@@ -328,66 +328,71 @@
 <context>
     <name>NetworkWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="355"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="422"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="443"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="361"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="428"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="450"/>
         <source>Sign in</source>
         <translation>Вход</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="356"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="423"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="362"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="429"/>
         <source>Sign out</source>
         <translation>Выйти</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="357"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="424"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="454"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="363"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="430"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="460"/>
         <source>Sign up</source>
         <translation>Регистрация</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="359"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="425"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="365"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="431"/>
         <source>Forgot password?</source>
         <translation>Забыли пароль?</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="360"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="426"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="366"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="432"/>
         <source>Change password</source>
         <translation>Изменить пароль</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="366"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="421"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="372"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="427"/>
         <source>Account</source>
         <translation>Аккаунт</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="378"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="415"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="384"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="421"/>
         <source>Edit</source>
         <translation>Изменить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="380"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="416"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="386"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="422"/>
         <source>Add</source>
         <translation>Добавить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="381"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="417"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="387"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="423"/>
         <source>Remove</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="387"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="418"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="393"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="424"/>
         <source>Actions</source>
         <translation>Действия</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="472"/>
+        <source>Reset your password</source>
+        <translation>Сброс пароля</translation>
     </message>
     <message>
         <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="100"/>
@@ -532,68 +537,78 @@
 <context>
     <name>SignUpWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="76"/>
-        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="166"/>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="77"/>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="171"/>
         <source>Sign up</source>
         <translation>Регистрация</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="162"/>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="163"/>
         <source>Name:</source>
         <translation>Имя:</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="163"/>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="166"/>
+        <source>New password:</source>
+        <translation>Новый пароль:</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="167"/>
+        <source>Reset</source>
+        <translation>Сбросить</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="170"/>
         <source>Password:</source>
         <translation>Пароль:</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="164"/>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="174"/>
         <source>Security question:</source>
         <translation>Секретный вопрос:</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="165"/>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="175"/>
         <source>Answer:</source>
         <translation>Ответ:</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="168"/>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="177"/>
         <source>Choose a question ...</source>
         <translation>Выберите вопрос ...</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="169"/>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="178"/>
         <source>What is the name of your best friend from childhood?</source>
         <translation>Имя моего лучшего друга детства?</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="170"/>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="179"/>
         <source>What was the name of your first teacher?</source>
         <translation>Имя моей первой учительницы?</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="171"/>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="180"/>
         <source>What is the name of your manager at your first job?</source>
         <translation>Имя моего начальника на первом месте работы?</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="172"/>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="181"/>
         <source>What was your first phone number?</source>
         <translation>Номер моего первого телефона?</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="173"/>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="182"/>
         <source>What is your vehicle registration number?</source>
         <translation>Номер моей машины?</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="174"/>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="183"/>
         <source>My own question</source>
         <translation>Мой собственный вопрос</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="221"/>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="230"/>
         <source>User is already registered</source>
         <translation>Пользователь уже зарегистрирован</translation>
     </message>

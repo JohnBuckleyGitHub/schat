@@ -271,6 +271,12 @@ void NetworkWidget::notify(const Notify &notify)
 }
 
 
+void NetworkWidget::recovery()
+{
+  setEditState(EditRecovery);
+}
+
+
 void NetworkWidget::reload()
 {
   connectAction();
@@ -436,6 +442,7 @@ void NetworkWidget::setEditState(EditState state)
   if (state != EditNone)
     setEditState(EditNone);
 
+  // Авторизация.
   if (state == EditSignIn) {
     if (m_login)
       return;
@@ -447,27 +454,39 @@ void NetworkWidget::setEditState(EditState state)
 
     QTimer::singleShot(0, m_login, SLOT(setFocus()));
   }
+  // Регистрация.
   else if (state == EditSignUp) {
-    if (m_reg)
-      return;
+    if (!m_reg) {
+      setTitle(tr("Sign up"));
 
-    setTitle(tr("Sign up"));
+      m_reg = new SignUpWidget(this);
+      connect(m_reg, SIGNAL(done()), SLOT(signUpDone()));
+      m_mainLayout->addWidget(m_reg);
+    }
 
-    m_reg = new SignUpWidget(this);
-    connect(m_reg, SIGNAL(done()), SLOT(signUpDone()));
-    m_mainLayout->addWidget(m_reg);
+    QTimer::singleShot(0, m_reg, SLOT(setFocus()));
+  }
+  // Восстановления пароля.
+  else if (state == EditRecovery) {
+    if (!m_reg) {
+      setTitle(tr("Reset your password"));
+
+      m_reg = new SignUpWidget(this, LS("reset"));
+      connect(m_reg, SIGNAL(done()), SLOT(signUpDone()));
+      m_mainLayout->addWidget(m_reg);
+    }
 
     QTimer::singleShot(0, m_reg, SLOT(setFocus()));
   }
   else {
     if (m_login) {
       m_mainLayout->removeWidget(m_login);
-      m_login->deleteLater();
+      delete m_login;
     }
 
     if (m_reg) {
       m_mainLayout->removeWidget(m_reg);
-      m_reg->deleteLater();
+      delete m_reg;
     }
 
     m_title->setVisible(false);
