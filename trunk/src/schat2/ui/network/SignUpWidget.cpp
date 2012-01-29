@@ -250,8 +250,8 @@ void SignUpWidget::signUp()
 
   QVariantMap data = RegCmds::request(LS("reg"), m_nameEdit->text(), m_passwordEdit->text());
 
-  data[LS("q")] = SimpleID::make(m_question->currentText().toUtf8(), SimpleID::MessageId);
-  data[LS("a")] = SimpleID::make(m_answerEdit->text().toUtf8(), SimpleID::MessageId);
+  data[LS("q")] = SimpleID::encode(SimpleID::make(m_question->currentText().toUtf8(), SimpleID::MessageId));
+  data[LS("a")] = SimpleID::encode(SimpleID::make(m_answerEdit->text().toUtf8(), SimpleID::MessageId));
 
   ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("account"), data);
 }

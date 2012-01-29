@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -26,12 +26,10 @@
 
 #include "schat.h"
 
-class AbstractMessage;
 class ChatPlugins;
 class ChatSettings;
 class ChatViewAction;
 class FileLocations;
-class MessageData;
 class NetworkManager;
 class SimpleClient;
 class Translation;

@@ -32,8 +32,11 @@ public:
     int result = QProxyStyle::pixelMetric(metric, option, widget);
     if (metric == PM_TabBarTabHSpace)
       return result / 2;
+
+#   if defined(Q_WS_WIN)
     else if (metric == PM_TabBarTabVSpace)
       return result + 2;
+#   endif
 
     return result;
   }

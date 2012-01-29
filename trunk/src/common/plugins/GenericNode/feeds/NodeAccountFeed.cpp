@@ -161,6 +161,8 @@ FeedQueryReply NodeAccountFeed::reg(const QVariantMap &json)
   channel->account()->groups().add(LS("registered"));
   m_data[LS("account")] = name;
   m_data[LS("groups")]  = channel->account()->groups().all();
+  setRecovery(LS("q"), json);
+  setRecovery(LS("a"), json);
 
   DataBase::update(channel);
 
@@ -191,4 +193,17 @@ QString NodeAccountFeed::name(const QVariantMap &json) const
     name = name.left(index);
 
   return name;
+}
+
+
+void NodeAccountFeed::setRecovery(const QString &type, const QVariantMap &json)
+{
+  if (!json.contains(type))
+    return;
+
+  QByteArray id = json.value(type).toByteArray();
+  if (SimpleID::typeOf(SimpleID::decode(id)) != SimpleID::MessageId)
+    return;
+
+  m_data[type] = id;
 }
