@@ -37,6 +37,7 @@ private:
   FeedQueryReply reg(const QVariantMap &json);
   QByteArray password(const QVariantMap &json) const;
   QString name(const QVariantMap &json) const;
+  void setRecovery(const QString &type, const QVariantMap &json);
 };
 
 #endif /* NODEACCOUNTFEED_H_ */
