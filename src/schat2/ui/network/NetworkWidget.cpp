@@ -33,6 +33,7 @@
 #include "ChatNotify.h"
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
+#include "hooks/RegCmds.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
 #include "sglobal.h"
@@ -41,21 +42,27 @@
 #include "ui/network/NetworkWidget.h"
 #include "ui/network/SignUpWidget.h"
 
-NetworkWidget::NetworkWidget(QWidget *parent)
+NetworkWidget::NetworkWidget(QWidget *parent, bool compact)
   : QWidget(parent)
   , m_editState(EditNone)
   , m_manager(ChatCore::networks())
+  , m_account(0)
 {
   m_combo = new QComboBox(this);
   m_combo->installEventFilter(this);
 
   createActionsButton();
-  createAccountButton();
+
+  if (!compact)
+    createAccountButton();
 
   m_toolBar = new QToolBar(this);
   m_toolBar->setIconSize(QSize(16, 16));
   m_toolBar->addWidget(m_actions);
-  m_toolBar->addWidget(m_account);
+
+  if (m_account)
+    m_toolBar->addWidget(m_account);
+
   m_connect = m_toolBar->addAction(QString(), this, SLOT(open()));
   m_toolBar->setStyleSheet(LS("QToolBar { margin:0px; border:0px; }"));
 
@@ -268,6 +275,9 @@ void NetworkWidget::reload()
 {
   connectAction();
 
+  if (!m_account)
+    return;
+
   m_account->setEnabled(ChatClient::state() == ChatClient::Online);
   if (m_account->isEnabled() && m_manager->selected() != ChatClient::serverId())
     m_account->setEnabled(false);
@@ -298,6 +308,8 @@ void NetworkWidget::showAccountMenu()
   m_signIn->setVisible(!account);
   m_signOut->setVisible(account);
   m_signUp->setVisible(!account);
+  m_recovery->setVisible(!account);
+  m_password->setVisible(account);
 }
 
 
@@ -314,6 +326,13 @@ void NetworkWidget::showMenu()
 void NetworkWidget::signIn()
 {
   setEditState(EditSignIn);
+}
+
+
+void NetworkWidget::signOut()
+{
+  setEditState(EditNone);
+  RegCmds::signOut();
 }
 
 
@@ -334,14 +353,18 @@ void NetworkWidget::createAccountButton()
   m_sign = new QMenu(this);
 
   m_signIn = m_sign->addAction(SCHAT_ICON(SignIn), tr("Sign in"), this, SLOT(signIn()));
-  m_signOut = m_sign->addAction(SCHAT_ICON(SignOut), tr("Sign out"), this, SLOT(edit()));
+  m_signOut = m_sign->addAction(SCHAT_ICON(SignOut), tr("Sign out"), this, SLOT(signOut()));
   m_signUp = m_sign->addAction(SCHAT_ICON(SignUp), tr("Sign up"), this, SLOT(signUp()));
+  m_sign->addSeparator();
+  m_recovery = m_sign->addAction(SCHAT_ICON(Password), tr("Forgot password?"), this, SLOT(recovery()));
+  m_password = m_sign->addAction(SCHAT_ICON(Password), tr("Change password"), this, SLOT(password()));
 
   m_account = new QToolButton(this);
   m_account->setIcon(SCHAT_ICON(Key));
   m_account->setMenu(m_sign);
   m_account->setPopupMode(QToolButton::InstantPopup);
   m_account->setToolTip(tr("Account"));
+  m_account->setEnabled(ChatClient::state() == ChatClient::Online);
 
   connect(m_sign, SIGNAL(aboutToShow()), SLOT(showAccountMenu()));
 }
@@ -392,12 +415,16 @@ void NetworkWidget::retranslateUi()
   m_edit->setText(tr("Edit"));
   m_add->setText(tr("Add"));
   m_remove->setText(tr("Remove"));
-  m_account->setToolTip(tr("Account"));
   m_actions->setToolTip(tr("Actions"));
 
-  m_signIn->setText(tr("Sign in"));
-  m_signOut->setText(tr("Sign out"));
-  m_signUp->setText(tr("Sign up"));
+  if (m_account) {
+    m_account->setToolTip(tr("Account"));
+    m_signIn->setText(tr("Sign in"));
+    m_signOut->setText(tr("Sign out"));
+    m_signUp->setText(tr("Sign up"));
+    m_recovery->setText(tr("Forgot password?"));
+    m_password->setText(tr("Change password"));
+  }
 }
 
 

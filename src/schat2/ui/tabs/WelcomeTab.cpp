@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 #include "ui/fields/GenderField.h"
 #include "ui/fields/LanguageField.h"
 #include "ui/fields/NickEdit.h"
-#include "ui/network/NetworkEditor.h"
+#include "ui/network/NetworkWidget.h"
 #include "ui/tabs/WelcomeTab.h"
 #include "ui/ChatIcons.h"
 
@@ -41,7 +41,7 @@ WelcomeTab::WelcomeTab(TabWidget *parent)
   QWidget *widget = new QWidget(this);
 
   m_networkLabel = new QLabel(this);
-  m_network = new NetworkEditor(this, NetworkEditor::ConnectButtonLayout);
+  m_network = new NetworkWidget(this, true);
   QGridLayout *networkLay = new QGridLayout;
   networkLay->addWidget(m_network, 0, 0, 1, 2);
   networkLay->setContentsMargins(20, 0, 3, 6);

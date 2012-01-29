@@ -38,7 +38,7 @@ class NetworkWidget : public QWidget
   Q_OBJECT
 
 public:
-  NetworkWidget(QWidget *parent = 0);
+  NetworkWidget(QWidget *parent = 0, bool compact = false);
   QAction *connectAction();
 
 public slots:
@@ -58,6 +58,7 @@ private slots:
   void showAccountMenu();
   void showMenu();
   void signIn();
+  void signOut();
   void signUp();
   void signUpDone();
 
@@ -81,6 +82,8 @@ private:
   QAction *m_add;                ///< Действие для добавления сервера.
   QAction *m_connect;            ///< Действие для подключения или отключения от сервера.
   QAction *m_edit;               ///< Действие для редактирования текущего подключения.
+  QAction *m_password;           ///< Действие для смены пароля.
+  QAction *m_recovery;           ///< Действие для восстановления пароля.
   QAction *m_remove;             ///< Действие для удаления сервера.
   QAction *m_signIn;             ///< Действие для авторизации на сервере.
   QAction *m_signOut;            ///< Действие для выхода из текущей учётной записи.

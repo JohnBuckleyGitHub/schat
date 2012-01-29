@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 
 class GenderField;
 class LanguageField;
-class NetworkEditor;
+class NetworkWidget;
 class NickEdit;
 class QLabel;
 class QPushButton;
@@ -44,7 +44,7 @@ private:
 
   GenderField *m_genderField;   ///< Виджет выбора пола.
   LanguageField *m_languageBox; ///< Виджет выбора языка.
-  NetworkEditor *m_network;    ///< Виджет выбора сети.
+  NetworkWidget *m_network;    ///< Виджет выбора сети.
   NickEdit *m_nickEdit;         ///< Поле редактирования ника.
   QLabel *m_genderLabel;
   QLabel *m_languageLabel;
