@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,17 +16,39 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QProxyStyle>
+
 #include "ui/TabBar.h"
+
+class TabStyle : public QProxyStyle
+{
+public:
+  TabStyle(QStyle *style = 0)
+  : QProxyStyle(style)
+  {}
+
+  int pixelMetric(PixelMetric metric, const QStyleOption *option = 0, const QWidget *widget = 0) const
+  {
+    int result = QProxyStyle::pixelMetric(metric, option, widget);
+    if (metric == PM_TabBarTabHSpace)
+      return result / 2;
+    else if (metric == PM_TabBarTabVSpace)
+      return result + 2;
+
+    return result;
+  }
+};
+
 
 TabBar::TabBar(QWidget *parent)
   : QTabBar(parent)
 {
   setMovable(true);
   setTabsClosable(true);
+  setUsesScrollButtons(false);
+  setElideMode(Qt::ElideMiddle);
 
-# if QT_VERSION < 0x040800
-  setElideMode(Qt::ElideRight);
-# endif
+  setStyle(new TabStyle());
 }
 
 
@@ -36,6 +58,8 @@ void TabBar::tabInserted(int index)
 
   if (!tabsClosable() && count() > 1)
     setTabsClosable(true);
+
+  setUsesScrollButtons(count() > 2);
 }
 
 
@@ -45,4 +69,6 @@ void TabBar::tabRemoved(int index)
 
   if (count() < 2)
     setTabsClosable(false);
+
+  setUsesScrollButtons(count() > 2);
 }
