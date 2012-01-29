@@ -122,10 +122,6 @@ void LoginWidget::retranslateUi()
  */
 void LoginWidget::reload()
 {
-  Network item = m_manager->item(m_manager->selected());
-  m_nameEdit->setText(item->account());
-  m_passwordEdit->setText(item->password());
-
   textChanged();
 }
 
@@ -149,12 +145,6 @@ void LoginWidget::showEvent(QShowEvent *event)
 
 void LoginWidget::editingFinished()
 {
-  Network item = m_manager->item(m_manager->selected());
-
-  if (ChatClient::serverId() != item->id()) {
-    item->setAccount(m_nameEdit->text());
-    item->setPassword(m_passwordEdit->text());
-  }
 }
 
 

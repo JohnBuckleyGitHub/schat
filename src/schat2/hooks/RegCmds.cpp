@@ -16,13 +16,16 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "ChatCore.h"
 #include "client/ChatClient.h"
 #include "client/ClientCmd.h"
+#include "client/ClientFeeds.h"
 #include "client/ClientMessages.h"
+#include "client/SimpleClient.h"
 #include "hooks/RegCmds.h"
 #include "net/SimpleID.h"
+#include "NetworkManager.h"
 #include "sglobal.h"
-#include "client/ClientFeeds.h"
 
 RegCmds::RegCmds(QObject *parent)
   : Messages(parent)
@@ -31,7 +34,7 @@ RegCmds::RegCmds(QObject *parent)
 }
 
 
-bool RegCmds::command(const QByteArray & /*dest*/, const ClientCmd &cmd)
+bool RegCmds::command(const QByteArray &dest, const ClientCmd &cmd)
 {
   QString command = cmd.command().toLower();
   if (command == LS("reg") || command == LS("login")) {
@@ -40,6 +43,24 @@ bool RegCmds::command(const QByteArray & /*dest*/, const ClientCmd &cmd)
       return true;
 
     ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("account"), request(command, body.command(), body.body()));
+    return true;
+  }
+  else if (command == LS("sign")) {
+    ClientCmd body(cmd.body());
+    if (!body.isValid())
+      return true;
+
+    if (body.command() == LS("in")) {
+      return this->command(dest, LS("login ") + body.body());
+    }
+    else if (body.command() == LS("up")) {
+      return this->command(dest, LS("reg ") + body.body());
+    }
+    else if (body.command() == LS("out")) {
+      signOut();
+      return true;
+    }
+
     return true;
   }
 
@@ -61,4 +82,19 @@ QVariantMap RegCmds::request(const QString &action, const QString &name, const Q
   out[LS("pass")]   = SimpleID::encode(SimpleID::password(password));
 
   return out;
+}
+
+
+void RegCmds::signOut()
+{
+  if (ChatClient::state() != ChatClient::Online)
+    return;
+
+  Network item = ChatCore::networks()->item(ChatClient::serverId());
+  if (!item)
+    return;
+
+  ChatClient::io()->leave();
+  item->setCookie(QByteArray());
+  ChatClient::open();
 }

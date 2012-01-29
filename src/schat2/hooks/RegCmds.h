@@ -30,6 +30,7 @@ public:
   bool command(const QByteArray &dest, const ClientCmd &cmd);
 
   static QVariantMap request(const QString &action, const QString &name, const QString &password);
+  static void signOut();
 };
 
 #endif /* REGCMDS_H_ */
