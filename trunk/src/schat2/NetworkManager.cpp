@@ -301,7 +301,7 @@ void NetworkManager::notify(const Notify &notify)
         return;
 
       QString action = json.value(LS("action")).toString();
-      if (action == LS("login"))
+      if (action == LS("login") || action == LS("reset"))
         login(json);
     }
   }

@@ -612,6 +612,16 @@
         <source>User is already registered</source>
         <translation>Пользователь уже зарегистрирован</translation>
     </message>
+    <message>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="234"/>
+        <source>User does not exist</source>
+        <translation type="unfinished">Пользователь не существует</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="238"/>
+        <source>Security question or answer is incorrect</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SoundButton</name>
