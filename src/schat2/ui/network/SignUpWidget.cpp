@@ -230,6 +230,14 @@ void SignUpWidget::notify(const Notify &notify)
       m_error->setToolTip(tr("User is already registered"));
       makeRed(m_nameEdit);
     }
+    else if (status == Notice::NotFound) {
+      m_error->setToolTip(tr("User does not exist"));
+      makeRed(m_nameEdit);
+    }
+    else if (status == Notice::Unauthorized) {
+      m_error->setToolTip(tr("Security question or answer is incorrect"));
+      makeRed(m_answerEdit);
+    }
     else
       m_error->setToolTip(Notice::status(status));
 
@@ -286,6 +294,7 @@ void SignUpWidget::setState(WidgetState state)
   if (m_state == Idle) {
     m_nameEdit->setEnabled(true);
     makeRed(m_nameEdit, false);
+    makeRed(m_answerEdit, false);
     m_passwordEdit->setEnabled(true);
     m_question->setEnabled(true);
     m_answerEdit->setEnabled(true);
