@@ -36,6 +36,7 @@
 #include "QProgressIndicator/QProgressIndicator.h"
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
+#include "ui/network/SecurityQuestion.h"
 #include "ui/network/SignUpWidget.h"
 
 SignUpWidget::SignUpWidget(QWidget *parent, const QString &action)
@@ -52,14 +53,7 @@ SignUpWidget::SignUpWidget(QWidget *parent, const QString &action)
   m_passwordEdit->setEchoMode(QLineEdit::Password);
 
   m_questionLabel = new QLabel(this);
-  m_question = new QComboBox(this);
-  m_question->addItem("");
-  m_question->addItem("");
-  m_question->addItem("");
-  m_question->addItem("");
-  m_question->addItem("");
-  m_question->addItem("");
-  m_question->addItem("");
+  m_question = new SecurityQuestion(this);
 
   m_answerLabel = new QLabel(this);
   m_answerEdit = new QLineEdit(this);
@@ -102,7 +96,7 @@ SignUpWidget::SignUpWidget(QWidget *parent, const QString &action)
   connect(m_nameEdit, SIGNAL(textChanged(const QString &)), SLOT(reload()));
   connect(m_passwordEdit, SIGNAL(textChanged(const QString &)), SLOT(reload()));
   connect(m_answerEdit, SIGNAL(textChanged(const QString &)), SLOT(reload()));
-  connect(m_question, SIGNAL(currentIndexChanged(int)), SLOT(indexChanged(int)));
+  connect(m_question, SIGNAL(currentIndexChanged(int)), SLOT(reload()));
 
   connect(m_signUp, SIGNAL(clicked(bool)), SLOT(signUp()));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
@@ -173,14 +167,6 @@ void SignUpWidget::retranslateUi()
 
   m_questionLabel->setText(tr("Security question:"));
   m_answerLabel->setText(tr("Answer:"));
-
-  m_question->setItemText(0, tr("Choose a question ..."));
-  m_question->setItemText(1, tr("What is the name of your best friend from childhood?"));
-  m_question->setItemText(2, tr("What was the name of your first teacher?"));
-  m_question->setItemText(3, tr("What is the name of your manager at your first job?"));
-  m_question->setItemText(4, tr("What was your first phone number?"));
-  m_question->setItemText(5, tr("What is your vehicle registration number?"));
-  m_question->setItemText(6, tr("My own question"));
 }
 
 
@@ -195,21 +181,6 @@ void SignUpWidget::focusInEvent(QFocusEvent *event)
 void SignUpWidget::reload()
 {
   setState(Idle);
-}
-
-
-void SignUpWidget::indexChanged(int index)
-{
-  reload();
-
-  if (index == 6) {
-    m_question->setEditable(true);
-    QLineEdit *edit = m_question->lineEdit();
-    if (edit)
-      edit->selectAll();
-  }
-  else
-    m_question->setEditable(false);
 }
 
 

@@ -244,6 +244,11 @@ FeedQueryReply NodeAccountFeed::reset(const QVariantMap &json)
 }
 
 
+/*!
+ * Получение пароля из запроса.
+ *
+ * \return Идентификатор пароля или пустой массив в случае ошибки.
+ */
 QByteArray NodeAccountFeed::password(const QVariantMap &json) const
 {
   QByteArray password = SimpleID::decode(json.value(LS("pass")).toString().toLatin1());
@@ -254,9 +259,18 @@ QByteArray NodeAccountFeed::password(const QVariantMap &json) const
 }
 
 
+/*!
+ * Получение имени из запроса.
+ *
+ * \return Имя пользователя или пустая строка в случае ошибки.
+ */
 QString NodeAccountFeed::name(const QVariantMap &json) const
 {
-  QString name = json.value(LS("name")).toString().simplified().toLower().remove(LC(' '));
+  QString name = json.value(LS("name")).toString();
+  if (name.isEmpty() || name.size() > 255 )
+    return QString();
+
+  name = name.simplified().toLower().remove(LC(' '));
   int index = name.indexOf(LC('@'));
   if (index != -1)
     name = name.left(index);
@@ -265,6 +279,9 @@ QString NodeAccountFeed::name(const QVariantMap &json) const
 }
 
 
+/*!
+ * Установка данных для ограничения пароля.
+ */
 void NodeAccountFeed::setRecovery(const QString &type, const QVariantMap &json)
 {
   if (!json.contains(type))
