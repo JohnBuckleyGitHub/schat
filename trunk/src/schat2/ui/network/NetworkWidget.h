@@ -25,6 +25,7 @@
 class LoginWidget;
 class NetworkManager;
 class Notify;
+class Password;
 class QComboBox;
 class QLabel;
 class QMenu;
@@ -53,6 +54,7 @@ private slots:
   void edit();
   void indexChanged(int index);
   void notify(const Notify &notify);
+  void password();
   void recovery();
   void reload();
   void remove();
@@ -68,7 +70,8 @@ private:
     EditNone,
     EditSignIn,
     EditSignUp,
-    EditRecovery
+    EditRecovery,
+    EditPassword
   };
 
   void createAccountButton();
@@ -96,6 +99,7 @@ private:
   QMenu *m_menu;                 ///< Меню дополнительных действий.
   QMenu *m_sign;                 ///< Меню действий над аккаунтом.
   QPointer<LoginWidget> m_login; ///< Виджет авторизации.
+  QPointer<Password> m_pass;    ///< Виджет для изменения пароля или секретного вопроса.
   QPointer<SignUpWidget> m_reg;  ///< Виджет регистрации.
   QToolBar *m_toolBar;           ///< Тулбар для размещения основных действий.
   QToolButton *m_account;        ///< Кнопка аккаунта.

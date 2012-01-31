@@ -73,6 +73,7 @@ HEADERS = \
     ui/network/NetworkEditor.h \
     ui/network/NetworkTabs.h \
     ui/network/NetworkWidget.h \
+    ui/network/Password.h \
     ui/network/SecurityQuestion.h \
     ui/network/SignUpWidget.h \
     ui/SendWidget.h \
@@ -144,6 +145,7 @@ SOURCES = \
     ui/network/NetworkEditor.cpp \
     ui/network/NetworkTabs.cpp \
     ui/network/NetworkWidget.cpp \
+    ui/network/Password.cpp \
     ui/network/SecurityQuestion.cpp \
     ui/network/SignUpWidget.cpp \
     ui/SendWidget.cpp \

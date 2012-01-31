@@ -41,6 +41,7 @@
 #include "ui/network/LoginWidget.h"
 #include "ui/network/NetworkWidget.h"
 #include "ui/network/SignUpWidget.h"
+#include "ui/network/Password.h"
 
 NetworkWidget::NetworkWidget(QWidget *parent, bool compact)
   : QWidget(parent)
@@ -271,6 +272,12 @@ void NetworkWidget::notify(const Notify &notify)
 }
 
 
+void NetworkWidget::password()
+{
+  setEditState(EditPassword);
+}
+
+
 void NetworkWidget::recovery()
 {
   setEditState(EditRecovery);
@@ -456,27 +463,27 @@ void NetworkWidget::setEditState(EditState state)
   }
   // Регистрация.
   else if (state == EditSignUp) {
-    if (!m_reg) {
-      setTitle(tr("Sign up"));
+    setTitle(tr("Sign up"));
 
-      m_reg = new SignUpWidget(this);
-      connect(m_reg, SIGNAL(done()), SLOT(signUpDone()));
-      m_mainLayout->addWidget(m_reg);
-    }
+    m_reg = new SignUpWidget(this);
+    connect(m_reg, SIGNAL(done()), SLOT(signUpDone()));
+    m_mainLayout->addWidget(m_reg);
 
     QTimer::singleShot(0, m_reg, SLOT(setFocus()));
   }
   // Восстановления пароля.
   else if (state == EditRecovery) {
-    if (!m_reg) {
-      setTitle(tr("Reset your password"));
+    setTitle(tr("Reset your password"));
 
-      m_reg = new SignUpWidget(this, LS("reset"));
-      connect(m_reg, SIGNAL(done()), SLOT(signUpDone()));
-      m_mainLayout->addWidget(m_reg);
-    }
+    m_reg = new SignUpWidget(this, LS("reset"));
+    connect(m_reg, SIGNAL(done()), SLOT(signUpDone()));
+    m_mainLayout->addWidget(m_reg);
 
     QTimer::singleShot(0, m_reg, SLOT(setFocus()));
+  }
+  else if (state == EditPassword) {
+    m_pass = new Password(this);
+    m_mainLayout->addWidget(m_pass);
   }
   else {
     if (m_login) {
@@ -487,6 +494,11 @@ void NetworkWidget::setEditState(EditState state)
     if (m_reg) {
       m_mainLayout->removeWidget(m_reg);
       delete m_reg;
+    }
+
+    if (m_pass) {
+      m_mainLayout->removeWidget(m_pass);
+      delete m_pass;
     }
 
     m_title->setVisible(false);
