@@ -23,12 +23,12 @@
 
 class NetworkManager;
 class Notify;
-class QComboBox;
 class QLabel;
 class QLineEdit;
 class QProgressIndicator;
 class QPushButton;
 class QToolButton;
+class SecurityQuestion;
 
 class SignUpWidget : public QWidget
 {
@@ -58,7 +58,6 @@ public slots:
   void reload();
 
 private slots:
-  void indexChanged(int index);
   void notify(const Notify &notify);
   void signUp();
 
@@ -67,7 +66,6 @@ private:
   void setState(WidgetState state);
 
   NetworkManager *m_manager;      ///< Указатель на менеджер сетевых подключений.
-  QComboBox *m_question;          ///< Секретный вопрос.
   QLabel *m_answerLabel;
   QLabel *m_nameLabel;            ///< Пояснительный текст для поля редктирования имени.
   QLabel *m_passwordLabel;        ///< Пояснительный текст для поля редктирования пароля.
@@ -79,6 +77,7 @@ private:
   QPushButton *m_signUp;
   QString m_action;               ///< Основное действие "reg" или "reset".
   QToolButton *m_error;           ///< Кнопка просмотра подробной информации об ошибке.
+  SecurityQuestion *m_question;   ///< Секретный вопрос.
   WidgetState m_state;            ///< Состояние виджета.
 };
 

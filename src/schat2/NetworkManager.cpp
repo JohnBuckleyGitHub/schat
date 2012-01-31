@@ -236,7 +236,7 @@ QString NetworkManager::root(const QByteArray &id) const
   if (id.isEmpty())
     return QString();
 
-  QString out = ChatCore::locations()->path(FileLocations::ConfigPath) + LS("/networks/") + SimpleID::encode(id);
+  QString out = ChatCore::locations()->path(FileLocations::ConfigPath) + LS("/.") + ChatCore::locations()->path(FileLocations::BaseName) + LC('/') + SimpleID::encode(id);
   if (!QFile::exists(out))
     QDir().mkpath(out);
 

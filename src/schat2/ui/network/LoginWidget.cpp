@@ -42,11 +42,13 @@ LoginWidget::LoginWidget(QWidget *parent)
   , m_manager(ChatCore::networks())
 {
   m_nameEdit = new QLineEdit(this);
+  m_nameEdit->setMaxLength(255);
   m_nameLabel = new QLabel(this);
   m_nameLabel->setBuddy(m_nameEdit);
 
   m_passwordEdit = new QLineEdit(this);
   m_passwordEdit->setEchoMode(QLineEdit::Password);
+  m_passwordEdit->setMaxLength(255);
   m_passwordLabel = new QLabel(this);
   m_passwordLabel->setBuddy(m_passwordEdit);
 
