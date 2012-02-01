@@ -70,6 +70,7 @@ HEADERS = \
     ui/LoginIcon.h \
     ui/MainToolBar.h \
     ui/network/LoginWidget.h \
+    ui/network/NetworkButton.h \
     ui/network/NetworkEditor.h \
     ui/network/NetworkTabs.h \
     ui/network/NetworkWidget.h \
@@ -142,6 +143,7 @@ SOURCES = \
     ui/LoginIcon.cpp \
     ui/MainToolBar.cpp \
     ui/network/LoginWidget.cpp \
+    ui/network/NetworkButton.cpp \
     ui/network/NetworkEditor.cpp \
     ui/network/NetworkTabs.cpp \
     ui/network/NetworkWidget.cpp \

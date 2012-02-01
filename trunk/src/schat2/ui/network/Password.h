@@ -21,6 +21,7 @@
 
 #include <QWidget>
 
+class NetworkButton;
 class PasswordWidget;
 class QLabel;
 class QLineEdit;
@@ -29,12 +30,18 @@ class QToolButton;
 class QuestionWidget;
 class SecurityQuestion;
 
+/*!
+ * Виджет изменения пароля или секретного вопроса.
+ */
 class Password : public QWidget
 {
   Q_OBJECT
 
 public:
   Password(QWidget *parent = 0);
+
+private slots:
+  void toggled();
 
 private:
   enum Mode {
@@ -52,37 +59,65 @@ private:
 };
 
 
-class PasswordWidget : public QWidget
+/*!
+ * Базовый виджет для отдельных виждетов смены пароля или секретного вопроса.
+ */
+class PasswordBase : public QWidget
+{
+  Q_OBJECT
+
+public:
+  PasswordBase(QWidget *parent = 0);
+
+public slots:
+  void reload();
+
+protected:
+  virtual bool isReady() const;
+
+  QLabel *m_passwordLabel;
+  QLineEdit *m_passwordEdit;
+  NetworkButton *m_ok;
+};
+
+
+/*!
+ * Виджет для смены пароля.
+ */
+class PasswordWidget : public PasswordBase
 {
   Q_OBJECT
 
 public:
   PasswordWidget(QWidget *parent = 0);
 
+protected:
+  bool isReady() const;
+
 private:
   QLabel *m_newLabel;
-  QLabel *m_passwordLabel;
   QLineEdit *m_newEdit;
-  QLineEdit *m_passwordEdit;
-  QToolButton *m_ok;
 };
 
 
-class QuestionWidget : public QWidget
+/*!
+ * Виджет для смены секретного вопроса.
+ */
+class QuestionWidget : public PasswordBase
 {
   Q_OBJECT
 
 public:
   QuestionWidget(QWidget *parent = 0);
 
+protected:
+  bool isReady() const;
+
 private:
   QLabel *m_answerLabel;
-  QLabel *m_passwordLabel;
   QLabel *m_questionLabel;
   QLineEdit *m_answerEdit;
-  QLineEdit *m_passwordEdit;
   SecurityQuestion *m_question;
-  QToolButton *m_ok;
 };
 
 #endif /* PASSWORD_H_ */
