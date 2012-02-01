@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -32,40 +30,26 @@
 #include "hooks/RegCmds.h"
 #include "net/packets/Notice.h"
 #include "NetworkManager.h"
-#include "QProgressIndicator/QProgressIndicator.h"
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
 #include "ui/network/LoginWidget.h"
+#include "ui/network/NetworkButton.h"
 
 LoginWidget::LoginWidget(QWidget *parent)
   : QWidget(parent)
-  , m_manager(ChatCore::networks())
 {
   m_nameEdit = new QLineEdit(this);
   m_nameEdit->setMaxLength(255);
-  m_nameLabel = new QLabel(this);
+  m_nameLabel = new QLabel(tr("&Name:"), this);
   m_nameLabel->setBuddy(m_nameEdit);
 
   m_passwordEdit = new QLineEdit(this);
   m_passwordEdit->setEchoMode(QLineEdit::Password);
   m_passwordEdit->setMaxLength(255);
-  m_passwordLabel = new QLabel(this);
+  m_passwordLabel = new QLabel(tr("&Password:"), this);
   m_passwordLabel->setBuddy(m_passwordEdit);
 
-  m_login = new QToolButton(this);
-  m_login->setIcon(SCHAT_ICON(OK));
-  m_login->setAutoRaise(true);
-  m_login->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-
-  m_error = new QToolButton(this);
-  m_error->setIcon(SCHAT_ICON(ExclamationRed));
-  m_error->setAutoRaise(true);
-  m_error->setVisible(false);
-
-  m_progress = new QProgressIndicator(this);
-  m_progress->setAnimationDelay(100);
-  m_progress->setMaximumSize(16, 16);
-  m_progress->setVisible(false);
+  m_login = new NetworkButton(tr("Sign in"), this);
 
   QHBoxLayout *mainLay = new QHBoxLayout(this);
   mainLay->addWidget(m_nameLabel);
@@ -73,58 +57,17 @@ LoginWidget::LoginWidget(QWidget *parent)
   mainLay->addWidget(m_passwordLabel);
   mainLay->addWidget(m_passwordEdit);
   mainLay->addWidget(m_login);
-  mainLay->addWidget(m_error);
-  mainLay->addWidget(m_progress);
   mainLay->setMargin(0);
 
-  connect(m_nameEdit, SIGNAL(textChanged(const QString &)), SLOT(textChanged()));
-  connect(m_nameEdit, SIGNAL(editingFinished()), SLOT(editingFinished()));
+  connect(m_nameEdit, SIGNAL(textChanged(const QString &)), SLOT(reload()));
   connect(m_nameEdit, SIGNAL(returnPressed()), SLOT(login()));
-  connect(m_passwordEdit, SIGNAL(textChanged(const QString &)), SLOT(textChanged()));
-  connect(m_passwordEdit, SIGNAL(editingFinished()), SLOT(editingFinished()));
+  connect(m_passwordEdit, SIGNAL(textChanged(const QString &)), SLOT(reload()));
   connect(m_passwordEdit, SIGNAL(returnPressed()), SLOT(login()));
 
-  connect(m_login, SIGNAL(clicked()), SLOT(login()));
+  connect(m_login->button(), SIGNAL(clicked()), SLOT(login()));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 
-  textChanged();
-  retranslateUi();
-}
-
-
-/*!
- * Возвращает \p true если в текущий момент времени возможна авторизация.
- */
-bool LoginWidget::canLogIn() const
-{
-  if (ChatClient::state() != ChatClient::Online)
-    return false;
-
-  if (ChatClient::serverId() != ChatCore::networks()->selected())
-    return false;
-
-  if (!ChatClient::channel()->account()->name().isEmpty())
-    return false;
-
-  return true;
-}
-
-
-void LoginWidget::retranslateUi()
-{
-  m_nameLabel->setText(tr("&Name:"));
-  m_passwordLabel->setText(tr("&Password:"));
-  m_login->setText(tr("Sign in"));
-  m_login->setToolTip(m_login->text());
-}
-
-
-/*!
- * Обновление состояния виджета.
- */
-void LoginWidget::reload()
-{
-  textChanged();
+  reload();
 }
 
 
@@ -136,29 +79,12 @@ void LoginWidget::focusInEvent(QFocusEvent *event)
 }
 
 
-void LoginWidget::showEvent(QShowEvent *event)
-{
-  m_login->setMaximumHeight(m_passwordEdit->height());
-  m_error->setMaximumHeight(m_passwordEdit->height());
-
-  QWidget::showEvent(event);
-}
-
-
-void LoginWidget::editingFinished()
-{
-}
-
-
 void LoginWidget::login()
 {
-  if (!m_login->isVisible())
+  if (!isReady())
     return;
 
-  m_progress->startAnimation();
-  m_progress->setVisible(true);
-  m_login->setVisible(false);
-
+  m_login->setProgress();
   ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("account"), RegCmds::request(LS("login"), m_nameEdit->text(), m_passwordEdit->text()));
 }
 
@@ -173,37 +99,56 @@ void LoginWidget::notify(const Notify &notify)
     if (data.value(LS("id")) != ChatClient::id())
       return;
 
-    m_progress->setVisible(false);
-    m_error->setVisible(true);
-
     int status = data.value(LS("status")).toInt();
     if (status == Notice::NotFound) {
-      m_error->setToolTip(tr("User does not exist"));
+      m_login->setError(tr("User does not exist"));
       makeRed(m_nameEdit);
       m_nameEdit->setFocus();
     }
     else if (status == Notice::Forbidden) {
-      m_error->setToolTip(tr("Password is incorrect"));
+      m_login->setError(tr("Password is incorrect"));
       makeRed(m_passwordEdit);
       m_passwordEdit->setFocus();
     }
     else
-      m_error->setToolTip(Notice::status(status));
+      m_login->setError(Notice::status(status));
   }
 }
 
 
-void LoginWidget::textChanged()
+/*!
+ * Обновление состояния виджета.
+ */
+void LoginWidget::reload()
 {
-  if (m_nameEdit->text().isEmpty() || m_passwordEdit->text().isEmpty() || !canLogIn())
-    m_login->setVisible(false);
-  else
-    m_login->setVisible(true);
-
-  m_error->setVisible(false);
+  m_login->setReady(isReady());
 
   makeRed(m_nameEdit, false);
   makeRed(m_passwordEdit, false);
+}
+
+
+/*!
+ * Возвращает \p true если в текущий момент времени возможна авторизация.
+ */
+bool LoginWidget::isReady() const
+{
+  if (m_nameEdit->text().isEmpty())
+    return false;
+
+  if (m_passwordEdit->text().isEmpty())
+    return false;
+
+  if (ChatClient::state() != ChatClient::Online)
+    return false;
+
+  if (ChatClient::serverId() != ChatCore::networks()->selected())
+    return false;
+
+  if (!ChatClient::channel()->account()->name().isEmpty())
+    return false;
+
+  return true;
 }
 
 

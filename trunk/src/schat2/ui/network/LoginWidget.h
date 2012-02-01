@@ -21,12 +21,10 @@
 
 #include <QWidget>
 
-class NetworkManager;
 class Notify;
 class QLabel;
 class QLineEdit;
-class QProgressIndicator;
-class QToolButton;
+class NetworkButton;
 
 class LoginWidget : public QWidget
 {
@@ -34,31 +32,24 @@ class LoginWidget : public QWidget
 
 public:
   LoginWidget(QWidget *parent = 0);
-  bool canLogIn() const;
-  void retranslateUi();
-  void reload();
 
 protected:
   void focusInEvent(QFocusEvent *event);
-  void showEvent(QShowEvent *event);
 
 private slots:
-  void editingFinished();
   void login();
   void notify(const Notify &notify);
-  void textChanged();
+  void reload();
 
 private:
+  bool isReady() const;
   void makeRed(QWidget *widget, bool red = true);
 
-  NetworkManager *m_manager;      ///< Указатель на менеджер сетевых подключений.
-  QLabel *m_nameLabel;            ///< Пояснительный текст для поля редктирования имени.
-  QLabel *m_passwordLabel;        ///< Пояснительный текст для поля редктирования пароля.
-  QLineEdit *m_nameEdit;          ///< Поле редактирования имени.
-  QLineEdit *m_passwordEdit;      ///< Поле редактирования пароля.
-  QProgressIndicator *m_progress; ///< Прогресс бар.
-  QToolButton *m_error;           ///< Кнопка просмотра подробной информации об ошибке.
-  QToolButton *m_login;           ///< Кнопка немедленного входа.
+  QLabel *m_nameLabel;       ///< Пояснительный текст для поля редктирования имени.
+  QLabel *m_passwordLabel;   ///< Пояснительный текст для поля редктирования пароля.
+  QLineEdit *m_nameEdit;     ///< Поле редактирования имени.
+  QLineEdit *m_passwordEdit; ///< Поле редактирования пароля.
+  NetworkButton *m_login;    ///< Кнопка немедленного входа.
 };
 
 #endif /* LOGINWIDGET_H_ */
