@@ -21,32 +21,22 @@
 
 #include <QWidget>
 
-class NetworkManager;
 class Notify;
 class QLabel;
 class QLineEdit;
-class QProgressIndicator;
-class QPushButton;
 class QToolButton;
 class SecurityQuestion;
+class NetworkButton;
 
+/*!
+ * Виджет регистрации или восстановления забытого пароля.
+ */
 class SignUpWidget : public QWidget
 {
   Q_OBJECT
 
 public:
-  /// Состояние виджета.
-  enum WidgetState {
-    Idle,     ///< Ожидание действий пользователя.
-    Progress, ///< Запущен процесс регистрации.
-    Error     ///< Ошибка регистрации.
-  };
-
   SignUpWidget(QWidget *parent = 0, const QString &action = QLatin1String("reg"));
-  ~SignUpWidget();
-  bool ready() const;
-  static bool canSignUp();
-  void retranslateUi();
 
 signals:
   void done();
@@ -62,23 +52,19 @@ private slots:
   void signUp();
 
 private:
+  bool isReady() const;
   void makeRed(QWidget *widget, bool red = true);
-  void setState(WidgetState state);
 
-  NetworkManager *m_manager;      ///< Указатель на менеджер сетевых подключений.
   QLabel *m_answerLabel;
-  QLabel *m_nameLabel;            ///< Пояснительный текст для поля редктирования имени.
-  QLabel *m_passwordLabel;        ///< Пояснительный текст для поля редктирования пароля.
+  QLabel *m_nameLabel;            ///< Пояснительный текст для поля редактирования имени.
+  QLabel *m_passwordLabel;        ///< Пояснительный текст для поля редактирования пароля.
   QLabel *m_questionLabel;
   QLineEdit *m_answerEdit;        ///< Поле редактирования секретного вопроса.
   QLineEdit *m_nameEdit;          ///< Поле редактирования имени.
   QLineEdit *m_passwordEdit;      ///< Поле редактирования пароля.
-  QProgressIndicator *m_progress; ///< Прогресс бар.
-  QPushButton *m_signUp;
+  NetworkButton *m_signUp;
   QString m_action;               ///< Основное действие "reg" или "reset".
-  QToolButton *m_error;           ///< Кнопка просмотра подробной информации об ошибке.
   SecurityQuestion *m_question;   ///< Секретный вопрос.
-  WidgetState m_state;            ///< Состояние виджета.
 };
 
 #endif /* SIGNUPWIDGET_H_ */

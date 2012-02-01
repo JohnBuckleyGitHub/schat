@@ -57,21 +57,21 @@ void NetworkTabs::reload()
 {
 //  m_login->reload();
 
-  if (SignUpWidget::canSignUp()) {
-    if (!m_signup) {
-      m_signup = new SignUpWidget(this);
-      addTab(m_signup, tr("Sign Up"));
-    }
-  }
-  else {
-    if (m_signup) {
-      removeTab(indexOf(m_signup));
-      delete m_signup;
-    }
-  }
-
-  if (m_signup)
-    m_signup->reload();
+//  if (SignUpWidget::canSignUp()) {
+//    if (!m_signup) {
+//      m_signup = new SignUpWidget(this);
+//      addTab(m_signup, tr("Sign Up"));
+//    }
+//  }
+//  else {
+//    if (m_signup) {
+//      removeTab(indexOf(m_signup));
+//      delete m_signup;
+//    }
+//  }
+//
+//  if (m_signup)
+//    m_signup->reload();
 }
 
 
@@ -84,7 +84,7 @@ void NetworkTabs::changeEvent(QEvent *event)
 }
 
 
-void NetworkTabs::indexChanged(int index)
+void NetworkTabs::indexChanged(int /*index*/)
 {
 //  if (m_signup)
 //    m_signup->setSmall(indexOf(m_signup) != index);
@@ -96,6 +96,6 @@ void NetworkTabs::indexChanged(int index)
 
 void NetworkTabs::retranslateUi()
 {
-  if (m_signup)
-    m_signup->retranslateUi();
+//  if (m_signup)
+//    m_signup->retranslateUi();
 }

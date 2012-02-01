@@ -26,6 +26,9 @@ class QLabel;
 class QLineEdit;
 class NetworkButton;
 
+/*!
+ * Виджет авторизации.
+ */
 class LoginWidget : public QWidget
 {
   Q_OBJECT
