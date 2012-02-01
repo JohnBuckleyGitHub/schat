@@ -45,7 +45,8 @@ NetworkTabs::NetworkTabs(QWidget *parent)
  */
 bool NetworkTabs::canLogIn() const
 {
-  return m_login->canLogIn();
+//  return m_login->canLogIn();
+  return false;
 }
 
 
@@ -54,7 +55,7 @@ bool NetworkTabs::canLogIn() const
  */
 void NetworkTabs::reload()
 {
-  m_login->reload();
+//  m_login->reload();
 
   if (SignUpWidget::canSignUp()) {
     if (!m_signup) {
@@ -95,8 +96,6 @@ void NetworkTabs::indexChanged(int index)
 
 void NetworkTabs::retranslateUi()
 {
-  m_login->retranslateUi();
-
   if (m_signup)
     m_signup->retranslateUi();
 }

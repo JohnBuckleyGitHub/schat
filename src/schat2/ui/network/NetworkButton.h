@@ -39,7 +39,7 @@ public:
 private:
   QLabel *m_error;                ///< Ошибка
   QProgressIndicator *m_progress; ///< Прогресс бар.
-  QToolButton *m_button;          ///< Кнопка..
+  QToolButton *m_button;          ///< Кнопка.
 };
 
 #endif /* NETWORKBUTTON_H_ */
