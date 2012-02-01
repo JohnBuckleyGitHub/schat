@@ -45,7 +45,7 @@ SignUpWidget::SignUpWidget(QWidget *parent, const QString &action)
   m_nameLabel = new QLabel(tr("Name:"), this);
   m_nameEdit = new QLineEdit(this);
 
-  m_passwordLabel = new QLabel(tr("New password:"), this);
+  m_passwordLabel = new QLabel(tr("Password:"), this);
   m_passwordEdit = new QLineEdit(this);
   m_passwordEdit->setEchoMode(QLineEdit::Password);
 
@@ -85,7 +85,7 @@ SignUpWidget::SignUpWidget(QWidget *parent, const QString &action)
   if (m_action == LS("reset")) {
     m_signUp->button()->setText(tr("Reset"));
     m_signUp->button()->setToolTip(m_signUp->button()->text());
-    m_passwordLabel->setText(tr("Password:"));
+    m_passwordLabel->setText(tr("New password:"));
   }
 }
 
@@ -110,14 +110,10 @@ void SignUpWidget::reload()
 void SignUpWidget::notify(const Notify &notify)
 {
   if (notify.type() == Notify::QueryError) {
-    QVariantMap data = notify.data().toMap();
-    if (data.value(LS("name")) != LS("account"))
+    if (!ChatNotify::isFeed(notify, LS("account"), ChatClient::id(), m_action))
       return;
 
-    if (data.value(LS("id")) != ChatClient::id())
-      return;
-
-    int status = data.value(LS("status")).toInt();
+    int status = notify.data().toMap().value(LS("status")).toInt();
     if (status == Notice::ObjectAlreadyExists) {
       m_signUp->setError(tr("User is already registered"));
       makeRed(m_nameEdit);
@@ -134,14 +130,7 @@ void SignUpWidget::notify(const Notify &notify)
       m_signUp->setError(Notice::status(status));
   }
   else if (notify.type() == Notify::FeedReply) {
-    QVariantMap data = notify.data().toMap();
-    if (data.value(LS("name")) != LS("account"))
-      return;
-
-    if (data.value(LS("id")) != ChatClient::id())
-      return;
-
-    if (data.value(LS("data")).toMap().value(LS("action")) != m_action)
+    if (!ChatNotify::isFeed(notify, LS("account"), ChatClient::id(), m_action))
       return;
 
     m_signUp->setReady(false);

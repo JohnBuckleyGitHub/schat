@@ -206,6 +206,16 @@ int NodeFeeds::query()
     broadcast(m_channel->feed(m_packet->text(), false));
   }
 
+  if (m_packet->json().contains(LS("action"))) {
+    FeedPacket packet = FeedNotice::reply(*m_packet, reply.status);
+    QVariantMap data;
+    data[LS("action")] = m_packet->json().value(LS("action"));
+    packet->setData(data);
+
+    m_core->send(m_user->sockets(), packet);
+    return Notice::OK;
+  }
+
   return reply.status;
 }
 

@@ -92,14 +92,10 @@ void LoginWidget::login()
 void LoginWidget::notify(const Notify &notify)
 {
   if (notify.type() == Notify::QueryError) {
-    QVariantMap data = notify.data().toMap();
-    if (data.value(LS("name")) != LS("account"))
+    if (!ChatNotify::isFeed(notify, LS("account"), ChatClient::id(), LS("login")))
       return;
 
-    if (data.value(LS("id")) != ChatClient::id())
-      return;
-
-    int status = data.value(LS("status")).toInt();
+    int status = notify.data().toMap().value(LS("status")).toInt();
     if (status == Notice::NotFound) {
       m_login->setError(tr("User does not exist"));
       makeRed(m_nameEdit);
