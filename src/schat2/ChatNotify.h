@@ -74,9 +74,10 @@ class SCHAT_CORE_EXPORT ChatNotify : public QObject
 
 public:
   ChatNotify(QObject *parent = 0);
-  inline static ChatNotify *i() { return m_self; }
-  inline static void start(const Notify &notify) { m_self->startNotify(notify); }
+  inline static ChatNotify *i()                                         { return m_self; }
+  inline static void start(const Notify &notify)                        { m_self->startNotify(notify); }
   inline static void start(int type, const QVariant &data = QVariant()) { m_self->startNotify(Notify(type, data)); }
+  static bool isFeed(const Notify &notify, const QString &name, const QByteArray &id, const QString &action = QString());
 
 signals:
   void notify(const Notify &notify);

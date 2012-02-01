@@ -36,6 +36,24 @@ ChatNotify::ChatNotify(QObject *parent)
 }
 
 
+bool ChatNotify::isFeed(const Notify &notify, const QString &name, const QByteArray &id, const QString &action)
+{
+  QVariantMap data = notify.data().toMap();
+  if (data.value(LS("name")) != name)
+    return false;
+
+  if (data.value(LS("id")) != id)
+    return false;
+
+  if (action.isEmpty())
+    return true;
+  else if (data.value(LS("data")).toMap().value(LS("action")) != action)
+    return false;
+
+  return true;
+}
+
+
 void ChatNotify::startNotify(const Notify &notify)
 {
   emit this->notify(notify);
