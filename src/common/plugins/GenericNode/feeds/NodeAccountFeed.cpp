@@ -84,6 +84,21 @@ FeedQueryReply NodeAccountFeed::query(const QVariantMap &json, Channel *channel)
 }
 
 
+QVariantMap NodeAccountFeed::feed(Channel *channel)
+{
+  QVariantMap header = head().get(channel);
+  if (header.isEmpty())
+    return QVariantMap();
+
+  QVariantMap out = m_data;
+  out.remove(LS("q"));
+  out.remove(LS("a"));
+
+  merge(LS("head"), out, header);
+  return out;
+}
+
+
 void NodeAccountFeed::setChannel(Channel *channel)
 {
   Feed::setChannel(channel);
