@@ -22,6 +22,7 @@
 #include <QWidget>
 #include <QPointer>
 
+class AccountButton;
 class LoginWidget;
 class NetworkManager;
 class Notify;
@@ -58,7 +59,6 @@ private slots:
   void recovery();
   void reload();
   void remove();
-  void showAccountMenu();
   void showMenu();
   void signIn();
   void signOut();
@@ -82,17 +82,13 @@ private:
   void setTitle(const QString &title);
   void updateIndex();
 
+  AccountButton *m_account;      ///< Кнопка аккаунта.
   EditState m_editState;         ///< Состояние виджета.
   NetworkManager *m_manager;     ///< Указатель на менеджер сетевых подключений.
   QAction *m_add;                ///< Действие для добавления сервера.
   QAction *m_connect;            ///< Действие для подключения или отключения от сервера.
   QAction *m_edit;               ///< Действие для редактирования текущего подключения.
-  QAction *m_password;           ///< Действие для смены пароля.
-  QAction *m_recovery;           ///< Действие для восстановления пароля.
   QAction *m_remove;             ///< Действие для удаления сервера.
-  QAction *m_signIn;             ///< Действие для авторизации на сервере.
-  QAction *m_signOut;            ///< Действие для выхода из текущей учётной записи.
-  QAction *m_signUp;             ///< Действие для регистрации на сервере.
   QByteArray m_editing;          ///< Идентификатор редактируемой сети.
   QComboBox *m_combo;            ///< Комбобокс выбора серверов.
   QLabel *m_title;               ///< Заголовок текущего расширенного действия.
@@ -102,9 +98,13 @@ private:
   QPointer<Password> m_pass;    ///< Виджет для изменения пароля или секретного вопроса.
   QPointer<SignUpWidget> m_reg;  ///< Виджет регистрации.
   QToolBar *m_toolBar;           ///< Тулбар для размещения основных действий.
-  QToolButton *m_account;        ///< Кнопка аккаунта.
   QToolButton *m_actions;        ///< Кнопка дополнительных действий.
   QVBoxLayout *m_mainLayout;     ///< Основной компоновщик.
+//  QAction *m_password;           ///< Действие для смены пароля.
+//  QAction *m_recovery;           ///< Действие для восстановления пароля.
+//  QAction *m_signIn;             ///< Действие для авторизации на сервере.
+//  QAction *m_signOut;            ///< Действие для выхода из текущей учётной записи.
+//  QAction *m_signUp;             ///< Действие для регистрации на сервере.
 };
 
 #endif /* NETWORKWIDGET_H_ */

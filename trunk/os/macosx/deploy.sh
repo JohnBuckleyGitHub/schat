@@ -16,7 +16,7 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-VERSION="1.99.9"
+VERSION="1.99.10"
 TARGET="SimpleChat2"
 
 cd ../..
