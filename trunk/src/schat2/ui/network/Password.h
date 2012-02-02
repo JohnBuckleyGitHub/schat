@@ -22,6 +22,7 @@
 #include <QWidget>
 
 class NetworkButton;
+class Notify;
 class PasswordWidget;
 class QLabel;
 class QLineEdit;
@@ -39,6 +40,9 @@ class Password : public QWidget
 
 public:
   Password(QWidget *parent = 0);
+
+signals:
+  void done();
 
 private slots:
   void toggled();
@@ -69,11 +73,18 @@ class PasswordBase : public QWidget
 public:
   PasswordBase(QWidget *parent = 0);
 
+signals:
+  void done();
+
 public slots:
   void reload();
 
+private slots:
+  void notify(const Notify &notify);
+
 protected:
   virtual bool isReady() const;
+  void makeRed(QWidget *widget, bool red = true);
 
   QLabel *m_passwordLabel;
   QLineEdit *m_passwordEdit;

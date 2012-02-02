@@ -264,12 +264,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/LoginWidget.cpp" line="104"/>
+        <location filename="../../src/schat2/ui/network/LoginWidget.cpp" line="100"/>
         <source>User does not exist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/LoginWidget.cpp" line="109"/>
+        <location filename="../../src/schat2/ui/network/LoginWidget.cpp" line="105"/>
         <source>Password is incorrect</source>
         <translation type="unfinished"></translation>
     </message>
@@ -414,12 +414,12 @@
 <context>
     <name>Password</name>
     <message>
-        <location filename="../../src/schat2/ui/network/Password.cpp" line="34"/>
+        <location filename="../../src/schat2/ui/network/Password.cpp" line="39"/>
         <source>Change password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/Password.cpp" line="40"/>
+        <location filename="../../src/schat2/ui/network/Password.cpp" line="45"/>
         <source>Change security question</source>
         <translation type="unfinished"></translation>
     </message>
@@ -427,20 +427,25 @@
 <context>
     <name>PasswordBase</name>
     <message>
-        <location filename="../../src/schat2/ui/network/Password.cpp" line="79"/>
+        <location filename="../../src/schat2/ui/network/Password.cpp" line="86"/>
         <source>Current password:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/Password.cpp" line="83"/>
+        <location filename="../../src/schat2/ui/network/Password.cpp" line="90"/>
         <source>OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/network/Password.cpp" line="115"/>
+        <source>Password is incorrect</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>PasswordWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/network/Password.cpp" line="115"/>
+        <location filename="../../src/schat2/ui/network/Password.cpp" line="160"/>
         <source>New password:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -549,12 +554,12 @@
 <context>
     <name>QuestionWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/network/Password.cpp" line="151"/>
+        <location filename="../../src/schat2/ui/network/Password.cpp" line="216"/>
         <source>New question:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/Password.cpp" line="154"/>
+        <location filename="../../src/schat2/ui/network/Password.cpp" line="219"/>
         <source>New answer:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -633,7 +638,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="48"/>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="88"/>
         <source>New password:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -643,7 +648,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="88"/>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="48"/>
         <source>Password:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -658,17 +663,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="122"/>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="118"/>
         <source>User is already registered</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="126"/>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="122"/>
         <source>User does not exist</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="130"/>
+        <location filename="../../src/schat2/ui/network/SignUpWidget.cpp" line="126"/>
         <source>Security question or answer is incorrect</source>
         <translation type="unfinished"></translation>
     </message>
