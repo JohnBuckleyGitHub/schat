@@ -71,8 +71,6 @@ HEADERS = \
     ui/MainToolBar.h \
     ui/network/LoginWidget.h \
     ui/network/NetworkButton.h \
-    ui/network/NetworkEditor.h \
-    ui/network/NetworkTabs.h \
     ui/network/NetworkWidget.h \
     ui/network/Password.h \
     ui/network/SecurityQuestion.h \
@@ -144,8 +142,6 @@ SOURCES = \
     ui/MainToolBar.cpp \
     ui/network/LoginWidget.cpp \
     ui/network/NetworkButton.cpp \
-    ui/network/NetworkEditor.cpp \
-    ui/network/NetworkTabs.cpp \
     ui/network/NetworkWidget.cpp \
     ui/network/Password.cpp \
     ui/network/SecurityQuestion.cpp \
