@@ -22,11 +22,14 @@
 #include <QRadioButton>
 #include <QToolButton>
 
+#include "client/ChatClient.h"
+#include "client/ClientFeeds.h"
+#include "net/SimpleID.h"
+#include "sglobal.h"
 #include "ui/ChatIcons.h"
+#include "ui/network/NetworkButton.h"
 #include "ui/network/Password.h"
 #include "ui/network/SecurityQuestion.h"
-#include "client/ChatClient.h"
-#include "ui/network/NetworkButton.h"
 
 Password::Password(QWidget *parent)
   : QWidget(parent)
@@ -82,11 +85,6 @@ PasswordBase::PasswordBase(QWidget *parent)
 
   m_ok = new NetworkButton(tr("OK"), this);
 
-//  m_progress = new QProgressIndicator(this);
-//  m_progress->setAnimationDelay(100);
-//  m_progress->setMaximumSize(16, 16);
-//  m_progress->startAnimation();
-
   connect(m_passwordEdit, SIGNAL(textChanged(const QString &)), SLOT(reload()));
 }
 
@@ -129,6 +127,10 @@ PasswordWidget::PasswordWidget(QWidget *parent)
 
   connect(m_newEdit, SIGNAL(textChanged(const QString &)), SLOT(reload()));
 
+  connect(m_passwordEdit, SIGNAL(returnPressed()), SLOT(execute()));
+  connect(m_newEdit, SIGNAL(returnPressed()), SLOT(execute()));
+  connect(m_ok->button(), SIGNAL(clicked()), SLOT(execute()));
+
   reload();
 }
 
@@ -142,6 +144,22 @@ bool PasswordWidget::isReady() const
     return false;
 
   return true;
+}
+
+
+void PasswordWidget::execute()
+{
+  if (!isReady())
+    return;
+
+  m_ok->setProgress();
+
+  QVariantMap data;
+  data[LS("action")] = LS("password");
+  data[LS("pass")]   = SimpleID::encode(SimpleID::password(m_passwordEdit->text()));
+  data[LS("new")]    = SimpleID::encode(SimpleID::password(m_newEdit->text()));
+
+  ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("account"), data);
 }
 
 
@@ -171,6 +189,10 @@ QuestionWidget::QuestionWidget(QWidget *parent)
   connect(m_answerEdit, SIGNAL(textChanged(const QString &)), SLOT(reload()));
   connect(m_question, SIGNAL(currentIndexChanged(int)), SLOT(reload()));
 
+  connect(m_passwordEdit, SIGNAL(returnPressed()), SLOT(execute()));
+  connect(m_answerEdit, SIGNAL(returnPressed()), SLOT(execute()));
+  connect(m_ok->button(), SIGNAL(clicked()), SLOT(execute()));
+
   reload();
 }
 
@@ -187,4 +209,21 @@ bool QuestionWidget::isReady() const
     return false;
 
   return true;
+}
+
+
+void QuestionWidget::execute()
+{
+  if (!isReady())
+    return;
+
+  m_ok->setProgress();
+
+  QVariantMap data;
+  data[LS("action")] = LS("password");
+  data[LS("pass")]   = SimpleID::encode(SimpleID::password(m_passwordEdit->text()));
+  data[LS("q")]      = SimpleID::encode(SimpleID::make(m_question->currentText().toUtf8(), SimpleID::MessageId));
+  data[LS("a")]      = SimpleID::encode(SimpleID::make(m_answerEdit->text().toUtf8(), SimpleID::MessageId));
+
+  ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("account"), data);
 }

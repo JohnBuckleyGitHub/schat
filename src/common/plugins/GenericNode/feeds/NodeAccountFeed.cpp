@@ -17,6 +17,7 @@
  */
 
 #include <QDebug>
+#include "JSON.h"
 
 #include "Account.h"
 #include "Ch.h"
@@ -72,6 +73,8 @@ FeedQueryReply NodeAccountFeed::query(const QVariantMap &json, Channel *channel)
 
   if (action == LS("login"))
     return login(json);
+  else if (action == LS("password"))
+    return password(json);
   else if (action == LS("reg"))
     return reg(json);
   else if (action == LS("reset"))
@@ -101,12 +104,12 @@ FeedQueryReply NodeAccountFeed::login(const QVariantMap &json)
     return FeedQueryReply(Notice::BadRequest);
 
   // Получение и проверка пароля.
-  QByteArray password = this->password(json);
+  QByteArray password = getPassword(json);
   if (password.isEmpty())
     return FeedQueryReply(Notice::BadRequest);
 
   // Получение и проверка имени.
-  QString name = this->name(json);
+  QString name = getName(json);
   if (name.isEmpty())
     return FeedQueryReply(Notice::BadRequest);
 
@@ -132,6 +135,46 @@ FeedQueryReply NodeAccountFeed::login(const QVariantMap &json)
 
 
 /*!
+ * Изменение пароля или секретного вопроса.
+ */
+FeedQueryReply NodeAccountFeed::password(const QVariantMap &json)
+{
+  qDebug() << JSON::generate(json);
+
+  ChatChannel channel = Ch::channel(head().channel()->id());
+  if (!channel)
+    return FeedQueryReply(Notice::InternalError);
+
+  if (channel->account()->name().isEmpty())
+    return FeedQueryReply(Notice::Unauthorized);
+
+  // Получение и проверка пароля.
+  QByteArray password = getPassword(json);
+  if (password.isEmpty())
+    return FeedQueryReply(Notice::BadRequest);
+
+  if (channel->account()->password() != password)
+    return FeedQueryReply(Notice::Forbidden);
+
+  QByteArray newPassword = getPassword(json, LS("new"));
+  if (!newPassword.isEmpty()) {
+    channel->account()->setPassword(newPassword);
+    DataBase::update(channel);
+  }
+  else {
+    setRecovery(LS("q"), json);
+    setRecovery(LS("a"), json);
+    FeedStorage::save(channel->feed(LS("account")));
+  }
+
+  // Формирования ответа.
+  FeedQueryReply reply     = FeedQueryReply(Notice::OK);
+  reply.json[LS("action")] = LS("password");
+  return reply;
+}
+
+
+/*!
  * Регистрация пользователя.
  *
  * http://wiki.schat.me/Feed/Account#reg
@@ -142,12 +185,12 @@ FeedQueryReply NodeAccountFeed::reg(const QVariantMap &json)
     return FeedQueryReply(Notice::BadRequest);
 
   // Получение и проверка пароля.
-  QByteArray password = this->password(json);
+  QByteArray password = getPassword(json);
   if (password.isEmpty())
     return FeedQueryReply(Notice::BadRequest);
 
   // Получение и проверка имени.
-  QString name = this->name(json);
+  QString name = getName(json);
   if (name.isEmpty())
     return FeedQueryReply(Notice::BadRequest);
 
@@ -190,12 +233,12 @@ FeedQueryReply NodeAccountFeed::reset(const QVariantMap &json)
     return FeedQueryReply(Notice::BadRequest);
 
   // Получение и проверка пароля.
-  QByteArray password = this->password(json);
+  QByteArray password = getPassword(json);
   if (password.isEmpty())
     return FeedQueryReply(Notice::BadRequest);
 
   // Получение и проверка имени.
-  QString name = this->name(json);
+  QString name = getName(json);
   if (name.isEmpty())
     return FeedQueryReply(Notice::BadRequest);
 
@@ -249,9 +292,9 @@ FeedQueryReply NodeAccountFeed::reset(const QVariantMap &json)
  *
  * \return Идентификатор пароля или пустой массив в случае ошибки.
  */
-QByteArray NodeAccountFeed::password(const QVariantMap &json) const
+QByteArray NodeAccountFeed::getPassword(const QVariantMap &json, const QString &key) const
 {
-  QByteArray password = SimpleID::decode(json.value(LS("pass")).toString().toLatin1());
+  QByteArray password = SimpleID::decode(json.value(key).toByteArray());
   if (SimpleID::typeOf(password) == SimpleID::PasswordId)
     return password;
 
@@ -264,7 +307,7 @@ QByteArray NodeAccountFeed::password(const QVariantMap &json) const
  *
  * \return Имя пользователя или пустая строка в случае ошибки.
  */
-QString NodeAccountFeed::name(const QVariantMap &json) const
+QString NodeAccountFeed::getName(const QVariantMap &json) const
 {
   QString name = json.value(LS("name")).toString();
   if (name.isEmpty() || name.size() > 255 )

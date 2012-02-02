@@ -94,6 +94,9 @@ public:
 protected:
   bool isReady() const;
 
+private slots:
+  void execute();
+
 private:
   QLabel *m_newLabel;
   QLineEdit *m_newEdit;
@@ -112,6 +115,9 @@ public:
 
 protected:
   bool isReady() const;
+
+private slots:
+  void execute();
 
 private:
   QLabel *m_answerLabel;
