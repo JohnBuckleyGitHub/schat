@@ -38,16 +38,17 @@
 #include "NetworkManager.h"
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
+#include "ui/network/AccountButton.h"
 #include "ui/network/LoginWidget.h"
 #include "ui/network/NetworkWidget.h"
-#include "ui/network/SignUpWidget.h"
 #include "ui/network/Password.h"
+#include "ui/network/SignUpWidget.h"
 
 NetworkWidget::NetworkWidget(QWidget *parent, bool compact)
   : QWidget(parent)
+  , m_account(0)
   , m_editState(EditNone)
   , m_manager(ChatCore::networks())
-  , m_account(0)
 {
   m_combo = new QComboBox(this);
   m_combo->installEventFilter(this);
@@ -315,17 +316,6 @@ void NetworkWidget::remove()
 }
 
 
-void NetworkWidget::showAccountMenu()
-{
-  bool account = !ChatClient::channel()->account()->name().isEmpty();
-  m_signIn->setVisible(!account);
-  m_signOut->setVisible(account);
-  m_signUp->setVisible(!account);
-  m_recovery->setVisible(!account);
-  m_password->setVisible(account);
-}
-
-
 void NetworkWidget::showMenu()
 {
   int index = m_combo->currentIndex();
@@ -363,23 +353,22 @@ void NetworkWidget::signUpDone()
 
 void NetworkWidget::createAccountButton()
 {
-  m_sign = new QMenu(this);
+//  m_sign = new QMenu(this);
+//
+//  m_signIn = m_sign->addAction(SCHAT_ICON(SignIn), tr("Sign in"), this, SLOT(signIn()));
+//  m_signOut = m_sign->addAction(SCHAT_ICON(SignOut), tr("Sign out"), this, SLOT(signOut()));
+//  m_signUp = m_sign->addAction(SCHAT_ICON(SignUp), tr("Sign up"), this, SLOT(signUp()));
+//  m_sign->addSeparator();
+//  m_recovery = m_sign->addAction(SCHAT_ICON(Password), tr("Forgot password?"), this, SLOT(recovery()));
+//  m_password = m_sign->addAction(SCHAT_ICON(Password), tr("Change password"), this, SLOT(password()));
 
-  m_signIn = m_sign->addAction(SCHAT_ICON(SignIn), tr("Sign in"), this, SLOT(signIn()));
-  m_signOut = m_sign->addAction(SCHAT_ICON(SignOut), tr("Sign out"), this, SLOT(signOut()));
-  m_signUp = m_sign->addAction(SCHAT_ICON(SignUp), tr("Sign up"), this, SLOT(signUp()));
-  m_sign->addSeparator();
-  m_recovery = m_sign->addAction(SCHAT_ICON(Password), tr("Forgot password?"), this, SLOT(recovery()));
-  m_password = m_sign->addAction(SCHAT_ICON(Password), tr("Change password"), this, SLOT(password()));
-
-  m_account = new QToolButton(this);
-  m_account->setIcon(SCHAT_ICON(Key));
-  m_account->setMenu(m_sign);
-  m_account->setPopupMode(QToolButton::InstantPopup);
-  m_account->setToolTip(tr("Account"));
-  m_account->setEnabled(ChatClient::state() == ChatClient::Online);
-
-  connect(m_sign, SIGNAL(aboutToShow()), SLOT(showAccountMenu()));
+  m_account = new AccountButton(this);
+//  m_account->setIcon(SCHAT_ICON(Key));
+//  m_account->setMenu(m_sign);
+//  m_account->setPopupMode(QToolButton::InstantPopup);
+//  m_account->setToolTip(tr("Account"));
+//  m_account->setEnabled(ChatClient::state() == ChatClient::Online);
+//
 }
 
 
@@ -431,12 +420,12 @@ void NetworkWidget::retranslateUi()
   m_actions->setToolTip(tr("Actions"));
 
   if (m_account) {
-    m_account->setToolTip(tr("Account"));
-    m_signIn->setText(tr("Sign in"));
-    m_signOut->setText(tr("Sign out"));
-    m_signUp->setText(tr("Sign up"));
-    m_recovery->setText(tr("Forgot password?"));
-    m_password->setText(tr("Change password"));
+//    m_account->setToolTip(tr("Account"));
+//    m_signIn->setText(tr("Sign in"));
+//    m_signOut->setText(tr("Sign out"));
+//    m_signUp->setText(tr("Sign up"));
+//    m_recovery->setText(tr("Forgot password?"));
+//    m_password->setText(tr("Change password"));
   }
 }
 

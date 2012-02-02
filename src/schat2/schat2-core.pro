@@ -69,6 +69,7 @@ HEADERS = \
     ui/LanguageBox.h \
     ui/LoginIcon.h \
     ui/MainToolBar.h \
+    ui/network/AccountButton.h \
     ui/network/LoginWidget.h \
     ui/network/NetworkButton.h \
     ui/network/NetworkWidget.h \
@@ -140,6 +141,7 @@ SOURCES = \
     ui/LanguageBox.cpp \
     ui/LoginIcon.cpp \
     ui/MainToolBar.cpp \
+    ui/network/AccountButton.cpp \
     ui/network/LoginWidget.cpp \
     ui/network/NetworkButton.cpp \
     ui/network/NetworkWidget.cpp \
