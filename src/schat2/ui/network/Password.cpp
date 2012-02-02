@@ -22,8 +22,10 @@
 #include <QRadioButton>
 #include <QToolButton>
 
+#include "ChatNotify.h"
 #include "client/ChatClient.h"
 #include "client/ClientFeeds.h"
+#include "net/packets/Notice.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
@@ -56,6 +58,8 @@ Password::Password(QWidget *parent)
   setMode(PasswordMode);
 
   connect(m_password, SIGNAL(toggled(bool)), SLOT(toggled()));
+  connect(m_passwordWidget, SIGNAL(done()), SIGNAL(done()));
+  connect(m_questionWidget, SIGNAL(done()), SIGNAL(done()));
 }
 
 
@@ -86,12 +90,42 @@ PasswordBase::PasswordBase(QWidget *parent)
   m_ok = new NetworkButton(tr("OK"), this);
 
   connect(m_passwordEdit, SIGNAL(textChanged(const QString &)), SLOT(reload()));
+  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 }
 
 
 void PasswordBase::reload()
 {
   m_ok->setReady(isReady());
+  makeRed(m_passwordEdit, false);
+}
+
+
+void PasswordBase::notify(const Notify &notify)
+{
+  if (!isVisible())
+    return;
+
+  if (notify.type() == Notify::QueryError) {
+    if (!ChatNotify::isFeed(notify, LS("account"), ChatClient::id(), LS("password")))
+      return;
+
+    int status = notify.data().toMap().value(LS("status")).toInt();
+    if (status == Notice::Forbidden) {
+      m_ok->setError(tr("Password is incorrect"));
+      m_passwordEdit->setFocus();
+      makeRed(m_passwordEdit);
+    }
+    else
+      m_ok->setError(Notice::status(status));
+  }
+  else if (notify.type() == Notify::FeedReply) {
+    if (!ChatNotify::isFeed(notify, LS("account"), ChatClient::id(), LS("password")))
+      return;
+
+    m_ok->setReady(false);
+    emit done();
+  }
 }
 
 
@@ -104,6 +138,19 @@ bool PasswordBase::isReady() const
     return false;
 
   return true;
+}
+
+
+void PasswordBase::makeRed(QWidget *widget, bool red)
+{
+  QPalette palette = widget->palette();
+
+  if (red)
+    palette.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
+  else
+    palette.setColor(QPalette::Active, QPalette::Base, Qt::white);
+
+  widget->setPalette(palette);
 }
 
 

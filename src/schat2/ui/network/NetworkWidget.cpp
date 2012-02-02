@@ -483,6 +483,7 @@ void NetworkWidget::setEditState(EditState state)
   }
   else if (state == EditPassword) {
     m_pass = new Password(this);
+    connect(m_pass, SIGNAL(done()), SLOT(signUpDone()));
     m_mainLayout->addWidget(m_pass);
   }
   else {
