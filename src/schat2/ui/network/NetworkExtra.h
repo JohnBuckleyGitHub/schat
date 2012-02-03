@@ -16,41 +16,25 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SETTINGSTAB_H_
-#define SETTINGSTAB_H_
+#ifndef NETWORKEXTRA_H_
+#define NETWORKEXTRA_H_
 
-#include "ui/tabs/AbstractTab.h"
+#include <QWidget>
 
-class AbstractSettingsPage;
-class QListWidget;
-class QListWidgetItem;
-class QPushButton;
-class QStackedWidget;
-class QUrl;
-
-class SettingsTab : public AbstractTab
+class NetworkExtra : public QWidget
 {
   Q_OBJECT
 
 public:
-  SettingsTab(TabWidget *parent);
-  void addPage(AbstractSettingsPage *page);
-  void openUrl(const QUrl &url);
+  NetworkExtra(QWidget *parent = 0);
+  inline const QString& title() const { return m_title; }
+  static void makeRed(QWidget *widget, bool red = true);
+
+signals:
+  void done();
 
 protected:
-  void showEvent(QShowEvent *event);
-
-private slots:
-  void pageChanged(QListWidgetItem *current, QListWidgetItem *previous);
-
-private:
-  void retranslateUi();
-
-  QList<QListWidgetItem *> m_items;
-  QListWidget *m_contents;
-  QPushButton *m_apply;
-  QStackedWidget *m_pages;
-  QStringList m_ids; ///< Идентификаторы страниц настроек.
+  QString m_title;
 };
 
-#endif /* SETTINGSTAB_H_ */
+#endif /* NETWORKEXTRA_H_ */
