@@ -72,6 +72,7 @@ HEADERS = \
     ui/network/AccountButton.h \
     ui/network/LoginWidget.h \
     ui/network/NetworkButton.h \
+    ui/network/NetworkExtra.h \
     ui/network/NetworkWidget.h \
     ui/network/Password.h \
     ui/network/SecurityQuestion.h \
@@ -144,6 +145,7 @@ SOURCES = \
     ui/network/AccountButton.cpp \
     ui/network/LoginWidget.cpp \
     ui/network/NetworkButton.cpp \
+    ui/network/NetworkExtra.cpp \
     ui/network/NetworkWidget.cpp \
     ui/network/Password.cpp \
     ui/network/SecurityQuestion.cpp \

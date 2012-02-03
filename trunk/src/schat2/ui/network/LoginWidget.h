@@ -19,7 +19,7 @@
 #ifndef LOGINWIDGET_H_
 #define LOGINWIDGET_H_
 
-#include <QWidget>
+#include "ui/network/NetworkExtra.h"
 
 class Notify;
 class QLabel;
@@ -29,7 +29,7 @@ class NetworkButton;
 /*!
  * Виджет авторизации.
  */
-class LoginWidget : public QWidget
+class LoginWidget : public NetworkExtra
 {
   Q_OBJECT
 
@@ -46,7 +46,6 @@ private slots:
 
 private:
   bool isReady() const;
-  void makeRed(QWidget *widget, bool red = true);
 
   QLabel *m_nameLabel;       ///< Пояснительный текст для поля редктирования имени.
   QLabel *m_passwordLabel;   ///< Пояснительный текст для поля редктирования пароля.

@@ -36,8 +36,10 @@
 #include "ui/network/NetworkButton.h"
 
 LoginWidget::LoginWidget(QWidget *parent)
-  : QWidget(parent)
+  : NetworkExtra(parent)
 {
+  m_title = tr("Sign in");
+
   m_nameEdit = new QLineEdit(this);
   m_nameEdit->setMaxLength(255);
   m_nameLabel = new QLabel(tr("&Name:"), this);
@@ -145,17 +147,4 @@ bool LoginWidget::isReady() const
     return false;
 
   return true;
-}
-
-
-void LoginWidget::makeRed(QWidget *widget, bool red)
-{
-  QPalette palette = widget->palette();
-
-  if (red)
-    palette.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
-  else
-    palette.setColor(QPalette::Active, QPalette::Base, Qt::white);
-
-  widget->setPalette(palette);
 }

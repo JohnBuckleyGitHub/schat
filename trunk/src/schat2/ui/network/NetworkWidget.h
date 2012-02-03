@@ -23,17 +23,15 @@
 #include <QPointer>
 
 class AccountButton;
-class LoginWidget;
+class NetworkExtra;
 class NetworkManager;
 class Notify;
-class Password;
 class QComboBox;
 class QLabel;
 class QMenu;
 class QToolBar;
 class QToolButton;
 class QVBoxLayout;
-class SignUpWidget;
 
 class NetworkWidget : public QWidget
 {
@@ -44,6 +42,8 @@ public:
   QAction *connectAction();
 
 public slots:
+  void add(NetworkExtra *extra);
+  void doneExtra();
   void open();
 
 protected:
@@ -55,35 +55,19 @@ private slots:
   void edit();
   void indexChanged(int index);
   void notify(const Notify &notify);
-  void password();
-  void recovery();
   void reload();
   void remove();
   void showMenu();
-  void signIn();
-  void signOut();
-  void signUp();
-  void signUpDone();
 
 private:
-  enum EditState {
-    EditNone,
-    EditSignIn,
-    EditSignUp,
-    EditRecovery,
-    EditPassword
-  };
-
-  void createAccountButton();
   void createActionsButton();
   void load();
   void retranslateUi();
-  void setEditState(EditState state);
   void setTitle(const QString &title);
   void updateIndex();
 
   AccountButton *m_account;      ///< Кнопка аккаунта.
-  EditState m_editState;         ///< Состояние виджета.
+  NetworkExtra *m_extra;         ///< Дополнительный виджет.
   NetworkManager *m_manager;     ///< Указатель на менеджер сетевых подключений.
   QAction *m_add;                ///< Действие для добавления сервера.
   QAction *m_connect;            ///< Действие для подключения или отключения от сервера.
@@ -94,17 +78,9 @@ private:
   QLabel *m_title;               ///< Заголовок текущего расширенного действия.
   QMenu *m_menu;                 ///< Меню дополнительных действий.
   QMenu *m_sign;                 ///< Меню действий над аккаунтом.
-  QPointer<LoginWidget> m_login; ///< Виджет авторизации.
-  QPointer<Password> m_pass;    ///< Виджет для изменения пароля или секретного вопроса.
-  QPointer<SignUpWidget> m_reg;  ///< Виджет регистрации.
   QToolBar *m_toolBar;           ///< Тулбар для размещения основных действий.
   QToolButton *m_actions;        ///< Кнопка дополнительных действий.
   QVBoxLayout *m_mainLayout;     ///< Основной компоновщик.
-//  QAction *m_password;           ///< Действие для смены пароля.
-//  QAction *m_recovery;           ///< Действие для восстановления пароля.
-//  QAction *m_signIn;             ///< Действие для авторизации на сервере.
-//  QAction *m_signOut;            ///< Действие для выхода из текущей учётной записи.
-//  QAction *m_signUp;             ///< Действие для регистрации на сервере.
 };
 
 #endif /* NETWORKWIDGET_H_ */

@@ -19,7 +19,7 @@
 #ifndef PASSWORD_H_
 #define PASSWORD_H_
 
-#include <QWidget>
+#include "ui/network/NetworkExtra.h"
 
 class NetworkButton;
 class Notify;
@@ -34,15 +34,12 @@ class SecurityQuestion;
 /*!
  * Виджет изменения пароля или секретного вопроса.
  */
-class Password : public QWidget
+class Password : public NetworkExtra
 {
   Q_OBJECT
 
 public:
   Password(QWidget *parent = 0);
-
-signals:
-  void done();
 
 private slots:
   void toggled();
@@ -84,7 +81,6 @@ private slots:
 
 protected:
   virtual bool isReady() const;
-  void makeRed(QWidget *widget, bool red = true);
 
   QLabel *m_passwordLabel;
   QLineEdit *m_passwordEdit;

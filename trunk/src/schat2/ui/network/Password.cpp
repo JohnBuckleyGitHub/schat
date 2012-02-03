@@ -34,7 +34,7 @@
 #include "ui/network/SecurityQuestion.h"
 
 Password::Password(QWidget *parent)
-  : QWidget(parent)
+  : NetworkExtra(parent)
 {
   m_password = new QRadioButton(tr("Change password"), this);
   m_password->setChecked(true);
@@ -97,7 +97,7 @@ PasswordBase::PasswordBase(QWidget *parent)
 void PasswordBase::reload()
 {
   m_ok->setReady(isReady());
-  makeRed(m_passwordEdit, false);
+  NetworkExtra::makeRed(m_passwordEdit, false);
 }
 
 
@@ -114,7 +114,7 @@ void PasswordBase::notify(const Notify &notify)
     if (status == Notice::Forbidden) {
       m_ok->setError(tr("Password is incorrect"));
       m_passwordEdit->setFocus();
-      makeRed(m_passwordEdit);
+      NetworkExtra::makeRed(m_passwordEdit);
     }
     else
       m_ok->setError(Notice::status(status));
@@ -138,19 +138,6 @@ bool PasswordBase::isReady() const
     return false;
 
   return true;
-}
-
-
-void PasswordBase::makeRed(QWidget *widget, bool red)
-{
-  QPalette palette = widget->palette();
-
-  if (red)
-    palette.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
-  else
-    palette.setColor(QPalette::Active, QPalette::Base, Qt::white);
-
-  widget->setPalette(palette);
 }
 
 

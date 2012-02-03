@@ -19,7 +19,7 @@
 #ifndef SIGNUPWIDGET_H_
 #define SIGNUPWIDGET_H_
 
-#include <QWidget>
+#include "ui/network/NetworkExtra.h"
 
 class Notify;
 class QLabel;
@@ -31,7 +31,7 @@ class NetworkButton;
 /*!
  * Виджет регистрации или восстановления забытого пароля.
  */
-class SignUpWidget : public QWidget
+class SignUpWidget : public NetworkExtra
 {
   Q_OBJECT
 
@@ -53,7 +53,6 @@ private slots:
 
 private:
   bool isReady() const;
-  void makeRed(QWidget *widget, bool red = true);
 
   QLabel *m_answerLabel;
   QLabel *m_nameLabel;            ///< Пояснительный текст для поля редактирования имени.
