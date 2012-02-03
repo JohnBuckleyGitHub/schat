@@ -48,6 +48,7 @@
 #include "hooks/UserMenuImpl.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
+#include "sglobal.h"
 #include "text/HtmlFilter.h"
 #include "text/PlainTextFilter.h"
 #include "Translation.h"
@@ -169,7 +170,7 @@ void ChatCore::send(const QString &text)
 
 void ChatCore::settingsChanged(const QString &key, const QVariant &value)
 {
-  if (key == QLatin1String("Translation")) {
+  if (key == LS("Translation")) {
     m_translation->load(value.toString());
   }
 }

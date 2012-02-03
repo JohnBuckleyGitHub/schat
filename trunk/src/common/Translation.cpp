@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include <QTranslator>
 #include <QLibraryInfo>
 
+#include "sglobal.h"
 #include "Translation.h"
 
 /*!
@@ -32,8 +33,8 @@ Translation::Translation(QObject *parent)
   m_empty(true)
 {
   m_language = tr("English");
-  m_name = QLatin1String("en");
-  m_prefix = QLatin1String("schat2_");
+  m_name = LS("en");
+  m_prefix = LS("schat2_");
   m_core = new QTranslator(this);
   m_qt = new QTranslator(this);
 }
@@ -58,14 +59,14 @@ void Translation::load(const QString &name)
   else
     m_empty = false;
 
-  if (name == QLatin1String("auto") || name.isEmpty()) {
+  if (name == LS("auto") || name.isEmpty()) {
     QLocale locale = QLocale::system();
     if (locale.language() == QLocale::C)
-      m_name = QLatin1String("en");
+      m_name = LS("en");
     else
       m_name = locale.name();
   }
-  else if (name.endsWith(QLatin1String(".qm"))) {
+  else if (name.endsWith(LS(".qm"))) {
     QFileInfo fileInfo = QFileInfo(name);
     m_name = fileInfo.baseName().mid(m_prefix.size());
     if (m_core->load(name)) {
@@ -91,8 +92,8 @@ void Translation::load(const QString &name)
   if (loaded) {
     loadQt();
   }
-  else if (m_name != QLatin1String("en"))
-    load(QLatin1String("en"));
+  else if (m_name != LS("en"))
+    load(LS("en"));
 }
 
 
@@ -108,9 +109,9 @@ void Translation::setSearch(const QString &search)
 void Translation::setSearch(const QStringList &search)
 {
   m_search = search;
-  m_search.removeAll("");
+  m_search.removeAll(QString());
   m_search.removeDuplicates();
-  m_search.append(QLatin1String(":/translations"));
+  m_search.append(LS(":/translations"));
 }
 
 
@@ -126,7 +127,7 @@ void Translation::loadQt()
   search.append(QLibraryInfo::location(QLibraryInfo::TranslationsPath));
 
   for (int i = 0; i < search.size(); ++i) {
-    if (m_qt->load(QLatin1String("qt_") + m_name, search.at(i))) {
+    if (m_qt->load(LS("qt_") + m_name, search.at(i))) {
       QCoreApplication::installTranslator(m_qt);
       return;
     }

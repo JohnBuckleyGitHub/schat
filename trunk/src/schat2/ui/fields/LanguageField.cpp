@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "sglobal.h"
 #include "Translation.h"
 #include "ui/fields/LanguageField.h"
 
@@ -31,5 +32,5 @@ LanguageField::LanguageField(QWidget *parent)
 void LanguageField::indexChanged()
 {
   if (save())
-    ChatCore::i()->settings()->setValue(QLatin1String("Translation"), m_translation->name());
+    ChatCore::settings()->setValue(LS("Translation"), m_translation->name());
 }
