@@ -61,6 +61,7 @@ class SCHAT_CORE_EXPORT ChatAlerts : public QObject
 
 public:
   ChatAlerts(QObject *parent = 0);
+  inline static bool hasAlerts()                  { return !m_self->m_channels.isEmpty(); }
   inline static ChatAlerts *i()                   { return m_self; }
   inline static void add(const QByteArray &id)    { m_self->addImpl(id); }
   inline static void remove(const QByteArray &id) { m_self->removeImpl(id); }
