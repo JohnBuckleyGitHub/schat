@@ -180,4 +180,5 @@ void ChatIcons::init()
   m_icons[SignOut]        = LS("sign-out");
   m_icons[SignUp]         = LS("sign-up");
   m_icons[Password]       = LS("password");
+  m_icons[Locale]         = LS("locale");
 }

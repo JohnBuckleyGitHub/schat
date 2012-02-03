@@ -91,4 +91,21 @@ private:
 };
 
 
+/*!
+ * Страница настройки профиля.
+ */
+class LocalePage : public AbstractSettingsPage
+{
+  Q_OBJECT
+
+public:
+  LocalePage(QWidget *parent = 0);
+
+private:
+  void retranslateUi();
+
+  QLabel *m_localeLabel;
+};
+
+
 #endif /* SETTINGSTAB_P_H_ */

@@ -74,7 +74,8 @@ public:
     SignIn             = 0x5349, ///< "SI"
     SignOut            = 0x534F, ///< "SO"
     SignUp             = 0x5355, ///< "SU"
-    Password           = 0x5073  ///< "Ps"
+    Password           = 0x5073, ///< "Ps"
+    Locale             = 0x4C6F  ///< "Lo"
   };
 
   /// Опции получения иконки канала.

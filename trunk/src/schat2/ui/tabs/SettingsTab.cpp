@@ -36,6 +36,7 @@
 #include "ui/tabs/SettingsTab.h"
 #include "ui/tabs/SettingsTab_p.h"
 #include "ui/ChatIcons.h"
+#include "sglobal.h"
 
 AbstractSettingsPage::AbstractSettingsPage(const QIcon &icon, const QString &id, QWidget *parent)
   : QWidget(parent)
@@ -54,7 +55,7 @@ AbstractSettingsPage::AbstractSettingsPage(QWidget *parent)
 
 
 ProfilePage::ProfilePage(QWidget *parent)
-  : AbstractSettingsPage(SCHAT_ICON(Profile), "profile", parent)
+  : AbstractSettingsPage(SCHAT_ICON(Profile), LS("profile"), parent)
 {
   m_profileLabel = new QLabel(this);
   m_nickLabel = new QLabel(this);
@@ -83,14 +84,14 @@ void ProfilePage::retranslateUi()
 {
   m_name = tr("Profile");
 
-  m_profileLabel->setText("<b>" + tr("Profile") + "</b>");
+  m_profileLabel->setText(LS("<b>") + tr("Profile") + LS("</b>"));
   m_nickLabel->setText(tr("Nick:"));
   m_genderLabel->setText(tr("Gender:"));
 }
 
 
 NetworkPage::NetworkPage(QWidget *parent)
-  : AbstractSettingsPage(SCHAT_ICON(Globe), "network", parent)
+  : AbstractSettingsPage(SCHAT_ICON(Globe), LS("network"), parent)
 {
   m_networkLabel = new QLabel(this);
   m_network = new NetworkWidget(this);
@@ -112,7 +113,28 @@ NetworkPage::NetworkPage(QWidget *parent)
 void NetworkPage::retranslateUi()
 {
   m_name = tr("Network");
-  m_networkLabel->setText("<b>" + tr("Network") + "</b>");
+  m_networkLabel->setText(LS("<b>") + tr("Network") + LS("</b>"));
+}
+
+
+LocalePage::LocalePage(QWidget *parent)
+  : AbstractSettingsPage(SCHAT_ICON(Locale), LS("locale"), parent)
+{
+  m_localeLabel = new QLabel(this);
+
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->addWidget(m_localeLabel);
+  mainLay->addStretch();
+  mainLay->addStretch();
+
+  retranslateUi();
+}
+
+
+void LocalePage::retranslateUi()
+{
+  m_name = tr("Language");
+  m_localeLabel->setText(LS("<b>") + tr("Language") + LS("</b>"));
 }
 
 
@@ -137,6 +159,7 @@ SettingsTab::SettingsTab(TabWidget *parent)
 
   addPage(new ProfilePage(this));
   addPage(new NetworkPage(this));
+  addPage(new LocalePage(this));
 
   m_contents->setCurrentRow(0);
   setIcon(SCHAT_ICON(Settings));
@@ -165,7 +188,7 @@ void SettingsTab::addPage(AbstractSettingsPage *page)
 
 void SettingsTab::openUrl(const QUrl &url)
 {
-  if (url.isEmpty() || url.scheme() != "chat" || url.host() != "settings")
+  if (url.isEmpty() || url.scheme() != LS("chat") || url.host() != LS("settings"))
     return;
 
   QStringList path = ChatUrls::path(url);
@@ -201,7 +224,7 @@ void SettingsTab::retranslateUi()
   for (int i = 0; i < m_ids.size(); ++i) {
     AbstractSettingsPage *page = static_cast<AbstractSettingsPage *>(static_cast<QScrollArea *>(m_pages->widget(i))->widget());
     page->retranslateUi();
-    m_contents->item(i)->setText(page->name()); /// /set Translation en
+    m_contents->item(i)->setText(page->name());
   }
 
   m_apply->setText(tr("Apply"));
