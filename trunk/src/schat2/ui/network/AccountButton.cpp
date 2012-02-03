@@ -101,4 +101,5 @@ void AccountButton::retranslateUi()
   m_signUp->setText(tr("Sign up"));
   m_reset->setText(tr("Forgot password?"));
   m_password->setText(tr("Change password"));
+  setToolTip(tr("Account"));
 }
