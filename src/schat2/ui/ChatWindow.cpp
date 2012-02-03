@@ -21,6 +21,7 @@
 #include <QTimer>
 #include <QVBoxLayout>
 
+#include "ChatAlerts.h"
 #include "ChatCore.h"
 #include "ChatNotify.h"
 #include "ChatSettings.h"
@@ -169,7 +170,7 @@ void ChatWindow::notify(const Notify &notify)
     closeChat();
   }
   else if (notify.type() == Notify::ToggleVisibility) {
-    if (isHidden())
+    if (isHidden() || ChatAlerts::hasAlerts())
       showChat();
     else
       hideChat();
