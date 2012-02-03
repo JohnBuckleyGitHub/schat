@@ -35,6 +35,7 @@ public:
   void setError(const QString &error);
   void setProgress();
   void setReady(bool ready = true);
+  void setText(const QString &text);
 
 private:
   QLabel *m_error;                ///< Ошибка

@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QEvent>
 #include <QLineEdit>
 
 #include "ui/network/SecurityQuestion.h"
@@ -23,15 +24,26 @@
 SecurityQuestion::SecurityQuestion(QWidget *parent)
   : QComboBox(parent)
 {
-  addItem(tr("Choose a question ..."));
-  addItem(tr("What is the name of your best friend from childhood?"));
-  addItem(tr("What was the name of your first teacher?"));
-  addItem(tr("What is the name of your manager at your first job?"));
-  addItem(tr("What was your first phone number?"));
-  addItem(tr("What is your vehicle registration number?"));
-  addItem(tr("My own question"));
+  addItem(QString());
+  addItem(QString());
+  addItem(QString());
+  addItem(QString());
+  addItem(QString());
+  addItem(QString());
+  addItem(QString());
 
   connect(this, SIGNAL(currentIndexChanged(int)), SLOT(indexChanged(int)));
+
+  retranslateUi();
+}
+
+
+void SecurityQuestion::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  QComboBox::changeEvent(event);
 }
 
 
@@ -44,4 +56,16 @@ void SecurityQuestion::indexChanged(int index)
   }
   else
     setEditable(false);
+}
+
+
+void SecurityQuestion::retranslateUi()
+{
+  setItemText(0, tr("Choose a question ..."));
+  setItemText(1, tr("What is the name of your best friend from childhood?"));
+  setItemText(2, tr("What was the name of your first teacher?"));
+  setItemText(3, tr("What is the name of your manager at your first job?"));
+  setItemText(4, tr("What was your first phone number?"));
+  setItemText(5, tr("What is your vehicle registration number?"));
+  setItemText(6, tr("My own question"));
 }

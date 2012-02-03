@@ -42,17 +42,17 @@ SignUpWidget::SignUpWidget(QWidget *parent, const QString &action)
   : NetworkExtra(parent)
   , m_action(action)
 {
-  m_nameLabel = new QLabel(tr("Name:"), this);
+  m_nameLabel = new QLabel(this);
   m_nameEdit = new QLineEdit(this);
 
-  m_passwordLabel = new QLabel(tr("Password:"), this);
+  m_passwordLabel = new QLabel(this);
   m_passwordEdit = new QLineEdit(this);
   m_passwordEdit->setEchoMode(QLineEdit::Password);
 
-  m_questionLabel = new QLabel(tr("Security question:"), this);
+  m_questionLabel = new QLabel(this);
   m_question = new SecurityQuestion(this);
 
-  m_answerLabel = new QLabel(tr("Answer:"), this);
+  m_answerLabel = new QLabel(this);
   m_answerEdit = new QLineEdit(this);
 
   m_signUp = new NetworkButton(tr("Sign up"), this);
@@ -82,14 +82,16 @@ SignUpWidget::SignUpWidget(QWidget *parent, const QString &action)
   connect(m_signUp->button(), SIGNAL(clicked(bool)), SLOT(signUp()));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 
-  if (m_action == LS("reset")) {
-    m_signUp->button()->setText(tr("Reset"));
-    m_signUp->button()->setToolTip(m_signUp->button()->text());
-    m_passwordLabel->setText(tr("New password:"));
-    m_title = tr("Reset your password");
-  }
-  else
-    m_title = tr("Sign up");
+  retranslateUi();
+}
+
+
+QString SignUpWidget::title() const
+{
+  if (m_action == LS("reset"))
+    return tr("Reset your password");
+
+  return tr("Sign up");
 }
 
 
@@ -98,6 +100,23 @@ void SignUpWidget::focusInEvent(QFocusEvent *event)
   QWidget::focusInEvent(event);
 
   m_nameEdit->setFocus();
+}
+
+
+void SignUpWidget::retranslateUi()
+{
+  m_nameLabel->setText(tr("Name:"));
+  m_questionLabel->setText(tr("Security question:"));
+  m_answerLabel->setText(tr("Answer:"));
+
+  if (m_action == LS("reset")) {
+    m_signUp->setText(tr("Reset"));
+    m_passwordLabel->setText(tr("New password:"));
+  }
+  else {
+    m_signUp->setText(tr("Sign up"));
+    m_passwordLabel->setText(tr("Password:"));
+  }
 }
 
 

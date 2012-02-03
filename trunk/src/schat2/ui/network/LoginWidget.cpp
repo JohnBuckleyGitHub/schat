@@ -38,17 +38,15 @@
 LoginWidget::LoginWidget(QWidget *parent)
   : NetworkExtra(parent)
 {
-  m_title = tr("Sign in");
-
   m_nameEdit = new QLineEdit(this);
   m_nameEdit->setMaxLength(255);
-  m_nameLabel = new QLabel(tr("&Name:"), this);
+  m_nameLabel = new QLabel(this);
   m_nameLabel->setBuddy(m_nameEdit);
 
   m_passwordEdit = new QLineEdit(this);
   m_passwordEdit->setEchoMode(QLineEdit::Password);
   m_passwordEdit->setMaxLength(255);
-  m_passwordLabel = new QLabel(tr("&Password:"), this);
+  m_passwordLabel = new QLabel(this);
   m_passwordLabel->setBuddy(m_passwordEdit);
 
   m_login = new NetworkButton(tr("Sign in"), this);
@@ -70,6 +68,21 @@ LoginWidget::LoginWidget(QWidget *parent)
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 
   reload();
+  retranslateUi();
+}
+
+
+QString LoginWidget::title() const
+{
+  return tr("Sign in");
+}
+
+
+void LoginWidget::retranslateUi()
+{
+  m_nameLabel->setText(tr("&Name:"));
+  m_passwordLabel->setText(tr("&Password:"));
+  m_login->setText(tr("Sign in"));
 }
 
 

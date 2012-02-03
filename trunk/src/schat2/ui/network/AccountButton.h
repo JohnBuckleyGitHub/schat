@@ -30,11 +30,16 @@ class AccountButton : public QToolButton
 public:
   AccountButton(NetworkWidget *parent = 0);
 
+protected:
+  void changeEvent(QEvent *event);
+
 private slots:
   void menuTriggered(QAction *action);
   void showMenu();
 
 private:
+  void retranslateUi();
+
   NetworkWidget *m_network;      ///< Виджет редактирования сети.
   QAction *m_password;           ///< Действие для смены пароля.
   QAction *m_reset;              ///< Действие для восстановления пароля.
