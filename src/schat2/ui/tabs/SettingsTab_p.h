@@ -24,6 +24,7 @@
 
 class ChatSettings;
 class GenderField;
+class LanguageField;
 class NetworkWidget;
 class NickEdit;
 class QCheckBox;
@@ -104,6 +105,7 @@ public:
 private:
   void retranslateUi();
 
+  LanguageField *m_language; ///< Виджет выбора языка.
   QLabel *m_localeLabel;
 };
 

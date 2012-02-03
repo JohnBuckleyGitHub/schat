@@ -30,13 +30,14 @@
 #include "ChatCore.h"
 #include "ChatSettings.h"
 #include "ChatUrls.h"
+#include "sglobal.h"
+#include "ui/ChatIcons.h"
 #include "ui/fields/GenderField.h"
+#include "ui/fields/LanguageField.h"
 #include "ui/fields/NickEdit.h"
 #include "ui/network/NetworkWidget.h"
 #include "ui/tabs/SettingsTab.h"
 #include "ui/tabs/SettingsTab_p.h"
-#include "ui/ChatIcons.h"
-#include "sglobal.h"
 
 AbstractSettingsPage::AbstractSettingsPage(const QIcon &icon, const QString &id, QWidget *parent)
   : QWidget(parent)
@@ -122,8 +123,17 @@ LocalePage::LocalePage(QWidget *parent)
 {
   m_localeLabel = new QLabel(this);
 
+  m_language = new LanguageField(this);
+  m_language->setMinimumWidth(m_language->width() + 20);
+
+  QHBoxLayout *languageLay = new QHBoxLayout;
+  languageLay->addWidget(m_language);
+  languageLay->addStretch();
+  languageLay->setContentsMargins(10, 0, 3, 0);
+
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_localeLabel);
+  mainLay->addLayout(languageLay);
   mainLay->addStretch();
   mainLay->addStretch();
 
