@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QEvent>
 #include <QMenu>
 
 #include "Account.h"
@@ -53,6 +54,15 @@ AccountButton::AccountButton(NetworkWidget *parent)
 }
 
 
+void AccountButton::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  QToolButton::changeEvent(event);
+}
+
+
 void AccountButton::menuTriggered(QAction *action)
 {
   if (action == m_password) {
@@ -81,4 +91,14 @@ void AccountButton::showMenu()
   m_signUp->setVisible(!account);
   m_reset->setVisible(!account);
   m_password->setVisible(account);
+}
+
+
+void AccountButton::retranslateUi()
+{
+  m_signIn->setText(tr("Sign in"));
+  m_signOut->setText(tr("Sign out"));
+  m_signUp->setText(tr("Sign up"));
+  m_reset->setText(tr("Forgot password?"));
+  m_password->setText(tr("Change password"));
 }

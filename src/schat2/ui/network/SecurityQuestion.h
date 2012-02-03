@@ -28,8 +28,14 @@ class SecurityQuestion : public QComboBox
 public:
   SecurityQuestion(QWidget *parent = 0);
 
+protected:
+  void changeEvent(QEvent *event);
+
 private slots:
   void indexChanged(int index);
+
+private:
+  void retranslateUi();
 };
 
 #endif /* SECURITYQUESTION_H_ */

@@ -37,12 +37,14 @@ class SignUpWidget : public NetworkExtra
 
 public:
   SignUpWidget(QWidget *parent = 0, const QString &action = QLatin1String("reg"));
+  QString title() const;
 
 signals:
   void done();
 
 protected:
   void focusInEvent(QFocusEvent *event);
+  void retranslateUi();
 
 public slots:
   void reload();

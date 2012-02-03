@@ -36,13 +36,13 @@
 Password::Password(QWidget *parent)
   : NetworkExtra(parent)
 {
-  m_password = new QRadioButton(tr("Change password"), this);
+  m_password = new QRadioButton(this);
   m_password->setChecked(true);
   QFont font = m_password->font();
   font.setBold(true);
   m_password->setFont(font);
 
-  m_question = new QRadioButton(tr("Change security question"), this);
+  m_question = new QRadioButton(this);
   m_question->setFont(font);
 
   m_passwordWidget = new PasswordWidget(this);
@@ -60,6 +60,18 @@ Password::Password(QWidget *parent)
   connect(m_password, SIGNAL(toggled(bool)), SLOT(toggled()));
   connect(m_passwordWidget, SIGNAL(done()), SIGNAL(done()));
   connect(m_questionWidget, SIGNAL(done()), SIGNAL(done()));
+
+  retranslateUi();
+}
+
+
+void Password::retranslateUi()
+{
+  m_password->setText(tr("Change password"));
+  m_question->setText(tr("Change security question"));
+
+  m_passwordWidget->retranslateUi();
+  m_questionWidget->retranslateUi();
 }
 
 
@@ -83,7 +95,7 @@ void Password::setMode(Mode mode)
 PasswordBase::PasswordBase(QWidget *parent)
   : QWidget(parent)
 {
-  m_passwordLabel = new QLabel(tr("Current password:"), this);
+  m_passwordLabel = new QLabel(this);
   m_passwordEdit = new QLineEdit(this);
   m_passwordEdit->setEchoMode(QLineEdit::Password);
 
@@ -91,6 +103,15 @@ PasswordBase::PasswordBase(QWidget *parent)
 
   connect(m_passwordEdit, SIGNAL(textChanged(const QString &)), SLOT(reload()));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+
+  retranslateUi();
+}
+
+
+void PasswordBase::retranslateUi()
+{
+  m_passwordLabel->setText(tr("Current password:"));
+  m_ok->setText(tr("OK"));
 }
 
 
@@ -144,7 +165,7 @@ bool PasswordBase::isReady() const
 PasswordWidget::PasswordWidget(QWidget *parent)
   : PasswordBase(parent)
 {
-  m_newLabel = new QLabel(tr("New password:"), this);
+  m_newLabel = new QLabel(this);
   m_newEdit = new QLineEdit(this);
   m_newEdit->setEchoMode(QLineEdit::Password);
 
@@ -166,6 +187,13 @@ PasswordWidget::PasswordWidget(QWidget *parent)
   connect(m_ok->button(), SIGNAL(clicked()), SLOT(execute()));
 
   reload();
+}
+
+
+void PasswordWidget::retranslateUi()
+{
+  PasswordBase::retranslateUi();
+  m_newLabel->setText(tr("New password:"));
 }
 
 
@@ -200,10 +228,10 @@ void PasswordWidget::execute()
 QuestionWidget::QuestionWidget(QWidget *parent)
   : PasswordBase(parent)
 {
-  m_questionLabel = new QLabel(tr("New question:"), this);
+  m_questionLabel = new QLabel(this);
   m_question = new SecurityQuestion(this);
 
-  m_answerLabel = new QLabel(tr("New answer:"), this);
+  m_answerLabel = new QLabel(this);
   m_answerEdit = new QLineEdit(this);
 
   setTabOrder(m_passwordEdit, m_question);
@@ -228,6 +256,14 @@ QuestionWidget::QuestionWidget(QWidget *parent)
   connect(m_ok->button(), SIGNAL(clicked()), SLOT(execute()));
 
   reload();
+}
+
+
+void QuestionWidget::retranslateUi()
+{
+  PasswordBase::retranslateUi();
+  m_questionLabel->setText(tr("New question:"));
+  m_answerLabel->setText(tr("New answer:"));
 }
 
 

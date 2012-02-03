@@ -81,3 +81,10 @@ void NetworkButton::setReady(bool ready)
   m_button->setVisible(true);
   setEnabled(ready);
 }
+
+
+void NetworkButton::setText(const QString &text)
+{
+  m_button->setText(text);
+  m_button->setToolTip(text);
+}

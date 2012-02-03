@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QEvent>
+
 #include "ui/network/NetworkExtra.h"
 
 NetworkExtra::NetworkExtra(QWidget *parent)
@@ -34,4 +36,18 @@ void NetworkExtra::makeRed(QWidget *widget, bool red)
     palette.setColor(QPalette::Active, QPalette::Base, Qt::white);
 
   widget->setPalette(palette);
+}
+
+
+void NetworkExtra::retranslateUi()
+{
+}
+
+
+void NetworkExtra::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  QWidget::changeEvent(event);
 }

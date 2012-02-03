@@ -27,14 +27,15 @@ class NetworkExtra : public QWidget
 
 public:
   NetworkExtra(QWidget *parent = 0);
-  inline const QString& title() const { return m_title; }
   static void makeRed(QWidget *widget, bool red = true);
+  virtual QString title() const { return QString(); }
 
 signals:
   void done();
 
 protected:
-  QString m_title;
+  virtual void retranslateUi();
+  void changeEvent(QEvent *event);
 };
 
 #endif /* NETWORKEXTRA_H_ */

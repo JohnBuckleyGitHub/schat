@@ -386,6 +386,9 @@ void NetworkWidget::retranslateUi()
   m_add->setText(tr("Add"));
   m_remove->setText(tr("Remove"));
   m_actions->setToolTip(tr("Actions"));
+
+  if (m_extra)
+    setTitle(m_extra->title());
 }
 
 

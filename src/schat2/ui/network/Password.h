@@ -41,6 +41,9 @@ class Password : public NetworkExtra
 public:
   Password(QWidget *parent = 0);
 
+protected:
+  void retranslateUi();
+
 private slots:
   void toggled();
 
@@ -69,6 +72,7 @@ class PasswordBase : public QWidget
 
 public:
   PasswordBase(QWidget *parent = 0);
+  virtual void retranslateUi();
 
 signals:
   void done();
@@ -97,6 +101,7 @@ class PasswordWidget : public PasswordBase
 
 public:
   PasswordWidget(QWidget *parent = 0);
+  void retranslateUi();
 
 protected:
   bool isReady() const;
@@ -119,6 +124,7 @@ class QuestionWidget : public PasswordBase
 
 public:
   QuestionWidget(QWidget *parent = 0);
+  void retranslateUi();
 
 protected:
   bool isReady() const;

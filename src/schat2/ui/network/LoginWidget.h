@@ -35,9 +35,11 @@ class LoginWidget : public NetworkExtra
 
 public:
   LoginWidget(QWidget *parent = 0);
+  QString title() const;
 
 protected:
   void focusInEvent(QFocusEvent *event);
+  void retranslateUi();
 
 private slots:
   void login();
