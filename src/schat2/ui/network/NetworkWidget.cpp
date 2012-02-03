@@ -382,6 +382,8 @@ void NetworkWidget::load()
 
 void NetworkWidget::retranslateUi()
 {
+  connectAction();
+
   m_edit->setText(tr("Edit"));
   m_add->setText(tr("Add"));
   m_remove->setText(tr("Remove"));

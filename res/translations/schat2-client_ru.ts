@@ -96,8 +96,8 @@
 <context>
     <name>Translation</name>
     <message>
-        <location filename="../../src/common/Translation.cpp" line="34"/>
-        <location filename="../../src/common/Translation.cpp" line="122"/>
+        <location filename="../../src/common/Translation.cpp" line="35"/>
+        <location filename="../../src/common/Translation.cpp" line="123"/>
         <source>English</source>
         <translation>Русский</translation>
     </message>
