@@ -39,7 +39,7 @@
 #include "ui/network/NetworkButton.h"
 
 SignUpWidget::SignUpWidget(QWidget *parent, const QString &action)
-  : QWidget(parent)
+  : NetworkExtra(parent)
   , m_action(action)
 {
   m_nameLabel = new QLabel(tr("Name:"), this);
@@ -86,7 +86,10 @@ SignUpWidget::SignUpWidget(QWidget *parent, const QString &action)
     m_signUp->button()->setText(tr("Reset"));
     m_signUp->button()->setToolTip(m_signUp->button()->text());
     m_passwordLabel->setText(tr("New password:"));
+    m_title = tr("Reset your password");
   }
+  else
+    m_title = tr("Sign up");
 }
 
 
@@ -179,17 +182,4 @@ bool SignUpWidget::isReady() const
     return false;
 
   return true;
-}
-
-
-void SignUpWidget::makeRed(QWidget *widget, bool red)
-{
-  QPalette palette = widget->palette();
-
-  if (red)
-    palette.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
-  else
-    palette.setColor(QPalette::Active, QPalette::Base, Qt::white);
-
-  widget->setPalette(palette);
 }

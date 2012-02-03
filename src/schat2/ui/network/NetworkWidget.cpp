@@ -33,21 +33,19 @@
 #include "ChatNotify.h"
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
-#include "hooks/RegCmds.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
 #include "ui/network/AccountButton.h"
-#include "ui/network/LoginWidget.h"
 #include "ui/network/NetworkWidget.h"
-#include "ui/network/Password.h"
+
 #include "ui/network/SignUpWidget.h"
 
 NetworkWidget::NetworkWidget(QWidget *parent, bool compact)
   : QWidget(parent)
   , m_account(0)
-  , m_editState(EditNone)
+  , m_extra(0)
   , m_manager(ChatCore::networks())
 {
   m_combo = new QComboBox(this);
@@ -56,7 +54,7 @@ NetworkWidget::NetworkWidget(QWidget *parent, bool compact)
   createActionsButton();
 
   if (!compact)
-    createAccountButton();
+    m_account = new AccountButton(this);
 
   m_toolBar = new QToolBar(this);
   m_toolBar->setIconSize(QSize(16, 16));
@@ -111,6 +109,34 @@ QAction *NetworkWidget::connectAction()
   }
 
   return m_connect;
+}
+
+
+void NetworkWidget::add(NetworkExtra *extra)
+{
+  if (m_extra) {
+    m_mainLayout->removeWidget(m_extra);
+    delete m_extra;
+  }
+
+  m_extra = extra;
+  setTitle(m_extra->title());
+  m_mainLayout->addWidget(m_extra);
+
+  connect(m_extra, SIGNAL(done()), SLOT(doneExtra()));
+  QTimer::singleShot(0, m_extra, SLOT(setFocus()));
+}
+
+
+void NetworkWidget::doneExtra()
+{
+  if (!m_extra)
+    return;
+
+  m_mainLayout->removeWidget(m_extra);
+  delete m_extra;
+  m_extra = 0;
+  m_title->setVisible(false);
 }
 
 
@@ -209,7 +235,7 @@ void NetworkWidget::edit()
   if (!item->isValid())
     return;
 
-  setEditState(EditNone);
+  doneExtra();
 
   m_editing = item->id();
   m_combo->setItemText(index, item->url());
@@ -237,7 +263,7 @@ void NetworkWidget::indexChanged(int index)
   }
 
   m_manager->setSelected(id);
-  setEditState(EditNone);
+  doneExtra();
   reload();
 }
 
@@ -270,18 +296,6 @@ void NetworkWidget::notify(const Notify &notify)
     if (index != -1)
       m_combo->setItemText(index, ChatClient::serverName());
   }
-}
-
-
-void NetworkWidget::password()
-{
-  setEditState(EditPassword);
-}
-
-
-void NetworkWidget::recovery()
-{
-  setEditState(EditRecovery);
 }
 
 
@@ -323,52 +337,6 @@ void NetworkWidget::showMenu()
     m_edit->setVisible(false);
   else
     m_edit->setVisible(true);
-}
-
-
-void NetworkWidget::signIn()
-{
-  setEditState(EditSignIn);
-}
-
-
-void NetworkWidget::signOut()
-{
-  setEditState(EditNone);
-  RegCmds::signOut();
-}
-
-
-void NetworkWidget::signUp()
-{
-  setEditState(EditSignUp);
-}
-
-
-void NetworkWidget::signUpDone()
-{
-  setEditState(EditNone);
-}
-
-
-void NetworkWidget::createAccountButton()
-{
-//  m_sign = new QMenu(this);
-//
-//  m_signIn = m_sign->addAction(SCHAT_ICON(SignIn), tr("Sign in"), this, SLOT(signIn()));
-//  m_signOut = m_sign->addAction(SCHAT_ICON(SignOut), tr("Sign out"), this, SLOT(signOut()));
-//  m_signUp = m_sign->addAction(SCHAT_ICON(SignUp), tr("Sign up"), this, SLOT(signUp()));
-//  m_sign->addSeparator();
-//  m_recovery = m_sign->addAction(SCHAT_ICON(Password), tr("Forgot password?"), this, SLOT(recovery()));
-//  m_password = m_sign->addAction(SCHAT_ICON(Password), tr("Change password"), this, SLOT(password()));
-
-  m_account = new AccountButton(this);
-//  m_account->setIcon(SCHAT_ICON(Key));
-//  m_account->setMenu(m_sign);
-//  m_account->setPopupMode(QToolButton::InstantPopup);
-//  m_account->setToolTip(tr("Account"));
-//  m_account->setEnabled(ChatClient::state() == ChatClient::Online);
-//
 }
 
 
@@ -418,90 +386,17 @@ void NetworkWidget::retranslateUi()
   m_add->setText(tr("Add"));
   m_remove->setText(tr("Remove"));
   m_actions->setToolTip(tr("Actions"));
-
-  if (m_account) {
-//    m_account->setToolTip(tr("Account"));
-//    m_signIn->setText(tr("Sign in"));
-//    m_signOut->setText(tr("Sign out"));
-//    m_signUp->setText(tr("Sign up"));
-//    m_recovery->setText(tr("Forgot password?"));
-//    m_password->setText(tr("Change password"));
-  }
-}
-
-
-void NetworkWidget::setEditState(EditState state)
-{
-  if (m_editState == state)
-    return;
-
-  if (state != EditNone)
-    setEditState(EditNone);
-
-  // Авторизация.
-  if (state == EditSignIn) {
-    if (m_login)
-      return;
-
-    setTitle(tr("Sign in"));
-
-    m_login = new LoginWidget(this);
-    m_mainLayout->addWidget(m_login);
-
-    QTimer::singleShot(0, m_login, SLOT(setFocus()));
-  }
-  // Регистрация.
-  else if (state == EditSignUp) {
-    setTitle(tr("Sign up"));
-
-    m_reg = new SignUpWidget(this);
-    connect(m_reg, SIGNAL(done()), SLOT(signUpDone()));
-    m_mainLayout->addWidget(m_reg);
-
-    QTimer::singleShot(0, m_reg, SLOT(setFocus()));
-  }
-  // Восстановления пароля.
-  else if (state == EditRecovery) {
-    setTitle(tr("Reset your password"));
-
-    m_reg = new SignUpWidget(this, LS("reset"));
-    connect(m_reg, SIGNAL(done()), SLOT(signUpDone()));
-    m_mainLayout->addWidget(m_reg);
-
-    QTimer::singleShot(0, m_reg, SLOT(setFocus()));
-  }
-  else if (state == EditPassword) {
-    m_pass = new Password(this);
-    connect(m_pass, SIGNAL(done()), SLOT(signUpDone()));
-    m_mainLayout->addWidget(m_pass);
-  }
-  else {
-    if (m_login) {
-      m_mainLayout->removeWidget(m_login);
-      delete m_login;
-    }
-
-    if (m_reg) {
-      m_mainLayout->removeWidget(m_reg);
-      delete m_reg;
-    }
-
-    if (m_pass) {
-      m_mainLayout->removeWidget(m_pass);
-      delete m_pass;
-    }
-
-    m_title->setVisible(false);
-  }
-
-  m_editState = state;
 }
 
 
 void NetworkWidget::setTitle(const QString &title)
 {
-  m_title->setText(LS("<b>") + title + LS("</b>"));
-  m_title->setVisible(true);
+  if (!title.isEmpty()) {
+    m_title->setText(LS("<b>") + title + LS("</b>"));
+    m_title->setVisible(true);
+  }
+  else
+    m_title->setVisible(false);
 }
 
 

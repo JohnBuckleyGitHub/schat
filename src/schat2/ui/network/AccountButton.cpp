@@ -20,11 +20,18 @@
 
 #include "Account.h"
 #include "client/ChatClient.h"
+#include "hooks/RegCmds.h"
+#include "sglobal.h"
 #include "ui/ChatIcons.h"
 #include "ui/network/AccountButton.h"
+#include "ui/network/LoginWidget.h"
+#include "ui/network/NetworkWidget.h"
+#include "ui/network/Password.h"
+#include "ui/network/SignUpWidget.h"
 
-AccountButton::AccountButton(QWidget *parent)
+AccountButton::AccountButton(NetworkWidget *parent)
   : QToolButton(parent)
+  , m_network(parent)
 {
   m_menu = new QMenu(this);
 
@@ -48,7 +55,21 @@ AccountButton::AccountButton(QWidget *parent)
 
 void AccountButton::menuTriggered(QAction *action)
 {
-
+  if (action == m_password) {
+    m_network->add(new Password(this));
+  }
+  else if (action == m_reset) {
+    m_network->add(new SignUpWidget(this, LS("reset")));
+  }
+  else if (action == m_signIn) {
+    m_network->add(new LoginWidget(this));
+  }
+  else if (action == m_signOut) {
+    RegCmds::signOut();
+  }
+  else if (action == m_signUp) {
+    m_network->add(new SignUpWidget(this));
+  }
 }
 
 
