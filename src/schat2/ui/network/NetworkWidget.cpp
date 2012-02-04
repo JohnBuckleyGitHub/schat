@@ -39,14 +39,14 @@
 #include "ui/ChatIcons.h"
 #include "ui/network/AccountButton.h"
 #include "ui/network/NetworkWidget.h"
-
-#include "ui/network/SignUpWidget.h"
+#include "ui/network/OfflineLogin.h"
 
 NetworkWidget::NetworkWidget(QWidget *parent, bool compact)
   : QWidget(parent)
   , m_account(0)
   , m_extra(0)
   , m_manager(ChatCore::networks())
+  , m_login(0)
 {
   m_combo = new QComboBox(this);
   m_combo->installEventFilter(this);
@@ -133,9 +133,13 @@ void NetworkWidget::doneExtra()
   if (!m_extra)
     return;
 
+  if (m_login && m_extra == m_login && m_manager->selected() == m_manager->tmpId())
+    return;
+
   m_mainLayout->removeWidget(m_extra);
   delete m_extra;
   m_extra = 0;
+  m_login = 0;
   m_title->setVisible(false);
 }
 
@@ -217,6 +221,9 @@ int NetworkWidget::add(const QString &url)
     m_combo->setCurrentIndex(index);
 
   m_combo->setEditable(true);
+  m_login = new OfflineLogin(this);
+  add(m_login);
+
   QTimer::singleShot(0, m_combo, SLOT(setFocus()));
   return index;
 }
@@ -249,6 +256,8 @@ void NetworkWidget::edit()
  */
 void NetworkWidget::indexChanged(int index)
 {
+  qDebug() << " ---- " << "indexChanged()" << index << parent();
+
   QByteArray id = m_combo->itemData(index).toByteArray();
   m_combo->setEditable(id == m_manager->tmpId());
 
@@ -261,6 +270,9 @@ void NetworkWidget::indexChanged(int index)
 
     m_editing.clear();
   }
+
+  if (id == m_manager->tmpId())
+    qDebug() << "------------------" << parent();
 
   m_manager->setSelected(id);
   doneExtra();

@@ -74,6 +74,7 @@ HEADERS = \
     ui/network/NetworkButton.h \
     ui/network/NetworkExtra.h \
     ui/network/NetworkWidget.h \
+    ui/network/OfflineLogin.h \
     ui/network/Password.h \
     ui/network/SecurityQuestion.h \
     ui/network/SignUpWidget.h \
@@ -147,6 +148,7 @@ SOURCES = \
     ui/network/NetworkButton.cpp \
     ui/network/NetworkExtra.cpp \
     ui/network/NetworkWidget.cpp \
+    ui/network/OfflineLogin.cpp \
     ui/network/Password.cpp \
     ui/network/SecurityQuestion.cpp \
     ui/network/SignUpWidget.cpp \

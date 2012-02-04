@@ -26,6 +26,7 @@ class AccountButton;
 class NetworkExtra;
 class NetworkManager;
 class Notify;
+class OfflineLogin;
 class QComboBox;
 class QLabel;
 class QMenu;
@@ -69,6 +70,7 @@ private:
   AccountButton *m_account;      ///< Кнопка аккаунта.
   NetworkExtra *m_extra;         ///< Дополнительный виджет.
   NetworkManager *m_manager;     ///< Указатель на менеджер сетевых подключений.
+  OfflineLogin *m_login;         ///< Виджет для офлайн ввода имени и пароля.
   QAction *m_add;                ///< Действие для добавления сервера.
   QAction *m_connect;            ///< Действие для подключения или отключения от сервера.
   QAction *m_edit;               ///< Действие для редактирования текущего подключения.

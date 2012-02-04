@@ -16,44 +16,31 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LOGINWIDGET_H_
-#define LOGINWIDGET_H_
+#ifndef OFFLINELOGIN_H_
+#define OFFLINELOGIN_H_
 
 #include "ui/network/NetworkExtra.h"
 
-class Notify;
+class QCheckBox;
 class QLabel;
 class QLineEdit;
-class NetworkButton;
 
-/*!
- * Виджет авторизации.
- */
-class LoginWidget : public NetworkExtra
+class OfflineLogin : public NetworkExtra
 {
   Q_OBJECT
 
 public:
-  LoginWidget(QWidget *parent = 0);
-  QString title() const;
+  OfflineLogin(QWidget *parent = 0);
 
 protected:
-  void focusInEvent(QFocusEvent *event);
   void retranslateUi();
 
-private slots:
-  void login();
-  void notify(const Notify &notify);
-  void reload();
-
 private:
-  bool isReady() const;
-
+  QCheckBox *m_anonymous;    ///< Чек бокс анонимного подключения.
   QLabel *m_nameLabel;       ///< Пояснительный текст для поля редактирования имени.
   QLabel *m_passwordLabel;   ///< Пояснительный текст для поля редактирования пароля.
   QLineEdit *m_nameEdit;     ///< Поле редактирования имени.
   QLineEdit *m_passwordEdit; ///< Поле редактирования пароля.
-  NetworkButton *m_login;    ///< Кнопка немедленного входа.
 };
 
-#endif /* LOGINWIDGET_H_ */
+#endif /* OFFLINELOGIN_H_ */
