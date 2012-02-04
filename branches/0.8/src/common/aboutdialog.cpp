@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -133,14 +133,14 @@ AboutMain::AboutMain(QWidget *parent)
     aboutLogo->setPixmap(QPixmap(":/images/schat.png"));
   aboutLogo->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
-  QLabel *copyrightLabel = new QLabel("Copyright © 2008 - 2011 <b>IMPOMEZIA</b>. All rights reserved.", this);
+  QLabel *copyrightLabel = new QLabel("Copyright © 2008 - 2012 <b>IMPOMEZIA</b>. All rights reserved.", this);
   QLabel *homeLabel = new QLabel(QString("<b><a href='http://%1' style='text-decoration:none; color:#1a4d82;'>%2</a></b>")
       .arg(QApplication::organizationDomain())
       .arg(tr("Official website")), this);
   homeLabel->setOpenExternalLinks(true);
   homeLabel->setToolTip("http://" + QApplication::organizationDomain());
 
-  QLabel *docLabel = new QLabel(QString("<b><a href='http://simple.impomezia.com' style='text-decoration:none; color:#1a4d82;'>%1</a></b>")
+  QLabel *docLabel = new QLabel(QString("<b><a href='http://wiki.schat.me' style='text-decoration:none; color:#1a4d82;'>%1</a></b>")
       .arg(tr("Documentation")), this);
   docLabel->setOpenExternalLinks(true);
   docLabel->setToolTip("http://simple.impomezia.com");
@@ -204,7 +204,7 @@ AboutMembers::AboutMembers(QWidget *parent)
     browser->setSource(QUrl().fromLocalFile(":/doc/members_ru.html"));
   else
   #endif
-    browser->setSource(QUrl().fromLocalFile(":/doc/members.html"));
+    browser->setSource(QUrl::fromLocalFile(":/doc/members.html"));
 
   QHBoxLayout *mainLay = new QHBoxLayout(this);
   mainLay->addWidget(browser);
@@ -231,10 +231,8 @@ AboutChangeLog::AboutChangeLog(QWidget *parent)
   else
     path = QApplication::applicationDirPath() + "/doc";
 
-  if (QFile::exists(path + "/ChangeLog.html")) {
-    browser->setSearchPaths(QStringList() << (path));
-    browser->setSource(QUrl("ChangeLog.html"));
-  }
+  if (QFile::exists(path + "/ChangeLog.html"))
+    browser->setSource(QUrl::fromLocalFile(path + "/ChangeLog.html"));
   else
     browser->setText(QString("<p style='color:#da251d;'>%2</p>")
                             .arg(tr("File <b>%1</b> not found!").arg(path + "/ChangeLog.html")));
@@ -254,7 +252,7 @@ AboutLicense::AboutLicense(QWidget *parent)
   QTextBrowser *browser = new QTextBrowser(this);
   browser->setText(QString(
       "<p style='color:#333;'><b>%1 %2</b><br />"
-      "<i>Copyright © 2008 - 2011 <b>IMPOMEZIA</b>. All rights reserved.</i></p>"
+      "<i>Copyright © 2008 - 2012 <b>IMPOMEZIA</b>. All rights reserved.</i></p>"
       "<p>This program is free software: you can redistribute it and/or modify "
       "it under the terms of the GNU General Public License as published by "
       "the Free Software Foundation, either version 3 of the License, or "

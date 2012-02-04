@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -375,6 +375,10 @@ UserView::UserView(const AbstractProfile *profile, QTabWidget *tabs, QWidget *pa
     p.setColor(QPalette::AlternateBase, QColor(247, 250, 255));
     setPalette(p);
   }
+
+  setTextElideMode(Qt::ElideRight);
+  setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  setStyleSheet("QScrollBar:vertical{background:transparent;width:6px}QScrollBar::handle:vertical{background:#ccc;border-radius:3px}QScrollBar::sub-line:vertical,QScrollBar::add-line:vertical{height:0}");
 
   connect(this, SIGNAL(doubleClicked(const QModelIndex &)), SLOT(addTab(const QModelIndex &)));
   connect(&d->sortTimer, SIGNAL(timeout()), SLOT(sort()));
