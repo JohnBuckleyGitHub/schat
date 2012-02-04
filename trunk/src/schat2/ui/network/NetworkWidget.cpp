@@ -41,9 +41,10 @@
 #include "ui/network/NetworkWidget.h"
 #include "ui/network/OfflineLogin.h"
 
-NetworkWidget::NetworkWidget(QWidget *parent, bool compact)
+NetworkWidget::NetworkWidget(QWidget *parent, int layout)
   : QWidget(parent)
   , m_account(0)
+  , m_layout(layout)
   , m_extra(0)
   , m_manager(ChatCore::networks())
   , m_login(0)
@@ -53,7 +54,7 @@ NetworkWidget::NetworkWidget(QWidget *parent, bool compact)
 
   createActionsButton();
 
-  if (!compact)
+  if (layout & AccountButtonLayout)
     m_account = new AccountButton(this);
 
   m_toolBar = new QToolBar(this);
@@ -112,6 +113,9 @@ QAction *NetworkWidget::connectAction()
 }
 
 
+/*!
+ * Добавление дополнительного виджета.
+ */
 void NetworkWidget::add(NetworkExtra *extra)
 {
   if (m_extra) {
@@ -128,6 +132,9 @@ void NetworkWidget::add(NetworkExtra *extra)
 }
 
 
+/*!
+ * Удаление дополнительного виджета.
+ */
 void NetworkWidget::doneExtra()
 {
   if (!m_extra)
@@ -221,8 +228,11 @@ int NetworkWidget::add(const QString &url)
     m_combo->setCurrentIndex(index);
 
   m_combo->setEditable(true);
-  m_login = new OfflineLogin(this);
-  add(m_login);
+
+  if (m_layout & ExtraLayout) {
+    m_login = new OfflineLogin(this);
+    add(m_login);
+  }
 
   QTimer::singleShot(0, m_combo, SLOT(setFocus()));
   return index;
@@ -256,10 +266,6 @@ void NetworkWidget::edit()
  */
 void NetworkWidget::indexChanged(int index)
 {
-  qDebug() << " ---- " << "indexChanged()" << index << parent();
-
-  QByteArray id = m_combo->itemData(index).toByteArray();
-  m_combo->setEditable(id == m_manager->tmpId());
 
   if (!m_editing.isEmpty()) {
     int index = m_combo->findData(m_editing);
@@ -271,8 +277,17 @@ void NetworkWidget::indexChanged(int index)
     m_editing.clear();
   }
 
-  if (id == m_manager->tmpId())
-    qDebug() << "------------------" << parent();
+  QByteArray id = m_combo->itemData(index).toByteArray();
+  if (id == m_manager->tmpId()) {
+    m_combo->setEditable(true);
+
+    if (m_layout & ExtraLayout && !m_login) {
+      m_login = new OfflineLogin(this);
+      add(m_login);
+    }
+  }
+  else
+    m_combo->setEditable(false);
 
   m_manager->setSelected(id);
   doneExtra();

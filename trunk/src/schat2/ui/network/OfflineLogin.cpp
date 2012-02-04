@@ -27,6 +27,7 @@ OfflineLogin::OfflineLogin(QWidget *parent)
   : NetworkExtra(parent)
 {
   m_anonymous = new QCheckBox(this);
+  m_anonymous->setChecked(true);
 
   m_nameEdit = new QLineEdit(this);
   m_nameEdit->setMaxLength(255);
@@ -47,7 +48,28 @@ OfflineLogin::OfflineLogin(QWidget *parent)
   mainLay->addWidget(m_passwordEdit, 1, 3);
   mainLay->setMargin(0);
 
+  connect(m_anonymous, SIGNAL(clicked(bool)), SLOT(clicked(bool)));
+
   retranslateUi();
+  clicked(true);
+}
+
+
+bool OfflineLogin::isAnonymous() const
+{
+  return m_anonymous->isChecked();
+}
+
+
+QString OfflineLogin::name() const
+{
+  return m_nameEdit->text();
+}
+
+
+QString OfflineLogin::password() const
+{
+  return m_passwordEdit->text();
 }
 
 
@@ -56,4 +78,16 @@ void OfflineLogin::retranslateUi()
   m_anonymous->setText(tr("Anonymous connection"));
   m_nameLabel->setText(tr("&Name:"));
   m_passwordLabel->setText(tr("&Password:"));
+}
+
+
+void OfflineLogin::clicked(bool checked)
+{
+  m_nameLabel->setVisible(!checked);
+  m_nameEdit->setVisible(!checked);
+  m_passwordLabel->setVisible(!checked);
+  m_passwordEdit->setVisible(!checked);
+
+  if (!checked)
+    m_nameEdit->setFocus();
 }

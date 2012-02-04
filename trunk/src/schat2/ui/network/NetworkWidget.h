@@ -39,7 +39,14 @@ class NetworkWidget : public QWidget
   Q_OBJECT
 
 public:
-  NetworkWidget(QWidget *parent = 0, bool compact = false);
+  /// Дополнительные возможности виджета.
+  enum WidgetLayout {
+    BasicLayout = 0,
+    AccountButtonLayout = 1,
+    ExtraLayout = 2
+  };
+
+  NetworkWidget(QWidget *parent, int layout = 3);
   QAction *connectAction();
 
 public slots:
@@ -68,6 +75,7 @@ private:
   void updateIndex();
 
   AccountButton *m_account;      ///< Кнопка аккаунта.
+  int m_layout;                  ///< Дополнительные возможности виджета.
   NetworkExtra *m_extra;         ///< Дополнительный виджет.
   NetworkManager *m_manager;     ///< Указатель на менеджер сетевых подключений.
   OfflineLogin *m_login;         ///< Виджет для офлайн ввода имени и пароля.

@@ -31,9 +31,15 @@ class OfflineLogin : public NetworkExtra
 
 public:
   OfflineLogin(QWidget *parent = 0);
+  bool isAnonymous() const;
+  QString name() const;
+  QString password() const;
 
 protected:
   void retranslateUi();
+
+private slots:
+  void clicked(bool checked);
 
 private:
   QCheckBox *m_anonymous;    ///< Чек бокс анонимного подключения.
