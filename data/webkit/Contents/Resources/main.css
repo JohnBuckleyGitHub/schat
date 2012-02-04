@@ -72,7 +72,7 @@ a span[style] { /* Fix Qt rich text */
   color:#185074;
   font-weight:bold;
 }
-.oldClientProtocol, .oldServerProtocol, .badNickName, .àccessDenied, .disconnect {
+.oldClientProtocol, .oldServerProtocol, .badNickName, .AccessDenied, .disconnect {
   color:#da251d;
 }
 .smb .ready {
