@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -39,11 +39,15 @@ protected:
 
 private slots:
   void alert(bool start);
+  void changed(const QString &key, const QVariant &value);
   void iconActivated(QSystemTrayIcon::ActivationReason reason);
   void reload();
   void triggered(QAction *action);
 
 private:
+  void startAlert();
+
+  bool m_staticAlerts;       ///< \b true если необходимо использовать статические (без мигания) уведомления.
   int m_alertIcon;           ///< Номер текущей иконки, при отображении уведомлений.
   QAction *m_about;          ///< О Simple Chat.
   QAction *m_quit;           ///< Выход.

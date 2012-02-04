@@ -18,28 +18,30 @@
 
 #include "Channel.h"
 #include "ChatSettings.h"
+#include "sglobal.h"
 
 ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
   : Settings(fileName, parent)
 {
-  setDefault("AutoConnect",         true);
-  setDefault("AutoJoin",            true);
-  setDefault("ChannelUserCount",    false);
-  setDefault("DeveloperExtras",     false);
-  setDefault("Height",              420);
-  setDefault("HideIgnore",          true);
-  setDefault("Maximized",           false);
-  setDefault("Networks",            QStringList());
-  setDefault("ShowSeconds",         false);
-  setDefault("ShowServiceMessages", false);
-  setDefault("Translation",         "auto");
-  setDefault("Width",               666);
-  setDefault("WindowsAero",         true);
+  setDefault(LS("AutoConnect"),           true);
+  setDefault(LS("AutoJoin"),              true);
+  setDefault(LS("ChannelUserCount"),      false);
+  setDefault(LS("DeveloperExtras"),       false);
+  setDefault(LS("Height"),                420);
+  setDefault(LS("HideIgnore"),            true);
+  setDefault(LS("Maximized"),             false);
+  setDefault(LS("Networks"),              QStringList());
+  setDefault(LS("ShowSeconds"),           false);
+  setDefault(LS("ShowServiceMessages"),   false);
+  setDefault(LS("Translation"),           LS("auto"));
+  setDefault(LS("Width"),                 666);
+  setDefault(LS("WindowsAero"),           true);
 
-  setDefault("Labs/CookieAuth",     true);
-  setDefault("Labs/DisableUI",      false);
+  setDefault(LS("Labs/CookieAuth"),       true);
+  setDefault(LS("Labs/DisableUI"),        false);
+  setDefault(LS("Labs/StaticTrayAlerts"), false);
 
-  setDefault("Profile/Gender",      0);
-  setDefault("Profile/Nick",        Channel::defaultName());
-  setDefault("Profile/Status",      1);
+  setDefault(LS("Profile/Gender"),        0);
+  setDefault(LS("Profile/Nick"),          Channel::defaultName());
+  setDefault(LS("Profile/Status"),        1);
 }
