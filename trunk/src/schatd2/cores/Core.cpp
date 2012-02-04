@@ -52,9 +52,6 @@ Core::Core(QObject *parent)
 {
   m_self = this;
 
-//  if (Storage::serverData()->is(ServerData::PasswordAuthSupport))
-//    addAuth(new PasswordAuth(this));
-
   m_sendStream = new QDataStream(&m_sendBuffer, QIODevice::ReadWrite);
   m_readStream = new QDataStream(&m_readBuffer, QIODevice::ReadWrite);
 
@@ -250,6 +247,7 @@ bool Core::auth()
   if (m_auth.isEmpty()) {
     addAuth(new AnonymousAuth(this));
     addAuth(new CookieAuth(this));
+    addAuth(new PasswordAuth(this));
   }
 
   for (int i = 0; i < m_auth.size(); ++i) {

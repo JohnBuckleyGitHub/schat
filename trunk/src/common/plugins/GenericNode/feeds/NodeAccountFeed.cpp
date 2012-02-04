@@ -19,6 +19,7 @@
 #include "Account.h"
 #include "Ch.h"
 #include "Channel.h"
+#include "cores/PasswordAuth.h"
 #include "DataBase.h"
 #include "DateTime.h"
 #include "feeds/FeedStorage.h"
@@ -323,16 +324,7 @@ QByteArray NodeAccountFeed::getPassword(const QVariantMap &json, const QString &
  */
 QString NodeAccountFeed::getName(const QVariantMap &json) const
 {
-  QString name = json.value(LS("name")).toString();
-  if (name.isEmpty() || name.size() > 255 )
-    return QString();
-
-  name = name.simplified().toLower().remove(LC(' '));
-  int index = name.indexOf(LC('@'));
-  if (index != -1)
-    name = name.left(index);
-
-  return name;
+  return PasswordAuth::name(json.value(LS("name")).toString());
 }
 
 
