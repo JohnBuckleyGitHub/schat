@@ -173,6 +173,9 @@ void NetworkWidget::open()
   if (item->id() == m_manager->tmpId()) {
     item->setUrl(m_combo->currentText());
     m_combo->setItemText(index, item->url());
+
+    if (m_login)
+      ChatClient::io()->setAccount(m_login->isAnonymous() ? QString() : m_login->name(), m_login->password());
   }
   else if (!m_editing.isEmpty() && item->id() == m_editing) {
     item->setUrl(m_combo->currentText());

@@ -16,9 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-#include "JSON.h"
-
 #include "Account.h"
 #include "Ch.h"
 #include "Channel.h"
@@ -151,11 +148,11 @@ FeedQueryReply NodeAccountFeed::login(const QVariantMap &json)
 
 /*!
  * Изменение пароля или секретного вопроса.
+ *
+ * http://wiki.schat.me/Feed/Account#password
  */
 FeedQueryReply NodeAccountFeed::password(const QVariantMap &json)
 {
-  qDebug() << JSON::generate(json);
-
   ChatChannel channel = Ch::channel(head().channel()->id());
   if (!channel)
     return FeedQueryReply(Notice::InternalError);
@@ -241,6 +238,8 @@ FeedQueryReply NodeAccountFeed::reg(const QVariantMap &json)
 
 /*!
  * Сброс пароля.
+ *
+ * http://wiki.schat.me/Feed/Account#reset
  */
 FeedQueryReply NodeAccountFeed::reset(const QVariantMap &json)
 {
