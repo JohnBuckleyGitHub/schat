@@ -357,26 +357,26 @@
 <context>
     <name>NetworkWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="348"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="387"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="360"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="399"/>
         <source>Edit</source>
         <translation>Изменить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="350"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="388"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="362"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="400"/>
         <source>Add</source>
         <translation>Добавить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="351"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="389"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="363"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="401"/>
         <source>Remove</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="357"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="390"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="369"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="402"/>
         <source>Actions</source>
         <translation>Действия</translation>
     </message>
@@ -394,6 +394,24 @@
         <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="108"/>
         <source>Connect</source>
         <translation>Подключиться</translation>
+    </message>
+</context>
+<context>
+    <name>OfflineLogin</name>
+    <message>
+        <location filename="../../src/schat2/ui/network/OfflineLogin.cpp" line="56"/>
+        <source>Anonymous connection</source>
+        <translation>Анонимное подключение</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/network/OfflineLogin.cpp" line="57"/>
+        <source>&amp;Name:</source>
+        <translation>&amp;Имя:</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/network/OfflineLogin.cpp" line="58"/>
+        <source>&amp;Password:</source>
+        <translation>&amp;Пароль:</translation>
     </message>
 </context>
 <context>
@@ -748,20 +766,20 @@
 <context>
     <name>TrayIcon</name>
     <message>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="46"/>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="74"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="50"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="79"/>
         <source>Preferences...</source>
         <translation>Настройки...</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="47"/>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="75"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="51"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="80"/>
         <source>About...</source>
         <translation>О Simple Chat...</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="49"/>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="76"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="53"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="81"/>
         <source>Quit</source>
         <translation>Выход</translation>
     </message>
