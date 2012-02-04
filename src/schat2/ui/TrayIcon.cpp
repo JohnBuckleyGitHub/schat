@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,8 +23,10 @@
 #include "ChatAlerts.h"
 #include "ChatCore.h"
 #include "ChatNotify.h"
+#include "ChatSettings.h"
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
+#include "sglobal.h"
 #include "ui/ChatIcons.h"
 #include "ui/StatusMenu.h"
 #include "ui/TrayIcon.h"
@@ -36,6 +38,8 @@ TrayIcon::TrayIcon(QObject *parent)
   , m_alertIcon(0)
 {
   m_self = this;
+
+  m_staticAlerts = ChatCore::settings()->value(LS("Labs/StaticTrayAlerts")).toBool();
 
   m_menu = new QMenu();
   m_timer = new QBasicTimer();
@@ -54,6 +58,7 @@ TrayIcon::TrayIcon(QObject *parent)
   connect(StatusMenu::i(), SIGNAL(updated()), SLOT(reload()));
   connect(m_menu, SIGNAL(triggered(QAction *)), SLOT(triggered(QAction *)));
   connect(ChatAlerts::i(), SIGNAL(alert(bool)), SLOT(alert(bool)));
+  connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(changed(const QString &, const QVariant &)));
 
   reload();
 }
@@ -85,9 +90,9 @@ void TrayIcon::timerEvent(QTimerEvent *event)
       setIcon(m_icon);
     }
     else {
-      m_alertIcon = 1;
-      setIcon(QIcon(":/images/message-active.png"));
+      startAlert();
     }
+
     return;
   }
 
@@ -102,8 +107,24 @@ void TrayIcon::alert(bool start)
     setIcon(m_icon);
     m_alertIcon = 0;
   }
-  else if (!m_timer->isActive()) {
-    m_timer->start(666, this);
+  else if (!m_timer->isActive() || m_staticAlerts) {
+    startAlert();
+  }
+}
+
+
+/*!
+ * Обработка изменения настроек.
+ */
+void TrayIcon::changed(const QString &key, const QVariant &value)
+{
+  if (key == LS("Labs/StaticTrayAlerts")) {
+    m_staticAlerts = value.toBool();
+
+    if (m_alertIcon) {
+      m_alertIcon = 0;
+      startAlert();
+    }
   }
 }
 
@@ -146,4 +167,29 @@ void TrayIcon::triggered(QAction *action)
   }
   else if (action == m_quit)
     ChatNotify::start(Notify::Quit);
+}
+
+
+/*!
+ * Смена иконки в трее на иконку уведомления.
+ */
+void TrayIcon::startAlert()
+{
+  if (m_alertIcon)
+    return;
+
+  m_alertIcon = 1;
+
+  if (m_staticAlerts) {
+    if (m_timer->isActive())
+      m_timer->stop();
+
+    setIcon(ChatIcons::icon(SCHAT_ICON(SmallLogo), LS(":/images/message-small.png")));
+    return;
+  }
+
+  setIcon(QIcon(LS(":/images/message-active.png")));
+
+  if (!m_timer->isActive())
+    m_timer->start(666, this);
 }
