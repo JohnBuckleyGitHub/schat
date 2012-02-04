@@ -41,7 +41,7 @@ WelcomeTab::WelcomeTab(TabWidget *parent)
   QWidget *widget = new QWidget(this);
 
   m_networkLabel = new QLabel(this);
-  m_network = new NetworkWidget(this, true);
+  m_network = new NetworkWidget(this, NetworkWidget::ExtraLayout);
   QGridLayout *networkLay = new QGridLayout;
   networkLay->addWidget(m_network, 0, 0, 1, 2);
   networkLay->setContentsMargins(20, 0, 3, 6);
