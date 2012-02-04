@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@ public:
   PasswordAuth(Core *core);
   AuthResult auth(const AuthRequest &data);
   int type() const;
+
+  static QString name(const QString &name);
 };
 
 #endif /* PASSWORDAUTH_H_ */
