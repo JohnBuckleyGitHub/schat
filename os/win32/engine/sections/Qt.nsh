@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@ ${Section}
   File "${SCHAT_QT_BINDIR}\QtGui4.dll"
   File "${SCHAT_QT_BINDIR}\QtNetwork4.dll"
   File "${SCHAT_QT_BINDIR}\QtWebKit4.dll"
+  File "${SCHAT_QT_BINDIR}\libpng15.dll"
+  File "${SCHAT_QT_BINDIR}\zlib1.dll"
 
   !if ${SCHAT_VC90} == 1
     File "${VC90_REDIST_DIR}\msvcp90.dll"
@@ -55,6 +57,8 @@ ${Uninstall}
   Delete "$INSTDIR\QtGui4.dll"
   Delete "$INSTDIR\QtNetwork4.dll"
   Delete "$INSTDIR\QtWebKit4.dll"
+  Delete "$INSTDIR\libpng15.dll"
+  Delete "$INSTDIR\zlib1.dll"
   Delete "$INSTDIR\msvcp90.dll"
   Delete "$INSTDIR\msvcr90.dll"
   Delete "$INSTDIR\msvcp100.dll"
