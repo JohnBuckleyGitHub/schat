@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -478,12 +478,12 @@ void ChatView::changeEvent(QEvent *event)
 
 void ChatView::contextMenuEvent(QContextMenuEvent *event)
 {
-  #ifndef SCHAT_NO_WEBKIT
-    d->copy->setEnabled(!selectedText().isEmpty());
-  #else
-    d->copy->setEnabled(textCursor().hasSelection());
-    d->selectAll->setEnabled(!d->empty);
-  #endif
+# ifndef SCHAT_NO_WEBKIT
+  d->copy->setEnabled(!selectedText().isEmpty());
+# else
+  d->copy->setEnabled(textCursor().hasSelection());
+# endif
+  d->selectAll->setEnabled(!d->empty);
 
   QString copyLinkText = tr("Copy &link");
   d->clear->setEnabled(!d->empty);
@@ -492,18 +492,18 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
   QMenu menu(this);
   menu.addAction(d->copy);
 
-  #ifndef SCHAT_NO_WEBKIT
-    QWebHitTestResult r = page()->mainFrame()->hitTestContent(event->pos());
-    QUrl url = r.linkUrl();
-    if (!url.isEmpty() && url.scheme() != "nick"  && url.scheme() != "smile") {
-      copyLink = pageAction(QWebPage::CopyLinkToClipboard);
-      copyLink->setText(copyLinkText);
-    }
-  #else
-    QUrl url(anchorAt(event->pos()));
-    if (!url.isEmpty() && url.scheme() != "nick" && url.scheme() != "smile")
-      copyLink = menu.addAction(copyLinkText);
-  #endif
+# ifndef SCHAT_NO_WEBKIT
+  QWebHitTestResult r = page()->mainFrame()->hitTestContent(event->pos());
+  QUrl url = r.linkUrl();
+  if (!url.isEmpty() && url.scheme() != "nick"  && url.scheme() != "smile") {
+    copyLink = pageAction(QWebPage::CopyLinkToClipboard);
+    copyLink->setText(copyLinkText);
+  }
+# else
+  QUrl url(anchorAt(event->pos()));
+  if (!url.isEmpty() && url.scheme() != "nick" && url.scheme() != "smile")
+    copyLink = menu.addAction(copyLinkText);
+# endif
 
   if (copyLink)
     menu.addAction(copyLink);
@@ -513,16 +513,16 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
   menu.addAction(d->serviceMessages);
   menu.addSeparator();
   menu.addAction(d->clear);
+  menu.addAction(d->selectAll);
 
-  #ifndef SCHAT_NO_WEBKIT
-    menu.exec(event->globalPos());
-  #else
-    menu.addAction(d->selectAll);
-    QAction *action = menu.exec(event->globalPos());
+# ifndef SCHAT_NO_WEBKIT
+  menu.exec(event->globalPos());
+# else
+  QAction *action = menu.exec(event->globalPos());
 
-    if (action == copyLink)
-      QApplication::clipboard()->setText(url.toString());
-  #endif
+  if (action == copyLink)
+    QApplication::clipboard()->setText(url.toString());
+# endif
 }
 
 
@@ -570,16 +570,22 @@ void ChatView::toggleServiceMessages(bool checked)
 }
 
 
+#ifndef SCHAT_NO_WEBKIT
 /*!
  * Завершение загрузки документа.
  */
-#ifndef SCHAT_NO_WEBKIT
 void ChatView::loadFinished()
 {
   d->loaded = true;
 
   while (!d->pendingJs.isEmpty())
     page()->mainFrame()->evaluateJavaScript(d->pendingJs.dequeue());
+}
+
+
+void ChatView::selectAll()
+{
+  triggerPageAction(QWebPage::SelectAll);
 }
 #endif
 
@@ -588,8 +594,8 @@ void ChatView::appendMessage(const QString &message, bool sameFrom)
 {
   #ifndef SCHAT_NO_WEBKIT
     QString jsMessage = message;
-    jsMessage.replace("\"","\\\"");
-    jsMessage.replace("\n","\\n");
+    jsMessage.replace("\"", "\\\"");
+    jsMessage.replace("\n", "\\n");
     jsMessage = QString("append%2Message(\"%1\");").arg(jsMessage).arg(sameFrom ? "Next" : "");
     if (d->loaded) {
       page()->mainFrame()->evaluateJavaScript(jsMessage);
@@ -623,10 +629,8 @@ void ChatView::createActions()
   d->clear = new QAction(SimpleChatApp::iconFromTheme("edit-clear"), "", this);
   connect(d->clear, SIGNAL(triggered()), SLOT(clear()));
 
-  #ifdef SCHAT_NO_WEBKIT
-    d->selectAll = new QAction(SimpleChatApp::iconFromTheme("edit-select-all"), "", this);
-    connect(d->selectAll, SIGNAL(triggered()), SLOT(selectAll()));
-  #endif
+  d->selectAll = new QAction(SimpleChatApp::iconFromTheme("edit-select-all"), "", this);
+  connect(d->selectAll, SIGNAL(triggered()), SLOT(selectAll()));
 }
 
 
@@ -636,8 +640,5 @@ void ChatView::retranslateUi()
   d->serviceMessages->setText(tr("Service messages"));
   d->copy->setText(tr("&Copy"));
   d->clear->setText(tr("Clear"));
-
-  #ifdef SCHAT_NO_WEBKIT
   d->selectAll->setText(tr("Select All"));
-  #endif
 }

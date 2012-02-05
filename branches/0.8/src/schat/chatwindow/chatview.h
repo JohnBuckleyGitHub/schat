@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -82,9 +82,10 @@ private slots:
   void linkClicked(const QUrl &url);
   void notify(int notify);
   void toggleServiceMessages(bool checked);
-  #ifndef SCHAT_NO_WEBKIT
-    void loadFinished();
-  #endif
+# ifndef SCHAT_NO_WEBKIT
+  void loadFinished();
+  void selectAll();
+# endif
 
 private:
   void appendMessage(const QString &message, bool sameFrom = false);
