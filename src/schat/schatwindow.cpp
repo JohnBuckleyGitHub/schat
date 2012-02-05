@@ -728,7 +728,6 @@ SChatWindow::SChatWindow(QWidget *parent)
   connect(d->send, SIGNAL(needCopy()), SLOT(copy()));
   connect(d->send, SIGNAL(about()), SLOT(about()));
   connect(d->send, SIGNAL(closeChat()), SLOT(closeChat()));
-  connect(d->send, SIGNAL(statusShortcut(int)), SLOT(statusShortcut(int)));
   connect(d->send, SIGNAL(showSettingsPage(int)), SLOT(showSettingsPage(int)));
   connect(d->users, SIGNAL(addTab(const QString &)), SLOT(addTab(const QString &)));
   connect(d->users, SIGNAL(insertNick(const QString &)), d->send, SLOT(insertHtml(const QString &)));
@@ -1290,19 +1289,6 @@ void SChatWindow::statusChangedByUser(int index)
 
   if (!d->clientService->isReady())
     d->clientService->connectToHost();
-}
-
-
-/*!
- * Обработка клавиатурных сочетаний Ctrl+1, Ctrl+2, Ctrl+3 и Ctrl+0
- * для изменения статуса.
- */
-void SChatWindow::statusShortcut(int key)
-{
-  if (key == 0)
-    statusChangedByUser(StatusMenu::StatusOffline);
-  else
-    statusChangedByUser(--key);
 }
 
 

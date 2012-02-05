@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -150,14 +150,6 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
     emit needCopy();
   else if (event->matches(QKeySequence::Paste))
     paste();
-  else if (key == Qt::Key_1 && modifiers == Qt::ControlModifier)
-    emit statusShortcut(1);
-  else if (key == Qt::Key_2 && modifiers == Qt::ControlModifier)
-    emit statusShortcut(2);
-  else if (key == Qt::Key_3 && modifiers == Qt::ControlModifier)
-    emit statusShortcut(3);
-  else if (key == Qt::Key_0 && modifiers == Qt::ControlModifier)
-    emit statusShortcut(0);
   else if (key == Qt::Key_Tab)
     QWidget::keyPressEvent(event);
   else

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPainter>
-//#include <QDebug>
 
 #include "statusmenu.h"
 
@@ -33,19 +32,15 @@ StatusMenu::StatusMenu(bool male, QWidget *parent)
     m_group(new QActionGroup(this))
 {
   QAction *action = m_group->addAction(icon(StatusOnline), "");
-  action->setShortcut(Qt::CTRL + Qt::Key_1);
   m_statuses.append(action);
 
   action = m_group->addAction(icon(StatusAway), "");
-  action->setShortcut(Qt::CTRL + Qt::Key_2);
   m_statuses.append(action);
 
   action = m_group->addAction(icon(StatusDnD), "");
-  action->setShortcut(Qt::CTRL + Qt::Key_3);
   m_statuses.append(action);
 
   action = m_group->addAction(icon(StatusOffline), "");
-  action->setShortcut(Qt::CTRL + Qt::Key_0);
   m_statuses.append(action);
 
   for (int i = 0; i < m_statuses.size(); ++i) {
