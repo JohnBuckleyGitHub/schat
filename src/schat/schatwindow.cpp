@@ -812,6 +812,8 @@ void SChatWindow::changeEvent(QEvent *event)
 {
   if (event->type() == QEvent::LanguageChange)
     retranslateUi();
+  else if (event->type() == QEvent::ActivationChange)
+    d->activationChanged = QTime::currentTime();
 
   QMainWindow::changeEvent(event);
 }
@@ -1051,10 +1053,10 @@ void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
   switch (reason) {
     case QSystemTrayIcon::Trigger:
     case QSystemTrayIcon::MiddleClick:
-      if (isHidden())
-        d->showChat();
-      else
+      if (isActiveWindow() || qAbs(d->activationChanged.msecsTo(QTime::currentTime())) < QApplication::doubleClickInterval())
         d->hideChat();
+      else
+        d->showChat();
 
     default:
       break;
