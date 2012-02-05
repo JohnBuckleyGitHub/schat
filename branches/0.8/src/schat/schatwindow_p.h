@@ -95,6 +95,7 @@ public:
   QPointer<AboutDialog> about;
   QPointer<SettingsDialog> settingsDialog;
   QTabWidget *tabs;
+  QTime activationChanged; ///< Время когда была изменена видимость окна.
   QTime pingTime;
   QVBoxLayout *mainLay;
   QWidget *central;
