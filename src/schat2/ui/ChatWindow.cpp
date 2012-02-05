@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 #include <QTimer>
 #include <QVBoxLayout>
 
-#include "ChatAlerts.h"
 #include "ChatCore.h"
 #include "ChatNotify.h"
 #include "ChatSettings.h"
@@ -47,8 +46,7 @@
 
 ChatWindow::ChatWindow(QWidget *parent)
   : QMainWindow(parent)
-  , m_core(ChatCore::i())
-  , m_settings(ChatCore::i()->settings())
+  , m_settings(ChatCore::settings())
 {
   new StatusMenu(this);
 
@@ -75,7 +73,7 @@ ChatWindow::ChatWindow(QWidget *parent)
 
   resize(SCHAT_OPTION("Width").toInt(), SCHAT_OPTION("Height").toInt());
 
-  connect(m_send, SIGNAL(send(const QString &)), m_core, SLOT(send(const QString &)));
+  connect(m_send, SIGNAL(send(const QString &)), ChatCore::i(), SLOT(send(const QString &)));
   connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
   connect(m_tabs, SIGNAL(pageChanged(int, bool)), SLOT(pageChanged(int, bool)));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
@@ -106,6 +104,8 @@ void ChatWindow::changeEvent(QEvent *event)
 {
   if (event->type() == QEvent::LanguageChange)
     retranslateUi();
+  else if (event->type() == QEvent::ActivationChange)
+    m_activationChanged = QTime::currentTime();
 
   QMainWindow::changeEvent(event);
 }
@@ -170,10 +170,10 @@ void ChatWindow::notify(const Notify &notify)
     closeChat();
   }
   else if (notify.type() == Notify::ToggleVisibility) {
-    if (isHidden() || ChatAlerts::hasAlerts())
-      showChat();
-    else
+    if (isActiveWindow() || qAbs(m_activationChanged.msecsTo(QTime::currentTime())) < QApplication::doubleClickInterval())
       hideChat();
+    else
+      showChat();
   }
   else if (notify.type() == Notify::ShowChat) {
     showChat();

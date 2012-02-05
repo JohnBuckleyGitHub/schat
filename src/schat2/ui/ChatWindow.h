@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 #define CHATWINDOW_H_
 
 #include <QMainWindow>
+#include <QTime>
 
-class ChatCore;
 class ChatSettings;
 class Notify;
 class QVBoxLayout;
@@ -60,13 +60,13 @@ private:
   void setWindowsAero();
   #endif
 
-  ChatCore *m_core;         ///< Глобальный объект.
-  ChatSettings *m_settings; ///< Настройки.
-  QVBoxLayout *m_mainLay;   ///< Основной компоновщик.
-  QWidget *m_central;       ///< Центральный виджет.
-  SendWidget *m_send;       ///< Виджет отправки сообщения.
-  StatusBar *m_statusBar;   ///< Статус бар.
-  TabWidget *m_tabs;        ///< Вкладки.
+  ChatSettings *m_settings;  ///< Настройки.
+  QTime m_activationChanged; ///< Время когда была изменена видимость окна.
+  QVBoxLayout *m_mainLay;    ///< Основной компоновщик.
+  QWidget *m_central;        ///< Центральный виджет.
+  SendWidget *m_send;        ///< Виджет отправки сообщения.
+  StatusBar *m_statusBar;    ///< Статус бар.
+  TabWidget *m_tabs;         ///< Вкладки.
 };
 
 #endif /* CHATWINDOW_H_ */
