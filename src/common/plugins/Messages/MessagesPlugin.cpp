@@ -16,33 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GENERICNODEPLUGIN_H_
-#define GENERICNODEPLUGIN_H_
+#include "MessagesPlugin.h"
+#include "MessagesPlugin_p.h"
 
-#include "CoreApi.h"
-#include "NodeApi.h"
-
-class GenericNodePlugin : public QObject, CoreApi, NodeApi
+NodeMessagesBase::NodeMessagesBase(QObject *parent)
+  : NodePlugin(parent)
 {
-  Q_OBJECT
-  Q_INTERFACES(CoreApi NodeApi)
+}
 
-public:
-  QVariantMap header() const
-  {
-    QVariantMap out = CoreApi::header();
-    out["Id"]       = "GenericNode";
-    out["Name"]     = "Generic Node";
-    out["Version"]  = "0.2.2";
-    out["Type"]     = "server";
-    out["Site"]     = "http://wiki.schat.me/Plugin/GenericNode";
-    out["Desc"]     = "Standard core of server";
-    out["Required"] = "1.99.10";
 
-    return out;
-  }
-
-  NodePlugin *create();
-};
-
-#endif /* GENERICNODEPLUGIN_H_ */
+NodePlugin *MessagesPlugin::create()
+{
+  m_plugin = new NodeMessagesBase(this);
+  return m_plugin;
+}
