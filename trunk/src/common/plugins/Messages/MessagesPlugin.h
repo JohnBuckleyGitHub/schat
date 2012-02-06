@@ -16,13 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GENERICNODEPLUGIN_H_
-#define GENERICNODEPLUGIN_H_
+#ifndef MESSAGESPLUGIN_H_
+#define MESSAGESPLUGIN_H_
 
 #include "CoreApi.h"
 #include "NodeApi.h"
 
-class GenericNodePlugin : public QObject, CoreApi, NodeApi
+class MessagesPlugin : public QObject, CoreApi, NodeApi
 {
   Q_OBJECT
   Q_INTERFACES(CoreApi NodeApi)
@@ -31,12 +31,12 @@ public:
   QVariantMap header() const
   {
     QVariantMap out = CoreApi::header();
-    out["Id"]       = "GenericNode";
-    out["Name"]     = "Generic Node";
-    out["Version"]  = "0.2.2";
+    out["Id"]       = "Messages";
+    out["Name"]     = "Messages";
+    out["Version"]  = "0.1.0";
     out["Type"]     = "server";
     out["Site"]     = "http://wiki.schat.me/Plugin/GenericNode";
-    out["Desc"]     = "Standard core of server";
+    out["Desc"]     = "Server Messages Support";
     out["Required"] = "1.99.10";
 
     return out;
@@ -45,4 +45,4 @@ public:
   NodePlugin *create();
 };
 
-#endif /* GENERICNODEPLUGIN_H_ */
+#endif /* MESSAGESPLUGIN_H_ */
