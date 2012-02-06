@@ -43,7 +43,6 @@ HEADERS = \
     net/NodeWorker.h \
     net/TcpServer.h \
     NodeLog.h \
-    NodeMessages.h \
     NodeNoticeReader.h \
     NodePlugins.h \
     Normalize.h \
@@ -67,7 +66,6 @@ SOURCES = \
     net/NodeWorker.cpp \
     net/TcpServer.cpp \
     NodeLog.cpp \
-    NodeMessages.cpp \
     NodeNoticeReader.cpp \
     NodePlugins.cpp \
     Normalize.cpp \

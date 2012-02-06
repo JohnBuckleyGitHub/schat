@@ -37,7 +37,7 @@
 #include "net/Protocol.h"
 #include "net/SimpleID.h"
 #include "NodeLog.h"
-#include "NodeMessages.h"
+#include "NodeNoticeReader.h"
 #include "NodePlugins.h"
 #include "Sockets.h"
 #include "Storage.h"
@@ -54,8 +54,6 @@ Core::Core(QObject *parent)
 
   m_sendStream = new QDataStream(&m_sendBuffer, QIODevice::ReadWrite);
   m_readStream = new QDataStream(&m_readBuffer, QIODevice::ReadWrite);
-
-  new NodeMessages(this);
 }
 
 

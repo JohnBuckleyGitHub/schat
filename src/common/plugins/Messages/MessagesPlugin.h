@@ -35,7 +35,7 @@ public:
     out["Name"]     = "Messages";
     out["Version"]  = "0.1.0";
     out["Type"]     = "server";
-    out["Site"]     = "http://wiki.schat.me/Plugin/GenericNode";
+    out["Site"]     = "http://wiki.schat.me/Plugin/Messages";
     out["Desc"]     = "Server Messages Support";
     out["Required"] = "1.99.10";
 

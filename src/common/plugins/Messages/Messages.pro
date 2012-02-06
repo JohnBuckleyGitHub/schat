@@ -21,10 +21,12 @@ QT = core network sql
 HEADERS  = \
    MessagesPlugin.h \
    MessagesPlugin_p.h \
+   NodeMessages.h \
 
 SOURCES  = \
    MessagesPlugin.cpp \
-   
+   NodeMessages.cpp \
+
 unix {
   target.path += $$SCHAT_PREFIX/usr/share/schatd2/plugins
   INSTALLS += target
