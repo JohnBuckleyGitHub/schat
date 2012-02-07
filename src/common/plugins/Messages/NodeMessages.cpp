@@ -26,6 +26,7 @@
 #include "net/packets/Notice.h"
 #include "net/SimpleID.h"
 #include "NodeMessages.h"
+#include "NodeMessagesDB.h"
 
 NodeMessages::NodeMessages(Core *core)
   : NodeNoticeReader(Notice::MessageType, core)
@@ -53,9 +54,12 @@ bool NodeMessages::read(PacketReader *reader)
 
   if (m_dest->type() == SimpleID::UserId && m_dest->status().value() == Status::Offline) {
     reject(Notice::ChannelOffline);
+    NodeMessagesDB::add(packet, Notice::ChannelOffline);
     Ch::gc(m_dest);
     return false;
   }
+
+  NodeMessagesDB::add(packet);
 
   return true;
 }
@@ -63,7 +67,7 @@ bool NodeMessages::read(PacketReader *reader)
 
 void NodeMessages::reject(int status)
 {
-  MessageNotice packet(m_packet->sender(), m_packet->dest(), m_packet->text(), DateTime::utc(), m_packet->id());
+  MessageNotice packet(m_packet->sender(), m_packet->dest(), m_packet->text(), Core::date(), m_packet->id());
   packet.setStatus(status);
   m_core->send(m_sender->sockets(), packet.data(m_core->sendStream()));
 }
