@@ -18,8 +18,14 @@
 
 #include <QDebug>
 
-#include "NodeMessages.h"
+#include "Ch.h"
+#include "cores/Core.h"
+#include "DateTime.h"
+#include "net/PacketReader.h"
+#include "net/packets/MessageNotice.h"
 #include "net/packets/Notice.h"
+#include "net/SimpleID.h"
+#include "NodeMessages.h"
 
 NodeMessages::NodeMessages(Core *core)
   : NodeNoticeReader(Notice::MessageType, core)
@@ -29,6 +35,35 @@ NodeMessages::NodeMessages(Core *core)
 
 bool NodeMessages::read(PacketReader *reader)
 {
-  Q_UNUSED(reader)
+  if (SimpleID::typeOf(reader->sender()) != SimpleID::UserId)
+    return false;
+
+  m_sender = Ch::channel(reader->sender(), SimpleID::UserId);
+  if (!m_sender)
+    return false;
+
+  MessageNotice packet(m_type, reader);
+  m_packet = &packet;
+
+  m_dest = Ch::channel(reader->dest(), SimpleID::typeOf(reader->dest()));
+  if (!m_dest) {
+    reject(Notice::NotFound);
+    return false;
+  }
+
+  if (m_dest->type() == SimpleID::UserId && m_dest->status().value() == Status::Offline) {
+    reject(Notice::ChannelOffline);
+    Ch::gc(m_dest);
+    return false;
+  }
+
   return true;
+}
+
+
+void NodeMessages::reject(int status)
+{
+  MessageNotice packet(m_packet->sender(), m_packet->dest(), m_packet->text(), DateTime::utc(), m_packet->id());
+  packet.setStatus(status);
+  m_core->send(m_sender->sockets(), packet.data(m_core->sendStream()));
 }
