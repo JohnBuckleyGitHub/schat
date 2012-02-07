@@ -21,6 +21,7 @@
 #include "Account.h"
 #include "Ch.h"
 #include "DataBase.h"
+#include "feeds/FeedStorage.h"
 #include "net/packets/Notice.h"
 #include "Normalize.h"
 #include "Settings.h"
@@ -254,6 +255,25 @@ void Ch::removeImpl(ChatChannel channel)
   foreach (Ch *hook, m_hooks) {
     hook->removeImpl(channel);
   }
+}
+
+
+/*!
+ * Создание при необходимости пользовательского фида.
+ *
+ * \param channel Канал-пользователь.
+ * \param name    Имя фида.
+ */
+void Ch::addNewUserFeedIsNotExist(ChatChannel channel, const QString &name)
+{
+  FeedPtr feed = channel->feed(name, false);
+  if (feed)
+    return;
+
+  feed = channel->feed(name, true, false);
+  feed->head().acl().add(channel->id());
+
+  FeedStorage::save(feed);
 }
 
 

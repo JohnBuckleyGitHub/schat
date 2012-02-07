@@ -71,6 +71,8 @@ protected:
   virtual void newUserChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host, bool created);
   virtual void removeImpl(ChatChannel channel);
 
+  void addNewUserFeedIsNotExist(ChatChannel channel, const QString &name);
+
   Cache m_cache;      ///< Кеш хранилища.
 
 private:

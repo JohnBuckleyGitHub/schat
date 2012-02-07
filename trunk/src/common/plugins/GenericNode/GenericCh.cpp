@@ -58,19 +58,3 @@ void GenericCh::newUserChannelImpl(ChatChannel channel, const AuthRequest &data,
 
   NodeLinksFeed::add(channel, data, host);
 }
-
-
-/*!
- * Создание при необходимости пользовательского фида.
- */
-void GenericCh::addNewUserFeedIsNotExist(ChatChannel channel, const QString &name)
-{
-  FeedPtr feed = channel->feed(name, false);
-  if (feed)
-    return;
-
-  feed = channel->feed(name, true, false);
-  feed->head().acl().add(channel->id());
-
-  FeedStorage::save(feed);
-}

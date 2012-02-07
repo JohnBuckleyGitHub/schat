@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,24 +16,30 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MESSAGELOGPLUGIN_H_
-#define MESSAGELOGPLUGIN_H_
+#include "DateTime.h"
+#include "feeds/NodeHistoryFeed.h"
 
-#include "CoreApi.h"
-#include "NodeApi.h"
-
-class NodePlugin;
-
-class MessageLogPlugin : public QObject, CoreApi, NodeApi
+NodeHistoryFeed::NodeHistoryFeed(const QString &name, const QVariantMap &data)
+  : Feed(name, data)
 {
-  Q_OBJECT
-  Q_INTERFACES(CoreApi NodeApi)
+  m_header.acl().setMask(0444);
+}
 
-public:
-  NodePlugin *init(Core *core);
-  QString id() const { return QLatin1String("MessageLog"); }
-  QString name() const { return QLatin1String("Message Log"); }
-  QString version() const { return QLatin1String("1.1.0"); }
-};
 
-#endif /* MESSAGELOGPLUGIN_H_ */
+NodeHistoryFeed::NodeHistoryFeed(const QString &name, qint64 date)
+  : Feed(name, date)
+{
+  m_header.acl().setMask(0444);
+}
+
+
+Feed* NodeHistoryFeed::create(const QString &name)
+{
+  return new NodeHistoryFeed(name, DateTime::utc());
+}
+
+
+Feed* NodeHistoryFeed::load(const QString &name, const QVariantMap &data)
+{
+  return new NodeHistoryFeed(name, data);
+}

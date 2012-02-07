@@ -19,6 +19,8 @@
 #include <QtPlugin>
 
 #include "cores/Core.h"
+#include "feeds/FeedStorage.h"
+#include "feeds/NodeHistoryFeed.h"
 #include "MessagesPlugin.h"
 #include "MessagesPlugin_p.h"
 #include "NodeMessages.h"
@@ -28,6 +30,7 @@ NodeMessagesBase::NodeMessagesBase(QObject *parent)
   : NodePlugin(parent)
 {
   new NodeMessages(Core::i());
+  FeedStorage::add(new NodeHistoryFeed());
 
   NodeMessagesDB::open();
 }
