@@ -19,12 +19,14 @@ SCHAT_DAEMON_LIB = 1
 QT = core network sql
 
 HEADERS  = \
+   feeds/NodeHistoryFeed.h \
    MessagesPlugin.h \
    MessagesPlugin_p.h \
    NodeMessages.h \
    NodeMessagesDB.h \
 
 SOURCES  = \
+   feeds/NodeHistoryFeed.cpp \
    MessagesPlugin.cpp \
    NodeMessages.cpp \
    NodeMessagesDB.cpp \

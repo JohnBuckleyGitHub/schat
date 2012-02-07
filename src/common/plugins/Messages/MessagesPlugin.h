@@ -37,7 +37,7 @@ public:
     out["Type"]     = "server";
     out["Site"]     = "http://wiki.schat.me/Plugin/Messages";
     out["Desc"]     = "Server Messages Support";
-    out["Required"] = "1.99.10";
+    out["Required"] = "1.99.11";
 
     return out;
   }
