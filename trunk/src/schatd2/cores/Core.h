@@ -44,6 +44,7 @@ public:
   Core(QObject *parent = 0);
   ~Core();
   inline static Core *i() { return m_self; }
+  static qint64 date();
 
   // Функции отправки пакетов.
   bool route();

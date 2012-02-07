@@ -21,12 +21,15 @@
 
 #include <QString>
 
+class MessageNotice;
+
 class NodeMessagesDB
 {
   NodeMessagesDB();
 
 public:
   static bool open();
+  static void add(const MessageNotice &packet, int status = 200);
 
 private:
   static bool m_isOpen; ///< true если база открыта.

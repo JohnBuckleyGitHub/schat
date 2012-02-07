@@ -66,6 +66,18 @@ Core::~Core()
 
 
 /*!
+ * Возвращает и при необходимости устанавливает отметку времени для следующего отправленного пакета.
+ */
+qint64 Core::date()
+{
+  if (m_self->m_timestamp == 0)
+    m_self->m_timestamp = DateTime::utc();
+
+  return m_self->m_timestamp;
+}
+
+
+/*!
  * Маршрутизация входящих пакетов.
  */
 bool Core::route()
