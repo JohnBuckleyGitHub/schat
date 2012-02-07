@@ -21,7 +21,7 @@
 
 #include "NodeNoticeReader.h"
 
-class MessagePacket;
+class MessageNotice;
 
 class NodeMessages : public NodeNoticeReader
 {
@@ -31,7 +31,12 @@ public:
 protected:
   bool read(PacketReader *reader);
 
-  MessagePacket *m_packet;
+private:
+  void reject(int status);
+
+  MessageNotice *m_packet; ///< Прочитанный пакет.
+  ChatChannel m_dest;      ///< Канал получателя.
+  ChatChannel m_sender;    ///< Канал отправителя.
 };
 
 #endif /* NODEMESSAGES_H_ */
