@@ -16,27 +16,21 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#ifndef NODEMESSAGESDB_H_
+#define NODEMESSAGESDB_H_
 
-#include "cores/Core.h"
-#include "MessagesPlugin.h"
-#include "MessagesPlugin_p.h"
-#include "NodeMessages.h"
-#include "NodeMessagesDB.h"
+#include <QString>
 
-NodeMessagesBase::NodeMessagesBase(QObject *parent)
-  : NodePlugin(parent)
+class NodeMessagesDB
 {
-  new NodeMessages(Core::i());
+  NodeMessagesDB();
 
-  NodeMessagesDB::open();
-}
+public:
+  static bool open();
 
+private:
+  static bool m_isOpen; ///< true если база открыта.
+  static QString m_id;  ///< Идентификатор сооединения с базой, это строка всегда равна "messages".
+};
 
-NodePlugin *MessagesPlugin::create()
-{
-  m_plugin = new NodeMessagesBase(this);
-  return m_plugin;
-}
-
-Q_EXPORT_PLUGIN2(Messages, MessagesPlugin);
+#endif /* NODEMESSAGESDB_H_ */

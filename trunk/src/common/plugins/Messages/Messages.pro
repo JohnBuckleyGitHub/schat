@@ -22,10 +22,12 @@ HEADERS  = \
    MessagesPlugin.h \
    MessagesPlugin_p.h \
    NodeMessages.h \
+   NodeMessagesDB.h \
 
 SOURCES  = \
    MessagesPlugin.cpp \
    NodeMessages.cpp \
+   NodeMessagesDB.cpp \
 
 unix {
   target.path += $$SCHAT_PREFIX/usr/share/schatd2/plugins
