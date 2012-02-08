@@ -259,6 +259,30 @@ void Ch::removeImpl(ChatChannel channel)
 
 
 /*!
+ * Создание при необходимости фида в обычном канале.
+ *
+ * \param channel Обычный канал.
+ * \param user    Пользователь.
+ * \param name    Имя фида.
+ */
+void Ch::addNewFeedIsNotExist(ChatChannel channel, ChatChannel user, const QString &name)
+{
+  if (channel->type() != SimpleID::ChannelId)
+    return;
+
+  FeedPtr feed = channel->feed(name, false);
+  if (feed)
+    return;
+
+  feed = channel->feed(name, true, false);
+  if (user)
+    feed->head().acl().add(user->id());
+
+  FeedStorage::save(feed);
+}
+
+
+/*!
  * Создание при необходимости пользовательского фида.
  *
  * \param channel Канал-пользователь.

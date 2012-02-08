@@ -32,12 +32,7 @@ GenericCh::GenericCh(QObject *parent)
 void GenericCh::newChannelImpl(ChatChannel channel, ChatChannel user)
 {
   if (channel->type() == SimpleID::ChannelId) {
-    FeedPtr acl = channel->feed(LS("acl"), true, false);
-    if (user)
-      acl->head().acl().add(user->id());
-
-    FeedStorage::save(acl);
-
+    addNewFeedIsNotExist(channel, user, LS("acl"));
     channel->feed(LS("topic"));
   }
   else if (channel->type() == SimpleID::ServerId) {
