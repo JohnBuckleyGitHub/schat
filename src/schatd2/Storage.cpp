@@ -58,7 +58,6 @@ Storage::Storage(QObject *parent)
   m_settings->setDefault("Certificate",  QLatin1String("server.crt"));
   m_settings->setDefault("Listen",       QStringList("0.0.0.0:7667"));
   m_settings->setDefault("LogLevel",     2);
-  m_settings->setDefault("MainChannel",  2);
   m_settings->setDefault("MaxOpenFiles", 0);
   m_settings->setDefault("PrivateId",    QString(SimpleID::encode(SimpleID::uniqueId())));
   m_settings->setDefault("PrivateKey",   QLatin1String("server.key"));
