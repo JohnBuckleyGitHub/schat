@@ -87,9 +87,13 @@ bool Ch::isCollision(const QByteArray &id, const QString &name)
  */
 ChatChannel Ch::channel(const QByteArray &id, int type, bool db)
 {
+  if (type == SimpleID::ServerId)
+    return server();
+
   ChatChannel channel = m_self->channelImpl(id, type, db);
-  if (channel)
-    qDebug() << " ++++++++++ " << channel->name() << channel->isSynced();
+  if (channel && channel->type() == SimpleID::ChannelId && !channel->isSynced())
+    m_self->channelImpl(channel);
+
   return channel;
 }
 
@@ -97,8 +101,8 @@ ChatChannel Ch::channel(const QByteArray &id, int type, bool db)
 ChatChannel Ch::channel(const QString &name, ChatChannel user)
 {
   ChatChannel channel = m_self->channelImpl(name, user);
-  if (channel)
-    qDebug() << " ~~~~~~~~~~ " << channel->name() << channel->isSynced();
+  if (channel && channel->type() == SimpleID::ChannelId && !channel->isSynced())
+    m_self->channelImpl(channel, user);
 
   return channel;
 }
@@ -225,6 +229,19 @@ ChatChannel Ch::channelImpl(const QString &name, ChatChannel user)
 }
 
 
+void Ch::channelImpl(ChatChannel channel, ChatChannel user)
+{
+  if (m_self != this)
+    return;
+
+  foreach (Ch *hook, m_hooks) {
+    hook->channelImpl(channel, user);
+  }
+
+  channel->setSynced(true);
+}
+
+
 /*!
  * Загрузка основных каналов сервера.
  */
@@ -256,8 +273,6 @@ void Ch::newChannelImpl(ChatChannel channel, ChatChannel user)
   foreach (Ch *hook, m_hooks) {
     hook->newChannelImpl(channel, user);
   }
-
-  channel->setSynced(true);
 }
 
 
@@ -325,10 +340,10 @@ void Ch::serverImpl(ChatChannel channel, bool created)
  * Создание при необходимости фида в обычном канале.
  *
  * \param channel Обычный канал.
- * \param user    Пользователь.
  * \param name    Имя фида.
+ * \param user    Пользователь.
  */
-void Ch::addNewFeedIsNotExist(ChatChannel channel, ChatChannel user, const QString &name)
+void Ch::addNewFeedIsNotExist(ChatChannel channel, const QString &name, ChatChannel user)
 {
   if (channel->type() != SimpleID::ChannelId)
     return;

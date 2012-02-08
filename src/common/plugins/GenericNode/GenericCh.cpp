@@ -21,20 +21,21 @@
 #include "sglobal.h"
 #include "feeds/NodeLinksFeed.h"
 
-#include "JSON.h"
-
 GenericCh::GenericCh(QObject *parent)
   : Ch(parent)
 {
 }
 
 
+void GenericCh::channelImpl(ChatChannel channel, ChatChannel /*user*/)
+{
+  channel->feed(LS("topic"));
+}
+
+
 void GenericCh::newChannelImpl(ChatChannel channel, ChatChannel user)
 {
-  if (channel->type() == SimpleID::ChannelId) {
-    addNewFeedIsNotExist(channel, user, LS("acl"));
-    channel->feed(LS("topic"));
-  }
+  addNewFeedIsNotExist(channel, LS("acl"), user);
 }
 
 

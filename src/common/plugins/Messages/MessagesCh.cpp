@@ -25,9 +25,15 @@ MessagesCh::MessagesCh(QObject *parent)
 }
 
 
+void MessagesCh::channelImpl(ChatChannel channel, ChatChannel /*user*/)
+{
+  addNewFeedIsNotExist(channel, LS("history"));
+}
+
+
 void MessagesCh::newChannelImpl(ChatChannel channel, ChatChannel user)
 {
-//  addNewFeedIsNotExist(channel, user, LS("history"));
+  addNewFeedIsNotExist(channel, LS("history"), user);
 }
 
 
