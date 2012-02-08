@@ -16,32 +16,21 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#ifndef MESSAGESCH_H_
+#define MESSAGESCH_H_
 
-#include "cores/Core.h"
-#include "feeds/FeedStorage.h"
-#include "feeds/NodeHistoryFeed.h"
-#include "MessagesCh.h"
-#include "MessagesPlugin.h"
-#include "MessagesPlugin_p.h"
-#include "NodeMessages.h"
-#include "NodeMessagesDB.h"
+#include "Ch.h"
 
-NodeMessagesBase::NodeMessagesBase(QObject *parent)
-  : NodePlugin(parent)
+class MessagesCh : public Ch
 {
-  new NodeMessages(Core::i());
-  new MessagesCh(this);
-  FeedStorage::add(new NodeHistoryFeed());
+  Q_OBJECT
 
-  NodeMessagesDB::open();
-}
+public:
+  MessagesCh(QObject *parent = 0);
 
+protected:
+  void newChannelImpl(ChatChannel channel, ChatChannel user = ChatChannel());
+  void newUserChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host, bool created);
+};
 
-NodePlugin *MessagesPlugin::create()
-{
-  m_plugin = new NodeMessagesBase(this);
-  return m_plugin;
-}
-
-Q_EXPORT_PLUGIN2(Messages, MessagesPlugin);
+#endif /* MESSAGESCH_H_ */

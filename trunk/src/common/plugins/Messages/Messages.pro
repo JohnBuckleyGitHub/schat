@@ -20,6 +20,7 @@ QT = core network sql
 
 HEADERS  = \
    feeds/NodeHistoryFeed.h \
+   MessagesCh.h \
    MessagesPlugin.h \
    MessagesPlugin_p.h \
    NodeMessages.h \
@@ -27,6 +28,7 @@ HEADERS  = \
 
 SOURCES  = \
    feeds/NodeHistoryFeed.cpp \
+   MessagesCh.cpp \
    MessagesPlugin.cpp \
    NodeMessages.cpp \
    NodeMessagesDB.cpp \

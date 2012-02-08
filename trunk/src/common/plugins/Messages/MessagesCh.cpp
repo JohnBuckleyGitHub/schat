@@ -16,32 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
-
-#include "cores/Core.h"
-#include "feeds/FeedStorage.h"
-#include "feeds/NodeHistoryFeed.h"
 #include "MessagesCh.h"
-#include "MessagesPlugin.h"
-#include "MessagesPlugin_p.h"
-#include "NodeMessages.h"
-#include "NodeMessagesDB.h"
+#include "sglobal.h"
 
-NodeMessagesBase::NodeMessagesBase(QObject *parent)
-  : NodePlugin(parent)
+MessagesCh::MessagesCh(QObject *parent)
+  : Ch(parent)
 {
-  new NodeMessages(Core::i());
-  new MessagesCh(this);
-  FeedStorage::add(new NodeHistoryFeed());
-
-  NodeMessagesDB::open();
 }
 
 
-NodePlugin *MessagesPlugin::create()
+void MessagesCh::newChannelImpl(ChatChannel channel, ChatChannel user)
 {
-  m_plugin = new NodeMessagesBase(this);
-  return m_plugin;
+  addNewFeedIsNotExist(channel, user, LS("history"));
 }
 
-Q_EXPORT_PLUGIN2(Messages, MessagesPlugin);
+
+void MessagesCh::newUserChannelImpl(ChatChannel channel, const AuthRequest & /*data*/, const QString & /*host*/, bool /*created*/)
+{
+  addNewUserFeedIsNotExist(channel, LS("history"));
+}
