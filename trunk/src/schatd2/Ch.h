@@ -68,6 +68,7 @@ protected:
   virtual ChatChannel channelImpl(const QString &name, ChatChannel user);
 
   // Хуки.
+  virtual void channelImpl(ChatChannel channel, ChatChannel user = ChatChannel());
   virtual void loadImpl();
   virtual void newChannelImpl(ChatChannel channel, ChatChannel user = ChatChannel());
   virtual void removeImpl(ChatChannel channel);
@@ -75,7 +76,7 @@ protected:
   virtual void userChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host, bool created);
 
   // Служебные функции.
-  void addNewFeedIsNotExist(ChatChannel channel, ChatChannel user, const QString &name);
+  void addNewFeedIsNotExist(ChatChannel channel, const QString &name, ChatChannel user = ChatChannel());
   void addNewUserFeedIsNotExist(ChatChannel channel, const QString &name);
 
   Cache m_cache;      ///< Кеш хранилища.
