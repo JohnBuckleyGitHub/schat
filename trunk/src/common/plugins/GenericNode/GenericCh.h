@@ -30,7 +30,8 @@ public:
 
 protected:
   void newChannelImpl(ChatChannel channel, ChatChannel user = ChatChannel());
-  void newUserChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host, bool created);
+  void serverImpl(ChatChannel channel, bool created);
+  void userChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host, bool created);
 };
 
 #endif /* GENERICCH_H_ */

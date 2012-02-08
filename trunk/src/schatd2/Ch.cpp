@@ -25,6 +25,7 @@
 #include "net/packets/Notice.h"
 #include "Normalize.h"
 #include "Settings.h"
+#include "sglobal.h"
 #include "Storage.h"
 
 Ch *Ch::m_self = 0;
@@ -81,14 +82,44 @@ bool Ch::isCollision(const QByteArray &id, const QString &name)
 }
 
 
+/*!
+ * Получение канала по идентификатору.
+ */
+ChatChannel Ch::channel(const QByteArray &id, int type, bool db)
+{
+  ChatChannel channel = m_self->channelImpl(id, type, db);
+  if (channel)
+    qDebug() << " ++++++++++ " << channel->name() << channel->isSynced();
+  return channel;
+}
+
+
+ChatChannel Ch::channel(const QString &name, ChatChannel user)
+{
+  ChatChannel channel = m_self->channelImpl(name, user);
+  if (channel)
+    qDebug() << " ~~~~~~~~~~ " << channel->name() << channel->isSynced();
+
+  return channel;
+}
+
+
+/*!
+ * Получение канала сервера.
+ */
 ChatChannel Ch::server()
 {
-  ChatChannel server = channel(Storage::serverId(), SimpleID::ServerId);
+  ChatChannel server = m_self->channelImpl(Storage::serverId(), SimpleID::ServerId);
+  bool created = false;
+
   if (!server) {
     server = ChatChannel(new ServerChannel(Storage::serverId(), QString()));
     add(server);
-    m_self->newChannelImpl(server);
+    created = true;
   }
+
+  if (!server->isSynced())
+    m_self->serverImpl(server, created);
 
   return server;
 }
@@ -179,10 +210,10 @@ ChatChannel Ch::channelImpl(const QString &name, ChatChannel user)
   if (m_self != this)
     return ChatChannel();
 
-  QByteArray normalized = Normalize::toId('#' + name);
-  ChatChannel channel = this->channel(normalized);
+  QByteArray normalized = Normalize::toId(LC('#') + name);
+  ChatChannel channel = channelImpl(normalized);
   if (!channel)
-    channel = this->channel(makeId(normalized));
+    channel = channelImpl(makeId(normalized));
 
   if (!channel) {
     channel = ChatChannel(new ServerChannel(makeId(normalized), name));
@@ -203,15 +234,7 @@ void Ch::loadImpl()
     return;
 
   Ch::server();
-  Ch::channel(QString("Main"));
-
-  qint64 key = Storage::settings()->value("MainChannel").toLongLong();
-  if (key > 0) {
-    ChatChannel channel = DataBase::channel(key);
-//    if (channel) {
-//      Storage::serverData()->setChannelId(channel->id());
-//    }
-  }
+  Ch::channel(QString(LS("Main")));
 
   foreach (Ch *hook, m_hooks) {
     hook->loadImpl();
@@ -219,6 +242,12 @@ void Ch::loadImpl()
 }
 
 
+/*!
+ * Создание нового обычного канала.
+ *
+ * \param channel Созданный канал.
+ * \param user    Пользователь создавший канал, если есть такой.
+ */
 void Ch::newChannelImpl(ChatChannel channel, ChatChannel user)
 {
   if (m_self != this)
@@ -227,22 +256,37 @@ void Ch::newChannelImpl(ChatChannel channel, ChatChannel user)
   foreach (Ch *hook, m_hooks) {
     hook->newChannelImpl(channel, user);
   }
+
+  channel->setSynced(true);
 }
 
 
-void Ch::newUserChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host, bool created)
+/*!
+ * Создание нового или успешная авторизация существующего пользователя.
+ *
+ * \param channel Канал-пользователь.
+ * \param data    Авторизационные данные.
+ * \param host    Адрес пользователя.
+ * \param created \b true если пользователь был создан.
+ */
+void Ch::userChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host, bool created)
 {
   if (m_self != this)
     return;
 
   foreach (Ch *hook, m_hooks) {
-    hook->newUserChannelImpl(channel, data, host, created);
+    hook->userChannelImpl(channel, data, host, created);
   }
+
+  channel->setSynced(true);
 }
 
 
 /*!
  * Удаление канала.
+ *
+ * Сначала происходит обновление базы данных, затем канал удаляется из кеша.
+ * После этого вызываются хуки.
  */
 void Ch::removeImpl(ChatChannel channel)
 {
@@ -255,6 +299,25 @@ void Ch::removeImpl(ChatChannel channel)
   foreach (Ch *hook, m_hooks) {
     hook->removeImpl(channel);
   }
+}
+
+
+/*!
+ * Инициализация серверного канала.
+ *
+ * \param channel Канал сервера.
+ * \param created \b true если канал был создан, фактически это происходит только при первом запуске сервера.
+ */
+void Ch::serverImpl(ChatChannel channel, bool created)
+{
+  if (m_self != this)
+    return;
+
+  foreach (Ch *hook, m_hooks) {
+    hook->serverImpl(channel, created);
+  }
+
+  channel->setSynced(true);
 }
 
 

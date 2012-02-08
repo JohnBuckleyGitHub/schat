@@ -27,11 +27,11 @@ MessagesCh::MessagesCh(QObject *parent)
 
 void MessagesCh::newChannelImpl(ChatChannel channel, ChatChannel user)
 {
-  addNewFeedIsNotExist(channel, user, LS("history"));
+//  addNewFeedIsNotExist(channel, user, LS("history"));
 }
 
 
-void MessagesCh::newUserChannelImpl(ChatChannel channel, const AuthRequest & /*data*/, const QString & /*host*/, bool /*created*/)
+void MessagesCh::userChannelImpl(ChatChannel channel, const AuthRequest & /*data*/, const QString & /*host*/, bool /*created*/)
 {
   addNewUserFeedIsNotExist(channel, LS("history"));
 }

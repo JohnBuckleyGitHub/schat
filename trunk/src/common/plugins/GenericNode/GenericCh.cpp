@@ -35,13 +35,16 @@ void GenericCh::newChannelImpl(ChatChannel channel, ChatChannel user)
     addNewFeedIsNotExist(channel, user, LS("acl"));
     channel->feed(LS("topic"));
   }
-  else if (channel->type() == SimpleID::ServerId) {
-    channel->feed(LS("acl"));
-  }
 }
 
 
-void GenericCh::newUserChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host, bool /*created*/)
+void GenericCh::serverImpl(ChatChannel channel, bool /*created*/)
+{
+  channel->feed(LS("acl"));
+}
+
+
+void GenericCh::userChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host, bool /*created*/)
 {
   if (!channel->account())
     channel->createAccount();
