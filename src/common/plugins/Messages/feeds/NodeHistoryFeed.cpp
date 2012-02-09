@@ -18,6 +18,7 @@
 
 #include "DateTime.h"
 #include "feeds/NodeHistoryFeed.h"
+#include "net/packets/Notice.h"
 
 NodeHistoryFeed::NodeHistoryFeed(const QString &name, const QVariantMap &data)
   : Feed(name, data)
@@ -42,4 +43,10 @@ Feed* NodeHistoryFeed::create(const QString &name)
 Feed* NodeHistoryFeed::load(const QString &name, const QVariantMap &data)
 {
   return new NodeHistoryFeed(name, data);
+}
+
+
+FeedQueryReply NodeHistoryFeed::query(const QVariantMap &json, Channel *channel)
+{
+  return FeedQueryReply(Notice::Forbidden);
 }
