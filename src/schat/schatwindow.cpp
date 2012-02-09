@@ -1052,6 +1052,11 @@ void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
   switch (reason) {
     case QSystemTrayIcon::Trigger:
     case QSystemTrayIcon::MiddleClick:
+      if (isHidden() || isMinimized()) {
+        d->showChat();
+        return;
+      }
+
       if (isActiveWindow() || qAbs(d->activationChanged.msecsTo(QTime::currentTime())) < QApplication::doubleClickInterval())
         d->hideChat();
       else
