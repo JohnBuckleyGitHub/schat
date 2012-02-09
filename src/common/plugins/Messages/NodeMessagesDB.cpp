@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include <QSqlDatabase>
 #include <QSqlQuery>
 
@@ -59,6 +61,33 @@ bool NodeMessagesDB::open()
 
   m_isOpen = true;
   return true;
+}
+
+
+QVariantList NodeMessagesDB::last(const QByteArray &channel, int limit)
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.prepare(LS("SELECT id, messageId, senderId, status, date, text FROM messages WHERE destId = :destId ORDER BY id DESC LIMIT ") + QString::number(limit) + LS(";"));
+  query.bindValue(LS(":destId"), channel);
+  query.exec();
+
+  if (!query.isActive())
+    return QVariantList();
+
+  QVariantList out;
+
+  while (query.next()) {
+    QVariantList data;
+    data.append(query.value(1)); // 0 messageId
+    data.append(query.value(2)); // 1 senderId
+    data.append(channel);        // 2 destId
+    data.append(query.value(3)); // 3 status
+    data.append(query.value(4)); // 4 date
+    data.append(query.value(5)); // 5 text
+    out.push_front(data);
+  }
+
+  return out;
 }
 
 

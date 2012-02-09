@@ -16,9 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
+#include "Channel.h"
+#include "cores/Core.h"
 #include "DateTime.h"
 #include "feeds/NodeHistoryFeed.h"
+#include "net/packets/MessageNotice.h"
 #include "net/packets/Notice.h"
+#include "net/SimpleID.h"
+#include "NodeMessagesDB.h"
+#include "sglobal.h"
 
 NodeHistoryFeed::NodeHistoryFeed(const QString &name, const QVariantMap &data)
   : Feed(name, data)
@@ -46,7 +54,57 @@ Feed* NodeHistoryFeed::load(const QString &name, const QVariantMap &data)
 }
 
 
-FeedQueryReply NodeHistoryFeed::query(const QVariantMap &json, Channel *channel)
+FeedQueryReply NodeHistoryFeed::query(const QVariantMap &json, Channel * /*channel*/)
 {
-  return FeedQueryReply(Notice::Forbidden);
+  QString action = json.value(LS("action")).toString();
+  if (action.isEmpty())
+    return FeedQueryReply(Notice::BadRequest);
+
+  if (action == LS("last"))
+    return last(json);
+
+  return FeedQueryReply(Notice::NotImplemented);
+}
+
+
+void NodeHistoryFeed::setChannel(Channel *channel)
+{
+  Feed::setChannel(channel);
+
+  if (channel->type() == SimpleID::UserId)
+    head().acl().setMask(0400);
+}
+
+
+
+FeedQueryReply NodeHistoryFeed::last(const QVariantMap &json)
+{
+  int count = json.value(LS("count")).toInt();
+  if (count <= 0)
+    return FeedQueryReply(Notice::BadRequest);
+
+  QVariantList data = NodeMessagesDB::last(head().channel()->id(), count);
+  if (data.isEmpty())
+    return FeedQueryReply(Notice::NotFound);
+
+  QList<QByteArray> packets;
+
+  for (int i = 0; i < data.size(); ++i) {
+    QVariantList msg = data.at(i).toList();
+    if (msg.isEmpty())
+      continue;
+
+    MessageNotice packet(msg.value(1).toByteArray(), msg.value(2).toByteArray(), msg.value(5).toString(), msg.value(4).toLongLong(), msg.value(0).toByteArray());
+    packet.setStatus(msg.value(3).toInt());
+    packets.append(packet.data(Core::stream()));
+  }
+
+  if (packets.isEmpty())
+    return FeedQueryReply(Notice::InternalError);
+
+  Core::i()->send(QList<quint64>() << Core::socket(), packets);
+  FeedQueryReply reply     = FeedQueryReply(Notice::OK);
+  reply.json[LS("action")] = LS("last");
+  reply.json[LS("count")]  = packets.size();
+  return reply;
 }
