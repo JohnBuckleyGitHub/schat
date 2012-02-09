@@ -170,6 +170,11 @@ void ChatWindow::notify(const Notify &notify)
     closeChat();
   }
   else if (notify.type() == Notify::ToggleVisibility) {
+    if (isHidden() || isMinimized()) {
+      showChat();
+      return;
+    }
+
     if (isActiveWindow() || qAbs(m_activationChanged.msecsTo(QTime::currentTime())) < QApplication::doubleClickInterval())
       hideChat();
     else

@@ -28,6 +28,8 @@ public:
   NodeHistoryFeed(const QString &name = QLatin1String("history"), qint64 date = 0);
   Feed* create(const QString &name);
   Feed* load(const QString &name, const QVariantMap &data);
+
+  FeedQueryReply query(const QVariantMap &json, Channel *channel = 0);
 };
 
 #endif /* NODEHISTORYFEED_H_ */
