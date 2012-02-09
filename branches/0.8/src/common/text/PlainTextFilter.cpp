@@ -37,8 +37,10 @@ QString PlainTextFilter::filter(const QString &text)
       break;
 
     gt = out.indexOf(QLatin1Char('>'), lt);
-    if (gt == -1)
-      gt = out.size() - lt;
+    if (gt == -1) {
+      out.remove(lt, out.size() - lt);
+      break;
+    }
 
     out.remove(lt, gt - lt + 1);
   }
