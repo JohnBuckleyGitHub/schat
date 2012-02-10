@@ -22,7 +22,6 @@
 RawFeedsChatView::RawFeedsChatView(QObject *parent)
   : ChatViewHooks(parent)
 {
-  add(this);
 }
 
 

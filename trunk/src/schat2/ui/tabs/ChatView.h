@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -33,6 +33,9 @@ class SCHAT_CORE_EXPORT ChatView : public QWebView
 
 public:
   ChatView(const QByteArray &id, const QString &url, QWidget *parent = 0);
+  ~ChatView();
+
+  inline const QByteArray& id() const { return m_id; }
   void add(const Message &message);
   void copy();
   void evaluateJavaScript(const QString &func, const QVariant &param);
@@ -52,6 +55,7 @@ private slots:
   void openUrl(const QUrl &url);
   void populateJavaScriptWindowObject();
   void settingsChanged(const QString &key, const QVariant &value);
+  void start();
 
 private:
   QVariantMap addHint(const Message &message);

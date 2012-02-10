@@ -16,42 +16,26 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
+#ifndef HISTORYCHATVIEW_H_
+#define HISTORYCHATVIEW_H_
 
-#include <QTime>
-#include <QtPlugin>
+#include "hooks/ChatViewHooks.h"
 
-#include "ChatCore.h"
-#include "client/ChatClient.h"
-#include "HistoryChatView.h"
-#include "HistoryDB.h"
-#include "HistoryPlugin.h"
-#include "HistoryPlugin_p.h"
-#include "NetworkManager.h"
-#include "ui/tabs/PrivateTab.h"
-
-History::History(QObject *parent)
-  : ChatPlugin(parent)
+class HistoryChatView : public ChatViewHooks
 {
-  new HistoryChatView(this);
+  Q_OBJECT
 
-  m_db = new HistoryDB(this);
-  openDb();
-}
+public:
+  HistoryChatView(QObject *parent = 0);
 
+protected:
+  void addImpl(ChatView *view);
 
-void History::openDb()
-{
-  QByteArray id = ChatClient::serverId();
-  if (!id.isEmpty())
-    m_db->open(id, ChatCore::networks()->root(id));
-}
+private slots:
+  void online();
 
+private:
+  void getLast(const QByteArray &id);
+};
 
-ChatPlugin *HistoryPlugin::create()
-{
-  m_plugin = new History(this);
-  return m_plugin;
-}
-
-Q_EXPORT_PLUGIN2(History, HistoryPlugin);
+#endif /* HISTORYCHATVIEW_H_ */
