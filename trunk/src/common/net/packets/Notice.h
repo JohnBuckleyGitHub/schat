@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -52,6 +52,7 @@ public:
   ///< Коды состояния.
   enum StatusCodes {
     OK                  = 200, ///< OK.
+    Found               = 300, ///< Found
     BadRequest          = 400, ///< Bad Request.
     Unauthorized        = 401, ///< Unauthorized.
     Forbidden           = 402, ///< Forbidden.

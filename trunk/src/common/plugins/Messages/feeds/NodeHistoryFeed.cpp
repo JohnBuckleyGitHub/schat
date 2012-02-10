@@ -95,14 +95,19 @@ FeedQueryReply NodeHistoryFeed::last(const QVariantMap &json)
       continue;
 
     MessageNotice packet(msg.value(1).toByteArray(), msg.value(2).toByteArray(), msg.value(5).toString(), msg.value(4).toLongLong(), msg.value(0).toByteArray());
-    packet.setStatus(msg.value(3).toInt());
+    int status = msg.value(3).toInt();
+    if (status == Notice::OK)
+      status = Notice::Found;
+
+    packet.setStatus(status);
     packets.append(packet.data(Core::stream()));
   }
 
   if (packets.isEmpty())
     return FeedQueryReply(Notice::InternalError);
 
-  Core::i()->send(QList<quint64>() << Core::socket(), packets);
+  Core::send(packets);
+
   FeedQueryReply reply     = FeedQueryReply(Notice::OK);
   reply.json[LS("action")] = LS("last");
   reply.json[LS("count")]  = packets.size();

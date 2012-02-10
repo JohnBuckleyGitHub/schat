@@ -20,19 +20,32 @@
 #include "messages/ChannelMessage.h"
 #include "net/packets/MessageNotice.h"
 #include "net/SimpleID.h"
+#include "sglobal.h"
 #include "text/TokenFilter.h"
 
 ChannelMessage::ChannelMessage(MessagePacket packet)
   : Message()
   , m_packet(packet)
 {
-  m_data["Type"]      = "channel";
-  m_data["Id"]        = SimpleID::encode(packet->id());
-  m_data["Command"]   = packet->command();
-  m_data["Text"]      = TokenFilter::filter("channel", packet->text());
-  m_data["Direction"] = m_packet->sender() == ChatClient::id() ? "outgoing" : "incoming";
-  m_data["Date"]      = m_packet->date();
-//  m_data["Day"]       = true; // true включает отображение полного времени.
+  m_data[LS("Type")]      = LS("channel");
+  m_data[LS("Id")]        = SimpleID::encode(packet->id());
+  m_data[LS("Command")]   = packet->command();
+  m_data[LS("Text")]      = TokenFilter::filter(LS("channel"), packet->text());
+  m_data[LS("Direction")] = m_packet->sender() == ChatClient::id() ? LS("outgoing") : LS("incoming");
+  m_data[LS("Date")]      = m_packet->date();
+
+  /// Если это собственное сообщение, то для него при необходимости устанавливается
+  /// статус "offline" или "rejected".
+  int status = packet->status();
+  if (packet->sender() == ChatClient::id()) {
+    if (status == Notice::ChannelOffline)
+      m_data[LS("Status")] = LS("offline");
+    else if (status != Notice::OK && status != Notice::Found)
+      m_data[LS("Status")] = LS("rejected");
+  }
+
+  if (status == Notice::Found)
+    m_data["Day"] = true;
 
   author(m_packet->sender());
 

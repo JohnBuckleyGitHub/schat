@@ -121,7 +121,8 @@ void ClientMessages::notice(int type)
   if (!m_packet->isValid())
     return;
 
-  m_packet->setDate(ChatClient::date());
+  if (m_packet->status() != Notice::Found)
+    m_packet->setDate(ChatClient::date());
 
   /// В случае если отправитель сообщения неизвестен клиенту, то будет произведён вход в канал
   /// этого пользователя для получения информации о нём, само сообщения будет добавлено в очередь

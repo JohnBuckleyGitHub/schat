@@ -24,6 +24,7 @@
 #include "hooks/MessagesImpl.h"
 #include "messages/ChannelMessage.h"
 #include "net/packets/MessageNotice.h"
+#include "sglobal.h"
 #include "text/LinksFilter.h"
 #include "text/UrlFilter.h"
 #include "ui/TabWidget.h"
@@ -36,8 +37,8 @@ MessagesImpl::MessagesImpl(QObject *parent)
 {
   ChatClient::messages()->hooks()->add(this);
 
-  TokenFilter::add("channel", new LinksFilter());
-  TokenFilter::add("channel", new UrlFilter());
+  TokenFilter::add(LS("channel"), new LinksFilter());
+  TokenFilter::add(LS("channel"), new UrlFilter());
 
   connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
 }
@@ -49,15 +50,6 @@ MessagesImpl::MessagesImpl(QObject *parent)
 void MessagesImpl::readText(MessagePacket packet)
 {
   ChannelMessage message(packet);
-
-  /// Если это собственное сообщение, то для него при необходимости устанавливается
-  /// статус "offline" или "rejected".
-  if (packet->sender() == ChatClient::id()) {
-    if (packet->status() == Notice::ChannelOffline)
-      message.data()["Status"] = "offline";
-    else if (packet->status() != Notice::OK)
-      message.data()["Status"] = "rejected";
-  }
 
   if (TabWidget::i())
     TabWidget::i()->add(message);
@@ -79,7 +71,7 @@ void MessagesImpl::readText(MessagePacket packet)
 void MessagesImpl::sendText(MessagePacket packet)
 {
   ChannelMessage message(packet);
-  message.data()["Status"] = "undelivered";
+  message.data()[LS("Status")] = LS("undelivered");
 
   m_undelivered[packet->id()] = packet;
 
@@ -102,7 +94,7 @@ void MessagesImpl::clientStateChanged(int state, int previousState)
     while (i.hasNext()) {
       i.next();
       ChannelMessage message(i.value());
-      message.data()["Status"] = "rejected";
+      message.data()[LS("Status")] = LS("rejected");
 
       if (TabWidget::i())
         TabWidget::i()->add(message);

@@ -146,9 +146,27 @@ bool Core::send(const QList<quint64> &sockets, Packet packet, int option, const 
 /*!
  * Отправка пакета текущему сокету.
  */
+bool Core::send(const QByteArray &packet)
+{
+  return i()->send(QList<quint64>() << socket(), packet);
+}
+
+
+/*!
+ * Отправка пакетов текущему сокету.
+ */
+bool Core::send(const QList<QByteArray> &packets)
+{
+  return i()->send(QList<quint64>() << socket(), packets);
+}
+
+
+/*!
+ * Отправка пакета текущему сокету.
+ */
 bool Core::send(Packet packet)
 {
-  return send(QList<quint64>() << m_socket, packet->data(m_sendStream));
+  return i()->send(QList<quint64>() << socket(), packet->data(stream()));
 }
 
 
