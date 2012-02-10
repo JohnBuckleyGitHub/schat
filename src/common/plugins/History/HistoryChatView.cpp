@@ -27,7 +27,7 @@
 HistoryChatView::HistoryChatView(QObject *parent)
   : ChatViewHooks(parent)
 {
-  connect(ChatClient::i(), SIGNAL(online()), SLOT(online()));
+  connect(ChatClient::io(), SIGNAL(ready()), SLOT(ready()));
 }
 
 
@@ -38,11 +38,11 @@ void HistoryChatView::addImpl(ChatView *view)
 }
 
 
-void HistoryChatView::online()
+void HistoryChatView::ready()
 {
   ChatClient::io()->lock();
 
-  foreach (ChatView *view, m_views) {
+  foreach (ChatView *view, i()->views()) {
     if (SimpleID::typeOf(view->id()) == SimpleID::ChannelId)
       getLast(view->id());
   }

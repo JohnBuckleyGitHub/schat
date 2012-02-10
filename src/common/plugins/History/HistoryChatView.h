@@ -32,7 +32,7 @@ protected:
   void addImpl(ChatView *view);
 
 private slots:
-  void online();
+  void ready();
 
 private:
   void getLast(const QByteArray &id);
