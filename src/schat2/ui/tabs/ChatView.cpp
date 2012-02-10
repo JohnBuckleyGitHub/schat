@@ -31,6 +31,7 @@
 #include "JSON.h"
 #include "messages/Message.h"
 #include "net/SimpleID.h"
+#include "sglobal.h"
 #include "ui/ChatIcons.h"
 #include "ui/tabs/ChatView.h"
 
@@ -61,7 +62,7 @@ void ChatView::add(const Message &message)
   if (!message.isValid())
     return;
 
-  evaluateJavaScript(message.func() + "(" + JSON::quote(message.json()) + ");");
+  evaluateJavaScript(message.func() + LS("(") + JSON::quote(message.json()) + LS(", ") + JSON::quote(JSON::generate(addHint(message))) + LS(");"));
 }
 
 
@@ -73,7 +74,7 @@ void ChatView::copy()
 
 void ChatView::evaluateJavaScript(const QString &func, const QVariant &param)
 {
-  evaluateJavaScript(func + "(" + param.toString() + ");");
+  evaluateJavaScript(func + LS("(") + param.toString() + LS(");"));
 }
 
 
@@ -171,6 +172,7 @@ void ChatView::menuTriggered(QAction *action)
   if (action == m_clear) {
     m_loaded = false;
     page()->triggerAction(QWebPage::ReloadAndBypassCache);
+    m_messages.clear();
     emit reloaded();
   }
   else if (action == m_seconds) {
@@ -204,6 +206,35 @@ void ChatView::settingsChanged(const QString &key, const QVariant &value)
     m_service->setChecked(value.toBool());
     evaluateJavaScript("showService", value);
   }
+}
+
+
+QVariantMap ChatView::addHint(const Message &message)
+{
+  QVariantMap out;
+  out[LS("Hint")] = LS("end");
+
+  qint64 date = message.data().value(LS("Date")).toLongLong();
+  if (date == 0)
+    return out;
+
+  QByteArray id = message.data().value(LS("Id")).toByteArray();
+  if (id.isEmpty())
+    return out;
+
+  m_messages[date] = id;
+  if (m_messages.size() == 1)
+    return out;
+
+  QList<qint64> dates = m_messages.keys();
+  int index = dates.indexOf(date);
+  if (index == dates.size() - 1)
+    return out;
+
+  out[LS("Hint")] = LS("before");
+  out["Id"] = m_messages.value(dates.at(index + 1));
+
+  return out;
 }
 
 

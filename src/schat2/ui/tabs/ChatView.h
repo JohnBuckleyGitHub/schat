@@ -54,18 +54,20 @@ private slots:
   void settingsChanged(const QString &key, const QVariant &value);
 
 private:
+  QVariantMap addHint(const Message &message);
   void createActions();
   void retranslateUi();
 
-  bool m_loaded;                      ///< true если документ загружен.
-  QAction *m_clear;                   ///< Очистить.
-  QAction *m_copy;                    ///< Копировать.
-  QAction *m_copyLink;                ///< Копировать ссылку.
-  QAction *m_seconds;                 ///< Секунды.
-  QAction *m_selectAll;               ///< Выделить всё.
-  QAction *m_service;                 ///< Сервисные сообщения.
-  QByteArray m_id;                    ///< Идентификатор.
-  QQueue<QString> m_pendingJs;        ///< Очередь сообщений ожидающих загрузки документа.
+  bool m_loaded;                       ///< true если документ загружен.
+  QAction *m_clear;                    ///< Очистить.
+  QAction *m_copy;                     ///< Копировать.
+  QAction *m_copyLink;                 ///< Копировать ссылку.
+  QAction *m_seconds;                  ///< Секунды.
+  QAction *m_selectAll;                ///< Выделить всё.
+  QAction *m_service;                  ///< Сервисные сообщения.
+  QByteArray m_id;                     ///< Идентификатор.
+  QMap<qint64, QByteArray> m_messages; ///< Сортированные по времени сообщения.
+  QQueue<QString> m_pendingJs;         ///< Очередь сообщений ожидающих загрузки документа.
 };
 
 #endif /* CHATVIEW_H_ */
