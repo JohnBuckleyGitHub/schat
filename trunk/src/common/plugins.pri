@@ -19,4 +19,5 @@ SUBDIRS += \
     common/plugins/GenericNode \
     common/plugins/Messages \
     common/plugins/Cache \
+    common/plugins/History \
     common/plugins/RawFeeds \
