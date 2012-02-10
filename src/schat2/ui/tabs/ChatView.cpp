@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include <QContextMenuEvent>
 #include <QEvent>
 #include <QMenu>
+#include <QTimer>
 #include <QWebFrame>
 
 #include "ChatCore.h"
@@ -49,11 +50,19 @@ ChatView::ChatView(const QByteArray &id, const QString &url, QWidget *parent)
 
   setFocusPolicy(Qt::NoFocus);
 
-  connect(ChatCore::i()->settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
+  connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
   connect(this, SIGNAL(linkClicked(const QUrl &)), SLOT(openUrl(const QUrl &)));
 
   createActions();
   retranslateUi();
+
+  QTimer::singleShot(0, this, SLOT(start()));
+}
+
+
+ChatView::~ChatView()
+{
+  ChatViewHooks::remove(this);
 }
 
 
@@ -143,7 +152,7 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
 
 void ChatView::showEvent(QShowEvent *event)
 {
-  evaluateJavaScript("alignChat();");
+  evaluateJavaScript(LS("alignChat();"));
   QWebView::showEvent(event);
 }
 
@@ -209,6 +218,15 @@ void ChatView::settingsChanged(const QString &key, const QVariant &value)
 }
 
 
+void ChatView::start()
+{
+  ChatViewHooks::add(this);
+}
+
+
+/*!
+ * Формирует подсказку размещения сообщения.
+ */
 QVariantMap ChatView::addHint(const Message &message)
 {
   QVariantMap out;

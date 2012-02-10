@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,12 +25,31 @@ ChatViewHooks::ChatViewHooks(QObject *parent)
 {
   if (!m_self)
     m_self = this;
+  else
+    add(this);
 }
 
 
+void ChatViewHooks::addImpl(ChatView *view)
+{
+  if (m_self != this)
+    return;
+
+  if (!m_views.contains(view))
+    m_views.append(view);
+
+  foreach (ChatViewHooks *hook, m_hooks) {
+    hook->addImpl(view);
+  }
+}
+
+
+/*!
+ * Обработка завершения загрузки страницы.
+ */
 void ChatViewHooks::loadFinishedImpl(ChatView *view)
 {
-  if (m_hooks.isEmpty())
+  if (m_self != this)
     return;
 
   emit loadFinishedHook(view);
@@ -38,4 +57,17 @@ void ChatViewHooks::loadFinishedImpl(ChatView *view)
   foreach (ChatViewHooks *hook, m_hooks) {
     hook->loadFinishedImpl(view);
   }
+}
+
+
+void ChatViewHooks::removeImpl(ChatView *view)
+{
+  if (m_self != this)
+    return;
+
+  foreach (ChatViewHooks *hook, m_hooks) {
+    hook->removeImpl(view);
+  }
+
+  m_views.removeAll(view);
 }
