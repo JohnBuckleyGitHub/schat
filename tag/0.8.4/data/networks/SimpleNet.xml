@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<network version="1.0">
+  <meta>
+    <name>Simple Network</name>
+    <site>http://impomezia.ru</site>
+  </meta>
+  <servers random="false">
+    <host>schat.impomezia.com</host>
+    <host>de.schat.impomezia.com</host>
+    <host>us.schat.impomezia.com</host>
+  </servers>
+</network>

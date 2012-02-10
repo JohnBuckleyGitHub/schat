@@ -1,0 +1,68 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+  <file alias="images/arrow-down.png">images/vga/arrow-down.png</file>
+  <file alias="images/arrow-right.png">images/vga/arrow-right.png</file>
+  <file alias="images/arrow-up.png">images/vga/arrow-up.png</file>
+  <file alias="images/book.png">images/vga/book.png</file>
+  <file alias="images/color.png">images/vga/color.png</file>
+  <file alias="images/color-map.png">images/vga/color-map.png</file>
+  <file alias="images/computer.png">images/vga/computer.png</file>
+  <file alias="images/configure.png">images/vga/configure.png</file>
+  <file alias="images/configure2.png">images/vga/configure2.png</file>
+  <file alias="images/dialog-cancel.png">images/vga/dialog-cancel.png</file>
+  <file alias="images/dialog-ok.png">images/vga/dialog-ok.png</file>
+  <file alias="images/edit-add.png">images/vga/edit-add.png</file>
+  <file alias="images/edit-clear.png">images/vga/edit-clear.png</file>
+  <file alias="images/edit-copy.png">images/vga/edit-copy.png</file>
+  <file alias="images/edit-cut.png">images/vga/edit-cut.png</file>
+  <file alias="images/edit-delete.png">images/vga/edit-delete.png</file>
+  <file alias="images/edit-paste.png">images/vga/edit-paste.png</file>
+  <file alias="images/edit-select-all.png">images/vga/edit-select-all.png</file>
+  <file alias="images/emoticon.png">images/vga/emoticon.png</file>
+  <file alias="images/exit.png">images/vga/exit.png</file>
+  <file alias="images/female.png">images/vga/female.png</file>
+  <file alias="images/format-text-bold.png">images/vga/format-text-bold.png</file>
+  <file alias="images/format-text-italic.png">images/vga/format-text-italic.png</file>
+  <file alias="images/format-text-strikethrough.png">images/vga/format-text-strikethrough.png</file>
+  <file alias="images/format-text-underline.png">images/vga/format-text-underline.png</file>
+  <file alias="images/go-jump-locationbar.png">images/vga/go-jump-locationbar.png</file>
+  <file alias="images/go-jump-locationbar-v.png">images/vga/go-jump-locationbar-v.png</file>
+  <file alias="images/im-user.png">images/vga/im-user.png</file>
+  <file alias="images/logo16.png">images/schat.png</file>
+  <file alias="images/logo16-ny.png">images/schat-ny.png</file>
+  <file alias="images/male.png">images/vga/male.png</file>
+  <file alias="images/network.png">images/vga/network.png</file>
+  <file alias="images/note2.png">images/vga/note2.png</file>
+  <file alias="images/profile.png">images/vga/profile.png</file>
+  <file alias="images/sound.png">images/vga/sound.png</file>
+  <file alias="images/sound_mute.png">images/vga/sound_mute.png</file>
+  <file alias="images/undo.png">images/vga/undo.png</file>
+  <file>css/popupwindow-flash.css</file>
+  <file>css/popupwindow-normal.css</file>
+  <file>css/richtext.css</file>
+  <file>doc/members.html</file>
+  <file>images/applications-graphics.png</file>
+  <file>images/application-x-desktop.png</file>
+  <file>images/gplv3-88x31.png</file>
+  <file>images/impomezia.png</file>
+  <file>images/im-status-message-edit.png</file>
+  <file>images/load.gif</file>
+  <file>images/main.png</file>
+  <file>images/network_connect.png</file>
+  <file>images/network_disconnect.png</file>
+  <file>images/notice.png</file>
+  <file>images/notification.png</file>
+  <file>images/ok2.png</file>
+  <file>images/player_play.png</file>
+  <file>images/qt-logo.png</file>
+  <file>images/schat.png</file>
+  <file>images/schat16-away.png</file>
+  <file>images/schat16-dnd.png</file>
+  <file>images/schat16-ny.png</file>
+  <file>images/tab_close.png</file>
+  <file>images/update.png</file>
+  <file>images/warning.png</file>
+  <file>translations/qt_ru.qm</file>
+  <file>translations/schat_ru.qm</file>
+</qresource>
+</RCC>
