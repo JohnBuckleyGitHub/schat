@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -159,6 +159,9 @@ QString Notice::status(int status)
   switch (status) {
     case OK:
       return QObject::tr("OK");
+
+    case Found:
+      return QObject::tr("Found");
 
     case BadRequest:
       return QObject::tr("Bad Request");
