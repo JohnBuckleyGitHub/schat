@@ -81,12 +81,12 @@ function alignChat() {
 
 /// Добавление сообщения.
 /// Эта функция вызывается из C++ кода.
-function addMessage(data)
+function addMessage(data, hint)
 {
 	var json = JSON.parse(data);
 
 	if (json.Type == 'channel')
-		addChannelMessage(json);
+		addChannelMessage(json, JSON.parse(hint));
 	else if (json.Type == 'service' || json.Type == 'info')
 		addServiceMessage(json);
 }
@@ -99,8 +99,24 @@ function addRawMessage(html) {
 }
 
 
+function addHintedRawMessage(html, hint)
+{
+	if (hint.Hint == 'before') {
+		if (!$('#' + hint.Id).length) {
+			addRawMessage(html);
+			return;
+		}
+
+		$('#' + hint.Id).before(html);
+		alignChat();
+	}
+	else
+		addRawMessage(html);
+}
+
+
 /// Добавление сообщения пользователя.
-function addChannelMessage(json)
+function addChannelMessage(json, hint)
 {
 	if ($('#' + json.Id).length) {
 		updateChannelMessage(json);
@@ -126,7 +142,7 @@ function addChannelMessage(json)
 	html += '</div>';
 	html += '</div>';
 
-	addRawMessage(html);
+	addHintedRawMessage(html, hint);
 }
 
 
