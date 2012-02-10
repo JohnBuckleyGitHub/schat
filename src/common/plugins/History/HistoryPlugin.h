@@ -33,11 +33,12 @@ public:
   QVariantMap header() const
   {
     QVariantMap out = CoreApi::header();
-    out["Id"]      = "history";
-    out["Name"]    = "History";
-    out["Version"] = "0.1.0";
-    out["Site"]    = "http://wiki.schat.me/Plugin/History";
-    out["Desc"]    = "History";
+    out["Id"]       = "history";
+    out["Name"]     = "History";
+    out["Version"]  = "0.1.0";
+    out["Site"]     = "http://wiki.schat.me/Plugin/History";
+    out["Desc"]     = "History";
+    out["Required"] = "1.99.11";
 
     return out;
   }
