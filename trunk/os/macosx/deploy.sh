@@ -30,7 +30,7 @@ macdeployqt $TARGET.app
 DMG="dmg/$TARGET-$VERSION.dmg"
 
 test -f $DMG && rm $DMG
-./create-dmg/create-dmg --window-size 500 300 --volicon schat.icns --icon-size 96 --volname "Simple Chat 2" --icon "Applications" 380 205 --icon "SimpleChat2" 110 205 $DMG ../../out/SimpleChat2.app
+./create-dmg/create-dmg --window-size 500 300 --volicon schat.icns --icon-size 96 --volname "Simple Chat 2" --background background.png --icon "Applications" 380 205 --icon "SimpleChat2" 110 205 $DMG ../../out/SimpleChat2.app
 hdiutil internet-enable -yes $DMG 
 
 
