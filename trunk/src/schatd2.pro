@@ -21,3 +21,4 @@ SUBDIRS  = \
     schatd2/schatd.pro \
     schatd2 \
     common/plugins/GenericNode \
+    common/plugins/Messages \
