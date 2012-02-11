@@ -100,38 +100,38 @@
 <context>
     <name>ChatView</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="121"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="131"/>
         <source>Display</source>
         <translation>Отображать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="218"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="235"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="267"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="284"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="223"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="272"/>
         <source>Seconds</source>
         <translation>Секунды</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="226"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="275"/>
         <source>Service messages</source>
         <translation>Сервисные сообщения</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="233"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="282"/>
         <source>Copy</source>
         <translation>Копировать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="234"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="283"/>
         <source>Copy Link</source>
         <translation>Копировать ссылку</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="236"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="285"/>
         <source>Select All</source>
         <translation>Выделить всё</translation>
     </message>
@@ -357,41 +357,41 @@
 <context>
     <name>NetworkWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="360"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="399"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="378"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="417"/>
         <source>Edit</source>
         <translation>Изменить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="362"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="400"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="380"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="418"/>
         <source>Add</source>
         <translation>Добавить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="363"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="401"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="381"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="419"/>
         <source>Remove</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="369"/>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="402"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="387"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="420"/>
         <source>Actions</source>
         <translation>Действия</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="100"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="101"/>
         <source>Disconnect</source>
         <translation>Отключиться</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="104"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="105"/>
         <source>Abort</source>
         <translation>Прервать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="108"/>
+        <location filename="../../src/schat2/ui/network/NetworkWidget.cpp" line="109"/>
         <source>Connect</source>
         <translation>Подключиться</translation>
     </message>
@@ -399,17 +399,17 @@
 <context>
     <name>OfflineLogin</name>
     <message>
-        <location filename="../../src/schat2/ui/network/OfflineLogin.cpp" line="56"/>
+        <location filename="../../src/schat2/ui/network/OfflineLogin.cpp" line="78"/>
         <source>Anonymous connection</source>
         <translation>Анонимное подключение</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/OfflineLogin.cpp" line="57"/>
+        <location filename="../../src/schat2/ui/network/OfflineLogin.cpp" line="79"/>
         <source>&amp;Name:</source>
         <translation>&amp;Имя:</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/OfflineLogin.cpp" line="58"/>
+        <location filename="../../src/schat2/ui/network/OfflineLogin.cpp" line="80"/>
         <source>&amp;Password:</source>
         <translation>&amp;Пароль:</translation>
     </message>
@@ -766,20 +766,26 @@
 <context>
     <name>TrayIcon</name>
     <message>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="50"/>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="79"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="46"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="81"/>
+        <source>Show...</source>
+        <translation>Показать...</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="52"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="82"/>
         <source>Preferences...</source>
         <translation>Настройки...</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="51"/>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="80"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="53"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="83"/>
         <source>About...</source>
         <translation>О Simple Chat...</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="53"/>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="81"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="55"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="84"/>
         <source>Quit</source>
         <translation>Выход</translation>
     </message>

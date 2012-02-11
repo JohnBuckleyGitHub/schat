@@ -43,6 +43,8 @@ TrayIcon::TrayIcon(QObject *parent)
 
   m_menu = new QMenu();
   m_timer = new QBasicTimer();
+  m_show = m_menu->addAction(SCHAT_ICON(SmallLogo), tr("Show..."));
+  m_menu->addSeparator();
 
   m_menu->addMenu(StatusMenu::i());
   m_menu->addSeparator();
@@ -76,6 +78,7 @@ TrayIcon::~TrayIcon()
 
 void TrayIcon::retranslateUi()
 {
+  m_show->setText(tr("Show..."));
   m_settings->setText(tr("Preferences..."));
   m_about->setText(tr("About..."));
   m_quit->setText(tr("Quit"));
@@ -167,6 +170,8 @@ void TrayIcon::triggered(QAction *action)
   }
   else if (action == m_quit)
     ChatNotify::start(Notify::Quit);
+  else if (action == m_show)
+    ChatNotify::start(Notify::ShowChat);
 }
 
 

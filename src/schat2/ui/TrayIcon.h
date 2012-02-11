@@ -52,6 +52,7 @@ private:
   QAction *m_about;          ///< О Simple Chat.
   QAction *m_quit;           ///< Выход.
   QAction *m_settings;       ///< Настройки.
+  QAction *m_show;           ///< Показать.
   QBasicTimer *m_timer;      ///< Таймер анимации.
   QIcon m_icon;              ///< Иконка.
   QMenu *m_menu;             ///< Меню.
