@@ -41,6 +41,8 @@ ${L} sec_Emoticons.Kolobok  "Kolobok"
 ${L} desc_Emoticons.Kolobok "Смайлики Kolobok от Aiwan http://kolobok.us/"
 ${L} sec_Cache              "Cache"
 ${L} desc_Cache             "Плагин Cache"
+${L} sec_History            "History"
+${L} desc_History           "Плагин History"
 ${L} sec_RawFeeds           "Raw Feeds"
 ${L} desc_RawFeeds          "Плагин Raw Feeds"
 

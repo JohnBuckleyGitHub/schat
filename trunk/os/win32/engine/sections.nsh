@@ -48,6 +48,7 @@ ${mod} Emoticons.Kolobok
   !endif
 !endif
 ${mod} Cache
+${mod} History
 ${mod} RawFeeds 
 !ifdef SCHAT_SECTIONS
   !if ${SCHAT_PLUGINS_GRP} == 1

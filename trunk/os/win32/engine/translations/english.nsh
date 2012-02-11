@@ -41,6 +41,8 @@ ${L} sec_Emoticons.Kolobok  "Kolobok"
 ${L} desc_Emoticons.Kolobok "Kolobok emoticons by Aiwan http://kolobok.us/"
 ${L} sec_Cache              "Cache"
 ${L} desc_Cache             "Cache Plugin"
+${L} sec_History            "History"
+${L} desc_History           "History Plugin"
 ${L} sec_RawFeeds           "Raw Feeds"
 ${L} desc_RawFeeds          "Raw Feeds Plugin"
 
