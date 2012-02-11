@@ -54,9 +54,13 @@ unix {
 
   applications.files = ../../os/ubuntu/schat2.desktop
   applications.path = $$SCHAT_PREFIX/usr/share/applications
-  
+
+  translations.files = ../../res/translations/schat2_ru.qm
+  translations.files += ../../res/translations/ru.png
+  translations.path = $$SCHAT_PREFIX/usr/share/translations
+
   target.path += $$SCHAT_PREFIX/usr/bin
-  INSTALLS += target pixmaps applications
+  INSTALLS += target pixmaps applications translations
 }
 
 include(../common/common.pri)
