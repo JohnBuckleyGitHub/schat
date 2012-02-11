@@ -49,18 +49,26 @@ SCHAT_CLIENT_LIB = 1
 SCHAT_CORE_LIB = 1
 
 unix {
-  pixmaps.files = ../../res/images/schat2.png
-  pixmaps.path = $$SCHAT_PREFIX/usr/share/pixmaps
-
-  applications.files = ../../os/ubuntu/schat2.desktop
-  applications.path = $$SCHAT_PREFIX/usr/share/applications
-
   translations.files = ../../res/translations/schat2_ru.qm
   translations.files += ../../res/translations/ru.png
-  translations.path = $$SCHAT_PREFIX/usr/share/translations
 
-  target.path += $$SCHAT_PREFIX/usr/bin
-  INSTALLS += target pixmaps applications translations
+  macx {
+    translations.path += ../../out/SimpleChat2.app/Contents/Resources/translations
+
+    INSTALLS += translations
+  } else {
+    pixmaps.files = ../../res/images/schat2.png
+    pixmaps.path = $$SCHAT_PREFIX/usr/share/pixmaps
+    
+    applications.files = ../../os/ubuntu/schat2.desktop
+    applications.path = $$SCHAT_PREFIX/usr/share/applications
+    
+    translations.path = $$SCHAT_PREFIX/usr/share/schat2/translations
+
+    target.path += $$SCHAT_PREFIX/usr/bin
+    
+    INSTALLS += target pixmaps applications translations
+  }
 }
 
 include(../common/common.pri)

@@ -36,7 +36,7 @@ TRANSLATIONS += ../../res/translations/schatd2_en.ts
 TRANSLATIONS += ../../res/translations/schatd2_ru.ts
 CODECFORTR = UTF-8
 
-unix {
+unix:!macx {
   ssl.files = ../../misc/tools/server.crt
   ssl.files += ../../misc/tools/server.key
   ssl.path = $$SCHAT_PREFIX/etc/schatd2
