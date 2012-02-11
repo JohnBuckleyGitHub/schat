@@ -22,27 +22,16 @@ TARGET="SimpleChat2"
 cd ../..
 qmake -r
 make -j3
+make install
 cd out
-mkdir $TARGET.app/Contents/Frameworks/
-cp -R libschat*dylib $TARGET.app/Contents/Frameworks/
-cp schatd2.app/Contents/MacOS/schatd2 $TARGET.app/Contents/MacOS/
-cp plugins/*dylib $TARGET.app/Contents/PlugIns/
 
 macdeployqt $TARGET.app
 
-cp -fR ../res/doc $TARGET.app/Contents/Resources/doc
-mkdir $TARGET.app/Contents/Resources/translations
-cp -fr ../res/translations/*.png $TARGET.app/Contents/Resources/translations/
-cp -fr ../res/translations/*.qm $TARGET.app/Contents/Resources/translations/
+DMG="dmg/$TARGET-$VERSION.dmg"
 
-DIR="bundle"
-mkdir $DIR
-cp -fr $TARGET.app $DIR
-ln -s /Applications $DIR/Applications
+test -f $DMG && rm $DMG
+./create-dmg/create-dmg --window-size 500 300 --volicon schat.icns --icon-size 96 --volname "Simple Chat 2" --icon "Applications" 380 205 --icon "SimpleChat2" 110 205 $DMG ../../out/SimpleChat2.app
+hdiutil internet-enable -yes $DMG 
 
-hdiutil create -ov -srcfolder $DIR -format UDBZ -volname "$TARGET $VERSION" "$TARGET-$VERSION.dmg"
-hdiutil internet-enable -yes "$TARGET-$VERSION.dmg"
-
-cp "$TARGET-$VERSION.dmg" ../os/macosx/dmg
 
 

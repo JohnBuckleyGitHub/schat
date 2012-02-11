@@ -3,7 +3,11 @@
 <plist version="0.9">
 <dict>
 	<key>CFBundleIconFile</key>
-	<string>@ICON@</string>
+	<string>schat.icns</string>
+	<key>CFBundleName</key>
+	<string>Simple Chat 2</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.99.11</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleGetInfoString</key>
@@ -11,8 +15,10 @@
 	<key>CFBundleSignature</key>
 	<string>@TYPEINFO@</string>
 	<key>CFBundleExecutable</key>
-	<string>@EXECUTABLE@</string>
+	<string>SimpleChat2</string>
 	<key>CFBundleIdentifier</key>
 	<string>me.schat</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright © 2008-2012, IMPOMEZIA.</string>
 </dict>
 </plist>
