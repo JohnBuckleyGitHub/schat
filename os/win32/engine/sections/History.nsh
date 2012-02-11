@@ -9,18 +9,30 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-!define Core
-!define Qt
-!define Emoticons.Kolobok
-!define Cache
-!define History
-!define RawFeeds
+${Name} History
+${State} 1
 
-!include "engine\core.nsh"
+${Body}
+${Section}
+  SetOutPath "$INSTDIR\plugins"
+  File "${SCHAT_SOURCE}\plugins\History.dll"
+
+  SetOutPath "$INSTDIR\doc"
+  File "${SCHAT_SOURCE}\doc\ChangeLog.History.html"
+${SectionEnd}
+${BodyEnd}
+
+${Uninstall}
+  Delete "$INSTDIR\doc\ChangeLog.History.html"
+  Delete "$INSTDIR\plugins\History.dll"
+
+  RMDir "$INSTDIR\doc"
+  RMDir "$INSTDIR\plugins"
+${UninstallEnd}
