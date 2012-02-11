@@ -80,7 +80,7 @@ TRANSLATIONS += ../../data/translations/schatd-lib_en.ts
 TRANSLATIONS += ../../data/translations/schatd-lib_ru.ts
 CODECFORTR = UTF-8
 
-unix {
+unix:!macx {
   target.path += $$SCHAT_PREFIX/usr/lib
   INSTALLS += target
 }

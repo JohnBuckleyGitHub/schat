@@ -181,7 +181,12 @@ TRANSLATIONS += ../../res/translations/schat2_ru.ts
 CODECFORTR = UTF-8
 
 unix {
-  target.path += $$SCHAT_PREFIX/usr/lib
+  macx {
+    target.path += ../../out/SimpleChat2.app/Contents/Frameworks/
+  } else {
+    target.path += $$SCHAT_PREFIX/usr/lib
+  }
+
   INSTALLS += target
 }
 

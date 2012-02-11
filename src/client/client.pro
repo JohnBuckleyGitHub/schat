@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2011 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2012 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -26,7 +26,12 @@ DEFINES += SCHAT_LIBRARY
 win32:RC_FILE = client.rc
 
 unix {
-  target.path += $$SCHAT_PREFIX/usr/lib
+  macx {
+    target.path += ../../out/SimpleChat2.app/Contents/Frameworks/
+  } else {
+    target.path += $$SCHAT_PREFIX/usr/lib
+  }
+
   INSTALLS += target
 }
 

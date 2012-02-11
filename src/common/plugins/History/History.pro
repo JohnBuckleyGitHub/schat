@@ -31,7 +31,8 @@ SOURCES  = \
    HistoryPlugin.cpp \
 
 unix {
-  target.path += $$SCHAT_PREFIX/usr/share/schat2/plugins
+  macx:target.path += ../../../../out/SimpleChat2.app/Contents/PlugIns/
+  !macx:target.path += $$SCHAT_PREFIX/usr/share/schat2/plugins
   INSTALLS += target
 }
 
