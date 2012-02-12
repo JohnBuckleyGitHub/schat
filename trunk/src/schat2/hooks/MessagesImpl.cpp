@@ -54,6 +54,9 @@ void MessagesImpl::readText(MessagePacket packet)
   if (TabWidget::i())
     TabWidget::i()->add(message);
 
+  if (packet->status() == Notice::Found)
+    return;
+
   if (packet->sender() != ChatClient::id() || !m_undelivered.contains(packet->id())) {
     qDebug() << " ~~ START ALERT ~~";
     MessageAlert alert(message);
