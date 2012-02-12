@@ -232,6 +232,9 @@ QVariantMap ChatView::addHint(const Message &message)
   QVariantMap out;
   out[LS("Hint")] = LS("end");
 
+  if (message.data().value(LS("Status")) == LS("undelivered"))
+    return out;
+
   qint64 date = message.data().value(LS("Date")).toLongLong();
   if (date == 0)
     return out;
