@@ -24,16 +24,9 @@
 #include <QVariant>
 
 #include "Channel.h"
-#include "ChatCore.h"
-#include "ChatSettings.h"
-#include "client/ChatClient.h"
-#include "client/SimpleClient.h"
 #include "HistoryDB.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
-#include "text/PlainTextFilter.h"
-#include "ui/tabs/ChatView.h"
-#include "ui/tabs/PrivateTab.h"
 
 QString HistoryDB::m_id;
 

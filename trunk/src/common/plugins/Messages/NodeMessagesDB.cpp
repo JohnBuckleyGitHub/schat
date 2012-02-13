@@ -68,7 +68,7 @@ bool NodeMessagesDB::open()
 QVariantList NodeMessagesDB::last(const QByteArray &channel, int limit)
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(LS("SELECT id, messageId, senderId, status, date, text FROM messages WHERE destId = :destId ORDER BY id DESC LIMIT ") + QString::number(limit) + LS(";"));
+  query.prepare(LS("SELECT id, messageId, senderId, status, date, command, text FROM messages WHERE destId = :destId ORDER BY id DESC LIMIT ") + QString::number(limit) + LS(";"));
   query.bindValue(LS(":destId"), channel);
   query.exec();
 
@@ -84,7 +84,8 @@ QVariantList NodeMessagesDB::last(const QByteArray &channel, int limit)
     data.append(channel);        // 2 destId
     data.append(query.value(3)); // 3 status
     data.append(query.value(4)); // 4 date
-    data.append(query.value(5)); // 5 text
+    data.append(query.value(5)); // 5 command
+    data.append(query.value(6)); // 6 text
     out.push_front(data);
   }
 
@@ -95,14 +96,15 @@ QVariantList NodeMessagesDB::last(const QByteArray &channel, int limit)
 void NodeMessagesDB::add(const MessageNotice &packet, int status)
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(LS("INSERT INTO messages (messageId, senderId, destId, status, date, text, plain) "
-                     "VALUES (:messageId, :senderId, :destId, :status, :date, :text, :plain);"));
+  query.prepare(LS("INSERT INTO messages (messageId, senderId, destId, status, date, command, text, plain) "
+                     "VALUES (:messageId, :senderId, :destId, :status, :date, :command, :text, :plain);"));
 
   query.bindValue(LS(":messageId"), packet.id());
   query.bindValue(LS(":senderId"),  packet.sender());
   query.bindValue(LS(":destId"),    packet.dest());
   query.bindValue(LS(":status"),    status);
   query.bindValue(LS(":date"),      Core::date());
+  query.bindValue(LS(":command"),   packet.command());
   query.bindValue(LS(":text"),      packet.text());
   query.bindValue(LS(":plain"),     PlainTextFilter::filter(packet.text()));
   query.exec();

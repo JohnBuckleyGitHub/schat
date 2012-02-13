@@ -94,12 +94,13 @@ FeedQueryReply NodeHistoryFeed::last(const QVariantMap &json)
     if (msg.isEmpty())
       continue;
 
-    MessageNotice packet(msg.value(1).toByteArray(), msg.value(2).toByteArray(), msg.value(5).toString(), msg.value(4).toLongLong(), msg.value(0).toByteArray());
+    MessageNotice packet(msg.value(1).toByteArray(), msg.value(2).toByteArray(), msg.value(6).toString(), msg.value(4).toLongLong(), msg.value(0).toByteArray());
     int status = msg.value(3).toInt();
     if (status == Notice::OK)
       status = Notice::Found;
 
     packet.setStatus(status);
+    packet.setCommand(msg.value(5).toString());
     packets.append(packet.data(Core::stream()));
   }
 
