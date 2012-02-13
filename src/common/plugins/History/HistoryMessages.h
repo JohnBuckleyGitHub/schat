@@ -16,31 +16,19 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HISTORYDB_H_
-#define HISTORYDB_H_
+#ifndef HISTORYMESSAGES_H_
+#define HISTORYMESSAGES_H_
 
-#include <QHash>
-#include <QObject>
+#include "client/ClientHooks.h"
 
-#include "net/packets/MessageNotice.h"
-
-class MessageData;
-class PrivateTab;
-
-class HistoryDB : public QObject
+class HistoryMessages : public Hooks::Messages
 {
   Q_OBJECT
 
-  HistoryDB(QObject *parent = 0);
-
 public:
-  inline static QString id() { return m_id; }
-  static bool open(const QByteArray &id, const QString &dir);
-  static void add(MessagePacket packet);
-  static void close();
+  HistoryMessages(QObject *parent = 0);
 
-private:
-  static QString m_id; ///< Идентификатор соединения с базой.
+  void readText(MessagePacket packet);
 };
 
-#endif /* HISTORYDB_H_ */
+#endif /* HISTORYMESSAGES_H_ */

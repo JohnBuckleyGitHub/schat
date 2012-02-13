@@ -27,6 +27,7 @@
 #include "HistoryDB.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
+#include "text/PlainTextFilter.h"
 
 QString HistoryDB::m_id;
 
@@ -78,6 +79,24 @@ bool HistoryDB::open(const QByteArray &id, const QString &dir)
     ");"));
 
   return true;
+}
+
+
+void HistoryDB::add(MessagePacket packet)
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.prepare(LS("INSERT INTO messages (messageId, senderId, destId, status, date, command, text, plain) "
+                     "VALUES (:messageId, :senderId, :destId, :status, :date, :command, :text, :plain);"));
+
+  query.bindValue(LS(":messageId"), packet->id());
+  query.bindValue(LS(":senderId"),  packet->sender());
+  query.bindValue(LS(":destId"),    packet->dest());
+  query.bindValue(LS(":status"),    packet->status());
+  query.bindValue(LS(":date"),      packet->date());
+  query.bindValue(LS(":command"),   packet->command());
+  query.bindValue(LS(":text"),      packet->text());
+  query.bindValue(LS(":plain"),     PlainTextFilter::filter(packet->text()));
+  query.exec();
 }
 
 

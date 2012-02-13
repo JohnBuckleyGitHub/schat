@@ -22,12 +22,14 @@ QT = core gui network sql webkit
 HEADERS  = \
    HistoryChatView.h \
    HistoryDB.h \
+   HistoryMessages.h \
    HistoryPlugin.h \
    HistoryPlugin_p.h \
 
 SOURCES  = \
    HistoryChatView.cpp \
    HistoryDB.cpp \
+   HistoryMessages.cpp \
    HistoryPlugin.cpp \
 
 unix {

@@ -23,6 +23,7 @@
 #include "client/ChatClient.h"
 #include "HistoryChatView.h"
 #include "HistoryDB.h"
+#include "HistoryMessages.h"
 #include "HistoryPlugin.h"
 #include "HistoryPlugin_p.h"
 #include "NetworkManager.h"
@@ -32,6 +33,7 @@ History::History(QObject *parent)
   : ChatPlugin(parent)
 {
   new HistoryChatView(this);
+  new HistoryMessages(this);
 
   open();
   connect(ChatClient::i(), SIGNAL(online()), SLOT(open()));
