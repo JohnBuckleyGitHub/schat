@@ -31,7 +31,7 @@ public:
   History(QObject *parent);
 
 private:
-  void openDb();
+  void open();
 
   HistoryDB *m_db;
 };

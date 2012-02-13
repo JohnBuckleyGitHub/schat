@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QTime>
 #include <QtPlugin>
 
@@ -35,16 +33,16 @@ History::History(QObject *parent)
 {
   new HistoryChatView(this);
 
-  m_db = new HistoryDB(this);
-  openDb();
+  open();
+  connect(ChatClient::i(), SIGNAL(online()), SLOT(open()));
 }
 
 
-void History::openDb()
+void History::open()
 {
   QByteArray id = ChatClient::serverId();
   if (!id.isEmpty())
-    m_db->open(id, ChatCore::networks()->root(id));
+    HistoryDB::open(id, ChatCore::networks()->root(id));
 }
 
 

@@ -47,7 +47,7 @@ bool NodeMessagesDB::open()
   QSqlQuery query(db);
   query.exec(LS("PRAGMA synchronous = OFF"));
 
-  query.exec(QLatin1String(
+  query.exec(LS(
     "CREATE TABLE IF NOT EXISTS messages ( "
     "  id         INTEGER PRIMARY KEY,"
     "  messageId  BLOB,"
@@ -55,6 +55,7 @@ bool NodeMessagesDB::open()
     "  destId     BLOB,"
     "  status     INTEGER DEFAULT ( 200 ),"
     "  date       INTEGER,"
+    "  command    TEXT,"
     "  text       TEXT,"
     "  plain      TEXT"
     ");"));
