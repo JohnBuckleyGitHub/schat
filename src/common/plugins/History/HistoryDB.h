@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -29,22 +29,15 @@ class HistoryDB : public QObject
 {
   Q_OBJECT
 
-public:
   HistoryDB(QObject *parent = 0);
-  void open(const QByteArray &id, const QString &dir);
 
-private slots:
-  void clientStateChanged(int state);
-  void synced(const QByteArray &channelId);
+public:
+  inline static QString id() { return m_id; }
+  static bool open(const QByteArray &id, const QString &dir);
+  static void close();
 
 private:
-  qint64 messageId(const QByteArray &id) const;
-  qint64 userId(const QByteArray &id) const;
-  void close();
-
-  int m_lastMessages;
-  QHash<QByteArray, qint64> m_cache;
-  QString m_id;
+  static QString m_id; ///< Идентификатор соединения с базой.
 };
 
 #endif /* HISTORYDB_H_ */

@@ -27,11 +27,11 @@ class CacheDB : public QObject
 {
   Q_OBJECT
 
-public:
   CacheDB(QObject *parent = 0)
   : QObject(parent)
   {}
 
+public:
   inline static QString id() { return m_id; }
   static bool open(const QByteArray &id, const QString &dir);
   static ClientChannel channel(const QByteArray &id, bool feeds = true);
