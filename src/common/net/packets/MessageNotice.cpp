@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,19 +16,19 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "net/packets/MessageNotice.h"
 #include "DateTime.h"
-
+#include "net/packets/MessageNotice.h"
+#include "sglobal.h"
 
 MessageNotice::MessageNotice()
-  : Notice(QByteArray(), QByteArray(), "m")
+  : Notice(QByteArray(), QByteArray(), LS("m"))
 {
   m_type = MessageType;
 }
 
 
 MessageNotice::MessageNotice(const QByteArray &sender, const QByteArray &dest, const QString &text, quint64 time, const QByteArray &id)
-  : Notice(sender, dest, "m", time, id)
+  : Notice(sender, dest, LS("m"), time, id)
 {
   m_type = MessageType;
   setText(text);

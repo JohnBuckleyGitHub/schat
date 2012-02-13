@@ -21,8 +21,6 @@
 
 #include "plugins/ChatPlugin.h"
 
-class HistoryDB;
-
 class History : public ChatPlugin
 {
   Q_OBJECT
@@ -30,10 +28,8 @@ class History : public ChatPlugin
 public:
   History(QObject *parent);
 
-private:
+private slots:
   void open();
-
-  HistoryDB *m_db;
 };
 
 
