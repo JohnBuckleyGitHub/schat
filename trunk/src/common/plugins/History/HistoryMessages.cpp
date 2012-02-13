@@ -16,31 +16,21 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HISTORYDB_H_
-#define HISTORYDB_H_
+#include <QDebug>
 
-#include <QHash>
-#include <QObject>
+#include "client/ChatClient.h"
+#include "client/ClientMessages.h"
+#include "HistoryMessages.h"
+#include "HistoryDB.h"
 
-#include "net/packets/MessageNotice.h"
-
-class MessageData;
-class PrivateTab;
-
-class HistoryDB : public QObject
+HistoryMessages::HistoryMessages(QObject *parent)
+  : Messages(parent)
 {
-  Q_OBJECT
+  ChatClient::messages()->hooks()->add(this);
+}
 
-  HistoryDB(QObject *parent = 0);
 
-public:
-  inline static QString id() { return m_id; }
-  static bool open(const QByteArray &id, const QString &dir);
-  static void add(MessagePacket packet);
-  static void close();
-
-private:
-  static QString m_id; ///< Идентификатор соединения с базой.
-};
-
-#endif /* HISTORYDB_H_ */
+void HistoryMessages::readText(MessagePacket packet)
+{
+  HistoryDB::add(packet);
+}
