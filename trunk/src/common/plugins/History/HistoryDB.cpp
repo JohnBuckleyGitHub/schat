@@ -85,6 +85,14 @@ bool HistoryDB::open(const QByteArray &id, const QString &dir)
 void HistoryDB::add(MessagePacket packet)
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
+  query.prepare(LS("SELECT id FROM messages WHERE messageId = :messageId AND date = :date LIMIT 1;"));
+  query.bindValue(LS(":messageId"), packet->id());
+  query.bindValue(LS(":date"), packet->date());
+  query.exec();
+
+  if (query.first() && query.value(0).toLongLong() > 0)
+    return;
+
   query.prepare(LS("INSERT INTO messages (messageId, senderId, destId, status, date, command, text, plain) "
                      "VALUES (:messageId, :senderId, :destId, :status, :date, :command, :text, :plain);"));
 
