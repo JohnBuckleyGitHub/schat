@@ -54,14 +54,14 @@ Feed* NodeHistoryFeed::load(const QString &name, const QVariantMap &data)
 }
 
 
-FeedQueryReply NodeHistoryFeed::query(const QVariantMap &json, Channel * /*channel*/)
+FeedQueryReply NodeHistoryFeed::query(const QVariantMap &json, Channel *channel)
 {
   QString action = json.value(LS("action")).toString();
   if (action.isEmpty())
     return FeedQueryReply(Notice::BadRequest);
 
   if (action == LS("last"))
-    return last(json);
+    return last(json, channel);
 
   return FeedQueryReply(Notice::NotImplemented);
 }
@@ -76,14 +76,29 @@ void NodeHistoryFeed::setChannel(Channel *channel)
 }
 
 
-
-FeedQueryReply NodeHistoryFeed::last(const QVariantMap &json)
+/*!
+ * Загрузка последних сообщений.
+ */
+FeedQueryReply NodeHistoryFeed::last(const QVariantMap &json, Channel *channel)
 {
+  if (!channel)
+    return FeedQueryReply(Notice::BadRequest);
+
+  // Обязательно должно быть указано количество сообщений.
   int count = json.value(LS("count")).toInt();
   if (count <= 0)
     return FeedQueryReply(Notice::BadRequest);
 
-  QVariantList data = NodeMessagesDB::last(head().channel()->id(), count);
+  QVariantList data;
+
+  if (head().channel()->type() == SimpleID::UserId) {
+    if (head().channel()->id() == channel->id())
+      data = NodeMessagesDB::last(head().channel()->id(), count);
+  }
+  else if (head().channel()->type() == SimpleID::ChannelId) {
+    data = NodeMessagesDB::last(head().channel()->id(), count);
+  }
+
   if (data.isEmpty())
     return FeedQueryReply(Notice::NotFound);
 

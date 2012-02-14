@@ -33,7 +33,7 @@ public:
   void setChannel(Channel *channel);
 
 private:
-  FeedQueryReply last(const QVariantMap &json);
+  FeedQueryReply last(const QVariantMap &json, Channel *channel);
 };
 
 #endif /* NODEHISTORYFEED_H_ */

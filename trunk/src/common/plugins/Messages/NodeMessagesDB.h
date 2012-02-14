@@ -22,6 +22,7 @@
 #include <QString>
 
 class MessageNotice;
+class QSqlQuery;
 
 class NodeMessagesDB
 {
@@ -30,6 +31,7 @@ class NodeMessagesDB
 public:
   static bool open();
   static QVariantList last(const QByteArray &channel, int limit);
+  static QVariantList messages(QSqlQuery &query);
   static void add(const MessageNotice &packet, int status = 200);
 
 private:
