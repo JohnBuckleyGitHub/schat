@@ -483,7 +483,10 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
 # else
   d->copy->setEnabled(textCursor().hasSelection());
 # endif
+
+# if QT_VERSION >= 0x040500
   d->selectAll->setEnabled(!d->empty);
+# endif
 
   QString copyLinkText = tr("Copy &link");
   d->clear->setEnabled(!d->empty);
@@ -513,7 +516,10 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
   menu.addAction(d->serviceMessages);
   menu.addSeparator();
   menu.addAction(d->clear);
+
+# if QT_VERSION >= 0x040500
   menu.addAction(d->selectAll);
+# endif
 
 # ifndef SCHAT_NO_WEBKIT
   menu.exec(event->globalPos());
@@ -585,7 +591,9 @@ void ChatView::loadFinished()
 
 void ChatView::selectAll()
 {
+# if QT_VERSION >= 0x040500
   triggerPageAction(QWebPage::SelectAll);
+# endif
 }
 #endif
 
@@ -629,8 +637,10 @@ void ChatView::createActions()
   d->clear = new QAction(SimpleChatApp::iconFromTheme("edit-clear"), "", this);
   connect(d->clear, SIGNAL(triggered()), SLOT(clear()));
 
+# if QT_VERSION >= 0x040500
   d->selectAll = new QAction(SimpleChatApp::iconFromTheme("edit-select-all"), "", this);
   connect(d->selectAll, SIGNAL(triggered()), SLOT(selectAll()));
+# endif
 }
 
 
@@ -640,5 +650,8 @@ void ChatView::retranslateUi()
   d->serviceMessages->setText(tr("Service messages"));
   d->copy->setText(tr("&Copy"));
   d->clear->setText(tr("Clear"));
+
+# if QT_VERSION >= 0x040500
   d->selectAll->setText(tr("Select All"));
+# endif
 }

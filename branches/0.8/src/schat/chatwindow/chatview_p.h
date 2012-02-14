@@ -46,10 +46,14 @@ public:
   QAction *autoScroll;
   QAction *clear;
   QAction *copy;
-  QAction *selectAll;
+
   QAction *serviceMessages;
   QPointer<ChannelLog> channelLog;
   QString channel;
+
+# if QT_VERSION >= 0x040500
+  QAction *selectAll;
+# endif
 
   #ifndef SCHAT_NO_WEBKIT
     bool cleanStyle(const QString &styleName, const QString &styleVariant);
