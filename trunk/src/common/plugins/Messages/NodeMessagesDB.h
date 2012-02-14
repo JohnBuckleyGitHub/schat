@@ -31,6 +31,7 @@ class NodeMessagesDB
 public:
   static bool open();
   static QVariantList last(const QByteArray &channel, int limit);
+  static QVariantList last(const QByteArray &user1, const QByteArray &user2, int limit);
   static QVariantList messages(QSqlQuery &query);
   static void add(const MessageNotice &packet, int status = 200);
 
