@@ -68,10 +68,28 @@ bool NodeMessagesDB::open()
 QVariantList NodeMessagesDB::last(const QByteArray &channel, int limit)
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(LS("SELECT id, messageId, senderId, status, date, command, text FROM messages WHERE destId = :destId ORDER BY id DESC LIMIT ") + QString::number(limit) + LS(";"));
+
+  int type = SimpleID::typeOf(channel);
+  if (type == SimpleID::ChannelId) {
+    query.prepare(LS("SELECT id, messageId, senderId, destId, status, date, command, text FROM messages WHERE destId = :destId ORDER BY id DESC LIMIT :limit;"));
+  }
+  else if (type == SimpleID::UserId) {
+    query.prepare(LS("SELECT id, messageId, senderId, destId, status, date, command, text FROM messages WHERE senderId = :senderId AND destId = :destId ORDER BY id DESC LIMIT :limit;"));
+    query.bindValue(LS(":senderId"), channel);
+  }
+  else
+    return QVariantList();
+
   query.bindValue(LS(":destId"), channel);
+  query.bindValue(LS(":limit"), limit);
   query.exec();
 
+  return messages(query);
+}
+
+
+QVariantList NodeMessagesDB::messages(QSqlQuery &query)
+{
   if (!query.isActive())
     return QVariantList();
 
@@ -81,11 +99,11 @@ QVariantList NodeMessagesDB::last(const QByteArray &channel, int limit)
     QVariantList data;
     data.append(query.value(1)); // 0 messageId
     data.append(query.value(2)); // 1 senderId
-    data.append(channel);        // 2 destId
-    data.append(query.value(3)); // 3 status
-    data.append(query.value(4)); // 4 date
-    data.append(query.value(5)); // 5 command
-    data.append(query.value(6)); // 6 text
+    data.append(query.value(3)); // 2 destId
+    data.append(query.value(4)); // 3 status
+    data.append(query.value(5)); // 4 date
+    data.append(query.value(6)); // 5 command
+    data.append(query.value(7)); // 6 text
     out.push_front(data);
   }
 
