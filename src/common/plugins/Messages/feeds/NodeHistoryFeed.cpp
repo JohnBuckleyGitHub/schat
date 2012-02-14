@@ -94,6 +94,8 @@ FeedQueryReply NodeHistoryFeed::last(const QVariantMap &json, Channel *channel)
   if (head().channel()->type() == SimpleID::UserId) {
     if (head().channel()->id() == channel->id())
       data = NodeMessagesDB::last(head().channel()->id(), count);
+    else
+      data = NodeMessagesDB::last(head().channel()->id(), channel->id(), count);
   }
   else if (head().channel()->type() == SimpleID::ChannelId) {
     data = NodeMessagesDB::last(head().channel()->id(), count);

@@ -88,6 +88,21 @@ QVariantList NodeMessagesDB::last(const QByteArray &channel, int limit)
 }
 
 
+QVariantList NodeMessagesDB::last(const QByteArray &user1, const QByteArray &user2, int limit)
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.prepare(LS("SELECT id, messageId, senderId, destId, status, date, command, text FROM messages WHERE (senderId = :id1 AND destId = :id2) OR (senderId = :id3 AND destId = :id4) ORDER BY id DESC LIMIT :limit;"));
+  query.bindValue(LS(":id1"), user1);
+  query.bindValue(LS(":id2"), user2);
+  query.bindValue(LS(":id3"), user2);
+  query.bindValue(LS(":id4"), user1);
+  query.bindValue(LS(":limit"), limit);
+  query.exec();
+
+  return messages(query);
+}
+
+
 QVariantList NodeMessagesDB::messages(QSqlQuery &query)
 {
   if (!query.isActive())
