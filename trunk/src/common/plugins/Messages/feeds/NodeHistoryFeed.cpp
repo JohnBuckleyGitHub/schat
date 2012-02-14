@@ -106,7 +106,7 @@ FeedQueryReply NodeHistoryFeed::last(const QVariantMap &json, Channel *channel)
     return FeedQueryReply(Notice::NotFound);
 
   // Формирование пакетов.
-  FeedQueryReply reply     = FeedQueryReply(Notice::OK);
+  FeedQueryReply reply = FeedQueryReply(Notice::OK);
   reply.single = true;
   reply.json[LS("action")] = LS("last");
 
@@ -116,7 +116,7 @@ FeedQueryReply NodeHistoryFeed::last(const QVariantMap &json, Channel *channel)
       continue;
 
     MessageNotice packet(msg.value(1).toByteArray(), msg.value(2).toByteArray(), msg.value(6).toString(), msg.value(4).toLongLong(), msg.value(0).toByteArray());
-    packet.setStatus(Notice::Found);
+    packet.setStatus(status(msg.value(3).toInt()));
     packet.setCommand(msg.value(5).toString());
     reply.packets.append(packet.data(Core::stream()));
   }
@@ -126,4 +126,16 @@ FeedQueryReply NodeHistoryFeed::last(const QVariantMap &json, Channel *channel)
 
   reply.json[LS("count")]  = reply.packets.size();
   return reply;
+}
+
+
+int NodeHistoryFeed::status(int status) const
+{
+  if (status == Notice::OK)
+    return Notice::Found;
+
+  if (status == Notice::ChannelOffline)
+    return Notice::Undelivered;
+
+  return status;
 }

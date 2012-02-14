@@ -40,6 +40,7 @@ public:
   ClientMessages(QObject *parent = 0);
   inline Hooks::Messages *hooks() const { return m_hooks; }
   QByteArray randomId() const;
+  static bool isClientDate(int status);
 
   bool send(const QByteArray &dest, const QString &text);
   bool sendText(const QByteArray &dest, const QString &text, const QString &command = QString());

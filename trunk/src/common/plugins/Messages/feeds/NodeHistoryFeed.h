@@ -34,6 +34,7 @@ public:
 
 private:
   FeedQueryReply last(const QVariantMap &json, Channel *channel);
+  int status(int status) const;
 };
 
 #endif /* NODEHISTORYFEED_H_ */

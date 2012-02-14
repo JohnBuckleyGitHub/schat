@@ -26,6 +26,7 @@
 #include "client/SimpleClient.h"
 #include "DateTime.h"
 #include "net/SimpleID.h"
+#include "sglobal.h"
 #include "text/PlainTextFilter.h"
 
 ClientMessages::ClientMessages(QObject *parent)
@@ -47,6 +48,24 @@ QByteArray ClientMessages::randomId() const
 
 
 /*!
+ * Возвращает \b true если используется время клиента, вместо времени пакета
+ * для определения времени сообщения.
+ *
+ * \p status Статус пакета.
+ */
+bool ClientMessages::isClientDate(int status)
+{
+  if (status == Notice::Found)
+    return false;
+
+  if (status == Notice::Undelivered)
+    return false;
+
+  return true;
+}
+
+
+/*!
  * Отправка текстового сообщения, если в тексте будут команды, то они будут обработаны.
  */
 bool ClientMessages::send(const QByteArray &dest, const QString &text)
@@ -57,14 +76,14 @@ bool ClientMessages::send(const QByteArray &dest, const QString &text)
   m_destId = dest;
   QString plain = PlainTextFilter::filter(text);
 
-  if (!plain.startsWith('/'))
+  if (!plain.startsWith(LC('/')))
     return sendText(dest, text);
 
   if (m_hooks->command(dest, text, plain))
     return true;
 
   /// Для обработки обычных команд используется хук: Hooks::Messages::command(const QByteArray &dest, const ClientCmd &cmd).
-  QStringList commands = (" " + plain).split(" /", QString::SkipEmptyParts);
+  QStringList commands = (LS(" ") + plain).split(LS(" /"), QString::SkipEmptyParts);
   for (int i = 0; i < commands.size(); ++i) {
     ClientCmd cmd(commands.at(i));
     if (cmd.isValid())
@@ -121,7 +140,7 @@ void ClientMessages::notice(int type)
   if (!m_packet->isValid())
     return;
 
-  if (m_packet->status() != Notice::Found)
+  if (isClientDate(m_packet->status()))
     m_packet->setDate(ChatClient::date());
 
   /// В случае если отправитель сообщения неизвестен клиенту, то будет произведён вход в канал
