@@ -37,19 +37,41 @@ ChannelMessage::ChannelMessage(MessagePacket packet)
   /// Если это собственное сообщение, то для него при необходимости устанавливается
   /// статус "offline" или "rejected".
   int status = packet->status();
-  if (packet->sender() == ChatClient::id()) {
-    if (status == Notice::ChannelOffline)
-      m_data[LS("Status")] = LS("offline");
-    else if (status != Notice::OK && status != Notice::Found)
-      m_data[LS("Status")] = LS("rejected");
-  }
+  if (isOffline(status))
+    m_data[LS("Status")] = LS("offline");
+  else if (status != Notice::OK && status != Notice::Found)
+    m_data[LS("Status")] = LS("rejected");
 
-  if (status == Notice::Found)
+  if (isFullDate(status))
     m_data["Day"] = true;
 
   author(m_packet->sender());
 
   m_tab = detectTab();
+}
+
+
+bool ChannelMessage::isFullDate(int status)
+{
+  if (status == Notice::Found)
+    return true;
+
+  if (status == Notice::Undelivered)
+    return true;
+
+  return false;
+}
+
+
+bool ChannelMessage::isOffline(int status)
+{
+  if (status == Notice::ChannelOffline)
+    return true;
+
+  if (status == Notice::Undelivered)
+    return true;
+
+  return false;
 }
 
 

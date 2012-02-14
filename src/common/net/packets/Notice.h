@@ -52,7 +52,8 @@ public:
   ///< Коды состояния.
   enum StatusCodes {
     OK                  = 200, ///< OK.
-    Found               = 300, ///< Found
+    Found               = 300, ///< Found.
+    Undelivered         = 301, ///< Undelivered.
     BadRequest          = 400, ///< Bad Request.
     Unauthorized        = 401, ///< Unauthorized.
     Forbidden           = 402, ///< Forbidden.
