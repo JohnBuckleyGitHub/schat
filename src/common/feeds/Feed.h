@@ -29,13 +29,16 @@ class FeedQueryReply
 public:
   FeedQueryReply(int status, const QVariantMap &json = QVariantMap())
   : modified(false)
+  , single(false)
   , status(status)
   , json(json)
   {}
 
-  bool modified;    ///< \b true если тело фида изменилось.
-  int status;       ///< Статус операции.
-  QVariantMap json; ///< JSON ответ на запрос.
+  bool modified;             ///< \b true если тело фида изменилось.
+  bool single;               ///< \b true если ответ должен получить только пользователь создавший запрос.
+  int status;                ///< Статус операции.
+  QList<QByteArray> packets; ///< Дополнительные пакеты с ответом на запрос.
+  QVariantMap json;          ///< JSON ответ на запрос.
 };
 
 /*!

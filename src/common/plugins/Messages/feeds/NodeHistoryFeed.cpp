@@ -89,6 +89,7 @@ FeedQueryReply NodeHistoryFeed::last(const QVariantMap &json, Channel *channel)
   if (count <= 0)
     return FeedQueryReply(Notice::BadRequest);
 
+  // Получение списка сообщений.
   QVariantList data;
 
   if (head().channel()->type() == SimpleID::UserId) {
@@ -104,7 +105,10 @@ FeedQueryReply NodeHistoryFeed::last(const QVariantMap &json, Channel *channel)
   if (data.isEmpty())
     return FeedQueryReply(Notice::NotFound);
 
-  QList<QByteArray> packets;
+  // Формирование пакетов.
+  FeedQueryReply reply     = FeedQueryReply(Notice::OK);
+  reply.single = true;
+  reply.json[LS("action")] = LS("last");
 
   for (int i = 0; i < data.size(); ++i) {
     QVariantList msg = data.at(i).toList();
@@ -112,22 +116,14 @@ FeedQueryReply NodeHistoryFeed::last(const QVariantMap &json, Channel *channel)
       continue;
 
     MessageNotice packet(msg.value(1).toByteArray(), msg.value(2).toByteArray(), msg.value(6).toString(), msg.value(4).toLongLong(), msg.value(0).toByteArray());
-    int status = msg.value(3).toInt();
-    if (status == Notice::OK)
-      status = Notice::Found;
-
-    packet.setStatus(status);
+    packet.setStatus(Notice::Found);
     packet.setCommand(msg.value(5).toString());
-    packets.append(packet.data(Core::stream()));
+    reply.packets.append(packet.data(Core::stream()));
   }
 
-  if (packets.isEmpty())
+  if (reply.packets.isEmpty())
     return FeedQueryReply(Notice::InternalError);
 
-  Core::send(packets);
-
-  FeedQueryReply reply     = FeedQueryReply(Notice::OK);
-  reply.json[LS("action")] = LS("last");
-  reply.json[LS("count")]  = packets.size();
+  reply.json[LS("count")]  = reply.packets.size();
   return reply;
 }

@@ -198,8 +198,15 @@ int NodeFeeds::query()
   if (reply.modified)
     FeedStorage::save(feed);
 
-  if (reply.status == Notice::OK)
-    m_core->send(m_user->sockets(), FeedNotice::reply(*m_packet, reply));
+  if (reply.status == Notice::OK) {
+    if (!reply.single)
+      m_core->send(m_user->sockets(), FeedNotice::reply(*m_packet, reply));
+    else
+      Core::send(FeedNotice::reply(*m_packet, reply));
+
+    if (!reply.packets.isEmpty())
+      Core::send(reply.packets);
+  }
 
   if (reply.modified) {
     get();
