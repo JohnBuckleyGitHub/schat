@@ -138,6 +138,7 @@ FeedQueryReply NodeHistoryFeed::offline(const QVariantMap & /*json*/, Channel *c
   if (packets.isEmpty())
     return FeedQueryReply(Notice::InternalError);
 
+  NodeMessagesDB::markAsRead(data);
   Core::send(packets);
 
   FeedQueryReply reply = FeedQueryReply(Notice::OK);
