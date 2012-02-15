@@ -56,7 +56,7 @@ ChatView::ChatView(const QByteArray &id, const QString &url, QWidget *parent)
   createActions();
   retranslateUi();
 
-  QTimer::singleShot(0, this, SLOT(start()));
+  ChatViewHooks::add(this);
 }
 
 
@@ -215,12 +215,6 @@ void ChatView::settingsChanged(const QString &key, const QVariant &value)
     m_service->setChecked(value.toBool());
     evaluateJavaScript("showService", value);
   }
-}
-
-
-void ChatView::start()
-{
-  ChatViewHooks::add(this);
 }
 
 

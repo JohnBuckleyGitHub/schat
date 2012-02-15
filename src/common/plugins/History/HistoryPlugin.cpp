@@ -17,26 +17,80 @@
  */
 
 #include <QTime>
+#include <QTimer>
 #include <QtPlugin>
 
 #include "ChatCore.h"
+#include "ChatNotify.h"
 #include "client/ChatClient.h"
+#include "client/ClientFeeds.h"
 #include "HistoryChatView.h"
 #include "HistoryDB.h"
 #include "HistoryMessages.h"
 #include "HistoryPlugin.h"
 #include "HistoryPlugin_p.h"
+#include "net/SimpleID.h"
 #include "NetworkManager.h"
+#include "sglobal.h"
 #include "ui/tabs/PrivateTab.h"
 
 History::History(QObject *parent)
   : ChatPlugin(parent)
 {
-  new HistoryChatView(this);
+  m_chatView = new HistoryChatView(this);
   new HistoryMessages(this);
 
   open();
   connect(ChatClient::i(), SIGNAL(online()), SLOT(open()));
+  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+}
+
+
+/*!
+ * Отправка пакета с запросом на получение последних сообщений в канале.
+ *
+ * \param id Идентификатор канала.
+ */
+bool History::getLast(const QByteArray &id)
+{
+  if (ChatClient::state() != ChatClient::Online)
+    return false;
+
+  QVariantMap data;
+  data.insert(LS("action"), LS("last"));
+  data.insert(LS("count"), 20);
+  return ChatClient::feeds()->request(id, LS("query"), LS("history"), data);
+}
+
+
+/*!
+ * Отправка пакета с запросом на получение офлайн сообщений.
+ */
+bool History::getOffline()
+{
+  if (ChatClient::state() != ChatClient::Online)
+    return false;
+
+  QVariantMap data;
+  data.insert(LS("action"), LS("offline"));
+  return ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("history"), data);
+}
+
+
+void History::getLast()
+{
+  m_chatView->getLast(SimpleID::UserId);
+}
+
+
+void History::notify(const Notify &notify)
+{
+  if (notify.type() == Notify::FeedReply || notify.type() == Notify::QueryError) {
+    if (!ChatNotify::isFeed(notify, LS("history"), ChatClient::id(), LS("offline")))
+      return;
+
+    QTimer::singleShot(0, this, SLOT(getLast()));
+  }
 }
 
 

@@ -55,7 +55,6 @@ private slots:
   void openUrl(const QUrl &url);
   void populateJavaScriptWindowObject();
   void settingsChanged(const QString &key, const QVariant &value);
-  void start();
 
 private:
   QVariantMap addHint(const Message &message);

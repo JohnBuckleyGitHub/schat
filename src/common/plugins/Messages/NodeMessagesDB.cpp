@@ -155,3 +155,9 @@ void NodeMessagesDB::add(const MessageNotice &packet, int status)
   query.bindValue(LS(":plain"),     PlainTextFilter::filter(packet.text()));
   query.exec();
 }
+
+
+void NodeMessagesDB::markAsRead(const QVariantList &data)
+{
+
+}

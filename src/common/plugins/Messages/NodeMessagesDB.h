@@ -35,6 +35,7 @@ public:
   static QVariantList messages(QSqlQuery &query);
   static QVariantList offline(const QByteArray &user);
   static void add(const MessageNotice &packet, int status = 200);
+  static void markAsRead(const QVariantList &data);
 
 private:
   static bool m_isOpen; ///< true если база открыта.

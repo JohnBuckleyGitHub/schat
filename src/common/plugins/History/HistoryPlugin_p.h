@@ -21,15 +21,25 @@
 
 #include "plugins/ChatPlugin.h"
 
+class HistoryChatView;
+class Notify;
+
 class History : public ChatPlugin
 {
   Q_OBJECT
 
 public:
   History(QObject *parent);
+  static bool getLast(const QByteArray &id);
+  static bool getOffline();
 
 private slots:
+  void getLast();
+  void notify(const Notify &notify);
   void open();
+
+private:
+  HistoryChatView *m_chatView;
 };
 
 

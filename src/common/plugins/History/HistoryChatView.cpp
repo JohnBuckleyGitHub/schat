@@ -17,9 +17,9 @@
  */
 
 #include "client/ChatClient.h"
-#include "client/ClientFeeds.h"
 #include "client/SimpleClient.h"
 #include "HistoryChatView.h"
+#include "HistoryPlugin_p.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
 #include "ui/tabs/ChatView.h"
@@ -31,33 +31,28 @@ HistoryChatView::HistoryChatView(QObject *parent)
 }
 
 
-void HistoryChatView::addImpl(ChatView *view)
-{
-  if (SimpleID::typeOf(view->id()) == SimpleID::ChannelId)
-    getLast(view->id());
-}
-
-
-void HistoryChatView::ready()
+void HistoryChatView::getLast(int type) const
 {
   ChatClient::io()->lock();
 
   foreach (ChatView *view, i()->views()) {
-    if (SimpleID::typeOf(view->id()) == SimpleID::ChannelId)
-      getLast(view->id());
+    if (SimpleID::typeOf(view->id()) == type)
+      History::getLast(view->id());
   }
 
   ChatClient::io()->unlock();
 }
 
 
-void HistoryChatView::getLast(const QByteArray &id)
+void HistoryChatView::addImpl(ChatView *view)
 {
-  if (ChatClient::state() != ChatClient::Online)
-    return;
+  if (SimpleID::typeOf(view->id()) == SimpleID::ChannelId || SimpleID::typeOf(view->id()) == SimpleID::UserId)
+    History::getLast(view->id());
+}
 
-  QVariantMap data;
-  data.insert(LS("action"), LS("last"));
-  data.insert(LS("count"), 20);
-  ChatClient::feeds()->request(id, LS("query"), LS("history"), data);
+
+void HistoryChatView::ready()
+{
+  getLast(SimpleID::ChannelId);
+  History::getOffline();
 }
