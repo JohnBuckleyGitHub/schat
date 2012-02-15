@@ -119,10 +119,23 @@ QVariantList NodeMessagesDB::messages(QSqlQuery &query)
     data.append(query.value(5)); // 4 date
     data.append(query.value(6)); // 5 command
     data.append(query.value(7)); // 6 text
+    data.append(query.value(0)); // 7 id
     out.push_front(data);
   }
 
   return out;
+}
+
+
+QVariantList NodeMessagesDB::offline(const QByteArray &user)
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.prepare(LS("SELECT id, messageId, senderId, destId, status, date, command, text FROM messages WHERE destId = :destId AND status = :status ORDER BY id DESC;"));
+  query.bindValue(LS(":destId"), user);
+  query.bindValue(LS(":status"), Notice::ChannelOffline);
+  query.exec();
+
+  return messages(query);
 }
 
 

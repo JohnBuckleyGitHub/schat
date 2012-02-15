@@ -34,7 +34,10 @@ public:
 
 private:
   FeedQueryReply last(const QVariantMap &json, Channel *channel);
+  FeedQueryReply offline(const QVariantMap &json, Channel *channel);
   int status(int status) const;
+  QList<QByteArray> toPackets(const QVariantList &data);
+  void toPackets(QList<QByteArray> &out, const QVariantList &data);
 };
 
 #endif /* NODEHISTORYFEED_H_ */

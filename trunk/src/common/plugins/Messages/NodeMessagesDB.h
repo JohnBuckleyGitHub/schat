@@ -33,6 +33,7 @@ public:
   static QVariantList last(const QByteArray &channel, int limit);
   static QVariantList last(const QByteArray &user1, const QByteArray &user2, int limit);
   static QVariantList messages(QSqlQuery &query);
+  static QVariantList offline(const QByteArray &user);
   static void add(const MessageNotice &packet, int status = 200);
 
 private:
