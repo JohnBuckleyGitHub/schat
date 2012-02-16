@@ -86,23 +86,11 @@ FeedQueryReply NodeHistoryFeed::last(const QVariantMap &json, Channel *channel)
   if (!channel)
     return FeedQueryReply(Notice::BadRequest);
 
-  // Обязательно должно быть указано количество сообщений.
-  int count = json.value(LS("count")).toInt();
-  if (count <= 0)
-    return FeedQueryReply(Notice::BadRequest);
-
   // Получение списка сообщений.
-  QVariantList data;
-
-  if (head().channel()->type() == SimpleID::UserId) {
-    if (head().channel()->id() == channel->id())
-      data = NodeMessagesDB::last(head().channel()->id(), count);
-    else
-      data = NodeMessagesDB::last(head().channel()->id(), channel->id(), count);
-  }
-  else if (head().channel()->type() == SimpleID::ChannelId) {
-    data = NodeMessagesDB::last(head().channel()->id(), count);
-  }
+  int status = Notice::OK;
+  QVariantList data = lastMessages(json, status);
+  if (status != Notice::OK)
+    return FeedQueryReply(status);
 
   if (data.isEmpty())
     return FeedQueryReply(Notice::NotFound);
@@ -166,6 +154,30 @@ QList<QByteArray> NodeHistoryFeed::toPackets(const QVariantList &data)
   QList<QByteArray> out;
   toPackets(out, data);
   return out;
+}
+
+
+QVariantList NodeHistoryFeed::lastMessages(const QVariantMap &json, int &status)
+{
+  int count = json.value(LS("count")).toInt();
+  if (count <= 0) {
+    status = Notice::BadRequest;
+    return QVariantList();
+  }
+
+  if (head().channel()->type() == SimpleID::ChannelId)
+    return NodeMessagesDB::last(head().channel()->id(), count);
+
+  if (head().channel()->type() != SimpleID::UserId) {
+    status = Notice::BadRequest;
+    return QVariantList();
+  }
+
+  QByteArray id = SimpleID::decode(json.value(LS("id")).toByteArray());
+  if (SimpleID::typeOf(id) != SimpleID::UserId)
+    return NodeMessagesDB::last(head().channel()->id(), count);
+  else
+    return NodeMessagesDB::last(head().channel()->id(), id, count);
 }
 
 
