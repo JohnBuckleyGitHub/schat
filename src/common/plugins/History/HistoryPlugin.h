@@ -38,7 +38,7 @@ public:
     out["Version"]  = "0.1.1";
     out["Site"]     = "http://wiki.schat.me/Plugin/History";
     out["Desc"]     = "History";
-    out["Required"] = "1.99.11";
+    out["Required"] = "1.99.12";
 
     return out;
   }
