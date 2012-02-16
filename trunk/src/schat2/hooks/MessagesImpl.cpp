@@ -57,6 +57,9 @@ void MessagesImpl::readText(MessagePacket packet)
   if (packet->status() == Notice::Found)
     return;
 
+  if (packet->status() == Notice::Undelivered && packet->sender() == ChatClient::id())
+    return;
+
   if (packet->sender() != ChatClient::id() || !m_undelivered.contains(packet->id())) {
     qDebug() << " ~~ START ALERT ~~";
     MessageAlert alert(message);
