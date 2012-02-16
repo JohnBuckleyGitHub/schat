@@ -59,7 +59,14 @@ bool History::getLast(const QByteArray &id)
   QVariantMap data;
   data.insert(LS("action"), LS("last"));
   data.insert(LS("count"), 20);
-  return ChatClient::feeds()->request(id, LS("query"), LS("history"), data);
+
+  QByteArray channel = id;
+  if (SimpleID::typeOf(id) == SimpleID::UserId && ChatClient::id() != id) {
+    data.insert(LS("id"), SimpleID::encode(id));
+    channel = ChatClient::id();
+  }
+
+  return ChatClient::feeds()->request(channel, LS("query"), LS("history"), data);
 }
 
 
