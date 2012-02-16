@@ -21,7 +21,7 @@ TARGET="SimpleChat2"
 
 cd ../..
 qmake -r
-make -j3
+make -j9
 make install
 cd out
 
