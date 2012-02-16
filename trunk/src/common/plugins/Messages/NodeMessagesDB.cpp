@@ -159,5 +159,22 @@ void NodeMessagesDB::add(const MessageNotice &packet, int status)
 
 void NodeMessagesDB::markAsRead(const QVariantList &data)
 {
+  if (data.isEmpty())
+    return;
 
+  QSqlDatabase db = QSqlDatabase::database(m_id);
+  QSqlQuery query(db);
+  db.transaction();
+  query.prepare(LS("UPDATE messages SET status = 200 WHERE id = :id;"));
+
+  for (int i = 0; i < data.size(); ++i) {
+    QVariantList msg = data.at(i).toList();
+    if (msg.isEmpty())
+      continue;
+
+    query.bindValue(LS(":id"), msg.value(7));
+    query.exec();
+  }
+
+  db.commit();
 }
