@@ -95,10 +95,13 @@ FeedQueryReply NodeHistoryFeed::last(const QVariantMap &json, Channel *channel)
   if (data.isEmpty())
     return FeedQueryReply(Notice::NotFound);
 
+  QList<MessageId> ids = last(json);
+
   // Формирование пакетов.
   FeedQueryReply reply = FeedQueryReply(Notice::OK);
   reply.single = true;
   reply.json[LS("action")] = LS("last");
+  reply.json[LS("ids")] = MessageId::toString(ids);
 
   toPackets(reply.packets, data);
 
@@ -149,6 +152,26 @@ int NodeHistoryFeed::status(int status) const
 }
 
 
+QList<MessageId> NodeHistoryFeed::last(const QVariantMap &json)
+{
+  int count = json.value(LS("count")).toInt();
+  if (count <= 0)
+    return QList<MessageId>();
+
+  if (head().channel()->type() == SimpleID::ChannelId)
+    return NodeMessagesDB::last(head().channel()->id(), count);
+
+  if (head().channel()->type() != SimpleID::UserId)
+    return QList<MessageId>();
+
+  QByteArray id = SimpleID::decode(json.value(LS("id")).toByteArray());
+  if (SimpleID::typeOf(id) != SimpleID::UserId)
+    return NodeMessagesDB::last(head().channel()->id(), count);
+  else
+    return NodeMessagesDB::last(head().channel()->id(), id, count);
+}
+
+
 QList<QByteArray> NodeHistoryFeed::toPackets(const QVariantList &data)
 {
   QList<QByteArray> out;
@@ -157,6 +180,9 @@ QList<QByteArray> NodeHistoryFeed::toPackets(const QVariantList &data)
 }
 
 
+/*!
+ * Получение последних сообщений.
+ */
 QVariantList NodeHistoryFeed::lastMessages(const QVariantMap &json, int &status)
 {
   int count = json.value(LS("count")).toInt();
@@ -166,7 +192,7 @@ QVariantList NodeHistoryFeed::lastMessages(const QVariantMap &json, int &status)
   }
 
   if (head().channel()->type() == SimpleID::ChannelId)
-    return NodeMessagesDB::last(head().channel()->id(), count);
+    return NodeMessagesDB::lastDeprecated(head().channel()->id(), count);
 
   if (head().channel()->type() != SimpleID::UserId) {
     status = Notice::BadRequest;
@@ -175,9 +201,9 @@ QVariantList NodeHistoryFeed::lastMessages(const QVariantMap &json, int &status)
 
   QByteArray id = SimpleID::decode(json.value(LS("id")).toByteArray());
   if (SimpleID::typeOf(id) != SimpleID::UserId)
-    return NodeMessagesDB::last(head().channel()->id(), count);
+    return NodeMessagesDB::lastDeprecated(head().channel()->id(), count);
   else
-    return NodeMessagesDB::last(head().channel()->id(), id, count);
+    return NodeMessagesDB::lastDeprecated(head().channel()->id(), id, count);
 }
 
 

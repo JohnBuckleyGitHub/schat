@@ -33,11 +33,11 @@ public:
     QVariantMap out = CoreApi::header();
     out["Id"]       = "Messages";
     out["Name"]     = "Messages";
-    out["Version"]  = "0.1.1";
+    out["Version"]  = "0.2.0";
     out["Type"]     = "server";
     out["Site"]     = "http://wiki.schat.me/Plugin/Messages";
     out["Desc"]     = "Server Messages Support";
-    out["Required"] = "1.99.12";
+    out["Required"] = "1.99.13";
 
     return out;
   }

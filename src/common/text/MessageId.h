@@ -16,14 +16,28 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#ifndef MESSAGEID_H_
+#define MESSAGEID_H_
 
-#define SCHAT_VERSION      "1.99.13"
-#define SCHAT_VERSION_RC   1,99,13,0
-#define SCHAT_NAME         "Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "schat.me"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2012 IMPOMEZIA"
+#include <QByteArray>
 
-#endif /*VERSION_H_*/
+#include "schat.h"
+
+/*!
+ * Идентификатор сообщения.
+ */
+class SCHAT_EXPORT MessageId
+{
+public:
+  MessageId(qint64 date, const QByteArray &id);
+  bool isValid() const;
+  QString toString() const;
+
+  static QString toString(const QList<MessageId> &ids);
+
+private:
+  QByteArray m_id; ///< Идентификатор сообщения.
+  qint64 m_date;   ///< Время сообщения.
+};
+
+#endif /* MESSAGEID_H_ */
