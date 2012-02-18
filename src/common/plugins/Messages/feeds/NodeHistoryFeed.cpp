@@ -79,36 +79,25 @@ void NodeHistoryFeed::setChannel(Channel *channel)
 
 
 /*!
- * Загрузка последних сообщений.
+ * Обработка запроса \b last, для получения идентификаторов последних сообщений.
+ *
+ * Дополнительные поля запроса:
+ * - \b count - Число сообщений, обязательно.
  */
 FeedQueryReply NodeHistoryFeed::last(const QVariantMap &json, Channel *channel)
 {
   if (!channel)
     return FeedQueryReply(Notice::BadRequest);
 
-  // Получение списка сообщений.
-  int status = Notice::OK;
-  QVariantList data = lastMessages(json, status);
-  if (status != Notice::OK)
-    return FeedQueryReply(status);
-
-  if (data.isEmpty())
+  QList<MessageId> ids = last(json);
+  if (ids.isEmpty())
     return FeedQueryReply(Notice::NotFound);
 
-  QList<MessageId> ids = last(json);
-
-  // Формирование пакетов.
   FeedQueryReply reply = FeedQueryReply(Notice::OK);
   reply.single = true;
   reply.json[LS("action")] = LS("last");
-  reply.json[LS("ids")] = MessageId::toString(ids);
-
-  toPackets(reply.packets, data);
-
-  if (reply.packets.isEmpty())
-    return FeedQueryReply(Notice::InternalError);
-
-  reply.json[LS("count")]  = reply.packets.size();
+  reply.json[LS("ids")]    = MessageId::toString(ids);
+  reply.json[LS("count")]  = ids.size();
   return reply;
 }
 
@@ -152,6 +141,9 @@ int NodeHistoryFeed::status(int status) const
 }
 
 
+/*!
+ * Получение идентификаторов последних сообщений.
+ */
 QList<MessageId> NodeHistoryFeed::last(const QVariantMap &json)
 {
   int count = json.value(LS("count")).toInt();
