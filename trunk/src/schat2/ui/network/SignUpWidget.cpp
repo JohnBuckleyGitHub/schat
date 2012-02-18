@@ -132,27 +132,27 @@ void SignUpWidget::reload()
 void SignUpWidget::notify(const Notify &notify)
 {
   if (notify.type() == Notify::QueryError) {
-    if (!ChatNotify::isFeed(notify, LS("account"), ChatClient::id(), m_action))
+    const FeedNotify &n = static_cast<const FeedNotify &>(notify);
+    if (!FeedNotify::isFeed(n, LS("account"), ChatClient::id(), m_action))
       return;
 
-    int status = notify.data().toMap().value(LS("status")).toInt();
-    if (status == Notice::ObjectAlreadyExists) {
+    if (n.status() == Notice::ObjectAlreadyExists) {
       m_signUp->setError(tr("User is already registered"));
       makeRed(m_nameEdit);
     }
-    else if (status == Notice::NotFound) {
+    else if (n.status() == Notice::NotFound) {
       m_signUp->setError(tr("User does not exist"));
       makeRed(m_nameEdit);
     }
-    else if (status == Notice::Unauthorized) {
+    else if (n.status() == Notice::Unauthorized) {
       m_signUp->setError(tr("Security question or answer is incorrect"));
       makeRed(m_answerEdit);
     }
     else
-      m_signUp->setError(Notice::status(status));
+      m_signUp->setError(Notice::status(n.status()));
   }
   else if (notify.type() == Notify::FeedReply) {
-    if (!ChatNotify::isFeed(notify, LS("account"), ChatClient::id(), m_action))
+    if (!FeedNotify::isFeed(static_cast<const FeedNotify &>(notify), LS("account"), ChatClient::id(), m_action))
       return;
 
     m_signUp->setReady(false);

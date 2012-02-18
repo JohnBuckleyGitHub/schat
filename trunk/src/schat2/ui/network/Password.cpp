@@ -128,20 +128,20 @@ void PasswordBase::notify(const Notify &notify)
     return;
 
   if (notify.type() == Notify::QueryError) {
-    if (!ChatNotify::isFeed(notify, LS("account"), ChatClient::id(), LS("password")))
+    const FeedNotify &n = static_cast<const FeedNotify &>(notify);
+    if (!FeedNotify::isFeed(n, LS("account"), ChatClient::id(), LS("password")))
       return;
 
-    int status = notify.data().toMap().value(LS("status")).toInt();
-    if (status == Notice::Forbidden) {
+    if (n.status() == Notice::Forbidden) {
       m_ok->setError(tr("Password is incorrect"));
       m_passwordEdit->setFocus();
       NetworkExtra::makeRed(m_passwordEdit);
     }
     else
-      m_ok->setError(Notice::status(status));
+      m_ok->setError(Notice::status(n.status()));
   }
   else if (notify.type() == Notify::FeedReply) {
-    if (!ChatNotify::isFeed(notify, LS("account"), ChatClient::id(), LS("password")))
+    if (!FeedNotify::isFeed(static_cast<const FeedNotify &>(notify), LS("account"), ChatClient::id(), LS("password")))
       return;
 
     m_ok->setReady(false);

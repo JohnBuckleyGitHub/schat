@@ -38,11 +38,11 @@ LoginIcon::LoginIcon(QWidget *parent)
 void LoginIcon::notify(const Notify &notify)
 {
   if (notify.type() == Notify::FeedData) {
-    QVariantMap data = notify.data().toMap();
-    if (data.value(LS("name")) != LS("account"))
+    const FeedNotify &n = static_cast<const FeedNotify &>(notify);
+    if (n.name() != LS("account"))
       return;
 
-    if (data.value(LS("id")) != ChatClient::id())
+    if (n.channel() != ChatClient::id())
       return;
 
     reload();
