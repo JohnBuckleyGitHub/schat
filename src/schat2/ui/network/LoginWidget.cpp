@@ -107,22 +107,22 @@ void LoginWidget::login()
 void LoginWidget::notify(const Notify &notify)
 {
   if (notify.type() == Notify::QueryError) {
-    if (!ChatNotify::isFeed(notify, LS("account"), ChatClient::id(), LS("login")))
+    const FeedNotify &n = static_cast<const FeedNotify &>(notify);
+    if (!FeedNotify::isFeed(n, LS("account"), ChatClient::id(), LS("login")))
       return;
 
-    int status = notify.data().toMap().value(LS("status")).toInt();
-    if (status == Notice::NotFound) {
+    if (n.status() == Notice::NotFound) {
       m_login->setError(tr("User does not exist"));
       makeRed(m_nameEdit);
       m_nameEdit->setFocus();
     }
-    else if (status == Notice::Forbidden) {
+    else if (n.status() == Notice::Forbidden) {
       m_login->setError(tr("Password is incorrect"));
       makeRed(m_passwordEdit);
       m_passwordEdit->setFocus();
     }
     else
-      m_login->setError(Notice::status(status));
+      m_login->setError(Notice::status(n.status()));
   }
 }
 

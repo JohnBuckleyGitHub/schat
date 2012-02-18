@@ -291,18 +291,16 @@ void NetworkManager::notify(const Notify &notify)
     item->write();
   }
   else if (notify.type() == Notify::FeedReply) {
-    QVariantMap data = notify.data().toMap();
-    if (data.value(LS("name")) == LS("account")) {
-      if (data.value(LS("id")) != ChatClient::id())
+    const FeedNotify &n = static_cast<const FeedNotify &>(notify);
+    if (n.name() == LS("account")) {
+      if (n.channel() != ChatClient::id())
         return;
 
-      QVariantMap json = data.value(LS("data")).toMap();
-      if (json.isEmpty())
+      if (n.json().isEmpty())
         return;
 
-      QString action = json.value(LS("action")).toString();
-      if (action == LS("login") || action == LS("reset"))
-        login(json);
+      if (n.action() == LS("login") || n.action() == LS("reset"))
+        login(n.json());
     }
   }
 }

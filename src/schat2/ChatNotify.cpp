@@ -31,6 +31,12 @@ FeedNotify::FeedNotify(int type, const QByteArray &channel, const QString &name,
 }
 
 
+QString FeedNotify::action() const
+{
+  return m_json.value(LS("action")).toString();
+}
+
+
 bool FeedNotify::isFeed(const FeedNotify &notify, const QString &name, const QByteArray &id, const QString &action)
 {
   if (notify.name() != name)
@@ -42,7 +48,7 @@ bool FeedNotify::isFeed(const FeedNotify &notify, const QString &name, const QBy
   if (action.isEmpty())
     return true;
 
-  if (notify.json().value(LS("action")) != action)
+  if (notify.action() != action)
     return false;
 
   return true;
@@ -52,24 +58,6 @@ ChatNotify::ChatNotify(QObject *parent)
   : QObject(parent)
 {
   m_self = this;
-}
-
-
-bool ChatNotify::isFeed(const Notify &notify, const QString &name, const QByteArray &id, const QString &action)
-{
-  QVariantMap data = notify.data().toMap();
-  if (data.value(LS("name")) != name)
-    return false;
-
-  if (data.value(LS("id")) != id)
-    return false;
-
-  if (action.isEmpty())
-    return true;
-  else if (data.value(LS("data")).toMap().value(LS("action")) != action)
-    return false;
-
-  return true;
 }
 
 
