@@ -57,11 +57,31 @@ public:
 
   inline const QVariant& data() const { return m_data; }
   inline int type() const             { return m_type; }
-  static Notify feedData(const QByteArray &id, const QString &name);
 
-private:
+protected:
   int m_type;
   QVariant m_data;
+};
+
+
+/*!
+ * Уведомления связанные с фидами.
+ */
+class SCHAT_CORE_EXPORT FeedNotify : public Notify
+{
+public:
+  FeedNotify(int type, const QByteArray &channel, const QString &name, const QVariantMap &json = QVariantMap(), int status = 200);
+  inline const QByteArray& channel() const { return m_channel; }
+  inline const QString& name() const       { return m_name; }
+  inline const QVariantMap& json() const   { return m_json; }
+  inline int status() const                { return m_status; }
+  static bool isFeed(const FeedNotify &notify, const QString &name, const QByteArray &id, const QString &action = QString());
+
+private:
+  int m_status;         ///< Статус.
+  QByteArray m_channel; ///< Идентификатор канала.
+  QString m_name;       ///< Имя фида.
+  QVariantMap m_json;   ///< JSON данные.
 };
 
 

@@ -98,8 +98,7 @@ void ClientFeedsImpl::feed()
     return;
 
   m_channel->feeds().add(feed);
-
-  ChatNotify::start(Notify::feedData(m_channel->id(), name));
+  ChatNotify::start(FeedNotify(Notify::FeedData, m_channel->id(), name));
 }
 
 
@@ -143,12 +142,7 @@ void ClientFeedsImpl::query()
   if (m_packet->status() == Notice::OK)
     return;
 
-  QVariantMap data;
-  data[LS("id")]     = m_channel->id();
-  data[LS("name")]   = name;
-  data[LS("data")]   = m_packet->json();
-  data[LS("status")] = m_packet->status();
-  ChatNotify::start(Notify::QueryError, data);
+  ChatNotify::start(FeedNotify(Notify::QueryError, m_channel->id(), name, m_packet->json(), m_packet->status()));
 }
 
 
@@ -158,9 +152,5 @@ void ClientFeedsImpl::reply()
   if (name.isEmpty())
     return;
 
-  QVariantMap data;
-  data[LS("id")]   = m_channel->id();
-  data[LS("name")] = name;
-  data[LS("data")] = m_packet->json();
-  ChatNotify::start(Notify::FeedReply, data);
+  ChatNotify::start(FeedNotify(Notify::FeedReply, m_channel->id(), name, m_packet->json()));
 }
