@@ -19,15 +19,34 @@
 #include "ChatNotify.h"
 #include "sglobal.h"
 
-Notify Notify::feedData(const QByteArray &id, const QString &name)
+ChatNotify *ChatNotify::m_self = 0;
+
+FeedNotify::FeedNotify(int type, const QByteArray &channel, const QString &name, const QVariantMap &json, int status)
+  : Notify(type)
+  , m_status(status)
+  , m_channel(channel)
+  , m_name(name)
+  , m_json(json)
 {
-  QVariantMap data;
-  data[LS("id")]   = id;
-  data[LS("name")] = name;
-  return Notify(FeedData, data);
 }
 
-ChatNotify *ChatNotify::m_self = 0;
+
+bool FeedNotify::isFeed(const FeedNotify &notify, const QString &name, const QByteArray &id, const QString &action)
+{
+  if (notify.name() != name)
+    return false;
+
+  if (notify.channel() != id)
+    return false;
+
+  if (action.isEmpty())
+    return true;
+
+  if (notify.json().value(LS("action")) != action)
+    return false;
+
+  return true;
+}
 
 ChatNotify::ChatNotify(QObject *parent)
   : QObject(parent)

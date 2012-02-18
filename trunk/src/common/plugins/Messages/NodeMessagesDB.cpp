@@ -117,7 +117,7 @@ QList<MessageId> NodeMessagesDB::last(const QByteArray &channel, int limit)
 QList<MessageId> NodeMessagesDB::last(const QByteArray &user1, const QByteArray &user2, int limit)
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(LS("SELECT id, messageId, senderId, destId, status, date, command, text FROM messages WHERE (senderId = :id1 AND destId = :id2) OR (senderId = :id3 AND destId = :id4) ORDER BY id DESC LIMIT :limit;"));
+  query.prepare(LS("SELECT id, messageId, date FROM messages WHERE (senderId = :id1 AND destId = :id2) OR (senderId = :id3 AND destId = :id4) ORDER BY id DESC LIMIT :limit;"));
   query.bindValue(LS(":id1"), user1);
   query.bindValue(LS(":id2"), user2);
   query.bindValue(LS(":id3"), user2);
