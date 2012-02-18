@@ -16,14 +16,43 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#include <QStringList>
 
-#define SCHAT_VERSION      "1.99.13"
-#define SCHAT_VERSION_RC   1,99,13,0
-#define SCHAT_NAME         "Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "schat.me"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2012 IMPOMEZIA"
+#include "net/SimpleID.h"
+#include "sglobal.h"
+#include "text/MessageId.h"
 
-#endif /*VERSION_H_*/
+MessageId::MessageId(qint64 date, const QByteArray &id)
+  : m_id(id)
+  , m_date(date)
+{
+}
+
+
+bool MessageId::isValid() const
+{
+  if (m_date == 0)
+    return false;
+
+  if (SimpleID::typeOf(m_id) != SimpleID::MessageId)
+    return false;
+
+  return true;
+}
+
+
+QString MessageId::toString() const
+{
+  return QString::number(m_date) + LC(':') + SimpleID::encode(m_id);
+}
+
+
+QString MessageId::toString(const QList<MessageId> &ids)
+{
+  QStringList out;
+  for (int i = 0; i < ids.size(); ++i) {
+    out.append(ids.at(i).toString());
+  }
+
+  return out.join(LS(","));
+}
