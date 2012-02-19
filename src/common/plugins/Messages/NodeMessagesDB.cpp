@@ -65,6 +65,18 @@ bool NodeMessagesDB::open()
 }
 
 
+int NodeMessagesDB::status(int status)
+{
+  if (status == Notice::OK)
+    return Notice::Found;
+
+  if (status == Notice::ChannelOffline)
+    return Notice::Unread;
+
+  return status;
+}
+
+
 QList<MessageId> NodeMessagesDB::ids(QSqlQuery &query)
 {
   if (!query.isActive())
@@ -164,44 +176,6 @@ QVariantList NodeMessagesDB::get(const QList<MessageId> &ids)
 }
 
 
-QVariantList NodeMessagesDB::lastDeprecated(const QByteArray &channel, int limit)
-{
-  QSqlQuery query(QSqlDatabase::database(m_id));
-
-  int type = SimpleID::typeOf(channel);
-  if (type == SimpleID::ChannelId) {
-    query.prepare(LS("SELECT id, messageId, senderId, destId, status, date, command, text FROM messages WHERE destId = :destId ORDER BY id DESC LIMIT :limit;"));
-  }
-  else if (type == SimpleID::UserId) {
-    query.prepare(LS("SELECT id, messageId, senderId, destId, status, date, command, text FROM messages WHERE senderId = :senderId AND destId = :destId ORDER BY id DESC LIMIT :limit;"));
-    query.bindValue(LS(":senderId"), channel);
-  }
-  else
-    return QVariantList();
-
-  query.bindValue(LS(":destId"), channel);
-  query.bindValue(LS(":limit"), limit);
-  query.exec();
-
-  return messages(query);
-}
-
-
-QVariantList NodeMessagesDB::lastDeprecated(const QByteArray &user1, const QByteArray &user2, int limit)
-{
-  QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(LS("SELECT id, messageId, senderId, destId, status, date, command, text FROM messages WHERE (senderId = :id1 AND destId = :id2) OR (senderId = :id3 AND destId = :id4) ORDER BY id DESC LIMIT :limit;"));
-  query.bindValue(LS(":id1"), user1);
-  query.bindValue(LS(":id2"), user2);
-  query.bindValue(LS(":id3"), user2);
-  query.bindValue(LS(":id4"), user1);
-  query.bindValue(LS(":limit"), limit);
-  query.exec();
-
-  return messages(query);
-}
-
-
 QVariantList NodeMessagesDB::messages(QSqlQuery &query)
 {
   if (!query.isActive())
@@ -229,9 +203,8 @@ QVariantList NodeMessagesDB::messages(QSqlQuery &query)
 QVariantList NodeMessagesDB::offline(const QByteArray &user)
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(LS("SELECT id, messageId, senderId, destId, status, date, command, text FROM messages WHERE destId = :destId AND status = :status ORDER BY id DESC;"));
+  query.prepare(LS("SELECT id, messageId, senderId, destId, status, date, command, text FROM messages WHERE destId = :destId AND status = 301 ORDER BY id DESC;"));
   query.bindValue(LS(":destId"), user);
-  query.bindValue(LS(":status"), Notice::ChannelOffline);
   query.exec();
 
   return messages(query);
@@ -247,7 +220,7 @@ void NodeMessagesDB::add(const MessageNotice &packet, int status)
   query.bindValue(LS(":messageId"), packet.id());
   query.bindValue(LS(":senderId"),  packet.sender());
   query.bindValue(LS(":destId"),    packet.dest());
-  query.bindValue(LS(":status"),    status);
+  query.bindValue(LS(":status"),    NodeMessagesDB::status(status));
   query.bindValue(LS(":date"),      Core::date());
   query.bindValue(LS(":command"),   packet.command());
   query.bindValue(LS(":text"),      packet.text());
@@ -264,7 +237,7 @@ void NodeMessagesDB::markAsRead(const QVariantList &data)
   QSqlDatabase db = QSqlDatabase::database(m_id);
   QSqlQuery query(db);
   db.transaction();
-  query.prepare(LS("UPDATE messages SET status = 200 WHERE id = :id;"));
+  query.prepare(LS("UPDATE messages SET status = 302 WHERE id = :id;"));
 
   for (int i = 0; i < data.size(); ++i) {
     QVariantList msg = data.at(i).toList();

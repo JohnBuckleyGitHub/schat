@@ -32,15 +32,14 @@ class NodeMessagesDB
 
 public:
   static bool open();
+  static int status(int status);
   static QList<MessageId> ids(QSqlQuery &query);
   static QList<MessageId> last(const QByteArray &channel, int limit);
   static QList<MessageId> last(const QByteArray &user1, const QByteArray &user2, int limit);
   static QVariantList get(const QList<MessageId> &ids);
-  static QVariantList lastDeprecated(const QByteArray &channel, int limit);
-  static QVariantList lastDeprecated(const QByteArray &user1, const QByteArray &user2, int limit);
   static QVariantList messages(QSqlQuery &query);
   static QVariantList offline(const QByteArray &user);
-  static void add(const MessageNotice &packet, int status = 200);
+  static void add(const MessageNotice &packet, int status = 300);
   static void markAsRead(const QVariantList &data);
 
 private:

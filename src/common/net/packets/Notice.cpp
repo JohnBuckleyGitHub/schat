@@ -163,8 +163,8 @@ QString Notice::status(int status)
     case Found:
       return QObject::tr("Found");
 
-    case Undelivered:
-      return QObject::tr("Undelivered");
+//    case Undelivered:
+//      return QObject::tr("Undelivered");
 
     case BadRequest:
       return QObject::tr("Bad Request");
