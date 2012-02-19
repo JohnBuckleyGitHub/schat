@@ -49,6 +49,19 @@ History::History(QObject *parent)
 }
 
 
+bool History::get(const QList<MessageId> &ids)
+{
+  if (ChatClient::state() != ChatClient::Online)
+    return false;
+
+  QVariantMap data;
+  data.insert(LS("action"), LS("get"));
+  data.insert(LS("ids"), MessageId::toString(ids));
+
+  return ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("history"), data);
+}
+
+
 /*!
  * Отправка пакета с запросом на получение последних сообщений в канале.
  *
@@ -125,9 +138,14 @@ void History::open()
 void History::lastReady(const FeedNotify &notify)
 {
   QList<MessageId> ids = MessageId::toList(notify.json().value(LS("ids")).toString());
+  if (ids.isEmpty())
+    return;
+
   qDebug() << "++++++++++++++++++++++++++";
   qDebug() << ids.size();
   qDebug() << "++++++++++++++++++++++++++";
+
+  get(ids);
 }
 
 

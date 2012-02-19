@@ -20,6 +20,7 @@
 #define HISTORYPLUGIN_P_H_
 
 #include "plugins/ChatPlugin.h"
+#include "text/MessageId.h"
 
 class HistoryChatView;
 class Notify;
@@ -31,6 +32,7 @@ class History : public ChatPlugin
 
 public:
   History(QObject *parent);
+  static bool get(const QList<MessageId> &ids);
   static bool getLast(const QByteArray &id);
   static bool getOffline();
 

@@ -34,6 +34,7 @@ public:
   void setChannel(Channel *channel);
 
 private:
+  FeedQueryReply get(const QVariantMap &json, Channel *channel);
   FeedQueryReply last(const QVariantMap &json, Channel *channel);
   FeedQueryReply offline(const QVariantMap &json, Channel *channel);
 

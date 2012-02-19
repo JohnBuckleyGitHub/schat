@@ -129,6 +129,41 @@ QList<MessageId> NodeMessagesDB::last(const QByteArray &user1, const QByteArray 
 }
 
 
+QVariantList NodeMessagesDB::get(const QList<MessageId> &ids)
+{
+  if (ids.isEmpty())
+    return QVariantList();
+
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.prepare(LS("SELECT id, senderId, destId, status, command, text FROM messages WHERE messageId = :messageId AND date = :date LIMIT 1;"));
+
+  QVariantList out;
+  out.reserve(ids.size());
+
+  for (int i = 0; i < ids.size(); ++i) {
+    query.bindValue(LS(":messageId"), ids.at(i).id());
+    query.bindValue(LS(":date"), ids.at(i).date());
+    query.exec();
+
+    if (!query.first())
+      continue;
+
+    QVariantList data;
+    data.append(ids.at(i).id());   // 0 messageId
+    data.append(query.value(1));   // 1 senderId
+    data.append(query.value(2));   // 2 destId
+    data.append(query.value(3));   // 3 status
+    data.append(ids.at(i).date()); // 4 date
+    data.append(query.value(4));   // 5 command
+    data.append(query.value(5));   // 6 text
+    data.append(query.value(0));   // 7 id
+    out.push_back(data);
+  }
+
+  return out;
+}
+
+
 QVariantList NodeMessagesDB::lastDeprecated(const QByteArray &channel, int limit)
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
