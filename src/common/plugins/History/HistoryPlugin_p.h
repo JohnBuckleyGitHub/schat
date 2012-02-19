@@ -23,6 +23,7 @@
 
 class HistoryChatView;
 class Notify;
+class FeedNotify;
 
 class History : public ChatPlugin
 {
@@ -39,6 +40,8 @@ private slots:
   void open();
 
 private:
+  void lastReady(const FeedNotify &notify);
+
   HistoryChatView *m_chatView;
 };
 

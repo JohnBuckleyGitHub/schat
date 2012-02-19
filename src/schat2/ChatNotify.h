@@ -55,6 +55,8 @@ public:
   , m_data(data)
   {}
 
+  virtual ~Notify() {}
+
   inline const QVariant& data() const { return m_data; }
   inline int type() const             { return m_type; }
 
@@ -71,12 +73,13 @@ class SCHAT_CORE_EXPORT FeedNotify : public Notify
 {
 public:
   FeedNotify(int type, const QByteArray &channel, const QString &name, const QVariantMap &json = QVariantMap(), int status = 200);
+  bool match(const QByteArray &id, const QString &name, const QString &action = QString()) const;
+  bool match(const QString &name, const QString &action = QString()) const;
   inline const QByteArray& channel() const { return m_channel; }
   inline const QString& name() const       { return m_name; }
   inline const QVariantMap& json() const   { return m_json; }
   inline int status() const                { return m_status; }
   QString action() const;
-  static bool isFeed(const FeedNotify &notify, const QString &name, const QByteArray &id, const QString &action = QString());
 
 private:
   int m_status;         ///< Статус.

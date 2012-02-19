@@ -19,7 +19,7 @@
 #ifndef MESSAGEID_H_
 #define MESSAGEID_H_
 
-#include <QByteArray>
+#include <QString>
 
 #include "schat.h"
 
@@ -29,10 +29,12 @@
 class SCHAT_EXPORT MessageId
 {
 public:
+  MessageId(const QString &id);
   MessageId(qint64 date, const QByteArray &id);
   bool isValid() const;
   QString toString() const;
 
+  static QList<MessageId> toList(const QString &ids);
   static QString toString(const QList<MessageId> &ids);
 
 private:

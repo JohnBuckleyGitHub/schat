@@ -133,7 +133,7 @@ void SignUpWidget::notify(const Notify &notify)
 {
   if (notify.type() == Notify::QueryError) {
     const FeedNotify &n = static_cast<const FeedNotify &>(notify);
-    if (!FeedNotify::isFeed(n, LS("account"), ChatClient::id(), m_action))
+    if (!n.match(ChatClient::id(), LS("account"), m_action))
       return;
 
     if (n.status() == Notice::ObjectAlreadyExists) {
@@ -152,7 +152,7 @@ void SignUpWidget::notify(const Notify &notify)
       m_signUp->setError(Notice::status(n.status()));
   }
   else if (notify.type() == Notify::FeedReply) {
-    if (!FeedNotify::isFeed(static_cast<const FeedNotify &>(notify), LS("account"), ChatClient::id(), m_action))
+    if (!static_cast<const FeedNotify &>(notify).match(ChatClient::id(), LS("account"), m_action))
       return;
 
     m_signUp->setReady(false);

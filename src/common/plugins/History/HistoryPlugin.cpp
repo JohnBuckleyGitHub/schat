@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include <QTime>
 #include <QTimer>
 #include <QtPlugin>
@@ -32,6 +34,7 @@
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
 #include "sglobal.h"
+#include "text/MessageId.h"
 #include "ui/tabs/PrivateTab.h"
 
 History::History(QObject *parent)
@@ -92,8 +95,15 @@ void History::getLast()
 
 void History::notify(const Notify &notify)
 {
+  if (notify.type() == Notify::FeedReply) {
+    const FeedNotify &n = static_cast<const FeedNotify &>(notify);
+    if (n.match(LS("history"), LS("last"))) {
+      lastReady(n);
+    }
+  }
+
   if (notify.type() == Notify::FeedReply || notify.type() == Notify::QueryError) {
-    if (!ChatNotify::isFeed(notify, LS("history"), ChatClient::id(), LS("offline")))
+    if (!static_cast<const FeedNotify &>(notify).match(ChatClient::id(), LS("history"), LS("offline")))
       return;
 
     QTimer::singleShot(0, this, SLOT(getLast()));
@@ -106,6 +116,18 @@ void History::open()
   QByteArray id = ChatClient::serverId();
   if (!id.isEmpty())
     HistoryDB::open(id, ChatCore::networks()->root(id));
+}
+
+
+/*!
+ * Обработка ответа на успешный запрос \b last к фиду \b history.
+ */
+void History::lastReady(const FeedNotify &notify)
+{
+  QList<MessageId> ids = MessageId::toList(notify.json().value(LS("ids")).toString());
+  qDebug() << "++++++++++++++++++++++++++";
+  qDebug() << ids.size();
+  qDebug() << "++++++++++++++++++++++++++";
 }
 
 
