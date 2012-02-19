@@ -108,7 +108,7 @@ void LoginWidget::notify(const Notify &notify)
 {
   if (notify.type() == Notify::QueryError) {
     const FeedNotify &n = static_cast<const FeedNotify &>(notify);
-    if (!FeedNotify::isFeed(n, LS("account"), ChatClient::id(), LS("login")))
+    if (!n.match(ChatClient::id(), LS("account"), LS("login")))
       return;
 
     if (n.status() == Notice::NotFound) {

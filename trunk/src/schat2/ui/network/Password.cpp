@@ -129,7 +129,7 @@ void PasswordBase::notify(const Notify &notify)
 
   if (notify.type() == Notify::QueryError) {
     const FeedNotify &n = static_cast<const FeedNotify &>(notify);
-    if (!FeedNotify::isFeed(n, LS("account"), ChatClient::id(), LS("password")))
+    if (!n.match(ChatClient::id(), LS("account"), LS("password")))
       return;
 
     if (n.status() == Notice::Forbidden) {
@@ -141,7 +141,7 @@ void PasswordBase::notify(const Notify &notify)
       m_ok->setError(Notice::status(n.status()));
   }
   else if (notify.type() == Notify::FeedReply) {
-    if (!FeedNotify::isFeed(static_cast<const FeedNotify &>(notify), LS("account"), ChatClient::id(), LS("password")))
+    if (!static_cast<const FeedNotify &>(notify).match(ChatClient::id(), LS("account"), LS("password")))
       return;
 
     m_ok->setReady(false);

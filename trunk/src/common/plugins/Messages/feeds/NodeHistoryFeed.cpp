@@ -98,6 +98,10 @@ FeedQueryReply NodeHistoryFeed::last(const QVariantMap &json, Channel *channel)
   reply.json[LS("action")] = LS("last");
   reply.json[LS("ids")]    = MessageId::toString(ids);
   reply.json[LS("count")]  = ids.size();
+
+  if (json.contains(LS("id")))
+    reply.json[LS("id")]  = json.value(LS("id"));
+
   return reply;
 }
 

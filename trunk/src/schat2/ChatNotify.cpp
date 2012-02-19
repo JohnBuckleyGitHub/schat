@@ -31,28 +31,35 @@ FeedNotify::FeedNotify(int type, const QByteArray &channel, const QString &name,
 }
 
 
-QString FeedNotify::action() const
+bool FeedNotify::match(const QByteArray &id, const QString &name, const QString &action) const
 {
-  return m_json.value(LS("action")).toString();
+  if (m_channel != id)
+    return false;
+
+  return match(name, action);
 }
 
 
-bool FeedNotify::isFeed(const FeedNotify &notify, const QString &name, const QByteArray &id, const QString &action)
+bool FeedNotify::match(const QString &name, const QString &action) const
 {
-  if (notify.name() != name)
-    return false;
-
-  if (notify.channel() != id)
+  if (m_name != name)
     return false;
 
   if (action.isEmpty())
     return true;
 
-  if (notify.action() != action)
+  if (this->action() != action)
     return false;
 
   return true;
 }
+
+
+QString FeedNotify::action() const
+{
+  return m_json.value(LS("action")).toString();
+}
+
 
 ChatNotify::ChatNotify(QObject *parent)
   : QObject(parent)

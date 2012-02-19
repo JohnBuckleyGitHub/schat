@@ -22,6 +22,17 @@
 #include "sglobal.h"
 #include "text/MessageId.h"
 
+MessageId::MessageId(const QString &id)
+{
+  QStringList in = id.split(LC(':'));
+  if (in.size() > 0)
+    m_date = in.at(0).toLongLong();
+
+  if (in.size() > 1)
+    m_id = SimpleID::decode(in.at(1).toLatin1());
+}
+
+
 MessageId::MessageId(qint64 date, const QByteArray &id)
   : m_id(id)
   , m_date(date)
@@ -47,12 +58,26 @@ QString MessageId::toString() const
 }
 
 
+QList<MessageId> MessageId::toList(const QString &ids)
+{
+  QStringList in = ids.split(LC(','), QString::SkipEmptyParts);
+  QList<MessageId> out;
+
+  for (int i = 0; i < in.size(); ++i) {
+    MessageId id(in.at(i));
+    if (id.isValid())
+      out.append(id);
+  }
+
+  return out;
+}
+
+
 QString MessageId::toString(const QList<MessageId> &ids)
 {
   QStringList out;
-  for (int i = 0; i < ids.size(); ++i) {
+  for (int i = 0; i < ids.size(); ++i)
     out.append(ids.at(i).toString());
-  }
 
   return out.join(LS(","));
 }
