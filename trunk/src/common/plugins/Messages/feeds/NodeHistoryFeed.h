@@ -38,10 +38,8 @@ private:
   FeedQueryReply last(const QVariantMap &json, Channel *channel);
   FeedQueryReply offline(const QVariantMap &json, Channel *channel);
 
-  int status(int status) const;
   QList<MessageId> last(const QVariantMap &json);
   QList<QByteArray> toPackets(const QVariantList &data);
-  QVariantList lastMessages(const QVariantMap &json, int &status);
   void toPackets(QList<QByteArray> &out, const QVariantList &data);
 };
 

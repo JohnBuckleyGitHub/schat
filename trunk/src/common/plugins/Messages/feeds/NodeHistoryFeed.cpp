@@ -168,18 +168,6 @@ FeedQueryReply NodeHistoryFeed::offline(const QVariantMap & /*json*/, Channel *c
 }
 
 
-int NodeHistoryFeed::status(int status) const
-{
-  if (status == Notice::OK)
-    return Notice::Found;
-
-  if (status == Notice::ChannelOffline)
-    return Notice::Undelivered;
-
-  return status;
-}
-
-
 /*!
  * Получение идентификаторов последних сообщений.
  */
@@ -211,33 +199,6 @@ QList<QByteArray> NodeHistoryFeed::toPackets(const QVariantList &data)
 }
 
 
-/*!
- * Получение последних сообщений.
- */
-QVariantList NodeHistoryFeed::lastMessages(const QVariantMap &json, int &status)
-{
-  int count = json.value(LS("count")).toInt();
-  if (count <= 0) {
-    status = Notice::BadRequest;
-    return QVariantList();
-  }
-
-  if (head().channel()->type() == SimpleID::ChannelId)
-    return NodeMessagesDB::lastDeprecated(head().channel()->id(), count);
-
-  if (head().channel()->type() != SimpleID::UserId) {
-    status = Notice::BadRequest;
-    return QVariantList();
-  }
-
-  QByteArray id = SimpleID::decode(json.value(LS("id")).toByteArray());
-  if (SimpleID::typeOf(id) != SimpleID::UserId)
-    return NodeMessagesDB::lastDeprecated(head().channel()->id(), count);
-  else
-    return NodeMessagesDB::lastDeprecated(head().channel()->id(), id, count);
-}
-
-
 void NodeHistoryFeed::toPackets(QList<QByteArray> &out, const QVariantList &data)
 {
   for (int i = 0; i < data.size(); ++i) {
@@ -246,7 +207,7 @@ void NodeHistoryFeed::toPackets(QList<QByteArray> &out, const QVariantList &data
       continue;
 
     MessageNotice packet(msg.value(1).toByteArray(), msg.value(2).toByteArray(), msg.value(6).toString(), msg.value(4).toLongLong(), msg.value(0).toByteArray());
-    packet.setStatus(status(msg.value(3).toInt()));
+    packet.setStatus(msg.value(3).toInt());
     packet.setCommand(msg.value(5).toString());
     out.append(packet.data(Core::stream()));
   }

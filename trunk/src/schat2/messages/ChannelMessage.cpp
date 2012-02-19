@@ -56,7 +56,10 @@ bool ChannelMessage::isFullDate(int status)
   if (status == Notice::Found)
     return true;
 
-  if (status == Notice::Undelivered)
+  if (status == Notice::Unread)
+    return true;
+
+  if (status == Notice::Read)
     return true;
 
   return false;
@@ -68,7 +71,10 @@ bool ChannelMessage::isOffline(int status)
   if (status == Notice::ChannelOffline)
     return true;
 
-  if (status == Notice::Undelivered)
+  if (status == Notice::Unread)
+    return true;
+
+  if (status == Notice::Read)
     return true;
 
   return false;

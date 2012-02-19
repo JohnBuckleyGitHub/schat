@@ -58,7 +58,10 @@ bool ClientMessages::isClientDate(int status)
   if (status == Notice::Found)
     return false;
 
-  if (status == Notice::Undelivered)
+  if (status == Notice::Unread)
+    return false;
+
+  if (status == Notice::Read)
     return false;
 
   return true;
