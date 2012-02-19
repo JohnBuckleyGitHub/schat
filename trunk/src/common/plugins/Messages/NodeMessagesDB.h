@@ -35,6 +35,7 @@ public:
   static QList<MessageId> ids(QSqlQuery &query);
   static QList<MessageId> last(const QByteArray &channel, int limit);
   static QList<MessageId> last(const QByteArray &user1, const QByteArray &user2, int limit);
+  static QVariantList get(const QList<MessageId> &ids);
   static QVariantList lastDeprecated(const QByteArray &channel, int limit);
   static QVariantList lastDeprecated(const QByteArray &user1, const QByteArray &user2, int limit);
   static QVariantList messages(QSqlQuery &query);

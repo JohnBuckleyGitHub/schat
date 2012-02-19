@@ -60,8 +60,14 @@ FeedQueryReply NodeHistoryFeed::query(const QVariantMap &json, Channel *channel)
   if (action.isEmpty())
     return FeedQueryReply(Notice::BadRequest);
 
-  if (action == LS("last"))
+  qDebug() << " > [Messages] NodeHistoryFeed::query()" << action;
+
+  if (action == LS("get"))
+    return get(json, channel);
+
+  else if (action == LS("last"))
     return last(json, channel);
+
   else if (action == LS("offline"))
     return offline(json, channel);
 
@@ -78,11 +84,40 @@ void NodeHistoryFeed::setChannel(Channel *channel)
 }
 
 
+FeedQueryReply NodeHistoryFeed::get(const QVariantMap &json, Channel *channel)
+{
+  if (!channel)
+    return FeedQueryReply(Notice::BadRequest);
+
+  if (head().channel()->id() != channel->id())
+    return FeedQueryReply(Notice::Forbidden);
+
+  QList<MessageId> ids = MessageId::toList(json.value(LS("ids")).toString());
+  if (ids.isEmpty())
+    return FeedQueryReply(Notice::BadRequest);
+
+  QVariantList data = NodeMessagesDB::get(ids);
+  if (data.isEmpty())
+    return FeedQueryReply(Notice::NotFound);
+
+  FeedQueryReply reply = FeedQueryReply(Notice::OK);
+  toPackets(reply.packets, data);
+  if (reply.packets.isEmpty())
+    return FeedQueryReply(Notice::InternalError);
+
+  reply.single = true;
+  reply.json[LS("action")] = LS("get");
+  reply.json[LS("count")]  = reply.packets.size();
+  return reply;
+}
+
+
 /*!
  * Обработка запроса \b last, для получения идентификаторов последних сообщений.
  *
  * Дополнительные поля запроса:
  * - \b count - Число сообщений, обязательно.
+ * - \b id    - Идентификатор пользователя, с которым идёт разговор.
  */
 FeedQueryReply NodeHistoryFeed::last(const QVariantMap &json, Channel *channel)
 {

@@ -32,6 +32,8 @@ public:
   MessageId(const QString &id);
   MessageId(qint64 date, const QByteArray &id);
   bool isValid() const;
+  inline const QByteArray& id() const { return m_id; }
+  inline qint64 date() const          { return m_date; }
   QString toString() const;
 
   static QList<MessageId> toList(const QString &ids);
