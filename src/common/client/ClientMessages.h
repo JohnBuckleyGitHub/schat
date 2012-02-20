@@ -44,14 +44,16 @@ public:
 
   bool send(const QByteArray &dest, const QString &text);
   bool sendText(const QByteArray &dest, const QString &text, const QString &command = QString());
+  void insert(MessageNotice *notice);
 
 private slots:
   void channels(const QList<QByteArray> &channels);
   void notice(int type);
 
 private:
+  void readText(MessagePacket packet);
+
   Hooks::Messages *m_hooks;                           ///< Хуки.
-  MessagePacket m_packet;                            ///< Текущий прочитанный пакет.
   QByteArray m_destId;                                ///< Текущий получатель сообщения.
   QHash<QByteArray, QList<MessagePacket> > m_pending; ///< Сообщения отображение которых отложена, т.к. не известна информация об отправителе.
   SimpleClient *m_client;                             ///< Клиент чата.

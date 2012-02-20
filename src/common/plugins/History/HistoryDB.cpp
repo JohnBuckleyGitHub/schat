@@ -27,6 +27,7 @@
 #include "HistoryDB.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
+#include "text/MessageId.h"
 #include "text/PlainTextFilter.h"
 
 QString HistoryDB::m_id;
@@ -91,6 +92,32 @@ int HistoryDB::status(int status)
     return Notice::Read;
 
   return status;
+}
+
+
+QVariantList HistoryDB::get(const MessageId &id)
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.prepare(LS("SELECT id, senderId, destId, status, command, text FROM messages WHERE messageId = :messageId AND date = :date LIMIT 1;"));
+
+  query.bindValue(LS(":messageId"), id.id());
+  query.bindValue(LS(":date"), id.date());
+  query.exec();
+
+  QVariantList out;
+  if (!query.first())
+    return out;
+
+  out.append(id.id());          // 0 messageId
+  out.append(query.value(1));   // 1 senderId
+  out.append(query.value(2));   // 2 destId
+  out.append(query.value(3));   // 3 status
+  out.append(id.date());        // 4 date
+  out.append(query.value(4));   // 5 command
+  out.append(query.value(5));   // 6 text
+  out.append(query.value(0));   // 7 id
+
+  return out;
 }
 
 
