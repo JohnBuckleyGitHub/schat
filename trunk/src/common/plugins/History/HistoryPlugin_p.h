@@ -35,6 +35,7 @@ public:
   static bool get(const QList<MessageId> &ids);
   static bool getLast(const QByteArray &id);
   static bool getOffline();
+  static QList<MessageId> getLocal(const QList<MessageId> &ids);
 
 private slots:
   void getLast();

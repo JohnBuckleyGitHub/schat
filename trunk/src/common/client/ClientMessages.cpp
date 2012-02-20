@@ -55,13 +55,7 @@ QByteArray ClientMessages::randomId() const
  */
 bool ClientMessages::isClientDate(int status)
 {
-  if (status == Notice::Found)
-    return false;
-
-  if (status == Notice::Unread)
-    return false;
-
-  if (status == Notice::Read)
+  if (status == Notice::Found || status == Notice::Unread || status == Notice::Read)
     return false;
 
   return true;
@@ -116,6 +110,12 @@ bool ClientMessages::sendText(const QByteArray &dest, const QString &text, const
 }
 
 
+void ClientMessages::insert(MessageNotice *notice)
+{
+  readText(MessagePacket(notice));
+}
+
+
 void ClientMessages::channels(const QList<QByteArray> &channels)
 {
   foreach (QByteArray id, channels) {
@@ -139,22 +139,27 @@ void ClientMessages::notice(int type)
   if (type != Notice::MessageType)
     return;
 
-  m_packet = MessagePacket(new MessageNotice(type, ChatClient::io()->reader()));
-  if (!m_packet->isValid())
+  readText(MessagePacket(new MessageNotice(type, ChatClient::io()->reader())));
+}
+
+
+void ClientMessages::readText(MessagePacket packet)
+{
+  if (!packet->isValid())
     return;
 
-  if (isClientDate(m_packet->status()))
-    m_packet->setDate(ChatClient::date());
+  if (isClientDate(packet->status()))
+    packet->setDate(ChatClient::date());
 
   /// В случае если отправитель сообщения неизвестен клиенту, то будет произведён вход в канал
   /// этого пользователя для получения информации о нём, само сообщения будет добавлено в очередь
   /// до момента получения информации об отправителе.
-  ClientChannel user = ChatClient::channels()->get(m_packet->sender());
+  ClientChannel user = ChatClient::channels()->get(packet->sender());
   if (!user || !user->isSynced()) {
-    ChatClient::channels()->join(m_packet->sender());
-    m_pending[m_packet->sender()].append(m_packet);
+    ChatClient::channels()->join(packet->sender());
+    m_pending[packet->sender()].append(packet);
     return;
   }
 
-  m_hooks->readText(m_packet);
+  m_hooks->readText(packet);
 }

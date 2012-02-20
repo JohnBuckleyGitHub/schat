@@ -36,6 +36,7 @@
 #include "sglobal.h"
 #include "text/MessageId.h"
 #include "ui/tabs/PrivateTab.h"
+#include "client/ClientMessages.h"
 
 History::History(QObject *parent)
   : ChatPlugin(parent)
@@ -49,14 +50,20 @@ History::History(QObject *parent)
 }
 
 
+/*!
+ * Загрузка сообщений по идентификаторам.
+ */
 bool History::get(const QList<MessageId> &ids)
 {
+  QList<MessageId> required = getLocal(ids);
+  if (required.isEmpty())
+
   if (ChatClient::state() != ChatClient::Online)
     return false;
 
   QVariantMap data;
   data.insert(LS("action"), LS("get"));
-  data.insert(LS("ids"), MessageId::toString(ids));
+  data.insert(LS("ids"), MessageId::toString(required));
 
   return ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("history"), data);
 }
@@ -100,6 +107,26 @@ bool History::getOffline()
 }
 
 
+QList<MessageId> History::getLocal(const QList<MessageId> &ids)
+{
+  QList<MessageId> out;
+  for (int i = 0; i < ids.size(); ++i) {
+    QVariantList data = HistoryDB::get(ids.at(i));
+    if (data.isEmpty()) {
+      out.append(ids.at(i));
+      continue;
+    }
+
+    MessageNotice *notice = new MessageNotice(data.at(1).toByteArray(), data.at(2).toByteArray(), data.at(6).toString(), data.at(4).toLongLong(), data.at(0).toByteArray());
+    notice->setCommand((data.at(5).toString()));
+    notice->setStatus(data.at(3).toInt());
+    ChatClient::messages()->insert(notice);
+  }
+
+  return out;
+}
+
+
 void History::getLast()
 {
   m_chatView->getLast(SimpleID::UserId);
@@ -140,10 +167,6 @@ void History::lastReady(const FeedNotify &notify)
   QList<MessageId> ids = MessageId::toList(notify.json().value(LS("ids")).toString());
   if (ids.isEmpty())
     return;
-
-  qDebug() << "++++++++++++++++++++++++++";
-  qDebug() << ids.size();
-  qDebug() << "++++++++++++++++++++++++++";
 
   get(ids);
 }
