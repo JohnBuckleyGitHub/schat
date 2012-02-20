@@ -36,6 +36,7 @@ class HistoryDB : public QObject
 public:
   inline static QString id() { return m_id; }
   static bool open(const QByteArray &id, const QString &dir);
+  static int status(int status);
   static void add(MessagePacket packet);
   static void close();
 

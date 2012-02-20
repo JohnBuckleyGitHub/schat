@@ -71,7 +71,7 @@ bool HistoryDB::open(const QByteArray &id, const QString &dir)
     "  messageId  BLOB,"
     "  senderId   BLOB,"
     "  destId     BLOB,"
-    "  status     INTEGER DEFAULT ( 200 ),"
+    "  status     INTEGER DEFAULT ( 300 ),"
     "  date       INTEGER,"
     "  command    TEXT,"
     "  text       TEXT,"
@@ -79,6 +79,18 @@ bool HistoryDB::open(const QByteArray &id, const QString &dir)
     ");"));
 
   return true;
+}
+
+
+int HistoryDB::status(int status)
+{
+  if (status == Notice::OK)
+    return Notice::Found;
+
+  if (status == Notice::ChannelOffline || status == Notice::Unread)
+    return Notice::Read;
+
+  return status;
 }
 
 
@@ -99,7 +111,7 @@ void HistoryDB::add(MessagePacket packet)
   query.bindValue(LS(":messageId"), packet->id());
   query.bindValue(LS(":senderId"),  packet->sender());
   query.bindValue(LS(":destId"),    packet->dest());
-  query.bindValue(LS(":status"),    packet->status());
+  query.bindValue(LS(":status"),    status(packet->status()));
   query.bindValue(LS(":date"),      packet->date());
   query.bindValue(LS(":command"),   packet->command());
   query.bindValue(LS(":text"),      packet->text());
