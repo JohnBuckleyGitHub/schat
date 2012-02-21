@@ -143,6 +143,9 @@ void History::notify(const Notify &notify)
       lastReady(n);
     }
   }
+  else if (notify.type() == Notify::ClearCache) {
+    HistoryDB::clear();
+  }
 
   if (notify.type() == Notify::FeedReply || notify.type() == Notify::QueryError) {
     if (!static_cast<const FeedNotify &>(notify).match(ChatClient::id(), LS("history"), LS("offline")))

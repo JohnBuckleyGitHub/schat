@@ -64,22 +64,7 @@ bool HistoryDB::open(const QByteArray &id, const QString &dir)
   if (!db.open())
     return false;
 
-  QSqlQuery query(db);
-  query.exec(LS("PRAGMA synchronous = OFF"));
-
-  query.exec(LS(
-    "CREATE TABLE IF NOT EXISTS messages ( "
-    "  id         INTEGER PRIMARY KEY,"
-    "  messageId  BLOB,"
-    "  senderId   BLOB,"
-    "  destId     BLOB,"
-    "  status     INTEGER DEFAULT ( 300 ),"
-    "  date       INTEGER,"
-    "  command    TEXT,"
-    "  text       TEXT,"
-    "  plain      TEXT"
-    ");"));
-
+  create();
   return true;
 }
 
@@ -188,6 +173,16 @@ void HistoryDB::add(MessagePacket packet)
 }
 
 
+void HistoryDB::clear()
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.exec("DROP TABLE IF EXISTS messages;");
+  query.exec("VACUUM;");
+
+  create();
+}
+
+
 /*!
  * Закрытие базы данных и очистка кэша.
  */
@@ -195,4 +190,24 @@ void HistoryDB::close()
 {
   QSqlDatabase::removeDatabase(m_id);
   m_id.clear();
+}
+
+
+void HistoryDB::create()
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.exec(LS("PRAGMA synchronous = OFF"));
+
+  query.exec(LS(
+    "CREATE TABLE IF NOT EXISTS messages ( "
+    "  id         INTEGER PRIMARY KEY,"
+    "  messageId  BLOB,"
+    "  senderId   BLOB,"
+    "  destId     BLOB,"
+    "  status     INTEGER DEFAULT ( 300 ),"
+    "  date       INTEGER,"
+    "  command    TEXT,"
+    "  text       TEXT,"
+    "  plain      TEXT"
+    ");"));
 }
