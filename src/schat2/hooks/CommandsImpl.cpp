@@ -26,6 +26,7 @@
 #include "client/ClientMessages.h"
 #include "client/SimpleClient.h"
 #include "hooks/CommandsImpl.h"
+#include "sglobal.h"
 #include "ui/StatusMenu.h"
 
 namespace Hooks
@@ -46,60 +47,67 @@ bool CommandsImpl::command(const QByteArray &dest, const ClientCmd &cmd)
   QString command = cmd.command().toLower();
 
   /// - /about Открытие вкладки O Simple Chat.
-  if (command == "about")
+  if (command == LS("about"))
     ChatNotify::start(Notify::OpenAbout);
 
   /// - /away Установка статуса «Отсутствую» (Away).
-  else if (command == "away")
+  else if (command == LS("away"))
     StatusMenu::apply(Status::Away);
 
+  else if (command == LS("clear")) {
+    if (cmd.body().isEmpty())
+      ChatNotify::start(Notify::ClearChat, dest);
+    else if (cmd.body() == LS("cache"))
+      ChatNotify::start(Notify::ClearCache);
+  }
+
   /// - /color Установка цвета иконки пользователя.
-  else if (command == "color") {
+  else if (command == LS("color")) {
     if (cmd.isBody())
       setGender(QString(), cmd.body());
     else
-      setGender(QString(), "default");
+      setGender(QString(), LS("default"));
   }
 
   /// - /dnd Установка статуса «Не беспокоить» (Do not disturb).
-  else if (command == "dnd")
+  else if (command == LS("dnd"))
     StatusMenu::apply(Status::DnD);
 
   /// - /exit Выход из чата.
-  else if (command == "exit" || command == "quit")
+  else if (command == LS("exit") || command == LS("quit"))
     ChatNotify::start(Notify::Quit);
 
   /// - /female Установка женского пола пользователя.
-  else if (command == "female")
+  else if (command == LS("female"))
     setGender(command, cmd.body());
 
   /// - /ffc Установка статуса «Готов болтать» (Free for chat).
-  else if (command == "ffc")
+  else if (command == LS("ffc"))
     StatusMenu::apply(Status::FreeForChat);
 
   /// - /gender Установка пола пользователя.
-  else if (command == "gender")
+  else if (command == LS("gender"))
     setGender(cmd.body(), QString());
 
   /// - /hide Скрытие окна чата.
-  else if (command == "hide")
+  else if (command == LS("hide"))
     ChatNotify::start(Notify::ToggleVisibility);
 
-  else if (command == "id")
+  else if (command == LS("id"))
     ChatNotify::start(Notify::ShowID, dest);
 
   /// - /male Установка мужского пола пользователя.
-  else if (command == "male")
+  else if (command == LS("male"))
     setGender(command, cmd.body());
 
   /// - /nick Установка нового ника.
-  else if (command == "nick") {
+  else if (command == LS("nick")) {
     if (!Channel::isValidName(cmd.body()))
       return true;
 
     if (ChatClient::state() != ChatClient::Online) {
       ChatClient::io()->setNick(cmd.body());
-      ChatCore::settings()->setValue("Profile/Nick", ChatClient::channel()->name());
+      ChatCore::settings()->setValue(LS("Profile/Nick"), ChatClient::channel()->name());
       return true;
     }
 
@@ -107,19 +115,19 @@ bool CommandsImpl::command(const QByteArray &dest, const ClientCmd &cmd)
   }
 
   /// - /offline Установка статуса «Не в сети» (Offline) и отключение от сервера.
-  else if (command == "offline")
+  else if (command == LS("offline"))
     StatusMenu::apply(Status::Offline);
 
   /// - /online Установка статуса «В сети» (Online).
-  else if (command == "online")
+  else if (command == LS("online"))
     StatusMenu::apply(Status::Online);
 
   /// - /open Открытие URL адреса.
-  else if (command == "open")
+  else if (command == LS("open"))
     ChatUrls::open(cmd.body());
 
   /// - /set Установка опции чата, имя опции чувствительно к регистру символов.
-  else if (command == QLatin1String("set")) {
+  else if (command == LS("set")) {
     ClientCmd body(cmd.body());
     if (body.isValid() && body.isBody())
       ChatCore::settings()->setValue(body.command(), body.body());
@@ -139,15 +147,15 @@ void CommandsImpl::setGender(const QString &gender, const QString &color)
   Gender data = ChatClient::channel()->gender();
 
   if (!gender.isEmpty()) {
-    if (gender == "male")
+    if (gender == LS("male"))
       data.set(Gender::Male);
-    else if (gender == "female")
+    else if (gender == LS("female"))
       data.set(Gender::Female);
-    else if (gender == "ghost")
+    else if (gender == LS("ghost"))
       data.set(Gender::Ghost);
-    else if (gender == "unknown")
+    else if (gender == LS("unknown"))
       data.set(Gender::Unknown);
-    else if (gender == "bot")
+    else if (gender == LS("bot"))
       data.set(Gender::Bot);
     else
       return;
@@ -160,7 +168,7 @@ void CommandsImpl::setGender(const QString &gender, const QString &color)
     return;
 
   ChatClient::channel()->gender() = data.raw();
-  ChatCore::settings()->setValue("Profile/Gender", data.raw());
+  ChatCore::settings()->setValue(LS("Profile/Gender"), data.raw());
 
   if (ChatClient::state() == ChatClient::Online)
     ChatClient::channels()->update();
