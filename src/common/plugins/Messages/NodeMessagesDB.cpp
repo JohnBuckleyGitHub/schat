@@ -150,7 +150,9 @@ QVariantList NodeMessagesDB::get(const QList<MessageId> &ids)
   query.prepare(LS("SELECT id, senderId, destId, status, command, text FROM messages WHERE messageId = :messageId AND date = :date LIMIT 1;"));
 
   QVariantList out;
+# if QT_VERSION >= 0x040700
   out.reserve(ids.size());
+# endif
 
   for (int i = 0; i < ids.size(); ++i) {
     query.bindValue(LS(":messageId"), ids.at(i).id());
