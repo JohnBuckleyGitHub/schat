@@ -24,6 +24,7 @@
 #include <QWebFrame>
 
 #include "ChatCore.h"
+#include "ChatNotify.h"
 #include "ChatSettings.h"
 #include "ChatUrls.h"
 #include "debugstream.h"
@@ -52,6 +53,7 @@ ChatView::ChatView(const QByteArray &id, const QString &url, QWidget *parent)
 
   connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
   connect(this, SIGNAL(linkClicked(const QUrl &)), SLOT(openUrl(const QUrl &)));
+  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 
   createActions();
   retranslateUi();
@@ -179,16 +181,22 @@ void ChatView::loadFinished()
 void ChatView::menuTriggered(QAction *action)
 {
   if (action == m_clear) {
-    m_loaded = false;
-    page()->triggerAction(QWebPage::ReloadAndBypassCache);
-    m_messages.clear();
-    emit reloaded();
+    clearPage();
   }
   else if (action == m_seconds) {
     ChatCore::settings()->setValue(QLatin1String("ShowSeconds"), action->isChecked());
   }
   else if (action == m_service) {
     ChatCore::settings()->setValue(QLatin1String("ShowServiceMessages"), action->isChecked());
+  }
+}
+
+
+void ChatView::notify(const Notify &notify)
+{
+  if (notify.type() == Notify::ClearChat) {
+    if (m_id == notify.data().toByteArray())
+      clearPage();
   }
 }
 
@@ -256,6 +264,15 @@ QVariantMap ChatView::addHint(const Message &message)
   out["Id"] = m_messages.value(dates.at(index + 1));
 
   return out;
+}
+
+
+void ChatView::clearPage()
+{
+  m_loaded = false;
+  page()->triggerAction(QWebPage::Reload);
+  m_messages.clear();
+  emit reloaded();
 }
 
 

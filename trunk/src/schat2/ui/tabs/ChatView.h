@@ -26,6 +26,7 @@
 #include "schat.h"
 
 class Message;
+class Notify;
 
 class SCHAT_CORE_EXPORT ChatView : public QWebView
 {
@@ -52,6 +53,7 @@ protected:
 private slots:
   void loadFinished();
   void menuTriggered(QAction *action);
+  void notify(const Notify &notify);
   void openUrl(const QUrl &url);
   void populateJavaScriptWindowObject();
   void settingsChanged(const QString &key, const QVariant &value);
@@ -59,6 +61,7 @@ private slots:
 
 private:
   QVariantMap addHint(const Message &message);
+  void clearPage();
   void createActions();
   void retranslateUi();
 
