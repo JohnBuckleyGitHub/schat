@@ -24,6 +24,7 @@
 #include <QVariant>
 
 #include "Channel.h"
+#include "client/ChatClient.h"
 #include "HistoryDB.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
@@ -92,6 +93,46 @@ int HistoryDB::status(int status)
     return Notice::Read;
 
   return status;
+}
+
+
+QList<MessageId> HistoryDB::last(const QByteArray &channel, int limit)
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  int type = SimpleID::typeOf(channel);
+
+  if (type == SimpleID::ChannelId) {
+    query.prepare(LS("SELECT id, messageId, date FROM messages WHERE destId = :destId ORDER BY id DESC LIMIT :limit;"));
+    query.bindValue(LS(":destId"), channel);
+  }
+  else if (type == SimpleID::UserId) {
+    if (ChatClient::id() == channel) {
+      query.prepare(LS("SELECT id, messageId, date FROM messages WHERE senderId = :senderId AND destId = :destId ORDER BY id DESC LIMIT :limit;"));
+      query.bindValue(LS(":destId"), channel);
+      query.bindValue(LS(":senderId"), channel);
+    }
+    else {
+      query.prepare(LS("SELECT id, messageId, date FROM messages WHERE (senderId = :id1 AND destId = :id2) OR (senderId = :id3 AND destId = :id4) ORDER BY id DESC LIMIT :limit;"));
+      query.bindValue(LS(":id1"), channel);
+      query.bindValue(LS(":id2"), ChatClient::id());
+      query.bindValue(LS(":id3"), ChatClient::id());
+      query.bindValue(LS(":id4"), channel);
+    }
+  }
+  else
+    return QList<MessageId>();
+
+  query.bindValue(LS(":limit"), limit);
+  query.exec();
+
+  if (!query.isActive())
+    return QList<MessageId>();
+
+  QList<MessageId> out;
+  while (query.next())
+    out.prepend(MessageId(query.value(2).toLongLong(), query.value(1).toByteArray()));
+
+  return out;
 }
 
 

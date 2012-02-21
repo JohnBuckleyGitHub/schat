@@ -155,11 +155,16 @@ void ClientMessages::readText(MessagePacket packet)
   /// этого пользователя для получения информации о нём, само сообщения будет добавлено в очередь
   /// до момента получения информации об отправителе.
   ClientChannel user = ChatClient::channels()->get(packet->sender());
-  if (!user || !user->isSynced()) {
-    ChatClient::channels()->join(packet->sender());
-    m_pending[packet->sender()].append(packet);
-    return;
+
+  if (ChatClient::state() == ChatClient::Online) {
+    if (!user || !user->isSynced()) {
+      ChatClient::channels()->join(packet->sender());
+      m_pending[packet->sender()].append(packet);
+      return;
+    }
   }
+  else if (!user)
+    return;
 
   m_hooks->readText(packet);
 }

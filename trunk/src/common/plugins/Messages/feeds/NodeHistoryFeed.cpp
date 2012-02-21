@@ -206,9 +206,9 @@ void NodeHistoryFeed::toPackets(QList<QByteArray> &out, const QVariantList &data
     if (msg.isEmpty())
       continue;
 
-    MessageNotice packet(msg.value(1).toByteArray(), msg.value(2).toByteArray(), msg.value(6).toString(), msg.value(4).toLongLong(), msg.value(0).toByteArray());
-    packet.setStatus(msg.value(3).toInt());
-    packet.setCommand(msg.value(5).toString());
+    MessageNotice packet(msg.at(1).toByteArray(), msg.at(2).toByteArray(), msg.at(6).toString(), msg.at(4).toLongLong(), msg.at(0).toByteArray());
+    packet.setStatus(msg.at(3).toInt());
+    packet.setCommand(msg.at(5).toString());
     out.append(packet.data(Core::stream()));
   }
 }

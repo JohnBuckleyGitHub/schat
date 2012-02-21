@@ -36,6 +36,7 @@ public:
   inline static QString id() { return m_id; }
   static bool open(const QByteArray &id, const QString &dir);
   static int status(int status);
+  static QList<MessageId> last(const QByteArray &channel, int limit);
   static QVariantList get(const MessageId &id);
   static void add(MessagePacket packet);
   static void close();

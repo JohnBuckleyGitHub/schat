@@ -76,8 +76,10 @@ bool History::get(const QList<MessageId> &ids)
  */
 bool History::getLast(const QByteArray &id)
 {
-  if (ChatClient::state() != ChatClient::Online)
+  if (ChatClient::state() != ChatClient::Online) {
+    getLocal(HistoryDB::last(id, 20));
     return false;
+  }
 
   QVariantMap data;
   data.insert(LS("action"), LS("last"));
