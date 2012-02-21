@@ -64,6 +64,7 @@ class SCHAT_EXPORT ClientChannels : public QObject
 public:
   ClientChannels(QObject *parent = 0);
   inline Hooks::Channels *hooks() const { return m_hooks; }
+  inline const QHash<QByteArray, ClientChannel>& channels() const { return m_channels; }
 
   bool info(const QList<QByteArray> &channels);
   bool join(const QByteArray &id);

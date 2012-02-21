@@ -22,6 +22,8 @@
 #include "Channel.h"
 #include "plugins/ChatPlugin.h"
 
+class Notify;
+
 class Cache : public ChatPlugin
 {
   Q_OBJECT
@@ -30,6 +32,7 @@ public:
   Cache(QObject *parent);
 
 private slots:
+  void notify(const Notify &notify);
   void open();
 
 private:

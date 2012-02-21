@@ -38,7 +38,9 @@ public:
   static ClientChannel channel(qint64 id, bool feeds = true);
   static qint64 add(ClientChannel channel);
   static qint64 channelKey(const QByteArray &id, int type);
+  static void clear();
   static void close();
+  static void create();
   static void saveData(Channel *channel);
   static void update(ClientChannel channel);
 
