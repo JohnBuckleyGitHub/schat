@@ -48,31 +48,7 @@ bool CacheDB::open(const QByteArray &id, const QString &dir)
   if (!db.open())
     return false;
 
-  QSqlQuery query(db);
-  query.exec(LS("PRAGMA synchronous = OFF"));
-
-  query.exec(LS(
-    "CREATE TABLE IF NOT EXISTS channels ( "
-    "  id         INTEGER PRIMARY KEY,"
-    "  channel    BLOB    NOT NULL UNIQUE,"
-    "  type       INTEGER DEFAULT ( 73 ),"
-    "  gender     INTEGER DEFAULT ( 0 ),"
-    "  name       TEXT    NOT NULL,"
-    "  data       BLOB"
-    ");"
-  ));
-
-  query.exec(LS(
-    "CREATE TABLE IF NOT EXISTS feeds ( "
-    "  id         INTEGER PRIMARY KEY,"
-    "  channel    INTEGER DEFAULT ( 0 ),"
-    "  rev        INTEGER DEFAULT ( 0 ),"
-    "  date       INTEGER DEFAULT ( 0 ),"
-    "  name       TEXT    NOT NULL,"
-    "  json       BLOB"
-    ");"
-  ));
-
+  create();
   return true;
 }
 
@@ -161,6 +137,17 @@ qint64 CacheDB::channelKey(const QByteArray &id, int type)
 }
 
 
+void CacheDB::clear()
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.exec("DROP TABLE IF EXISTS channels;");
+  query.exec("DROP TABLE IF EXISTS feeds");
+  query.exec("VACUUM;");
+
+  create();
+}
+
+
 /*!
  * Закрытие базы данных.
  */
@@ -168,6 +155,35 @@ void CacheDB::close()
 {
   QSqlDatabase::removeDatabase(m_id);
   m_id.clear();
+}
+
+
+void CacheDB::create()
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.exec(LS("PRAGMA synchronous = OFF"));
+
+  query.exec(LS(
+    "CREATE TABLE IF NOT EXISTS channels ( "
+    "  id         INTEGER PRIMARY KEY,"
+    "  channel    BLOB    NOT NULL UNIQUE,"
+    "  type       INTEGER DEFAULT ( 73 ),"
+    "  gender     INTEGER DEFAULT ( 0 ),"
+    "  name       TEXT    NOT NULL,"
+    "  data       BLOB"
+    ");"
+  ));
+
+  query.exec(LS(
+    "CREATE TABLE IF NOT EXISTS feeds ( "
+    "  id         INTEGER PRIMARY KEY,"
+    "  channel    INTEGER DEFAULT ( 0 ),"
+    "  rev        INTEGER DEFAULT ( 0 ),"
+    "  date       INTEGER DEFAULT ( 0 ),"
+    "  name       TEXT    NOT NULL,"
+    "  json       BLOB"
+    ");"
+  ));
 }
 
 

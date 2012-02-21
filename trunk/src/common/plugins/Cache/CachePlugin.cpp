@@ -25,7 +25,9 @@
 #include "CachePlugin.h"
 #include "CachePlugin_p.h"
 #include "ChatCore.h"
+#include "ChatNotify.h"
 #include "client/ChatClient.h"
+#include "client/ClientChannels.h"
 #include "feeds/CacheFeeds.h"
 #include "feeds/CacheFeedStorage.h"
 #include "NetworkManager.h"
@@ -39,6 +41,23 @@ Cache::Cache(QObject *parent)
   open();
 
   connect(ChatClient::i(), SIGNAL(online()), SLOT(open()));
+  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+}
+
+
+void Cache::notify(const Notify &notify)
+{
+  if (notify.type() == Notify::ClearCache) {
+    CacheDB::clear();
+
+    foreach (ClientChannel channel, ChatClient::channels()->channels()) {
+      channel->setKey(0);
+      channel->data().clear();
+    }
+
+    CacheDB::add(ChatClient::server());
+    CacheDB::add(ChatClient::channel());
+  }
 }
 
 
