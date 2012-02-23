@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,9 @@ class SCHAT_CORE_EXPORT ChatSettings : public Settings
 
 public:
   ChatSettings(const QString &fileName, QObject *parent = 0);
+
+public slots:
+  void ready();
 };
 
 #endif /* CHATSETTINGS_H_ */

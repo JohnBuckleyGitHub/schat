@@ -16,8 +16,12 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include "Channel.h"
 #include "ChatSettings.h"
+#include "client/ChatClient.h"
+#include "client/ClientFeeds.h"
 #include "sglobal.h"
 
 ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
@@ -44,4 +48,19 @@ ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
   setDefault(LS("Profile/Gender"),        0);
   setDefault(LS("Profile/Nick"),          Channel::defaultName());
   setDefault(LS("Profile/Status"),        1);
+}
+
+
+void ChatSettings::ready()
+{
+  qDebug() << "";
+  qDebug() << "";
+  qDebug() << "ChatSettings::ready()";
+  qDebug() << "";
+  qDebug() << "";
+  FeedPtr feed = ChatClient::channel()->feed(LS("settings"), false);
+  if (!feed) {
+    qDebug() << "FEED NOT EXIST";
+    ChatClient::feeds()->request(ChatClient::id(), LS("add"), LS("settings"));
+  }
 }

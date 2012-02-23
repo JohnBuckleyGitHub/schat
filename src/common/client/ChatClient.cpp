@@ -41,6 +41,7 @@ ChatClient::ChatClient(QObject *parent)
 
   connect(m_client, SIGNAL(restore()), SLOT(restore()));
   connect(m_client, SIGNAL(setup()), SLOT(setup()));
+  connect(m_client, SIGNAL(ready()), SIGNAL(ready()));
   connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
 }
 
