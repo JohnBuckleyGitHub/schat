@@ -1,5 +1,5 @@
 src/common/version.h
-src/common/common.h
+src/common/common.pri
 os/macosx/deploy.sh
 os/ubuntu/schat2/changelog.in
 os/ubuntu/schatd2/changelog.in
