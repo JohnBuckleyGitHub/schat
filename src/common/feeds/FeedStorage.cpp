@@ -87,6 +87,17 @@ int FeedStorage::saveImpl(FeedPtr feed)
 }
 
 
+void FeedStorage::cloneImpl(FeedPtr feed)
+{
+  if (m_self != this)
+    return;
+
+  foreach (FeedStorage *hook, m_hooks) {
+    hook->cloneImpl(feed);
+  }
+}
+
+
 void FeedStorage::loadImpl(Channel *channel)
 {
   if (m_self != this)

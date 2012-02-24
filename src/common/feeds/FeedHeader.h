@@ -37,19 +37,24 @@ public:
   inline const Acl& acl() const            { return m_acl; }
   inline const QString& name() const       { return m_name; }
   inline const QVariantMap& data() const   { return m_data; }
-  inline qint64 date() const               { return m_data.value("date").toLongLong(); }
+  inline qint64 date() const               { return m_data.value(QLatin1String("date")).toLongLong(); }
+  inline qint64 key() const                { return m_key; }
+  inline qint64 rev() const                { return m_data.value(QLatin1String("rev")).toLongLong(); }
   inline QVariantMap& data()               { return m_data; }
 
   QVariantMap get(Channel *channel);
   QVariantMap save();
 
   inline void setChannel(Channel *channel) { m_channel = channel; }
+  inline void setKey(qint64 key)           { m_key = key; }
   inline void setName(const QString &name) { m_name = name; }
+  inline void setRev(qint64 rev)           { m_data[QLatin1String("rev")] = rev; }
   void setData(const QVariantMap &data);
 
 private:
   Acl m_acl;          ///< Права доступа к фиду.
   Channel *m_channel; ///< Канал фидов.
+  qint64 m_key;       ///< Ключ в базе данных.
   QString m_name;     ///< Имя фида.
   QVariantMap m_data; ///< Данные фида.
 };

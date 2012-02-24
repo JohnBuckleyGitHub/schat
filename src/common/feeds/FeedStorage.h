@@ -34,6 +34,7 @@ public:
   inline static int save(FeedPtr feed)         { return m_self->saveImpl(feed); }
   inline static void add(Feed *feed)           { m_feeds[feed->head().name()] = FeedPtr(feed); }
   inline static void add(FeedStorage *hook)    { if (!m_self->m_hooks.contains(hook)) m_self->m_hooks.append(hook); }
+  inline static void clone(FeedPtr feed)       { return m_self->cloneImpl(feed); }
   inline static void load(Channel *channel)    { m_self->loadImpl(channel); }
   inline static void remove(FeedPtr feed)      { m_self->removeImpl(feed); }
   inline static void remove(FeedStorage *hook) { m_self->m_hooks.removeAll(hook); }
@@ -43,6 +44,7 @@ public:
 protected:
   virtual int revertImpl(FeedPtr feed, const QVariantMap &data);
   virtual int saveImpl(FeedPtr feed);
+  virtual void cloneImpl(FeedPtr feed);
   virtual void loadImpl(Channel *channel);
   virtual void removeImpl(FeedPtr feed);
 

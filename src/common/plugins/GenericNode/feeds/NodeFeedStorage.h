@@ -31,6 +31,7 @@ public:
 protected:
   int revertImpl(FeedPtr feed, const QVariantMap &data);
   int saveImpl(FeedPtr feed);
+  void cloneImpl(FeedPtr feed);
   void loadImpl(Channel *channel);
   void removeImpl(FeedPtr feed);
 
@@ -38,6 +39,7 @@ private:
   qint64 save(FeedPtr feed, const QByteArray &json);
   void load(Channel *channel, const QString &name, qint64 id);
   void start();
+  void updateKey(FeedPtr feed);
 };
 
 #endif /* NODEFEEDSTORAGE_H_ */
