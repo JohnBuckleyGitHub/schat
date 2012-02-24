@@ -36,7 +36,9 @@ protected:
   void removeImpl(FeedPtr feed);
 
 private:
+  qint64 rev(FeedPtr feed);
   qint64 save(FeedPtr feed, const QByteArray &json);
+  qint64 update(FeedPtr feed, const QByteArray &json);
   void load(Channel *channel, const QString &name, qint64 id);
   void start();
   void updateKey(FeedPtr feed);
