@@ -81,6 +81,13 @@ qint64 CacheFeedStorage::save(FeedPtr feed, const QByteArray &json)
 }
 
 
+/*!
+ * Загрузка фида из базы данных.
+ *
+ * \param channel Канал.
+ * \param name    Имя фида.
+ * \param id      Ключ в таблице фидов.
+ */
 void CacheFeedStorage::load(Channel *channel, const QString &name, qint64 id)
 {
   if (id <= 0)
@@ -94,9 +101,8 @@ void CacheFeedStorage::load(Channel *channel, const QString &name, qint64 id)
   if (!query.first())
     return;
 
-  QVariantMap json = JSON::parse(query.value(0).toByteArray()).toMap();
-
-  Feed *feed = FeedStorage::load(name, json);
+  Feed *feed = FeedStorage::load(name, JSON::parse(query.value(0).toByteArray()).toMap());
+  feed->head().setKey(id);
   channel->feeds().add(feed, false);
 
   ChatNotify::start(FeedNotify(Notify::FeedData, channel->id(), name));

@@ -30,6 +30,7 @@
 #include "JSON.h"
 #include "net/packets/Notice.h"
 #include "ServerChannel.h"
+#include "sglobal.h"
 
 NodeFeedStorage::NodeFeedStorage(QObject *parent)
   : FeedStorage(parent)
@@ -86,6 +87,23 @@ int NodeFeedStorage::revertImpl(FeedPtr feed, const QVariantMap &data)
  */
 int NodeFeedStorage::saveImpl(FeedPtr feed)
 {
+  feed->head().data().remove(LS("size"));
+  feed->head().data()[LS("date")] = DateTime::utc();
+
+  QByteArray json = JSON::generate(feed->save());
+  feed->head().data()[LS("size")] = json.size();
+
+  save(feed, json);
+  if (feed->head().key() <= 0)
+    return Notice::InternalError;
+
+  updateKey(feed);
+  return Notice::OK;
+}
+
+
+void NodeFeedStorage::cloneImpl(FeedPtr feed)
+{
   qint64 rev = feed->head().data().value("rev").toLongLong();
 
   feed->head().data().remove("rev");
@@ -109,19 +127,19 @@ int NodeFeedStorage::saveImpl(FeedPtr feed)
 
   qint64 id = save(feed, json);
   if (id == -1)
-    return Notice::InternalError;
+    return;
 
   feeds[feed->head().name()] = id;
   feed->head().channel()->data()["feeds"] = feeds;
   DataBase::saveData(feed->head().channel());
 
-  return Notice::OK;
+  return;
 }
 
 
 void NodeFeedStorage::loadImpl(Channel *channel)
 {
-  QVariantMap feeds = channel->data()["feeds"].toMap();
+  QVariantMap feeds = channel->data().value(LS("feeds")).toMap();
 
   QMapIterator<QString, QVariant> i(feeds);
   while (i.hasNext()) {
@@ -159,18 +177,27 @@ qint64 NodeFeedStorage::save(FeedPtr feed, const QByteArray &json)
   if (query.numRowsAffected() <= 0)
     return -1;
 
-  return query.lastInsertId().toLongLong();
+  qint64 key = query.lastInsertId().toLongLong();
+  feed->head().setKey(key);
+  return key;
 }
 
 
+/*!
+ * Загрузка фида из базы данных.
+ *
+ * \param channel Канал.
+ * \param name    Имя фида.
+ * \param id      Ключ в таблице фидов.
+ */
 void NodeFeedStorage::load(Channel *channel, const QString &name, qint64 id)
 {
   if (id <= 0)
     return;
 
   QSqlQuery query;
-  query.prepare("SELECT rev, date, json FROM feeds WHERE id = :id LIMIT 1;");
-  query.bindValue(":id", id);
+  query.prepare(LS("SELECT rev, date, json FROM feeds WHERE id = :id LIMIT 1;"));
+  query.bindValue(LS(":id"), id);
   query.exec();
 
   if (!query.first())
@@ -180,8 +207,9 @@ void NodeFeedStorage::load(Channel *channel, const QString &name, qint64 id)
   QVariantMap json = JSON::parse(data).toMap();
 
   Feed *feed = FeedStorage::load(name, json);
-  feed->head().data()["rev"]  = query.value(0).toLongLong();
-  feed->head().data()["size"] = data.size();
+  feed->head().data()[LS("rev")]  = query.value(0).toLongLong();
+  feed->head().data()[LS("size")] = data.size();
+  feed->head().setKey(id);
 
   channel->feeds().add(feed, false);
 }
@@ -191,7 +219,7 @@ void NodeFeedStorage::start()
 {
   QSqlQuery query;
 
-  query.exec(
+  query.exec(LS(
   "CREATE TABLE IF NOT EXISTS feeds ( "
   "  id         INTEGER PRIMARY KEY,"
   "  channel    INTEGER DEFAULT ( 0 ),"
@@ -199,5 +227,15 @@ void NodeFeedStorage::start()
   "  date       INTEGER DEFAULT ( 0 ),"
   "  name       TEXT    NOT NULL,"
   "  json       BLOB"
-  ");");
+  ");"
+  ));
+}
+
+
+void NodeFeedStorage::updateKey(FeedPtr feed)
+{
+  QVariantMap feeds = feed->head().channel()->data().value(LS("feeds")).toMap();
+  feeds[feed->head().name()] = feed->head().key();
+  feed->head().channel()->data()[LS("feeds")] = feeds;
+  DataBase::saveData(feed->head().channel());
 }

@@ -27,7 +27,9 @@
  */
 FeedHeader::FeedHeader()
   : m_channel(0)
+  , m_key(0)
 {
+  setRev(0);
 }
 
 
@@ -69,4 +71,5 @@ void FeedHeader::setData(const QVariantMap &data)
   m_acl.load(data.value(LS("acl")).toMap());
   m_data = data;
   m_data.remove(LS("acl"));
+  setRev(rev());
 }
