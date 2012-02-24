@@ -52,30 +52,26 @@ NodeFeedStorage::NodeFeedStorage(QObject *parent)
  */
 int NodeFeedStorage::revertImpl(FeedPtr feed, const QVariantMap &data)
 {
-  qint64 rev = feed->head().data().value("rev").toLongLong();
-  if (rev == 1)
+  qint64 rev = feed->head().rev();
+  if (!rev)
     return Notice::InternalError;
 
-  qint64 revTo = data.value("rev").toLongLong();
+  qint64 revTo = data.value(LS("rev")).toLongLong();
   if (revTo == 0)
     revTo = rev - 1;
 
   QSqlQuery query;
-  query.prepare("SELECT rev, date, json FROM feeds WHERE channel = :channel AND rev = :rev AND name = :name LIMIT 1;");
-  query.bindValue(":channel", feed->head().channel()->key());
-  query.bindValue(":rev",     revTo);
-  query.bindValue(":name",    feed->head().name());
+  query.prepare(LS("SELECT json FROM feeds WHERE channel = :channel AND rev = :rev AND name = :name LIMIT 1;"));
+  query.bindValue(LS(":channel"), feed->head().channel()->key());
+  query.bindValue(LS(":rev"),     revTo);
+  query.bindValue(LS(":name"),    feed->head().name());
   query.exec();
 
   if (!query.first())
     return Notice::InternalError;
 
-  QByteArray body = query.value(2).toByteArray();
-  QVariantMap json = JSON::parse(body).toMap();
-
-  Feed *f = FeedStorage::load(feed->head().name(), json);
-  f->head().data()["rev"]  = rev;
-  f->head().data()["size"] = body.size();
+  Feed *f = FeedStorage::load(feed->head().name(), JSON::parse(query.value(0).toByteArray()).toMap());
+  f->head().setRev(rev + 1);
 
   feed->head().channel()->feeds().add(f);
   return Notice::OK;
@@ -105,38 +101,16 @@ int NodeFeedStorage::saveImpl(FeedPtr feed)
 }
 
 
+/*!
+ * Создание новой ревизии фида.
+ *
+ * \param feed Фид.
+ */
 void NodeFeedStorage::cloneImpl(FeedPtr feed)
 {
-  qint64 rev = feed->head().data().value("rev").toLongLong();
-
-  feed->head().data().remove("rev");
-  feed->head().data().remove("size");
-  feed->head().data()["date"] = DateTime::utc();
-
-  QByteArray json = JSON::generate(feed->save());
-  QVariantMap feeds = feed->head().channel()->data().value("feeds").toMap();
-
-  // Специальная обработка получения ревизии для случая если фид был раннее существовал но был удалён.
-  if (feeds.contains(feed->head().name())) {
-    qint64 id = feeds.value(feed->head().name()).toLongLong();
-    if (id < 0)
-      rev = -id;
-  }
-
-  rev++;
-
-  feed->head().data()["rev"]  = rev;
-  feed->head().data()["size"] = json.size();
-
-  qint64 id = save(feed, json);
-  if (id == -1)
-    return;
-
-  feeds[feed->head().name()] = id;
-  feed->head().channel()->data()["feeds"] = feeds;
-  DataBase::saveData(feed->head().channel());
-
-  return;
+  feed->head().setRev(feed->head().rev() + 1);
+  feed->head().setKey(0);
+  saveImpl(feed);
 }
 
 
@@ -176,7 +150,7 @@ qint64 NodeFeedStorage::rev(FeedPtr feed)
       return qAbs(rev) + 1;
   }
 
-  return feed->head().key();
+  return feed->head().rev();
 }
 
 

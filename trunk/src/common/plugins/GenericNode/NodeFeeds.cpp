@@ -95,13 +95,18 @@ int NodeFeeds::add()
   if (name.isEmpty())
     return Notice::BadRequest;
 
-  if (m_channel->feed(name, false))
-    return Notice::ObjectAlreadyExists;
-
   if (!m_channel->canEdit(m_user))
     return Notice::Forbidden;
 
-  FeedPtr feed = m_channel->feed(name, true, false);
+  FeedPtr feed = m_channel->feed(name, false);
+  if (feed) {
+    FeedStorage::clone(feed);
+    reply(Notice::OK);
+    return Notice::OK;
+  }
+
+
+  feed = m_channel->feed(name, true, false);
   if (!feed)
     return Notice::InternalError;
 
