@@ -84,11 +84,14 @@ int NodeFeedStorage::revertImpl(FeedPtr feed, const QVariantMap &data)
 
 /*!
  * Реализация сохранения фида.
+ *
+ * \param feed Фид.
  */
 int NodeFeedStorage::saveImpl(FeedPtr feed)
 {
   feed->head().data().remove(LS("size"));
   feed->head().data()[LS("date")] = DateTime::utc();
+  feed->head().setRev(rev(feed));
 
   QByteArray json = JSON::generate(feed->save());
   feed->head().data()[LS("size")] = json.size();
@@ -137,6 +140,9 @@ void NodeFeedStorage::cloneImpl(FeedPtr feed)
 }
 
 
+/*!
+ * Реализация загрузки фида.
+ */
 void NodeFeedStorage::loadImpl(Channel *channel)
 {
   QVariantMap feeds = channel->data().value(LS("feeds")).toMap();
@@ -149,6 +155,9 @@ void NodeFeedStorage::loadImpl(Channel *channel)
 }
 
 
+/*!
+ * Удаление фида.
+ */
 void NodeFeedStorage::removeImpl(FeedPtr feed)
 {
   QVariantMap feeds = feed->head().channel()->data()["feeds"].toMap();
@@ -158,20 +167,35 @@ void NodeFeedStorage::removeImpl(FeedPtr feed)
 }
 
 
+qint64 NodeFeedStorage::rev(FeedPtr feed)
+{
+  QVariantMap feeds = feed->head().channel()->data().value(LS("feeds")).toMap();
+  if (feeds.contains(feed->head().name())) {
+    qint64 rev = feeds.value(feed->head().name()).toLongLong();
+    if (rev <= 0)
+      return qAbs(rev) + 1;
+  }
+
+  return feed->head().key();
+}
+
+
 /*!
  * Запись в базу новой ревизии фида.
  */
 qint64 NodeFeedStorage::save(FeedPtr feed, const QByteArray &json)
 {
-  QSqlQuery query;
-  query.prepare("INSERT INTO feeds (channel, rev, date, name, json) "
-                     "VALUES (:channel, :rev, :date, :name, :json);");
+  if (feed->head().key() > 0)
+    return update(feed, json);
 
-  query.bindValue(":channel", feed->head().channel()->key());
-  query.bindValue(":rev",     feed->head().data().value("rev").toLongLong());
-  query.bindValue(":date",    feed->head().data().value("date"));
-  query.bindValue(":name",    feed->head().name());
-  query.bindValue(":json",    json);
+  QSqlQuery query;
+  query.prepare(LS("INSERT INTO feeds (channel, rev, date, name, json) VALUES (:channel, :rev, :date, :name, :json);"));
+
+  query.bindValue(LS(":channel"), feed->head().channel()->key());
+  query.bindValue(LS(":rev"),     feed->head().rev());
+  query.bindValue(LS(":date"),    feed->head().date());
+  query.bindValue(LS(":name"),    feed->head().name());
+  query.bindValue(LS(":json"),    json);
   query.exec();
 
   if (query.numRowsAffected() <= 0)
@@ -180,6 +204,20 @@ qint64 NodeFeedStorage::save(FeedPtr feed, const QByteArray &json)
   qint64 key = query.lastInsertId().toLongLong();
   feed->head().setKey(key);
   return key;
+}
+
+
+qint64 NodeFeedStorage::update(FeedPtr feed, const QByteArray &json)
+{
+  QSqlQuery query;
+  query.prepare(LS("UPDATE feeds SET rev = :rev, date = :date, json = :json WHERE id = :id;"));
+  query.bindValue(LS(":rev"),  feed->head().rev());
+  query.bindValue(LS(":date"), feed->head().date());
+  query.bindValue(LS(":json"), json);
+  query.bindValue(LS(":id"),   feed->head().key());
+  query.exec();
+
+  return feed->head().key();
 }
 
 
@@ -232,6 +270,9 @@ void NodeFeedStorage::start()
 }
 
 
+/*!
+ * Обновление информации о расположении фида в базе данных.
+ */
 void NodeFeedStorage::updateKey(FeedPtr feed)
 {
   QVariantMap feeds = feed->head().channel()->data().value(LS("feeds")).toMap();
