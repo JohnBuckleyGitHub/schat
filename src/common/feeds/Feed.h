@@ -62,7 +62,9 @@ public:
 
   virtual void setChannel(Channel *channel);
 
+  bool canEdit(Channel *channel) const;
   bool canRead(Channel *channel) const;
+  bool canWrite(Channel *channel) const;
   inline const FeedHeader& head() const    { return m_header; }
   inline const QVariantMap& data() const   { return m_data; }
   inline FeedHeader& head()                { return m_header; }
@@ -74,6 +76,9 @@ public:
 protected:
   FeedHeader m_header;  ///< Заголовок фида.
   QVariantMap m_data;   ///< JSON данные фида.
+
+private:
+  FeedQueryReply mask(const QVariantMap &json, Channel *channel);
 };
 
 typedef QSharedPointer<Feed> FeedPtr;

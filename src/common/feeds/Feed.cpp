@@ -20,6 +20,7 @@
 #include "feeds/Feed.h"
 #include "net/packets/Notice.h"
 #include "net/SimpleID.h"
+#include "sglobal.h"
 
 /*!
  * Создание фида на основе JSON данных.
@@ -30,7 +31,7 @@
 Feed::Feed(const QString &name, const QVariantMap &data)
 {
   m_header.setName(name);
-  m_header.setData(data.value("head").toMap());
+  m_header.setData(data.value(LS("head")).toMap());
   m_data = data;
 }
 
@@ -41,7 +42,7 @@ Feed::Feed(const QString &name, const QVariantMap &data)
 Feed::Feed(const QString &name, qint64 date)
 {
   m_header.setName(name);
-  m_header.data()["date"] = date;
+  m_header.data()[LS("date")] = date;
 }
 
 
@@ -74,10 +75,20 @@ Feed* Feed::load(const QString &name, const QVariantMap &data)
 
 FeedQueryReply Feed::query(const QVariantMap &json, Channel *channel)
 {
-  Q_UNUSED(json)
-  Q_UNUSED(channel)
+  if (!channel)
+    return FeedQueryReply(Notice::BadRequest);
 
-  return FeedQueryReply(Notice::ServiceUnavailable);
+  QString action = json.value(LS("action")).toString();
+  if (action.isEmpty())
+    return FeedQueryReply(Notice::BadRequest);
+
+  if (!action.startsWith(LS("x-")))
+    return FeedQueryReply(Notice::ServiceUnavailable);
+
+  if (action == LS("x-mask"))
+    return mask(json, channel);
+
+  return FeedQueryReply(Notice::NotImplemented);
 }
 
 
@@ -105,7 +116,7 @@ QVariantMap Feed::feed(Channel *channel)
   if (header.isEmpty())
     return QVariantMap();
 
-  merge("head", m_data, header);
+  merge(LS("head"), m_data, header);
   return m_data;
 }
 
@@ -115,7 +126,7 @@ QVariantMap Feed::feed(Channel *channel)
  */
 QVariantMap Feed::save()
 {
-  merge("head", m_data, m_header.save());
+  merge(LS("head"), m_data, m_header.save());
   return m_data;
 }
 
@@ -126,9 +137,30 @@ void Feed::setChannel(Channel *channel)
 }
 
 
+/*!
+ * Проверка прав канала на редактирование.
+ */
+bool Feed::canEdit(Channel *channel) const
+{
+  return head().acl().can(channel, Acl::Edit);
+}
+
+
+/*!
+ * Проверка прав канала на чтение.
+ */
 bool Feed::canRead(Channel *channel) const
 {
-  return m_header.acl().match(channel) & Acl::Read;
+  return head().acl().can(channel, Acl::Read);
+}
+
+
+/*!
+ * Проверка прав канала на запись.
+ */
+bool Feed::canWrite(Channel *channel) const
+{
+  return head().acl().can(channel, Acl::Write);
 }
 
 
@@ -162,5 +194,28 @@ void Feed::merge(QVariantMap &out, const QVariantMap &in)
     i.next();
     out[i.key()] = i.value();
   }
+}
+
+
+/*!
+ * Установка маски прав доступа к фиду.
+ * Эта операция требует прав на редактирование.
+ * Новая маска содержится в поле \b mask запроса \p json.
+ *
+ * \param json    Тело запроса.
+ * \param channel Канал для проверки прав доступа.
+ */
+FeedQueryReply Feed::mask(const QVariantMap &json, Channel *channel)
+{
+  if (!canEdit(channel))
+    return FeedQueryReply(Notice::Forbidden);
+
+  if (!json.contains(LS("mask")))
+    return FeedQueryReply(Notice::BadRequest);
+
+  head().acl().setMask(json.value(LS("mask")).toInt());
+  FeedQueryReply reply(Notice::OK);
+  reply.modified = true;
+  return reply;
 }
 

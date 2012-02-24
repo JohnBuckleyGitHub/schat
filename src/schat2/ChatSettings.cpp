@@ -22,6 +22,7 @@
 #include "ChatSettings.h"
 #include "client/ChatClient.h"
 #include "client/ClientFeeds.h"
+#include "client/SimpleClient.h"
 #include "sglobal.h"
 
 ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
@@ -61,6 +62,13 @@ void ChatSettings::ready()
   FeedPtr feed = ChatClient::channel()->feed(LS("settings"), false);
   if (!feed) {
     qDebug() << "FEED NOT EXIST";
+    QVariantMap query;
+    query[LS("action")] = LS("x-mask");
+    query[LS("mask")] = 0700;
+
+    ChatClient::io()->lock();
     ChatClient::feeds()->request(ChatClient::id(), LS("add"), LS("settings"));
+    ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("settings"), query);
+    ChatClient::io()->unlock();
   }
 }
