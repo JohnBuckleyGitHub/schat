@@ -29,8 +29,17 @@
 ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
   : Settings(fileName, parent)
 {
-  m_local << LS("AutoConnect");
-
+  m_local
+  << LS("AutoConnect")
+  << LS("Height")
+  << LS("Labs/CookieAuth")
+  << LS("Labs/DisableUI")
+  << LS("Networks")
+  << LS("Profile/Gender")
+  << LS("Profile/Nick")
+  << LS("Profile/Status")
+  << LS("Width")
+  << LS("WindowsAero");
 
   setDefault(LS("AutoConnect"),           true);
   setDefault(LS("AutoJoin"),              true);
@@ -52,8 +61,6 @@ ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
   setDefault(LS("Profile/Gender"),        0);
   setDefault(LS("Profile/Nick"),          Channel::defaultName());
   setDefault(LS("Profile/Status"),        1);
-
-  connect(this, SIGNAL(changed(const QString &, const QVariant &)), SLOT(changed(const QString &, const QVariant &)));
 }
 
 
@@ -67,19 +74,15 @@ void ChatSettings::init()
 void ChatSettings::setValue(const QString &key, const QVariant &value, bool notify)
 {
   qDebug() << " > > > ChatSettings::setValue()" << key;
+  if (QSettings::value(key, m_default.value(key)) == value)
+    return;
+
   Settings::setValue(key, value, notify);
-}
+  if (m_local.contains(key))
+    return;
 
-
-void ChatSettings::changed(const QString &key, const QVariant &value)
-{
-  qDebug() << " > > > ChatSettings::changed()" << key;
-  if (ChatClient::state() == ChatClient::Online && !m_local.contains(key)) {
-    QVariantMap query;
-    query[LS("action")] = LS("x-set");
-    query[key] = value;
-    ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("settings"), query);
-  }
+  if (ChatClient::state() == ChatClient::Online)
+    set(key, value);
 }
 
 
@@ -94,6 +97,11 @@ void ChatSettings::notify(const Notify &notify)
       return;
 
     qDebug() << "DATA";
+  }
+  else if (notify.type() == Notify::FeedReply) {
+    const FeedNotify &n = static_cast<const FeedNotify &>(notify);
+    if (n.match(ChatClient::id(), LS("settings"), LS("x-set")))
+      set(n);
   }
 }
 
@@ -117,4 +125,26 @@ void ChatSettings::ready()
     ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("settings"), query);
     ChatClient::io()->unlock();
   }
+}
+
+
+void ChatSettings::set(const FeedNotify &notify)
+{
+  QStringList keys = notify.json().keys();
+  keys.removeAll(LS("action"));
+  if (keys.isEmpty())
+    return;
+
+  foreach (QString key, keys) {
+    Settings::setValue(key, notify.json().value(key));
+  }
+}
+
+
+void ChatSettings::set(const QString &key, const QVariant &value)
+{
+  QVariantMap query;
+  query[LS("action")] = LS("x-set");
+  query[key] = value;
+  ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("settings"), query);
 }
