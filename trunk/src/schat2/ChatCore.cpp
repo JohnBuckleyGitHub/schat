@@ -101,8 +101,9 @@ ChatCore::ChatCore(QObject *parent)
   m_plugins = new ChatPlugins(this);
   m_plugins->load();
 
+  m_settings->init();
+
   connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
-  connect(ChatClient::i(), SIGNAL(ready()), m_settings, SLOT(ready()));
 
   QTimer::singleShot(0, this, SLOT(start()));
 }

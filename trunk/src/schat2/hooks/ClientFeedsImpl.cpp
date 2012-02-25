@@ -80,6 +80,7 @@ QStringList ClientFeedsImpl::unsynced(ClientChannel channel, const QVariantMap &
 {
   QStringList extra;
   extra += LS("account");
+
   return Feeds::unsynced(channel, feeds, extra);
 }
 

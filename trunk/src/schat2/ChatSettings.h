@@ -21,7 +21,7 @@
 
 #include "Settings.h"
 
-class SimpleClient;
+class Notify;
 
 class SCHAT_CORE_EXPORT ChatSettings : public Settings
 {
@@ -29,8 +29,10 @@ class SCHAT_CORE_EXPORT ChatSettings : public Settings
 
 public:
   ChatSettings(const QString &fileName, QObject *parent = 0);
+  void init();
 
-public slots:
+private slots:
+  void notify(const Notify &notify);
   void ready();
 };
 
