@@ -30,24 +30,23 @@ ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
   : Settings(fileName, parent)
 {
   setLocalDefault(LS("AutoConnect"),           true);
-  setLocalDefault(LS("DeveloperExtras"),       false);
   setLocalDefault(LS("AutoJoin"),              true);
   setLocalDefault(LS("Height"),                420);
-  setLocalDefault(LS("HideIgnore"),            true);
+  setLocalDefault(LS("Labs/CookieAuth"),       true);
+  setLocalDefault(LS("Labs/DeveloperExtras"),  false);
+  setLocalDefault(LS("Labs/DisableUI"),        false);
   setLocalDefault(LS("Maximized"),             false);
   setLocalDefault(LS("Networks"),              QStringList());
-  setLocalDefault(LS("Width"),                 666);
-  setLocalDefault(LS("WindowsAero"),           true);
   setLocalDefault(LS("Profile/Gender"),        0);
   setLocalDefault(LS("Profile/Nick"),          Channel::defaultName());
   setLocalDefault(LS("Profile/Status"),        1);
-  setLocalDefault(LS("Labs/CookieAuth"),       true);
-  setLocalDefault(LS("Labs/DisableUI"),        false);
+  setLocalDefault(LS("Width"),                 666);
+  setLocalDefault(LS("WindowsAero"),           true);
 
   setDefault(LS("Display/Seconds"),            false);
   setDefault(LS("Display/Service"),            false);
-  setDefault(LS("Translation"),           LS("auto"));
-  setDefault(LS("Labs/StaticTrayAlerts"), false);
+  setDefault(LS("Labs/StaticTrayAlerts"),      false);
+  setDefault(LS("Translation"),                LS("auto"));
 }
 
 
@@ -123,7 +122,8 @@ void ChatSettings::set(const FeedNotify &notify)
     return;
 
   foreach (QString key, keys) {
-    Settings::setValue(key, notify.json().value(key));
+    if (!m_local.contains(key))
+      Settings::setValue(key, notify.json().value(key));
   }
 }
 

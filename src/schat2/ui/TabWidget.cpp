@@ -75,7 +75,7 @@ TabWidget::TabWidget(QWidget *parent)
   QWebSettings::globalSettings()->setFontSize(QWebSettings::DefaultFontSize, fontInfo().pixelSize());
   QWebSettings::globalSettings()->setFontSize(QWebSettings::DefaultFixedFontSize, fontInfo().pixelSize());
   QWebSettings::globalSettings()->setFontFamily(QWebSettings::StandardFont, fontInfo().family());
-  QWebSettings::globalSettings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, SCHAT_OPTION("DeveloperExtras").toBool());
+  QWebSettings::globalSettings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, SCHAT_OPTION("Labs/DeveloperExtras").toBool());
 
   m_alertTab = new AlertTab(this);
   m_alertTab->setVisible(false);
