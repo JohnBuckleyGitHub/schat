@@ -28,12 +28,14 @@ class FeedQueryReply
 {
 public:
   FeedQueryReply(int status, const QVariantMap &json = QVariantMap())
-  : modified(false)
+  : broadcast(true)
+  , modified(false)
   , single(false)
   , status(status)
   , json(json)
   {}
 
+  bool broadcast;            ///< \b true если нужно разослать тело фида если оно изменилось.
   bool modified;             ///< \b true если тело фида изменилось.
   bool single;               ///< \b true если ответ должен получить только пользователь создавший запрос.
   int status;                ///< Статус операции.
@@ -79,6 +81,7 @@ protected:
 
 private:
   FeedQueryReply mask(const QVariantMap &json, Channel *channel);
+  FeedQueryReply set(const QVariantMap &json, Channel *channel);
 };
 
 typedef QSharedPointer<Feed> FeedPtr;

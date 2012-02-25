@@ -49,7 +49,7 @@ private slots:
 private:
   void displayUserCount();
 
-  bool m_userCount;
+//  bool m_userCount;
   ChannelBar *m_bar;
   QSplitter *m_splitter;
   QVBoxLayout *m_leftLayout;

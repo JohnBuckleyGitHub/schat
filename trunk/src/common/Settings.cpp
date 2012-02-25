@@ -43,7 +43,7 @@ void Settings::setDefault(const QString &key, const QVariant &value)
 
 void Settings::setValue(const QString &key, const QVariant &value, bool notify)
 {
-  if (value == QSettings::value(key, m_default.value(key)))
+  if (QSettings::value(key, m_default.value(key)) == value)
     return;
 
   if (m_default.contains(key) && m_default.value(key) == value)

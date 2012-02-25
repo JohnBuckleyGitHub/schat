@@ -29,9 +29,11 @@
 ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
   : Settings(fileName, parent)
 {
+  m_local << LS("AutoConnect");
+
+
   setDefault(LS("AutoConnect"),           true);
   setDefault(LS("AutoJoin"),              true);
-  setDefault(LS("ChannelUserCount"),      false);
   setDefault(LS("DeveloperExtras"),       false);
   setDefault(LS("Height"),                420);
   setDefault(LS("HideIgnore"),            true);
@@ -50,6 +52,8 @@ ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
   setDefault(LS("Profile/Gender"),        0);
   setDefault(LS("Profile/Nick"),          Channel::defaultName());
   setDefault(LS("Profile/Status"),        1);
+
+  connect(this, SIGNAL(changed(const QString &, const QVariant &)), SLOT(changed(const QString &, const QVariant &)));
 }
 
 
@@ -57,6 +61,25 @@ void ChatSettings::init()
 {
   connect(ChatClient::i(), SIGNAL(ready()), SLOT(ready()));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+}
+
+
+void ChatSettings::setValue(const QString &key, const QVariant &value, bool notify)
+{
+  qDebug() << " > > > ChatSettings::setValue()" << key;
+  Settings::setValue(key, value, notify);
+}
+
+
+void ChatSettings::changed(const QString &key, const QVariant &value)
+{
+  qDebug() << " > > > ChatSettings::changed()" << key;
+  if (ChatClient::state() == ChatClient::Online && !m_local.contains(key)) {
+    QVariantMap query;
+    query[LS("action")] = LS("x-set");
+    query[key] = value;
+    ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("settings"), query);
+  }
 }
 
 

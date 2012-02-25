@@ -19,6 +19,8 @@
 #ifndef CHATSETTINGS_H_
 #define CHATSETTINGS_H_
 
+#include <QStringList>
+
 #include "Settings.h"
 
 class Notify;
@@ -30,10 +32,15 @@ class SCHAT_CORE_EXPORT ChatSettings : public Settings
 public:
   ChatSettings(const QString &fileName, QObject *parent = 0);
   void init();
+  void setValue(const QString &key, const QVariant &value, bool notify = true);
 
 private slots:
+  void changed(const QString &key, const QVariant &value);
   void notify(const Notify &notify);
   void ready();
+
+private:
+  QStringList m_local; ///< Список ключей локальных настроек.
 };
 
 #endif /* CHATSETTINGS_H_ */
