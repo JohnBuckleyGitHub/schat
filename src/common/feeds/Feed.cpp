@@ -87,6 +87,8 @@ FeedQueryReply Feed::query(const QVariantMap &json, Channel *channel)
 
   if (action == LS("x-mask"))
     return mask(json, channel);
+  else if (action == LS("x-set"))
+    return set(json, channel);
 
   return FeedQueryReply(Notice::NotImplemented);
 }
@@ -219,3 +221,33 @@ FeedQueryReply Feed::mask(const QVariantMap &json, Channel *channel)
   return reply;
 }
 
+
+FeedQueryReply Feed::set(const QVariantMap &json, Channel *channel)
+{
+  if (!canWrite(channel))
+    return FeedQueryReply(Notice::Forbidden);
+
+  QStringList keys = json.keys();
+  keys.removeAll(LS("action"));
+  if (keys.isEmpty())
+    return FeedQueryReply(Notice::BadRequest);
+
+  int modified = 0;
+  FeedQueryReply reply(Notice::OK);
+  reply.broadcast = false;
+  reply.json[LS("action")] = LS("x-set");
+
+  foreach (QString key, keys) {
+    QVariant value = json.value(key);
+    if (m_data.value(key) != value) {
+      modified++;
+      m_data[key] = value;
+      reply.json[key] = value;
+    }
+  }
+
+  if (modified)
+    reply.modified = true;
+
+  return reply;
+}

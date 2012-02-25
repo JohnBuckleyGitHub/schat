@@ -213,7 +213,7 @@ int NodeFeeds::query()
       Core::send(reply.packets);
   }
 
-  if (reply.modified) {
+  if (reply.modified && reply.broadcast) {
     get();
     broadcast(m_channel->feed(m_packet->text(), false));
   }

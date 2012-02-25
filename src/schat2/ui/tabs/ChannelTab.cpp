@@ -57,7 +57,7 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   m_splitter->setStretchFactor(0, 1);
   m_splitter->setStretchFactor(1, 1);
 
-  m_userCount = SCHAT_OPTION("ChannelUserCount").toBool();
+//  m_userCount = SCHAT_OPTION("ChannelUserCount").toBool();
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_splitter);
@@ -152,10 +152,10 @@ void ChannelTab::quit(const QByteArray &user)
 }
 
 
-void ChannelTab::settingsChanged(const QString &key, const QVariant &value)
+void ChannelTab::settingsChanged(const QString &key, const QVariant & /*value*/)
 {
   if (key == QLatin1String("ChannelUserCount")) {
-    m_userCount = value.toBool();
+//    m_userCount = value.toBool();
     displayUserCount();
   }
 }
