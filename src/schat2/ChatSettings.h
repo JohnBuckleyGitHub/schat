@@ -23,6 +23,7 @@
 
 #include "Settings.h"
 
+class FeedNotify;
 class Notify;
 
 class SCHAT_CORE_EXPORT ChatSettings : public Settings
@@ -35,11 +36,13 @@ public:
   void setValue(const QString &key, const QVariant &value, bool notify = true);
 
 private slots:
-  void changed(const QString &key, const QVariant &value);
   void notify(const Notify &notify);
   void ready();
 
 private:
+  void set(const FeedNotify &notify);
+  void set(const QString &key, const QVariant &value);
+
   QStringList m_local; ///< Список ключей локальных настроек.
 };
 
