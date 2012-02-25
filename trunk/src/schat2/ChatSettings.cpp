@@ -29,38 +29,25 @@
 ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
   : Settings(fileName, parent)
 {
-  m_local
-  << LS("AutoConnect")
-  << LS("Height")
-  << LS("Labs/CookieAuth")
-  << LS("Labs/DisableUI")
-  << LS("Networks")
-  << LS("Profile/Gender")
-  << LS("Profile/Nick")
-  << LS("Profile/Status")
-  << LS("Width")
-  << LS("WindowsAero");
+  setLocalDefault(LS("AutoConnect"),           true);
+  setLocalDefault(LS("DeveloperExtras"),       false);
+  setLocalDefault(LS("AutoJoin"),              true);
+  setLocalDefault(LS("Height"),                420);
+  setLocalDefault(LS("HideIgnore"),            true);
+  setLocalDefault(LS("Maximized"),             false);
+  setLocalDefault(LS("Networks"),              QStringList());
+  setLocalDefault(LS("Width"),                 666);
+  setLocalDefault(LS("WindowsAero"),           true);
+  setLocalDefault(LS("Profile/Gender"),        0);
+  setLocalDefault(LS("Profile/Nick"),          Channel::defaultName());
+  setLocalDefault(LS("Profile/Status"),        1);
+  setLocalDefault(LS("Labs/CookieAuth"),       true);
+  setLocalDefault(LS("Labs/DisableUI"),        false);
 
-  setDefault(LS("AutoConnect"),           true);
-  setDefault(LS("AutoJoin"),              true);
-  setDefault(LS("DeveloperExtras"),       false);
-  setDefault(LS("Height"),                420);
-  setDefault(LS("HideIgnore"),            true);
-  setDefault(LS("Maximized"),             false);
-  setDefault(LS("Networks"),              QStringList());
-  setDefault(LS("ShowSeconds"),           false);
-  setDefault(LS("ShowServiceMessages"),   false);
+  setDefault(LS("Display/Seconds"),            false);
+  setDefault(LS("Display/Service"),            false);
   setDefault(LS("Translation"),           LS("auto"));
-  setDefault(LS("Width"),                 666);
-  setDefault(LS("WindowsAero"),           true);
-
-  setDefault(LS("Labs/CookieAuth"),       true);
-  setDefault(LS("Labs/DisableUI"),        false);
   setDefault(LS("Labs/StaticTrayAlerts"), false);
-
-  setDefault(LS("Profile/Gender"),        0);
-  setDefault(LS("Profile/Nick"),          Channel::defaultName());
-  setDefault(LS("Profile/Status"),        1);
 }
 
 
@@ -147,4 +134,13 @@ void ChatSettings::set(const QString &key, const QVariant &value)
   query[LS("action")] = LS("x-set");
   query[key] = value;
   ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("settings"), query);
+}
+
+
+void ChatSettings::setLocalDefault(const QString &key, const QVariant &value)
+{
+  setDefault(key, value);
+
+  if (!m_local.contains(key))
+    m_local.append(key);
 }

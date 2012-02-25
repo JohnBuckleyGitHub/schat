@@ -165,8 +165,8 @@ void ChatView::showEvent(QShowEvent *event)
 void ChatView::loadFinished()
 {
   m_loaded = true;
-  m_seconds->setChecked(SCHAT_OPTION("ShowSeconds").toBool());
-  m_service->setChecked(SCHAT_OPTION("ShowServiceMessages").toBool());
+  m_seconds->setChecked(SCHAT_OPTION("Display/Seconds").toBool());
+  m_service->setChecked(SCHAT_OPTION("Display/Service").toBool());
 
   evaluateJavaScript("showSeconds", m_seconds->isChecked());
   evaluateJavaScript("showService", m_service->isChecked());
@@ -184,10 +184,10 @@ void ChatView::menuTriggered(QAction *action)
     clearPage();
   }
   else if (action == m_seconds) {
-    ChatCore::settings()->setValue(QLatin1String("ShowSeconds"), action->isChecked());
+    ChatCore::settings()->setValue(LS("Display/Seconds"), action->isChecked());
   }
   else if (action == m_service) {
-    ChatCore::settings()->setValue(QLatin1String("ShowServiceMessages"), action->isChecked());
+    ChatCore::settings()->setValue(LS("Display/Service"), action->isChecked());
   }
 }
 
@@ -215,13 +215,13 @@ void ChatView::populateJavaScriptWindowObject()
 
 void ChatView::settingsChanged(const QString &key, const QVariant &value)
 {
-  if (key == QLatin1String("ShowSeconds")) {
+  if (key == LS("Display/Seconds")) {
     m_seconds->setChecked(value.toBool());
-    evaluateJavaScript("showSeconds", value);
+    evaluateJavaScript(LS("showSeconds"), value);
   }
-  else if (key == QLatin1String("ShowServiceMessages")) {
+  else if (key == LS("Display/Service")) {
     m_service->setChecked(value.toBool());
-    evaluateJavaScript("showService", value);
+    evaluateJavaScript(LS("showService"), value);
   }
 }
 
