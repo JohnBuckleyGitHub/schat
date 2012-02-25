@@ -82,7 +82,7 @@ void ChatSettings::notify(const Notify &notify)
     if (n.channel() != ChatClient::id())
       return;
 
-    qDebug() << "DATA";
+    set();
   }
   else if (notify.type() == Notify::FeedReply) {
     const FeedNotify &n = static_cast<const FeedNotify &>(notify);
@@ -110,6 +110,24 @@ void ChatSettings::ready()
     ChatClient::feeds()->request(ChatClient::id(), LS("add"), LS("settings"));
     ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("settings"), query);
     ChatClient::io()->unlock();
+  }
+}
+
+
+void ChatSettings::set()
+{
+  FeedPtr feed = ChatClient::channel()->feed(LS("settings"), false);
+  if (!feed)
+    return;
+
+  QStringList keys = feed->data().keys();
+  keys.removeAll(LS("head"));
+  if (keys.isEmpty())
+    return;
+
+  foreach (QString key, keys) {
+    if (!m_local.contains(key))
+      Settings::setValue(key, feed->data().value(key));
   }
 }
 
