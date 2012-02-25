@@ -24,6 +24,7 @@
 #include "client/ClientFeeds.h"
 #include "client/SimpleClient.h"
 #include "sglobal.h"
+#include "ChatNotify.h"
 
 ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
   : Settings(fileName, parent)
@@ -49,6 +50,28 @@ ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
   setDefault(LS("Profile/Gender"),        0);
   setDefault(LS("Profile/Nick"),          Channel::defaultName());
   setDefault(LS("Profile/Status"),        1);
+}
+
+
+void ChatSettings::init()
+{
+  connect(ChatClient::i(), SIGNAL(ready()), SLOT(ready()));
+  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+}
+
+
+void ChatSettings::notify(const Notify &notify)
+{
+  if (notify.type() == Notify::FeedData) {
+    const FeedNotify &n = static_cast<const FeedNotify &>(notify);
+    if (n.name() != LS("settings"))
+      return;
+
+    if (n.channel() != ChatClient::id())
+      return;
+
+    qDebug() << "DATA";
+  }
 }
 
 

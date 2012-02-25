@@ -60,8 +60,6 @@ FeedQueryReply NodeHistoryFeed::query(const QVariantMap &json, Channel *channel)
   if (action.isEmpty())
     return FeedQueryReply(Notice::BadRequest);
 
-  qDebug() << " > [Messages] NodeHistoryFeed::query()" << action;
-
   if (action == LS("get"))
     return get(json, channel);
 
