@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include "Channel.h"
 #include "ChatSettings.h"
 #include "client/ChatClient.h"
@@ -59,7 +57,6 @@ void ChatSettings::init()
 
 void ChatSettings::setValue(const QString &key, const QVariant &value, bool notify)
 {
-  qDebug() << " > > > ChatSettings::setValue()" << key;
   if (QSettings::value(key, m_default.value(key)) == value)
     return;
 
@@ -94,14 +91,8 @@ void ChatSettings::notify(const Notify &notify)
 
 void ChatSettings::ready()
 {
-  qDebug() << "";
-  qDebug() << "";
-  qDebug() << "ChatSettings::ready()";
-  qDebug() << "";
-  qDebug() << "";
   FeedPtr feed = ChatClient::channel()->feed(LS("settings"), false);
   if (!feed) {
-    qDebug() << "FEED NOT EXIST";
     QVariantMap query;
     query[LS("action")] = LS("x-mask");
     query[LS("mask")] = 0700;

@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QSqlQuery>
 #include <QSqlDatabase>
 
@@ -34,6 +32,11 @@ CacheFeedStorage::CacheFeedStorage(QObject *parent)
 }
 
 
+/*!
+ * Реализация сохранения фида.
+ *
+ * \param feed Фид.
+ */
 int CacheFeedStorage::saveImpl(FeedPtr feed)
 {
   QVariantMap feeds = feed->head().channel()->data().value(LS("feeds")).toMap();
@@ -49,6 +52,9 @@ int CacheFeedStorage::saveImpl(FeedPtr feed)
 }
 
 
+/*!
+ * Реализация загрузки фида.
+ */
 void CacheFeedStorage::loadImpl(Channel *channel)
 {
   QVariantMap feeds = channel->data()[LS("feeds")].toMap();
@@ -61,15 +67,20 @@ void CacheFeedStorage::loadImpl(Channel *channel)
 }
 
 
+/*!
+ * Запись в базу тела фида.
+ */
 qint64 CacheFeedStorage::save(FeedPtr feed, const QByteArray &json)
 {
+  if (feed->head().key() > 0)
+    return update(feed, json);
+
   QSqlQuery query(QSqlDatabase::database(CacheDB::id()));
-  query.prepare(LS("INSERT INTO feeds (channel, rev, date, name, json) "
-                     "VALUES (:channel, :rev, :date, :name, :json);"));
+  query.prepare(LS("INSERT INTO feeds (channel, rev, date, name, json) VALUES (:channel, :rev, :date, :name, :json);"));
 
   query.bindValue(LS(":channel"), feed->head().channel()->key());
-  query.bindValue(LS(":rev"),     feed->head().data().value(LS("rev")).toLongLong());
-  query.bindValue(LS(":date"),    feed->head().data().value(LS("date")));
+  query.bindValue(LS(":rev"),     feed->head().rev());
+  query.bindValue(LS(":date"),    feed->head().date());
   query.bindValue(LS(":name"),    feed->head().name());
   query.bindValue(LS(":json"),    json);
   query.exec();
@@ -77,7 +88,23 @@ qint64 CacheFeedStorage::save(FeedPtr feed, const QByteArray &json)
   if (query.numRowsAffected() <= 0)
     return -1;
 
-  return query.lastInsertId().toLongLong();
+  qint64 key = query.lastInsertId().toLongLong();
+  feed->head().setKey(key);
+  return key;
+}
+
+
+qint64 CacheFeedStorage::update(FeedPtr feed, const QByteArray &json)
+{
+  QSqlQuery query(QSqlDatabase::database(CacheDB::id()));
+  query.prepare(LS("UPDATE feeds SET rev = :rev, date = :date, json = :json WHERE id = :id;"));
+  query.bindValue(LS(":rev"),  feed->head().rev());
+  query.bindValue(LS(":date"), feed->head().date());
+  query.bindValue(LS(":json"), json);
+  query.bindValue(LS(":id"),   feed->head().key());
+  query.exec();
+
+  return feed->head().key();
 }
 
 

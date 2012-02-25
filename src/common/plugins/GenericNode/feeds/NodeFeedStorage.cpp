@@ -155,7 +155,7 @@ qint64 NodeFeedStorage::rev(FeedPtr feed)
 
 
 /*!
- * Запись в базу новой ревизии фида.
+ * Запись в базу тела фида.
  */
 qint64 NodeFeedStorage::save(FeedPtr feed, const QByteArray &json)
 {
@@ -208,18 +208,17 @@ void NodeFeedStorage::load(Channel *channel, const QString &name, qint64 id)
     return;
 
   QSqlQuery query;
-  query.prepare(LS("SELECT rev, date, json FROM feeds WHERE id = :id LIMIT 1;"));
+  query.prepare(LS("SELECT json FROM feeds WHERE id = :id LIMIT 1;"));
   query.bindValue(LS(":id"), id);
   query.exec();
 
   if (!query.first())
     return;
 
-  QByteArray data = query.value(2).toByteArray();
+  QByteArray data = query.value(0).toByteArray();
   QVariantMap json = JSON::parse(data).toMap();
 
   Feed *feed = FeedStorage::load(name, json);
-  feed->head().data()[LS("rev")]  = query.value(0).toLongLong();
   feed->head().data()[LS("size")] = data.size();
   feed->head().setKey(id);
 
