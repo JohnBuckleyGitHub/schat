@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QSqlDatabase>
 #include <QSqlQuery>
 
@@ -66,8 +64,8 @@ ClientChannel CacheDB::channel(const QByteArray &id, bool feeds)
 ClientChannel CacheDB::channel(qint64 id, bool feeds)
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare("SELECT channel, gender, name, data FROM channels WHERE id = :id LIMIT 1;");
-  query.bindValue(":id", id);
+  query.prepare(LS("SELECT channel, gender, name, data FROM channels WHERE id = :id LIMIT 1;"));
+  query.bindValue(LS(":id"), id);
   query.exec();
 
   if (!query.first())
@@ -101,14 +99,14 @@ qint64 CacheDB::add(ClientChannel channel)
   }
 
   QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare("INSERT INTO channels (channel, type, gender, name, data) "
-                     "VALUES (:channel, :type, :gender, :name, :data);");
+  query.prepare(LS("INSERT INTO channels (channel, type, gender, name, data) "
+                     "VALUES (:channel, :type, :gender, :name, :data);"));
 
-  query.bindValue(":channel",    channel->id());
-  query.bindValue(":type",       channel->type());
-  query.bindValue(":gender",     channel->gender().raw());
-  query.bindValue(":name",       channel->name());
-  query.bindValue(":data",       JSON::generate(channel->data()));
+  query.bindValue(LS(":channel"),    channel->id());
+  query.bindValue(LS(":type"),       channel->type());
+  query.bindValue(LS(":gender"),     channel->gender().raw());
+  query.bindValue(LS(":name"),       channel->name());
+  query.bindValue(LS(":data"),       JSON::generate(channel->data()));
   query.exec();
 
   if (query.numRowsAffected() <= 0)
@@ -125,9 +123,9 @@ qint64 CacheDB::add(ClientChannel channel)
 qint64 CacheDB::channelKey(const QByteArray &id, int type)
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare("SELECT id FROM channels WHERE channel = :id AND type = :type LIMIT 1;");
-  query.bindValue(":id",   id);
-  query.bindValue(":type", type);
+  query.prepare(LS("SELECT id FROM channels WHERE channel = :id AND type = :type LIMIT 1;"));
+  query.bindValue(LS(":id"),   id);
+  query.bindValue(LS(":type"), type);
   query.exec();
 
   if (!query.first())
@@ -140,9 +138,9 @@ qint64 CacheDB::channelKey(const QByteArray &id, int type)
 void CacheDB::clear()
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
-  query.exec("DROP TABLE IF EXISTS channels;");
-  query.exec("DROP TABLE IF EXISTS feeds");
-  query.exec("VACUUM;");
+  query.exec(LS("DROP TABLE IF EXISTS channels;"));
+  query.exec(LS("DROP TABLE IF EXISTS feeds"));
+  query.exec(LS("VACUUM;"));
 
   create();
 }
@@ -203,12 +201,12 @@ void CacheDB::saveData(Channel *channel)
 void CacheDB::update(ClientChannel channel)
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare("UPDATE channels SET channel = :channel, type = :type, gender = :gender, name = :name, data = :data WHERE id = :id;");
-  query.bindValue(":channel",    channel->id());
-  query.bindValue(":type",       channel->type());
-  query.bindValue(":gender",     channel->gender().raw());
-  query.bindValue(":name",       channel->name());
-  query.bindValue(":data",       JSON::generate(channel->data()));
-  query.bindValue(":id",         channel->key());
+  query.prepare(LS("UPDATE channels SET channel = :channel, type = :type, gender = :gender, name = :name, data = :data WHERE id = :id;"));
+  query.bindValue(LS(":channel"),    channel->id());
+  query.bindValue(LS(":type"),       channel->type());
+  query.bindValue(LS(":gender"),     channel->gender().raw());
+  query.bindValue(LS(":name"),       channel->name());
+  query.bindValue(LS(":data"),       JSON::generate(channel->data()));
+  query.bindValue(LS(":id"),         channel->key());
   query.exec();
 }
