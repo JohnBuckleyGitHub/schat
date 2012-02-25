@@ -40,6 +40,7 @@ private slots:
   void ready();
 
 private:
+  void set();
   void set(const FeedNotify &notify);
   void set(const QString &key, const QVariant &value);
   void setLocalDefault(const QString &key, const QVariant &value);
