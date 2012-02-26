@@ -21,6 +21,8 @@
 
 #include "client/ClientHooks.h"
 
+class FeedNotify;
+
 class ClientFeedsImpl : public Hooks::Feeds
 {
   Q_OBJECT
@@ -39,6 +41,7 @@ private:
   void headers();
   void query();
   void reply();
+  void set(const FeedNotify &notify);
 
   ClientChannel m_channel;
   const FeedNotice *m_packet;
