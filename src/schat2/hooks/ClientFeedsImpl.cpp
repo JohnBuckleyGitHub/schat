@@ -165,5 +165,41 @@ void ClientFeedsImpl::reply()
   if (name.isEmpty())
     return;
 
-  ChatNotify::start(FeedNotify(Notify::FeedReply, m_channel->id(), name, m_packet->json()));
+  FeedNotify notify(Notify::FeedReply, m_channel->id(), name, m_packet->json());
+  if (notify.match(ChatClient::id(), LS("settings"), LS("x-set")))
+    set(notify);
+
+  ChatNotify::start(notify);
+}
+
+
+void ClientFeedsImpl::set(const FeedNotify &notify)
+{
+  QStringList keys = notify.json().keys();
+  keys.removeAll(LS("action"));
+  keys.removeAll(LS("date"));
+  keys.removeAll(LS("size"));
+  if (keys.isEmpty())
+    return;
+
+  qint64 date = notify.json().value(LS("date")).toLongLong();
+  if (date == 0)
+    return;
+
+  int size = notify.json().value(LS("size")).toInt();
+  if (size == 0)
+    return;
+
+  FeedPtr feed = ChatClient::channel()->feed(notify.name(), false);
+  if (!feed)
+    return;
+
+  feed->head().data()[LS("date")] = date;
+  feed->head().data()[LS("size")] = size;
+
+  foreach (QString key, keys) {
+    feed->data()[key] = notify.json().value(key);
+  }
+
+  FeedStorage::save(feed);
 }

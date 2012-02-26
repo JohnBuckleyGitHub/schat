@@ -70,6 +70,7 @@ public:
   inline const FeedHeader& head() const    { return m_header; }
   inline const QVariantMap& data() const   { return m_data; }
   inline FeedHeader& head()                { return m_header; }
+  inline QVariantMap& data()               { return m_data; }
 
   static bool merge(const QString &key, QVariantMap &out, const QVariantMap &in);
   static QVariantMap merge(const QString &key, const QVariantMap &in);
