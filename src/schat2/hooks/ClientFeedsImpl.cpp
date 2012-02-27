@@ -166,7 +166,7 @@ void ClientFeedsImpl::reply()
     return;
 
   FeedNotify notify(Notify::FeedReply, m_channel->id(), name, m_packet->json());
-  if (notify.match(ChatClient::id(), LS("settings"), LS("x-set")))
+  if (notify.action() == LS("x-set"))
     set(notify);
 
   ChatNotify::start(notify);
