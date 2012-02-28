@@ -156,3 +156,33 @@ a:active, a:hover {
 .info-type .red-text {
 	color:#da251d;
 }
+
+.tab-content > .tab-pane, .pill-content > .pill-pane {
+  display: none;
+}
+.tab-content > .active, .pill-content > .active {
+  display: block;
+}
+
+.page-switcher {
+  background: transparent;
+  border: none;
+  bottom: 0;
+  font-size: 42px;
+  padding: 0;
+  position: fixed;
+  margin: 0;
+  width: 40px;
+  outline: none;
+  top: 0;
+  z-index: 5;
+  font-family: segoe ui, arial, helvetica, sans-serif;
+  color: rgba(0,0,0, 0.5);
+  -webkit-transition: width 150ms, right 150ms, background-color 150ms;
+}
+
+.page-switcher:hover,
+.page-switcher:focus,
+.page-switcher.drag-target {
+  background: rgba(0,0,0, 0.06);
+}
