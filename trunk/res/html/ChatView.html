@@ -1,15 +1,25 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<link rel="stylesheet" type="text/css" href="qrc:/css/ChatView.css">
-	<link rel="stylesheet" type="text/css" href="qrc:/css/ui.css">
-	<script type="text/javascript" src="qrc:/js/jquery.js"></script>
-	<script type="text/javascript" src="qrc:/js/ChatView.js"></script>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="qrc:/css/ChatView.css">
+  <link rel="stylesheet" href="qrc:/css/ui.css">
+  <script src="qrc:/js/jquery.js"></script>
+  <script src="qrc:/js/ChatView.js"></script>
+  <script src="qrc:/js/bootstrap-tab.js"></script>
 </head>
 <body id="body" class="no-seconds no-service no-topic-author">
-	<div id="topic-wrapper"></div>
-	<div id="Chat">
-	</div>
+<div class="tabbable">
+  <div class="tab-content">
+    <div class="tab-pane active" id="messages">
+      <div id="Chat">
+      </div>
+      <button id="page-switcher-end" class="page-switcher" data-toggle="tab" href="#info" style="right: 0;">›</button>
+    </div>
+    <div class="tab-pane" id="info">
+      <button id="page-switcher-start" class="page-switcher" data-toggle="tab" href="#messages">‹</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
