@@ -53,6 +53,7 @@
 #include "text/PlainTextFilter.h"
 #include "Translation.h"
 #include "ui/ChatIcons.h"
+#include "WebBridge.h"
 
 ChatCore *ChatCore::m_self = 0;
 
@@ -102,6 +103,8 @@ ChatCore::ChatCore(QObject *parent)
   m_plugins->load();
 
   m_settings->init();
+
+  new WebBridge(this);
 
   connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
 
