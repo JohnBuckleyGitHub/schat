@@ -56,6 +56,7 @@ private slots:
 
 protected:
   QIcon channelIcon() const;
+  QString page() const;
   virtual void reload();
   void rename(const QByteArray &id);
 

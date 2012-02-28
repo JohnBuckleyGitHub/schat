@@ -16,6 +16,12 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "ChatUrls.h"
+#include "client/ChatClient.h"
+#include "client/ClientChannels.h"
+#include "JSON.h"
+#include "net/SimpleID.h"
+#include "sglobal.h"
 #include "WebBridge.h"
 
 WebBridge *WebBridge::m_self = 0;
@@ -29,5 +35,14 @@ WebBridge::WebBridge(QObject *parent)
 
 QString WebBridge::channel(const QString &id)
 {
-  return "CHANNEL:" + id;
+  ClientChannel channel = ChatClient::channels()->get(SimpleID::decode(id.toLatin1()));
+  if (!channel)
+    return QString();
+
+  QVariantMap data;
+  data[LS("Id")]   = id;
+  data[LS("Name")] = channel->name();
+  data[LS("Url")]  = ChatUrls::toUrl(channel, LS("insert")).toString();
+
+  return JSON::generate(data);
 }

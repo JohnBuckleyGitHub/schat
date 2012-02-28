@@ -32,6 +32,7 @@
 #include "JSON.h"
 #include "messages/ServiceMessage.h"
 #include "net/SimpleID.h"
+#include "sglobal.h"
 #include "ui/ChatIcons.h"
 #include "ui/tabs/ChannelBaseTab.h"
 #include "ui/tabs/ChatView.h"
@@ -43,11 +44,11 @@ ChannelBaseTab::ChannelBaseTab(ClientChannel channel, TabType type, TabWidget *p
   , m_channel(channel)
   , m_alerts(0)
 {
-  QString file = QApplication::applicationDirPath() + "/styles/test/html/ChatView.html";
+  QString file = QApplication::applicationDirPath() + "/styles/test/html/" + page();
   if (QFile::exists(file))
     file = QUrl::fromLocalFile(file).toString();
   else
-    file = "qrc:/html/ChatView.html";
+    file = "qrc:/html/" + page();
 
   m_chatView = new ChatView(channel->id(), file, this);
   setIcon(channelIcon());
@@ -160,10 +161,21 @@ QIcon ChannelBaseTab::channelIcon() const
     if (m_channel->type() == SimpleID::ChannelId)
       return SCHAT_ICON(ChannelAlert);
 
-    return ChatIcons::icon(ChatIcons::icon(m_channel, ChatIcons::OfflineStatus), ":/images/message-small.png");
+    return ChatIcons::icon(ChatIcons::icon(m_channel, ChatIcons::OfflineStatus), LS(":/images/message-small.png"));
   }
   else
     return ChatIcons::icon(m_channel);
+}
+
+
+QString ChannelBaseTab::page() const
+{
+  if (SimpleID::typeOf(id()) == SimpleID::UserId)
+    return LS("User.html");
+  else if (SimpleID::typeOf(id()) == SimpleID::ChannelId)
+    return LS("Channel.html");
+  else
+    return LS("Server.html");
 }
 
 

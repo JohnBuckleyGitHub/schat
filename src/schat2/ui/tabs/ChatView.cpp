@@ -219,6 +219,7 @@ void ChatView::openUrl(const QUrl &url)
 void ChatView::populateJavaScriptWindowObject()
 {
   page()->mainFrame()->addToJavaScriptWindowObject("SimpleChat", WebBridge::i());
+  evaluateJavaScript(LS("reloadInfo();"));
 }
 
 

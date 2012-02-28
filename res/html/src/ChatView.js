@@ -58,6 +58,12 @@ function setChannelId(id)
 }
 
 
+function reloadInfo()
+{
+    $("#info-content > h1").html(nameTemplate(JSON.parse(SimpleChat.channel(channelId))));
+}
+
+
 function loadJS(filename)
 {
 	var e = document.createElement("script");
@@ -154,7 +160,7 @@ function addChannelMessage(json, hint)
 	html += '">';
 
 	html += dateTemplate(json.Date, json.Day);
-	html += nameTemplate(json);
+	html += nameTemplate(json.Author);
 	html += '<span class="msg-body-block">' + json.Text + '</span>';
 
 	html += '</div>';
@@ -174,7 +180,7 @@ function addServiceMessage(json)
 	html += '">';
 
 	html += dateTemplate(json.Date, false);
-	html += nameTemplate(json);
+	html += nameTemplate(json.Author);
 	html += '<span class="msg-body-block">' + json.Text + '</span>';
 
 	html += '</div>';
@@ -261,13 +267,13 @@ function datePad(n)
 function nameTemplate(json)
 {
 	var out = '';
-	if (json.Author === undefined)
+	if (json === undefined)
 		return out;
 
 	out += '<span class="nick-block"><a class="nick ';
-	out += json.Author.Id + '" href="';
-	out += json.Author.Url + '">';
-	out += htmlspecialchars(json.Author.Name);
+	out += json.Id + '" href="';
+	out += json.Url + '">';
+	out += htmlspecialchars(json.Name);
 	out += '</a></span> ';
 
 	return out;

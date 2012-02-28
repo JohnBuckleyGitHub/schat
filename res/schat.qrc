@@ -82,7 +82,9 @@
   <file alias="js/ChatView.js">html/js/ChatView.min.js</file>
   <file alias="js/jquery.js">html/js/jquery-1.7.1.min.js</file>
   <file>html/about.html</file>
-  <file>html/ChatView.html</file>
+  <file>html/Channel.html</file>
+  <file>html/Server.html</file>
+  <file>html/User.html</file>
   <file>images/color.png</file>
   <file>images/color-map.png</file>
   <file>images/logo128.png</file>
