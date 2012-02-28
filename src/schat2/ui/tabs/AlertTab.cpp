@@ -78,6 +78,7 @@ void AlertTab::notify(const Notify &notify)
 void AlertTab::online()
 {
   setId(ChatClient::serverId());
+  m_chatView->setId(id());
 }
 
 
