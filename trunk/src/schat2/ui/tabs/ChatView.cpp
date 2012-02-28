@@ -99,6 +99,13 @@ void ChatView::evaluateJavaScript(const QString &js)
 }
 
 
+void ChatView::setId(const QByteArray &id)
+{
+  m_id = id;
+  evaluateJavaScript(LS("setChannelId(\"") + SimpleID::encode(m_id) + LS("\");"));
+}
+
+
 void ChatView::changeEvent(QEvent *event)
 {
   if (event->type() == QEvent::LanguageChange)
@@ -170,6 +177,7 @@ void ChatView::loadFinished()
 
   evaluateJavaScript("showSeconds", m_seconds->isChecked());
   evaluateJavaScript("showService", m_service->isChecked());
+  setId(m_id);
 
   while (!m_pendingJs.isEmpty())
     page()->mainFrame()->evaluateJavaScript(m_pendingJs.dequeue());

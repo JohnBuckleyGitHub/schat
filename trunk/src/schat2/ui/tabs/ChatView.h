@@ -41,6 +41,7 @@ public:
   void copy();
   void evaluateJavaScript(const QString &func, const QVariant &param);
   void evaluateJavaScript(const QString &js);
+  void setId(const QByteArray &id);
 
 signals:
   void reloaded();
