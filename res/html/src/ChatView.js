@@ -23,6 +23,16 @@ $(document).ready(function() {
 		alignChat();
 	});
 
+	$("#page-switcher-start").on("click", function(event){
+		$("#messages").addClass("active");
+		$("#info").removeClass("active");
+	});
+
+	$("#page-switcher-end").on("click", function(event){
+		$("#messages").removeClass("active");
+		$("#info").addClass("active");
+	});
+
 	var timeoutID;
 	$('#topic-wrapper').hover(
 		function () {
