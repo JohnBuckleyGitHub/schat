@@ -100,6 +100,7 @@ HEADERS = \
     ui/TabsToolBar.h \
     ui/TabWidget.h \
     ui/TrayIcon.h \
+    WebBridge.h \
 
 SOURCES = \
     actions/ChatViewAction.cpp \
@@ -173,6 +174,7 @@ SOURCES = \
     ui/TabsToolBar.cpp \
     ui/TabWidget.cpp \
     ui/TrayIcon.cpp \
+    WebBridge.cpp \
 
 SCHAT_CLIENT_LIB = 1
 

@@ -36,6 +36,7 @@
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
 #include "ui/tabs/ChatView.h"
+#include "WebBridge.h"
 
 ChatView::ChatView(const QByteArray &id, const QString &url, QWidget *parent)
   : QWebView(parent)
@@ -217,7 +218,7 @@ void ChatView::openUrl(const QUrl &url)
 
 void ChatView::populateJavaScriptWindowObject()
 {
-  page()->mainFrame()->addToJavaScriptWindowObject("SimpleChat", ChatCore::i());
+  page()->mainFrame()->addToJavaScriptWindowObject("SimpleChat", WebBridge::i());
 }
 
 

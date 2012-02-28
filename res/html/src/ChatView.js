@@ -54,8 +54,7 @@ $(document).ready(function() {
 
 function setChannelId(id)
 {
-    channelId = id;
-    $("#info-content").html(channelId);
+	channelId = id;
 }
 
 
