@@ -43,5 +43,8 @@ QString Message::json() const
 
 void Message::author(const QByteArray &id)
 {
-  m_data[LS("Author")]  = WebBridge::channel(id);
+  QVariantMap data = WebBridge::channel(id);
+
+  if (!data.isEmpty())
+    m_data[LS("Author")] = data;
 }

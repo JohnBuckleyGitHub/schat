@@ -162,7 +162,7 @@ function addChannelMessage(json, hint)
 	html += '">';
 
 	html += dateTemplate(json.Date, json.Day);
-	html += '<span class="nick-block">' + nameTemplate(json.Author) + '</span> ';
+	html += nameBlock(json.Author);
 	html += '<span class="msg-body-block">' + json.Text + '</span>';
 
 	html += '</div>';
@@ -182,7 +182,7 @@ function addServiceMessage(json)
 	html += '">';
 
 	html += dateTemplate(json.Date, false);
-	html += '<span class="nick-block">' + nameTemplate(json.Author) + '</span> ';
+	html += nameBlock(json.Author);
 	html += '<span class="msg-body-block">' + json.Text + '</span>';
 
 	html += '</div>';
@@ -268,17 +268,25 @@ function datePad(n)
 /// Возвращает HTML шаблон имени канала.
 function nameTemplate(json)
 {
-	var out = '';
 	if (json === undefined)
-		return out;
+		return '';
 
-	out += '<a class="nick ';
+	var out = '<a class="nick ';
 	out += json.Id + '" href="';
 	out += json.Url + '">';
 	out += htmlspecialchars(json.Name);
 	out += '</a>';
 
 	return out;
+}
+
+function nameBlock(json)
+{
+	var nick = nameTemplate(json);
+	if (nick == '')
+		return nick;
+
+	return '<span class="nick-block">' + nick + '</span> ';
 }
 
 
