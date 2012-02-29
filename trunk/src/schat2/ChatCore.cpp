@@ -85,7 +85,7 @@ ChatCore::ChatCore(QObject *parent)
   new RegCmds(this);
 
   new Hooks::ChannelMenu(this);
-//  new Hooks::ChannelMenuImpl(this);
+  new ChannelMenuImpl(this);
   new UserMenuImpl(this);
 
   new ChatViewHooks(this);

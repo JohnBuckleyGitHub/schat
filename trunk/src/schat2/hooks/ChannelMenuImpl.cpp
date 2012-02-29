@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,12 +23,12 @@
 #include "hooks/ChannelMenuImpl.h"
 #include "net/SimpleID.h"
 #include "ui/ChatIcons.h"
-
-namespace Hooks
-{
+#include "sglobal.h"
 
 ChannelMenuImpl::ChannelMenuImpl(QObject *parent)
   : ChannelMenu(parent)
+  , m_info(0)
+  , m_talk(0)
   , m_topic(0)
 {
   add(this);
@@ -40,18 +40,29 @@ void ChannelMenuImpl::bindImpl(QMenu *menu, ClientChannel channel)
   if (channel->type() != SimpleID::ChannelId)
     return;
 
-  m_topic = new QAction(SCHAT_ICON(TopicEdit), Hooks::ChannelMenuImpl::tr("Edit topic..."), this);
-  m_topic->setData(ChatUrls::toUrl(channel, "edit/topic"));
-  menu->addAction(m_topic);
+//  m_topic = new QAction(SCHAT_ICON(TopicEdit), tr("Edit topic..."), this);
+//  m_topic->setData(ChatUrls::toUrl(channel, LS("edit/topic")));
+//  menu->addAction(m_topic);
+
+  bool active = ChatCore::currentId() == channel->id();
+
+  if (!active || (active && channel->data().value(LS("page")) != 0)) {
+    m_talk = new QAction(SCHAT_ICON(Balloon), tr("Talk..."), this);
+    m_talk->setData(ChatUrls::toUrl(channel, LS("open")));
+    menu->addAction(m_talk);
+  }
+
+  if (!active || (active && channel->data().value(LS("page")) != 1)) {
+    m_info = new QAction(SCHAT_ICON(InfoBalloon), tr("Information..."), this);
+    m_info->setData(ChatUrls::toUrl(channel, LS("info")));
+    menu->addAction(m_info);
+  }
 }
 
 
 void ChannelMenuImpl::cleanupImpl()
 {
-  if (m_topic)
-    delete m_topic;
-
-  m_topic = 0;
+  if (m_info) delete m_info; m_info = 0;
+  if (m_talk) delete m_talk; m_talk = 0;
+  if (m_topic) delete m_topic; m_topic = 0;
 }
-
-} // namespace Hooks

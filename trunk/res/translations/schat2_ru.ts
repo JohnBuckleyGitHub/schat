@@ -98,6 +98,19 @@
     </message>
 </context>
 <context>
+    <name>ChannelMenuImpl</name>
+    <message>
+        <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="50"/>
+        <source>Talk...</source>
+        <translation>Разговор...</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="56"/>
+        <source>Information...</source>
+        <translation>Информация...</translation>
+    </message>
+</context>
+<context>
     <name>ChatView</name>
     <message>
         <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="141"/>
@@ -199,14 +212,6 @@
         <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="156"/>
         <source>Yellow</source>
         <translation>Жёлтый</translation>
-    </message>
-</context>
-<context>
-    <name>Hooks::ChannelMenuImpl</name>
-    <message>
-        <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="43"/>
-        <source>Edit topic...</source>
-        <translation>Изменить тему...</translation>
     </message>
 </context>
 <context>
@@ -716,7 +721,7 @@
 <context>
     <name>TabWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="245"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="246"/>
         <source>Close Tab</source>
         <translation>Закрыть вкладку</translation>
     </message>
@@ -780,17 +785,17 @@
 <context>
     <name>UserMenuImpl</name>
     <message>
-        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="43"/>
+        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="46"/>
         <source>Talk...</source>
         <translation>Разговор...</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="48"/>
+        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="51"/>
         <source>Insert Nick</source>
         <translation>Вставить ник</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="55"/>
+        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="56"/>
         <source>Profile...</source>
         <translation>Профиль...</translation>
     </message>
