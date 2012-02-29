@@ -27,6 +27,7 @@
 
 UserMenuImpl::UserMenuImpl(QObject *parent)
   : ChannelMenu(parent)
+  , m_info(0)
   , m_insert(0)
   , m_talk(0)
 {

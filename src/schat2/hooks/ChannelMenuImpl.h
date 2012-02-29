@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,10 +21,7 @@
 
 #include "hooks/ChannelMenu.h"
 
-namespace Hooks
-{
-
-class ChannelMenuImpl : public ChannelMenu
+class ChannelMenuImpl : public Hooks::ChannelMenu
 {
   Q_OBJECT
 
@@ -36,9 +33,9 @@ protected:
   void cleanupImpl();
 
 private:
+  QAction *m_info;
+  QAction *m_talk;
   QAction *m_topic;
 };
-
-} // namespace Hooks
 
 #endif /* CHANNELMENUIMPL_H_ */

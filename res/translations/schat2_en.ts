@@ -98,6 +98,19 @@
     </message>
 </context>
 <context>
+    <name>ChannelMenuImpl</name>
+    <message>
+        <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="50"/>
+        <source>Talk...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="56"/>
+        <source>Information...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ChatView</name>
     <message>
         <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="141"/>
@@ -208,11 +221,6 @@
         <source></source>
         <comment>Necessary for lupdate. ...</comment>
         <translation></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="43"/>
-        <source>Edit topic...</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -722,7 +730,7 @@
 <context>
     <name>TabWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="245"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="246"/>
         <source>Close Tab</source>
         <translation type="unfinished"></translation>
     </message>
@@ -786,17 +794,17 @@
 <context>
     <name>UserMenuImpl</name>
     <message>
-        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="43"/>
+        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="46"/>
         <source>Talk...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="48"/>
+        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="51"/>
         <source>Insert Nick</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="55"/>
+        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="56"/>
         <source>Profile...</source>
         <translation type="unfinished"></translation>
     </message>
