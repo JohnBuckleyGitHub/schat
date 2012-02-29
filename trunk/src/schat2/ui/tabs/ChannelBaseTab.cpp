@@ -168,6 +168,9 @@ QIcon ChannelBaseTab::channelIcon() const
 }
 
 
+/*!
+ * Определение базового каркаса страницы в зависимости от типа канала.
+ */
 QString ChannelBaseTab::page() const
 {
   if (SimpleID::typeOf(id()) == SimpleID::UserId)

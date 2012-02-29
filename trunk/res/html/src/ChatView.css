@@ -188,5 +188,11 @@ a:active, a:hover {
 }
 
 #info-content {
-    margin-left: 40px;
+	margin-left: 40px;
+}
+
+#info-content h1 {
+	margin: 0;
+	padding: 0;
+	font-size: 150%;
 }
