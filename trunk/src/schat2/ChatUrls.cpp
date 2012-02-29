@@ -134,7 +134,7 @@ void ChatUrls::openChannelUrl(const QUrl &url)
     ChatNotify::start(Notify::OpenChannel, channel->id());
   }
   else if (action == LS("info")) {
-    ChatNotify::start(Notify::OpenChannel, channel->id());
+    ChatNotify::start(Notify::OpenInfo, channel->id());
   }
   else if (action == LS("insert")) {
     ChatNotify::start(Notify::InsertText, QString(LS(" <a class=\"nick\" href=\"%1\">%2</a> ")).arg(url.toString()).arg(Qt::escape(channel->name())));

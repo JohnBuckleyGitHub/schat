@@ -37,6 +37,7 @@
 #include "messages/ChannelMessage.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
+#include "sglobal.h"
 #include "ui/MainToolBar.h"
 #include "ui/SoundButton.h"
 #include "ui/TabBar.h"
@@ -291,23 +292,32 @@ void TabWidget::currentChanged(int index)
 
 void TabWidget::notify(const Notify &notify)
 {
-  if (notify.type() == Notify::OpenChannel) {
-    channelTab(notify.data().toByteArray());
+  int type = notify.type();
+
+  if (type == Notify::OpenChannel || type == Notify::OpenInfo) {
+    ChannelBaseTab *tab = channelTab(notify.data().toByteArray());
+    if (!tab)
+      return;
+
+    if (type == Notify::OpenInfo)
+      tab->chatView()->evaluateJavaScript(LS("setPage(1);"));
+    else
+      tab->chatView()->evaluateJavaScript(LS("setPage(0);"));
   }
-  else if (notify.type() == Notify::OpenAbout) {
+  else if (type == Notify::OpenAbout) {
     if (!m_aboutTab)
       m_aboutTab = new AboutTab(this);
 
     addChatTab(m_aboutTab);
   }
-  else if (notify.type() == Notify::OpenSettings) {
+  else if (type == Notify::OpenSettings) {
     if (!m_settingsTab)
       m_settingsTab = new SettingsTab(this);
 
     m_settingsTab->openUrl(notify.data().toUrl());
     addChatTab(m_settingsTab);
   }
-  else if (notify.type() == Notify::CopyRequest) {
+  else if (type == Notify::CopyRequest) {
     ChannelBaseTab *tab = qobject_cast<ChannelBaseTab *>(currentWidget());
     if (!tab)
       return;

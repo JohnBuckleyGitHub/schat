@@ -32,6 +32,7 @@ public:
   WebBridge(QObject *parent = 0);
   inline static WebBridge *i() { return m_self; }
   Q_INVOKABLE QString channel(const QString &id);
+  Q_INVOKABLE void setTabPage(const QString &id, int page);
   static QVariantMap channel(const QByteArray &id);
 
 private:
