@@ -35,14 +35,19 @@ WebBridge::WebBridge(QObject *parent)
 
 QString WebBridge::channel(const QString &id)
 {
-  ClientChannel channel = ChatClient::channels()->get(SimpleID::decode(id.toLatin1()));
+  return JSON::generate(channel(SimpleID::decode(id.toLatin1())));
+}
+
+
+QVariantMap WebBridge::channel(const QByteArray &id)
+{
+  ClientChannel channel = ChatClient::channels()->get(id);
   if (!channel)
-    return QString();
+    return QVariantMap();
 
   QVariantMap data;
-  data[LS("Id")]   = id;
+  data[LS("Id")]   = SimpleID::encode(id);
   data[LS("Name")] = channel->name();
   data[LS("Url")]  = ChatUrls::toUrl(channel, LS("insert")).toString();
-
-  return JSON::generate(data);
+  return data;
 }
