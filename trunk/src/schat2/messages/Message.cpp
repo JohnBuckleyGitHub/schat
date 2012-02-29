@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,9 +22,11 @@
 #include "JSON.h"
 #include "messages/Message.h"
 #include "net/SimpleID.h"
+#include "sglobal.h"
+#include "WebBridge.h"
 
 Message::Message()
-  : m_func("addMessage")
+  : m_func(LS("addMessage"))
 {
 }
 
@@ -33,24 +35,13 @@ QString Message::json() const
 {
   QString json = JSON::generate(m_data);
 
-  json.remove('\n');
-  json.remove('\r');
+  json.remove(LC('\n'));
+  json.remove(LC('\r'));
   return json;
 }
 
 
 void Message::author(const QByteArray &id)
 {
-  if (id.isEmpty())
-    return;
-
-  ClientChannel user = ChatClient::channels()->get(id);
-  if (!user)
-    return;
-
-  QVariantMap author;
-  author["Id"]      = SimpleID::encode(user->id());
-  author["Name"]    = user->name();
-  author["Url"]     = ChatUrls::toUrl(user, "insert").toString();
-  m_data["Author"]  = author;
+  m_data[LS("Author")]  = WebBridge::channel(id);
 }

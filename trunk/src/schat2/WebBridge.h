@@ -20,6 +20,7 @@
 #define WEBBRIDGE_H_
 
 #include <QObject>
+#include <QVariant>
 
 #include "schat.h"
 
@@ -31,6 +32,7 @@ public:
   WebBridge(QObject *parent = 0);
   inline static WebBridge *i() { return m_self; }
   Q_INVOKABLE QString channel(const QString &id);
+  static QVariantMap channel(const QByteArray &id);
 
 private:
   static WebBridge *m_self; ///< Указатель на себя.

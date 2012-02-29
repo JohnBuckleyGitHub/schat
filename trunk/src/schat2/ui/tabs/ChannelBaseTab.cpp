@@ -37,6 +37,7 @@
 #include "ui/tabs/ChannelBaseTab.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/TabWidget.h"
+#include "WebBridge.h"
 
 ChannelBaseTab::ChannelBaseTab(ClientChannel channel, TabType type, TabWidget *parent)
   : AbstractTab(channel->id(), type, parent)
@@ -126,7 +127,7 @@ void ChannelBaseTab::alert(const Alert &alert)
 
 void ChannelBaseTab::channel(const ChannelInfo &info)
 {
-  if (SimpleID::typeOf(info.id()) == SimpleID::UserId && info.option() != ChannelInfo::Updated)
+  if (info.option() != ChannelInfo::Updated)
     rename(info.id());
 
   if (info.id() != id())
@@ -191,15 +192,5 @@ void ChannelBaseTab::reload()
 
 void ChannelBaseTab::rename(const QByteArray &id)
 {
-  ClientChannel user = ChatClient::channels()->get(id);
-
-  if (!user)
-    return;
-
-  QVariantMap json;
-  json["Id"]   = SimpleID::encode(user->id());
-  json["Url"]  = ChatUrls::toUrl(user, "insert").toString();
-  json["Name"] = user->name();
-
-  m_chatView->evaluateJavaScript("updateChannelName(" + JSON::quote(JSON::generate(json)) + ");");
+  m_chatView->evaluateJavaScript(LS("updateChannelName(") + JSON::quote(JSON::generate(WebBridge::channel(id))) + LS(");"));
 }
