@@ -92,7 +92,7 @@
 <context>
     <name>AlertTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/AlertTab.cpp" line="86"/>
+        <location filename="../../src/schat2/ui/tabs/AlertTab.cpp" line="87"/>
         <source>Notifications</source>
         <translation>Уведомления</translation>
     </message>
@@ -100,38 +100,38 @@
 <context>
     <name>ChatView</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="131"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="141"/>
         <source>Display</source>
         <translation>Отображать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="267"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="284"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="297"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="314"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="272"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="302"/>
         <source>Seconds</source>
         <translation>Секунды</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="275"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="305"/>
         <source>Service messages</source>
         <translation>Сервисные сообщения</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="282"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="312"/>
         <source>Copy</source>
         <translation>Копировать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="283"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="313"/>
         <source>Copy Link</source>
         <translation>Копировать ссылку</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="285"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="315"/>
         <source>Select All</source>
         <translation>Выделить всё</translation>
     </message>
@@ -207,19 +207,6 @@
         <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="43"/>
         <source>Edit topic...</source>
         <translation>Изменить тему...</translation>
-    </message>
-</context>
-<context>
-    <name>Hooks::UserMenuImpl</name>
-    <message>
-        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="44"/>
-        <source>Talk...</source>
-        <translation>Разговор...</translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="49"/>
-        <source>Insert Nick</source>
-        <translation>Вставить ник</translation>
     </message>
 </context>
 <context>
@@ -788,6 +775,24 @@
         <location filename="../../src/schat2/ui/TrayIcon.cpp" line="84"/>
         <source>Quit</source>
         <translation>Выход</translation>
+    </message>
+</context>
+<context>
+    <name>UserMenuImpl</name>
+    <message>
+        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="43"/>
+        <source>Talk...</source>
+        <translation>Разговор...</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="48"/>
+        <source>Insert Nick</source>
+        <translation>Вставить ник</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="55"/>
+        <source>Profile...</source>
+        <translation>Профиль...</translation>
     </message>
 </context>
 <context>

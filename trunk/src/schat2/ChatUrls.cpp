@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 #include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
 #include "net/SimpleID.h"
+#include "sglobal.h"
 
 ChatUrls *ChatUrls::m_self = 0;
 
@@ -129,17 +130,20 @@ void ChatUrls::openChannelUrl(const QUrl &url)
 
   QString action = actions.first();
 
-  if (action == "open") {
+  if (action == LS("open")) {
     ChatNotify::start(Notify::OpenChannel, channel->id());
   }
-  else if (action == "insert") {
-    ChatNotify::start(Notify::InsertText, QString(" <a class=\"nick\" href=\"%1\">%2</a> ").arg(url.toString()).arg(Qt::escape(channel->name())));
+  else if (action == LS("info")) {
+    ChatNotify::start(Notify::OpenChannel, channel->id());
   }
-  else if (action == "edit") {
+  else if (action == LS("insert")) {
+    ChatNotify::start(Notify::InsertText, QString(LS(" <a class=\"nick\" href=\"%1\">%2</a> ")).arg(url.toString()).arg(Qt::escape(channel->name())));
+  }
+  else if (action == LS("edit")) {
     if (actions.size() == 1)
       return;
 
-    if (actions.at(1) == "topic" && channel->type() == SimpleID::ChannelId)
+    if (actions.at(1) == LS("topic") && channel->type() == SimpleID::ChannelId)
       ChatNotify::start(Notify::EditTopic, channel->id());
   }
 }

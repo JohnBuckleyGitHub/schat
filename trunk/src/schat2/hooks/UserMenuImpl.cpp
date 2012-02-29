@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,9 +23,7 @@
 #include "hooks/UserMenuImpl.h"
 #include "net/SimpleID.h"
 #include "ui/ChatIcons.h"
-
-namespace Hooks
-{
+#include "sglobal.h"
 
 UserMenuImpl::UserMenuImpl(QObject *parent)
   : ChannelMenu(parent)
@@ -35,27 +33,31 @@ UserMenuImpl::UserMenuImpl(QObject *parent)
   add(this);
 }
 
+
 void UserMenuImpl::bindImpl(QMenu *menu, ClientChannel channel)
 {
   if (channel->type() != SimpleID::UserId)
     return;
 
   if (ChatCore::currentId() != channel->id()) {
-    m_talk = new QAction(SCHAT_ICON(Balloon), Hooks::UserMenuImpl::tr("Talk..."), this);
-    m_talk->setData(ChatUrls::toUrl(channel, "open"));
+    m_talk = new QAction(SCHAT_ICON(Balloon), tr("Talk..."), this);
+    m_talk->setData(ChatUrls::toUrl(channel, LS("open")));
     menu->addAction(m_talk);
   }
 
-  m_insert = new QAction(Hooks::UserMenuImpl::tr("Insert Nick"), this);
-  m_insert->setData(ChatUrls::toUrl(channel, "insert"));
+  m_insert = new QAction(SCHAT_ICON(EditPaste), tr("Insert Nick"), this);
+  m_insert->setData(ChatUrls::toUrl(channel, LS("insert")));
   menu->addAction(m_insert);
+
+  m_info = new QAction(SCHAT_ICON(Profile), tr("Profile..."), this);
+  m_info->setData(ChatUrls::toUrl(channel, LS("info")));
+  menu->addAction(m_info);
 }
 
 
 void UserMenuImpl::cleanupImpl()
 {
   if (m_insert) delete m_insert; m_insert = 0;
-  if (m_talk)   delete m_insert; m_insert = 0;
+  if (m_talk)   delete m_talk;   m_talk = 0;
+  if (m_info)   delete m_info;   m_info = 0;
 }
-
-} // namespace Hooks
