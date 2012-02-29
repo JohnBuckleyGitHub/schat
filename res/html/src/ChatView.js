@@ -28,11 +28,13 @@ $(document).ready(function() {
 	$("#page-switcher-start").on("click", function(event){
 		$("#messages").addClass("active");
 		$("#info").removeClass("active");
+		alignChat();
 	});
 
 	$("#page-switcher-end").on("click", function(event){
 		$("#messages").removeClass("active");
 		$("#info").addClass("active");
+		reloadInfo();
 	});
 
 	var timeoutID;
@@ -60,7 +62,7 @@ function setChannelId(id)
 
 function reloadInfo()
 {
-    $("#info-content > h1").html(nameTemplate(JSON.parse(SimpleChat.channel(channelId))));
+	$("#info-content > h1").html(nameTemplate(JSON.parse(SimpleChat.channel(channelId))));
 }
 
 
@@ -160,7 +162,7 @@ function addChannelMessage(json, hint)
 	html += '">';
 
 	html += dateTemplate(json.Date, json.Day);
-	html += nameTemplate(json.Author);
+	html += '<span class="nick-block">' + nameTemplate(json.Author) + '</span> ';
 	html += '<span class="msg-body-block">' + json.Text + '</span>';
 
 	html += '</div>';
@@ -180,7 +182,7 @@ function addServiceMessage(json)
 	html += '">';
 
 	html += dateTemplate(json.Date, false);
-	html += nameTemplate(json.Author);
+	html += '<span class="nick-block">' + nameTemplate(json.Author) + '</span> ';
 	html += '<span class="msg-body-block">' + json.Text + '</span>';
 
 	html += '</div>';
@@ -270,11 +272,11 @@ function nameTemplate(json)
 	if (json === undefined)
 		return out;
 
-	out += '<span class="nick-block"><a class="nick ';
+	out += '<a class="nick ';
 	out += json.Id + '" href="';
 	out += json.Url + '">';
 	out += htmlspecialchars(json.Name);
-	out += '</a></span> ';
+	out += '</a>';
 
 	return out;
 }
