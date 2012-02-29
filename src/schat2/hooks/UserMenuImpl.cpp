@@ -39,7 +39,9 @@ void UserMenuImpl::bindImpl(QMenu *menu, ClientChannel channel)
   if (channel->type() != SimpleID::UserId)
     return;
 
-  if (ChatCore::currentId() != channel->id()) {
+  bool active = ChatCore::currentId() == channel->id();
+
+  if (!active || (active && channel->data().value(LS("page")) != 0)) {
     m_talk = new QAction(SCHAT_ICON(Balloon), tr("Talk..."), this);
     m_talk->setData(ChatUrls::toUrl(channel, LS("open")));
     menu->addAction(m_talk);
@@ -49,9 +51,11 @@ void UserMenuImpl::bindImpl(QMenu *menu, ClientChannel channel)
   m_insert->setData(ChatUrls::toUrl(channel, LS("insert")));
   menu->addAction(m_insert);
 
-  m_info = new QAction(SCHAT_ICON(Profile), tr("Profile..."), this);
-  m_info->setData(ChatUrls::toUrl(channel, LS("info")));
-  menu->addAction(m_info);
+  if (!active || (active && channel->data().value(LS("page")) != 1)) {
+    m_info = new QAction(SCHAT_ICON(Profile), tr("Profile..."), this);
+    m_info->setData(ChatUrls::toUrl(channel, LS("info")));
+    menu->addAction(m_info);
+  }
 }
 
 

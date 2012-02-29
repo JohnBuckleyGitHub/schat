@@ -39,6 +39,16 @@ QString WebBridge::channel(const QString &id)
 }
 
 
+void WebBridge::setTabPage(const QString &id, int page)
+{
+  ClientChannel channel = ChatClient::channels()->get(SimpleID::decode(id.toLatin1()));
+  if (!channel)
+    return;
+
+  channel->data()[LS("page")] = page;
+}
+
+
 QVariantMap WebBridge::channel(const QByteArray &id)
 {
   ClientChannel channel = ChatClient::channels()->get(id);

@@ -26,15 +26,11 @@ $(document).ready(function() {
 	});
 
 	$("#page-switcher-start").on("click", function(event){
-		$("#messages").addClass("active");
-		$("#info").removeClass("active");
-		alignChat();
+		setPage(0);
 	});
 
 	$("#page-switcher-end").on("click", function(event){
-		$("#messages").removeClass("active");
-		$("#info").addClass("active");
-		reloadInfo();
+		setPage(1);
 	});
 
 	var timeoutID;
@@ -57,6 +53,24 @@ $(document).ready(function() {
 function setChannelId(id)
 {
 	channelId = id;
+}
+
+
+// Установка отображаемой страницы, возможные значения 0 - отображаются сообщения, 1 - отображается информация о канале.
+function setPage(page)
+{
+	if (page == 0) {
+		$("#messages").addClass("active");
+		$("#info").removeClass("active");
+		alignChat();
+	}
+	else if (page == 1) {
+		$("#messages").removeClass("active");
+		$("#info").addClass("active");
+		reloadInfo();
+	}
+
+	SimpleChat.setTabPage(channelId, page);
 }
 
 
