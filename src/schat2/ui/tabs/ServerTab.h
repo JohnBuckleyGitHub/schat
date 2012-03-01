@@ -31,6 +31,7 @@ class ServerTab : public AbstractTab
 
 public:
   ServerTab(TabWidget *parent);
+  bool bindMenu(QMenu *menu);
   inline ChatView *chatView() { return m_chatView; }
 
 private slots:

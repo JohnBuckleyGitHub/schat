@@ -25,6 +25,7 @@
 #include "ChatCore.h"
 #include "ChatNotify.h"
 #include "client/ChatClient.h"
+#include "hooks/ChannelMenu.h"
 #include "messages/ServiceMessage.h"
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
@@ -56,6 +57,13 @@ ServerTab::ServerTab(TabWidget *parent)
   connect(ChatClient::i(), SIGNAL(online()), SLOT(online()));
   connect(ChatAlerts::i(), SIGNAL(alert(const Alert &)), SLOT(alert(const Alert &)));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+}
+
+
+bool ServerTab::bindMenu(QMenu *menu)
+{
+  Hooks::ChannelMenu::bind(menu, ChatClient::server());
+  return true;
 }
 
 
