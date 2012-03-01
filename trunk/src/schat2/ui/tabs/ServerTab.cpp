@@ -18,13 +18,13 @@
 
 #include <QApplication>
 #include <QFile>
-
 #include <QVBoxLayout>
 
 #include "ChatAlerts.h"
 #include "ChatCore.h"
 #include "ChatNotify.h"
 #include "client/ChatClient.h"
+#include "client/SimpleClient.h"
 #include "hooks/ChannelMenu.h"
 #include "messages/ServiceMessage.h"
 #include "sglobal.h"
@@ -52,11 +52,13 @@ ServerTab::ServerTab(TabWidget *parent)
   mainLay->setSpacing(0);
 
   setIcon(SCHAT_ICON(Globe));
-  retranslateUi();
 
   connect(ChatClient::i(), SIGNAL(online()), SLOT(online()));
   connect(ChatAlerts::i(), SIGNAL(alert(const Alert &)), SLOT(alert(const Alert &)));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+  connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged()));
+
+  retranslateUi();
 }
 
 
@@ -94,6 +96,9 @@ void ServerTab::notify(const Notify &notify)
     else
       chatView()->evaluateJavaScript(LS("setPage(0);"));
   }
+  if (notify.type() == Notify::ServerRenamed) {
+    retranslateUi();
+  }
 }
 
 
@@ -104,7 +109,17 @@ void ServerTab::online()
 }
 
 
+void ServerTab::clientStateChanged()
+{
+  retranslateUi();
+}
+
+
 void ServerTab::retranslateUi()
 {
-  setText(tr("Notifications"));
+  QString name = ChatClient::serverName();
+  if (name.isEmpty())
+    name = tr("Network");
+
+  setText(name);
 }

@@ -614,9 +614,9 @@
 <context>
     <name>ServerTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="101"/>
-        <source>Notifications</source>
-        <translation>Уведомления</translation>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="122"/>
+        <source>Network</source>
+        <translation>Сеть</translation>
     </message>
 </context>
 <context>
@@ -710,23 +710,23 @@
 <context>
     <name>StatusBar</name>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="179"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="183"/>
         <source>Encrypted connection</source>
         <translation>Зашифрованное соединение</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="183"/>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="184"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="187"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="188"/>
         <source>No connection</source>
         <translation>Нет подключения</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="191"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="195"/>
         <source>Connected</source>
         <translation>Подключено</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="194"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="198"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
