@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@
 #include "ui/SoundButton.h"
 #include "ui/TabBar.h"
 #include "ui/tabs/AboutTab.h"
-#include "ui/tabs/AlertTab.h"
+#include "ui/tabs/ServerTab.h"
 #include "ui/tabs/ChannelTab.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/PrivateTab.h"
@@ -78,8 +78,8 @@ TabWidget::TabWidget(QWidget *parent)
   QWebSettings::globalSettings()->setFontFamily(QWebSettings::StandardFont, fontInfo().family());
   QWebSettings::globalSettings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, SCHAT_OPTION("Labs/DeveloperExtras").toBool());
 
-  m_alertTab = new AlertTab(this);
-  m_alertTab->setVisible(false);
+  m_serverTab = new ServerTab(this);
+  m_serverTab->setVisible(false);
 
   showWelcome();
 
@@ -93,7 +93,7 @@ TabWidget::TabWidget(QWidget *parent)
   connect(this, SIGNAL(currentChanged(int)), SLOT(currentChanged(int)));
   connect(ChatClient::channels(), SIGNAL(channel(const QByteArray &)), SLOT(addChannel(const QByteArray &)));
   connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
-  connect(m_alertTab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
+  connect(m_serverTab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 }
 
@@ -169,7 +169,7 @@ void TabWidget::add(const Message &message, bool create)
     m_channels.value(id)->add(message);
   }
   else if (SimpleID::typeOf(id) == SimpleID::ServerId) {
-    m_alertTab->chatView()->add(message);
+    m_serverTab->chatView()->add(message);
   }
   else if (SimpleID::typeOf(id) == SimpleID::UserId) {
     ChannelBaseTab *tab = channelTab(id, create, false);
@@ -399,7 +399,7 @@ void TabWidget::createToolBars()
 void TabWidget::lastTab()
 {
   if (count() == 0)
-    addChatTab(m_alertTab);
+    addChatTab(m_serverTab);
 }
 
 

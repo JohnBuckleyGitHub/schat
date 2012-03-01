@@ -16,8 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ALERTTAB_H_
-#define ALERTTAB_H_
+#ifndef SERVERTAB_H_
+#define SERVERTAB_H_
 
 #include "ui/tabs/AbstractTab.h"
 
@@ -25,12 +25,12 @@ class Alert;
 class ChatView;
 class Notify;
 
-class AlertTab : public AbstractTab
+class ServerTab : public AbstractTab
 {
   Q_OBJECT
 
 public:
-  AlertTab(TabWidget *parent);
+  ServerTab(TabWidget *parent);
   inline ChatView *chatView() { return m_chatView; }
 
 private slots:
@@ -44,4 +44,4 @@ private:
   ChatView *m_chatView; ///< Виджет отображающий текст чата.
 };
 
-#endif /* ALERTTAB_H_ */
+#endif /* SERVERTAB_H_ */

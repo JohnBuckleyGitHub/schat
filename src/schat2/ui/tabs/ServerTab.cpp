@@ -28,11 +28,11 @@
 #include "messages/ServiceMessage.h"
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
-#include "ui/tabs/AlertTab.h"
 #include "ui/tabs/ChatView.h"
+#include "ui/tabs/ServerTab.h"
 #include "ui/TabWidget.h"
 
-AlertTab::AlertTab(TabWidget *parent)
+ServerTab::ServerTab(TabWidget *parent)
   : AbstractTab(QByteArray(), AlertType, parent)
 {
   QString file = QApplication::applicationDirPath() + "/styles/test/html/Server.html";
@@ -59,7 +59,7 @@ AlertTab::AlertTab(TabWidget *parent)
 }
 
 
-void AlertTab::alert(const Alert &alert)
+void ServerTab::alert(const Alert &alert)
 {
   if (alert.type() == Alert::Connected)
     m_chatView->add(ServiceMessage::connected());
@@ -68,7 +68,7 @@ void AlertTab::alert(const Alert &alert)
 }
 
 
-void AlertTab::notify(const Notify &notify)
+void ServerTab::notify(const Notify &notify)
 {
   int type = notify.type();
   if (type == Notify::ShowID) {
@@ -89,14 +89,14 @@ void AlertTab::notify(const Notify &notify)
 }
 
 
-void AlertTab::online()
+void ServerTab::online()
 {
   setId(ChatClient::serverId());
   m_chatView->setId(id());
 }
 
 
-void AlertTab::retranslateUi()
+void ServerTab::retranslateUi()
 {
   setText(tr("Notifications"));
 }

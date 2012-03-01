@@ -90,14 +90,6 @@
     </message>
 </context>
 <context>
-    <name>AlertTab</name>
-    <message>
-        <location filename="../../src/schat2/ui/tabs/AlertTab.cpp" line="87"/>
-        <source>Notifications</source>
-        <translation>Уведомления</translation>
-    </message>
-</context>
-<context>
     <name>ChannelMenuImpl</name>
     <message>
         <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="51"/>
@@ -617,6 +609,14 @@
         <location filename="../../src/schat2/hooks/ServerMenuImpl.cpp" line="52"/>
         <source>Information...</source>
         <translation>Информация...</translation>
+    </message>
+</context>
+<context>
+    <name>ServerTab</name>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="101"/>
+        <source>Notifications</source>
+        <translation>Уведомления</translation>
     </message>
 </context>
 <context>

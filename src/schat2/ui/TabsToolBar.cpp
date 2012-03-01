@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 #include "ui/ChatIcons.h"
 #include "ui/tabs/AbstractTab.h"
-#include "ui/tabs/AlertTab.h"
+#include "ui/tabs/ServerTab.h"
 #include "ui/TabsToolBar.h"
 #include "ui/TabWidget.h"
 
@@ -99,8 +99,8 @@ void TabsToolBar::showMenu()
   }
 
   m_menu->addSeparator();
-  m_menu->addAction(tabs->alertTab()->action());
-  tabs->alertTab()->action()->setChecked(currentTab == tabs->alertTab());
+  m_menu->addAction(tabs->serverTab()->action());
+  tabs->serverTab()->action()->setChecked(currentTab == tabs->serverTab());
 }
 
 
