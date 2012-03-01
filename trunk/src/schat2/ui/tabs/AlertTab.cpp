@@ -26,9 +26,11 @@
 #include "ChatNotify.h"
 #include "client/ChatClient.h"
 #include "messages/ServiceMessage.h"
+#include "sglobal.h"
 #include "ui/ChatIcons.h"
 #include "ui/tabs/AlertTab.h"
 #include "ui/tabs/ChatView.h"
+#include "ui/TabWidget.h"
 
 AlertTab::AlertTab(TabWidget *parent)
   : AbstractTab(QByteArray(), AlertType, parent)
@@ -68,9 +70,21 @@ void AlertTab::alert(const Alert &alert)
 
 void AlertTab::notify(const Notify &notify)
 {
-  if (notify.type() == Notify::ShowID) {
+  int type = notify.type();
+  if (type == Notify::ShowID) {
     if (notify.data().toByteArray() == id())
       m_chatView->add(ServiceMessage::showId(notify.data().toByteArray()));
+  }
+  else if (type == Notify::OpenChannel || type == Notify::OpenInfo) {
+    if (notify.data() != id())
+      return;
+
+    m_tabs->setCurrentIndex(m_tabs->indexOf(this));
+
+    if (type == Notify::OpenInfo)
+      chatView()->evaluateJavaScript(LS("setPage(1);"));
+    else
+      chatView()->evaluateJavaScript(LS("setPage(0);"));
   }
 }
 
