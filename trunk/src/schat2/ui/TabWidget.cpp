@@ -243,7 +243,7 @@ void TabWidget::contextMenuEvent(QContextMenuEvent *event)
     menu.addSeparator();
 
   if (tabsClosable())
-    closeAction = menu.addAction(tr("Close Tab"));
+    closeAction = menu.addAction(SCHAT_ICON(Remove), tr("Close Tab"));
 
   if (!menu.actions().isEmpty()) {
     QAction *action = menu.exec(event->globalPos());

@@ -723,7 +723,7 @@
     <message>
         <location filename="../../src/schat2/ui/TabWidget.cpp" line="246"/>
         <source>Close Tab</source>
-        <translation>Закрыть вкладку</translation>
+        <translation>Закрыть</translation>
     </message>
 </context>
 <context>
