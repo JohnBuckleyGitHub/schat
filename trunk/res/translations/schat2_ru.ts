@@ -100,12 +100,12 @@
 <context>
     <name>ChannelMenuImpl</name>
     <message>
-        <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="50"/>
+        <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="51"/>
         <source>Talk...</source>
         <translation>Разговор...</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="56"/>
+        <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="57"/>
         <source>Information...</source>
         <translation>Информация...</translation>
     </message>
@@ -607,6 +607,19 @@
     </message>
 </context>
 <context>
+    <name>ServerMenuImpl</name>
+    <message>
+        <location filename="../../src/schat2/hooks/ServerMenuImpl.cpp" line="46"/>
+        <source>Notifications...</source>
+        <translation>Уведомления...</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/hooks/ServerMenuImpl.cpp" line="52"/>
+        <source>Information...</source>
+        <translation>Информация...</translation>
+    </message>
+</context>
+<context>
     <name>SettingsTab</name>
     <message>
         <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="157"/>
@@ -785,17 +798,17 @@
 <context>
     <name>UserMenuImpl</name>
     <message>
-        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="46"/>
+        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="47"/>
         <source>Talk...</source>
         <translation>Разговор...</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="51"/>
+        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="52"/>
         <source>Insert Nick</source>
         <translation>Вставить ник</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="56"/>
+        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="57"/>
         <source>Profile...</source>
         <translation>Профиль...</translation>
     </message>

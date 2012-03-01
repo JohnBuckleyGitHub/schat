@@ -45,6 +45,7 @@
 #include "hooks/CommandsImpl.h"
 #include "hooks/MessagesImpl.h"
 #include "hooks/RegCmds.h"
+#include "hooks/ServerMenuImpl.h"
 #include "hooks/UserMenuImpl.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
@@ -87,6 +88,7 @@ ChatCore::ChatCore(QObject *parent)
   new Hooks::ChannelMenu(this);
   new ChannelMenuImpl(this);
   new UserMenuImpl(this);
+  new ServerMenuImpl(this);
 
   new ChatViewHooks(this);
 
