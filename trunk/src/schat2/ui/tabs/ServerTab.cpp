@@ -51,7 +51,7 @@ ServerTab::ServerTab(TabWidget *parent)
   mainLay->setMargin(0);
   mainLay->setSpacing(0);
 
-  setIcon(SCHAT_ICON(InfoBalloon));
+  setIcon(SCHAT_ICON(Globe));
   retranslateUi();
 
   connect(ChatClient::i(), SIGNAL(online()), SLOT(online()));
