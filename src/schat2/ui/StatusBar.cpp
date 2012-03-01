@@ -30,6 +30,7 @@
 #include "ChatNotify.h"
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
+#include "hooks/ChannelMenu.h"
 #include "net/packets/Notice.h"
 #include "NetworkManager.h"
 #include "QProgressIndicator/QProgressIndicator.h"
@@ -168,6 +169,9 @@ void StatusBar::menu(const QPoint &point)
 
   QAction *action = m_url->connectAction();
   m_connect = menu.addAction(action->icon(), action->text());
+
+  menu.addSeparator();
+  Hooks::ChannelMenu::bind(&menu, ChatClient::server());
 
   connect(&menu, SIGNAL(triggered(QAction*)), SLOT(menuTriggered(QAction*)));
   menu.exec(point);
