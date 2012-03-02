@@ -180,10 +180,10 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
   }
 
   if (modifiers == Qt::ControlModifier) {
-    if (key == Qt::Key_Up) {
+    if (key == Qt::Key_Down) {
       nextMsg();
     }
-    else if (key == Qt::Key_Down) {
+    else if (key == Qt::Key_Up) {
       prevMsg();
     }
     else if (key == Qt::Key_B) {
