@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -55,20 +55,20 @@ QString StatusMenu::statusTitle(int status)
 {
   switch (status) {
     case Status::Offline:
-      return QObject::tr("Offline");
+      return tr("Offline");
 
     case Status::Away:
     case Status::AutoAway:
-      return QObject::tr("Away");
+      return tr("Away");
 
     case Status::DnD:
-      return QObject::tr("Do not disturb");
+      return tr("Do not disturb");
 
     case Status::FreeForChat:
-      return QObject::tr("Free for Chat");
+      return tr("Free for Chat");
 
     default:
-      return QObject::tr("Online");
+      return tr("Online");
   }
 }
 

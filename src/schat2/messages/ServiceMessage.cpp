@@ -25,14 +25,15 @@
 #include "messages/ServiceMessage.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
+#include "sglobal.h"
 
 ServiceMessage::ServiceMessage(const QString &text, const QByteArray &user)
   : Message()
 {
-  m_data["Type"] = "service";
-  m_data["Id"]   = SimpleID::encode(ChatCore::randomId());
-  m_data["Text"] = text;
-  m_data["Date"] = ChatClient::date();
+  m_data[LS("Type")] = LS("service");
+  m_data[LS("Id")]   = SimpleID::encode(ChatCore::randomId());
+  m_data[LS("Text")] = text;
+  m_data[LS("Date")] = ChatClient::date();
 
   author(user);
 }
@@ -49,18 +50,18 @@ bool ServiceMessage::isValid() const
 
 ServiceMessage ServiceMessage::connected()
 {
-  ServiceMessage message(QObject::tr("Successfully connected to <b>%1</b>").arg(Qt::escape(ChatClient::serverName())));
-  message.data()["Type"]  = "info";
-  message.data()["Extra"] = "green-text";
+  ServiceMessage message(tr("Successfully connected to <b>%1</b>").arg(Qt::escape(ChatClient::serverName())));
+  message.data()[LS("Type")]  = LS("info");
+  message.data()[LS("Extra")] = LS("green-text");
   return message;
 }
 
 
 ServiceMessage ServiceMessage::connectionLost()
 {
-  ServiceMessage message(QObject::tr("Connection lost"));
-  message.data()["Type"]  = "info";
-  message.data()["Extra"] = "red-text";
+  ServiceMessage message(tr("Connection lost"));
+  message.data()[LS("Type")]  = LS("info");
+  message.data()[LS("Extra")] = LS("red-text");
   return message;
 }
 
@@ -75,9 +76,9 @@ ServiceMessage ServiceMessage::joined(const QByteArray &user)
 
   if (channel) {
     if (channel->gender().value() == Gender::Female)
-      text = QObject::tr("has joined", "Female");
+      text = tr("has joined", "Female");
     else
-      text = QObject::tr("has joined", "Male");
+      text = tr("has joined", "Male");
   }
 
   return ServiceMessage(text, user);
@@ -94,9 +95,9 @@ ServiceMessage ServiceMessage::part(const QByteArray &user)
 
   if (channel) {
     if (channel->gender().value() == Gender::Female)
-      text = QObject::tr("has left", "Female");
+      text = tr("has left", "Female");
     else
-      text = QObject::tr("has left", "Male");
+      text = tr("has left", "Male");
   }
 
   return ServiceMessage(text, user);
@@ -113,9 +114,9 @@ ServiceMessage ServiceMessage::quit(const QByteArray &user)
 
   if (channel) {
     if (channel->gender().value() == Gender::Female)
-      text = QObject::tr("has quit chat", "Female");
+      text = tr("has quit chat", "Female");
     else
-      text = QObject::tr("has quit chat", "Male");
+      text = tr("has quit chat", "Male");
   }
 
   return ServiceMessage(text, user);
@@ -124,8 +125,8 @@ ServiceMessage ServiceMessage::quit(const QByteArray &user)
 
 ServiceMessage ServiceMessage::showId(const QByteArray &id)
 {
-  ServiceMessage message("<b>" + SimpleID::encode(id) + "</b>", id);
-  message.data()["Type"]  = "info";
-  message.data()["Date"]  = 0;
+  ServiceMessage message(LS("<b>") + SimpleID::encode(id) + LS("</b>"), id);
+  message.data()[LS("Type")]  = LS("info");
+  message.data()[LS("Date")]  = 0;
   return message;
 }
