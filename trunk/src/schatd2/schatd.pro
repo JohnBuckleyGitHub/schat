@@ -38,6 +38,7 @@ HEADERS = \
     events.h \
     feeds/NodeAclFeed.h \
     feeds/NodeTopicFeed.h \
+    Hosts.h \
     net/NodeAuthReply.h \
     net/NodePool.h \
     net/NodeWorker.h \
@@ -61,6 +62,7 @@ SOURCES = \
     events.cpp \
     feeds/NodeAclFeed.cpp \
     feeds/NodeTopicFeed.cpp \
+    Hosts.cpp \
     net/NodeAuthReply.cpp \
     net/NodePool.cpp \
     net/NodeWorker.cpp \

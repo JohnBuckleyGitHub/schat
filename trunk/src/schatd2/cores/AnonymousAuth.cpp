@@ -108,5 +108,5 @@ void AnonymousAuth::update(ServerChannel *channel, const AuthRequest &data)
   channel->setName(data.nick);
   channel->gender().setRaw(data.gender);
   channel->status().set(data.status);
-  channel->addSocket(m_core->packetsEvent()->socket());
+  channel->hosts().add(Core::socket(), data);
 }
