@@ -22,19 +22,28 @@
 #include <QMap>
 
 #include "schat.h"
+#include "feeds/Feed.h"
 
 class AuthRequest;
+class ServerChannel;
 
 class SCHAT_EXPORT Hosts
 {
 public:
   Hosts();
-  inline QList<quint64> sockets() const { return m_sockets.keys(); }
-  void add(quint64 socket, const AuthRequest &data);
+  FeedPtr feed();
+  inline QList<quint64> sockets() const          { return m_sockets.keys(); }
+  inline void setChannel(ServerChannel *channel) { m_channel = channel; }
+  QByteArray currentId();
+  QVariantMap data(const QByteArray &uniqueId = QByteArray());
+  void add(const AuthRequest &data, const QString &host);
+  void add(const QByteArray &uniqueId);
   void remove(quint64 socket);
+  void setData(const QVariantMap &data, const QByteArray &uniqueId = QByteArray(), bool save = true);
 
 private:
   QMap<quint64, QByteArray> m_sockets; ///< Таблица сокетов и уникальных идентификаторов пользователя.
+  ServerChannel *m_channel;            ///< Канал.
 };
 
 #endif /* HOSTS_H_ */

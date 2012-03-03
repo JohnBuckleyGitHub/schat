@@ -31,6 +31,7 @@ ServerChannel::ServerChannel(ClientChannel channel)
   normalize();
 
   channels().set(channel->channels().all());
+  hosts().setChannel(this);
 }
 
 
@@ -38,6 +39,7 @@ ServerChannel::ServerChannel(const QByteArray &id, const QString &name)
   : Channel(id, name)
 {
   normalize();
+  hosts().setChannel(this);
 }
 
 ServerChannel::~ServerChannel()
