@@ -351,8 +351,7 @@ void Core::release(SocketReleaseEvent *event)
   if (!user)
     return;
 
-  user->removeSocket(event->socket());
-
+  user->hosts().remove(event->socket());
   NodeNoticeReader::release(user, event->socket());
 
   Ch::gc(user);

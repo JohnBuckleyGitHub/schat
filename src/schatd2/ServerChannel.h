@@ -20,6 +20,7 @@
 #define SERVERCHANNEL_H_
 
 #include "Channel.h"
+#include "Hosts.h"
 
 class ServerChannel;
 
@@ -33,12 +34,12 @@ public:
   ~ServerChannel();
   static QString serverName(const QString &name);
 
+  inline const Hosts& hosts() const            { return m_hosts; }
   inline const QByteArray& normalized() const  { return m_normalized; }
-  inline const QList<quint64>& sockets() const { return m_sockets; }
+  inline const QList<quint64> sockets() const  { return m_hosts.sockets(); }
+  inline Hosts& hosts()                        { return m_hosts; }
 
   bool setName(const QString &name);
-  inline void addSocket(quint64 socket) { if (!m_sockets.contains(socket)) m_sockets.append(socket); }
-  inline void removeSocket(quint64 socket) { m_sockets.removeAll(socket); }
   void createAccount();
 
   bool canEdit(ChatChannel channel);
@@ -48,8 +49,8 @@ public:
 private:
   void normalize();
 
+  Hosts m_hosts;            ///< Информация о хостах.
   QByteArray m_normalized;  ///< Нормализованное имя канала.
-  QList<quint64> m_sockets; ///< Идентификаторы сокетов.
 };
 
 #endif /* SERVERCHANNEL_H_ */
