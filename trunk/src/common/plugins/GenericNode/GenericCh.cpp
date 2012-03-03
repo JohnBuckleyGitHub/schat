@@ -55,5 +55,7 @@ void GenericCh::userChannelImpl(ChatChannel channel, const AuthRequest &data, co
   addNewUserFeedIsNotExist(channel, LS("acl"));
   addNewUserFeedIsNotExist(channel, LS("links"));
 
+  channel->hosts().add(data, host);
+
   NodeLinksFeed::add(channel, data, host);
 }
