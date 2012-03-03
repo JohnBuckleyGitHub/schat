@@ -475,80 +475,6 @@
     </message>
 </context>
 <context>
-    <name>QObject</name>
-    <message>
-        <location filename="../../src/schat2/ui/StatusMenu.cpp" line="58"/>
-        <source>Offline</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/ui/StatusMenu.cpp" line="62"/>
-        <source>Away</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/ui/StatusMenu.cpp" line="65"/>
-        <source>Do not disturb</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/ui/StatusMenu.cpp" line="68"/>
-        <source>Free for Chat</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/ui/StatusMenu.cpp" line="71"/>
-        <source>Online</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="52"/>
-        <source>Successfully connected to &lt;b&gt;%1&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="61"/>
-        <source>Connection lost</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="78"/>
-        <source>has joined</source>
-        <comment>Female</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="80"/>
-        <source>has joined</source>
-        <comment>Male</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="97"/>
-        <source>has left</source>
-        <comment>Female</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="99"/>
-        <source>has left</source>
-        <comment>Male</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="116"/>
-        <source>has quit chat</source>
-        <comment>Female</comment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="118"/>
-        <source>has quit chat</source>
-        <comment>Male</comment>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>QuestionWidget</name>
     <message>
         <location filename="../../src/schat2/ui/network/Password.cpp" line="265"/>
@@ -625,6 +551,55 @@
     <message>
         <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="122"/>
         <source>Network</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ServiceMessage</name>
+    <message>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="53"/>
+        <source>Successfully connected to &lt;b&gt;%1&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="62"/>
+        <source>Connection lost</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="79"/>
+        <source>has joined</source>
+        <comment>Female</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="81"/>
+        <source>has joined</source>
+        <comment>Male</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="98"/>
+        <source>has left</source>
+        <comment>Female</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="100"/>
+        <source>has left</source>
+        <comment>Male</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="117"/>
+        <source>has quit chat</source>
+        <comment>Female</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="119"/>
+        <source>has quit chat</source>
+        <comment>Male</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -737,6 +712,34 @@
     <message>
         <location filename="../../src/schat2/ui/StatusBar.cpp" line="198"/>
         <source>Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>StatusMenu</name>
+    <message>
+        <location filename="../../src/schat2/ui/StatusMenu.cpp" line="58"/>
+        <source>Offline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/StatusMenu.cpp" line="62"/>
+        <source>Away</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/StatusMenu.cpp" line="65"/>
+        <source>Do not disturb</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/StatusMenu.cpp" line="68"/>
+        <source>Free for Chat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/StatusMenu.cpp" line="71"/>
+        <source>Online</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

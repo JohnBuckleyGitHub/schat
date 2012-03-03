@@ -19,10 +19,14 @@
 #ifndef SERVICEMESSAGE_H_
 #define SERVICEMESSAGE_H_
 
+#include <QCoreApplication>
+
 #include "messages/Message.h"
 
 class SCHAT_CORE_EXPORT ServiceMessage : public Message
 {
+  Q_DECLARE_TR_FUNCTIONS(ServiceMessage)
+
 public:
   ServiceMessage(const QString &text, const QByteArray &user = QByteArray());
   bool isValid() const;
