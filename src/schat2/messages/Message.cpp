@@ -26,7 +26,6 @@
 #include "WebBridge.h"
 
 Message::Message()
-  : m_func(LS("addMessage"))
 {
 }
 

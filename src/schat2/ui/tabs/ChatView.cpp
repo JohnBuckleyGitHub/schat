@@ -74,7 +74,7 @@ void ChatView::add(const Message &message)
   if (!message.isValid())
     return;
 
-  evaluateJavaScript(message.func() + LS("(") + JSON::quote(message.json()) + LS(", ") + JSON::quote(JSON::generate(addHint(message))) + LS(");"));
+  evaluateJavaScript(LS("Messages.addMessage(") + JSON::quote(message.json()) + LS(", ") + JSON::quote(JSON::generate(addHint(message))) + LS(");"));
 }
 
 

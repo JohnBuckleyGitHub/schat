@@ -192,5 +192,5 @@ void ChannelBaseTab::reload()
 
 void ChannelBaseTab::rename(const QByteArray &id)
 {
-  m_chatView->evaluateJavaScript(LS("updateChannelName(") + JSON::quote(JSON::generate(WebBridge::channel(id))) + LS(");"));
+  m_chatView->evaluateJavaScript(LS("Messages.updateChannelName(") + JSON::quote(JSON::generate(WebBridge::channel(id))) + LS(");"));
 }

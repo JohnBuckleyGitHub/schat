@@ -33,6 +33,7 @@ ChannelMessage::ChannelMessage(MessagePacket packet)
   m_data[LS("Text")]      = TokenFilter::filter(LS("channel"), packet->text());
   m_data[LS("Direction")] = m_packet->sender() == ChatClient::id() ? LS("outgoing") : LS("incoming");
   m_data[LS("Date")]      = m_packet->date();
+  m_data[LS("Func")]      = LS("addChannelMessage");
 
   /// Если это собственное сообщение, то для него при необходимости устанавливается
   /// статус "offline" или "rejected".
