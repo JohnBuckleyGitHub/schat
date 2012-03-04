@@ -27,5 +27,5 @@ RawFeedsChatView::RawFeedsChatView(QObject *parent)
 
 void RawFeedsChatView::loadFinishedImpl(ChatView *view)
 {
-  view->evaluateJavaScript("loadJS('qrc:/js/RawFeeds/KelpJSONView.js'); loadJS('qrc:/js/RawFeeds/RawFeeds.js'); loadCSS('qrc:/css/RawFeeds/RawFeeds.css');");
+  view->evaluateJavaScript(QLatin1String("loadJS('qrc:/js/RawFeeds/KelpJSONView.js'); loadJS('qrc:/js/RawFeeds/RawFeeds.js'); loadCSS('qrc:/css/RawFeeds/RawFeeds.css');"));
 }
