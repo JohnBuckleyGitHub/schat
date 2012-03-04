@@ -18,6 +18,7 @@
 
 #include <QDebug>
 
+#include "ChatNotify.h"
 #include "ChatUrls.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
@@ -43,19 +44,24 @@ QString WebBridge::channel(const QString &id)
 
 
 /*!
- * Получение собственного фида по имени.
- *
- * \param name Имя фида.
+ * Получение фида по идентификатору канала и имени.
  */
-QString WebBridge::feed(const QString &name)
+QString WebBridge::feed(const QString &id, const QString &name, bool cache)
 {
-  FeedPtr feed = ChatClient::channel()->feed(name, false);
-  if (!feed) {
-    ChatClient::feeds()->request(ChatClient::id(), LS("get"), name);
+  ClientChannel channel = ChatClient::channels()->get(SimpleID::decode(id));
+  if (!channel)
     return QString();
-  }
 
-  return JSON::generate(feed->data());
+  return JSON::generate(feed(channel, name, cache));
+}
+
+
+/*!
+ * Получение собственного фида по имени.
+ */
+QString WebBridge::feed(const QString &name, bool cache)
+{
+  return JSON::generate(feed(ChatClient::channel(), name, cache));
 }
 
 
@@ -80,4 +86,45 @@ QVariantMap WebBridge::channel(const QByteArray &id)
   data[LS("Name")] = channel->name();
   data[LS("Url")]  = ChatUrls::toUrl(channel, LS("insert")).toString();
   return data;
+}
+
+
+/*!
+ * Базовая функция получения фида.
+ *
+ * \param channel Канал владелец фида.
+ * \param name    Имя фида.
+ * \param cache   \b false если необходимо игнорировать локальный кэш и получить фид с сервера.
+ *
+ * \return JSON тело фида или пустую таблицу, если фид не доступен локально.
+ */
+QVariantMap WebBridge::feed(ClientChannel channel, const QString &name, bool cache)
+{
+  if (!cache)
+    ChatClient::feeds()->request(channel->id(), LS("get"), name);
+
+  FeedPtr feed = channel->feed(name, false);
+  if (!feed)
+    return QVariantMap();
+
+  return feed->data();
+}
+
+
+QVariantMap WebBridge::feed(const FeedNotify &notify)
+{
+  QVariantMap out;
+  ClientChannel channel = ChatClient::channels()->get(notify.channel());
+  if (!channel)
+    return out;
+
+  FeedPtr feed = channel->feed(notify.name(), false);
+  if (!feed)
+    return out;
+
+  out[LS("name")] = notify.name();
+  out[LS("own")]  = notify.channel() == ChatClient::id();
+  out[LS("feed")] = feed->data();
+
+  return out;
 }
