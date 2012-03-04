@@ -300,9 +300,9 @@ void TabWidget::notify(const Notify &notify)
       return;
 
     if (type == Notify::OpenInfo)
-      tab->chatView()->evaluateJavaScript(LS("setPage(1);"));
+      tab->chatView()->evaluateJavaScript(LS("Pages.setPage(1);"));
     else
-      tab->chatView()->evaluateJavaScript(LS("setPage(0);"));
+      tab->chatView()->evaluateJavaScript(LS("Pages.setPage(0);"));
   }
   else if (type == Notify::OpenAbout) {
     if (!m_aboutTab)

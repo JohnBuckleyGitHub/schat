@@ -103,7 +103,7 @@ void ChatView::evaluateJavaScript(const QString &js)
 void ChatView::setId(const QByteArray &id)
 {
   m_id = id;
-  evaluateJavaScript(LS("setChannelId(\"") + SimpleID::encode(m_id) + LS("\");"));
+  evaluateJavaScript(LS("Settings.id = \"") + SimpleID::encode(m_id) + LS("\";"));
 }
 
 
@@ -219,7 +219,6 @@ void ChatView::openUrl(const QUrl &url)
 void ChatView::populateJavaScriptWindowObject()
 {
   page()->mainFrame()->addToJavaScriptWindowObject("SimpleChat", WebBridge::i());
-  evaluateJavaScript(LS("reloadInfo();"));
 }
 
 

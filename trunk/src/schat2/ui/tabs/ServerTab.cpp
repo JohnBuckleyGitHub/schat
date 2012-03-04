@@ -92,9 +92,9 @@ void ServerTab::notify(const Notify &notify)
     m_tabs->setCurrentIndex(m_tabs->indexOf(this));
 
     if (type == Notify::OpenInfo)
-      chatView()->evaluateJavaScript(LS("setPage(1);"));
+      chatView()->evaluateJavaScript(LS("Pages.setPage(1);"));
     else
-      chatView()->evaluateJavaScript(LS("setPage(0);"));
+      chatView()->evaluateJavaScript(LS("Pages.setPage(0);"));
   }
   if (notify.type() == Notify::ServerRenamed) {
     retranslateUi();

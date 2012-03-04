@@ -16,7 +16,45 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-var channelId = '';
+var Settings = {
+  id: ''
+};
+
+
+var Pages = {
+  onInfo: function()
+  {
+    $("#info-content > h1").html(Messages.nameTemplate(JSON.parse(SimpleChat.channel(Settings.id))));
+  },
+
+
+  onMessages: function()
+  {
+  },
+
+
+  // Установка отображаемой страницы, возможные значения 0 - отображаются сообщения, 1 - отображается информация о канале.
+  setPage: function(page)
+  {
+    try {
+      SimpleChat.setTabPage(Settings.id, page);
+    }
+    catch (e) {}
+
+    if (page == 0) {
+      $("#messages").addClass("active");
+      $("#info").removeClass("active");
+      alignChat();
+      Pages.onMessages();
+    }
+    else if (page == 1) {
+      $("#messages").removeClass("active");
+      $("#info").addClass("active");
+      Pages.onInfo();
+    }
+  }
+};
+
 
 // Объект сообщений.
 var Messages = {
@@ -230,11 +268,11 @@ $(document).ready(function() {
   });
 
   $("#page-switcher-start").on("click", function(event){
-    setPage(0);
+    Pages.setPage(0);
   });
 
   $("#page-switcher-end").on("click", function(event){
-    setPage(1);
+    Pages.setPage(1);
   });
 
   var timeoutID;
@@ -252,36 +290,6 @@ $(document).ready(function() {
 
   alignChat();
 });
-
-
-function setChannelId(id)
-{
-  channelId = id;
-}
-
-
-// Установка отображаемой страницы, возможные значения 0 - отображаются сообщения, 1 - отображается информация о канале.
-function setPage(page)
-{
-  if (page == 0) {
-    $("#messages").addClass("active");
-    $("#info").removeClass("active");
-    alignChat();
-  }
-  else if (page == 1) {
-    $("#messages").removeClass("active");
-    $("#info").addClass("active");
-    reloadInfo();
-  }
-
-  SimpleChat.setTabPage(channelId, page);
-}
-
-
-function reloadInfo()
-{
-  $("#info-content > h1").html(Messages.nameTemplate(JSON.parse(SimpleChat.channel(channelId))));
-}
 
 
 function loadJS(filename)

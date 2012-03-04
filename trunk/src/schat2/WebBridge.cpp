@@ -39,6 +39,12 @@ QString WebBridge::channel(const QString &id)
 }
 
 
+QString WebBridge::feed(const QString &id, const QString &name, bool cache)
+{
+  return QString();
+}
+
+
 void WebBridge::setTabPage(const QString &id, int page)
 {
   ClientChannel channel = ChatClient::channels()->get(SimpleID::decode(id.toLatin1()));
