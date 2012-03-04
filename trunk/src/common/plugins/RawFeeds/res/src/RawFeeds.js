@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright (c) 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright (c) 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,34 +16,32 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-function addRawFeedsMessage(data)
+Messages.addRawFeedsMessage = function(json, hint)
 {
-	var json = JSON.parse(data);
+  var html = '<div class="container ' + json.Type + '-type" id="' + json.Id + '">';
+  html += '<div class="blocks ';
+  if (json.Extra !== undefined)
+    html += json.Extra;
 
-	var html = '<div class="container ' + json.Type + '-type" id="' + json.Id + '">';
-	html += '<div class="blocks ';
-	if (json.Extra !== undefined)
-		html += json.Extra;
+  html += '">';
 
-	html += '">';
+  html += '<div class="raw-feeds-header">';
+  html += DateTime.template(json.Date, false);
+  html += '<b class="raw-feeds-command">' + json.Command + '</b>';
+  if (json.Status.Code != 200)
+    html += ' <span class="raw-feeds-bad-status">' + json.Status.Code + ' ' + json.Status.Desc + '</span>';
 
-	html += '<div class="raw-feeds-header">';
-	html += dateTemplate(json.Date, false);
-	html += '<b class="raw-feeds-command">' + json.Command + '</b>';
-	if (json.Status.Code != 200)
-		html += ' <span class="raw-feeds-bad-status">' + json.Status.Code + ' ' + json.Status.Desc + '</span>';
+  html += '</div>';
 
-	html += '</div>';
+  html += '<div class="jsonoutput"></div>';
 
-	html += '<div class="jsonoutput"></div>';
+  html += '</div>';
+  html += '</div>';
 
-	html += '</div>';
-	html += '</div>';
+  Messages.addRawMessage(html);
 
-	addRawMessage(html);
+  if (json.Text.length)
+    $.JSONView(json.Text, $('#' + json.Id + " .jsonoutput"));
 
-	if (json.Text.length)
-		$.JSONView(json.Text, $('#' + json.Id + " .jsonoutput"));
-
-	alignChat();
-}
+  alignChat();
+};
