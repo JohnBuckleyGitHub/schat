@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@ class SCHAT_CORE_EXPORT Message
 public:
   Message();
   inline const QByteArray& tab() const   { return m_tab; }
-  inline const QString& func() const     { return m_func; }
   inline const QVariantMap& data() const { return m_data; };
   inline QVariantMap& data()             { return m_data; };
   inline virtual bool isValid() const    { return true; }
@@ -41,7 +40,6 @@ protected:
   void author(const QByteArray &id);
 
   QByteArray m_tab;   ///< Идентификатор вкладки в котором будет отображено сообщение.
-  QString m_func;     ///< Функция добавления.
   QVariantMap m_data; ///< JSON данные.
 };
 

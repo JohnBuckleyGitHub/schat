@@ -28,13 +28,13 @@ RawFeedsMessage::RawFeedsMessage(const FeedNotice &packet)
   : Message()
 {
   m_tab = packet.sender();
-  m_func = LS("addRawFeedsMessage");
 
   m_data[LS("Type")]    = LS("raw-feeds");
   m_data[LS("Id")]      = SimpleID::encode(ChatCore::randomId());
   m_data[LS("Text")]    = packet.raw();
   m_data[LS("Command")] = packet.command();
   m_data[LS("Date")]    = ChatClient::date();
+  m_data[LS("Func")]    = LS("addRawFeedsMessage");
 
   QVariantMap status;
   status[LS("Code")] = packet.status();
@@ -48,13 +48,13 @@ RawFeedsMessage::RawFeedsMessage(const QByteArray &tab, const QString &command, 
   : Message()
 {
   m_tab = tab;
-  m_func = LS("addRawFeedsMessage");
 
   m_data[LS("Type")]    = LS("raw-feeds");
   m_data[LS("Id")]      = SimpleID::encode(ChatCore::randomId());
   m_data[LS("Text")]    = JSON::generate(data);
   m_data[LS("Command")] = command;
   m_data[LS("Date")]    = ChatClient::date();
+  m_data[LS("Func")]    = LS("addRawFeedsMessage");
 
   QVariantMap status;
   status[LS("Code")] = 200;
