@@ -20,7 +20,7 @@ Pages.onInfo = function()
 {
   $("#info-content > h1").html(Messages.nameTemplate(JSON.parse(SimpleChat.channel(Settings.id))));
 
-  var feed = SimpleChat.feed("hosts");
+  var feed = SimpleChat.feed("hosts", false);
   if (feed == "")
     return;
 
@@ -29,23 +29,40 @@ Pages.onInfo = function()
 };
 
 
+Pages.feedData = function(data)
+{
+  var json = JSON.parse(data);
+  if (json.own === true && json.name == "hosts")
+    Server.hosts(json.feed);
+};
+
+
 var Server = {
   hosts: function(json)
   {
+    $("#main-spinner").show();
     $(".host-row").hide();
 
     for (var key in json) if (json.hasOwnProperty(key) && key.length == 34) {
       Server.host(key, json[key]);
     }
+
+    $("#hosts-content p").show();
+    $("#hosts-content #fieldset").show();
+    $("#main-spinner").hide();
   },
 
 
   host: function(key, json)
   {
-    var out = '<tr class="host-row" id="' + key + '"><td><i class="icon-unknown"></i></td><td class="host-name"></td><td>0<i class="icon-spinner"></i></td><td>Rename</td><td>Unlink</td></tr>';
-    $("#account-table > tbody").append(out);
-
     var id = "#" + key;
+    if (!$(id).length) {
+      var out = '<tr class="host-row" id="' + key + '"><td><i class="icon-unknown"></i></td><td class="host-name"></td><td>0<i class="icon-spinner"></i></td><td>Rename</td><td>Unlink</td></tr>';
+      $("#account-table > tbody").append(out);
+    }
+    else
+      $(id).show();
+
     $(id + " > .host-name").text(json.name);
   }
 };

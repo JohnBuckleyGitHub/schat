@@ -4,6 +4,7 @@ java -jar yuicompressor.jar ..\..\res\html\src\server.js -o ..\..\res\html\js\se
 java -jar yuicompressor.jar ..\..\res\html\src\about.js -o ..\..\res\html\js\about.min.js
 java -jar yuicompressor.jar ..\..\res\html\src\about.css -o ..\..\res\html\css\about.min.css
 java -jar yuicompressor.jar ..\..\res\html\src\ChatView.css -o ..\..\res\html\css\ChatView.min.css
+java -jar yuicompressor.jar ..\..\res\html\src\server.css -o ..\..\res\html\css\server.min.css
 java -jar yuicompressor.jar ..\..\res\html\src\ui.css -o ..\..\res\html\css\ui.min.css
 
 java -jar yuicompressor.jar ..\..\src\common\plugins\RawFeeds\res\src\RawFeeds.js -o ..\..\src\common\plugins\RawFeeds\res\js\RawFeeds.min.js

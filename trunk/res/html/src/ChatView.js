@@ -22,6 +22,11 @@ var Settings = {
 
 
 var Pages = {
+  feedData: function(data)
+  {
+  },
+
+
   onInfo: function()
   {
     $("#info-content > h1").html(Messages.nameTemplate(JSON.parse(SimpleChat.channel(Settings.id))));
@@ -36,10 +41,7 @@ var Pages = {
   // Установка отображаемой страницы, возможные значения 0 - отображаются сообщения, 1 - отображается информация о канале.
   setPage: function(page)
   {
-    try {
-      SimpleChat.setTabPage(Settings.id, page);
-    }
-    catch (e) {}
+    SimpleChat.setTabPage(Settings.id, page);
 
     if (page == 0) {
       $("#messages").addClass("active");

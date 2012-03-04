@@ -27,6 +27,7 @@
 #include "ChatNotify.h"
 #include "ChatSettings.h"
 #include "ChatUrls.h"
+#include "client/ChatClient.h"
 #include "debugstream.h"
 #include "hooks/ChannelMenu.h"
 #include "hooks/ChatViewHooks.h"
@@ -206,6 +207,17 @@ void ChatView::notify(const Notify &notify)
   if (notify.type() == Notify::ClearChat) {
     if (m_id == notify.data().toByteArray())
       clearPage();
+  }
+  else if (notify.type() == Notify::FeedData) {
+    const FeedNotify &n = static_cast<const FeedNotify &>(notify);
+    if (n.channel() != id() && n.channel() != ChatClient::id())
+      return;
+
+    QVariantMap json = WebBridge::feed(n);
+    if (json.isEmpty())
+      return;
+
+    evaluateJavaScript(LS("Pages.feedData(") + JSON::quote(JSON::generate(json)) + LS(");"));
   }
 }
 

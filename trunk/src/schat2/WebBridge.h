@@ -22,7 +22,9 @@
 #include <QObject>
 #include <QVariant>
 
-#include "schat.h"
+#include "Channel.h"
+
+class FeedNotify;
 
 class SCHAT_CORE_EXPORT WebBridge : public QObject
 {
@@ -31,10 +33,15 @@ class SCHAT_CORE_EXPORT WebBridge : public QObject
 public:
   WebBridge(QObject *parent = 0);
   inline static WebBridge *i() { return m_self; }
+
   Q_INVOKABLE QString channel(const QString &id);
-  Q_INVOKABLE QString feed(const QString &name);
+  Q_INVOKABLE QString feed(const QString &id, const QString &name, bool cache = true);
+  Q_INVOKABLE QString feed(const QString &name, bool cache = true);
   Q_INVOKABLE void setTabPage(const QString &id, int page);
+
   static QVariantMap channel(const QByteArray &id);
+  static QVariantMap feed(ClientChannel channel, const QString &name, bool cache = true);
+  static QVariantMap feed(const FeedNotify &notify);
 
 private:
   static WebBridge *m_self; ///< Указатель на себя.
