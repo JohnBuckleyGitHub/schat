@@ -68,6 +68,12 @@ QByteArray SimpleID::decode(const QByteArray &id)
 }
 
 
+QByteArray SimpleID::decode(const QString &id)
+{
+  return decode(id.toLatin1());
+}
+
+
 /*!
  * Кодирование идентификатора в Base32.
  *

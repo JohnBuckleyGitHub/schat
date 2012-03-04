@@ -16,9 +16,12 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include "ChatUrls.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
+#include "client/ClientFeeds.h"
 #include "JSON.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
@@ -39,9 +42,20 @@ QString WebBridge::channel(const QString &id)
 }
 
 
-QString WebBridge::feed(const QString &id, const QString &name, bool cache)
+/*!
+ * Получение собственного фида по имени.
+ *
+ * \param name Имя фида.
+ */
+QString WebBridge::feed(const QString &name)
 {
-  return QString();
+  FeedPtr feed = ChatClient::channel()->feed(name, false);
+  if (!feed) {
+    ChatClient::feeds()->request(ChatClient::id(), LS("get"), name);
+    return QString();
+  }
+
+  return JSON::generate(feed->data());
 }
 
 
