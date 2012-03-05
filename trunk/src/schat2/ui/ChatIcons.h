@@ -60,6 +60,7 @@ public:
     Profile            = 0x5072, ///< "Pr"
     OK                 = 0x4F4B, ///< "OK"
     InfoBalloon        = 0x4942, ///< "IB"
+    Information        = 0x4932, ///< "I2"
     EditClear          = 0x436C, ///< "Cl"
     EditCopy           = 0x4543, ///< "EC"
     EditCut            = 0x4563, ///< "Ec"

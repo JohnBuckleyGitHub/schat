@@ -213,6 +213,10 @@ a:active, a:hover {
   background-image: url("qrc:/webkit/resources/missingImage.png");
 }
 
+.icon-info {
+  background-image: url("qrc:/images/information.png");
+}
+
 .icon-os {
   background-image: url("qrc:/images/os.png");
 }

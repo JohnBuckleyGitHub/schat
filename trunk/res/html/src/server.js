@@ -58,7 +58,7 @@ var Server = {
   {
     var id = "#" + key;
     if (!$(id).length) {
-      var out = '<tr class="host-row" id="' + key + '"><td><i class="icon-os"></i></td><td class="host-name"></td><td>0<i class="icon-spinner"></i></td><td>Rename</td><td>Unlink</td></tr>';
+      var out = '<tr class="host-row" id="' + key + '"><td><i class="icon-os"></i></td><td class="host-name"></td><td><i class="icon-info"></i></td><td>Rename</td><td>Unlink</td></tr>';
       $("#account-table > tbody").append(out);
     }
     else
