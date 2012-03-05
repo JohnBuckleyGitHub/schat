@@ -29,9 +29,9 @@ public:
   ///< Тип операционной системы.
   enum OsType {
     Unknown = 0,  ///< Неизвестная операционная система.
-    Windows = 87, ///< 'W' Windows.
-    MacOSX  = 77, ///< 'M' Mac OS X.
-    Linux   = 76  ///< 'L' Linux.
+    Windows = 1,  ///< Windows, диапазон от 1 до 19.
+    MacOSX  = 20, ///< Mac OS X, диапазон от 20 до 39.
+    Linux   = 40  ///< Linux, диапазон от 40 до 79.
   };
 
   OsInfo();
