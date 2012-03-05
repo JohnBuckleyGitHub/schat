@@ -212,3 +212,23 @@ a:active, a:hover {
 .icon-unknown {
   background-image: url("qrc:/webkit/resources/missingImage.png");
 }
+
+.icon-os {
+  background-image: url("qrc:/images/os.png");
+}
+
+.os-windows {
+  background-position: 0 0;
+}
+
+.os-osx {
+  background-position: -16px 0;
+}
+
+.os-linux {
+  background-position: -32px 0;
+}
+
+.os-unknown {
+  background:none;
+}

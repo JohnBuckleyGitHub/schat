@@ -38,6 +38,25 @@ var Pages = {
   },
 
 
+  // Преобразование кода операционной системы в строку.
+  os: function(code)
+  {
+    if (code == 0 || code > 79)
+      return "unknown";
+
+    if (code >= 1 && code < 20)
+      return "windows";
+
+    if (code >= 20 && code < 40)
+      return "osx";
+
+    if (code >= 40)
+      return "linux";
+
+    return "unknown";
+  },
+
+
   // Установка отображаемой страницы, возможные значения 0 - отображаются сообщения, 1 - отображается информация о канале.
   setPage: function(page)
   {
