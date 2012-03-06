@@ -81,6 +81,7 @@
   <file alias="images/user-yellow-female.png">images/fugue/user-yellow-female.png</file>
   <file alias="js/about.js">html/js/about.min.js</file>
   <file alias="js/ChatView.js">html/js/ChatView.min.js</file>
+  <file alias="js/easyTooltip.js">html/js/easyTooltip.min.js</file>
   <file alias="js/jquery.js">html/js/jquery-1.7.1.min.js</file>
   <file alias="js/server.js">html/js/server.min.js</file>
   <file>html/about.html</file>

@@ -51,6 +51,7 @@ var Server = {
     $("#hosts-content #fieldset").show();
     $("#main-spinner").hide();
     $(".host-row:hidden").remove();
+    $(".tooltip").easyTooltip();
   },
 
 
@@ -58,7 +59,8 @@ var Server = {
   {
     var id = "#" + key;
     if (!$(id).length) {
-      var out = '<tr class="host-row" id="' + key + '"><td><i class="icon-os"></i></td><td class="host-name"></td><td><i class="icon-info"></i></td><td>Rename</td><td>Unlink</td></tr>';
+      var out = '<tr class="host-row" id="' + key + '"><td><i class="icon-os"></i></td><td class="host-name"></td>' +
+        '<td><i class="icon-info tooltip" title="test"></i></td><td>Rename</td><td>Unlink</td></tr>';
       $("#account-table > tbody").append(out);
     }
     else
