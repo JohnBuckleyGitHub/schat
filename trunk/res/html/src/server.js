@@ -60,7 +60,7 @@ var Server = {
     var id = "#" + key;
     if (!$(id).length) {
       var out = '<tr class="host-row" id="' + key + '"><td><i class="icon-os"></i></td><td class="host-name"></td>' +
-        '<td><i class="icon-info tooltip"></i></td><td>Rename</td><td>Unlink</td></tr>';
+        '<td><i class="icon-info tooltip"></i></td><td><a href="#" class="btn btn-small">Unlink</a></td></tr>';
       $("#account-table > tbody").append(out);
     }
     else
