@@ -21,6 +21,19 @@ var Settings = {
 };
 
 
+var Utils = {
+  makeTable: function (dict) {
+    var table = '<table><tbody>';
+
+    for (var key in dict) if (dict.hasOwnProperty(key)) {
+      table += '<tr><td>' + key + '</td><td>' + dict[key] + '</td></tr>';
+    }
+
+    table += '</table></tbody>';
+    return table;
+  }
+};
+
 var Pages = {
   feedData: function(data)
   {
