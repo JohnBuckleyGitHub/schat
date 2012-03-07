@@ -27,6 +27,8 @@ Pages.onInfo = function()
 
   var json = JSON.parse(feed);
   Server.hosts(json);
+
+  Server.retranslate();
 };
 
 
@@ -61,7 +63,7 @@ var Server = {
     var id = "#" + key;
     if (!$(id).length) {
       var out = '<tr class="host-row" id="' + key + '"><td class="os-cell"><i class="icon-os"></i></td><td class="host-name"></td>' +
-        '<td><i class="icon-info tooltip"></i></td><td><a class="btn btn-small">Unlink</a></td></tr>';
+        '<td><i class="icon-info tooltip"></i></td><td><a class="btn btn-small" data-tr="unlink">Unlink</a></td></tr>';
       $("#account-table > tbody").append(out);
     }
     else
@@ -69,6 +71,18 @@ var Server = {
 
     $(id + " > .host-name").text(json.name);
     $(id + " .icon-os").attr("class", "icon-os os-" + Pages.os(json.os));
-    $(id + " .icon-info").attr("title", Utils.makeTable({'<b>Version:</b>':json.version, '<b>Last IP Address:</b>': json.host}));
+    $(id + " .icon-info").attr("title", Utils.table({'version': json.version, 'last_ip': json.host}));
+  },
+
+
+  // Перевод текстовых строк.
+  retranslate: function()
+  {
+    Utils.TR("my_computers");
+    Utils.TR("my_computers_desc");
+    Utils.TR("computer_name");
+    Utils.TR("last_activity");
+    Utils.TR("actions");
+    Utils.TR("unlink");
   }
 };

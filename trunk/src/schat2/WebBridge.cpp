@@ -29,11 +29,13 @@
 #include "WebBridge.h"
 
 WebBridge *WebBridge::m_self = 0;
+QHash<QString, QString> WebBridge::translations;
 
 WebBridge::WebBridge(QObject *parent)
   : QObject(parent)
 {
   m_self = this;
+  retranslate();
 }
 
 
@@ -62,6 +64,12 @@ QString WebBridge::feed(const QString &id, const QString &name, bool cache)
 QString WebBridge::feed(const QString &name, bool cache)
 {
   return JSON::generate(feed(ChatClient::channel(), name, cache));
+}
+
+
+QString WebBridge::translate(const QString &key)
+{
+  return translations.value(key, key);
 }
 
 
@@ -127,4 +135,17 @@ QVariantMap WebBridge::feed(const FeedNotify &notify)
   out[LS("feed")] = feed->data();
 
   return out;
+}
+
+
+void WebBridge::retranslate()
+{
+  translations[LS("my_computers")]      = tr("My Computers");
+  translations[LS("my_computers_desc")] = tr("These are the computers currently linked to your account.");
+  translations[LS("computer_name")]     = tr("Computer name");
+  translations[LS("last_activity")]     = tr("Last Activity");
+  translations[LS("actions")]           = tr("Actions");
+  translations[LS("unlink")]            = tr("Unlink");
+  translations[LS("version")]           = tr("<b>Version:</b>");
+  translations[LS("last_ip")]           = tr("<b>Last IP Address:</b>");
 }

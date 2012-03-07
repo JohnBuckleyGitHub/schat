@@ -22,17 +22,26 @@ var Settings = {
 
 
 var Utils = {
-  makeTable: function (dict) {
+  table: function (dict) {
     var table = '<table><tbody>';
 
     for (var key in dict) if (dict.hasOwnProperty(key)) {
-      table += '<tr><td>' + key + '</td><td>' + dict[key] + '</td></tr>';
+      table += '<tr><td>' + Utils.tr(key) + '</td><td>' + dict[key] + '</td></tr>';
     }
 
     table += '</table></tbody>';
     return table;
+  },
+
+  tr: function(key) {
+    return SimpleChat.translate(key);
+  },
+
+  TR: function(key) {
+    $("[data-tr='" + key + "']").html(Utils.tr(key));
   }
 };
+
 
 var Pages = {
   feedData: function(data)
