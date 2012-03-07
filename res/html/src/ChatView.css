@@ -238,6 +238,10 @@ a:active, a:hover {
   background-position: -32px 0;
 }
 
+.os-ubuntu {
+  background-position: -48px 0;
+}
+
 .os-unknown {
   background:none;
 }
