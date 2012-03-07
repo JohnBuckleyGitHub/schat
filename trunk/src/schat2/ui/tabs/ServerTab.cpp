@@ -32,6 +32,7 @@
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/ServerTab.h"
 #include "ui/TabWidget.h"
+#include "WebBridge.h"
 
 ServerTab::ServerTab(TabWidget *parent)
   : AbstractTab(QByteArray(), AlertType, parent)
@@ -66,6 +67,18 @@ bool ServerTab::bindMenu(QMenu *menu)
 {
   Hooks::ChannelMenu::bind(menu, ChatClient::server());
   return true;
+}
+
+
+void ServerTab::changeEvent(QEvent *event)
+{
+  AbstractTab::changeEvent(event);
+
+  if (event->type() == QEvent::LanguageChange) {
+    WebBridge::retranslate();
+    ChatNotify::start(Notify::Language);
+    m_chatView->evaluateJavaScript(LS("Pages.retranslate();"));
+  }
 }
 
 

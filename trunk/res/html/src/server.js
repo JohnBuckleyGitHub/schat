@@ -42,6 +42,12 @@ Pages.feedData = function(data)
 };
 
 
+Pages.retranslate = function()
+{
+  Server.retranslate();
+};
+
+
 var Server = {
   hosts: function(json)
   {

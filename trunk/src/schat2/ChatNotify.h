@@ -50,7 +50,8 @@ public:
     FeedReply        = 0x4652, ///< "FR" Успешный ответ на запрос к фиду.
     QueryError       = 0x5145, ///< "QE" Ошибка запроса к фиду.
     ClearChat        = 0x4343, ///< "CC" Очистка текущего разговора.
-    ClearCache       = 0x4363  ///< "Cc" Очистка кешей.
+    ClearCache       = 0x4363, ///< "Cc" Очистка кешей.
+    Language         = 0x4C61  ///< "La" Изменение языка.
   };
 
   Notify(int type, const QVariant &data = QVariant())
