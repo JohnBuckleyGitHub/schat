@@ -16,6 +16,44 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#hosts-content h3 {
+  margin-bottom: 0;
+}
+
+#hosts-content p {
+  margin-top: 4px;
+}
+
 #hosts-content p, #hosts-content #fieldset {
   display: none;
+}
+
+#fieldset {
+  border: 1px solid rgba(204, 204, 204, 0.4);
+  border-radius:4px;
+  padding: 10px;
+  max-width: 980px;
+}
+
+#account-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+#account-table th, #account-table td {
+  text-align: left;
+  padding: 2px;
+}
+
+#account-table th {
+  border-bottom: 1px solid rgba(204, 204, 204, 0.4);
+}
+
+.table-striped tbody tr:nth-child(odd) td {
+  background-color: #f9f9f9;
+}
+
+.os-cell {
+  width: 16px;
 }
