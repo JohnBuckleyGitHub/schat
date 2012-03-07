@@ -19,6 +19,7 @@
 Pages.onInfo = function()
 {
   $("#info-content > h1").html(Messages.nameTemplate(JSON.parse(SimpleChat.channel(Settings.id))));
+  $("#main-spinner").css("display", "inline-block");
 
   var feed = SimpleChat.feed("hosts", false);
   if (feed == "")
@@ -32,15 +33,16 @@ Pages.onInfo = function()
 Pages.feedData = function(data)
 {
   var json = JSON.parse(data);
-  if (json.own === true && json.name == "hosts")
+  if (json.own === true && json.name == "hosts") {
     Server.hosts(json.feed);
+    $("#main-spinner").hide();
+  }
 };
 
 
 var Server = {
   hosts: function(json)
   {
-    $("#main-spinner").show();
     $(".host-row").hide();
 
     for (var key in json) if (json.hasOwnProperty(key) && key.length == 34) {
@@ -49,7 +51,6 @@ var Server = {
 
     $("#hosts-content p").show();
     $("#hosts-content #fieldset").show();
-    $("#main-spinner").hide();
     $(".host-row:hidden").remove();
     $(".tooltip").easyTooltip();
   },
