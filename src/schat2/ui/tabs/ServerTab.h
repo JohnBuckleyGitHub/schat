@@ -34,6 +34,9 @@ public:
   bool bindMenu(QMenu *menu);
   inline ChatView *chatView() { return m_chatView; }
 
+protected:
+  void changeEvent(QEvent *event);
+
 private slots:
   void alert(const Alert &alert);
   void notify(const Notify &notify);
