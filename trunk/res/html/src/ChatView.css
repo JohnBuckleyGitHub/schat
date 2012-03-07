@@ -218,6 +218,10 @@ a:active, a:hover {
   background-image: url("qrc:/images/information.png");
 }
 
+.icon-computer {
+  background-image: url("qrc:/images/computer.png");
+}
+
 .icon-os {
   background-image: url("qrc:/images/os.png");
 }

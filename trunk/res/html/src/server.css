@@ -21,17 +21,18 @@
 }
 
 #hosts-content p {
-  margin-top: 4px;
+  margin: 4px 0 8px;
+
 }
 
-#hosts-content p, #hosts-content #fieldset {
+#hosts-content p, #hosts-content #fieldset, #main-spinner {
   display: none;
 }
 
 #fieldset {
   border: 1px solid rgba(204, 204, 204, 0.4);
   border-radius:4px;
-  padding: 10px;
+  padding: 4px 10px 10px 10px;
   max-width: 980px;
 }
 
