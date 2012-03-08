@@ -27,8 +27,6 @@ Pages.onInfo = function()
 
   var json = JSON.parse(feed);
   Server.hosts(json);
-
-  Server.retranslate();
 };
 
 
@@ -61,6 +59,8 @@ var Server = {
     $("#hosts-content #fieldset").show();
     $(".host-row:hidden").remove();
     $(".tooltip").easyTooltip();
+
+    Server.retranslate();
   },
 
 
