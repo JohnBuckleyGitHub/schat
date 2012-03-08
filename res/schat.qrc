@@ -50,6 +50,8 @@
   <file alias="images/slash.png">images/fugue/slash.png</file>
   <file alias="images/sound.png">images/human_o2/kmixdocked.png</file>
   <file alias="images/sound_mute.png">images/human_o2/kmixdocked_mute.png</file>
+  <file alias="images/status.png">images/fugue/status.png</file>
+  <file alias="images/status-offline.png">images/fugue/status-offline.png</file>
   <file alias="images/text-bold.png">images/oxygen/format-text-bold.png</file>
   <file alias="images/text-italic.png">images/oxygen/format-text-italic.png</file>
   <file alias="images/text-strikethrough.png">images/oxygen/format-text-strikethrough.png</file>

@@ -226,6 +226,14 @@ a:active, a:hover {
   background-image: url("qrc:/images/os.png");
 }
 
+.icon-status {
+  background-image: url("qrc:/images/status.png");
+}
+
+.icon-status-offline {
+  background-image: url("qrc:/images/status-offline.png");
+}
+
 .os-windows {
   background-position: 0 0;
 }

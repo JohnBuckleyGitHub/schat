@@ -68,7 +68,7 @@ var Server = {
   {
     var id = "#" + key;
     if (!$(id).length) {
-      var out = '<tr class="host-row" id="' + key + '"><td class="os-cell"><i class="icon-os"></i></td><td class="host-name"></td>' +
+      var out = '<tr class="host-row" id="' + key + '"><td class="os-cell"><i class="icon-status-offline host-status"></i><i class="icon-os"></i></td><td class="host-name"></td>' +
         '<td><i class="icon-info tooltip"></i></td><td><a class="btn btn-small" data-tr="unlink">Unlink</a></td></tr>';
       $("#account-table > tbody").append(out);
     }
@@ -78,6 +78,7 @@ var Server = {
     $(id + " > .host-name").text(json.name);
     $(id + " .icon-os").attr("class", "icon-os os-" + Pages.os(json.os));
     $(id + " .icon-info").attr("title", Utils.table({'version': json.version, 'last_ip': json.host}));
+    $(id + " .host-status").attr("class", (json.online === true ? "icon-status" : "icon-status-offline") + " host-status");
   },
 
 
