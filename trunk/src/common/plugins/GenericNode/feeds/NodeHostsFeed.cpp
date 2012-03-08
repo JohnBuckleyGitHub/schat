@@ -18,10 +18,23 @@
 
 #include "DateTime.h"
 #include "feeds/NodeHostsFeed.h"
+#include "sglobal.h"
 
 NodeHostsFeed::NodeHostsFeed(const QString &name, const QVariantMap &data)
   : Feed(name, data)
 {
+  QStringList keys = data.keys();
+  keys.removeAll(LS("head"));
+
+  for (int i = 0; i < keys.size(); ++i) {
+    if (keys.at(i).size() != 34)
+      continue;
+
+    QVariantMap data = m_data.value(keys.at(i)).toMap();
+    data[LS("online")] = false;
+    m_data[keys.at(i)] = data;
+  }
+
   m_header.acl().setMask(0400);
 }
 
