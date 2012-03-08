@@ -79,9 +79,7 @@ QVariantMap Hosts::data(const QByteArray &uniqueId)
 
 void Hosts::add(const AuthRequest &data, const QString &host)
 {
-  qDebug() << m_channel;
   FeedPtr feed = this->feed();
-  qDebug() << "##########################" << sockets() << feed;
 
   QVariantMap json = this->data();
   if (json.isEmpty())
@@ -104,6 +102,16 @@ void Hosts::add(const AuthRequest &data, const QString &host)
  */
 void Hosts::remove(quint64 socket)
 {
+  if (m_sockets.count(socket) == 1) {
+    QByteArray id = m_sockets.publicId(socket);
+    if (!id.isEmpty()) {
+      QVariantMap json = data(id);
+      json[LS("date")]   = DateTime::utc();
+      json[LS("online")] = false;
+      setData(json, id);
+    }
+  }
+
   m_sockets.remove(socket);
 }
 
@@ -125,16 +133,27 @@ void Hosts::setData(const QVariantMap &data, const QByteArray &uniqueId, bool sa
 }
 
 
-/*!
- * Возвращает идентификатор текущего сокета, полученный из приватного идентификатора сервера
- * и уникального идентификатора пользователя. В случае ошибки возвращается пустой идентификатор.
- */
-QByteArray Hosts::Sockets::currentId() const
+int Hosts::Sockets::count(quint64 socket)
 {
-  if (!m_sockets.contains(Core::socket()))
+  if (socket == 0)
+    socket = Core::socket();
+
+  if (!m_sockets.contains(socket))
+    return 0;
+
+  return m_ids.value(m_sockets.value(socket)).size();
+}
+
+
+QByteArray Hosts::Sockets::publicId(quint64 socket) const
+{
+  if (socket == 0)
+    socket = Core::socket();
+
+  if (!m_sockets.contains(socket))
     return QByteArray();
 
-  return SimpleID::make(Storage::privateId() + m_sockets.value(Core::socket()), SimpleID::MessageId);
+  return SimpleID::make(Storage::privateId() + m_sockets.value(socket), SimpleID::MessageId);
 }
 
 
