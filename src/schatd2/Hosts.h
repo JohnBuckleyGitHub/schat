@@ -27,23 +27,41 @@
 class AuthRequest;
 class ServerChannel;
 
+/*!
+ * Обеспечивает средства для работы с хостами пользователя.
+ */
 class SCHAT_EXPORT Hosts
 {
 public:
   Hosts();
   FeedPtr feed();
-  inline QList<quint64> sockets() const          { return m_sockets.keys(); }
+  inline QByteArray currentId() const            { return m_sockets.currentId(); }
+  inline QList<quint64> sockets() const          { return m_sockets.sockets(); }
+  inline void add(const QByteArray &uniqueId)    { m_sockets.add(uniqueId); }
   inline void setChannel(ServerChannel *channel) { m_channel = channel; }
-  QByteArray currentId();
+  QByteArray id(const QByteArray &uniqueId) const;
   QVariantMap data(const QByteArray &uniqueId = QByteArray());
   void add(const AuthRequest &data, const QString &host);
-  void add(const QByteArray &uniqueId);
   void remove(quint64 socket);
   void setData(const QVariantMap &data, const QByteArray &uniqueId = QByteArray(), bool save = true);
 
 private:
-  QMap<quint64, QByteArray> m_sockets; ///< Таблица сокетов и уникальных идентификаторов пользователя.
-  ServerChannel *m_channel;            ///< Канал.
+  class Sockets
+  {
+  public:
+    Sockets() {}
+    inline QList<quint64> sockets() const { return m_sockets.keys(); }
+    QByteArray currentId() const;
+    void add(const QByteArray &uniqueId);
+    void remove(quint64 socket);
+
+  private:
+    QMap<quint64, QByteArray> m_sockets;     ///< Таблица сокетов и уникальных идентификаторов пользователя.
+    QMap<QByteArray, QList<quint64> > m_ids; ///< Обратная таблица.
+  };
+
+  ServerChannel *m_channel;                  ///< Канал.
+  Sockets m_sockets;                         ///< Сокеты.
 };
 
 #endif /* HOSTS_H_ */
