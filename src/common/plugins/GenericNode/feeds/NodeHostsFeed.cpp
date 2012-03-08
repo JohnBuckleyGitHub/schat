@@ -18,7 +18,9 @@
 
 #include "DateTime.h"
 #include "feeds/NodeHostsFeed.h"
+#include "net/packets/Notice.h"
 #include "sglobal.h"
+#include "Channel.h"
 
 NodeHostsFeed::NodeHostsFeed(const QString &name, const QVariantMap &data)
   : Feed(name, data)
@@ -55,4 +57,49 @@ Feed* NodeHostsFeed::create(const QString &name)
 Feed* NodeHostsFeed::load(const QString &name, const QVariantMap &data)
 {
   return new NodeHostsFeed(name, data);
+}
+
+
+FeedQueryReply NodeHostsFeed::query(const QVariantMap &json, Channel *channel)
+{
+  QString action = json.value(LS("action")).toString();
+  if (action.isEmpty())
+    return FeedQueryReply(Notice::BadRequest);
+
+  if (action.startsWith(LS("x-")))
+    return Feed::query(json, channel);
+
+  if (action == LS("activity"))
+    return activity(channel);
+
+  return FeedQueryReply(Notice::ServiceUnavailable);
+}
+
+
+FeedQueryReply NodeHostsFeed::activity(Channel *channel)
+{
+  if (!channel || head().channel()->id() != channel->id())
+    return FeedQueryReply(Notice::Forbidden);
+
+  qint64 current = DateTime::utc();
+  FeedQueryReply reply = FeedQueryReply(Notice::OK);
+
+  QMapIterator<QString, QVariant> i(m_data);
+  while (i.hasNext()) {
+    i.next();
+    if (i.key().size() != 34)
+      continue;
+
+    qint64 date = i.value().toMap().value(LS("date")).toLongLong();
+    if (date == 0)
+      continue;
+
+    QVariantMap data;
+    data[LS("date")] = date;
+    data[LS("diff")] = current - date;
+    reply.json[i.key()] = data;
+  }
+
+  reply.json[LS("action")] = LS("activity");
+  return reply;
 }
