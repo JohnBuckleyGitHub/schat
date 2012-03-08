@@ -3,6 +3,7 @@
   <file alias="css/about.css">html/css/about.min.css</file>
   <file alias="css/ChatView.css">html/css/ChatView.min.css</file>
   <file alias="css/input.css">html/css/input.css</file>
+  <file alias="css/server.css">html/css/server.min.css</file>
   <file alias="css/ui.css">html/css/ui.min.css</file>
   <file alias="images/add.png">images/diagona/103.png</file>
   <file alias="images/arrow-right.png">images/silk/resultset_next.png</file>

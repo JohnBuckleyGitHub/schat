@@ -34,6 +34,11 @@ Hosts::Hosts()
 }
 
 
+/*!
+ * Получение фида \b hosts.
+ *
+ * Если фид не существует, то он будет создан, при создании будет задана маска прав доступа 0400.
+ */
 FeedPtr Hosts::feed()
 {
   FeedPtr feed = m_channel->feed(LS("hosts"), false);
@@ -49,26 +54,26 @@ FeedPtr Hosts::feed()
 }
 
 
-/*!
- * Возвращает идентификатор текущего сокета, полученный из приватного идентификатора сервера
- * и уникального идентификатора пользователя.
- */
-QByteArray Hosts::currentId()
+QByteArray Hosts::id(const QByteArray &uniqueId) const
 {
-  if (!m_sockets.contains(Core::socket()))
-    return QByteArray();
+  if (uniqueId.isEmpty())
+    return currentId();
 
-  return SimpleID::make(Storage::privateId() + m_sockets.value(Core::socket()), SimpleID::MessageId);
+  return uniqueId;
 }
 
 
+/*!
+ * Получение JSON данных хоста.
+ *
+ * \param uniqueId Публичный идентификатор хоста, если не задан будет использоваться текущий идентификатор.
+ *
+ * \sa setData().
+ * \sa currentId().
+ */
 QVariantMap Hosts::data(const QByteArray &uniqueId)
 {
-  QByteArray id = uniqueId;
-  if (uniqueId.isEmpty())
-    id = currentId();
-
-  return feed()->data().value(SimpleID::encode(id)).toMap();
+  return feed()->data().value(SimpleID::encode(id(uniqueId))).toMap();
 }
 
 
@@ -88,21 +93,9 @@ void Hosts::add(const AuthRequest &data, const QString &host)
   json[LS("offset")]   = data.offset;
   json[LS("name")]     = data.hostName;
   json[LS("date")]     = DateTime::utc();
+  json[LS("online")]   = true;
 
   setData(json);
-}
-
-
-/*!
- * Добавление сокета.
- *
- * \param uniqueId Уникальный идентификатор клиента.
- */
-void Hosts::add(const QByteArray &uniqueId)
-{
-  m_sockets.insert(Core::socket(), uniqueId);
-
-  qDebug() << "##########################" << sockets();
 }
 
 
@@ -115,15 +108,57 @@ void Hosts::remove(quint64 socket)
 }
 
 
+/*!
+ * Установка JSON данных хоста.
+ *
+ * \param data     Новые данные.
+ * \param uniqueId Публичный идентификатор хоста, если не задан будет использоваться текущий идентификатор.
+ * \param save     \b true если надо сохранить тело фида.
+ */
 void Hosts::setData(const QVariantMap &data, const QByteArray &uniqueId, bool save)
 {
-  QByteArray id = uniqueId;
-  if (uniqueId.isEmpty())
-    id = currentId();
-
   FeedPtr feed = this->feed();
-  feed->data()[SimpleID::encode(id)] = data;
+  feed->data()[SimpleID::encode(id(uniqueId))] = data;
 
   if (save)
     FeedStorage::save(feed);
+}
+
+
+/*!
+ * Возвращает идентификатор текущего сокета, полученный из приватного идентификатора сервера
+ * и уникального идентификатора пользователя. В случае ошибки возвращается пустой идентификатор.
+ */
+QByteArray Hosts::Sockets::currentId() const
+{
+  if (!m_sockets.contains(Core::socket()))
+    return QByteArray();
+
+  return SimpleID::make(Storage::privateId() + m_sockets.value(Core::socket()), SimpleID::MessageId);
+}
+
+
+/*!
+ * Добавление сокета.
+ *
+ * \param uniqueId Уникальный идентификатор клиента.
+ */
+void Hosts::Sockets::add(const QByteArray &uniqueId)
+{
+  m_sockets.insert(Core::socket(), uniqueId);
+  m_ids[uniqueId].append(Core::socket());
+}
+
+
+void Hosts::Sockets::remove(quint64 socket)
+{
+  if (!m_sockets.contains(socket))
+    return;
+
+  QByteArray id = m_sockets.value(socket);
+  m_ids[id].removeAll(socket);
+  if (m_ids.value(id).isEmpty())
+    m_ids.remove(id);
+
+  m_sockets.remove(socket);
 }
