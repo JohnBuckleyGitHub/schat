@@ -24,6 +24,9 @@
 
 class AuthRequest;
 
+/*!
+ * \deprecated Фид links должен быть заменён на фид hosts.
+ */
 class NodeLinksFeed : public Feed
 {
 public:
