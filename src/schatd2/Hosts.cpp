@@ -46,6 +46,8 @@ FeedPtr Hosts::feed()
     return feed;
 
   feed = m_channel->feed(LS("hosts"), true, false);
+  feed->head().acl().add(m_channel->id());
+
   QVariantMap mask;
   mask[LS("action")] = LS("x-mask");
   mask[LS("mask")] = 0400;
