@@ -25,6 +25,7 @@
 
 #include "schat.h"
 
+class FeedNotify;
 class Message;
 class Notify;
 
@@ -44,7 +45,7 @@ public:
   void setId(const QByteArray &id);
 
 signals:
-  void feedData(const QVariantMap &data);
+  void feed(const QVariantMap &data);
   void reloaded();
 
 protected:

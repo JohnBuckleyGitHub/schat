@@ -127,19 +127,33 @@ QVariantMap WebBridge::feed(ClientChannel channel, const QString &name, bool cac
 
 QVariantMap WebBridge::feed(const FeedNotify &notify)
 {
-  QVariantMap out;
   ClientChannel channel = ChatClient::channels()->get(notify.channel());
   if (!channel)
-    return out;
+    return QVariantMap();
 
-  FeedPtr feed = channel->feed(notify.name(), false);
-  if (!feed)
-    return out;
+  int type = notify.type();
+  QVariantMap out;
 
-  out[LS("name")] = notify.name();
-  out[LS("own")]  = notify.channel() == ChatClient::id();
-  out[LS("feed")] = feed->data();
+  if (type == Notify::FeedData) {
+    FeedPtr feed = channel->feed(notify.name(), false);
+    if (!feed)
+      return out;
 
+    out[LS("data")] = feed->data();
+    out[LS("type")] = LS("body");
+  }
+  else
+    out[LS("data")] = notify.json();
+
+  if (type == Notify::FeedReply)
+    out[LS("type")] = LS("reply");
+  else if (type == Notify::QueryError)
+    out[LS("type")] = LS("error");
+
+  out[LS("status")] = notify.status();
+  out[LS("name")]   = notify.name();
+  out[LS("own")]    = notify.channel() == ChatClient::id();
+  out[LS("id")]     = SimpleID::encode(notify.channel());
   return out;
 }
 

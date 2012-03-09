@@ -204,11 +204,13 @@ void ChatView::menuTriggered(QAction *action)
 
 void ChatView::notify(const Notify &notify)
 {
-  if (notify.type() == Notify::ClearChat) {
+  int type = notify.type();
+
+  if (type == Notify::ClearChat) {
     if (m_id == notify.data().toByteArray())
       clearPage();
   }
-  else if (notify.type() == Notify::FeedData) {
+  else if (type == Notify::FeedData || type == Notify::FeedReply || type == Notify::QueryError) {
     const FeedNotify &n = static_cast<const FeedNotify &>(notify);
     if (n.channel() != id() && n.channel() != ChatClient::id())
       return;
@@ -217,7 +219,7 @@ void ChatView::notify(const Notify &notify)
     if (json.isEmpty())
       return;
 
-    emit feedData(json);
+    emit feed(json);
   }
 }
 

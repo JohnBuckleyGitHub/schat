@@ -44,6 +44,8 @@ var Utils = {
 
 
 var Pages = {
+  current: 0,
+
   onInfo: function()
   {
     $("#info-content > h1").html(Messages.nameTemplate(JSON.parse(SimpleChat.channel(Settings.id))));
@@ -78,6 +80,7 @@ var Pages = {
   setPage: function(page)
   {
     SimpleChat.setTabPage(Settings.id, page);
+    Pages.current = page;
 
     if (page == 0) {
       $("#messages").addClass("active");

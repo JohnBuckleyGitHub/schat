@@ -26,16 +26,22 @@ Pages.onInfo = function()
 
 
 var Server = {
-  feedData: function(json)
+  // Базовый слот обрабатывающий новые данные фидов.
+  feed: function(json)
   {
-    if (json.own === true && json.name == "hosts") {
-      Server.hosts(json.feed);
-      $("#main-spinner").hide();
-    }
+    if (Pages.current == 0)
+      return;
 
-    SimpleChat.request("query", "hosts", {"action":"activity"});
+    if (!json.hasOwnProperty("type"))
+      return;
+
+    if (json.own === true && json.name === "hosts") {
+      if (json.type === "body")
+        Server.hostsBody(json.data);
+    }
   },
 
+  // Обработка одиночного хоста.
   host: function(key, json)
   {
     var id = "#" + key;
@@ -75,6 +81,16 @@ var Server = {
   },
 
 
+  // Обработка получения тела фида hosts.
+  hostsBody: function(json)
+  {
+    Server.hosts(json);
+    $("#main-spinner").hide();
+
+    SimpleChat.request("query", "hosts", {"action":"activity"});
+  },
+
+
   // Перевод текстовых строк.
   retranslate: function()
   {
@@ -90,5 +106,5 @@ var Server = {
 
 $(document).ready(function() {
   SimpleChat.retranslated.connect(Server, Server.retranslate);
-  ChatView.feedData.connect(Server, Server.feedData);
+  ChatView.feed.connect(Server, Server.feed);
 });
