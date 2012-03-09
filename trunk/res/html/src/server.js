@@ -21,11 +21,22 @@ Pages.onInfo = function()
   $("#info-content > h1").html(Messages.nameTemplate(JSON.parse(SimpleChat.channel(Settings.id))));
   $("#main-spinner").css("display", "inline-block");
 
-  Server.hosts(SimpleChat.feed("hosts", false));
+  Hosts.read(SimpleChat.feed("hosts", false));
 };
 
 
-var Server = {
+// Объект связанный с обработкой таблицы компьютеров.
+var Hosts = {
+  // Обработка получения тела фида hosts.
+  body: function(json)
+  {
+    Hosts.read(json);
+    $("#main-spinner").hide();
+
+    SimpleChat.request("query", "hosts", {"action":"activity"});
+  },
+
+
   // Базовый слот обрабатывающий новые данные фидов.
   feed: function(json)
   {
@@ -35,19 +46,23 @@ var Server = {
     if (!json.hasOwnProperty("type"))
       return;
 
-    if (json.own === true && json.name === "hosts") {
-      if (json.type === "body")
-        Server.hostsBody(json.data);
-    }
+    if (json.own !== true)
+      return;
+
+    if (json.name !== "hosts")
+      return;
+
+    Hosts[json.type](json.data);
   },
 
+
   // Обработка одиночного хоста.
-  host: function(key, json)
+  processSingleHost: function(key, json)
   {
     var id = "#" + key;
     if (!$(id).length) {
       var out = '<tr class="host-row" id="' + key + '"><td class="os-cell"><i class="icon-status-offline host-status"></i><i class="icon-os"></i></td><td class="host-name"></td>' +
-        '<td><i class="icon-info tooltip"></i></td><td><a class="btn btn-small" data-tr="unlink">Unlink</a></td></tr>';
+        '<td><i class="icon-info tooltip"></i> <span class="last-activity"></span></td><td><a class="btn btn-small" data-tr="unlink">Unlink</a></td></tr>';
       $("#account-table > tbody").append(out);
     }
     else
@@ -60,8 +75,8 @@ var Server = {
   },
 
 
-  // Обработка данных фида hosts.
-  hosts: function(json)
+  // Чтение тела фида hosts.
+  read: function(json)
   {
     if (!json.hasOwnProperty("head"))
       return;
@@ -69,7 +84,7 @@ var Server = {
     $(".host-row").hide();
 
     for (var key in json) if (json.hasOwnProperty(key) && key.length == 34) {
-      Server.host(key, json[key]);
+      Hosts.processSingleHost(key, json[key]);
     }
 
     $("#hosts-content p").show();
@@ -77,17 +92,21 @@ var Server = {
     $(".host-row:hidden").remove();
     $(".tooltip").easyTooltip();
 
-    Server.retranslate();
+    Hosts.retranslate();
   },
 
 
-  // Обработка получения тела фида hosts.
-  hostsBody: function(json)
+  readActivity: function(key, json)
   {
-    Server.hosts(json);
-    $("#main-spinner").hide();
+    $("#" + key + " .last-activity").html(DateTime.template(json.date, true));
+  },
 
-    SimpleChat.request("query", "hosts", {"action":"activity"});
+
+  reply: function(json)
+  {
+    for (var key in json) if (json.hasOwnProperty(key) && key.length == 34) {
+      Hosts.readActivity(key, json[key]);
+    }
   },
 
 
@@ -105,6 +124,6 @@ var Server = {
 
 
 $(document).ready(function() {
-  SimpleChat.retranslated.connect(Server, Server.retranslate);
-  ChatView.feed.connect(Server, Server.feed);
+  SimpleChat.retranslated.connect(Hosts, Hosts.retranslate);
+  ChatView.feed.connect(Hosts, Hosts.feed);
 });
