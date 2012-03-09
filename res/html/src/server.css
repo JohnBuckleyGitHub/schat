@@ -58,3 +58,9 @@
 .os-cell {
   width: 32px;
 }
+
+
+.last-activity .date-time-block {
+  font-size: inherit;
+  color: inherit;
+}
