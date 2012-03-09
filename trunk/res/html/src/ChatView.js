@@ -44,11 +44,6 @@ var Utils = {
 
 
 var Pages = {
-  feedData: function(data)
-  {
-  },
-
-
   onInfo: function()
   {
     $("#info-content > h1").html(Messages.nameTemplate(JSON.parse(SimpleChat.channel(Settings.id))));

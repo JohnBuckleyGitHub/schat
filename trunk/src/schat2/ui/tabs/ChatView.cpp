@@ -217,7 +217,7 @@ void ChatView::notify(const Notify &notify)
     if (json.isEmpty())
       return;
 
-    evaluateJavaScript(LS("Pages.feedData(") + JSON::quote(JSON::generate(json)) + LS(");"));
+    emit feedData(json);
   }
 }
 
@@ -231,6 +231,7 @@ void ChatView::openUrl(const QUrl &url)
 void ChatView::populateJavaScriptWindowObject()
 {
   page()->mainFrame()->addToJavaScriptWindowObject("SimpleChat", WebBridge::i());
+  page()->mainFrame()->addToJavaScriptWindowObject("ChatView", this);
 }
 
 

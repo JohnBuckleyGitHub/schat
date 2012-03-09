@@ -21,44 +21,20 @@ Pages.onInfo = function()
   $("#info-content > h1").html(Messages.nameTemplate(JSON.parse(SimpleChat.channel(Settings.id))));
   $("#main-spinner").css("display", "inline-block");
 
-  var feed = SimpleChat.feed("hosts", false);
-  if (feed == "")
-    return;
-
-  var json = JSON.parse(feed);
-  Server.hosts(json);
-};
-
-
-Pages.feedData = function(data)
-{
-  var json = JSON.parse(data);
-  if (json.own === true && json.name == "hosts") {
-    Server.hosts(json.feed);
-    $("#main-spinner").hide();
-  }
-
-  SimpleChat.request("query", "hosts", {"action":"activity"});
+  Server.hosts(SimpleChat.feed("hosts", false));
 };
 
 
 var Server = {
-  hosts: function(json)
+  feedData: function(json)
   {
-    $(".host-row").hide();
-
-    for (var key in json) if (json.hasOwnProperty(key) && key.length == 34) {
-      Server.host(key, json[key]);
+    if (json.own === true && json.name == "hosts") {
+      Server.hosts(json.feed);
+      $("#main-spinner").hide();
     }
 
-    $("#hosts-content p").show();
-    $("#hosts-content #fieldset").show();
-    $(".host-row:hidden").remove();
-    $(".tooltip").easyTooltip();
-
-    Server.retranslate();
+    SimpleChat.request("query", "hosts", {"action":"activity"});
   },
-
 
   host: function(key, json)
   {
@@ -78,6 +54,27 @@ var Server = {
   },
 
 
+  // Обработка данных фида hosts.
+  hosts: function(json)
+  {
+    if (!json.hasOwnProperty("head"))
+      return;
+
+    $(".host-row").hide();
+
+    for (var key in json) if (json.hasOwnProperty(key) && key.length == 34) {
+      Server.host(key, json[key]);
+    }
+
+    $("#hosts-content p").show();
+    $("#hosts-content #fieldset").show();
+    $(".host-row:hidden").remove();
+    $(".tooltip").easyTooltip();
+
+    Server.retranslate();
+  },
+
+
   // Перевод текстовых строк.
   retranslate: function()
   {
@@ -90,6 +87,8 @@ var Server = {
   }
 };
 
+
 $(document).ready(function() {
   SimpleChat.retranslated.connect(Server, Server.retranslate);
+  ChatView.feedData.connect(Server, Server.feedData);
 });
