@@ -45,31 +45,31 @@ QString WebBridge::channel(const QString &id)
 }
 
 
+QString WebBridge::translate(const QString &key)
+{
+  return translations.value(key, key);
+}
+
+
 /*!
  * Получение фида по идентификатору канала и имени.
  */
-QString WebBridge::feed(const QString &id, const QString &name, bool cache)
+QVariantMap WebBridge::feed(const QString &id, const QString &name, bool cache)
 {
   ClientChannel channel = ChatClient::channels()->get(SimpleID::decode(id));
   if (!channel)
-    return QString();
+    return QVariantMap();
 
-  return JSON::generate(feed(channel, name, cache));
+  return feed(channel, name, cache);
 }
 
 
 /*!
  * Получение собственного фида по имени.
  */
-QString WebBridge::feed(const QString &name, bool cache)
+QVariantMap WebBridge::feed(const QString &name, bool cache)
 {
-  return JSON::generate(feed(ChatClient::channel(), name, cache));
-}
-
-
-QString WebBridge::translate(const QString &key)
-{
-  return translations.value(key, key);
+  return feed(ChatClient::channel(), name, cache);
 }
 
 

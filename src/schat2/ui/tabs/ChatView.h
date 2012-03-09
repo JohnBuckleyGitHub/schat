@@ -44,6 +44,7 @@ public:
   void setId(const QByteArray &id);
 
 signals:
+  void feedData(const QVariantMap &data);
   void reloaded();
 
 protected:
