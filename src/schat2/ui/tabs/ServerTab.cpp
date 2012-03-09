@@ -75,9 +75,8 @@ void ServerTab::changeEvent(QEvent *event)
   AbstractTab::changeEvent(event);
 
   if (event->type() == QEvent::LanguageChange) {
-    WebBridge::retranslate();
+    WebBridge::i()->retranslate();
     ChatNotify::start(Notify::Language);
-    m_chatView->evaluateJavaScript(LS("Pages.retranslate();"));
   }
 }
 
