@@ -73,6 +73,12 @@ QString WebBridge::translate(const QString &key)
 }
 
 
+void WebBridge::request(const QString &command, const QString &name, const QVariantMap &json)
+{
+  ChatClient::feeds()->request(ChatClient::id(), command, name, json);
+}
+
+
 void WebBridge::setTabPage(const QString &id, int page)
 {
   ClientChannel channel = ChatClient::channels()->get(SimpleID::decode(id.toLatin1()));
@@ -108,10 +114,10 @@ QVariantMap WebBridge::channel(const QByteArray &id)
  */
 QVariantMap WebBridge::feed(ClientChannel channel, const QString &name, bool cache)
 {
-  if (!cache)
+  FeedPtr feed = channel->feed(name, false);
+  if (!cache || !feed)
     ChatClient::feeds()->request(channel->id(), LS("get"), name);
 
-  FeedPtr feed = channel->feed(name, false);
   if (!feed)
     return QVariantMap();
 
@@ -148,4 +154,6 @@ void WebBridge::retranslate()
   translations[LS("unlink")]            = tr("Unlink");
   translations[LS("version")]           = tr("<b>Version:</b>");
   translations[LS("last_ip")]           = tr("<b>Last IP Address:</b>");
+
+  emit retranslated();
 }

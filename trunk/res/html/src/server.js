@@ -37,12 +37,8 @@ Pages.feedData = function(data)
     Server.hosts(json.feed);
     $("#main-spinner").hide();
   }
-};
 
-
-Pages.retranslate = function()
-{
-  Server.retranslate();
+  SimpleChat.request("query", "hosts", {"action":"activity"});
 };
 
 
@@ -93,3 +89,7 @@ var Server = {
     Utils.TR("unlink");
   }
 };
+
+$(document).ready(function() {
+  SimpleChat.retranslated.connect(Server, Server.retranslate);
+});

@@ -38,14 +38,19 @@ public:
   Q_INVOKABLE QString feed(const QString &id, const QString &name, bool cache = true);
   Q_INVOKABLE QString feed(const QString &name, bool cache = true);
   Q_INVOKABLE QString translate(const QString &key);
+  Q_INVOKABLE void request(const QString &command, const QString &name, const QVariantMap &json = QVariantMap());
   Q_INVOKABLE void setTabPage(const QString &id, int page);
 
   static QVariantMap channel(const QByteArray &id);
   static QVariantMap feed(ClientChannel channel, const QString &name, bool cache = true);
   static QVariantMap feed(const FeedNotify &notify);
-  static void retranslate();
+
+  void retranslate();
 
   static QHash<QString, QString> translations;
+
+signals:
+  void retranslated();
 
 private:
   static WebBridge *m_self; ///< Указатель на себя.
