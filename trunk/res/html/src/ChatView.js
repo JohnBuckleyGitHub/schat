@@ -214,6 +214,16 @@ var Messages = {
   },
 
 
+  // Очистка страницы.
+  reload: function()
+  {
+    if (Pages.current != 0)
+      return;
+
+    $(".container").remove();
+  },
+
+
   // Обновление информации сообщения.
   updateChannelMessage: function(json)
   {
@@ -331,6 +341,9 @@ $(document).ready(function() {
 
   alignChat();
 });
+
+
+ChatView.reload.connect(Messages.reload);
 
 
 function loadJS(filename)

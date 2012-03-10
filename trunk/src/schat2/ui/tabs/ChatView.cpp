@@ -28,6 +28,7 @@
 #include "ChatSettings.h"
 #include "ChatUrls.h"
 #include "client/ChatClient.h"
+#include "client/ClientChannels.h"
 #include "debugstream.h"
 #include "hooks/ChannelMenu.h"
 #include "hooks/ChatViewHooks.h"
@@ -152,7 +153,13 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
   }
 
   menu.addSeparator();
-  menu.addAction(m_clear);
+
+  ClientChannel channel = ChatClient::channels()->get(id());
+  if (channel && channel->data().value(LS("page")) == 1)
+    menu.addAction(m_reload);
+  else
+    menu.addAction(m_clear);
+
   menu.addAction(m_selectAll);
 
   connect(&menu, SIGNAL(triggered(QAction *)), SLOT(menuTriggered(QAction *)));
@@ -190,7 +197,7 @@ void ChatView::loadFinished()
 
 void ChatView::menuTriggered(QAction *action)
 {
-  if (action == m_clear) {
+  if (action == m_clear || action == m_reload) {
     clearPage();
   }
   else if (action == m_seconds) {
@@ -293,9 +300,10 @@ QVariantMap ChatView::addHint(const Message &message)
 
 void ChatView::clearPage()
 {
-  m_loaded = false;
-  page()->triggerAction(QWebPage::Reload);
+//  m_loaded = false;
+//  page()->triggerAction(QWebPage::Reload);
   m_messages.clear();
+  emit reload();
   emit reloaded();
 }
 
@@ -309,6 +317,7 @@ void ChatView::createActions()
   m_copyLink->setIcon(SCHAT_ICON(EditCopy));
 
   m_clear = new QAction(SCHAT_ICON(EditClear), tr("Clear"), this);
+  m_reload = new QAction(SCHAT_ICON(Reload), tr("Reload"), this);
 
   m_selectAll = pageAction(QWebPage::SelectAll);
   m_selectAll->setIcon(SCHAT_ICON(EditSelectAll));
@@ -326,5 +335,6 @@ void ChatView::retranslateUi()
   m_copy->setText(tr("Copy"));
   m_copyLink->setText(tr("Copy Link"));
   m_clear->setText(tr("Clear"));
+  m_reload->setText(tr("Reload"));
   m_selectAll->setText(tr("Select All"));
 }
