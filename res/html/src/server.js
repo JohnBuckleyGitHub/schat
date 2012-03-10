@@ -123,7 +123,5 @@ var Hosts = {
 };
 
 
-$(document).ready(function() {
-  SimpleChat.retranslated.connect(Hosts, Hosts.retranslate);
-  ChatView.feed.connect(Hosts, Hosts.feed);
-});
+SimpleChat.retranslated.connect(Hosts.retranslate);
+ChatView.feed.connect(Hosts.feed);

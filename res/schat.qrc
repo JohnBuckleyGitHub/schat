@@ -40,6 +40,7 @@
   <file alias="images/plug-disconnect.png">images/fugue/plug-disconnect.png</file>
   <file alias="images/profile.png">images/led-icons/vcard.png</file>
   <file alias="images/quit.png">images/crystal/exit.png</file>
+  <file alias="images/reload.png">images/fugue/arrow-circle-315.png</file>
   <file alias="images/remove.png">images/diagona/101.png</file>
   <file alias="images/secure.png">images/fugue/lock.png</file>
   <file alias="images/send.png">images/oxygen/go-jump-locationbar.png</file>

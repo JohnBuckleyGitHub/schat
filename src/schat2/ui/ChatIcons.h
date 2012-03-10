@@ -77,7 +77,8 @@ public:
     SignUp             = 0x5355, ///< "SU"
     Password           = 0x5073, ///< "Ps"
     Locale             = 0x4C6F, ///< "Lo"
-    Computer           = 0x4370  ///< "Cp"
+    Computer           = 0x4370, ///< "Cp"
+    Reload             = 0x526C  ///< "Rl"
   };
 
   /// Опции получения иконки канала.

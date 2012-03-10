@@ -47,6 +47,7 @@ public:
 signals:
   void feed(const QVariantMap &data);
   void reloaded();
+  void reload();
 
 protected:
   void changeEvent(QEvent *event);
@@ -72,6 +73,7 @@ private:
   QAction *m_clear;                    ///< Очистить.
   QAction *m_copy;                     ///< Копировать.
   QAction *m_copyLink;                 ///< Копировать ссылку.
+  QAction *m_reload;                   ///< Обновить.
   QAction *m_seconds;                  ///< Секунды.
   QAction *m_selectAll;                ///< Выделить всё.
   QAction *m_service;                  ///< Сервисные сообщения.

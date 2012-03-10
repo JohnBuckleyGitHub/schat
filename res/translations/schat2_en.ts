@@ -105,38 +105,44 @@
 <context>
     <name>ChatView</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="142"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="143"/>
         <source>Display</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="308"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="325"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="319"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="337"/>
         <source>Clear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="313"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="320"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="338"/>
+        <source>Reload</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="325"/>
         <source>Seconds</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="316"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="328"/>
         <source>Service messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="323"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="335"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="324"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="336"/>
         <source>Copy Link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="326"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="339"/>
         <source>Select All</source>
         <translation type="unfinished"></translation>
     </message>
@@ -549,7 +555,7 @@
 <context>
     <name>ServerTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="122"/>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="134"/>
         <source>Network</source>
         <translation type="unfinished"></translation>
     </message>
@@ -828,42 +834,42 @@
 <context>
     <name>WebBridge</name>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="143"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="163"/>
         <source>My Computers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="144"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="164"/>
         <source>These are the computers currently linked to your account.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="145"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="165"/>
         <source>Computer name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="146"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="166"/>
         <source>Last Activity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="147"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="167"/>
         <source>Actions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="148"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="168"/>
         <source>Unlink</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="149"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="169"/>
         <source>&lt;b&gt;Version:&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="150"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="170"/>
         <source>&lt;b&gt;Last IP Address:&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
