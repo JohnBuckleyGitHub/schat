@@ -16,24 +16,12 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-Pages.onInfo = function()
-{
-  $("#info-content > h1").html(Messages.nameTemplate(JSON.parse(SimpleChat.channel(Settings.id))));
-  $("#main-spinner").css("display", "inline-block");
-
-  Hosts.read(SimpleChat.feed("hosts", false));
-};
-
-
 // Объект связанный с обработкой таблицы компьютеров.
 var Hosts = {
   // Обработка получения тела фида hosts.
   body: function(json)
   {
     Hosts.read(json);
-    $("#main-spinner").hide();
-
-    SimpleChat.request("query", "hosts", {"action":"activity"});
   },
 
 
@@ -102,11 +90,26 @@ var Hosts = {
   },
 
 
+  reload: function()
+  {
+    if (Pages.current != 1)
+      return;
+
+    $("#info-content > h1").html(Messages.nameTemplate(JSON.parse(SimpleChat.channel(Settings.id))));
+    $("#main-spinner").css("display", "inline-block");
+
+    Hosts.read(SimpleChat.feed("hosts", false));
+    SimpleChat.request("query", "hosts", {"action":"activity"});
+  },
+
+
   reply: function(json)
   {
     for (var key in json) if (json.hasOwnProperty(key) && key.length == 34) {
       Hosts.readActivity(key, json[key]);
     }
+
+    $("#main-spinner").hide();
   },
 
 
@@ -122,6 +125,8 @@ var Hosts = {
   }
 };
 
+Pages.onInfo.push(Hosts.reload);
 
 SimpleChat.retranslated.connect(Hosts.retranslate);
 ChatView.feed.connect(Hosts.feed);
+ChatView.reload.connect(Hosts.reload);
