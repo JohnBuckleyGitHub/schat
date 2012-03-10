@@ -45,17 +45,8 @@ var Utils = {
 
 var Pages = {
   current: 0,
-
-  onInfo: function()
-  {
-    $("#info-content > h1").html(Messages.nameTemplate(JSON.parse(SimpleChat.channel(Settings.id))));
-  },
-
-
-  onMessages: function()
-  {
-  },
-
+  onInfo: [],
+  onMessages: [],
 
   // Преобразование кода операционной системы в строку.
   os: function(code)
@@ -86,15 +77,26 @@ var Pages = {
       $("#messages").addClass("active");
       $("#info").removeClass("active");
       alignChat();
-      Pages.onMessages();
+
+      for (var i = 0; i < Pages.onMessages.length; i++) {
+        Pages.onMessages[i]();
+      }
     }
     else if (page == 1) {
       $("#messages").removeClass("active");
       $("#info").addClass("active");
-      Pages.onInfo();
+
+      for (i = 0; i < Pages.onInfo.length; i++) {
+        Pages.onInfo[i]();
+      }
     }
   }
 };
+
+
+Pages.onInfo.push(function() {
+  $("#info-content > h1").html(Messages.nameTemplate(JSON.parse(SimpleChat.channel(Settings.id))));
+});
 
 
 // Объект сообщений.
