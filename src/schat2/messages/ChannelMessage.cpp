@@ -28,7 +28,7 @@ ChannelMessage::ChannelMessage(MessagePacket packet)
   , m_packet(packet)
 {
   m_data[LS("Type")]      = LS("channel");
-  m_data[LS("Id")]        = SimpleID::encode(packet->id());
+  m_data[LS("Id")]        = QString(SimpleID::encode(packet->id()));
   m_data[LS("Command")]   = packet->command();
   m_data[LS("Text")]      = TokenFilter::filter(LS("channel"), packet->text());
   m_data[LS("Direction")] = m_packet->sender() == ChatClient::id() ? LS("outgoing") : LS("incoming");
