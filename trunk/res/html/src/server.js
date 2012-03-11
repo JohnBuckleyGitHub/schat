@@ -50,7 +50,7 @@ var Hosts = {
     var id = "#" + key;
     if (!$(id).length) {
       var out = '<tr class="host-row" id="' + key + '"><td class="os-cell"><i class="icon-status-offline host-status"></i><i class="icon-os"></i></td><td class="host-name"></td>' +
-        '<td><i class="icon-info tooltip"></i> <span class="last-activity"></span></td><td><a class="btn btn-small" data-tr="unlink">Unlink</a></td></tr>';
+        '<td><i class="icon-info tooltip"></i> <span class="last-activity"></span></td><td><a class="btn btn-small btn-unlink" data-tr="unlink">Unlink</a></td></tr>';
       $("#account-table > tbody").append(out);
     }
     else
@@ -60,6 +60,11 @@ var Hosts = {
     $(id + " .icon-os").attr("class", "icon-os os-" + Pages.os(json.os));
     $(id + " .icon-info").attr("title", Utils.table({'version': json.version, 'last_ip': json.host}));
     $(id + " .host-status").attr("class", (json.online === true ? "icon-status" : "icon-status-offline") + " host-status");
+
+    var unlink = $(id + " .btn-unlink");
+    unlink.attr("data-id", key);
+    unlink.off("click");
+    unlink.on("click", Hosts.unlink);
   },
 
 
@@ -97,6 +102,7 @@ var Hosts = {
 
     $("#info-content > h1").html(Messages.nameTemplate(JSON.parse(SimpleChat.channel(Settings.id))));
     $("#main-spinner").css("display", "inline-block");
+    Utils.TR("my_computers");
 
     Hosts.read(SimpleChat.feed("hosts", false));
     SimpleChat.request("query", "hosts", {"action":"activity"});
@@ -122,6 +128,21 @@ var Hosts = {
     Utils.TR("last_activity");
     Utils.TR("actions");
     Utils.TR("unlink");
+  },
+
+
+  unlink: function()
+  {
+    var query = {
+      "action":"unlink"
+    };
+
+    query.id = $(this).attr("data-id");
+
+//    alert(JSON.stringify(query));
+
+    SimpleChat.request("query", "hosts", query);
+    return false;
   }
 };
 
