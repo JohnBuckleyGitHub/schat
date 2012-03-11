@@ -38,7 +38,7 @@ public:
   ~ChatView();
 
   inline const QByteArray& id() const { return m_id; }
-  void add(const Message &message);
+  void add(const Message &msg);
   void copy();
   void evaluateJavaScript(const QString &func, const QVariant &param);
   void evaluateJavaScript(const QString &js);
@@ -46,8 +46,9 @@ public:
 
 signals:
   void feed(const QVariantMap &data);
-  void reloaded();
+  void message(const QVariantMap &body, const QVariantMap &hint);
   void reload();
+  void reloaded();
 
 protected:
   void changeEvent(QEvent *event);

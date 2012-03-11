@@ -50,7 +50,7 @@ var Hosts = {
     var id = "#" + key;
     if (!$(id).length) {
       var out = '<tr class="host-row" id="' + key + '"><td class="os-cell"><i class="icon-status-offline host-status"></i><i class="icon-os"></i></td><td class="host-name"></td>' +
-        '<td><i class="icon-info tooltip"></i> <span class="last-activity"></span></td><td><a class="btn btn-small btn-unlink" data-tr="unlink">Unlink</a></td></tr>';
+        '<td><i class="icon-info tooltip"></i> <span class="last-activity"></span></td><td><a onclick="" class="btn btn-small btn-unlink" data-tr="unlink">Unlink</a></td></tr>';
       $("#account-table > tbody").append(out);
     }
     else

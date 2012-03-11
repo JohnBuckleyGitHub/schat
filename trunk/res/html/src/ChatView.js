@@ -150,14 +150,13 @@ var Messages = {
 
 
   // Добавление сообщения.
-  addMessage: function(data, hint)
+  addMessage: function(json, hint)
   {
-    var json = JSON.parse(data);
     var func = json.Func;
     if (func == undefined)
       return;
 
-    Messages[func](json, JSON.parse(hint));
+    Messages[func](json, hint);
   },
 
 
@@ -346,7 +345,7 @@ $(document).ready(function() {
 
 
 ChatView.reload.connect(Messages.reload);
-
+ChatView.message.connect(Messages.addMessage);
 
 function loadJS(filename)
 {

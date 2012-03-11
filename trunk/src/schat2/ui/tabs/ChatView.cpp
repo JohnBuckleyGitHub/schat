@@ -71,12 +71,12 @@ ChatView::~ChatView()
 }
 
 
-void ChatView::add(const Message &message)
+void ChatView::add(const Message &msg)
 {
-  if (!message.isValid())
+  if (!msg.isValid())
     return;
 
-  evaluateJavaScript(LS("Messages.addMessage(") + JSON::quote(message.json()) + LS(", ") + JSON::quote(JSON::generate(addHint(message))) + LS(");"));
+  emit message(msg.data(), addHint(msg));
 }
 
 
@@ -292,7 +292,7 @@ QVariantMap ChatView::addHint(const Message &message)
     return out;
 
   out[LS("Hint")] = LS("before");
-  out["Id"] = m_messages.value(dates.at(index + 1));
+  out["Id"] = QString(m_messages.value(dates.at(index + 1)));
 
   return out;
 }
