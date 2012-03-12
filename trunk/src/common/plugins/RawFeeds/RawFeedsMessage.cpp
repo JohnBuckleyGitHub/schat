@@ -30,8 +30,8 @@ RawFeedsMessage::RawFeedsMessage(const FeedNotice &packet)
   m_tab = packet.sender();
 
   m_data[LS("Type")]    = LS("raw-feeds");
-  m_data[LS("Id")]      = SimpleID::encode(ChatCore::randomId());
-  m_data[LS("Text")]    = packet.raw();
+  m_data[LS("Id")]      = QString(SimpleID::encode(ChatCore::randomId()));
+  m_data[LS("Text")]    = QString(packet.raw());
   m_data[LS("Command")] = packet.command();
   m_data[LS("Date")]    = ChatClient::date();
   m_data[LS("Func")]    = LS("addRawFeedsMessage");
@@ -50,8 +50,8 @@ RawFeedsMessage::RawFeedsMessage(const QByteArray &tab, const QString &command, 
   m_tab = tab;
 
   m_data[LS("Type")]    = LS("raw-feeds");
-  m_data[LS("Id")]      = SimpleID::encode(ChatCore::randomId());
-  m_data[LS("Text")]    = JSON::generate(data);
+  m_data[LS("Id")]      = QString(SimpleID::encode(ChatCore::randomId()));
+  m_data[LS("Text")]    = QString(JSON::generate(data));
   m_data[LS("Command")] = command;
   m_data[LS("Date")]    = ChatClient::date();
   m_data[LS("Func")]    = LS("addRawFeedsMessage");

@@ -34,7 +34,6 @@ public:
   inline const QVariantMap& data() const { return m_data; };
   inline QVariantMap& data()             { return m_data; };
   inline virtual bool isValid() const    { return true; }
-  QString json() const;
 
 protected:
   void author(const QByteArray &id);
