@@ -16,7 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-Messages.addRawFeedsMessage = function(json, hint)
+Messages.addRawFeedsMessage = function(json)
 {
   var html = '<div class="container ' + json.Type + '-type" id="' + json.Id + '">';
   html += '<div class="blocks ';
