@@ -30,16 +30,6 @@ Message::Message()
 }
 
 
-QString Message::json() const
-{
-  QString json = JSON::generate(m_data);
-
-  json.remove(LC('\n'));
-  json.remove(LC('\r'));
-  return json;
-}
-
-
 void Message::author(const QByteArray &id)
 {
   QVariantMap data = WebBridge::channel(id);
