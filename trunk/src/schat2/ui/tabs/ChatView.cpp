@@ -76,7 +76,15 @@ void ChatView::add(const Message &msg)
   if (!msg.isValid())
     return;
 
-  emit message(msg.data(), addHint(msg));
+  QVariantMap data = msg.data();
+  data[LS("Hint")] = addHint(msg);
+
+  if (!m_loaded) {
+    m_pending.enqueue(data);
+    return;
+  }
+
+  emit message(data);
 }
 
 
@@ -190,6 +198,9 @@ void ChatView::loadFinished()
 
   while (!m_pendingJs.isEmpty())
     page()->mainFrame()->evaluateJavaScript(m_pendingJs.dequeue());
+
+  while (!m_pending.isEmpty())
+    emit message(m_pending.dequeue());
 
   ChatViewHooks::loadFinished(this);
 }

@@ -46,7 +46,7 @@ public:
 
 signals:
   void feed(const QVariantMap &data);
-  void message(const QVariantMap &body, const QVariantMap &hint);
+  void message(const QVariantMap &data);
   void reload();
   void reloaded();
 
@@ -81,6 +81,7 @@ private:
   QByteArray m_id;                     ///< Идентификатор.
   QMap<qint64, QByteArray> m_messages; ///< Сортированные по времени сообщения.
   QQueue<QString> m_pendingJs;         ///< Очередь сообщений ожидающих загрузки документа.
+  QQueue<QVariantMap> m_pending;       ///< Очередь сообщений ожидающих загрузки документа.
 };
 
 #endif /* CHATVIEW_H_ */

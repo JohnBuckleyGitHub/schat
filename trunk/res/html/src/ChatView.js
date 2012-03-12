@@ -102,7 +102,7 @@ Pages.onInfo.push(function() {
 // Объект сообщений.
 var Messages = {
   // Добавление сообщения пользователя.
-  addChannelMessage: function(json, hint)
+  addChannelMessage: function(json)
   {
     if ($("#" + json.Id).length) {
       Messages.updateChannelMessage(json);
@@ -128,7 +128,7 @@ var Messages = {
     html += '</div>';
     html += '</div>';
 
-    Messages.addHintedRawMessage(html, hint);
+    Messages.addHintedRawMessage(html, json.Hint);
   },
 
 
@@ -150,13 +150,13 @@ var Messages = {
 
 
   // Добавление сообщения.
-  addMessage: function(json, hint)
+  addMessage: function(json)
   {
     var func = json.Func;
     if (func == undefined)
       return;
 
-    Messages[func](json, hint);
+    Messages[func](json);
   },
 
 
@@ -169,7 +169,7 @@ var Messages = {
 
 
   // Добавление сервисного сообщения.
-  addServiceMessage: function(json, hint)
+  addServiceMessage: function(json)
   {
     var html = '<div class="container ' + json.Type + '-type" id="' + json.Id + '">';
     html += '<div class="blocks ';
