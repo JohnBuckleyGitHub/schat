@@ -156,7 +156,10 @@ var Messages = {
     if (func == undefined)
       return;
 
-    Messages[func](json);
+    try {
+      Messages[func](json);
+    }
+    catch (e) {}
   },
 
 
