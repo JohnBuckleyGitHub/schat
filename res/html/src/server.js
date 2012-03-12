@@ -40,7 +40,10 @@ var Hosts = {
     if (json.name !== "hosts")
       return;
 
-    Hosts[json.type](json.data);
+    try {
+      Hosts[json.type](json.data);
+    }
+    catch (e) {}
   },
 
 
