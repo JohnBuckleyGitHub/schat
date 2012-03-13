@@ -56,7 +56,6 @@ AuthResult CookieAuth::auth(const AuthRequest &data, ChatChannel channel)
     return result;
 
   update(channel.data(), data);
-
   if (!channel->isValid())
     return AuthResult(Notice::BadRequest, data.id);
 

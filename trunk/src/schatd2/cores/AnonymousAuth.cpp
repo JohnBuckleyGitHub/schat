@@ -47,10 +47,12 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
   if (!channel) {
     channel = ChatChannel(new ServerChannel(id, data.nick));
     created = true;
+
+    channel->setName(data.nick);
+    channel->gender().setRaw(data.gender);
   }
 
   update(channel.data(), data);
-
   if (!channel->isValid())
     return AuthResult(Notice::BadRequest, data.id);
 
@@ -97,8 +99,8 @@ AuthResult AnonymousAuth::isCollision(const QByteArray &id, const QString &name,
 
 void AnonymousAuth::update(ServerChannel *channel, const AuthRequest &data)
 {
-  channel->setName(data.nick);
-  channel->gender().setRaw(data.gender);
-  channel->status().set(data.status);
+  if (channel->status().value() == Status::Offline)
+    channel->status().set(data.status);
+
   channel->hosts().add(data.uniqueId);
 }
