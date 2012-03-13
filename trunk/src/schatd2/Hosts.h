@@ -34,16 +34,21 @@ class SCHAT_EXPORT Hosts
 {
 public:
   Hosts();
-  FeedPtr feed();
   inline QByteArray currentId() const            { return m_sockets.publicId(); }
   inline QList<quint64> sockets() const          { return m_sockets.socketsList(); }
-  inline void add(const QByteArray &uniqueId)    { m_sockets.add(uniqueId); }
+  inline void add(const QByteArray &uniqueId)    { m_sockets.add(toPublicId(uniqueId)); }
   inline void setChannel(ServerChannel *channel) { m_channel = channel; }
-  QByteArray id(const QByteArray &uniqueId) const;
-  QVariantMap data(const QByteArray &uniqueId = QByteArray());
+
+  FeedPtr feed() const;
+  QByteArray id(const QByteArray &publicId) const;
+  QList<quint64> sockets(const QByteArray &publicId) const;
+  QVariantMap data(const QByteArray &publicId = QByteArray()) const;
+
   void add(const AuthRequest &data, const QString &host);
   void remove(quint64 socket);
-  void setData(const QVariantMap &data, const QByteArray &uniqueId = QByteArray(), bool save = true);
+  void setData(const QVariantMap &data, const QByteArray &publicId = QByteArray(), bool save = true);
+
+  static QByteArray toPublicId(const QByteArray &uniqueId);
 
 private:
   class Sockets
@@ -55,7 +60,8 @@ private:
     inline QList<quint64> socketsList() const                   { return m_sockets.keys(); }
     int count(quint64 socket = 0);
     QByteArray publicId(quint64 socket = 0) const;
-    void add(const QByteArray &uniqueId);
+
+    void add(const QByteArray &publicId);
     void remove(quint64 socket);
 
   private:

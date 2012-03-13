@@ -39,7 +39,7 @@ Hosts::Hosts()
  *
  * Если фид не существует, то он будет создан, при создании будет задана маска прав доступа 0400.
  */
-FeedPtr Hosts::feed()
+FeedPtr Hosts::feed() const
 {
   FeedPtr feed = m_channel->feed(LS("hosts"), false);
   if (feed)
@@ -56,26 +56,35 @@ FeedPtr Hosts::feed()
 }
 
 
-QByteArray Hosts::id(const QByteArray &uniqueId) const
+QByteArray Hosts::id(const QByteArray &publicId) const
 {
-  if (uniqueId.isEmpty())
-    return currentId();
+  if (SimpleID::typeOf(publicId) != SimpleID::MessageId)
+    return m_sockets.publicId();
 
-  return uniqueId;
+  return publicId;
+}
+
+
+QList<quint64> Hosts::sockets(const QByteArray &publicId) const
+{
+  if (SimpleID::typeOf(publicId) == SimpleID::MessageId)
+    return m_sockets.ids().value(publicId);
+
+  return QList<quint64>();
 }
 
 
 /*!
  * Получение JSON данных хоста.
  *
- * \param uniqueId Публичный идентификатор хоста, если не задан будет использоваться текущий идентификатор.
+ * \param publicId Публичный идентификатор хоста, если не задан будет использоваться текущий идентификатор.
  *
  * \sa setData().
  * \sa currentId().
  */
-QVariantMap Hosts::data(const QByteArray &uniqueId)
+QVariantMap Hosts::data(const QByteArray &publicId) const
 {
-  return feed()->data().value(SimpleID::encode(id(uniqueId))).toMap();
+  return feed()->data().value(SimpleID::encode(id(publicId))).toMap();
 }
 
 
@@ -122,16 +131,28 @@ void Hosts::remove(quint64 socket)
  * Установка JSON данных хоста.
  *
  * \param data     Новые данные.
- * \param uniqueId Публичный идентификатор хоста, если не задан будет использоваться текущий идентификатор.
+ * \param publicId Публичный идентификатор хоста, если не задан будет использоваться текущий идентификатор.
  * \param save     \b true если надо сохранить тело фида.
  */
-void Hosts::setData(const QVariantMap &data, const QByteArray &uniqueId, bool save)
+void Hosts::setData(const QVariantMap &data, const QByteArray &publicId, bool save)
 {
   FeedPtr feed = this->feed();
-  feed->data()[SimpleID::encode(id(uniqueId))] = data;
+  feed->data()[SimpleID::encode(id(publicId))] = data;
 
   if (save)
     FeedStorage::save(feed);
+}
+
+
+/*!
+ * Получение публичного идентификатора хоста на основе приватного идентификатора сервера
+ * и уникального идентификатора пользователя.
+ *
+ * \param uniqueId Уникальный идентификатор пользователя.
+ */
+QByteArray Hosts::toPublicId(const QByteArray &uniqueId)
+{
+  return SimpleID::make(Storage::privateId() + uniqueId, SimpleID::MessageId);
 }
 
 
@@ -147,6 +168,9 @@ int Hosts::Sockets::count(quint64 socket)
 }
 
 
+/*!
+ * Возвращает публичный идентификатора хоста по номеру сокета.
+ */
 QByteArray Hosts::Sockets::publicId(quint64 socket) const
 {
   if (socket == 0)
@@ -155,22 +179,25 @@ QByteArray Hosts::Sockets::publicId(quint64 socket) const
   if (!m_sockets.contains(socket))
     return QByteArray();
 
-  return SimpleID::make(Storage::privateId() + m_sockets.value(socket), SimpleID::MessageId);
+  return m_sockets.value(socket);
 }
 
 
 /*!
  * Добавление сокета.
  *
- * \param uniqueId Уникальный идентификатор клиента.
+ * \param publicId Публичный идентификатор хоста.
  */
-void Hosts::Sockets::add(const QByteArray &uniqueId)
+void Hosts::Sockets::add(const QByteArray &publicId)
 {
-  m_sockets.insert(Core::socket(), uniqueId);
-  m_ids[uniqueId].append(Core::socket());
+  m_sockets.insert(Core::socket(), publicId);
+  m_ids[publicId].append(Core::socket());
 }
 
 
+/*!
+ * Удаление сокета.
+ */
 void Hosts::Sockets::remove(quint64 socket)
 {
   if (!m_sockets.contains(socket))
