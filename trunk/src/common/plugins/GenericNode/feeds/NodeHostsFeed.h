@@ -34,6 +34,8 @@ public:
 private:
   FeedQueryReply activity(Channel *channel);
   FeedQueryReply unlink(const QVariantMap &json, Channel *channel);
+
+  void kick(const QByteArray &id, const QVariantMap &data);
 };
 
 #endif /* NODEHOSTSFEED_H_ */
