@@ -88,6 +88,11 @@ var Hosts = {
     $(".host-row:hidden").remove();
     $(".tooltip").easyTooltip();
 
+    if (!Hosts.progress) {
+      Hosts.progress = true;
+      SimpleChat.request("query", "hosts", {"action":"activity"});
+    }
+
     Hosts.retranslate();
   },
 
@@ -108,12 +113,15 @@ var Hosts = {
     Utils.TR("my_computers");
 
     Hosts.read(SimpleChat.feed("hosts", false));
-    SimpleChat.request("query", "hosts", {"action":"activity"});
   },
 
 
   reply: function(json)
   {
+    if (json.action !== "activity")
+      return;
+
+    Hosts.progress = false;
     for (var key in json) if (json.hasOwnProperty(key) && key.length == 34) {
       Hosts.readActivity(key, json[key]);
     }
@@ -136,17 +144,15 @@ var Hosts = {
 
   unlink: function()
   {
-    var query = {
-      "action":"unlink"
-    };
-
+    var query = {};
+    query.action = "unlink";
     query.id = $(this).attr("data-id");
-
-//    alert(JSON.stringify(query));
 
     SimpleChat.request("query", "hosts", query);
     return false;
-  }
+  },
+
+  progress: false
 };
 
 Pages.onInfo.push(Hosts.reload);
