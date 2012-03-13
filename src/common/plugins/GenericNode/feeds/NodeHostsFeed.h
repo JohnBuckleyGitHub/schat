@@ -33,6 +33,7 @@ public:
 
 private:
   FeedQueryReply activity(Channel *channel);
+  FeedQueryReply unlink(const QVariantMap &json, Channel *channel);
 };
 
 #endif /* NODEHOSTSFEED_H_ */
