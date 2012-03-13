@@ -108,31 +108,6 @@ int Storage::start()
 }
 
 
-/*!
- * Создание идентификатора пользователя.
- */
-QByteArray Storage::makeUserId(int type, const QByteArray &userId) const
-{
-  QByteArray prefix;
-  if (type == AuthRequest::Anonymous || type == AuthRequest::Cookie || type == AuthRequest::Password)
-    prefix = "anonymous:";
-  else if (type == AuthRequest::SlaveNode)
-    prefix = "slave:";
-
-  return SimpleID::make(prefix + m_privateId + userId, SimpleID::UserId);
-}
-
-
-/*!
- * Генерирование новой Cookie.
- */
-QByteArray Storage::cookie() const
-{
-  return SimpleID::randomId(SimpleID::CookieId, m_privateId);
-}
-
-
-
 void Storage::setDefaultSslConf()
 {
 # if !defined(SCHAT_NO_SSL)

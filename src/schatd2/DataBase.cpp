@@ -24,6 +24,7 @@
 #include <QStringList>
 #include <QVariant>
 
+#include "Ch.h"
 #include "DataBase.h"
 #include "DateTime.h"
 #include "feeds/FeedStorage.h"
@@ -426,7 +427,7 @@ qint64 DataBase::add(Account *account)
     return -1;
 
   if (account->cookie().isEmpty())
-    account->setCookie(Storage::i()->cookie());
+    account->setCookie(Ch::cookie());
 
   QSqlQuery query;
   query.prepare("INSERT INTO accounts (channel, date, cookie, name, password, groups) "

@@ -33,14 +33,9 @@ AnonymousAuth::AnonymousAuth(Core *core)
 }
 
 
-/*!
- * \todo Реализовать поддержку различных агентов и адреса пользователя для различных подключений одного из них.
- *
- * \sa StorageHooks::createdNewUserChannel().
- */
 AuthResult AnonymousAuth::auth(const AuthRequest &data)
 {
-  QByteArray id = Storage::i()->makeUserId(data.authType, data.uniqueId);
+  QByteArray id = Ch::userId(data.uniqueId);
 
   AuthResult result = isCollision(id, data.nick, data.id);
   if (result.action == AuthResult::Reject)
@@ -59,7 +54,7 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
   if (!channel->isValid())
     return AuthResult(Notice::BadRequest, data.id);
 
-  m_core->add(channel, data.authType, data.id);
+  Core::add(channel);
   Ch::newUserChannel(channel, data, m_core->packetsEvent()->address.toString(), created);
 
   SCHAT_LOG_DEBUG(<< "ANONYMOUS AUTH" << (channel->name() + "@" + m_core->packetsEvent()->address.toString() + "/" + SimpleID::encode(channel->id())) << data.userAgent << data.host);
@@ -100,9 +95,6 @@ AuthResult AnonymousAuth::isCollision(const QByteArray &id, const QString &name,
 }
 
 
-/*!
- * \todo Добавить обновление информации об адресе и клиенте пользователя.
- */
 void AnonymousAuth::update(ServerChannel *channel, const AuthRequest &data)
 {
   channel->setName(data.nick);

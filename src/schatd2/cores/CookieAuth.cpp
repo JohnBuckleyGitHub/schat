@@ -60,7 +60,7 @@ AuthResult CookieAuth::auth(const AuthRequest &data, ChatChannel channel)
   if (!channel->isValid())
     return AuthResult(Notice::BadRequest, data.id);
 
-  m_core->add(channel, data.authType, data.id);
+  Core::add(channel);
   Ch::newUserChannel(channel, data, m_core->packetsEvent()->address.toString());
 
   SCHAT_LOG_DEBUG(<< "COOKIE AUTH" << (channel->name() + "@" + m_core->packetsEvent()->address.toString() + "/" + SimpleID::encode(channel->id())) << data.userAgent << data.host);
