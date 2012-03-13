@@ -130,11 +130,29 @@ ChatChannel Ch::server()
 
 
 /*!
+ * Генерирование новой Cookie.
+ */
+QByteArray Ch::cookie()
+{
+  return SimpleID::randomId(SimpleID::CookieId, Storage::privateId());
+}
+
+
+/*!
  * Создание идентификатора канала.
  */
 QByteArray Ch::makeId(const QByteArray &normalized)
 {
   return SimpleID::make("channel:" + Storage::privateId() + normalized, SimpleID::ChannelId);
+}
+
+
+/*!
+ * Создание идентификатора пользователя.
+ */
+QByteArray Ch::userId(const QByteArray &uniqueId)
+{
+  return SimpleID::make("anonymous:" + Storage::privateId() + uniqueId, SimpleID::UserId);
 }
 
 

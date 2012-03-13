@@ -47,10 +47,6 @@ public:
   int load();
   int start();
 
-  // user management.
-  QByteArray makeUserId(int type, const QByteArray &userId) const;
-  QByteArray cookie() const;
-
 private:
   void setDefaultSslConf();
   void setMaxOpenFiles(int max);

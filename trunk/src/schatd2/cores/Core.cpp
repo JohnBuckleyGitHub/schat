@@ -170,11 +170,8 @@ bool Core::send(Packet packet)
 }
 
 
-bool Core::add(ChatChannel channel, int authType, const QByteArray &authId)
+bool Core::add(ChatChannel channel)
 {
-  Q_UNUSED(authType);
-  Q_UNUSED(authId)
-
   if (Ch::add(channel)) {
     NodeNoticeReader::add(channel);
     return true;

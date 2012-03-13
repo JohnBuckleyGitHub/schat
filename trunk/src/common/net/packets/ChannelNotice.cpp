@@ -63,7 +63,6 @@ void ChannelNotice::write(PacketWriter *writer) const
  *
  * \param channel Канал.
  * \param user    Получатель.
- * \param stream  Поток записи пакета.
  * \param command Команда.
  */
 ChannelPacket ChannelNotice::channel(ClientChannel channel, ClientChannel user, const QString &command)
@@ -87,7 +86,6 @@ ChannelPacket ChannelNotice::channel(ClientChannel channel, ClientChannel user, 
  *
  * \param channel Канал.
  * \param dest    Идентификатор получателя.
- * \param stream  Поток записи пакета.
  * \param command Команда.
  */
 ChannelPacket ChannelNotice::channel(ClientChannel channel, const QByteArray &dest, const QString &command)
@@ -122,7 +120,6 @@ ChannelPacket ChannelNotice::info(ClientChannel channel)
  *
  * \param user     Идентификатор пользователя отправителя.
  * \param channels Список идентификаторов каналов, о которых необходима информация.
- * \param stream   Поток записи пакета.
  */
 ChannelPacket ChannelNotice::info(const QByteArray &user, const QList<QByteArray> &channels)
 {

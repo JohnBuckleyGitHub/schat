@@ -44,7 +44,9 @@ public:
   static ChatChannel channel(const QByteArray &id, int type = SimpleID::ChannelId, bool db = true);
   static ChatChannel channel(const QString &name, ChatChannel user = ChatChannel());
   static ChatChannel server();
+  static QByteArray cookie();
   static QByteArray makeId(const QByteArray &normalized);
+  static QByteArray userId(const QByteArray &uniqueId);
 
 protected:
   /// Внутренний кэш хранилища.

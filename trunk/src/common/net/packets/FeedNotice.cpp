@@ -59,7 +59,6 @@ FeedPacket FeedNotice::feed(const FeedNotice &source, const QVariantMap &json)
  *
  * \param user    Идентификатор пользователя.
  * \param channel Идентификатор канала.
- * \param stream  Поток записи пакета.
  */
 FeedPacket FeedNotice::headers(const QByteArray &user, const QByteArray &channel)
 {
@@ -94,7 +93,6 @@ FeedPacket FeedNotice::reply(const FeedNotice &source, const QVariantMap &json)
  *
  * \param source  Исходный пакет, полученный от клиента.
  * \param status  Код ответа на запрос.
- * \param stream  Поток записи пакета.
  */
 FeedPacket FeedNotice::reply(const FeedNotice &source, int status)
 {
@@ -113,7 +111,6 @@ FeedPacket FeedNotice::reply(const FeedNotice &source, int status)
  * \param channel Идентификатор канала, к которому предназначен запрос.
  * \param command Команда.
  * \param name    Имя фида.
- * \param stream  Поток записи пакета.
  * \param json    JSON данные запроса.
  */
 FeedPacket FeedNotice::request(const QByteArray &user, const QByteArray &channel, const QString &command, const QString &name, const QVariantMap &json)
