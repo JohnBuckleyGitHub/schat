@@ -16,11 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "DateTime.h"
-#include "feeds/NodeHostsFeed.h"
-#include "net/packets/Notice.h"
-#include "sglobal.h"
+#include "Ch.h"
 #include "Channel.h"
+#include "cores/Core.h"
+#include "DateTime.h"
+#include "events.h"
+#include "feeds/NodeHostsFeed.h"
+#include "net/packets/ChannelNotice.h"
+#include "net/packets/Notice.h"
+#include "net/SimpleID.h"
+#include "ServerChannel.h"
+#include "sglobal.h"
 
 NodeHostsFeed::NodeHostsFeed(const QString &name, const QVariantMap &data)
   : Feed(name, data)
@@ -128,10 +134,30 @@ FeedQueryReply NodeHostsFeed::unlink(const QVariantMap &json, Channel *channel)
   if (!m_data.contains(id))
     return FeedQueryReply(Notice::NotFound);
 
+  QVariantMap data = m_data.value(id).toMap();
   m_data.remove(id);
+
+  kick(SimpleID::decode(id), data);
 
   FeedQueryReply reply = FeedQueryReply(Notice::OK);
   reply.json[LS("action")] = LS("unlink");
   reply.modified = true;
   return reply;
+}
+
+
+void NodeHostsFeed::kick(const QByteArray &id, const QVariantMap &data)
+{
+  if (data.value(LS("online")) == false)
+    return;
+
+  ChatChannel channel = Ch::channel(head().channel()->id());
+  if (!channel)
+    return;
+
+  QList<quint64> sockets = channel->hosts().sockets(id);
+  if (sockets.isEmpty())
+    return;
+
+  Core::i()->send(sockets, ChannelNotice::request(channel->id(), channel->id(), LS("quit"))->data(Core::stream()), NewPacketsEvent::KillSocketOption);
 }
