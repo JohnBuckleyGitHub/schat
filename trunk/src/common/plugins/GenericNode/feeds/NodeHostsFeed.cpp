@@ -60,6 +60,9 @@ Feed* NodeHostsFeed::load(const QString &name, const QVariantMap &data)
 }
 
 
+/*!
+ * Обработка запросов.
+ */
 FeedQueryReply NodeHostsFeed::query(const QVariantMap &json, Channel *channel)
 {
   QString action = json.value(LS("action")).toString();
@@ -71,11 +74,16 @@ FeedQueryReply NodeHostsFeed::query(const QVariantMap &json, Channel *channel)
 
   if (action == LS("activity"))
     return activity(channel);
+  else if (action == LS("unlink"))
+    return unlink(json, channel);
 
   return FeedQueryReply(Notice::ServiceUnavailable);
 }
 
 
+/*!
+ * Обработка запроса \b activity.
+ */
 FeedQueryReply NodeHostsFeed::activity(Channel *channel)
 {
   if (!channel || head().channel()->id() != channel->id())
@@ -101,5 +109,29 @@ FeedQueryReply NodeHostsFeed::activity(Channel *channel)
   }
 
   reply.json[LS("action")] = LS("activity");
+  return reply;
+}
+
+
+/*!
+ * Обработка запроса \b unlink.
+ */
+FeedQueryReply NodeHostsFeed::unlink(const QVariantMap &json, Channel *channel)
+{
+  if (!channel || head().channel()->id() != channel->id())
+    return FeedQueryReply(Notice::Forbidden);
+
+  QString id = json.value(LS("id")).toString();
+  if (id.size() != 34)
+    return FeedQueryReply(Notice::BadRequest);
+
+  if (!m_data.contains(id))
+    return FeedQueryReply(Notice::NotFound);
+
+  m_data.remove(id);
+
+  FeedQueryReply reply = FeedQueryReply(Notice::OK);
+  reply.json[LS("action")] = LS("unlink");
+  reply.modified = true;
   return reply;
 }
