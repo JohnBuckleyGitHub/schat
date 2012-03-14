@@ -117,9 +117,11 @@ void Hosts::remove(quint64 socket)
     QByteArray id = m_sockets.publicId(socket);
     if (!id.isEmpty()) {
       QVariantMap json = data(id);
-      json[LS("date")]   = DateTime::utc();
-      json[LS("online")] = false;
-      setData(json, id);
+      if (!json.isEmpty()) {
+        json[LS("date")]   = DateTime::utc();
+        json[LS("online")] = false;
+        setData(json, id);
+      }
     }
   }
 
