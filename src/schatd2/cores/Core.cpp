@@ -361,25 +361,6 @@ void Core::release(SocketReleaseEvent *event)
  */
 void Core::notice(quint16 type)
 {
-  if (type == Notice::GenericType) {
-    Notice notice(type, m_reader);
-    m_notice = &notice;
-
-
-    QString command = m_notice->command();
-    SCHAT_LOG_TRACE(<< "NOTICE PACKET" << command << notice.text() << notice.raw());
-
-
-//    else if (command == "leave")
-//      leave(m_storage->channel(m_reader->sender()), m_packetsEvent->socket());
-
-  }
-  else {
-    if (NodeNoticeReader::read(type, m_reader))
-      route();
-
-    return;
-  }
-
-  route();
+  if (NodeNoticeReader::read(type, m_reader))
+    route();
 }

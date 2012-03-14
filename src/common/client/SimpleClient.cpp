@@ -84,36 +84,7 @@ bool SimpleClientPrivate::notice()
 {
   Q_Q(SimpleClient);
   quint16 type = reader->get<quint16>();
-  m_notice = 0;
-
-  if (type == Notice::GenericType) {
-    Notice notice(type, reader);
-    if (!notice.isValid())
-      return false;
-
-    m_notice = &notice;
-    QString cmd = notice.command();
-
-//    if (cmd == "leave")
-//      removeUser(reader->sender());
-
-    emit(q->notice(notice));
-  }
-  else {
-    emit(q->notice(type));
-
-//    ChannelPacket notice(type, reader);
-//    if (!notice.isValid())
-//      return false;
-//
-//    m_notice = &notice;
-//    QString cmd = notice.command();
-
-//    if (cmd == "channel")
-//      channel();
-
-//    emit(q->notice(notice));
-  }
+  emit(q->notice(type));
 
   return true;
 }

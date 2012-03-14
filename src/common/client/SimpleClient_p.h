@@ -38,12 +38,11 @@ public:
   bool isFatalError(int status) const;
   bool notice();
 
-  AuthError m_authError;                     ///< Информация об ошибки подключения.
-  bool cookieAuth;                           ///< true если разрешена Сookie авторизация.
-  int authType;                              ///< Тип авторизации.
-  Notice *m_notice;                          ///< Текущий прочитанный объект Notice.
-  QByteArray password;                       ///< Пароль.
-  QString account;                           ///< Имя аккаунта пользователя.
+  AuthError m_authError; ///< Информация об ошибки подключения.
+  bool cookieAuth;       ///< true если разрешена Сookie авторизация.
+  int authType;          ///< Тип авторизации.
+  QByteArray password;   ///< Пароль.
+  QString account;       ///< Имя аккаунта пользователя.
 };
 
 #endif /* SIMPLECLIENT_P_H_ */
