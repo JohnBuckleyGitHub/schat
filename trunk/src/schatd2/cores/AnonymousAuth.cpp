@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Account.h"
 #include "Ch.h"
 #include "cores/AnonymousAuth.h"
 #include "cores/Core.h"
@@ -29,6 +30,7 @@ QHash<QByteArray, quint64> AnonymousAuth::m_collisions;
 
 AnonymousAuth::AnonymousAuth(Core *core)
   : NodeAuth(core)
+  , m_checked(false)
 {
 }
 
@@ -51,6 +53,8 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
     channel->setName(data.nick);
     channel->gender().setRaw(data.gender);
   }
+
+  qDebug() << "ANONYMOUS AUTH" << channel->account() << isPasswordRequired(channel.data(), data.uniqueId);
 
   update(channel.data(), data);
   if (!channel->isValid())
@@ -94,6 +98,34 @@ AuthResult AnonymousAuth::isCollision(const QByteArray &id, const QString &name,
 
   m_collisions.remove(id);
   return AuthResult();
+}
+
+
+/*!
+ * Проверка на необходимость принудительной авторизации по имени и паролю,
+ * в случае подключения зарегистрированного пользователя с нового компьютера.
+ *
+ * \param channel Указатель на канал пользователя.
+ * \param uniqueId Уникальный идентификатор пользователя.
+ *
+ * \param \b true если необходима проверка пароля.
+ */
+bool AnonymousAuth::isPasswordRequired(ServerChannel *channel, const QByteArray &uniqueId)
+{
+  if (m_checked)
+    return false;
+
+  if (!channel->account())
+    return false;
+
+  if (channel->account()->name().isEmpty())
+    return false;
+
+  FeedPtr feed = channel->hosts().feed();
+  if (feed->data().contains(SimpleID::encode(Hosts::toPublicId(uniqueId))))
+    return false;
+
+  return true;
 }
 
 
