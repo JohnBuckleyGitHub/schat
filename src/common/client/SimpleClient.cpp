@@ -57,8 +57,20 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
     return false;
   }
 
-  if (authType == AuthRequest::Password)
+  if (isFatalError(reply.status))
     setClientState(SimpleClient::ClientError);
+
+  return false;
+}
+
+
+bool SimpleClientPrivate::isFatalError(int status) const
+{
+  if (authType == AuthRequest::Password)
+    return true;
+
+  if (status == Notice::Unauthorized)
+    return true;
 
   return false;
 }

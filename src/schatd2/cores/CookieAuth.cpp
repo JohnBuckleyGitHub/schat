@@ -55,7 +55,9 @@ AuthResult CookieAuth::auth(const AuthRequest &data, ChatChannel channel)
   if (result.action == AuthResult::Reject)
     return result;
 
-  qDebug() << "COOKIE AUTH" << channel->account() << isPasswordRequired(channel.data(), data.uniqueId);
+  if (isPasswordRequired(channel.data(), data.uniqueId))
+    return AuthResult(Notice::Unauthorized, data.id);
+
   update(channel.data(), data);
   if (!channel->isValid())
     return AuthResult(Notice::BadRequest, data.id);

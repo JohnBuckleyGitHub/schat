@@ -54,7 +54,8 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
     channel->gender().setRaw(data.gender);
   }
 
-  qDebug() << "ANONYMOUS AUTH" << channel->account() << isPasswordRequired(channel.data(), data.uniqueId);
+  if (isPasswordRequired(channel.data(), data.uniqueId))
+    return AuthResult(Notice::Unauthorized, data.id);
 
   update(channel.data(), data);
   if (!channel->isValid())
