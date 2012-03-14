@@ -44,7 +44,7 @@ NodeNoticeReader::NodeNoticeReader(int type, Core *core)
 bool NodeNoticeReader::read(int type, PacketReader *reader)
 {
   if (!m_readers.contains(type))
-    return false;
+    return true;
 
   return m_readers.value(type)->read(reader);
 }
