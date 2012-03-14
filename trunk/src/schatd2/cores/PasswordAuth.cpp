@@ -53,6 +53,7 @@ AuthResult PasswordAuth::auth(const AuthRequest &data)
   if (!channel)
     return AuthResult(Notice::InternalError, data.id);
 
+  m_checked = true;
   return CookieAuth::auth(data, channel);
 }
 

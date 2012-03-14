@@ -49,13 +49,13 @@ AuthReply::AuthReply(PacketReader *reader)
   }
 
   if (fields & JSonField)
-    json = reader->json();
+    json = reader->json().toMap();
 }
 
 
 QByteArray AuthReply::data(QDataStream *stream) const
 {
-  if (!json.isNull())
+  if (!json.isEmpty())
     fields |= JSonField;
 
   PacketWriter writer(stream, Protocol::AuthReplyPacket, serverId, userId);

@@ -34,9 +34,8 @@ public:
   SimpleClientPrivate();
   virtual ~SimpleClientPrivate();
 
-  // Установка и завершение соединения.
   bool authReply(const AuthReply &reply);
-
+  bool isFatalError(int status) const;
   bool notice();
 
   AuthError m_authError;                     ///< Информация об ошибки подключения.

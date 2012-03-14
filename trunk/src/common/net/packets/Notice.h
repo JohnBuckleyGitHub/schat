@@ -35,7 +35,7 @@ class SCHAT_EXPORT Notice
 {
 public:
   enum Type {
-    GenericType = 103,  ///< 'g'
+    GenericType = 103,  ///< 'g' \deprecated Этот тип уведомлений устаревший.
     ChannelType = 99,   ///< 'c'
     MessageType = 109,  ///< 'm'
     FeedType    = 102   ///< 'f'

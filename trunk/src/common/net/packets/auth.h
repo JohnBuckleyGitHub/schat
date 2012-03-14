@@ -68,7 +68,7 @@ public:
   QByteArray id;         ///< Уникальный идентификатор авторизации.
   QString serverName;    ///< Имя сервера.
   QString account;       ///< Имя аккаунта пользователя.
-  QVariant json;         ///< JSON данные.
+  QVariantMap json;      ///< JSON данные.
 };
 
 
