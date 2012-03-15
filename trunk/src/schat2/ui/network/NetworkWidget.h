@@ -68,6 +68,7 @@ private slots:
   void showMenu();
 
 private:
+  void addLogin();
   void createActionsButton();
   void load();
   void retranslateUi();

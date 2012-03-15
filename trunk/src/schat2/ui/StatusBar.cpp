@@ -58,7 +58,7 @@ StatusBar::StatusBar(QWidget *parent)
 # endif
 
   m_url = new NetworkWidget(this, NetworkWidget::BasicLayout);
-  m_url->setMinimumWidth(m_url->width() * 2);
+  m_url->setMinimumWidth(m_url->width() * 2 + 50);
   m_urlAction = new QWidgetAction(this);
   m_urlAction->setDefaultWidget(m_url);
 
@@ -164,7 +164,7 @@ void StatusBar::notify(const Notify &notify)
 void StatusBar::menu(const QPoint &point)
 {
   QMenu menu(this);
-  if (ChatClient::state() == ChatClient::Offline)
+  if (ChatClient::state() == ChatClient::Offline || ChatClient::state() == ChatClient::Error)
     menu.addAction(m_urlAction);
 
   QAction *action = m_url->connectAction();

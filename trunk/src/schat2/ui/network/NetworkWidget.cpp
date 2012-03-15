@@ -231,11 +231,7 @@ int NetworkWidget::add(const QString &url)
     m_combo->setCurrentIndex(index);
 
   m_combo->setEditable(true);
-
-  if (m_layout & ExtraLayout) {
-    m_login = new OfflineLogin(this);
-    add(m_login);
-  }
+  addLogin();
 
   QTimer::singleShot(0, m_combo, SLOT(setFocus()));
   return index;
@@ -269,7 +265,6 @@ void NetworkWidget::edit()
  */
 void NetworkWidget::indexChanged(int index)
 {
-
   if (!m_editing.isEmpty()) {
     int index = m_combo->findData(m_editing);
     if (index != -1) {
@@ -284,10 +279,7 @@ void NetworkWidget::indexChanged(int index)
   if (id == m_manager->tmpId()) {
     m_combo->setEditable(true);
 
-    if (m_layout & ExtraLayout && !m_login) {
-      m_login = new OfflineLogin(this);
-      add(m_login);
-    }
+    addLogin();
   }
   else
     m_combo->setEditable(false);
@@ -367,6 +359,19 @@ void NetworkWidget::showMenu()
     m_edit->setVisible(false);
   else
     m_edit->setVisible(true);
+}
+
+
+void NetworkWidget::addLogin()
+{
+  if (!(m_layout & ExtraLayout))
+    return;
+
+  if (m_login)
+    return;
+
+  m_login = new OfflineLogin(this);
+  add(m_login);
 }
 
 
