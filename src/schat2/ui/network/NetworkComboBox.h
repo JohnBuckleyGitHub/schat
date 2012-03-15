@@ -21,6 +21,8 @@
 
 #include <QComboBox>
 
+class Notify;
+
 class NetworkComboBox : public QComboBox
 {
   Q_OBJECT
@@ -32,8 +34,17 @@ public:
 public slots:
   void remove();
 
+private slots:
+  void add(const QString &url = QLatin1String("schat://"));
+  void edit();
+  void indexChanged(int index);
+  void notify(const Notify &notify);
+
 private:
-  QByteArray m_tmpId; ///< Временный идентификатор для текущей редактируемой сети.
+  void updateIndex();
+
+  QByteArray m_editing; ///< Идентификатор редактируемой сети.
+  QByteArray m_tmpId;   ///< Временный идентификатор для текущей редактируемой сети.
 };
 
 #endif /* NETWORKCOMBOBOX_H_ */

@@ -16,17 +16,26 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <ui/ChatIcons.h>
-#include "ui/network/NetworkComboBox.h"
-#include "net/SimpleID.h"
-#include "sglobal.h"
+#include <QDebug>
+
+#include <QTimer>
+
 #include "ChatCore.h"
+#include "ChatNotify.h"
+#include "client/ChatClient.h"
+#include "net/SimpleID.h"
 #include "NetworkManager.h"
+#include "sglobal.h"
+#include "ui/ChatIcons.h"
+#include "ui/network/NetworkComboBox.h"
 
 NetworkComboBox::NetworkComboBox(QWidget *parent)
   : QComboBox(parent)
 {
   m_tmpId = SimpleID::make("", SimpleID::ServerId);
+
+  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+  connect(this, SIGNAL(currentIndexChanged(int)), SLOT(indexChanged(int)));
 }
 
 
@@ -48,7 +57,7 @@ void NetworkComboBox::load()
     setEditable(true);
   }
 
-//  updateIndex();
+  updateIndex();
 }
 
 
@@ -62,11 +71,127 @@ void NetworkComboBox::remove()
     return;
 
   if (index == 0) {
-    setItemText(0, LS("schat://"));
+    add();
     return;
   }
 
   QByteArray id = itemData(index).toByteArray();
   ChatCore::networks()->removeItem(id);
   removeItem(index);
+}
+
+
+/*!
+ * Добавление пользователем нового подключения.
+ */
+void NetworkComboBox::add(const QString &url)
+{
+  setCurrentIndex(0);
+  setItemText(0, url);
+  setEditable(true);
+  QTimer::singleShot(0, this, SLOT(setFocus()));
+}
+
+
+/*!
+ * Редактирование адреса сети.
+ */
+void NetworkComboBox::edit()
+{
+  int index = currentIndex();
+  if (index < 1)
+    return;
+
+  Network item = ChatCore::networks()->item(itemData(index).toByteArray());
+  if (!item->isValid())
+    return;
+
+//  doneExtra();
+
+  m_editing = item->id();
+  setItemText(index, item->url());
+  setEditable(true);
+  QTimer::singleShot(0, this, SLOT(setFocus()));
+}
+
+
+/*!
+ * Обработка изменения выбранного индекса.
+ */
+void NetworkComboBox::indexChanged(int index)
+{
+  if (index == -1)
+    return;
+
+  if (!m_editing.isEmpty()) {
+    int index = findData(m_editing);
+    if (index != -1) {
+      Network item = ChatCore::networks()->item(m_editing);
+      setItemText(index, item->name());
+    }
+
+    m_editing.clear();
+  }
+
+  if (index == 0) {
+    add();
+    return;
+  }
+
+  setEditable(false);
+  setItemText(0, tr("Add"));
+
+
+//  qDebug() << "";
+//  qDebug() << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++";
+//  qDebug() << this << index;
+//  qDebug() << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++";
+//  qDebug() << "";
+}
+
+
+void NetworkComboBox::notify(const Notify &notify)
+{
+  if (notify.type() == Notify::NetworkSelected) {
+    updateIndex();
+  }
+  else if (notify.type() == Notify::NetworkChanged) {
+    QByteArray id = notify.data().toByteArray();
+    Network item = ChatCore::networks()->item(id);
+
+    if (!item->isValid())
+      return;
+
+    setCurrentIndex(-1);
+
+    int index = findData(item->id());
+    if (index != -1)
+      removeItem(index);
+
+    insertItem(1, SCHAT_ICON(Globe), item->name(), item->id());
+    setCurrentIndex(1);
+  }
+  else if (notify.type() == Notify::ServerRenamed) {
+    int index = findData(ChatClient::serverId());
+    if (index != -1)
+      setItemText(index, ChatClient::serverName());
+  }
+}
+
+
+/*!
+ * Обновление выбора текущей сети.
+ * Необходимо для синхронизации выбора сети во всех виджетах.
+ */
+void NetworkComboBox::updateIndex()
+{
+  if (itemData(currentIndex()) == ChatCore::networks()->selected())
+    return;
+
+  int index = findData(ChatCore::networks()->selected());
+  if (index == -1)
+    return;
+
+  if (currentIndex() != index)
+    setCurrentIndex(index);
 }

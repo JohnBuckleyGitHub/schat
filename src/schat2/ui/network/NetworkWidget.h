@@ -26,7 +26,6 @@ class AccountButton;
 class NetworkComboBox;
 class NetworkExtra;
 class NetworkManager;
-class Notify;
 class OfflineLogin;
 class QComboBox;
 class QLabel;
@@ -63,7 +62,6 @@ private slots:
   int add(const QString &url = QLatin1String("schat://"));
   void edit();
   void indexChanged(int index);
-  void notify(const Notify &notify);
   void reload();
   void showMenu();
 
@@ -72,7 +70,6 @@ private:
   void createActionsButton();
   void retranslateUi();
   void setTitle(const QString &title);
-  void updateIndex();
 
   AccountButton *m_account;      ///< Кнопка аккаунта.
   int m_layout;                  ///< Дополнительные возможности виджета.
@@ -84,7 +81,7 @@ private:
   QAction *m_connect;            ///< Действие для подключения или отключения от сервера.
   QAction *m_edit;               ///< Действие для редактирования текущего подключения.
   QAction *m_remove;             ///< Действие для удаления сервера.
-  QByteArray m_editing;          ///< Идентификатор редактируемой сети.
+  QByteArray m_editing;          ///< Идентификатор редактируемой сети. \deprecated
   QLabel *m_title;               ///< Заголовок текущего расширенного действия.
   QMenu *m_menu;                 ///< Меню дополнительных действий.
   QMenu *m_sign;                 ///< Меню действий над аккаунтом.

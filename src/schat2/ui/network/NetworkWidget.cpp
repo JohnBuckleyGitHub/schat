@@ -29,7 +29,6 @@
 
 #include "Account.h"
 #include "ChatCore.h"
-#include "ChatNotify.h"
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "net/SimpleID.h"
@@ -86,7 +85,6 @@ NetworkWidget::NetworkWidget(QWidget *parent, int layout)
 //  load();
 
   connect(m_combo, SIGNAL(currentIndexChanged(int)), SLOT(indexChanged(int)));
-  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
   connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(reload()));
 
   connectAction();
@@ -214,67 +212,47 @@ void NetworkWidget::changeEvent(QEvent *event)
 
 /*!
  * Добавление пользователем нового подключения.
+ *
+ * \deprecated
  */
-int NetworkWidget::add(const QString &url)
+int NetworkWidget::add(const QString &)
 {
-  Network item = m_manager->item(m_manager->tmpId());
-
-  int index = m_combo->findData(item->id());
-  if (index == -1) {
-    if (!url.isEmpty())
-      item->setUrl(url);
-
-    m_combo->insertItem(0, SCHAT_ICON(Globe), item->url(), item->id());
-    index = 0;
-  }
-
-//  if (m_combo->currentIndex() != index)
-//    m_combo->setCurrentIndex(index);
-
-  m_combo->setEditable(true);
   addLogin();
 
-  QTimer::singleShot(0, m_combo, SLOT(setFocus()));
-  return index;
+  return 0;
 }
 
 
 /*!
  * Редактирование адреса сети.
+ *
+ * \deprecated
  */
 void NetworkWidget::edit()
 {
-  int index = m_combo->currentIndex();
-  if (index == -1)
-    return;
-
-  Network item = m_manager->item(m_combo->itemData(index).toByteArray());
-  if (!item->isValid())
-    return;
+//  int index = m_combo->currentIndex();
+//  if (index == -1)
+//    return;
+//
+//  Network item = m_manager->item(m_combo->itemData(index).toByteArray());
+//  if (!item->isValid())
+//    return;
 
   doneExtra();
-
-  m_editing = item->id();
-  m_combo->setItemText(index, item->url());
-  m_combo->setEditable(true);
-  m_combo->setFocus();
+//
+//  m_combo->setItemText(index, item->url());
+//  m_combo->setEditable(true);
+//  m_combo->setFocus();
 }
 
 
 /*!
  * Обработка изменения текущего индекса.
+ *
+ * \deprecated
  */
 void NetworkWidget::indexChanged(int index)
 {
-  if (!m_editing.isEmpty()) {
-    int index = m_combo->findData(m_editing);
-    if (index != -1) {
-      Network item = m_manager->item(m_editing);
-      m_combo->setItemText(index, item->name());
-    }
-
-    m_editing.clear();
-  }
 
   QByteArray id = m_combo->itemData(index).toByteArray();
   if (id == m_manager->tmpId()) {
@@ -288,37 +266,6 @@ void NetworkWidget::indexChanged(int index)
   m_manager->setSelected(id);
   doneExtra();
   reload();
-}
-
-
-void NetworkWidget::notify(const Notify &notify)
-{
-  if (notify.type() == Notify::NetworkChanged) {
-    int index = m_combo->findData(m_manager->tmpId());
-    if (index != -1)
-      m_combo->removeItem(index);
-
-    QByteArray id = notify.data().toByteArray();
-    Network item = m_manager->item(id);
-
-    if (!item->isValid())
-      return;
-
-    index = m_combo->findData(item->id());
-    if (index != -1)
-      m_combo->removeItem(index);
-
-    m_combo->insertItem(0, SCHAT_ICON(Globe), item->name(), item->id());
-    m_combo->setCurrentIndex(0);
-  }
-  else if (notify.type() == Notify::NetworkSelected) {
-    updateIndex();
-  }
-  else if (notify.type() == Notify::ServerRenamed) {
-    int index = m_combo->findData(ChatClient::serverId());
-    if (index != -1)
-      m_combo->setItemText(index, ChatClient::serverName());
-  }
 }
 
 
@@ -363,9 +310,9 @@ void NetworkWidget::createActionsButton()
   m_menu = new QMenu(this);
 
   m_menu->addSeparator();
-  m_edit = m_menu->addAction(SCHAT_ICON(TopicEdit), tr("Edit"), this, SLOT(edit()));
+  m_edit = m_menu->addAction(SCHAT_ICON(TopicEdit), tr("Edit"), m_combo, SLOT(edit()));
   m_menu->addSeparator();
-  m_add = m_menu->addAction(SCHAT_ICON(Add), tr("Add"), this, SLOT(add()));
+  m_add = m_menu->addAction(SCHAT_ICON(Add), tr("Add"), m_combo, SLOT(add()));
   m_remove = m_menu->addAction(SCHAT_ICON(Remove), tr("Remove"), m_combo, SLOT(remove()));
 
   m_actions = new QToolButton(this);
@@ -400,29 +347,4 @@ void NetworkWidget::setTitle(const QString &title)
   }
   else
     m_title->setVisible(false);
-}
-
-
-/*!
- * Обновление выбора текущей сети.
- * Необходимо для синхронизации выбора сети во всех виджетах.
- */
-void NetworkWidget::updateIndex()
-{
-  if (m_combo->itemData(m_combo->currentIndex()) == m_manager->selected())
-    return;
-
-  qDebug() << "++";
-  Network item = m_manager->item(m_manager->selected());
-
-  int index = m_combo->findData(item->id());
-  if (index == -1) {
-    if (m_manager->tmpId() == item->id())
-      index = add(QString());
-    else
-      return;
-  }
-
-  if (m_combo->currentIndex() != index)
-    m_combo->setCurrentIndex(index);
 }
