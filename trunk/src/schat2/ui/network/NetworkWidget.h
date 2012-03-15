@@ -23,6 +23,7 @@
 #include <QPointer>
 
 class AccountButton;
+class NetworkComboBox;
 class NetworkExtra;
 class NetworkManager;
 class Notify;
@@ -64,19 +65,18 @@ private slots:
   void indexChanged(int index);
   void notify(const Notify &notify);
   void reload();
-  void remove();
   void showMenu();
 
 private:
   void addLogin();
   void createActionsButton();
-  void load();
   void retranslateUi();
   void setTitle(const QString &title);
   void updateIndex();
 
   AccountButton *m_account;      ///< Кнопка аккаунта.
   int m_layout;                  ///< Дополнительные возможности виджета.
+  NetworkComboBox *m_combo;      ///< Комбобокс выбора серверов.
   NetworkExtra *m_extra;         ///< Дополнительный виджет.
   NetworkManager *m_manager;     ///< Указатель на менеджер сетевых подключений.
   OfflineLogin *m_login;         ///< Виджет для офлайн ввода имени и пароля.
@@ -85,7 +85,6 @@ private:
   QAction *m_edit;               ///< Действие для редактирования текущего подключения.
   QAction *m_remove;             ///< Действие для удаления сервера.
   QByteArray m_editing;          ///< Идентификатор редактируемой сети.
-  QComboBox *m_combo;            ///< Комбобокс выбора серверов.
   QLabel *m_title;               ///< Заголовок текущего расширенного действия.
   QMenu *m_menu;                 ///< Меню дополнительных действий.
   QMenu *m_sign;                 ///< Меню действий над аккаунтом.

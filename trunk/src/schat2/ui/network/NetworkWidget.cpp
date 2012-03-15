@@ -18,7 +18,6 @@
 
 #include <QDebug>
 
-#include <QComboBox>
 #include <QEvent>
 #include <QGridLayout>
 #include <QKeyEvent>
@@ -38,6 +37,7 @@
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
 #include "ui/network/AccountButton.h"
+#include "ui/network/NetworkComboBox.h"
 #include "ui/network/NetworkWidget.h"
 #include "ui/network/OfflineLogin.h"
 
@@ -49,7 +49,7 @@ NetworkWidget::NetworkWidget(QWidget *parent, int layout)
   , m_manager(ChatCore::networks())
   , m_login(0)
 {
-  m_combo = new QComboBox(this);
+  m_combo = new NetworkComboBox(this);
   m_combo->installEventFilter(this);
 
   createActionsButton();
@@ -82,7 +82,8 @@ NetworkWidget::NetworkWidget(QWidget *parent, int layout)
   m_mainLayout->addWidget(m_title);
   m_mainLayout->setMargin(0);
 
-  load();
+  m_combo->load();
+//  load();
 
   connect(m_combo, SIGNAL(currentIndexChanged(int)), SLOT(indexChanged(int)));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
@@ -212,7 +213,7 @@ void NetworkWidget::changeEvent(QEvent *event)
 
 
 /*!
- * Добавление нового подключения.
+ * Добавление пользователем нового подключения.
  */
 int NetworkWidget::add(const QString &url)
 {
@@ -227,8 +228,8 @@ int NetworkWidget::add(const QString &url)
     index = 0;
   }
 
-  if (m_combo->currentIndex() != index)
-    m_combo->setCurrentIndex(index);
+//  if (m_combo->currentIndex() != index)
+//    m_combo->setCurrentIndex(index);
 
   m_combo->setEditable(true);
   addLogin();
@@ -334,24 +335,6 @@ void NetworkWidget::reload()
 }
 
 
-/*!
- * Удаление сервера.
- */
-void NetworkWidget::remove()
-{
-  int index = m_combo->currentIndex();
-  if (index == -1)
-    return;
-
-  QByteArray id = m_combo->itemData(index).toByteArray();
-  m_manager->removeItem(id);
-  m_combo->removeItem(index);
-
-  if (!m_combo->count())
-    add();
-}
-
-
 void NetworkWidget::showMenu()
 {
   int index = m_combo->currentIndex();
@@ -383,7 +366,7 @@ void NetworkWidget::createActionsButton()
   m_edit = m_menu->addAction(SCHAT_ICON(TopicEdit), tr("Edit"), this, SLOT(edit()));
   m_menu->addSeparator();
   m_add = m_menu->addAction(SCHAT_ICON(Add), tr("Add"), this, SLOT(add()));
-  m_remove = m_menu->addAction(SCHAT_ICON(Remove), tr("Remove"), this, SLOT(remove()));
+  m_remove = m_menu->addAction(SCHAT_ICON(Remove), tr("Remove"), m_combo, SLOT(remove()));
 
   m_actions = new QToolButton(this);
   m_actions->setIcon(SCHAT_ICON(Gear));
@@ -392,26 +375,6 @@ void NetworkWidget::createActionsButton()
   m_actions->setToolTip(tr("Actions"));
 
   connect(m_menu, SIGNAL(aboutToShow()), SLOT(showMenu()));
-}
-
-
-/*!
- * Загрузка списка серверов в виджет.
- */
-void NetworkWidget::load()
-{
-  QList<Network> items = m_manager->items();
-
-  for (int i = 0; i < items.size(); ++i) {
-    m_combo->addItem(SCHAT_ICON(Globe), items.at(i)->name(), items.at(i)->id());
-  }
-
-  if (m_combo->count() == 0) {
-    add("schat://schat.me");
-    m_manager->setSelected(m_manager->tmpId());
-  }
-
-  updateIndex();
 }
 
 
@@ -446,6 +409,10 @@ void NetworkWidget::setTitle(const QString &title)
  */
 void NetworkWidget::updateIndex()
 {
+  if (m_combo->itemData(m_combo->currentIndex()) == m_manager->selected())
+    return;
+
+  qDebug() << "++";
   Network item = m_manager->item(m_manager->selected());
 
   int index = m_combo->findData(item->id());
