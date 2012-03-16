@@ -152,7 +152,7 @@ void NetworkWidget::doneExtra()
   if (!m_extra)
     return;
 
-  if (m_login && m_extra == m_login && m_manager->selected() == m_manager->tmpId())
+  if (m_login && m_extra == m_login && m_combo->canLogin())
     return;
 
   m_mainLayout->removeWidget(m_extra);
@@ -181,22 +181,7 @@ void NetworkWidget::open()
     return;
   }
 
-  Network item = m_manager->item(m_manager->selected());
-  if (item->id() == m_manager->tmpId()) {
-    item->setUrl(m_combo->currentText());
-    m_combo->setItemText(index, item->url());
-
-    if (m_login)
-      ChatClient::io()->setAccount(m_login->isAnonymous() ? QString() : m_login->name(), m_login->password());
-  }
-  else if (!m_editing.isEmpty() && item->id() == m_editing) {
-    item->setUrl(m_combo->currentText());
-    m_combo->setItemText(index, item->name());
-    m_editing.clear();
-    m_combo->setEditable(false);
-  }
-
-  ChatClient::open(item->id());
+  m_combo->open(m_login);
 }
 
 

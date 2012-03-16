@@ -23,6 +23,7 @@
 
 class NetworkWidget;
 class Notify;
+class OfflineLogin;
 
 class NetworkComboBox : public QComboBox
 {
@@ -30,14 +31,16 @@ class NetworkComboBox : public QComboBox
 
 public:
   NetworkComboBox(NetworkWidget *parent = 0);
+  bool canLogin() const;
   void load();
+  void open(OfflineLogin *login);
 
 public slots:
+  void add(const QString &url = QLatin1String("schat://"));
+  void edit();
   void remove();
 
 private slots:
-  void add(const QString &url = QLatin1String("schat://"));
-  void edit();
   void indexChanged(int index);
   void notify(const Notify &notify);
 
