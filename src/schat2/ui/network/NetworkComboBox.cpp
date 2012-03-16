@@ -28,14 +28,15 @@
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
 #include "ui/network/NetworkComboBox.h"
+#include "ui/network/NetworkWidget.h"
 
-NetworkComboBox::NetworkComboBox(QWidget *parent)
+NetworkComboBox::NetworkComboBox(NetworkWidget *parent)
   : QComboBox(parent)
+  , m_network(parent)
 {
   m_tmpId = SimpleID::make("", SimpleID::ServerId);
 
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
-  connect(this, SIGNAL(currentIndexChanged(int)), SLOT(indexChanged(int)));
 }
 
 
@@ -57,6 +58,7 @@ void NetworkComboBox::load()
     setEditable(true);
   }
 
+  connect(this, SIGNAL(currentIndexChanged(int)), SLOT(indexChanged(int)));
   updateIndex();
 }
 
@@ -86,7 +88,11 @@ void NetworkComboBox::remove()
  */
 void NetworkComboBox::add(const QString &url)
 {
-  setCurrentIndex(0);
+  if (currentIndex() != 0) {
+    setCurrentIndex(0);
+    ChatCore::networks()->setSelected(m_tmpId);
+  }
+
   setItemText(0, url);
   setEditable(true);
   QTimer::singleShot(0, this, SLOT(setFocus()));
@@ -133,20 +139,16 @@ void NetworkComboBox::indexChanged(int index)
     m_editing.clear();
   }
 
+  ChatCore::networks()->setSelected(itemData(index).toByteArray());
+
   if (index == 0) {
     add();
+    m_network->showLogin();
     return;
   }
 
   setEditable(false);
   setItemText(0, tr("Add"));
-
-
-//  qDebug() << "";
-//  qDebug() << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++";
-//  qDebug() << this << index;
-//  qDebug() << "+++++++++++++++++++++++++++++++++++++++++++++++++++++++";
-//  qDebug() << "";
 }
 
 

@@ -48,6 +48,7 @@ public:
 
   NetworkWidget(QWidget *parent, int layout = 3);
   QAction *connectAction();
+  void showLogin();
 
 public slots:
   void add(NetworkExtra *extra);
@@ -59,14 +60,11 @@ protected:
   void changeEvent(QEvent *event);
 
 private slots:
-  int add(const QString &url = QLatin1String("schat://"));
-  void edit();
   void indexChanged(int index);
   void reload();
   void showMenu();
 
 private:
-  void addLogin();
   void createActionsButton();
   void retranslateUi();
   void setTitle(const QString &title);

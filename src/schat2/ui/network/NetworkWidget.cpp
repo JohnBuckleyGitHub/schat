@@ -112,6 +112,19 @@ QAction *NetworkWidget::connectAction()
 }
 
 
+void NetworkWidget::showLogin()
+{
+  if (!(m_layout & ExtraLayout))
+    return;
+
+  if (m_login)
+    return;
+
+  m_login = new OfflineLogin(this);
+  add(m_login);
+}
+
+
 /*!
  * Добавление дополнительного виджета.
  */
@@ -211,59 +224,13 @@ void NetworkWidget::changeEvent(QEvent *event)
 
 
 /*!
- * Добавление пользователем нового подключения.
- *
- * \deprecated
- */
-int NetworkWidget::add(const QString &)
-{
-  addLogin();
-
-  return 0;
-}
-
-
-/*!
- * Редактирование адреса сети.
- *
- * \deprecated
- */
-void NetworkWidget::edit()
-{
-//  int index = m_combo->currentIndex();
-//  if (index == -1)
-//    return;
-//
-//  Network item = m_manager->item(m_combo->itemData(index).toByteArray());
-//  if (!item->isValid())
-//    return;
-
-  doneExtra();
-//
-//  m_combo->setItemText(index, item->url());
-//  m_combo->setEditable(true);
-//  m_combo->setFocus();
-}
-
-
-/*!
  * Обработка изменения текущего индекса.
- *
- * \deprecated
  */
 void NetworkWidget::indexChanged(int index)
 {
+  if (index == -1)
+    return;
 
-  QByteArray id = m_combo->itemData(index).toByteArray();
-  if (id == m_manager->tmpId()) {
-    m_combo->setEditable(true);
-
-    addLogin();
-  }
-  else
-    m_combo->setEditable(false);
-
-  m_manager->setSelected(id);
   doneExtra();
   reload();
 }
@@ -289,19 +256,6 @@ void NetworkWidget::showMenu()
     m_edit->setVisible(false);
   else
     m_edit->setVisible(true);
-}
-
-
-void NetworkWidget::addLogin()
-{
-  if (!(m_layout & ExtraLayout))
-    return;
-
-  if (m_login)
-    return;
-
-  m_login = new OfflineLogin(this);
-  add(m_login);
 }
 
 

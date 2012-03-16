@@ -21,6 +21,7 @@
 
 #include <QComboBox>
 
+class NetworkWidget;
 class Notify;
 
 class NetworkComboBox : public QComboBox
@@ -28,7 +29,7 @@ class NetworkComboBox : public QComboBox
   Q_OBJECT
 
 public:
-  NetworkComboBox(QWidget *parent = 0);
+  NetworkComboBox(NetworkWidget *parent = 0);
   void load();
 
 public slots:
@@ -43,8 +44,9 @@ private slots:
 private:
   void updateIndex();
 
-  QByteArray m_editing; ///< Идентификатор редактируемой сети.
-  QByteArray m_tmpId;   ///< Временный идентификатор для текущей редактируемой сети.
+  NetworkWidget *m_network; ///< Виджет редактирования сети.
+  QByteArray m_editing;     ///< Идентификатор редактируемой сети.
+  QByteArray m_tmpId;       ///< Временный идентификатор для текущей редактируемой сети.
 };
 
 #endif /* NETWORKCOMBOBOX_H_ */
