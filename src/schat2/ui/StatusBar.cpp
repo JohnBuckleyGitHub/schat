@@ -196,7 +196,7 @@ void StatusBar::retranslateUi()
   }
   else if (state == ChatClient::Error) {
     m_label->setText(tr("Error"));
-    m_icon->setToolTip(Notice::status(ChatClient::io()->authError().status));
+    m_icon->setToolTip(Notice::status(ChatClient::io()->json().value(LS("error")).toMap().value(LS("status")).toInt()));
   }
 }
 

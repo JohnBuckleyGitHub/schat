@@ -40,14 +40,19 @@ SimpleClientPrivate::~SimpleClientPrivate()
 bool SimpleClientPrivate::authReply(const AuthReply &reply)
 {
   AbstractClientPrivate::authReply(reply);
+  json[LS("id")] = SimpleID::encode(reply.serverId);
 
   if (reply.status == Notice::OK) {
     account.clear();
     password.clear();
+    json.remove(LS("error"));
     return true;
   }
 
-  m_authError = AuthError(authType, reply.status);
+  QVariantMap error;
+  error[LS("type")]   = authType;
+  error[LS("status")] = reply.status;
+  json[LS("error")]   = error;
 
   if (reply.status == Notice::NickAlreadyUse)
     return false;
@@ -107,17 +112,17 @@ SimpleClient::~SimpleClient()
 }
 
 
-const AuthError& SimpleClient::authError() const
-{
-  Q_D(const SimpleClient);
-  return d->m_authError;
-}
-
-
-const QString &SimpleClient::account() const
+const QString& SimpleClient::account() const
 {
   Q_D(const SimpleClient);
   return d->account;
+}
+
+
+const QVariantMap& SimpleClient::json() const
+{
+  Q_D(const SimpleClient);
+  return d->json;
 }
 
 

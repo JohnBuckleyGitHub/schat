@@ -82,7 +82,6 @@ NetworkWidget::NetworkWidget(QWidget *parent, int layout)
   m_mainLayout->setMargin(0);
 
   m_combo->load();
-//  load();
 
   connect(m_combo, SIGNAL(currentIndexChanged(int)), SLOT(indexChanged(int)));
   connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(reload()));
@@ -118,6 +117,9 @@ void NetworkWidget::showLogin()
     return;
 
   if (m_login)
+    return;
+
+  if (!m_combo->canLogin())
     return;
 
   m_login = new OfflineLogin(this);
