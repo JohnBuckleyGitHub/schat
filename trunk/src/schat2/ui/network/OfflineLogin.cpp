@@ -21,13 +21,13 @@
 #include <QLabel>
 #include <QLineEdit>
 
+#include "NetworkManager.h"
 #include "ui/network/OfflineLogin.h"
 
 OfflineLogin::OfflineLogin(QWidget *parent)
   : NetworkExtra(parent)
 {
   m_anonymous = new QCheckBox(this);
-  m_anonymous->setChecked(true);
 
   m_nameEdit = new QLineEdit(this);
   m_nameEdit->setMaxLength(255);
@@ -51,7 +51,10 @@ OfflineLogin::OfflineLogin(QWidget *parent)
   connect(m_anonymous, SIGNAL(clicked(bool)), SLOT(clicked(bool)));
 
   retranslateUi();
-  clicked(true);
+
+  bool passwordRequired = NetworkManager::isPasswordRequired();
+  m_anonymous->setChecked(!passwordRequired);
+  clicked(!passwordRequired);
 }
 
 

@@ -97,6 +97,8 @@ public:
   void removeItem(const QByteArray &id);
   void setSelected(const QByteArray &id);
 
+  static bool isPasswordRequired();
+
 private slots:
   void clientStateChanged(int state);
   void notify(const Notify &notify);

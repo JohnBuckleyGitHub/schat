@@ -233,6 +233,8 @@ void NetworkWidget::reload()
   m_account->setEnabled(ChatClient::state() == ChatClient::Online);
   if (m_account->isEnabled() && m_manager->selected() != ChatClient::serverId())
     m_account->setEnabled(false);
+
+  showLogin();
 }
 
 

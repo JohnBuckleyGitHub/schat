@@ -32,7 +32,6 @@ class NetworkComboBox : public QComboBox
 public:
   NetworkComboBox(NetworkWidget *parent = 0);
   bool canLogin() const;
-  static bool isPasswordRequired();
   void load();
   void open(OfflineLogin *login);
 
