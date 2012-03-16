@@ -23,12 +23,14 @@
 #include "ChatCore.h"
 #include "ChatNotify.h"
 #include "client/ChatClient.h"
+#include "client/SimpleClient.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
 #include "ui/network/NetworkComboBox.h"
 #include "ui/network/NetworkWidget.h"
+#include "ui/network/OfflineLogin.h"
 
 NetworkComboBox::NetworkComboBox(NetworkWidget *parent)
   : QComboBox(parent)
@@ -37,6 +39,15 @@ NetworkComboBox::NetworkComboBox(NetworkWidget *parent)
   m_tmpId = SimpleID::make("", SimpleID::ServerId);
 
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+}
+
+
+bool NetworkComboBox::canLogin() const
+{
+  if (ChatCore::networks()->selected() == m_tmpId)
+    return true;
+
+  return false;
 }
 
 
@@ -56,6 +67,7 @@ void NetworkComboBox::load()
     ChatCore::networks()->setSelected(m_tmpId);
     setItemText(0, LS("schat://schat.me"));
     setEditable(true);
+    m_network->showLogin();
   }
 
   connect(this, SIGNAL(currentIndexChanged(int)), SLOT(indexChanged(int)));
@@ -63,23 +75,24 @@ void NetworkComboBox::load()
 }
 
 
-/*!
- * Удаление сервера.
- */
-void NetworkComboBox::remove()
+void NetworkComboBox::open(OfflineLogin *login)
 {
-  int index = currentIndex();
-  if (index == -1)
-    return;
+  Network item = ChatCore::networks()->item(ChatCore::networks()->selected());
+  if (item->id() == m_tmpId) {
+    item->setUrl(currentText());
+    setItemText(currentIndex(), item->url());
 
-  if (index == 0) {
-    add();
-    return;
+    if (login)
+      ChatClient::io()->setAccount(login->isAnonymous() ? QString() : login->name(), login->password());
+  }
+  else if (!m_editing.isEmpty() && item->id() == m_editing) {
+    item->setUrl(currentText());
+    setItemText(currentIndex(), item->name());
+    m_editing.clear();
+    setEditable(false);
   }
 
-  QByteArray id = itemData(index).toByteArray();
-  ChatCore::networks()->removeItem(id);
-  removeItem(index);
+  ChatClient::open(item->id());
 }
 
 
@@ -118,6 +131,26 @@ void NetworkComboBox::edit()
   setItemText(index, item->url());
   setEditable(true);
   QTimer::singleShot(0, this, SLOT(setFocus()));
+}
+
+
+/*!
+ * Удаление сервера.
+ */
+void NetworkComboBox::remove()
+{
+  int index = currentIndex();
+  if (index == -1)
+    return;
+
+  if (index == 0) {
+    add();
+    return;
+  }
+
+  QByteArray id = itemData(index).toByteArray();
+  ChatCore::networks()->removeItem(id);
+  removeItem(index);
 }
 
 
