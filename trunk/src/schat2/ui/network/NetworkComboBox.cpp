@@ -42,12 +42,34 @@ NetworkComboBox::NetworkComboBox(NetworkWidget *parent)
 }
 
 
+/*!
+ * Возвращает \b true если нобходимо показывать виджет ввода имени и пароля.
+ */
 bool NetworkComboBox::canLogin() const
 {
   if (ChatCore::networks()->selected() == m_tmpId)
     return true;
 
-  return false;
+  return isPasswordRequired();
+}
+
+
+bool NetworkComboBox::isPasswordRequired()
+{
+  if (ChatClient::state() != ChatClient::Error)
+    return false;
+
+  QVariantMap error = ChatClient::io()->json().value(LS("error")).toMap();
+  if (error.isEmpty())
+    return false;
+
+  if (error.value("status") != Notice::Unauthorized)
+    return false;
+
+  if (ChatCore::networks()->selected() != SimpleID::decode(ChatClient::io()->json().value(LS("id")).toByteArray()))
+    return false;
+
+  return true;
 }
 
 
@@ -176,6 +198,7 @@ void NetworkComboBox::indexChanged(int index)
 
   if (index == 0) {
     add();
+
     m_network->showLogin();
     return;
   }

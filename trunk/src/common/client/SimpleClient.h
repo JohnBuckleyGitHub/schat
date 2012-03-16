@@ -24,23 +24,6 @@
 class AbstractNotice;
 class SimpleClientPrivate;
 
-class AuthError
-{
-public:
-  AuthError()
-  : authType(-1)
-  , status(-1)
-  {}
-
-  AuthError(int authType, int status)
-  : authType(authType)
-  , status(status)
-  {}
-
-  int authType;
-  int status;
-};
-
 
 class SCHAT_EXPORT SimpleClient : public AbstractClient
 {
@@ -49,14 +32,13 @@ class SCHAT_EXPORT SimpleClient : public AbstractClient
 public:
   explicit SimpleClient(QObject *parent = 0);
   ~SimpleClient();
-  const AuthError& authError() const;
   const QString &account() const;
+  const QVariantMap& json() const;
   void leave();
   void setAccount(const QString &account, const QString &password);
   void setCookieAuth(bool allow);
 
 signals:
-  void notice(const Notice &notice);
   void notice(int type);
 
 protected:
