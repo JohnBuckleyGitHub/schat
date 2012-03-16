@@ -50,26 +50,7 @@ bool NetworkComboBox::canLogin() const
   if (ChatCore::networks()->selected() == m_tmpId)
     return true;
 
-  return isPasswordRequired();
-}
-
-
-bool NetworkComboBox::isPasswordRequired()
-{
-  if (ChatClient::state() != ChatClient::Error)
-    return false;
-
-  QVariantMap error = ChatClient::io()->json().value(LS("error")).toMap();
-  if (error.isEmpty())
-    return false;
-
-  if (error.value("status") != Notice::Unauthorized)
-    return false;
-
-  if (ChatCore::networks()->selected() != SimpleID::decode(ChatClient::io()->json().value(LS("id")).toByteArray()))
-    return false;
-
-  return true;
+  return NetworkManager::isPasswordRequired();
 }
 
 
@@ -195,11 +176,10 @@ void NetworkComboBox::indexChanged(int index)
   }
 
   ChatCore::networks()->setSelected(itemData(index).toByteArray());
+  m_network->showLogin();
 
   if (index == 0) {
     add();
-
-    m_network->showLogin();
     return;
   }
 

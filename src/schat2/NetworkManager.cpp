@@ -271,6 +271,28 @@ void NetworkManager::setSelected(const QByteArray &id)
 }
 
 
+/*!
+ * Возвращает \b true если требуется принудительная авторизация по имени и паролю.
+ */
+bool NetworkManager::isPasswordRequired()
+{
+  if (ChatClient::state() != ChatClient::Error)
+    return false;
+
+  QVariantMap error = ChatClient::io()->json().value(LS("error")).toMap();
+  if (error.isEmpty())
+    return false;
+
+  if (error.value("status") != Notice::Unauthorized)
+    return false;
+
+  if (ChatCore::networks()->selected() != SimpleID::decode(ChatClient::io()->json().value(LS("id")).toByteArray()))
+    return false;
+
+  return true;
+}
+
+
 void NetworkManager::clientStateChanged(int state)
 {
   if (state != ChatClient::Online)
