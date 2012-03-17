@@ -24,6 +24,7 @@
 #include "net/packets/auth.h"
 #include "NodeLog.h"
 #include "Normalize.h"
+#include "sglobal.h"
 #include "Storage.h"
 
 QHash<QByteArray, quint64> AnonymousAuth::m_collisions;
@@ -54,8 +55,11 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
     channel->gender().setRaw(data.gender);
   }
 
-  if (isPasswordRequired(channel.data(), data.uniqueId))
-    return AuthResult(Notice::Unauthorized, data.id);
+  if (isPasswordRequired(channel.data(), data.uniqueId)) {
+    result = AuthResult(Notice::Unauthorized, data.id);
+    result.json[LS("account")] = channel->account()->name();
+    return result;
+  }
 
   update(channel.data(), data);
   if (!channel->isValid())

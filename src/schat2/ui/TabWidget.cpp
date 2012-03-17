@@ -31,6 +31,7 @@
 #include "ChatIcons.h"
 #include "ChatNotify.h"
 #include "ChatSettings.h"
+#include "ChatUrls.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
@@ -42,11 +43,11 @@
 #include "ui/SoundButton.h"
 #include "ui/TabBar.h"
 #include "ui/tabs/AboutTab.h"
-#include "ui/tabs/ServerTab.h"
 #include "ui/tabs/ChannelTab.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/PrivateTab.h"
 #include "ui/tabs/ProgressTab.h"
+#include "ui/tabs/ServerTab.h"
 #include "ui/tabs/SettingsTab.h"
 #include "ui/tabs/UserView.h"
 #include "ui/tabs/WelcomeTab.h"
@@ -354,6 +355,14 @@ void TabWidget::clientStateChanged(int state, int previousState)
 
   if (previousState == ChatClient::Connecting && m_progressTab) {
     closeTab(indexOf(m_progressTab));
+  }
+
+  if (state == ChatClient::Error) {
+    QVariantMap error = ChatClient::io()->json().value(LS("error")).toMap();
+    int status = error.value(LS("status")).toInt();
+
+    if (status == Notice::Unauthorized && !m_welcomeTab)
+      ChatUrls::open(LS("chat://settings/network"));
   }
 }
 

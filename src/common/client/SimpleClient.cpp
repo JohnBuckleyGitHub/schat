@@ -52,6 +52,7 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
   QVariantMap error;
   error[LS("type")]   = authType;
   error[LS("status")] = reply.status;
+  error[LS("data")]   = reply.json;
   json[LS("error")]   = error;
 
   if (reply.status == Notice::NickAlreadyUse)

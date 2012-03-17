@@ -20,6 +20,7 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QLineEdit>
+#include <QTimer>
 
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
@@ -51,17 +52,18 @@ OfflineLogin::OfflineLogin(QWidget *parent)
   mainLay->addWidget(m_passwordEdit, 1, 3);
   mainLay->setMargin(0);
 
-  connect(m_anonymous, SIGNAL(clicked(bool)), SLOT(clicked(bool)));
-
   retranslateUi();
 
   bool passwordRequired = NetworkManager::isPasswordRequired();
   m_anonymous->setChecked(!passwordRequired);
   clicked(!passwordRequired);
 
+  connect(m_anonymous, SIGNAL(clicked(bool)), SLOT(clicked(bool)));
   connect(m_nameEdit, SIGNAL(textChanged(const QString &)), SLOT(reload()));
   connect(m_passwordEdit, SIGNAL(textChanged(const QString &)), SLOT(reload()));
   connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
+
+  QTimer::singleShot(0, this, SLOT(clientStateChanged()));
 }
 
 
@@ -105,14 +107,30 @@ void OfflineLogin::clicked(bool checked)
 
 void OfflineLogin::clientStateChanged(int state)
 {
+  if (state == -1)
+    state = ChatClient::state();
+
   if (state != ChatClient::Error)
     return;
 
-  int status = ChatClient::io()->json().value(LS("error")).toMap().value(LS("status")).toInt();
+  QVariantMap error = ChatClient::io()->json().value(LS("error")).toMap();
+  int status = error.value(LS("status")).toInt();
+
   if (status == Notice::NotFound)
     makeRed(m_nameEdit);
-  else if (status == Notice::Forbidden || status == Notice::Unauthorized)
+  else if (status == Notice::Forbidden)
     makeRed(m_passwordEdit);
+  else if (status == Notice::Unauthorized) {
+    QString account = error.value(LS("data")).toMap().value(LS("account")).toString();
+    if (account.isEmpty())
+      makeRed(m_nameEdit);
+    else
+      m_nameEdit->setText(account);
+
+    makeRed(m_passwordEdit);
+    m_anonymous->setChecked(false);
+    clicked(false);
+  }
 }
 
 
