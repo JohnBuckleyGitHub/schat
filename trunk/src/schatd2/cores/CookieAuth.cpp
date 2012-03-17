@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Account.h"
 #include "Ch.h"
 #include "cores/CookieAuth.h"
 #include "cores/Core.h"
@@ -23,6 +24,7 @@
 #include "net/packets/auth.h"
 #include "NodeLog.h"
 #include "Normalize.h"
+#include "sglobal.h"
 #include "Storage.h"
 
 CookieAuth::CookieAuth(Core *core)
@@ -55,8 +57,11 @@ AuthResult CookieAuth::auth(const AuthRequest &data, ChatChannel channel)
   if (result.action == AuthResult::Reject)
     return result;
 
-  if (isPasswordRequired(channel.data(), data.uniqueId))
-    return AuthResult(Notice::Unauthorized, data.id);
+  if (isPasswordRequired(channel.data(), data.uniqueId)) {
+    result = AuthResult(Notice::Unauthorized, data.id);
+    result.json[LS("account")] = channel->account()->name();
+    return result;
+  }
 
   update(channel.data(), data);
   if (!channel->isValid())

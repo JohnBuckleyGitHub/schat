@@ -40,7 +40,7 @@ protected:
 
 private slots:
   void clicked(bool checked);
-  void clientStateChanged(int state);
+  void clientStateChanged(int state = -1);
   void reload();
 
 private:
