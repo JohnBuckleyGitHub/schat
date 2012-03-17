@@ -40,6 +40,8 @@ protected:
 
 private slots:
   void clicked(bool checked);
+  void clientStateChanged(int state);
+  void reload();
 
 private:
   QCheckBox *m_anonymous;    ///< Чек бокс анонимного подключения.
