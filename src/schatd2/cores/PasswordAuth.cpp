@@ -40,7 +40,7 @@ AuthResult PasswordAuth::auth(const AuthRequest &data)
 
   qint64 key = DataBase::accountKey(name);
   if (key == -1)
-    return AuthResult(Notice::Forbidden, data.id);
+    return AuthResult(Notice::NotFound, data.id);
 
   Account account = DataBase::account(key);
   if (!account.isValid())

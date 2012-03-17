@@ -84,9 +84,6 @@ void NetworkComboBox::open(OfflineLogin *login)
   if (item->id() == m_tmpId) {
     item->setUrl(currentText());
     setItemText(currentIndex(), item->url());
-
-    if (login)
-      ChatClient::io()->setAccount(login->isAnonymous() ? QString() : login->name(), login->password());
   }
   else if (!m_editing.isEmpty() && item->id() == m_editing) {
     item->setUrl(currentText());
@@ -94,6 +91,9 @@ void NetworkComboBox::open(OfflineLogin *login)
     m_editing.clear();
     setEditable(false);
   }
+
+  if (login)
+    ChatClient::io()->setAccount(login->isAnonymous() ? QString() : login->name(), login->password());
 
   ChatClient::open(item->id());
 }

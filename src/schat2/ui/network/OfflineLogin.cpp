@@ -21,7 +21,10 @@
 #include <QLabel>
 #include <QLineEdit>
 
+#include "client/ChatClient.h"
+#include "client/SimpleClient.h"
 #include "NetworkManager.h"
+#include "sglobal.h"
 #include "ui/network/OfflineLogin.h"
 
 OfflineLogin::OfflineLogin(QWidget *parent)
@@ -55,6 +58,10 @@ OfflineLogin::OfflineLogin(QWidget *parent)
   bool passwordRequired = NetworkManager::isPasswordRequired();
   m_anonymous->setChecked(!passwordRequired);
   clicked(!passwordRequired);
+
+  connect(m_nameEdit, SIGNAL(textChanged(const QString &)), SLOT(reload()));
+  connect(m_passwordEdit, SIGNAL(textChanged(const QString &)), SLOT(reload()));
+  connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
 }
 
 
@@ -93,4 +100,24 @@ void OfflineLogin::clicked(bool checked)
 
   if (!checked)
     m_nameEdit->setFocus();
+}
+
+
+void OfflineLogin::clientStateChanged(int state)
+{
+  if (state != ChatClient::Error)
+    return;
+
+  int status = ChatClient::io()->json().value(LS("error")).toMap().value(LS("status")).toInt();
+  if (status == Notice::NotFound)
+    makeRed(m_nameEdit);
+  else if (status == Notice::Forbidden || status == Notice::Unauthorized)
+    makeRed(m_passwordEdit);
+}
+
+
+void OfflineLogin::reload()
+{
+  makeRed(m_nameEdit, false);
+  makeRed(m_passwordEdit, false);
 }
