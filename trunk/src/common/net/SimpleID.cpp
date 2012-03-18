@@ -35,8 +35,6 @@
 #include "net/Protocol.h"
 #include "net/SimpleID.h"
 
-QString SimpleID::m_userAgent;
-
 /*!
  * Возвращает тип идентификатора.
  */
@@ -172,97 +170,3 @@ QByteArray SimpleID::uniqueId()
 
   return make("", UniqueUserId);
 }
-
-
-/*!
- * Строка UserAgent по умолчанию.
- *
- * \deprecated Вместо этой функции должен использоваться класс OsInfo.
- */
-QString SimpleID::userAgent()
-{
-  if (!m_userAgent.isEmpty())
-    return m_userAgent;
-
-  QString out = QLatin1String("SimpleChat/") + QCoreApplication::applicationVersion();
-
-  out += QLatin1String(" (");
-  #if defined(Q_OS_FREEBSD)
-  out += QLatin1String("FreeBSD");
-  #elif defined(Q_OS_LINUX)
-  out += linuxType();
-
-  #elif defined(Q_OS_MAC)
-  out += QLatin1String("Mac OS X");
-  QSysInfo::MacVersion version = QSysInfo::MacintoshVersion;
-  if (version == QSysInfo::MV_10_5)
-    out += QLatin1String(" 10.5");
-  else if (version == QSysInfo::MV_10_6)
-    out += QLatin1String(" 10.6");
-
-  #elif defined(Q_OS_NETBSD)
-  out += QLatin1String("NetBSD");
-  #elif defined(Q_OS_OPENBSD)
-  out += QLatin1String("OpenBSD");
-
-  #elif defined(Q_OS_WIN32)
-  out += QLatin1String("Windows");
-  QSysInfo::WinVersion version = QSysInfo::WindowsVersion;
-  if (version & QSysInfo::WV_NT_based) {
-    out += QLatin1String(" NT");
-    if (version == QSysInfo::WV_5_0)
-      out += QLatin1String(" 5.0");
-    else if (version == QSysInfo::WV_5_1)
-      out += QLatin1String(" 5.1");
-    else if (version == QSysInfo::WV_5_2)
-      out += QLatin1String(" 5.2");
-    else if (version == QSysInfo::WV_6_0)
-      out += QLatin1String(" 6.0");
-    else if (version == QSysInfo::WV_6_1)
-      out += QLatin1String(" 6.1");
-  }
-  #else
-  out += QLatin1String("Unknown");
-  #endif
-
-  out += QLatin1String("; Qt ");
-  out += qVersion();
-
-  #if defined(SCHAT_WEBKIT)
-  out += QLatin1String("; WebKit ");
-  out += qWebKitVersion();
-  #endif
-
-  if (QSysInfo::WordSize == 64)
-    out += QLatin1String("; x64");
-
-  out += ")";
-
-  return out;
-}
-
-
-#if defined(Q_OS_LINUX)
-QString SimpleID::linuxType()
-{
-  QString out = QLatin1String("Linux");
-
-  if (QFile::exists(QLatin1String("/etc/lsb-release"))) { // Ubuntu Linux
-    QSettings s(QLatin1String("/etc/lsb-release"), QSettings::IniFormat);
-    QString tmp = s.value(QLatin1String("DISTRIB_ID")).toString();
-    if (tmp.isEmpty())
-      return out;
-
-    out = tmp;
-    tmp = s.value(QLatin1String("DISTRIB_RELEASE")).toString();
-    qDebug() << tmp;
-    if (!tmp.isEmpty())
-      out += QLatin1String(" ") + tmp;
-  }
-  else if (QFile::exists(QLatin1String("/etc/gentoo-release"))) {
-    return QLatin1String("Gentoo Linux");
-  }
-
-  return out;
-}
-#endif

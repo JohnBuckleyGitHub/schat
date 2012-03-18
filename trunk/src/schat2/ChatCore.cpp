@@ -23,7 +23,6 @@
 #include <QTimer>
 #include <QWidget>
 
-#include "actions/ChatViewAction.h"
 #include "ChatAlerts.h"
 #include "ChatCore.h"
 #include "ChatHooks.h"
@@ -116,50 +115,12 @@ ChatCore::ChatCore(QObject *parent)
 
 ChatCore::~ChatCore()
 {
-  qDeleteAll(m_actions);
 }
 
 
 QByteArray ChatCore::randomId()
 {
   return SimpleID::randomId(SimpleID::MessageId, ChatClient::id());
-}
-
-
-/*!
- * \deprecated Эта функция не должна находится в этом классе.
- */
-void ChatCore::makeRed(QWidget *widget, bool red)
-{
-  QPalette palette = widget->palette();
-
-  if (red)
-    palette.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
-  else
-    palette.setColor(QPalette::Active, QPalette::Base, Qt::white);
-
-  widget->setPalette(palette);
-}
-
-
-/*!
- * \deprecated Необходим отдельный класс.
- */
-void ChatCore::click(const QString &id, const QString &button)
-{
-  QList<ChatViewAction *> actions = m_actions.values(id);
-  if (actions.isEmpty())
-    return;
-
-  ChatViewAction *action = 0;
-  for (int i = 0; i < actions.size(); ++i) {
-    action = actions.at(i);
-    if (action && action->exec(id, button)) {
-      m_actions.remove(id, action);
-      delete action;
-      action = 0;
-    }
-  }
 }
 
 

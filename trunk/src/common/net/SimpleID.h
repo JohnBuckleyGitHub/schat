@@ -60,14 +60,6 @@ public:
   static QByteArray setType(int type, const QByteArray &id);
   static QByteArray toBase32(const QByteArray &data);
   static QByteArray uniqueId();
-  static QString userAgent();
-
-# if defined(Q_OS_LINUX)
-  static QString linuxType();
-# endif
-
-private:
-  static QString m_userAgent;
 };
 
 #endif /* SIMPLEID_H_ */

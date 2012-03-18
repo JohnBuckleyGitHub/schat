@@ -26,7 +26,6 @@ DEFINES += SCHAT_CORE_LIBRARY
 win32:RC_FILE = schat2-core.rc
 
 HEADERS = \
-    actions/ChatViewAction.h \
     actions/MenuBuilder.h \
     alerts/MessageAlert.h \
     arora/lineedit.h \
@@ -105,7 +104,6 @@ HEADERS = \
     WebBridge.h \
 
 SOURCES = \
-    actions/ChatViewAction.cpp \
     actions/MenuBuilder.cpp \
     alerts/MessageAlert.cpp \
     arora/lineedit.cpp \
