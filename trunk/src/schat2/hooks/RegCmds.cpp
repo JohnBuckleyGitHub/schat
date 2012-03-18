@@ -94,6 +94,8 @@ void RegCmds::signOut()
   if (!item)
     return;
 
+  ChatClient::feeds()->query(LS("hosts"), LS("unlink"));
+
   ChatClient::io()->leave();
   item->setCookie(QByteArray());
   ChatClient::open();
