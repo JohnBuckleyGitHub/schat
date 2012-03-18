@@ -28,7 +28,6 @@
 
 class ChatPlugins;
 class ChatSettings;
-class ChatViewAction;
 class FileLocations;
 class NetworkManager;
 class SimpleClient;
@@ -50,13 +49,10 @@ public:
   inline static NetworkManager *networks() { return m_self->m_networkManager; }
   inline static QByteArray currentId()     { return m_self->m_currentId; }
   inline static void setCurrentId(const QByteArray &id) { m_self->m_currentId = id; }
-  inline Translation *translation() { return m_translation; }
-  inline void addChatViewAction(const QString &id, ChatViewAction *action) { m_actions.insert(id, action); }
+  inline Translation *translation()        { return m_translation; }
   static QByteArray randomId();
-  static void makeRed(QWidget *widget, bool red = true);
 
 public slots:
-  void click(const QString &id, const QString &button);
   void send(const QString &text);
 
 private slots:
@@ -71,7 +67,6 @@ private:
   FileLocations *m_locations;                     ///< Схема размещения файлов.
   NetworkManager *m_networkManager;               ///< Объект управляющих сетями.
   QByteArray m_currentId;                         ///< Идентификатор текущей вкладки.
-  QMultiHash<QString, ChatViewAction*> m_actions; ///< Web действия.
   SimpleClient *m_client;                         ///< Клиент.
   static ChatCore *m_self;                        ///< Указатель на себя.
   Translation *m_translation;                     ///< Модуль загрузки переводов.
