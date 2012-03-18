@@ -34,17 +34,17 @@ class SCHAT_EXPORT Hosts
 {
 public:
   Hosts();
-  inline QByteArray currentId() const            { return m_sockets.publicId(); }
-  inline QList<quint64> sockets() const          { return m_sockets.socketsList(); }
-  inline void add(const QByteArray &uniqueId)    { m_sockets.add(toPublicId(uniqueId)); }
   inline void setChannel(ServerChannel *channel) { m_channel = channel; }
 
   FeedPtr feed() const;
+  QByteArray currentId() const;
   QByteArray id(const QByteArray &publicId) const;
+  QList<quint64> sockets() const;
   QList<quint64> sockets(const QByteArray &publicId) const;
   QVariantMap data(const QByteArray &publicId = QByteArray()) const;
 
   void add(const AuthRequest &data, const QString &host);
+  void add(const QByteArray &uniqueId);
   void remove(quint64 socket);
   void setData(const QVariantMap &data, const QByteArray &publicId = QByteArray(), bool save = true);
 
