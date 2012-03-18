@@ -47,6 +47,20 @@ bool ClientFeeds::headers(const QByteArray &id)
 }
 
 
+bool ClientFeeds::query(const QString &name, const QString &action, const QVariantMap &json)
+{
+  return query(ChatClient::id(), name, action, json);
+}
+
+
+bool ClientFeeds::query(const QByteArray &id, const QString &name, const QString &action, const QVariantMap &json)
+{
+  QVariantMap data = json;
+  data[LS("action")] = action;
+  return request(id, LS("query"), name, data);
+}
+
+
 bool ClientFeeds::request(const QByteArray &id, const QString &command, const QString &name, const QVariantMap &json)
 {
   if (!Channel::isCompatibleId(id))
