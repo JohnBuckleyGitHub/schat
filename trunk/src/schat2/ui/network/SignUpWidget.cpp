@@ -166,11 +166,10 @@ void SignUpWidget::signUp()
   m_signUp->setProgress();
 
   QVariantMap data = RegCmds::request(m_action, m_nameEdit->text(), m_passwordEdit->text());
-
   data[LS("q")] = SimpleID::encode(SimpleID::make(m_question->currentText().toUtf8(), SimpleID::MessageId));
   data[LS("a")] = SimpleID::encode(SimpleID::make(m_answerEdit->text().toUtf8(), SimpleID::MessageId));
 
-  ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("account"), data);
+  ChatClient::feeds()->query(LS("account"), m_action, data);
 }
 
 
