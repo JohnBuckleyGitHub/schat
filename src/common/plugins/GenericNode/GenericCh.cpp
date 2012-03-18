@@ -19,7 +19,6 @@
 #include "feeds/FeedStorage.h"
 #include "GenericCh.h"
 #include "sglobal.h"
-#include "feeds/NodeLinksFeed.h"
 
 GenericCh::GenericCh(QObject *parent)
   : Ch(parent)
@@ -53,9 +52,5 @@ void GenericCh::userChannelImpl(ChatChannel channel, const AuthRequest &data, co
   channel->feed(LS("account"));
 
   addNewUserFeedIsNotExist(channel, LS("acl"));
-  addNewUserFeedIsNotExist(channel, LS("links"));
-
   channel->hosts().add(data, host);
-
-  NodeLinksFeed::add(channel, data, host);
 }
