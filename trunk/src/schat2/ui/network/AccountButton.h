@@ -41,6 +41,7 @@ private:
   void retranslateUi();
 
   NetworkWidget *m_network;      ///< Виджет редактирования сети.
+  QAction *m_computers;          ///< Действие для просмотра компьютеров.
   QAction *m_password;           ///< Действие для смены пароля.
   QAction *m_reset;              ///< Действие для восстановления пароля.
   QAction *m_signIn;             ///< Действие для авторизации на сервере.

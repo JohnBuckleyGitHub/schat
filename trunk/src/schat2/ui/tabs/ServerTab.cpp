@@ -101,6 +101,12 @@ void ServerTab::notify(const Notify &notify)
     if (notify.data() != id())
       return;
 
+    if (m_tabs->indexOf(this) == -1) {
+      m_tabs->addTab(this, QString());
+      setOnline();
+      retranslateUi();
+    }
+
     m_tabs->setCurrentIndex(m_tabs->indexOf(this));
 
     if (type == Notify::OpenInfo)

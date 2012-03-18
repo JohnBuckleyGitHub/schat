@@ -20,6 +20,7 @@
 #include <QMenu>
 
 #include "Account.h"
+#include "ChatNotify.h"
 #include "client/ChatClient.h"
 #include "hooks/RegCmds.h"
 #include "sglobal.h"
@@ -42,6 +43,7 @@ AccountButton::AccountButton(NetworkWidget *parent)
   m_menu->addSeparator();
   m_reset = m_menu->addAction(SCHAT_ICON(Password), tr("Forgot password?"));
   m_password = m_menu->addAction(SCHAT_ICON(Password), tr("Change password"));
+  m_computers = m_menu->addAction(SCHAT_ICON(Computer), tr("My Computers"));
 
   setIcon(SCHAT_ICON(Key));
   setMenu(m_menu);
@@ -65,7 +67,10 @@ void AccountButton::changeEvent(QEvent *event)
 
 void AccountButton::menuTriggered(QAction *action)
 {
-  if (action == m_password) {
+  if (action == m_computers) {
+    ChatNotify::start(Notify::OpenInfo, ChatClient::serverId());
+  }
+  else if (action == m_password) {
     m_network->add(new Password(this));
   }
   else if (action == m_reset) {
@@ -101,5 +106,6 @@ void AccountButton::retranslateUi()
   m_signUp->setText(tr("Sign up"));
   m_reset->setText(tr("Forgot password?"));
   m_password->setText(tr("Change password"));
+  m_computers->setText(tr("My Computers"));
   setToolTip(tr("Account"));
 }
