@@ -128,8 +128,13 @@ FeedQueryReply NodeHostsFeed::unlink(const QVariantMap &json, Channel *channel)
     return FeedQueryReply(Notice::Forbidden);
 
   QString id = json.value(LS("id")).toString();
-  if (id.size() != 34)
-    return FeedQueryReply(Notice::BadRequest);
+  if (id.size() != 34) {
+    ChatChannel user = Ch::channel(head().channel()->id());
+    if (!channel)
+      return FeedQueryReply(Notice::BadRequest);
+
+    id = SimpleID::encode(user->hosts().currentId());
+  }
 
   if (!m_data.contains(id))
     return FeedQueryReply(Notice::NotFound);

@@ -56,12 +56,24 @@ FeedPtr Hosts::feed() const
 }
 
 
+QByteArray Hosts::currentId() const
+{
+  return m_sockets.publicId();
+}
+
+
 QByteArray Hosts::id(const QByteArray &publicId) const
 {
   if (SimpleID::typeOf(publicId) != SimpleID::MessageId)
     return m_sockets.publicId();
 
   return publicId;
+}
+
+
+QList<quint64> Hosts::sockets() const
+{
+  return m_sockets.socketsList();
 }
 
 
@@ -105,6 +117,12 @@ void Hosts::add(const AuthRequest &data, const QString &host)
   json[LS("online")]   = true;
 
   setData(json);
+}
+
+
+void Hosts::add(const QByteArray &uniqueId)
+{
+  return m_sockets.add(toPublicId(uniqueId));
 }
 
 
