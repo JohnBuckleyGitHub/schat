@@ -42,7 +42,7 @@ bool RegCmds::command(const QByteArray &dest, const ClientCmd &cmd)
     if (!body.isValid())
       return true;
 
-    ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("account"), request(command, body.command(), body.body()));
+    ChatClient::feeds()->query(LS("account"), command, request(command, body.command(), body.body()));
     return true;
   }
   else if (command == LS("sign")) {

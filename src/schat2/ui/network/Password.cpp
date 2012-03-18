@@ -217,11 +217,10 @@ void PasswordWidget::execute()
   m_ok->setProgress();
 
   QVariantMap data;
-  data[LS("action")] = LS("password");
   data[LS("pass")]   = SimpleID::encode(SimpleID::password(m_passwordEdit->text()));
   data[LS("new")]    = SimpleID::encode(SimpleID::password(m_newEdit->text()));
 
-  ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("account"), data);
+  ChatClient::feeds()->query(LS("account"), LS("password"), data);
 }
 
 
@@ -290,10 +289,9 @@ void QuestionWidget::execute()
   m_ok->setProgress();
 
   QVariantMap data;
-  data[LS("action")] = LS("password");
   data[LS("pass")]   = SimpleID::encode(SimpleID::password(m_passwordEdit->text()));
   data[LS("q")]      = SimpleID::encode(SimpleID::make(m_question->currentText().toUtf8(), SimpleID::MessageId));
   data[LS("a")]      = SimpleID::encode(SimpleID::make(m_answerEdit->text().toUtf8(), SimpleID::MessageId));
 
-  ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("account"), data);
+  ChatClient::feeds()->query(LS("account"), LS("password"), data);
 }
