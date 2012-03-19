@@ -16,14 +16,21 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#include "client/ChatClient.h"
+#include "client/ClientFeeds.h"
+#include "Profile.h"
+#include "sglobal.h"
 
-#define SCHAT_VERSION      "1.99.18"
-#define SCHAT_VERSION_RC   1,99,18,0
-#define SCHAT_NAME         "Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "schat.me"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2012 IMPOMEZIA"
+Profile::Profile(QObject *parent)
+  : QObject(parent)
+{
+  connect(ChatClient::i(), SIGNAL(ready()), SLOT(ready()));
+}
 
-#endif /*VERSION_H_*/
+
+void Profile::ready()
+{
+  FeedPtr feed = ChatClient::channel()->feed(LS("profile"), false);
+  if (!feed)
+    ChatClient::feeds()->request(ChatClient::id(), LS("add"), LS("profile"));
+}

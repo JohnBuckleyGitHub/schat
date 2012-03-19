@@ -54,6 +54,7 @@ HEADERS = \
     messages/ServiceMessage.h \
     NetworkManager.h \
     plugins/ChatPlugin.h \
+    Profile.h \
     QProgressIndicator/QProgressIndicator.h \
     schat.h \
     text/LinksFilter.h \
@@ -131,6 +132,7 @@ SOURCES = \
     messages/ServiceMessage.cpp \
     NetworkManager.cpp \
     plugins/ChatPlugin.cpp \
+    Profile.cpp \
     QProgressIndicator/QProgressIndicator.cpp \
     text/LinksFilter.cpp \
     text/TokenFilter.cpp \
