@@ -16,14 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#ifndef PROFILE_H_
+#define PROFILE_H_
 
-#define SCHAT_VERSION      "1.99.18"
-#define SCHAT_VERSION_RC   1,99,18,0
-#define SCHAT_NAME         "Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "schat.me"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2012 IMPOMEZIA"
+#include <QObject>
 
-#endif /*VERSION_H_*/
+#include "schat.h"
+
+class SCHAT_CORE_EXPORT Profile : public QObject
+{
+  Q_OBJECT
+
+public:
+  Profile(QObject *parent = 0);
+
+private slots:
+  void ready();
+};
+
+#endif /* PROFILE_H_ */

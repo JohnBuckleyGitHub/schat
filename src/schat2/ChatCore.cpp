@@ -48,6 +48,7 @@
 #include "hooks/UserMenuImpl.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
+#include "Profile.h"
 #include "sglobal.h"
 #include "text/HtmlFilter.h"
 #include "text/PlainTextFilter.h"
@@ -56,7 +57,6 @@
 #include "WebBridge.h"
 
 ChatCore *ChatCore::m_self = 0;
-
 
 
 ChatCore::ChatCore(QObject *parent)
@@ -99,6 +99,8 @@ ChatCore::ChatCore(QObject *parent)
   ChatClient::id(); // Необходимо для инициализации базовых настроек.
 
   ChatIcons::init();
+
+  new Profile(this);
 
   m_plugins = new ChatPlugins(this);
   m_plugins->load();
