@@ -65,7 +65,6 @@ HEADERS = \
     ui/fields/GenderField.h \
     ui/fields/LanguageField.h \
     ui/fields/NickEdit.h \
-    ui/fields/ProfileField.h \
     ui/InputWidget.h \
     ui/LanguageBox.h \
     ui/LoginIcon.h \
@@ -142,7 +141,6 @@ SOURCES = \
     ui/fields/GenderField.cpp \
     ui/fields/LanguageField.cpp \
     ui/fields/NickEdit.cpp \
-    ui/fields/ProfileField.cpp \
     ui/InputWidget.cpp \
     ui/LanguageBox.cpp \
     ui/LoginIcon.cpp \
