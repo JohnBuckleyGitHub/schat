@@ -79,6 +79,7 @@ HEADERS = \
     ui/network/Password.h \
     ui/network/SecurityQuestion.h \
     ui/network/SignUpWidget.h \
+    ui/profile/ProfileButton.h \
     ui/SendWidget.h \
     ui/SoundButton.h \
     ui/StatusBar.h \
@@ -155,6 +156,7 @@ SOURCES = \
     ui/network/Password.cpp \
     ui/network/SecurityQuestion.cpp \
     ui/network/SignUpWidget.cpp \
+    ui/profile/ProfileButton.cpp \
     ui/SendWidget.cpp \
     ui/SoundButton.cpp \
     ui/StatusBar.cpp \

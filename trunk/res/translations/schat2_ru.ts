@@ -53,44 +53,44 @@
 <context>
     <name>AccountButton</name>
     <message>
-        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="39"/>
-        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="100"/>
+        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="40"/>
+        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="104"/>
         <source>Sign in</source>
         <translation>Вход</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="40"/>
-        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="101"/>
+        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="41"/>
+        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="105"/>
         <source>Sign out</source>
         <translation>Выйти</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="41"/>
-        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="102"/>
+        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="42"/>
+        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="106"/>
         <source>Sign up</source>
         <translation>Регистрация</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="43"/>
-        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="103"/>
+        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="44"/>
+        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="107"/>
         <source>Forgot password?</source>
         <translation>Забыли пароль?</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="44"/>
-        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="104"/>
+        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="45"/>
+        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="108"/>
         <source>Change password</source>
         <translation>Изменить пароль</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="45"/>
-        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="105"/>
+        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="46"/>
+        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="109"/>
         <source>My Computers</source>
         <translation>Мои компьютеры</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="50"/>
-        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="106"/>
+        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="51"/>
+        <location filename="../../src/schat2/ui/network/AccountButton.cpp" line="110"/>
         <source>Account</source>
         <translation>Аккаунт</translation>
     </message>
@@ -278,8 +278,8 @@
 <context>
     <name>LocalePage</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="146"/>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="147"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="150"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="151"/>
         <source>Language</source>
         <translation>Язык</translation>
     </message>
@@ -353,8 +353,8 @@
 <context>
     <name>NetworkPage</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="116"/>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="117"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="120"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="121"/>
         <source>Network</source>
         <translation>Сеть</translation>
     </message>
@@ -460,20 +460,28 @@
     </message>
 </context>
 <context>
+    <name>ProfileButton</name>
+    <message>
+        <location filename="../../src/schat2/ui/profile/ProfileButton.cpp" line="30"/>
+        <source>Add</source>
+        <translation>Добавить</translation>
+    </message>
+</context>
+<context>
     <name>ProfilePage</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="86"/>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="88"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="90"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="92"/>
         <source>Profile</source>
         <translation>Профиль</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="89"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="93"/>
         <source>Nick:</source>
         <translation>Ник:</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="90"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="94"/>
         <source>Gender:</source>
         <translation>Пол:</translation>
     </message>
@@ -561,7 +569,7 @@
 <context>
     <name>ServerTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="134"/>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="140"/>
         <source>Network</source>
         <translation>Сеть</translation>
     </message>
@@ -618,14 +626,14 @@
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="157"/>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="240"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="161"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="244"/>
         <source>Apply</source>
         <translation>Применить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="176"/>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="241"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="180"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="245"/>
         <source>Preferences</source>
         <translation>Настройки</translation>
     </message>
