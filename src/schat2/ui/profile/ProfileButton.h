@@ -16,25 +16,20 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NICKEDIT_H_
-#define NICKEDIT_H_
+#ifndef PROFILEBUTTON_H_
+#define PROFILEBUTTON_H_
 
-#include "arora/lineedit.h"
+#include <QToolButton>
 
-/*!
- * Виджет редактирования ника пользователя.
- */
-class NickEdit : public LineEdit
+class ProfileButton : public QToolButton
 {
   Q_OBJECT
 
 public:
-  NickEdit(QWidget *parent = 0);
+  ProfileButton(QWidget *parent = 0);
 
-private slots:
-  void editingFinished();
-  void settingsChanged(const QString &key, const QVariant &value);
-  void textChanged();
+private:
+  QMenu *m_menu; ///< Меню.
 };
 
-#endif /* NICKEDIT_H_ */
+#endif /* PROFILEBUTTON_H_ */
