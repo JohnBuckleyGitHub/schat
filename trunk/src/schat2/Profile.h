@@ -29,9 +29,21 @@ class SCHAT_CORE_EXPORT Profile : public QObject
 
 public:
   Profile(QObject *parent = 0);
+  inline static Profile *i()               { return m_self; }
+  inline static void add(Profile *hook)    { if (!m_self->m_hooks.contains(hook)) m_self->m_hooks.append(hook); }
+  inline static void remove(Profile *hook) { m_self->m_hooks.removeAll(hook); }
+
+  static QString translate(const QString &key);
+  static QStringList available();
+
+  static QStringList fields; ///< Поддерживаемые поля, отсортированные по приоритету.
 
 private slots:
   void ready();
+
+private:
+  QList<Profile*> m_hooks; ///< Хуки.
+  static Profile *m_self;  ///< Указатель на себя.
 };
 
 #endif /* PROFILE_H_ */

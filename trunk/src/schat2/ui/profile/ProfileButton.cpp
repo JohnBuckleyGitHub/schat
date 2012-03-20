@@ -18,6 +18,7 @@
 
 #include <QMenu>
 
+#include "Profile.h"
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
 #include "ui/profile/ProfileButton.h"
@@ -32,4 +33,20 @@ ProfileButton::ProfileButton(QWidget *parent)
   setPopupMode(InstantPopup);
   setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
   setMenu(m_menu);
+
+  rebuild();
+}
+
+
+void ProfileButton::rebuild()
+{
+  m_menu->clear();
+  QStringList available = Profile::available();
+  if (available.isEmpty())
+    setVisible(false);
+
+  foreach (QString field, available) {
+    QAction *action = m_menu->addAction(Profile::translate(field));
+    action->setData(field);
+  }
 }

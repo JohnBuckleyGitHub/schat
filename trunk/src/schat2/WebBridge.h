@@ -35,7 +35,7 @@ public:
   inline static WebBridge *i() { return m_self; }
 
   Q_INVOKABLE QString channel(const QString &id);
-  Q_INVOKABLE QString translate(const QString &key);
+  Q_INVOKABLE QString translate(const QString &key) const;
   Q_INVOKABLE QVariantMap feed(const QString &id, const QString &name, bool cache = true);
   Q_INVOKABLE QVariantMap feed(const QString &name, bool cache = true);
   Q_INVOKABLE void request(const QString &command, const QString &name, const QVariantMap &json = QVariantMap());

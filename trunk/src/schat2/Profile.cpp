@@ -21,10 +21,42 @@
 #include "Profile.h"
 #include "sglobal.h"
 
+QStringList Profile::fields;
+Profile *Profile::m_self = 0;
+
 Profile::Profile(QObject *parent)
   : QObject(parent)
 {
+  if (m_self)
+    add(this);
+  else
+    m_self = this;
+
+  fields << LS("name")
+         << LS("bday")
+         << LS("city")
+         << LS("country")
+         << LS("tel")
+         << LS("email")
+         << LS("site")
+         << LS("note");
+
   connect(ChatClient::i(), SIGNAL(ready()), SLOT(ready()));
+}
+
+
+QString Profile::translate(const QString &key)
+{
+  return key;
+}
+
+
+/*!
+ * Возвращает поля доступные для добавления.
+ */
+QStringList Profile::available()
+{
+  return fields;
 }
 
 
