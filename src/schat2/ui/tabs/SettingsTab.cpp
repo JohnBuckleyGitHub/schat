@@ -37,6 +37,7 @@
 #include "ui/fields/NickEdit.h"
 #include "ui/network/NetworkWidget.h"
 #include "ui/profile/ProfileButton.h"
+#include "ui/profile/ProfileLayout.h"
 #include "ui/tabs/SettingsTab.h"
 #include "ui/tabs/SettingsTab_p.h"
 
@@ -67,6 +68,7 @@ ProfilePage::ProfilePage(QWidget *parent)
   m_genderField = new GenderField(this);
 
   m_button = new ProfileButton(this);
+  m_layout = new ProfileLayout(this);
 
   QGridLayout *profileLay = new QGridLayout;
   profileLay->addWidget(m_nickLabel, 0, 0);
@@ -79,6 +81,7 @@ ProfilePage::ProfilePage(QWidget *parent)
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_profileLabel);
   mainLay->addLayout(profileLay);
+  mainLay->addWidget(m_layout);
   mainLay->addStretch();
 
   retranslateUi();
