@@ -45,7 +45,7 @@ QString WebBridge::channel(const QString &id)
 }
 
 
-QString WebBridge::translate(const QString &key)
+QString WebBridge::translate(const QString &key) const
 {
   return translations.value(key, key);
 }

@@ -29,6 +29,8 @@ public:
   ProfileButton(QWidget *parent = 0);
 
 private:
+  void rebuild();
+
   QMenu *m_menu; ///< Меню.
 };
 
