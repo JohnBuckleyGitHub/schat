@@ -85,6 +85,8 @@ ProfilePage::ProfilePage(QWidget *parent)
   mainLay->addStretch();
 
   retranslateUi();
+
+  connect(m_button, SIGNAL(add(const QString &)), m_layout, SLOT(add(const QString &)));
 }
 
 

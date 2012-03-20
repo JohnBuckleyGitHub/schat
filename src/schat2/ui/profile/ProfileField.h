@@ -16,31 +16,32 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PROFILELAYOUT_H_
-#define PROFILELAYOUT_H_
+#ifndef PROFILEFIELD_H_
+#define PROFILEFIELD_H_
 
 #include <QWidget>
-#include <QMap>
 
-class QGridLayout;
-class ProfileField;
+#include "schat.h"
+
+class QLabel;
 
 /*!
- * Виджет для размещения полей профиля.
+ * Базовый класс для полей профиля.
  */
-class ProfileLayout : public QWidget
+class SCHAT_CORE_EXPORT ProfileField : public QWidget
 {
   Q_OBJECT
 
 public:
-  ProfileLayout(QWidget *parent = 0);
+  ProfileField(const QString &field, QWidget *parent = 0);
+  inline const QString& field() const { return m_field; }
+  inline QLabel *label() { return m_label; }
 
-public slots:
-  void add(const QString &field);
+protected:
+  QLabel *m_label;
 
 private:
-  QGridLayout *m_layout;
-  QMap<QString, ProfileField*> m_fields;
+  QString m_field;
 };
 
-#endif /* PROFILELAYOUT_H_ */
+#endif /* PROFILEFIELD_H_ */
