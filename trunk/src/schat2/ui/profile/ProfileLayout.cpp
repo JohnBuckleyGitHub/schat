@@ -16,31 +16,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PROFILEBUTTON_H_
-#define PROFILEBUTTON_H_
+#include "ui/profile/ProfileLayout.h"
 
-#include <QToolButton>
-
-/*!
- * Кнопка добавления полей профиля.
- */
-class ProfileButton : public QToolButton
+ProfileLayout::ProfileLayout(QWidget *parent)
+  : QWidget(parent)
 {
-  Q_OBJECT
-
-public:
-  ProfileButton(QWidget *parent = 0);
-
-signals:
-  void add(const QString &field);
-
-private slots:
-  void triggered(QAction *action);
-
-private:
-  void rebuild();
-
-  QMenu *m_menu; ///< Меню.
-};
-
-#endif /* PROFILEBUTTON_H_ */
+}

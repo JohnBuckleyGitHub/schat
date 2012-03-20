@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include <QMenu>
 
 #include "Profile.h"
@@ -35,6 +37,15 @@ ProfileButton::ProfileButton(QWidget *parent)
   setMenu(m_menu);
 
   rebuild();
+
+  connect(m_menu, SIGNAL(triggered(QAction *)), SLOT(triggered(QAction *)));
+}
+
+
+void ProfileButton::triggered(QAction *action)
+{
+  if (action)
+    emit add(action->data().toString());
 }
 
 

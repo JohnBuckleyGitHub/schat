@@ -16,31 +16,20 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PROFILEBUTTON_H_
-#define PROFILEBUTTON_H_
+#ifndef PROFILELAYOUT_H_
+#define PROFILELAYOUT_H_
 
-#include <QToolButton>
+#include <QWidget>
 
 /*!
- * Кнопка добавления полей профиля.
+ * Виджет для размещения полей профиля.
  */
-class ProfileButton : public QToolButton
+class ProfileLayout : public QWidget
 {
   Q_OBJECT
 
 public:
-  ProfileButton(QWidget *parent = 0);
-
-signals:
-  void add(const QString &field);
-
-private slots:
-  void triggered(QAction *action);
-
-private:
-  void rebuild();
-
-  QMenu *m_menu; ///< Меню.
+  ProfileLayout(QWidget *parent = 0);
 };
 
-#endif /* PROFILEBUTTON_H_ */
+#endif /* PROFILELAYOUT_H_ */
