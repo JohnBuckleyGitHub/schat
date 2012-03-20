@@ -30,6 +30,9 @@ class SCHAT_CORE_EXPORT TextField : public ProfileField
 public:
   TextField(const QString &field, QWidget *parent = 0);
 
+private slots:
+  void editingFinished();
+
 protected:
   QLineEdit *m_edit;
 };

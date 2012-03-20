@@ -140,9 +140,8 @@ void ChatSettings::set(const FeedNotify &notify)
 void ChatSettings::set(const QString &key, const QVariant &value)
 {
   QVariantMap query;
-  query[LS("action")] = LS("x-set");
   query[key] = value;
-  ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("settings"), query);
+  ChatClient::feeds()->query(LS("settings"), LS("x-set"), query);
 }
 
 

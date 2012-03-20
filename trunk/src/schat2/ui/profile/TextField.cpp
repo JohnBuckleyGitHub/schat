@@ -30,4 +30,12 @@ TextField::TextField(const QString &field, QWidget *parent)
   mainLay->setMargin(0);
   mainLay->setSpacing(0);
   mainLay->addWidget(m_edit);
+
+  connect(m_edit, SIGNAL(editingFinished()), SLOT(editingFinished()));
+}
+
+
+void TextField::editingFinished()
+{
+  apply(m_edit->text());
 }
