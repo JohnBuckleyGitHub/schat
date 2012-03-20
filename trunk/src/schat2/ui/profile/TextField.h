@@ -16,31 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PROFILELAYOUT_H_
-#define PROFILELAYOUT_H_
+#ifndef TEXTFIELD_H_
+#define TEXTFIELD_H_
 
-#include <QWidget>
-#include <QMap>
+#include "ui/profile/ProfileField.h"
 
-class QGridLayout;
-class ProfileField;
+class QLineEdit;
 
-/*!
- * Виджет для размещения полей профиля.
- */
-class ProfileLayout : public QWidget
+class SCHAT_CORE_EXPORT TextField : public ProfileField
 {
   Q_OBJECT
 
 public:
-  ProfileLayout(QWidget *parent = 0);
+  TextField(const QString &field, QWidget *parent = 0);
 
-public slots:
-  void add(const QString &field);
-
-private:
-  QGridLayout *m_layout;
-  QMap<QString, ProfileField*> m_fields;
+protected:
+  QLineEdit *m_edit;
 };
 
-#endif /* PROFILELAYOUT_H_ */
+#endif /* TEXTFIELD_H_ */

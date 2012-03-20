@@ -45,9 +45,9 @@ Profile::Profile(QObject *parent)
 }
 
 
-QString Profile::translate(const QString &key)
+QString Profile::translate(const QString &field)
 {
-  return key;
+  return field;
 }
 
 

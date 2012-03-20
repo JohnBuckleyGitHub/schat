@@ -16,31 +16,14 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PROFILELAYOUT_H_
-#define PROFILELAYOUT_H_
+#include <QLabel>
 
-#include <QWidget>
-#include <QMap>
+#include "ui/profile/ProfileField.h"
+#include "Profile.h"
 
-class QGridLayout;
-class ProfileField;
-
-/*!
- * Виджет для размещения полей профиля.
- */
-class ProfileLayout : public QWidget
+ProfileField::ProfileField(const QString &field, QWidget *parent)
+  : QWidget(parent)
+  , m_field(field)
 {
-  Q_OBJECT
-
-public:
-  ProfileLayout(QWidget *parent = 0);
-
-public slots:
-  void add(const QString &field);
-
-private:
-  QGridLayout *m_layout;
-  QMap<QString, ProfileField*> m_fields;
-};
-
-#endif /* PROFILELAYOUT_H_ */
+  m_label = new QLabel(Profile::translate(field), this);
+}

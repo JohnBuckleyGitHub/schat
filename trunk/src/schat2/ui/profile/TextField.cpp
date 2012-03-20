@@ -16,31 +16,18 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PROFILELAYOUT_H_
-#define PROFILELAYOUT_H_
+#include <QLineEdit>
+#include <QVBoxLayout>
 
-#include <QWidget>
-#include <QMap>
+#include "ui/profile/TextField.h"
 
-class QGridLayout;
-class ProfileField;
-
-/*!
- * Виджет для размещения полей профиля.
- */
-class ProfileLayout : public QWidget
+TextField::TextField(const QString &field, QWidget *parent)
+  : ProfileField(field, parent)
 {
-  Q_OBJECT
+  m_edit = new QLineEdit(this);
 
-public:
-  ProfileLayout(QWidget *parent = 0);
-
-public slots:
-  void add(const QString &field);
-
-private:
-  QGridLayout *m_layout;
-  QMap<QString, ProfileField*> m_fields;
-};
-
-#endif /* PROFILELAYOUT_H_ */
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->setMargin(0);
+  mainLay->setSpacing(0);
+  mainLay->addWidget(m_edit);
+}
