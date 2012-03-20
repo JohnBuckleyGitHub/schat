@@ -18,12 +18,23 @@
 
 #include <QLabel>
 
-#include "ui/profile/ProfileField.h"
+#include "client/ChatClient.h"
+#include "client/ClientFeeds.h"
 #include "Profile.h"
+#include "sglobal.h"
+#include "ui/profile/ProfileField.h"
 
 ProfileField::ProfileField(const QString &field, QWidget *parent)
   : QWidget(parent)
   , m_field(field)
 {
   m_label = new QLabel(Profile::translate(field), this);
+}
+
+
+void ProfileField::apply(const QVariant &value)
+{
+  QVariantMap query;
+  query[m_field] = value;
+  ChatClient::feeds()->query(LS("profile"), LS("x-set"), query);
 }

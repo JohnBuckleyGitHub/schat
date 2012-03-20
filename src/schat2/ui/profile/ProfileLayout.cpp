@@ -53,8 +53,4 @@ void ProfileLayout::add(const QString &field)
 
   m_layout->addWidget(widget->label(), index, 0);
   m_layout->addWidget(widget, index, 1);
-
-  qDebug() << "ProfileLayout::add()" << field;
-
-
 }

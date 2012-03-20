@@ -38,6 +38,8 @@ public:
   inline QLabel *label() { return m_label; }
 
 protected:
+  void apply(const QVariant &value);
+
   QLabel *m_label;
 
 private:
