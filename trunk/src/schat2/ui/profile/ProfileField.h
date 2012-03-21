@@ -35,9 +35,13 @@ class SCHAT_CORE_EXPORT ProfileField : public QWidget
 public:
   ProfileField(const QString &field, QWidget *parent = 0);
   inline const QString& field() const { return m_field; }
-  inline QLabel *label() { return m_label; }
+  inline QLabel *label()              { return m_label; }
+
+public slots:
+  void reload();
 
 protected:
+  virtual void setData(const QVariant &value);
   void apply(const QVariant &value);
 
   QLabel *m_label;

@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include "client/ChatClient.h"
 #include "client/ClientFeeds.h"
 #include "Profile.h"
@@ -56,7 +58,51 @@ QString Profile::translate(const QString &field)
  */
 QStringList Profile::available()
 {
-  return fields;
+  FeedPtr feed = ChatClient::channel()->feed(LS("profile"), false);
+  if (!feed)
+    return QStringList();
+
+  QStringList filled = Profile::filled();
+  QStringList out = fields;
+  foreach (QString field, filled) {
+    out.removeAll(field);
+  }
+
+  return out;
+}
+
+
+/*!
+ * Получение списка заполненных полей.
+ */
+QStringList Profile::filled()
+{
+  FeedPtr feed = ChatClient::channel()->feed(LS("profile"), false);
+  if (!feed)
+    return QStringList();
+
+  QStringList keys = feed->data().keys();
+  keys.removeAll(LS("head"));
+  if (keys.isEmpty())
+    return QStringList();
+
+  QStringList out;
+  for (int i = 0; i < keys.size(); ++i) {
+    QVariant data = feed->data().value(keys.at(i));
+    if (data.type() == QVariant::String && data != QString())
+      out.append(keys.at(i));
+
+    else if (data.type() == QVariant::LongLong && data != 0)
+      out.append(keys.at(i));
+
+    else if (data.type() == QVariant::List && data != QVariantList())
+      out.append(keys.at(i));
+
+    else if (data.type() == QVariant::Map && data != QVariantMap())
+      out.append(keys.at(i));
+  }
+
+  return out;
 }
 
 

@@ -20,6 +20,7 @@
 
 #include <QGridLayout>
 #include <QLabel>
+#include <QTimer>
 
 #include "ui/profile/ProfileLayout.h"
 #include "ui/profile/ProfileField.h"
@@ -31,6 +32,8 @@ ProfileLayout::ProfileLayout(QWidget *parent)
 {
   m_layout = new QGridLayout(this);
   m_layout->setContentsMargins(10, 10, 3, 0);
+
+  QTimer::singleShot(0, this, SLOT(reload()));
 }
 
 
@@ -53,4 +56,13 @@ void ProfileLayout::add(const QString &field)
 
   m_layout->addWidget(widget->label(), index, 0);
   m_layout->addWidget(widget, index, 1);
+}
+
+
+void ProfileLayout::reload()
+{
+  QStringList filled = Profile::filled();
+  foreach (QString field, filled) {
+    add(field);
+  }
 }

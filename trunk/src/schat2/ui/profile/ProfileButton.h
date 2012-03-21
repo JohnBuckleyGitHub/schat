@@ -35,11 +35,10 @@ signals:
   void add(const QString &field);
 
 private slots:
+  void rebuild();
   void triggered(QAction *action);
 
 private:
-  void rebuild();
-
   QMenu *m_menu; ///< Меню.
 };
 

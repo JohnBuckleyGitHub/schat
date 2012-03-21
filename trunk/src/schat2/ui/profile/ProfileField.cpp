@@ -17,6 +17,7 @@
  */
 
 #include <QLabel>
+#include <QTimer>
 
 #include "client/ChatClient.h"
 #include "client/ClientFeeds.h"
@@ -29,6 +30,27 @@ ProfileField::ProfileField(const QString &field, QWidget *parent)
   , m_field(field)
 {
   m_label = new QLabel(Profile::translate(field), this);
+
+  QTimer::singleShot(0, this, SLOT(reload()));
+}
+
+
+void ProfileField::reload()
+{
+  FeedPtr feed = ChatClient::channel()->feed(LS("profile"), false);
+  if (!feed)
+    return;
+
+  QVariant data = feed->data().value(m_field);
+  if (data.isNull())
+    return;
+
+  setData(data);
+}
+
+
+void ProfileField::setData(const QVariant &)
+{
 }
 
 

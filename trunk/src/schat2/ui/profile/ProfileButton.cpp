@@ -36,16 +36,8 @@ ProfileButton::ProfileButton(QWidget *parent)
   setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
   setMenu(m_menu);
 
-  rebuild();
-
   connect(m_menu, SIGNAL(triggered(QAction *)), SLOT(triggered(QAction *)));
-}
-
-
-void ProfileButton::triggered(QAction *action)
-{
-  if (action)
-    emit add(action->data().toString());
+  connect(m_menu, SIGNAL(aboutToShow()), SLOT(rebuild()));
 }
 
 
@@ -60,4 +52,11 @@ void ProfileButton::rebuild()
     QAction *action = m_menu->addAction(Profile::translate(field));
     action->setData(field);
   }
+}
+
+
+void ProfileButton::triggered(QAction *action)
+{
+  if (action)
+    emit add(action->data().toString());
 }
