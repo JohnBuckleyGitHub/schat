@@ -222,6 +222,10 @@ a:active, a:hover {
   background-image: url("qrc:/images/computer.png");
 }
 
+.icon-profile {
+  background-image: url("qrc:/images/profile.png");
+}
+
 .icon-os {
   background-image: url("qrc:/images/os.png");
 }
