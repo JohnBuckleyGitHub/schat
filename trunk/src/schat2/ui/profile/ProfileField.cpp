@@ -29,7 +29,7 @@ ProfileField::ProfileField(const QString &field, QWidget *parent)
   : QWidget(parent)
   , m_field(field)
 {
-  m_label = new QLabel(Profile::translate(field), this);
+  m_label = new QLabel(Profile::translate(field) + LC(':'), this);
 
   QTimer::singleShot(0, this, SLOT(reload()));
 }
@@ -56,6 +56,13 @@ void ProfileField::setData(const QVariant &)
 
 void ProfileField::apply(const QVariant &value)
 {
+  FeedPtr feed = ChatClient::channel()->feed(LS("profile"), false);
+  if (!feed)
+    return;
+
+  if (feed->data().value(m_field) == value)
+    return;
+
   QVariantMap query;
   query[m_field] = value;
   ChatClient::feeds()->query(LS("profile"), LS("x-set"), query);
