@@ -34,6 +34,8 @@ private slots:
   void editingFinished();
 
 protected:
+  void setData(const QVariant &value);
+
   QLineEdit *m_edit;
 };
 

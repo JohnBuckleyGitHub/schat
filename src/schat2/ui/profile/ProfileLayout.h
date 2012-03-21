@@ -38,6 +38,9 @@ public:
 public slots:
   void add(const QString &field);
 
+private slots:
+  void reload();
+
 private:
   QGridLayout *m_layout;
   QMap<QString, ProfileField*> m_fields;

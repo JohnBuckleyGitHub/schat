@@ -35,6 +35,7 @@ public:
 
   static QString translate(const QString &field);
   static QStringList available();
+  static QStringList filled();
 
   static QStringList fields; ///< Поддерживаемые поля, отсортированные по приоритету.
 

@@ -39,3 +39,9 @@ void TextField::editingFinished()
 {
   apply(m_edit->text());
 }
+
+
+void TextField::setData(const QVariant &value)
+{
+  m_edit->setText(value.toString());
+}
