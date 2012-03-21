@@ -26,6 +26,7 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QStackedWidget>
+#include <QToolButton>
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
@@ -36,7 +37,6 @@
 #include "ui/fields/LanguageField.h"
 #include "ui/fields/NickEdit.h"
 #include "ui/network/NetworkWidget.h"
-#include "ui/profile/ProfileButton.h"
 #include "ui/profile/ProfileLayout.h"
 #include "ui/tabs/SettingsTab.h"
 #include "ui/tabs/SettingsTab_p.h"
@@ -67,7 +67,6 @@ ProfilePage::ProfilePage(QWidget *parent)
   m_genderLabel = new QLabel(this);
   m_genderField = new GenderField(this);
 
-  m_button = new ProfileButton(this);
   m_layout = new ProfileLayout(this);
 
   QGridLayout *profileLay = new QGridLayout;
@@ -75,7 +74,7 @@ ProfilePage::ProfilePage(QWidget *parent)
   profileLay->addWidget(m_nickEdit, 0, 1, 1, 2);
   profileLay->addWidget(m_genderLabel, 1, 0);
   profileLay->addWidget(m_genderField, 1, 1);
-  profileLay->addWidget(m_button, 1, 2);
+  profileLay->addWidget(m_layout->button(), 1, 2);
   profileLay->setContentsMargins(10, 0, 3, 0);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
@@ -85,8 +84,6 @@ ProfilePage::ProfilePage(QWidget *parent)
   mainLay->addStretch();
 
   retranslateUi();
-
-  connect(m_button, SIGNAL(add(const QString &)), m_layout, SLOT(add(const QString &)));
 }
 
 

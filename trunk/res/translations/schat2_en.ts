@@ -287,8 +287,8 @@
 <context>
     <name>LocalePage</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="150"/>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="151"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="154"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="155"/>
         <source>Language</source>
         <translation type="unfinished"></translation>
     </message>
@@ -362,8 +362,8 @@
 <context>
     <name>NetworkPage</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="120"/>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="121"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="124"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="125"/>
         <source>Network</source>
         <translation type="unfinished"></translation>
     </message>
@@ -469,9 +469,9 @@
     </message>
 </context>
 <context>
-    <name>ProfileButton</name>
+    <name>ProfileLayout</name>
     <message>
-        <location filename="../../src/schat2/ui/profile/ProfileButton.cpp" line="30"/>
+        <location filename="../../src/schat2/ui/profile/ProfileLayout.cpp" line="40"/>
         <source>Add</source>
         <translation type="unfinished"></translation>
     </message>
@@ -479,18 +479,18 @@
 <context>
     <name>ProfilePage</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="90"/>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="92"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="94"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="96"/>
         <source>Profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="93"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="97"/>
         <source>Nick:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="94"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="98"/>
         <source>Gender:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -635,14 +635,14 @@
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="161"/>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="244"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="165"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="248"/>
         <source>Apply</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="180"/>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="245"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="184"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="249"/>
         <source>Preferences</source>
         <translation type="unfinished"></translation>
     </message>

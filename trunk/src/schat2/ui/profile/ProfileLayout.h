@@ -22,8 +22,10 @@
 #include <QWidget>
 #include <QMap>
 
-class QGridLayout;
 class ProfileField;
+class QGridLayout;
+class QMenu;
+class QToolButton;
 
 /*!
  * Виджет для размещения полей профиля.
@@ -34,16 +36,23 @@ class ProfileLayout : public QWidget
 
 public:
   ProfileLayout(QWidget *parent = 0);
+  inline QToolButton *button() { return m_button; }
 
 public slots:
   void add(const QString &field);
 
 private slots:
+  void menuAboutToShow();
+  void menuTriggered(QAction *action);
   void reload();
 
 private:
-  QGridLayout *m_layout;
-  QMap<QString, ProfileField*> m_fields;
+  QStringList available() const;
+
+  QGridLayout *m_layout;                 ///< Компоновщик.
+  QMap<QString, ProfileField*> m_fields; ///< Добавленные поля.
+  QMenu *m_menu;                         ///< Меню, добавления новых полей.
+  QToolButton *m_button;                 ///< Кнопка добавления полей профиля.
 };
 
 #endif /* PROFILELAYOUT_H_ */
