@@ -216,11 +216,14 @@ int NodeFeeds::query()
       Core::send(reply.packets);
   }
 
-  if (reply.modified && reply.broadcast) {
-    get();
-    broadcast(m_channel->feed(m_packet->text(), false));
+  if (reply.modified) {
+    if (!reply.incremental)
+      get();
+
+    broadcast(m_channel->feed(m_packet->text(), false), !reply.incremental);
   }
 
+  // В случае если статус ответа не равен Notice::OK и запрос содержал поле \b action добавляем это поле в ответ.
   if (reply.status != Notice::OK && m_packet->json().contains(LS("action"))) {
     FeedPacket packet = FeedNotice::reply(*m_packet, reply.status);
     QVariantMap data;
@@ -338,7 +341,7 @@ int NodeFeeds::check(int acl)
 /*!
  * Отравка заголовка фида всем если он публично доступен для чтения.
  */
-void NodeFeeds::broadcast(FeedPtr feed)
+void NodeFeeds::broadcast(FeedPtr feed, bool echo)
 {
   QVariantMap headers = Feed::merge(LS("feeds"), Feed::merge(feed->head().name(), feed->head().get(0)));
   if (headers.isEmpty())
@@ -347,7 +350,7 @@ void NodeFeeds::broadcast(FeedPtr feed)
   FeedPacket packet = FeedNotice::reply(*m_packet, headers);
   packet->setDest(m_channel->id());
   packet->setCommand(LS("headers"));
-  m_core->send(Sockets::all(m_channel, m_user, true), packet);
+  m_core->send(Sockets::all(m_channel, m_user, echo), packet);
 }
 
 
