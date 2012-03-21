@@ -49,6 +49,9 @@ Profile::Profile(QObject *parent)
 
 QString Profile::translate(const QString &field)
 {
+  if (field == LS("name"))
+    return tr("Full name");
+
   return field;
 }
 

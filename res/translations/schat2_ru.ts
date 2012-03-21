@@ -278,8 +278,8 @@
 <context>
     <name>LocalePage</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="154"/>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="155"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="152"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="153"/>
         <source>Language</source>
         <translation>Язык</translation>
     </message>
@@ -353,8 +353,8 @@
 <context>
     <name>NetworkPage</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="124"/>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="125"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="122"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="123"/>
         <source>Network</source>
         <translation>Сеть</translation>
     </message>
@@ -460,9 +460,17 @@
     </message>
 </context>
 <context>
+    <name>Profile</name>
+    <message>
+        <location filename="../../src/schat2/Profile.cpp" line="53"/>
+        <source>Full name</source>
+        <translation>ФИО</translation>
+    </message>
+</context>
+<context>
     <name>ProfileLayout</name>
     <message>
-        <location filename="../../src/schat2/ui/profile/ProfileLayout.cpp" line="40"/>
+        <location filename="../../src/schat2/ui/profile/ProfileLayout.cpp" line="38"/>
         <source>Add</source>
         <translation>Добавить</translation>
     </message>
@@ -470,18 +478,18 @@
 <context>
     <name>ProfilePage</name>
     <message>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="92"/>
         <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="94"/>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="96"/>
         <source>Profile</source>
         <translation>Профиль</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="97"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="95"/>
         <source>Nick:</source>
         <translation>Ник:</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="98"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="96"/>
         <source>Gender:</source>
         <translation>Пол:</translation>
     </message>
@@ -626,14 +634,14 @@
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="165"/>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="248"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="163"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="246"/>
         <source>Apply</source>
         <translation>Применить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="184"/>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="249"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="182"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="247"/>
         <source>Preferences</source>
         <translation>Настройки</translation>
     </message>
