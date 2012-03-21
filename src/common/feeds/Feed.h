@@ -28,14 +28,14 @@ class FeedQueryReply
 {
 public:
   FeedQueryReply(int status, const QVariantMap &json = QVariantMap())
-  : broadcast(true)
+  : incremental(false)
   , modified(false)
   , single(false)
   , status(status)
   , json(json)
   {}
 
-  bool broadcast;            ///< \b true если нужно разослать тело фида если оно изменилось.
+  bool incremental;          ///< \b true если в результате запроса отправитель сможет воссоздать у себя полное тело фида без получения всего тела.
   bool modified;             ///< \b true если тело фида изменилось.
   bool single;               ///< \b true если ответ должен получить только пользователь создавший запрос.
   int status;                ///< Статус операции.

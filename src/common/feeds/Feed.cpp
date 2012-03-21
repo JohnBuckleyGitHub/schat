@@ -234,7 +234,7 @@ FeedQueryReply Feed::set(const QVariantMap &json, Channel *channel)
 
   int modified = 0;
   FeedQueryReply reply(Notice::OK);
-  reply.broadcast = false;
+  reply.incremental = true;
   reply.json[LS("action")] = LS("x-set");
 
   foreach (QString key, keys) {
