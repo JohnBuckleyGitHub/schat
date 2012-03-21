@@ -28,7 +28,7 @@ var Hosts = {
   // Базовый слот обрабатывающий новые данные фидов.
   feed: function(json)
   {
-    if (Pages.current == 0)
+    if (Pages.current != 1)
       return;
 
     if (!json.hasOwnProperty("type"))
