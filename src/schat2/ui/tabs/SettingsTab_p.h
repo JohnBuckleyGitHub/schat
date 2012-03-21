@@ -27,7 +27,6 @@ class GenderField;
 class LanguageField;
 class NetworkWidget;
 class NickEdit;
-class ProfileButton;
 class ProfileLayout;
 class QCheckBox;
 class QLabel;
@@ -70,7 +69,6 @@ private:
 
   GenderField *m_genderField;
   NickEdit *m_nickEdit;
-  ProfileButton *m_button;    ///< Кнопка добавления полей профиля.
   ProfileLayout *m_layout;    ///< Виджет для размещения полей профиля.
   QLabel *m_genderLabel;
   QLabel *m_nickLabel;

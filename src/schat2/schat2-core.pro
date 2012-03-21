@@ -79,7 +79,6 @@ HEADERS = \
     ui/network/Password.h \
     ui/network/SecurityQuestion.h \
     ui/network/SignUpWidget.h \
-    ui/profile/ProfileButton.h \
     ui/profile/ProfileField.h \
     ui/profile/ProfileLayout.h \
     ui/profile/TextField.h \
@@ -159,7 +158,6 @@ SOURCES = \
     ui/network/Password.cpp \
     ui/network/SecurityQuestion.cpp \
     ui/network/SignUpWidget.cpp \
-    ui/profile/ProfileButton.cpp \
     ui/profile/ProfileField.cpp \
     ui/profile/ProfileLayout.cpp \
     ui/profile/TextField.cpp \
