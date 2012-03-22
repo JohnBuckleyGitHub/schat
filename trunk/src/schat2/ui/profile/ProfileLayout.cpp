@@ -22,6 +22,7 @@
 #include <QTimer>
 #include <QToolButton>
 
+#include "ChatNotify.h"
 #include "Profile.h"
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
@@ -45,6 +46,7 @@ ProfileLayout::ProfileLayout(QWidget *parent)
 
   connect(m_menu, SIGNAL(aboutToShow()), SLOT(menuAboutToShow()));
   connect(m_menu, SIGNAL(triggered(QAction *)), SLOT(menuTriggered(QAction *)));
+  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 
   QTimer::singleShot(0, this, SLOT(reload()));
 }
@@ -95,11 +97,35 @@ void ProfileLayout::menuTriggered(QAction *action)
 }
 
 
+void ProfileLayout::notify(const Notify &notify)
+{
+  if (ProfileField::isMatch(notify))
+    reload();
+}
+
+
 void ProfileLayout::reload()
 {
   QStringList filled = Profile::filled();
   foreach (QString field, filled) {
     add(field);
+  }
+
+  if (m_fields.isEmpty())
+    return;
+
+
+  QStringList keys = m_fields.keys();
+  for (int i = 0; i < keys.size(); ++i) {
+    if (filled.contains(keys.at(i)))
+      continue;
+
+    ProfileField *widget = m_fields.value(keys.at(i));
+    m_layout->removeWidget(widget->label());
+    m_layout->removeWidget(widget);
+    widget->label()->deleteLater();
+    widget->deleteLater();
+    m_fields.remove(keys.at(i));
   }
 }
 

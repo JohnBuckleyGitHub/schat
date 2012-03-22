@@ -22,6 +22,7 @@
 #include <QWidget>
 #include <QMap>
 
+class Notify;
 class ProfileField;
 class QGridLayout;
 class QMenu;
@@ -44,6 +45,7 @@ public slots:
 private slots:
   void menuAboutToShow();
   void menuTriggered(QAction *action);
+  void notify(const Notify &notify);
   void reload();
 
 private:

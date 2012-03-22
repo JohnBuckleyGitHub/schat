@@ -17,6 +17,7 @@
  */
 
 #include <QLineEdit>
+#include <QVariant>
 #include <QVBoxLayout>
 
 #include "ui/profile/TextField.h"
