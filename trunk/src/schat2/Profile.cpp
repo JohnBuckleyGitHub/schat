@@ -112,6 +112,8 @@ QStringList Profile::filled()
 void Profile::ready()
 {
   FeedPtr feed = ChatClient::channel()->feed(LS("profile"), false);
-  if (!feed)
+  if (!feed) {
     ChatClient::feeds()->request(ChatClient::id(), LS("add"), LS("profile"));
+    ChatClient::feeds()->request(ChatClient::id(), LS("get"), LS("profile"));
+  }
 }
