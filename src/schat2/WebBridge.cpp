@@ -25,6 +25,7 @@
 #include "client/ClientFeeds.h"
 #include "JSON.h"
 #include "net/SimpleID.h"
+#include "Profile.h"
 #include "sglobal.h"
 #include "WebBridge.h"
 
@@ -39,7 +40,7 @@ WebBridge::WebBridge(QObject *parent)
 }
 
 
-QString WebBridge::channel(const QString &id)
+QString WebBridge::channel(const QString &id) const
 {
   return JSON::generate(channel(SimpleID::decode(id.toLatin1())));
 }
@@ -47,14 +48,23 @@ QString WebBridge::channel(const QString &id)
 
 QString WebBridge::translate(const QString &key) const
 {
+  if (key.startsWith(LS("field-")))
+    return Profile::translate(key.mid(6));
+
   return translations.value(key, key);
+}
+
+
+QStringList WebBridge::fields() const
+{
+  return Profile::fields;
 }
 
 
 /*!
  * Получение фида по идентификатору канала и имени.
  */
-QVariantMap WebBridge::feed(const QString &id, const QString &name, bool cache)
+QVariantMap WebBridge::feed(const QString &id, const QString &name, bool cache) const
 {
   ClientChannel channel = ChatClient::channels()->get(SimpleID::decode(id));
   if (!channel)
@@ -67,7 +77,7 @@ QVariantMap WebBridge::feed(const QString &id, const QString &name, bool cache)
 /*!
  * Получение собственного фида по имени.
  */
-QVariantMap WebBridge::feed(const QString &name, bool cache)
+QVariantMap WebBridge::feed(const QString &name, bool cache) const
 {
   return feed(ChatClient::channel(), name, cache);
 }
@@ -168,6 +178,8 @@ void WebBridge::retranslate()
   translations[LS("unlink")]            = tr("Unlink");
   translations[LS("version")]           = tr("<b>Version:</b>");
   translations[LS("last_ip")]           = tr("<b>Last IP Address:</b>");
+
+  translations[LS("profile")]           = tr("Profile");
 
   emit retranslated();
 }

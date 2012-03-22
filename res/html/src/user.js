@@ -17,12 +17,28 @@
  */
 
 var Profile = {
+  // Добавление поля профиля.
+  addRow: function(key, html) {
+    var out = '<tr class="profile-row" id="field-' + key + '">' +
+      '<td class="field-label" data-tr="field-' + key + '">' + Utils.tr('field-' + key) + ':</td>' +
+      '<td class="field-value">' + html + '</td></tr>';
+
+    $("#profile-table > tbody").append(out);
+  },
+
+  // Чтение фида.
   read: function(json) {
     if (!json.hasOwnProperty("head"))
       return;
 
-    for (var key in json) if (json.hasOwnProperty(key) && key !== "head") {
-      Profile.Field.generic(key, json[key]);
+    $(".profile-row").remove();
+
+    var fields = SimpleChat.fields();
+    for (var i = 0; i < fields.length; i++) {
+      var field = fields[i];
+      if (json.hasOwnProperty(field)) {
+        Profile.Field.generic(field, json[field]);
+      }
     }
   },
 
@@ -30,23 +46,29 @@ var Profile = {
     if (Pages.current != 1)
       return;
 
+    Utils.TR("profile");
     Profile.read(SimpleChat.feed(Settings.id, "profile"));
   },
 
+  // Перевод текстовых строк.
+  retranslate: function() {
+    Utils.TR("profile");
+  },
+
   Field: {
-    generic: function(key, json) {
-      if (typeof json !== 'string')
+    generic: function(key, value) {
+      if (typeof value !== 'string')
         return;
 
-      if (json === "")
+      if (value === "")
         return;
 
-      var out = '<tr><td>' + key + '</td><td>' + json + '</td></tr>';
-      $("#profile-table > tbody").append(out);
+      Profile.addRow(key, value);
     }
   }
 };
 
 Pages.onInfo.push(Profile.reload);
 
+SimpleChat.retranslated.connect(Profile.retranslate);
 ChatView.reload.connect(Profile.reload);

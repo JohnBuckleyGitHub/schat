@@ -865,43 +865,48 @@
 <context>
     <name>WebBridge</name>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="163"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="170"/>
         <source>My Computers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="164"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="171"/>
         <source>These are the computers currently linked to your account.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="165"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="172"/>
         <source>Computer name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="166"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="173"/>
         <source>Last Activity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="167"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="174"/>
         <source>Actions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="168"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="175"/>
         <source>Unlink</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="169"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="176"/>
         <source>&lt;b&gt;Version:&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="170"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="177"/>
         <source>&lt;b&gt;Last IP Address:&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="179"/>
+        <source>Profile</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
