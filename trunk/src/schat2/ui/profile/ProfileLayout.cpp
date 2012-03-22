@@ -114,7 +114,6 @@ void ProfileLayout::reload()
   if (m_fields.isEmpty())
     return;
 
-
   QStringList keys = m_fields.keys();
   for (int i = 0; i < keys.size(); ++i) {
     if (filled.contains(keys.at(i)))
@@ -127,6 +126,8 @@ void ProfileLayout::reload()
     widget->deleteLater();
     m_fields.remove(keys.at(i));
   }
+
+  m_button->setVisible(!available().isEmpty());
 }
 
 

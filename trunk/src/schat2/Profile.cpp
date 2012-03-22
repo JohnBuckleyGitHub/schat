@@ -34,14 +34,14 @@ Profile::Profile(QObject *parent)
   else
     m_self = this;
 
-  fields << LS("name")
-         << LS("bday")
-         << LS("city")
-         << LS("country")
-         << LS("tel")
-         << LS("email")
-         << LS("site")
-         << LS("note");
+  fields << LS("name");
+//         << LS("bday")
+//         << LS("city")
+//         << LS("country")
+//         << LS("tel")
+//         << LS("email")
+//         << LS("site")
+//         << LS("note");
 
   connect(ChatClient::i(), SIGNAL(ready()), SLOT(ready()));
 }
