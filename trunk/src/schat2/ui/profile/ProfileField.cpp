@@ -19,6 +19,7 @@
 #include <QLabel>
 #include <QTimer>
 
+#include "ChatNotify.h"
 #include "client/ChatClient.h"
 #include "client/ClientFeeds.h"
 #include "Profile.h"
@@ -31,7 +32,23 @@ ProfileField::ProfileField(const QString &field, QWidget *parent)
 {
   m_label = new QLabel(Profile::translate(field) + LC(':'), this);
 
+  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+
   QTimer::singleShot(0, this, SLOT(reload()));
+}
+
+
+bool ProfileField::isMatch(const Notify &notify)
+{
+  int type = notify.type();
+  if (type != Notify::FeedReply && type != Notify::FeedData)
+    return false;
+
+  const FeedNotify &n = static_cast<const FeedNotify &>(notify);
+  if (type == Notify::FeedReply)
+    return n.match(ChatClient::id(), LS("profile"), LS("x-set"));
+
+  return n.match(ChatClient::id(), LS("profile"));
 }
 
 
@@ -46,6 +63,21 @@ void ProfileField::reload()
     return;
 
   setData(data);
+}
+
+
+void ProfileField::notify(const Notify &notify)
+{
+  if (!isMatch(notify))
+    return;
+
+  if (notify.type() == Notify::FeedReply) {
+    const FeedNotify &n = static_cast<const FeedNotify &>(notify);
+    if (!n.json().contains(m_field))
+      return;
+  }
+
+  reload();
 }
 
 

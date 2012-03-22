@@ -24,6 +24,7 @@
 #include "schat.h"
 
 class QLabel;
+class Notify;
 
 /*!
  * Базовый класс для полей профиля.
@@ -36,9 +37,13 @@ public:
   ProfileField(const QString &field, QWidget *parent = 0);
   inline const QString& field() const { return m_field; }
   inline QLabel *label()              { return m_label; }
+  static bool isMatch(const Notify &notify);
 
 public slots:
   void reload();
+
+private slots:
+  void notify(const Notify &notify);
 
 protected:
   virtual void setData(const QVariant &value);
