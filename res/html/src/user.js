@@ -26,6 +26,29 @@ var Profile = {
     $("#profile-table > tbody").append(out);
   },
 
+
+  body: function(json) {
+    Profile.read(json);
+  },
+
+
+  feed: function(json) {
+    if (Pages.current != 1)
+      return;
+
+    if (!json.hasOwnProperty("type"))
+      return;
+
+    if (json.name !== "profile")
+      return;
+
+    try {
+      Profile[json.type](json.data);
+    }
+    catch (e) {}
+  },
+
+
   // Чтение фида.
   read: function(json) {
     if (!json.hasOwnProperty("head"))
@@ -40,20 +63,35 @@ var Profile = {
         Profile.Field.generic(field, json[field]);
       }
     }
+
+    $("#main-spinner").hide();
   },
+
 
   reload: function() {
     if (Pages.current != 1)
       return;
 
+    $("#main-spinner").css("display", "inline-block");
     Utils.TR("profile");
+
     Profile.read(SimpleChat.feed(Settings.id, "profile"));
   },
+
+
+  reply: function(json) {
+    if (json.action !== "x-set")
+      return;
+
+    Profile.read(SimpleChat.feed(Settings.id, "profile"));
+  },
+
 
   // Перевод текстовых строк.
   retranslate: function() {
     Utils.TR("profile");
   },
+
 
   Field: {
     generic: function(key, value) {
@@ -71,4 +109,5 @@ var Profile = {
 Pages.onInfo.push(Profile.reload);
 
 SimpleChat.retranslated.connect(Profile.retranslate);
+ChatView.feed.connect(Profile.feed);
 ChatView.reload.connect(Profile.reload);
