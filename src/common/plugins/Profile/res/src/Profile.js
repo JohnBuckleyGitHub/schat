@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright (c) 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,30 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
-
-#include "Profile.h"
-#include "ProfileChatView.h"
-#include "ProfilePlugin.h"
-#include "ProfilePlugin_p.h"
-#include "sglobal.h"
-
-ProfilePluginImpl::ProfilePluginImpl(QObject *parent)
-  : ChatPlugin(parent)
-{
-  new ProfileChatView(this);
-
-  Profile::addField(LS("city"), 2000);
-  Profile::addField(LS("site"), 4000);
-  Profile::addField(LS("email"), 4050);
-
-}
-
-
-ChatPlugin *ProfilePlugin::create()
-{
-  m_plugin = new ProfilePluginImpl(this);
-  return m_plugin;
-}
-
-Q_EXPORT_PLUGIN2(Profile, ProfilePlugin);
+Profile.Field.email = function(key, value) {
+  Profile.addRow(key, Utils.left(htmlspecialchars(value), 128));
+};

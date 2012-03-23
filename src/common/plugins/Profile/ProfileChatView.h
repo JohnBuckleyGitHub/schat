@@ -16,30 +16,20 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#ifndef PROFILECHATVIEW_H_
+#define PROFILECHATVIEW_H_
 
-#include "Profile.h"
-#include "ProfileChatView.h"
-#include "ProfilePlugin.h"
-#include "ProfilePlugin_p.h"
-#include "sglobal.h"
+#include "hooks/ChatViewHooks.h"
 
-ProfilePluginImpl::ProfilePluginImpl(QObject *parent)
-  : ChatPlugin(parent)
+class ProfileChatView : public ChatViewHooks
 {
-  new ProfileChatView(this);
+  Q_OBJECT
 
-  Profile::addField(LS("city"), 2000);
-  Profile::addField(LS("site"), 4000);
-  Profile::addField(LS("email"), 4050);
+public:
+  ProfileChatView(QObject *parent = 0);
 
-}
+protected:
+  void loadFinishedImpl(ChatView *view);
+};
 
-
-ChatPlugin *ProfilePlugin::create()
-{
-  m_plugin = new ProfilePluginImpl(this);
-  return m_plugin;
-}
-
-Q_EXPORT_PLUGIN2(Profile, ProfilePlugin);
+#endif /* PROFILECHATVIEW_H_ */

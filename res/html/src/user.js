@@ -59,11 +59,16 @@ var Profile = {
     var fields = SimpleChat.fields();
     for (var i = 0; i < fields.length; i++) {
       var field = fields[i];
-      if (json.hasOwnProperty(field)) {
-        try {
-          Profile.Field[field](field, json[field]);
-        } catch (e) {}
-      }
+      if (!json.hasOwnProperty(field))
+        continue;
+
+      var value = json[field];
+      if (typeof value === "string" && value === "")
+        continue;
+
+      try {
+        Profile.Field[field](field, value);
+      } catch (e) {}
     }
 
     $("#main-spinner").hide();
@@ -97,12 +102,6 @@ var Profile = {
 
   Field: {
     name: function(key, value) {
-      if (typeof value !== 'string')
-        return;
-
-      if (value === "")
-        return;
-
       Profile.addRow(key, Utils.left(htmlspecialchars(value), 128));
     }
   }

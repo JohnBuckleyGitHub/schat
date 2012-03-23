@@ -17,14 +17,18 @@
 
 SCHAT_CLIENT_LIB = 1
 SCHAT_CORE_LIB = 1
-QT = core gui network
+QT = core gui network webkit
 
 HEADERS  = \
+   ProfileChatView.h \
    ProfilePlugin.h \
    ProfilePlugin_p.h \
 
 SOURCES  = \
+   ProfileChatView.cpp \
    ProfilePlugin.cpp \
+
+RESOURCES += Profile.qrc
 
 unix {
   macx:target.path += ../../../../out/SimpleChat2.app/Contents/PlugIns/
