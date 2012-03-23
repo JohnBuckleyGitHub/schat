@@ -39,6 +39,17 @@ var Utils = {
 
   TR: function(key) {
     $("[data-tr='" + key + "']").html(Utils.tr(key));
+  },
+
+  // Обрезка строки.
+  left: function(text, n) {
+    if (typeof text !== 'string')
+      return "";
+
+    if (text.length < n)
+      return text;
+
+    return text.slice(0, n);
   }
 };
 
