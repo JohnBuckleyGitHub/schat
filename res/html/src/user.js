@@ -60,7 +60,9 @@ var Profile = {
     for (var i = 0; i < fields.length; i++) {
       var field = fields[i];
       if (json.hasOwnProperty(field)) {
-        Profile.Field.generic(field, json[field]);
+        try {
+          Profile.Field[field](field, json[field]);
+        } catch (e) {}
       }
     }
 
@@ -94,14 +96,14 @@ var Profile = {
 
 
   Field: {
-    generic: function(key, value) {
+    name: function(key, value) {
       if (typeof value !== 'string')
         return;
 
       if (value === "")
         return;
 
-      Profile.addRow(key, value);
+      Profile.addRow(key, Utils.left(htmlspecialchars(value), 128));
     }
   }
 };
