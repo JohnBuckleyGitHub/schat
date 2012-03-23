@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+  <file alias="js/Profile/Profile.js">res/js/Profile.min.js</file>
+</qresource>
+</RCC>

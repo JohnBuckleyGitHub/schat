@@ -14,4 +14,6 @@ java -jar yuicompressor.jar ..\..\res\html\src\ui.css -o ..\..\res\html\css\ui.m
 java -jar yuicompressor.jar ..\..\src\common\plugins\RawFeeds\res\src\RawFeeds.js -o ..\..\src\common\plugins\RawFeeds\res\js\RawFeeds.min.js
 java -jar yuicompressor.jar ..\..\src\common\plugins\RawFeeds\res\src\KelpJSONView.js -o ..\..\src\common\plugins\RawFeeds\res\js\KelpJSONView.min.js
 java -jar yuicompressor.jar ..\..\src\common\plugins\RawFeeds\res\src\RawFeeds.css -o ..\..\src\common\plugins\RawFeeds\res\css\RawFeeds.min.css
+
+java -jar yuicompressor.jar ..\..\src\common\plugins\Profile\res\src\Profile.js -o ..\..\src\common\plugins\Profile\res\js\Profile.min.js
 pause

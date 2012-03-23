@@ -16,30 +16,19 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
-
-#include "Profile.h"
+#include "net/SimpleID.h"
 #include "ProfileChatView.h"
-#include "ProfilePlugin.h"
-#include "ProfilePlugin_p.h"
-#include "sglobal.h"
+#include "ui/tabs/ChatView.h"
 
-ProfilePluginImpl::ProfilePluginImpl(QObject *parent)
-  : ChatPlugin(parent)
+ProfileChatView::ProfileChatView(QObject *parent)
+  : ChatViewHooks(parent)
 {
-  new ProfileChatView(this);
-
-  Profile::addField(LS("city"), 2000);
-  Profile::addField(LS("site"), 4000);
-  Profile::addField(LS("email"), 4050);
-
 }
 
 
-ChatPlugin *ProfilePlugin::create()
+void ProfileChatView::loadFinishedImpl(ChatView *view)
 {
-  m_plugin = new ProfilePluginImpl(this);
-  return m_plugin;
+  if (SimpleID::typeOf(view->id()) == SimpleID::UserId)
+    view->evaluateJavaScript(QLatin1String("loadJS('qrc:/js/Profile/Profile.js');"));
 }
 
-Q_EXPORT_PLUGIN2(Profile, ProfilePlugin);
