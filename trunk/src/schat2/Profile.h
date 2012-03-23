@@ -19,6 +19,7 @@
 #ifndef PROFILE_H_
 #define PROFILE_H_
 
+#include <QMap>
 #include <QObject>
 
 #include "schat.h"
@@ -35,16 +36,18 @@ public:
 
   static QString translate(const QString &field);
   static QStringList available();
+  static QStringList fields();
   static QStringList filled();
 
-  static QStringList fields; ///< Поддерживаемые поля, отсортированные по приоритету.
+  static void addField(const QString &name, int weight);
 
 private slots:
   void ready();
 
 private:
-  QList<Profile*> m_hooks; ///< Хуки.
-  static Profile *m_self;  ///< Указатель на себя.
+  QList<Profile*> m_hooks;            ///< Хуки.
+  static Profile *m_self;             ///< Указатель на себя.
+  static QMap<int, QString> m_fields; ///< Поддерживаемые поля.
 };
 
 #endif /* PROFILE_H_ */

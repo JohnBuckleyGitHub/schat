@@ -57,7 +57,7 @@ QString WebBridge::translate(const QString &key) const
 
 QStringList WebBridge::fields() const
 {
-  return Profile::fields;
+  return Profile::fields();
 }
 
 
