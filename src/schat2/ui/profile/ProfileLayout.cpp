@@ -62,7 +62,7 @@ void ProfileLayout::add(const QString &field)
   if (m_fields.contains(field))
     return;
 
-  int index = Profile::fields.indexOf(field);
+  int index = Profile::fields().indexOf(field);
   if (index == -1)
     return;
 

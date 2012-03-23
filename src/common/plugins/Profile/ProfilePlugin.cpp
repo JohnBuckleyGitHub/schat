@@ -18,12 +18,18 @@
 
 #include <QtPlugin>
 
+#include "Profile.h"
 #include "ProfilePlugin.h"
 #include "ProfilePlugin_p.h"
+#include "sglobal.h"
 
 ProfilePluginImpl::ProfilePluginImpl(QObject *parent)
   : ChatPlugin(parent)
 {
+  Profile::addField(LS("city"), 2000);
+  Profile::addField(LS("site"), 4000);
+  Profile::addField(LS("email"), 4050);
+
 }
 
 

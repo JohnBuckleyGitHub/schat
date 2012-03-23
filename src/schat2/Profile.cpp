@@ -23,7 +23,7 @@
 #include "Profile.h"
 #include "sglobal.h"
 
-QStringList Profile::fields;
+QMap<int, QString> Profile::m_fields;
 Profile *Profile::m_self = 0;
 
 Profile::Profile(QObject *parent)
@@ -34,7 +34,7 @@ Profile::Profile(QObject *parent)
   else
     m_self = this;
 
-  fields << LS("name");
+  addField(LS("name"), 1000);
 //         << LS("bday")
 //         << LS("city")
 //         << LS("country")
@@ -66,12 +66,18 @@ QStringList Profile::available()
     return QStringList();
 
   QStringList filled = Profile::filled();
-  QStringList out = fields;
+  QStringList out = fields();
   foreach (QString field, filled) {
     out.removeAll(field);
   }
 
   return out;
+}
+
+
+QStringList Profile::fields()
+{
+  return m_fields.values();
 }
 
 
@@ -106,6 +112,12 @@ QStringList Profile::filled()
   }
 
   return out;
+}
+
+
+void Profile::addField(const QString &name, int weight)
+{
+  m_fields[weight] = name;
 }
 
 
