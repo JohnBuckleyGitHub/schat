@@ -20,4 +20,5 @@ SUBDIRS += \
     common/plugins/Messages \
     common/plugins/Cache \
     common/plugins/History \
+    common/plugins/Profile \
     common/plugins/RawFeeds \
