@@ -22,6 +22,24 @@ var Settings = {
 
 
 var Utils = {
+  // Обрезка строки.
+  left: function(text, n) {
+    if (typeof text !== 'string')
+      return "";
+
+    if (text.length < n)
+      return text;
+
+    return text.slice(0, n);
+  },
+
+  // Динамический перевод интерфейса.
+  retranslate: function() {
+    $("[data-tr]").each(function() {
+      Utils.TR($(this).attr("data-tr"));
+    });
+  },
+
   table: function (dict) {
     var table = '<table><tbody>';
 
@@ -39,17 +57,6 @@ var Utils = {
 
   TR: function(key) {
     $("[data-tr='" + key + "']").html(Utils.tr(key));
-  },
-
-  // Обрезка строки.
-  left: function(text, n) {
-    if (typeof text !== 'string')
-      return "";
-
-    if (text.length < n)
-      return text;
-
-    return text.slice(0, n);
   }
 };
 
@@ -484,3 +491,5 @@ function htmlspecialchars (string, quote_style, charset, double_encode) {
 
   return string;
 }
+
+SimpleChat.retranslated.connect(Utils.retranslate);

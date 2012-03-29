@@ -130,18 +130,6 @@ var Hosts = {
   },
 
 
-  // Перевод текстовых строк.
-  retranslate: function()
-  {
-    Utils.TR("my_computers");
-    Utils.TR("my_computers_desc");
-    Utils.TR("computer_name");
-    Utils.TR("last_activity");
-    Utils.TR("actions");
-    Utils.TR("unlink");
-  },
-
-
   unlink: function()
   {
     var query = {};
@@ -156,7 +144,5 @@ var Hosts = {
 };
 
 Pages.onInfo.push(Hosts.reload);
-
-SimpleChat.retranslated.connect(Hosts.retranslate);
 ChatView.feed.connect(Hosts.feed);
 ChatView.reload.connect(Hosts.reload);
