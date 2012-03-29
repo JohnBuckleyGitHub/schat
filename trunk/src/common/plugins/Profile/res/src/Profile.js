@@ -25,5 +25,9 @@ Profile.Field.site = function(key, value) {
 };
 
 Profile.Field.email = function(key, value) {
-  Profile.addRow(key, Utils.left(htmlspecialchars(value), 128));
+  var addr = Utils.left(htmlspecialchars(value), 254).replace(/\s+/gi, '');
+  if (addr.indexOf("mailto:") == 0)
+    addr = addr.slice(7);
+
+  Profile.addRow(key, '<a href="mailto:' + addr + '">' + addr + '</a>');
 };
