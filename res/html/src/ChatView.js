@@ -40,6 +40,11 @@ var Utils = {
     });
   },
 
+  simplified: function(text) {
+    return $.trim(text.replace(/\s+/gi, ' '));
+  },
+
+
   table: function (dict) {
     var table = '<table><tbody>';
 
