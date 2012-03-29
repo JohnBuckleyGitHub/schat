@@ -52,6 +52,12 @@ bool ProfileField::isMatch(const Notify &notify)
 }
 
 
+void ProfileField::retranslateUi()
+{
+  m_label->setText(Profile::translate(m_field) + LC(':'));
+}
+
+
 void ProfileField::reload()
 {
   FeedPtr feed = ChatClient::channel()->feed(LS("profile"), false);
