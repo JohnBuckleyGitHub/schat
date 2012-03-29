@@ -16,8 +16,10 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "ChatCore.h"
 #include "ProfilePluginFields.h"
 #include "sglobal.h"
+#include "Translation.h"
 
 ProfilePluginFields::ProfilePluginFields(QObject *parent)
   : Profile(parent)
@@ -25,6 +27,8 @@ ProfilePluginFields::ProfilePluginFields(QObject *parent)
   addField(LS("city"), 2000);
   addField(LS("site"), 4000);
   addField(LS("email"), 4050);
+
+  ChatCore::translation()->addOther(LS("profile"));
 }
 
 

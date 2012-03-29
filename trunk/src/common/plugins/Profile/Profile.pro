@@ -38,4 +38,7 @@ unix {
   INSTALLS += target
 }
 
+TRANSLATIONS += ../../../../res/translations/profile_ru.ts
+CODECFORTR = UTF-8
+
 include(../plugins.pri)

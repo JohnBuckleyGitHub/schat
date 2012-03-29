@@ -156,6 +156,6 @@ void ChatCore::start()
 void ChatCore::loadTranslation()
 {
   m_translation = new Translation(this);
-  m_translation->setSearch(QStringList() << (m_locations->path(FileLocations::SharePath) + QLatin1String("/translations")) << (m_locations->path(FileLocations::ConfigPath) + QLatin1String("/translations")));
+  m_translation->setSearch(QStringList() << (m_locations->path(FileLocations::SharePath) + LS("/translations")) << (m_locations->path(FileLocations::ConfigPath) + LS("/translations")));
   m_translation->load(m_settings->value(QLatin1String("Translation")).toString());
 }
