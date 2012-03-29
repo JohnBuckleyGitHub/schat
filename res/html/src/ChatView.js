@@ -371,7 +371,6 @@ ChatView.message.connect(Messages.addMessage);
 function loadJS(filename)
 {
   var e = document.createElement("script");
-  e.setAttribute("type", "text/javascript");
   e.setAttribute("src", filename);
 
   document.getElementsByTagName("head")[0].appendChild(e);
@@ -382,7 +381,6 @@ function loadCSS(filename)
 {
   var e = document.createElement("link");
   e.setAttribute("rel", "stylesheet");
-  e.setAttribute("type", "text/css");
   e.setAttribute("href", filename);
 
   document.getElementsByTagName("head")[0].appendChild(e);
