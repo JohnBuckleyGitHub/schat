@@ -33,9 +33,17 @@ SOURCES  = \
 RESOURCES += Profile.qrc
 
 unix {
-  macx:target.path += ../../../../out/SimpleChat2.app/Contents/PlugIns/
-  !macx:target.path += $$SCHAT_PREFIX/usr/share/schat2/plugins
-  INSTALLS += target
+  translations.files = ../../../../res/translations/profile_ru.qm
+  
+  macx {
+    translations.path += ../../../../out/SimpleChat2.app/Contents/Resources/translations
+    target.path += ../../../../out/SimpleChat2.app/Contents/PlugIns/
+  } else {
+    translations.path = $$SCHAT_PREFIX/usr/share/schat2/translations
+    target.path += $$SCHAT_PREFIX/usr/share/schat2/plugins
+  }
+  
+  INSTALLS += target translations
 }
 
 TRANSLATIONS += ../../../../res/translations/profile_ru.ts

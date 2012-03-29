@@ -43,6 +43,8 @@ ${L} sec_Cache              "Cache"
 ${L} desc_Cache             "Cache Plugin"
 ${L} sec_History            "History"
 ${L} desc_History           "History Plugin"
+${L} sec_Profile            "Profile"
+${L} desc_Profile           "Profile Plugin"
 ${L} sec_RawFeeds           "Raw Feeds"
 ${L} desc_RawFeeds          "Raw Feeds Plugin"
 

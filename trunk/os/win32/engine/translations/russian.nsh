@@ -43,6 +43,8 @@ ${L} sec_Cache              "Cache"
 ${L} desc_Cache             "Плагин Cache"
 ${L} sec_History            "History"
 ${L} desc_History           "Плагин History"
+${L} sec_Profile            "Profile"
+${L} desc_Profile           "Плагин Profile"
 ${L} sec_RawFeeds           "Raw Feeds"
 ${L} desc_RawFeeds          "Плагин Raw Feeds"
 
