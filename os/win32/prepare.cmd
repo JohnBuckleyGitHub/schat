@@ -13,11 +13,13 @@ copy ..\..\out\plugins\GenericNode.dll in\plugins\
 copy ..\..\out\plugins\History.dll in\plugins\
 copy ..\..\out\plugins\Messages.dll in\plugins\
 copy ..\..\out\plugins\RawFeeds.dll in\plugins\
+copy ..\..\out\plugins\Profile.dll in\plugins\
 
 copy ..\..\res\doc\*.html in\doc\
 
 copy ..\..\res\translations\ru.png in\translations\
 copy ..\..\res\translations\schat2_en.qm in\translations\
 copy ..\..\res\translations\schat2_ru.qm in\translations\
+copy ..\..\res\translations\profile_ru.qm in\translations\
 
 pause
