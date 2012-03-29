@@ -32,11 +32,11 @@ class SCHAT_EXPORT Translation : public QObject
 
 public:
   Translation(QObject *parent = 0);
-  inline QString language() const              { return m_language; }
-  inline QString name() const                  { return m_name; }
-  inline QString prefix() const                { return m_prefix; }
-  inline QStringList search() const            { return m_search; }
-  inline void setPrefix(const QString &prefix) { m_prefix = prefix; }
+  inline const QString& language() const        { return m_language; }
+  inline const QString& name() const            { return m_name; }
+  inline const QString& prefix() const          { return m_prefix; }
+  inline const QStringList& search() const      { return m_search; }
+  inline void setPrefix(const QString &prefix)  { m_prefix = prefix; }
   void load(const QString &name);
   void setSearch(const QString &search);
   void setSearch(const QStringList &search);

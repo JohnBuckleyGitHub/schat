@@ -93,8 +93,6 @@ ChatCore::ChatCore(QObject *parent)
 
   new ChatAlerts(this);
 
-  m_client = ChatClient::io();
-
   m_networkManager = new NetworkManager(this);
   ChatClient::id(); // Необходимо для инициализации базовых настроек.
 

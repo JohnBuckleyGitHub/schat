@@ -16,6 +16,14 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+Profile.Field.city = function(key, value) {
+  Profile.addRow(key, Utils.left(htmlspecialchars(value), 128));
+};
+
+Profile.Field.site = function(key, value) {
+  Profile.addRow(key, Utils.left(htmlspecialchars(value), 128));
+};
+
 Profile.Field.email = function(key, value) {
   Profile.addRow(key, Utils.left(htmlspecialchars(value), 128));
 };

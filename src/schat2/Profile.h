@@ -41,6 +41,9 @@ public:
 
   static void addField(const QString &name, int weight);
 
+protected:
+  virtual QString translateImpl(const QString &field) const;
+
 private slots:
   void ready();
 
