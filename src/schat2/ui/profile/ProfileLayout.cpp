@@ -52,6 +52,14 @@ ProfileLayout::ProfileLayout(QWidget *parent)
 }
 
 
+void ProfileLayout::retranslateUi()
+{
+  foreach (ProfileField *field, m_fields) {
+    field->retranslateUi();
+  }
+}
+
+
 /*!
  * Добавления поля редактирования профиля.
  *

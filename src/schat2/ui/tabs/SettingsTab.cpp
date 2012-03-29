@@ -94,6 +94,8 @@ void ProfilePage::retranslateUi()
   m_profileLabel->setText(LS("<b>") + tr("Profile") + LS("</b>"));
   m_nickLabel->setText(tr("Nick:"));
   m_genderLabel->setText(tr("Gender:"));
+
+  m_layout->retranslateUi();
 }
 
 

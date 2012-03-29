@@ -38,6 +38,7 @@ public:
   inline const QString& field() const { return m_field; }
   inline QLabel *label()              { return m_label; }
   static bool isMatch(const Notify &notify);
+  void retranslateUi();
 
 public slots:
   void reload();

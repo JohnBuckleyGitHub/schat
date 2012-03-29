@@ -38,6 +38,7 @@ class ProfileLayout : public QWidget
 public:
   ProfileLayout(QWidget *parent = 0);
   inline QToolButton *button() { return m_button; }
+  void retranslateUi();
 
 public slots:
   void add(const QString &field);
