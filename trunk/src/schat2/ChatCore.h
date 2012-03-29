@@ -42,14 +42,13 @@ class SCHAT_CORE_EXPORT ChatCore : public QObject
 public:
   ChatCore(QObject *parent = 0);
   ~ChatCore();
-  inline ChatPlugins *plugins() { return m_plugins; }
-  inline static ChatCore *i()              { return m_self; }
-  inline static ChatSettings *settings()   { return m_self->m_settings; }
-  inline static FileLocations *locations() { return m_self->m_locations; }
-  inline static NetworkManager *networks() { return m_self->m_networkManager; }
-  inline static QByteArray currentId()     { return m_self->m_currentId; }
+  inline static ChatCore *i()                           { return m_self; }
+  inline static ChatSettings *settings()                { return m_self->m_settings; }
+  inline static FileLocations *locations()              { return m_self->m_locations; }
+  inline static NetworkManager *networks()              { return m_self->m_networkManager; }
+  inline static QByteArray currentId()                  { return m_self->m_currentId; }
+  inline static Translation *translation()              { return m_self->m_translation; }
   inline static void setCurrentId(const QByteArray &id) { m_self->m_currentId = id; }
-  inline Translation *translation()        { return m_translation; }
   static QByteArray randomId();
 
 public slots:
@@ -67,7 +66,6 @@ private:
   FileLocations *m_locations;                     ///< Схема размещения файлов.
   NetworkManager *m_networkManager;               ///< Объект управляющих сетями.
   QByteArray m_currentId;                         ///< Идентификатор текущей вкладки.
-  SimpleClient *m_client;                         ///< Клиент.
   static ChatCore *m_self;                        ///< Указатель на себя.
   Translation *m_translation;                     ///< Модуль загрузки переводов.
 };

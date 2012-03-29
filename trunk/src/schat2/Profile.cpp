@@ -47,10 +47,20 @@ Profile::Profile(QObject *parent)
 }
 
 
+/*!
+ * Перевод имени поля.
+ */
 QString Profile::translate(const QString &field)
 {
   if (field == LS("name"))
     return tr("Full name");
+
+  QString result;
+  foreach (Profile *hook, m_self->m_hooks) {
+    result = hook->translateImpl(field);
+    if (!result.isEmpty())
+      return result;
+  }
 
   return field;
 }
@@ -118,6 +128,12 @@ QStringList Profile::filled()
 void Profile::addField(const QString &name, int weight)
 {
   m_fields[weight] = name;
+}
+
+
+QString Profile::translateImpl(const QString & /*field*/) const
+{
+  return QString();
 }
 
 

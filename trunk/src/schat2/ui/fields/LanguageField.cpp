@@ -23,7 +23,7 @@
 #include "ui/fields/LanguageField.h"
 
 LanguageField::LanguageField(QWidget *parent)
-  : LanguageBox(ChatCore::i()->translation(), parent)
+  : LanguageBox(ChatCore::translation(), parent)
 {
   connect(this, SIGNAL(currentIndexChanged(int)), SLOT(indexChanged()));
 }

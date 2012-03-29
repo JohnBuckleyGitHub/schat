@@ -16,27 +16,20 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#ifndef PROFILEPLUGINFIELDS_H_
+#define PROFILEPLUGINFIELDS_H_
 
 #include "Profile.h"
-#include "ProfileChatView.h"
-#include "ProfilePlugin.h"
-#include "ProfilePlugin_p.h"
-#include "ProfilePluginFields.h"
-#include "sglobal.h"
 
-ProfilePluginImpl::ProfilePluginImpl(QObject *parent)
-  : ChatPlugin(parent)
+class ProfilePluginFields : public Profile
 {
-  new ProfileChatView(this);
-  new ProfilePluginFields(this);
-}
+  Q_OBJECT
 
+public:
+  ProfilePluginFields(QObject *parent = 0);
 
-ChatPlugin *ProfilePlugin::create()
-{
-  m_plugin = new ProfilePluginImpl(this);
-  return m_plugin;
-}
+protected:
+  QString translateImpl(const QString &field) const;
+};
 
-Q_EXPORT_PLUGIN2(Profile, ProfilePlugin);
+#endif /* PROFILEPLUGINFIELDS_H_ */
