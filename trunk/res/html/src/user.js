@@ -96,7 +96,7 @@ var Profile = {
 
   Field: {
     name: function(key, value) {
-      Profile.addRow(key, Utils.left(htmlspecialchars(value), 128));
+      Profile.addRow(key, Utils.left(htmlspecialchars(Utils.simplified(value)), 128));
     }
   }
 };

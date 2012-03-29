@@ -17,15 +17,24 @@
  */
 
 Profile.Field.city = function(key, value) {
-  Profile.addRow(key, Utils.left(htmlspecialchars(value), 128));
+  Profile.addRow(key, Utils.left(htmlspecialchars(Utils.simplified(value)), 128));
 };
 
 Profile.Field.site = function(key, value) {
-  Profile.addRow(key, Utils.left(htmlspecialchars(value), 128));
+  var addr = Utils.left(htmlspecialchars(value.replace(/\s+/gi, '')), 254);
+  var title = addr;
+  if (addr.indexOf("http://") == 0)
+    title = addr.slice(7);
+  else if (addr.indexOf("https://") == 0)
+    title = addr.slice(8);
+  else
+    addr = "http://" + addr;
+
+  Profile.addRow(key, '<a href="' + addr + '">' + title + '</a>');
 };
 
 Profile.Field.email = function(key, value) {
-  var addr = Utils.left(htmlspecialchars(value), 254).replace(/\s+/gi, '');
+  var addr = Utils.left(htmlspecialchars(value.replace(/\s+/gi, '')), 254);
   if (addr.indexOf("mailto:") == 0)
     addr = addr.slice(7);
 
