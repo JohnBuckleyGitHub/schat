@@ -94,12 +94,6 @@ var Profile = {
   },
 
 
-  // Перевод текстовых строк.
-  retranslate: function() {
-    Utils.TR("profile");
-  },
-
-
   Field: {
     name: function(key, value) {
       Profile.addRow(key, Utils.left(htmlspecialchars(value), 128));
@@ -108,7 +102,5 @@ var Profile = {
 };
 
 Pages.onInfo.push(Profile.reload);
-
-SimpleChat.retranslated.connect(Profile.retranslate);
 ChatView.feed.connect(Profile.feed);
 ChatView.reload.connect(Profile.reload);
