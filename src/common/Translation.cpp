@@ -36,7 +36,18 @@ Translation::Translation(QObject *parent)
   m_name = LS("en");
   m_prefix = LS("schat2_");
   m_core = new QTranslator(this);
-  m_qt = new QTranslator(this);
+
+  addOther(LS("qt"));
+}
+
+
+void Translation::addOther(const QString &name)
+{
+  if (m_others.contains(name))
+    return;
+
+  m_others[name] = new QTranslator(this);
+  loadOther(name);
 }
 
 
@@ -46,18 +57,11 @@ Translation::Translation(QObject *parent)
  * - auto или пустая строка, будет произведена попытка автоматически определить язык
  * в случае неудачи будет установлен английский язык.
  *
- * - Полный путь к qm файла, в случае неудачи будет попытка загрузить язык полученный из имени qm файла.
- *
  * - Код языка.
  */
 void Translation::load(const QString &name)
 {
-  if (!m_empty) {
-    QCoreApplication::removeTranslator(m_core);
-    QCoreApplication::removeTranslator(m_qt);
-  }
-  else
-    m_empty = false;
+  clear();
 
   if (name == LS("auto") || name.isEmpty()) {
     QLocale locale = QLocale::system();
@@ -70,7 +74,7 @@ void Translation::load(const QString &name)
     QFileInfo fileInfo = QFileInfo(name);
     m_name = fileInfo.baseName().mid(m_prefix.size());
     if (m_core->load(name)) {
-      loadQt();
+      finalize();
       return;
     }
     else {
@@ -90,16 +94,10 @@ void Translation::load(const QString &name)
   }
 
   if (loaded) {
-    loadQt();
+    finalize();
   }
   else if (m_name != LS("en"))
     load(LS("en"));
-}
-
-
-void Translation::setSearch(const QString &search)
-{
-  setSearch(QStringList(search));
 }
 
 
@@ -111,24 +109,51 @@ void Translation::setSearch(const QStringList &search)
   m_search = search;
   m_search.removeAll(QString());
   m_search.removeDuplicates();
+  m_search.append(QLibraryInfo::location(QLibraryInfo::TranslationsPath));
   m_search.append(LS(":/translations"));
 }
 
 
-/*!
- * Завершает загрузку перевода для приложения и инициирует загрузку перевода Qt.
- */
-void Translation::loadQt()
+void Translation::clear()
 {
+  if (m_empty)
+    return;
+
+  QCoreApplication::removeTranslator(m_core);
+  foreach (QTranslator *other, m_others) {
+    QCoreApplication::removeTranslator(other);
+  }
+
+  m_empty = true;
+}
+
+
+void Translation::finalize()
+{
+  m_empty = false;
   m_language = m_core->translate("Translation", "English");
   QCoreApplication::installTranslator(m_core);
 
-  QStringList search = m_search;
-  search.append(QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+  QMapIterator<QString, QTranslator*> i(m_others);
+  while (i.hasNext()) {
+    i.next();
+    loadOther(i.key());
+  }
+}
 
-  for (int i = 0; i < search.size(); ++i) {
-    if (m_qt->load(LS("qt_") + m_name, search.at(i))) {
-      QCoreApplication::installTranslator(m_qt);
+
+void Translation::loadOther(const QString &name)
+{
+  if (m_empty)
+    return;
+
+  QTranslator *translator = m_others.value(name);
+  if (!translator)
+    return;
+
+  for (int i = 0; i < m_search.size(); ++i) {
+    if (translator->load(name + LS("_") + m_name, m_search.at(i))) {
+      QCoreApplication::installTranslator(translator);
       return;
     }
   }
