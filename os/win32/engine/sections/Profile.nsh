@@ -26,13 +26,18 @@ ${Section}
 
   SetOutPath "$INSTDIR\doc"
   File "${SCHAT_SOURCE}\doc\ChangeLog.Profile.html"
+
+  SetOutPath "$INSTDIR\translations"
+  File "${SCHAT_SOURCE}\translations\profile_ru.qm"
 ${SectionEnd}
 ${BodyEnd}
 
 ${Uninstall}
-  Delete "$INSTDIR\doc\ChangeLog.Profile.html"
   Delete "$INSTDIR\plugins\Profile.dll"
+  Delete "$INSTDIR\doc\ChangeLog.Profile.html"
+  Delete "$INSTDIR\translations\profile_ru.qm"
 
   RMDir "$INSTDIR\doc"
   RMDir "$INSTDIR\plugins"
+  RMDir "$INSTDIR\translations"
 ${UninstallEnd}
