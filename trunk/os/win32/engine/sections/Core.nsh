@@ -28,10 +28,6 @@ ${Section}
   File "${SCHAT_SOURCE}\schat-client.dll"
   File "license.txt"
 
-  !if ${SCHAT_DEFAULT_CONF} == 1
-    File /nonfatal "default.conf"
-  !endif
-
   SetOutPath "$INSTDIR\doc"
   File "${SCHAT_SOURCE}\doc\ChangeLog.html"
   
