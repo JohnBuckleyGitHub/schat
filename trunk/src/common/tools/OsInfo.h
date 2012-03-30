@@ -34,11 +34,13 @@ public:
     Linux   = 40  ///< Linux, диапазон от 40 до 79.
   };
 
-  OsInfo();
-  inline const QVariantMap& json() const { return m_json; }
   static int type();
 
 private:
+  OsInfo() {}
+  static void init();
+
+  static int m_type;         ///< Тип операционной системы.
   QVariantMap m_json;
 };
 

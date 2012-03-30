@@ -93,7 +93,7 @@ var Hosts = {
       SimpleChat.request("query", "hosts", {"action":"activity"});
     }
 
-    Hosts.retranslate();
+    Utils.retranslate();
   },
 
 
