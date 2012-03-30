@@ -62,6 +62,11 @@ var Utils = {
 
   TR: function(key) {
     $("[data-tr='" + key + "']").html(Utils.tr(key));
+  },
+
+  log: function(text) {
+    var date = new Date();
+    console.log(DateTime.time(date) + DateTime.seconds(date) + "." + date.getMilliseconds() + " " + text);
   }
 };
 
@@ -338,6 +343,45 @@ var DateTime = {
 };
 
 
+var Loader = {
+  jsfiles: [],
+
+  done: function() {
+    ChatView.loadFinished();
+    alignChat();
+  },
+
+  load: function(jsfiles) {
+    for (var i = 0; i < jsfiles.length; i++)
+      Loader.jsfiles.push(jsfiles[i]);
+
+    for (i = 0; i < Loader.jsfiles.length; i++) {
+      Loader.loadJS(Loader.jsfiles[i]);
+    }
+  },
+
+  loadJS: function(jsfile) {
+    $.ajax({
+      url: jsfile,
+      dataType: "script",
+      success: function() {
+        Loader.remove(jsfile);
+      }
+    });
+  },
+
+  remove: function(jsfile) {
+    var index = Loader.jsfiles.indexOf(jsfile);
+    if (index === -1)
+      return;
+
+    Loader.jsfiles.splice(index, 1);
+    if (Loader.jsfiles.length === 0)
+      Loader.done();
+  }
+};
+
+
 $(document).ready(function() {
   //$.fx.off = true;
 
@@ -353,33 +397,18 @@ $(document).ready(function() {
     Pages.setPage(1);
   });
 
-  var timeoutID;
-  $('#topic-wrapper').hover(
-    function () {
-      window.clearTimeout(timeoutID);
-      $('#body').removeClass("no-topic-author");
-    },
-    function () {
-      timeoutID = window.setTimeout(function() {
-        $('#body').addClass("no-topic-author");
-      }, 2000);
-    }
-  );
+  var jsfiles = ChatView.jsfiles();
+  if (jsfiles.length === 0) {
+    Loader.done();
+    return;
+  }
 
-  alignChat();
+  Loader.load(jsfiles);
 });
 
 
 ChatView.reload.connect(Messages.reload);
 ChatView.message.connect(Messages.addMessage);
-
-function loadJS(filename)
-{
-  var e = document.createElement("script");
-  e.setAttribute("src", filename);
-
-  document.getElementsByTagName("head")[0].appendChild(e);
-}
 
 
 function loadCSS(filename)

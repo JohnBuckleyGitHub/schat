@@ -29,6 +29,7 @@ public:
   RawFeedsChatView(QObject *parent = 0);
 
 protected:
+  void initImpl(ChatView *view);
   void loadFinishedImpl(ChatView *view);
 };
 

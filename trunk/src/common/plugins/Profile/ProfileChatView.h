@@ -29,7 +29,7 @@ public:
   ProfileChatView(QObject *parent = 0);
 
 protected:
-  void loadFinishedImpl(ChatView *view);
+  void initImpl(ChatView *view);
 };
 
 #endif /* PROFILECHATVIEW_H_ */

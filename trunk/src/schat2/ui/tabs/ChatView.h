@@ -44,6 +44,10 @@ public:
   void evaluateJavaScript(const QString &js);
   void setId(const QByteArray &id);
 
+  Q_INVOKABLE QStringList jsfiles() const     { return m_jsfiles; }
+  Q_INVOKABLE void addJS(const QString &file) { if (!m_jsfiles.contains(file)) m_jsfiles.append(file); }
+  Q_INVOKABLE void loadFinished();
+
 signals:
   void feed(const QVariantMap &data);
   void message(const QVariantMap &data);
@@ -56,7 +60,6 @@ protected:
   void showEvent(QShowEvent *event);
 
 private slots:
-  void loadFinished();
   void menuTriggered(QAction *action);
   void notify(const Notify &notify);
   void openUrl(const QUrl &url);
@@ -82,6 +85,7 @@ private:
   QMap<qint64, QByteArray> m_messages; ///< Сортированные по времени сообщения.
   QQueue<QString> m_pendingJs;         ///< Очередь сообщений ожидающих загрузки документа.
   QQueue<QVariantMap> m_pending;       ///< Очередь сообщений ожидающих загрузки документа.
+  QStringList m_jsfiles;               ///< Дополнительные динамически загружаемые JavaScript скрипты.
 };
 
 #endif /* CHATVIEW_H_ */

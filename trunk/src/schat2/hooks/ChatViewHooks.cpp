@@ -44,6 +44,17 @@ void ChatViewHooks::addImpl(ChatView *view)
 }
 
 
+void ChatViewHooks::initImpl(ChatView *view)
+{
+  if (m_self != this)
+    return;
+
+  foreach (ChatViewHooks *hook, m_hooks) {
+    hook->initImpl(view);
+  }
+}
+
+
 /*!
  * Обработка завершения загрузки страницы.
  */
