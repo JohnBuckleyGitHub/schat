@@ -360,6 +360,14 @@ var Loader = {
     }
   },
 
+  loadCSS: function(filename) {
+    var e = document.createElement("link");
+    e.setAttribute("rel", "stylesheet");
+    e.setAttribute("href", filename);
+
+    document.getElementsByTagName("head")[0].appendChild(e);
+  },
+
   loadJS: function(jsfile) {
     $.ajax({
       url: jsfile,
@@ -409,16 +417,6 @@ $(document).ready(function() {
 
 ChatView.reload.connect(Messages.reload);
 ChatView.message.connect(Messages.addMessage);
-
-
-function loadCSS(filename)
-{
-  var e = document.createElement("link");
-  e.setAttribute("rel", "stylesheet");
-  e.setAttribute("href", filename);
-
-  document.getElementsByTagName("head")[0].appendChild(e);
-}
 
 
 function alignChat() {

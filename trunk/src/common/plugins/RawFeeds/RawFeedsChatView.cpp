@@ -35,5 +35,5 @@ void RawFeedsChatView::initImpl(ChatView *view)
 
 void RawFeedsChatView::loadFinishedImpl(ChatView *view)
 {
-  view->evaluateJavaScript(LS("loadCSS('qrc:/css/RawFeeds/RawFeeds.css');"));
+  view->evaluateJavaScript(LS("Loader.loadCSS('qrc:/css/RawFeeds/RawFeeds.css');"));
 }
