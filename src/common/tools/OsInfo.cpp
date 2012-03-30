@@ -18,20 +18,26 @@
 
 #include "tools/OsInfo.h"
 
-OsInfo::OsInfo()
-{
-}
-
+int OsInfo::m_type = -1;
 
 int OsInfo::type()
 {
+  if (m_type == -1)
+    init();
+
+  return m_type;
+}
+
+
+void OsInfo::init()
+{
 # if defined(Q_OS_WIN32)
-  return Windows;
+  m_type = Windows;
 # elif defined(Q_OS_MAC)
-  return MacOSX;
+  m_type = MacOSX;
 # elif defined(Q_OS_LINUX)
-  return Linux;
+  m_type = Linux;
 # else
-  return Unknown;
+  m_type = Unknown;
 # endif
 }
