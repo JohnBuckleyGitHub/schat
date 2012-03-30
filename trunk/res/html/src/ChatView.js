@@ -372,7 +372,11 @@ var Loader = {
     $.ajax({
       url: jsfile,
       dataType: "script",
+      isLocal: true,
       success: function() {
+        Loader.remove(jsfile);
+      },
+      error: function() {
         Loader.remove(jsfile);
       }
     });
