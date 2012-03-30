@@ -18,6 +18,7 @@
 
 #include "RawFeedsChatView.h"
 #include "ui/tabs/ChatView.h"
+#include "sglobal.h"
 
 RawFeedsChatView::RawFeedsChatView(QObject *parent)
   : ChatViewHooks(parent)
@@ -25,7 +26,14 @@ RawFeedsChatView::RawFeedsChatView(QObject *parent)
 }
 
 
+void RawFeedsChatView::initImpl(ChatView *view)
+{
+  view->addJS(LS("qrc:/js/RawFeeds/KelpJSONView.js"));
+  view->addJS(LS("qrc:/js/RawFeeds/RawFeeds.js"));
+}
+
+
 void RawFeedsChatView::loadFinishedImpl(ChatView *view)
 {
-  view->evaluateJavaScript(QLatin1String("loadJS('qrc:/js/RawFeeds/KelpJSONView.js'); loadJS('qrc:/js/RawFeeds/RawFeeds.js'); loadCSS('qrc:/css/RawFeeds/RawFeeds.css');"));
+  view->evaluateJavaScript(LS("loadCSS('qrc:/css/RawFeeds/RawFeeds.css');"));
 }

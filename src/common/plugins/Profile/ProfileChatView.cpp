@@ -19,6 +19,7 @@
 #include "net/SimpleID.h"
 #include "ProfileChatView.h"
 #include "ui/tabs/ChatView.h"
+#include "sglobal.h"
 
 ProfileChatView::ProfileChatView(QObject *parent)
   : ChatViewHooks(parent)
@@ -26,9 +27,8 @@ ProfileChatView::ProfileChatView(QObject *parent)
 }
 
 
-void ProfileChatView::loadFinishedImpl(ChatView *view)
+void ProfileChatView::initImpl(ChatView *view)
 {
   if (SimpleID::typeOf(view->id()) == SimpleID::UserId)
-    view->evaluateJavaScript(QLatin1String("loadJS('qrc:/js/Profile/Profile.js');"));
+    view->addJS(LS("qrc:/js/Profile/Profile.js"));
 }
-

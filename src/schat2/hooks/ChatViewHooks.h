@@ -35,6 +35,7 @@ public:
   inline static ChatViewHooks *i()                { return m_self; }
   inline static void add(ChatView *view)          { m_self->addImpl(view); }
   inline static void add(ChatViewHooks *hook)     { if (!m_self->m_hooks.contains(hook)) m_self->m_hooks.append(hook); }
+  inline static void init(ChatView *view)         { m_self->initImpl(view); }
   inline static void loadFinished(ChatView *view) { m_self->loadFinishedImpl(view); }
   inline static void remove(ChatView *view)       { m_self->removeImpl(view); }
   inline static void remove(ChatViewHooks *hook)  { m_self->m_hooks.removeAll(hook); }
@@ -44,6 +45,7 @@ signals:
 
 protected:
   virtual void addImpl(ChatView *view);
+  virtual void initImpl(ChatView *view);
   virtual void loadFinishedImpl(ChatView *view);
   virtual void removeImpl(ChatView *view);
 

@@ -49,7 +49,6 @@ ChatView::ChatView(const QByteArray &id, const QString &url, QWidget *parent)
   page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
 
   setUrl(QUrl(url));
-  connect(this, SIGNAL(loadFinished(bool)), SLOT(loadFinished()));
   connect(page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), SLOT(populateJavaScriptWindowObject()));
 
   setFocusPolicy(Qt::NoFocus);
@@ -114,6 +113,29 @@ void ChatView::setId(const QByteArray &id)
 {
   m_id = id;
   evaluateJavaScript(LS("Settings.id = \"") + SimpleID::encode(m_id) + LS("\";"));
+}
+
+
+/*!
+ * Завершение загрузки документа.
+ */
+void ChatView::loadFinished()
+{
+  m_loaded = true;
+  m_seconds->setChecked(SCHAT_OPTION("Display/Seconds").toBool());
+  m_service->setChecked(SCHAT_OPTION("Display/Service").toBool());
+
+  evaluateJavaScript("showSeconds", m_seconds->isChecked());
+  evaluateJavaScript("showService", m_service->isChecked());
+  setId(m_id);
+
+  ChatViewHooks::loadFinished(this);
+
+  while (!m_pendingJs.isEmpty())
+    page()->mainFrame()->evaluateJavaScript(m_pendingJs.dequeue());
+
+  while (!m_pending.isEmpty())
+    emit message(m_pending.dequeue());
 }
 
 
@@ -183,29 +205,6 @@ void ChatView::showEvent(QShowEvent *event)
 }
 
 
-/*!
- * Завершение загрузки документа.
- */
-void ChatView::loadFinished()
-{
-  m_loaded = true;
-  m_seconds->setChecked(SCHAT_OPTION("Display/Seconds").toBool());
-  m_service->setChecked(SCHAT_OPTION("Display/Service").toBool());
-
-  evaluateJavaScript("showSeconds", m_seconds->isChecked());
-  evaluateJavaScript("showService", m_service->isChecked());
-  setId(m_id);
-
-  while (!m_pendingJs.isEmpty())
-    page()->mainFrame()->evaluateJavaScript(m_pendingJs.dequeue());
-
-  while (!m_pending.isEmpty())
-    emit message(m_pending.dequeue());
-
-  ChatViewHooks::loadFinished(this);
-}
-
-
 void ChatView::menuTriggered(QAction *action)
 {
   if (action == m_clear || action == m_reload) {
@@ -252,6 +251,8 @@ void ChatView::populateJavaScriptWindowObject()
 {
   page()->mainFrame()->addToJavaScriptWindowObject("SimpleChat", WebBridge::i());
   page()->mainFrame()->addToJavaScriptWindowObject("ChatView", this);
+
+  ChatViewHooks::init(this);
 }
 
 
