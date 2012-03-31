@@ -78,15 +78,15 @@ QByteArray AuthReply::data(QDataStream *stream) const
 }
 
 
-AuthRequest::AuthRequest(int authType, const QString &host, Channel *channel, const QVariantMap &json)
+AuthRequest::AuthRequest(int authType, const QString &host, Channel *channel)
   : fields(ExtraInfoField)
   , authType(authType)
   , gender(channel->gender().raw())
   , host(host)
   , nick(channel->name())
   , userAgent(LC('i'))
-  , json(json)
 {
+  json = OsInfo::json();
   setStatus(channel->status().value());
 }
 
@@ -94,7 +94,7 @@ AuthRequest::AuthRequest(int authType, const QString &host, Channel *channel, co
 AuthRequest::AuthRequest(PacketReader *reader)
   : os(0)
   , version(0)
-  , offset(DateTime::offset())
+  , tz(DateTime::tz())
 {
   fields = reader->get<quint8>();
   authType = reader->get<quint8>();
@@ -128,7 +128,7 @@ AuthRequest::AuthRequest(PacketReader *reader)
   if (fields & ExtraInfoField) {
     os       = reader->get<quint8>();
     version  = reader->get<quint32>();
-    offset   = reader->get<qint32>();
+    tz       = reader->get<qint32>();
     hostName = reader->text();
   }
 }
@@ -199,7 +199,7 @@ QByteArray AuthRequest::data(QDataStream *stream) const
   if (fields & ExtraInfoField) {
     writer.put<quint8>(OsInfo::type());
     writer.put<quint32>(Ver::current().toUInt());
-    writer.put<qint32>(DateTime::offset());
+    writer.put<qint32>(DateTime::tz());
     writer.put(QHostInfo::localHostName());
   }
 

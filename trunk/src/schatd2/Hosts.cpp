@@ -111,10 +111,12 @@ void Hosts::add(const AuthRequest &data, const QString &host)
   json[LS("host")]     = host;
   json[LS("os")]       = data.os;
   json[LS("version")]  = Ver(data.version).toString();
-  json[LS("offset")]   = data.offset;
+  json[LS("tz")]       = data.tz;
   json[LS("name")]     = data.hostName;
   json[LS("date")]     = DateTime::utc();
   json[LS("online")]   = true;
+
+  json[LS("osName")]   = data.json.value(LS("os"));
 
   setData(json);
 }

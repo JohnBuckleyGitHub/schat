@@ -28,7 +28,7 @@ class SCHAT_EXPORT DateTime
   DateTime() {}
 
 public:
-  static int offset();
+  static int tz();
   static qint64 utc();
 };
 

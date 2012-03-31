@@ -35,13 +35,14 @@ public:
   };
 
   static int type();
+  static QVariantMap json();
 
 private:
   OsInfo() {}
   static void init();
 
   static int m_type;         ///< Тип операционной системы.
-  QVariantMap m_json;
+  static QVariantMap m_json; ///< JSON данные.
 };
 
 #endif /* OSINFO_H_ */

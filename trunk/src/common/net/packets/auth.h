@@ -119,7 +119,7 @@ public:
   , authType(0)
   {}
 
-  AuthRequest(int authType, const QString &host, Channel *channel, const QVariantMap &json = QVariantMap());
+  AuthRequest(int authType, const QString &host, Channel *channel);
   AuthRequest(PacketReader *reader);
   bool isValid() const;
   QByteArray data(QDataStream *stream) const;
@@ -146,7 +146,7 @@ public:
   // ExtraInfoField.
   quint8 os;               ///< Базовый тип операционной системы.
   quint32 version;         ///< Версия клиента.
-  qint32 offset;           ///< Смещение времени относительно UTC.
+  qint32 tz;               ///< Смещение времени относительно UTC.
   QString hostName;        ///< Локальное имя хоста клиента.
 };
 
