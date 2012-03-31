@@ -31,7 +31,9 @@ public:
     Unknown = 0,  ///< Неизвестная операционная система.
     Windows = 1,  ///< Windows, диапазон от 1 до 19.
     MacOSX  = 20, ///< Mac OS X, диапазон от 20 до 39.
-    Linux   = 40  ///< Linux, диапазон от 40 до 79.
+    Linux   = 40, ///< Linux, диапазон от 40 до 79.
+    Ubuntu  = 41, ///< Ubuntu Linux.
+    Gentoo  = 42  ///< Gentoo Linux.
   };
 
   static int type();
@@ -40,6 +42,10 @@ public:
 private:
   OsInfo() {}
   static void init();
+
+# if defined(Q_OS_LINUX)
+  static void detectLinux(QString &name);
+# endif
 
   static int m_type;         ///< Тип операционной системы.
   static QVariantMap m_json; ///< JSON данные.
