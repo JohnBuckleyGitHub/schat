@@ -24,7 +24,7 @@
 /*!
  * Возвращает смещение в секундах относительно UTC.
  */
-int DateTime::offset()
+int DateTime::tz()
 {
   QDateTime local = QDateTime::currentDateTime();
   QDateTime utc(local);
