@@ -254,6 +254,10 @@ a:active, a:hover {
   background-position: -48px 0;
 }
 
+.os-gentoo {
+  background-position: -64px 0;
+}
+
 .os-unknown {
   background:none;
 }

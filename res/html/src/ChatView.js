@@ -88,6 +88,12 @@ var Pages = {
     if (code >= 20 && code < 40)
       return "osx";
 
+    if (code == 41)
+      return "ubuntu";
+
+    if (code == 42)
+      return "gentoo";
+
     if (code >= 40)
       return "linux";
 

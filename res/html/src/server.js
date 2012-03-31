@@ -60,7 +60,8 @@ var Hosts = {
       $(id).show();
 
     $(id + " > .host-name").text(json.name);
-    $(id + " .icon-os").attr("class", "icon-os os-" + Pages.os(json.os));
+    $(id + " .icon-os").attr("class", "icon-os os-" + Pages.os(json.os) + " tooltip");
+    $(id + " .icon-os").attr("title", htmlspecialchars(json.osName));
     $(id + " .icon-info").attr("title", Utils.table({'version': json.version, 'last_ip': json.host}));
     $(id + " .host-status").attr("class", (json.online === true ? "icon-status" : "icon-status-offline") + " host-status");
 
