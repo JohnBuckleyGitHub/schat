@@ -94,6 +94,9 @@ var Pages = {
     if (code == 42)
       return "gentoo";
 
+    if (code == 43)
+      return "debian";
+
     if (code >= 40)
       return "linux";
 

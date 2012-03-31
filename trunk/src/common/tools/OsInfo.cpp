@@ -125,6 +125,13 @@ void OsInfo::detectLinux(QString &name)
     if (file.open(QIODevice::ReadOnly))
       name = file.read(256).trimmed();
   }
+  else if (QFile::exists(LS("/etc/debian_version"))) {
+    m_type = Debian;
+    name = LS("Debian GNU/Linux");
+    QFile file(LS("/etc/debian_version"));
+    if (file.open(QIODevice::ReadOnly))
+      name += LS(" ") + file.read(64).trimmed();
+  }
 
   if (name.isEmpty()) {
     utsname buf;

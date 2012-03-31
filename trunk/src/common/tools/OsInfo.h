@@ -33,7 +33,8 @@ public:
     MacOSX  = 20, ///< Mac OS X, диапазон от 20 до 39.
     Linux   = 40, ///< Linux, диапазон от 40 до 79.
     Ubuntu  = 41, ///< Ubuntu Linux.
-    Gentoo  = 42  ///< Gentoo Linux.
+    Gentoo  = 42, ///< Gentoo Linux.
+    Debian  = 43  ///< Debian GNU/Linux
   };
 
   static int type();
