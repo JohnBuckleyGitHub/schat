@@ -19,6 +19,12 @@
 #include "sglobal.h"
 #include "tools/OsInfo.h"
 
+#if defined(Q_OS_UNIX)
+# include <QFile>
+# include <QSettings>
+# include <sys/utsname.h>
+#endif
+
 int OsInfo::m_type = -1;
 QVariantMap OsInfo::m_json;
 
@@ -75,12 +81,15 @@ void OsInfo::init()
   switch (QSysInfo::MacintoshVersion) {
     case QSysInfo::MV_LION:
       os = LS("Mac OS X 10.7 Lion");
+      break;
 
     case QSysInfo::MV_SNOWLEOPARD:
       os = LS("Mac OS X 10.6 Snow Leopard");
+      break;
 
     case QSysInfo::MV_LEOPARD:
       os = LS("Mac OS X 10.5 Leopard");
+      break;
 
     default:
       os = LS("Mac OS X");
@@ -88,9 +97,45 @@ void OsInfo::init()
   }
 # elif defined(Q_OS_LINUX)
   m_type = Linux;
+  detectLinux(os);
 # else
   m_type = Unknown;
 # endif
 
   m_json[LS("os")] = os;
 }
+
+
+#if defined(Q_OS_LINUX)
+void OsInfo::detectLinux(QString &name)
+{
+  if (QFile::exists(LS("/etc/lsb-release"))) {
+    QSettings s(LS("/etc/lsb-release"), QSettings::IniFormat);
+    QString id = s.value(LS("DISTRIB_ID")).toString();
+    if (id == LS("Ubuntu"))
+      m_type = Ubuntu;
+
+    QString desc = s.value(LS("DISTRIB_DESCRIPTION")).toString();
+    if (!desc.isEmpty())
+      name = desc;
+  }
+  else if (QFile::exists(LS("/etc/gentoo-release"))) {
+    m_type = Gentoo;
+    QFile file(LS("/etc/gentoo-release"));
+    if (file.open(QIODevice::ReadOnly))
+      name = file.read(256).trimmed();
+  }
+
+  if (name.isEmpty()) {
+    utsname buf;
+    if (uname(&buf) != -1) {
+      name.append(buf.sysname).append(LC(' '));
+      name.append(buf.release).append(LC(' '));
+      name.append(buf.machine);
+    }
+    else {
+      name = LS("Linux");
+    }
+  }
+}
+#endif
