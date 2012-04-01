@@ -269,6 +269,7 @@ a:active, a:hover {
 #easyTooltip {
   padding:5px;
   border:1px solid rgba(159, 159, 141, 0.5);
+  background-color: rgba(255, 255, 225, 0.95);
   background-image: -webkit-linear-gradient( rgba(255, 255, 225, 0.95), rgba(255, 254, 189, 0.8));
   border-radius:4px;
   box-shadow:2px 2px 5px 0px rgba(0, 0, 0, 0.5);
