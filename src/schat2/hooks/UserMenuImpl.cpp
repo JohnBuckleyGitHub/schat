@@ -49,15 +49,15 @@ void UserMenuImpl::bindImpl(QMenu *menu, ClientChannel channel)
     menu->addAction(m_talk);
   }
 
-  m_insert = new QAction(SCHAT_ICON(EditPaste), tr("Insert Nick"), this);
-  m_insert->setData(ChatUrls::toUrl(channel, LS("insert")));
-  menu->addAction(m_insert);
-
   if (!active || (active && page != 1)) {
     m_info = new QAction(SCHAT_ICON(Profile), tr("Profile..."), this);
     m_info->setData(ChatUrls::toUrl(channel, LS("info")));
     menu->addAction(m_info);
   }
+
+  m_insert = new QAction(SCHAT_ICON(EditPaste), tr("Insert Nick"), this);
+  m_insert->setData(ChatUrls::toUrl(channel, LS("insert")));
+  menu->addAction(m_insert);
 }
 
 
