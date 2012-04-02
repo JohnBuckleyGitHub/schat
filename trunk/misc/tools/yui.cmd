@@ -3,7 +3,7 @@ java -jar yuicompressor.jar ..\..\res\html\src\ChatView.js -o ..\..\res\html\js\
 java -jar yuicompressor.jar ..\..\res\html\src\server.js -o ..\..\res\html\js\server.min.js
 java -jar yuicompressor.jar ..\..\res\html\src\user.js -o ..\..\res\html\js\user.min.js
 java -jar yuicompressor.jar ..\..\res\html\src\about.js -o ..\..\res\html\js\about.min.js
-java -jar yuicompressor.jar ..\..\res\html\src\easyTooltip.js -o ..\..\res\html\js\easyTooltip.min.js
+java -jar yuicompressor.jar ..\..\res\html\src\bootstrap-tooltip.js -o ..\..\res\html\js\bootstrap-tooltip.min.js
 
 java -jar yuicompressor.jar ..\..\res\html\src\about.css -o ..\..\res\html\css\about.min.css
 java -jar yuicompressor.jar ..\..\res\html\src\ChatView.css -o ..\..\res\html\css\ChatView.min.css
