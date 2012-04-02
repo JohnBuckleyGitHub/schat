@@ -45,6 +45,12 @@ FeedPtr Hosts::feed() const
 }
 
 
+FeedPtr Hosts::user() const
+{
+  return feed(LS("user"), 0444);
+}
+
+
 QByteArray Hosts::currentId() const
 {
   return m_sockets.publicId();
@@ -89,6 +95,13 @@ QVariantMap Hosts::data(const QByteArray &publicId) const
 }
 
 
+QVariantMap Hosts::userData(const QByteArray &publicId) const
+{
+  QVariantMap connections = user()->data().value(LS("connections")).toMap();
+  return connections.value(SimpleID::encode(id(publicId))).toMap();
+}
+
+
 void Hosts::add(const AuthRequest &data, const QString &host)
 {
   FeedPtr feed = this->feed();
@@ -104,10 +117,16 @@ void Hosts::add(const AuthRequest &data, const QString &host)
   json[LS("name")]     = data.hostName;
   json[LS("date")]     = DateTime::utc();
   json[LS("online")]   = true;
-
   json[LS("osName")]   = data.json.value(LS("os"));
 
+  QVariantMap connection;
+  connection[LS("host")]     = host;
+  connection[LS("os")]       = data.os;
+  connection[LS("osName")]   = data.json.value(LS("os"));
+  connection[LS("version")]  = Ver(data.version).toString();
+
   setData(json);
+  setUserData(connection);
 }
 
 
@@ -131,6 +150,8 @@ void Hosts::remove(quint64 socket)
         json[LS("online")] = false;
         setData(json, id);
       }
+
+      setUserData(QVariantMap(), id);
     }
   }
 
@@ -150,6 +171,23 @@ void Hosts::setData(const QVariantMap &data, const QByteArray &publicId, bool sa
   FeedPtr feed = this->feed();
   feed->data()[SimpleID::encode(id(publicId))] = data;
 
+  if (save)
+    FeedStorage::save(feed);
+}
+
+
+void Hosts::setUserData(const QVariantMap &data, const QByteArray &publicId, bool save)
+{
+  FeedPtr feed = user();
+  QVariantMap connections = feed->data().value(LS("connections")).toMap();
+  QString id = SimpleID::encode(this->id(publicId));
+
+  if (data.isEmpty())
+    connections.remove(id);
+  else
+    connections[id] = data;
+
+  feed->data()[LS("connections")] = connections;
   if (save)
     FeedStorage::save(feed);
 }

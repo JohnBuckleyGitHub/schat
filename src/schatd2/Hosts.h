@@ -37,16 +37,19 @@ public:
   inline void setChannel(ServerChannel *channel) { m_channel = channel; }
 
   FeedPtr feed() const;
+  FeedPtr user() const;
   QByteArray currentId() const;
   QByteArray id(const QByteArray &publicId) const;
   QList<quint64> sockets() const;
   QList<quint64> sockets(const QByteArray &publicId) const;
   QVariantMap data(const QByteArray &publicId = QByteArray()) const;
+  QVariantMap userData(const QByteArray &publicId = QByteArray()) const;
 
   void add(const AuthRequest &data, const QString &host);
   void add(const QByteArray &uniqueId);
   void remove(quint64 socket);
   void setData(const QVariantMap &data, const QByteArray &publicId = QByteArray(), bool save = true);
+  void setUserData(const QVariantMap &data, const QByteArray &publicId = QByteArray(), bool save = true);
 
   static QByteArray toPublicId(const QByteArray &uniqueId);
 
