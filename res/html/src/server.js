@@ -52,17 +52,17 @@ var Hosts = {
   {
     var id = "#" + key;
     if (!$(id).length) {
-      var out = '<tr class="host-row" id="' + key + '"><td class="os-cell"><i class="icon-status-offline host-status"></i><i class="icon-os"></i></td><td class="host-name"></td>' +
-        '<td><i class="icon-info tooltip"></i> <span class="last-activity"></span></td><td><a onclick="" class="btn btn-small btn-unlink" data-tr="unlink">Unlink</a></td></tr>';
+      var out = '<tr class="host-row" id="' + key + '"><td class="os-cell"><i class="icon-status-offline host-status"></i><a class="host-os" rel="tooltip"><i class="icon-os"></i></a></td><td class="host-name"></td>' +
+        '<td><a class="host-info" rel="tooltip"><i class="icon-info"></i></a> <span class="last-activity"></span></td><td><a onclick="" class="btn btn-small btn-unlink" data-tr="unlink">Unlink</a></td></tr>';
       $("#account-table > tbody").append(out);
     }
     else
       $(id).show();
 
     $(id + " > .host-name").text(json.name);
-    $(id + " .icon-os").attr("class", "icon-os os-" + Pages.os(json.os) + " tooltip");
-    $(id + " .icon-os").attr("title", htmlspecialchars(json.osName));
-    $(id + " .icon-info").attr("title", Utils.table({'version': json.version, 'last_ip': json.host}));
+    $(id + " .icon-os").attr("class", "icon-os os-" + Pages.os(json.os));
+    $(id + " .host-os").attr("data-original-title", htmlspecialchars(json.osName));
+    $(id + " .host-info").attr("data-original-title", Utils.table({'version': json.version, 'last_ip': json.host}));
     $(id + " .host-status").attr("class", (json.online === true ? "icon-status" : "icon-status-offline") + " host-status");
 
     var unlink = $(id + " .btn-unlink");
@@ -87,7 +87,7 @@ var Hosts = {
     $("#hosts-content p").show();
     $("#hosts-content #fieldset").show();
     $(".host-row:hidden").remove();
-    $(".tooltip").easyTooltip();
+    $('a[rel=tooltip]').tooltip();
 
     if (!Hosts.progress) {
       Hosts.progress = true;
