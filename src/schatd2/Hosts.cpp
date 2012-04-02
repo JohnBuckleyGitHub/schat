@@ -41,18 +41,7 @@ Hosts::Hosts()
  */
 FeedPtr Hosts::feed() const
 {
-  FeedPtr feed = m_channel->feed(LS("hosts"), false);
-  if (feed)
-    return feed;
-
-  feed = m_channel->feed(LS("hosts"), true, false);
-  feed->head().acl().add(m_channel->id());
-
-  QVariantMap mask;
-  mask[LS("action")] = LS("x-mask");
-  mask[LS("mask")] = 0400;
-  feed->query(mask, m_channel);
-  return feed;
+  return feed(LS("hosts"), 0400);
 }
 
 
@@ -174,7 +163,24 @@ void Hosts::setData(const QVariantMap &data, const QByteArray &publicId, bool sa
  */
 QByteArray Hosts::toPublicId(const QByteArray &uniqueId)
 {
-  return SimpleID::make(Storage::privateId() + uniqueId, SimpleID::MessageId);
+  return SimpleID::make("host:" + Storage::privateId() + uniqueId, SimpleID::HostId);
+}
+
+
+FeedPtr Hosts::feed(const QString &name, int mask) const
+{
+  FeedPtr feed = m_channel->feed(name, false);
+  if (feed)
+    return feed;
+
+  feed = m_channel->feed(name, true, false);
+  feed->head().acl().add(m_channel->id());
+
+  QVariantMap query;
+  query[LS("action")] = LS("x-mask");
+  query[LS("mask")]   = mask;
+  feed->query(query, m_channel);
+  return feed;
 }
 
 

@@ -51,6 +51,8 @@ public:
   static QByteArray toPublicId(const QByteArray &uniqueId);
 
 private:
+  FeedPtr feed(const QString &name, int mask) const;
+
   class Sockets
   {
   public:
