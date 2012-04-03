@@ -427,11 +427,6 @@ $(document).ready(function() {
   Loader.load(jsfiles);
 });
 
-
-ChatView.reload.connect(Messages.reload);
-ChatView.message.connect(Messages.addMessage);
-
-
 function alignChat() {
   var windowHeight = window.innerHeight;
 
@@ -539,4 +534,21 @@ function htmlspecialchars (string, quote_style, charset, double_encode) {
   return string;
 }
 
-SimpleChat.retranslated.connect(Utils.retranslate);
+if (typeof ChatView === "undefined") {
+  SimpleChat = {
+    channel: function(id) { return "{}"; },
+    translate: function(key) { return key; },
+    setTabPage: function(id, page) {},
+    feed: function(id, name) { return {}; }
+  };
+
+  ChatView = {
+    jsfiles: function() { return []; },
+    loadFinished: function() {}
+  }
+}
+else {
+  ChatView.reload.connect(Messages.reload);
+  ChatView.message.connect(Messages.addMessage);
+  SimpleChat.retranslated.connect(Utils.retranslate);
+}

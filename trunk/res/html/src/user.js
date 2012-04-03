@@ -171,7 +171,11 @@ var Connections = {
 
 Pages.onInfo.push(Profile.reload);
 Pages.onInfo.push(Connections.reload);
-ChatView.feed.connect(Profile.feed);
-ChatView.feed.connect(Connections.feed);
-ChatView.reload.connect(Profile.reload);
-ChatView.reload.connect(Connections.reload);
+
+try {
+  ChatView.feed.connect(Profile.feed);
+  ChatView.reload.connect(Profile.reload);
+
+  ChatView.feed.connect(Connections.feed);
+  ChatView.reload.connect(Connections.reload);
+} catch (e) {}

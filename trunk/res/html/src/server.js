@@ -145,5 +145,8 @@ var Hosts = {
 };
 
 Pages.onInfo.push(Hosts.reload);
-ChatView.feed.connect(Hosts.feed);
-ChatView.reload.connect(Hosts.reload);
+
+try {
+  ChatView.feed.connect(Hosts.feed);
+  ChatView.reload.connect(Hosts.reload);
+} catch (e) {}
