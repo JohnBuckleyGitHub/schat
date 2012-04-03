@@ -8,6 +8,7 @@
   <script src="qrc:/js/jquery.js"></script>
   <script src="qrc:/js/ChatView.js"></script>
   <script src="qrc:/js/user.js"></script>
+  <script src="qrc:/js/bootstrap-tooltip.js"></script>
 </head>
 <body id="body" class="no-seconds no-service no-topic-author">
   <div class="tabbable">
@@ -19,7 +20,7 @@
       </div>
       <div class="tab-pane" id="info">
         <button id="page-switcher-start" class="page-switcher" data-toggle="tab" href="#messages">‹</button>
-        <div id="info-content">
+        <div id="info-content" class="user-info">
           <h1></h1>
 
           <div id="profile-content"  class="tt">
@@ -35,8 +36,9 @@
 
           <div id="connections-content" class="ot">
             <h3><i class="icon-globe"></i> <span data-tr="connections">Connections</span> <i class="icon-spinner" id="connections-spinner"></i></h3>
-
             <div class="fieldset">
+              <div id="user-offline" data-tr="user_offline">User offline</div>
+              <div id="connections"></div>
             </div>
           </div>
 
