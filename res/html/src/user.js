@@ -104,7 +104,23 @@ var Profile = {
 
 var Connections = {
   body: function(json) {
-    Profile.read(json);
+    Connections.read(json);
+  },
+
+  feed: function(json) {
+    if (Pages.current != 1)
+      return;
+
+    if (!json.hasOwnProperty("type"))
+      return;
+
+    if (json.name !== "user")
+      return;
+
+    try {
+      Connections[json.type](json.data);
+    }
+    catch (e) {}
   },
 
   process: function(key, json) {
@@ -156,5 +172,6 @@ var Connections = {
 Pages.onInfo.push(Profile.reload);
 Pages.onInfo.push(Connections.reload);
 ChatView.feed.connect(Profile.feed);
+ChatView.feed.connect(Connections.feed);
 ChatView.reload.connect(Profile.reload);
 ChatView.reload.connect(Connections.reload);

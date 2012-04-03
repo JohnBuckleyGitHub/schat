@@ -16,15 +16,16 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
+#include "Ch.h"
 #include "cores/Core.h"
 #include "DateTime.h"
 #include "feeds/FeedStorage.h"
 #include "Hosts.h"
 #include "net/packets/auth.h"
+#include "net/packets/FeedNotice.h"
 #include "ServerChannel.h"
 #include "sglobal.h"
+#include "Sockets.h"
 #include "Storage.h"
 #include "tools/Ver.h"
 
@@ -188,8 +189,18 @@ void Hosts::setUserData(const QVariantMap &data, const QByteArray &publicId, boo
     connections[id] = data;
 
   feed->data()[LS("connections")] = connections;
-  if (save)
-    FeedStorage::save(feed);
+  if (!save)
+    return;
+
+  FeedStorage::save(feed);
+
+  QVariantMap headers = Feed::merge(LS("feeds"), Feed::merge(feed->head().name(), feed->head().get(0)));
+  if (headers.isEmpty())
+    return;
+
+  FeedNotice packet(m_channel->id(), m_channel->id(), LS("headers"));
+  packet.setData(headers);
+  Core::i()->send(::Sockets::all(Ch::channel(m_channel->id()), true), packet.data(Core::stream()));
 }
 
 
