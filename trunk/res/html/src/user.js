@@ -20,7 +20,7 @@ var Profile = {
   // Добавление поля профиля.
   addRow: function(key, html) {
     var out = '<tr class="profile-row" id="field-' + key + '">' +
-      '<td class="field-label" data-tr="field-' + key + '">' + Utils.tr('field-' + key) + ':</td>' +
+      '<td class="field-label"><span data-tr="field-' + key + '">' + Utils.tr('field-' + key) + '</span>:</td>' +
       '<td class="field-value">' + html + '</td></tr>';
 
     $("#profile-table > tbody").append(out);
@@ -83,7 +83,6 @@ var Profile = {
     Utils.TR("profile");
 
     Profile.read(SimpleChat.feed(Settings.id, "profile"));
-    Utils.retranslate();
   },
 
 
@@ -102,6 +101,60 @@ var Profile = {
   }
 };
 
+
+var Connections = {
+  body: function(json) {
+    Profile.read(json);
+  },
+
+  process: function(key, json) {
+    var id = "#" + key;
+    $("#connections").append('<div class="connection-row bottom-line" id="' + key + '"><i class="icon-os"></i> <span class="connection-host"></span></div>');
+
+    $(id + " .icon-os").attr("class", "icon-os os-" + Pages.os(json.os));
+    $(id + " .icon-os").attr("data-original-title", htmlspecialchars(json.osName));
+    $(id + " > .connection-host").text(json.host);
+  },
+
+  // Чтение фида.
+  read: function(json) {
+    if (!json.hasOwnProperty("head") && !json.hasOwnProperty("connections"))
+      return;
+
+    $(".connection-row").remove();
+
+    var connections = json.connections;
+    var count = 0;
+
+    for (var key in connections) if (connections.hasOwnProperty(key) && key.length == 34) {
+      count++;
+      Connections.process(key, connections[key]);
+    }
+
+    $("#connections-spinner").hide();
+    if (count > 0) {
+      $("#user-offline").hide();
+      $(".icon-os").tooltip();
+    } else
+      $("#user-offline").show();
+  },
+
+
+  reload: function() {
+    if (Pages.current != 1)
+      return;
+
+    $("#connections-spinner").css("display", "inline-block");
+    Utils.TR("connections");
+    Utils.TR("user_offline");
+
+    Connections.read(SimpleChat.feed(Settings.id, "user"));
+    Utils.retranslate();
+  }
+};
+
 Pages.onInfo.push(Profile.reload);
+Pages.onInfo.push(Connections.reload);
 ChatView.feed.connect(Profile.feed);
 ChatView.reload.connect(Profile.reload);
+ChatView.reload.connect(Connections.reload);

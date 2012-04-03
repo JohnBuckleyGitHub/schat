@@ -181,6 +181,7 @@ void WebBridge::retranslate()
 
   translations[LS("profile")]           = tr("Profile");
   translations[LS("connections")]       = tr("Connections");
+  translations[LS("user_offline")]      = tr("User offline");
 
   emit retranslated();
 }

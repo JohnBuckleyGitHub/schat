@@ -914,6 +914,11 @@
         <source>Connections</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="184"/>
+        <source>User offline</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>WelcomeTab</name>

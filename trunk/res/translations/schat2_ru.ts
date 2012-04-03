@@ -905,6 +905,11 @@
         <source>Connections</source>
         <translation>Подключения</translation>
     </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="184"/>
+        <source>User offline</source>
+        <translation>Пользователь не в сети</translation>
+    </message>
 </context>
 <context>
     <name>WelcomeTab</name>
