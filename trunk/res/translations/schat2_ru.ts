@@ -111,44 +111,44 @@
 <context>
     <name>ChatView</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="151"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="173"/>
         <source>Display</source>
         <translation>Отображать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="330"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="348"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="331"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="349"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="331"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="349"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="332"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="350"/>
         <source>Reload</source>
         <translation>Обновить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="336"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="337"/>
         <source>Seconds</source>
         <translation>Секунды</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="339"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="340"/>
         <source>Service messages</source>
         <translation>Сервисные сообщения</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="346"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="347"/>
         <source>Copy</source>
         <translation>Копировать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="347"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="348"/>
         <source>Copy Link</source>
         <translation>Копировать ссылку</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="350"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="351"/>
         <source>Select All</source>
         <translation>Выделить всё</translation>
     </message>
@@ -278,8 +278,8 @@
 <context>
     <name>LocalePage</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="152"/>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="153"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="154"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="155"/>
         <source>Language</source>
         <translation>Язык</translation>
     </message>
@@ -353,8 +353,8 @@
 <context>
     <name>NetworkPage</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="122"/>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="123"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="124"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="125"/>
         <source>Network</source>
         <translation>Сеть</translation>
     </message>
@@ -634,14 +634,14 @@
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="163"/>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="246"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="165"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="248"/>
         <source>Apply</source>
         <translation>Применить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="182"/>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="247"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="184"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="249"/>
         <source>Preferences</source>
         <translation>Настройки</translation>
     </message>
@@ -843,12 +843,12 @@
         <translation>Разговор...</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="52"/>
+        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="58"/>
         <source>Insert Nick</source>
         <translation>Вставить ник</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="57"/>
+        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="53"/>
         <source>Profile...</source>
         <translation>Профиль...</translation>
     </message>
@@ -899,6 +899,11 @@
         <location filename="../../src/schat2/WebBridge.cpp" line="182"/>
         <source>Profile</source>
         <translation>Профиль</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="183"/>
+        <source>Connections</source>
+        <translation>Подключения</translation>
     </message>
 </context>
 <context>

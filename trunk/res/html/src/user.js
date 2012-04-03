@@ -83,6 +83,7 @@ var Profile = {
     Utils.TR("profile");
 
     Profile.read(SimpleChat.feed(Settings.id, "profile"));
+    Utils.retranslate();
   },
 
 

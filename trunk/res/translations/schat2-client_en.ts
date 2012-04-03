@@ -102,7 +102,7 @@
     <name>Translation</name>
     <message>
         <location filename="../../src/common/Translation.cpp" line="35"/>
-        <location filename="../../src/common/Translation.cpp" line="123"/>
+        <location filename="../../src/common/Translation.cpp" line="134"/>
         <source>English</source>
         <translation type="unfinished"></translation>
     </message>
