@@ -5,17 +5,17 @@
 <context>
     <name>ProfilePluginFields</name>
     <message>
-        <location filename="../../src/common/plugins/Profile/ProfilePluginFields.cpp" line="34"/>
+        <location filename="../../src/common/plugins/Profile/ProfilePluginFields.cpp" line="38"/>
         <source>City</source>
         <translation>Город</translation>
     </message>
     <message>
-        <location filename="../../src/common/plugins/Profile/ProfilePluginFields.cpp" line="36"/>
+        <location filename="../../src/common/plugins/Profile/ProfilePluginFields.cpp" line="40"/>
         <source>Site</source>
         <translation>Сайт</translation>
     </message>
     <message>
-        <location filename="../../src/common/plugins/Profile/ProfilePluginFields.cpp" line="38"/>
+        <location filename="../../src/common/plugins/Profile/ProfilePluginFields.cpp" line="42"/>
         <source>E-Mail</source>
         <translation>E-Mail</translation>
     </message>

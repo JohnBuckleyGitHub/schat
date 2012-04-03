@@ -180,6 +180,7 @@ void WebBridge::retranslate()
   translations[LS("last_ip")]           = tr("<b>Last IP Address:</b>");
 
   translations[LS("profile")]           = tr("Profile");
+  translations[LS("connections")]       = tr("Connections");
 
   emit retranslated();
 }
