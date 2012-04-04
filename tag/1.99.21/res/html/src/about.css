@@ -1,0 +1,118 @@
+/* $Id$
+ * IMPOMEZIA Simple Chat
+ * Copyright (c) 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+* {
+	word-wrap:break-word;
+}
+
+body {
+	margin:0;
+	background:#fff url("qrc:/images/logo128.png") no-repeat top left;
+}
+
+.align_center {
+	position: relative;
+	width: 100%;
+}
+
+.align_center:after {
+	content: '';
+	display: block;
+	clear: both;
+}
+
+.align_center_to_left {
+	position: relative;
+	right: 50%;
+	float: right;
+}
+
+.align_center_to_right {
+	position: relative;
+	z-index: 1;
+	right: -50%;
+	margin-top:1em;
+	background:#fff;
+}
+
+a {
+	text-decoration:none;
+}
+
+a:link, a:visited {
+	color:#2976d1;
+}
+
+a:active, a:hover {
+	color:#1e6396;
+}
+
+td {
+	padding-right:1em;
+}
+
+td.label {
+	color:#666;
+}
+
+#copyright {
+	margin-bottom:1em;
+}
+
+#me {
+	color:#da251d;
+	text-shadow: 1px 1px 1px #c8ccdb;
+}
+
+#schat {
+	font-size:3em;
+	text-shadow: 2px 2px 1px #c8ccdb;
+}
+
+#version {
+	text-align:right;
+	color:#666;
+}
+
+a.external {
+	background: url("qrc:/images/external-small.png") no-repeat scroll right center transparent;
+ 	padding: 0 13px 0 0;
+}
+
+.header {
+	padding-left:14px;
+	margin-top:1em;
+	cursor:pointer;
+}
+
+.toggle-expand {
+	background: url("qrc:/images/toggle-small-expand.png") no-repeat left center transparent;
+}
+
+.toggle {
+	background: url("qrc:/images/toggle-small.png") no-repeat left center transparent;
+}
+
+#paths-body, #other-body, #about {
+	display:none;
+}
+
+#other-body, td.label {
+	padding-left:10px;
+}
+
