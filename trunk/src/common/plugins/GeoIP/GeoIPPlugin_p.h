@@ -21,12 +21,18 @@
 
 #include "plugins/NodePlugin.h"
 
+class GeoIPImpl;
+
 class GeoIPPluginImpl : public NodePlugin
 {
   Q_OBJECT
 
 public:
   GeoIPPluginImpl(QObject *parent);
+  ~GeoIPPluginImpl();
+
+private:
+  GeoIPImpl *m_hook;
 };
 
 

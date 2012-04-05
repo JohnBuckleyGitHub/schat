@@ -47,7 +47,7 @@ HEADERS = \
     NodeNoticeReader.h \
     NodePlugins.h \
     Normalize.h \
-    plugins/GeoIP.h \
+    plugins/GeoHook.h \
     plugins/NodePlugin.h \
     ServerChannel.h \
     Sockets.h \
@@ -72,7 +72,7 @@ SOURCES = \
     NodeNoticeReader.cpp \
     NodePlugins.cpp \
     Normalize.cpp \
-    plugins/GeoIP.cpp \
+    plugins/GeoHook.cpp \
     plugins/NodePlugin.cpp \
     ServerChannel.cpp \
     Sockets.cpp \

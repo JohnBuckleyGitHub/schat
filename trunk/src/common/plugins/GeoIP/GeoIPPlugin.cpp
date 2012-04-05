@@ -18,13 +18,20 @@
 
 #include <QtPlugin>
 
+#include "GeoIPImpl.h"
 #include "GeoIPPlugin.h"
 #include "GeoIPPlugin_p.h"
 
 GeoIPPluginImpl::GeoIPPluginImpl(QObject *parent)
   : NodePlugin(parent)
 {
+  m_hook = new GeoIPImpl();
+}
 
+
+GeoIPPluginImpl::~GeoIPPluginImpl()
+{
+  delete m_hook;
 }
 
 
