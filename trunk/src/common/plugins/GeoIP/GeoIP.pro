@@ -15,11 +15,19 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS += \
-    common/plugins/GenericNode \
-    common/plugins/Messages \
-    common/plugins/GeoIP \
-    common/plugins/Cache \
-    common/plugins/History \
-    common/plugins/Profile \
-    common/plugins/RawFeeds \
+SCHAT_DAEMON_LIB = 1
+QT = core network sql
+
+HEADERS  = \
+   GeoIPPlugin.h \
+   GeoIPPlugin_p.h \
+
+SOURCES  = \
+   GeoIPPlugin.cpp \
+
+unix:!macx {
+  target.path += $$SCHAT_PREFIX/usr/share/schatd2/plugins
+  INSTALLS += target
+}
+
+include(../plugins.pri)
