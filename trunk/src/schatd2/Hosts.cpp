@@ -23,6 +23,7 @@
 #include "Hosts.h"
 #include "net/packets/auth.h"
 #include "net/packets/FeedNotice.h"
+#include "plugins/GeoIP.h"
 #include "ServerChannel.h"
 #include "sglobal.h"
 #include "Sockets.h"
@@ -125,6 +126,7 @@ void Hosts::add(const AuthRequest &data, const QString &host)
   connection[LS("os")]       = data.os;
   connection[LS("osName")]   = data.json.value(LS("os"));
   connection[LS("version")]  = Ver(data.version).toString();
+  Feed::merge(LS("geo"), connection, GeoIP::geo(host));
 
   setData(json);
   setUserData(connection);
