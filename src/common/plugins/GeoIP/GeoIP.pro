@@ -31,6 +31,7 @@ HEADERS  = \
    GeoIP/GeoIPCity.h \
    GeoIP/global.h \
    GeoIP/types.h \
+   GeoIPImpl.h \
    GeoIPPlugin.h \
    GeoIPPlugin_p.h \
    QGeoIP.h \
@@ -40,6 +41,7 @@ SOURCES  = \
    GeoIP/GeoIPCity.c \
    GeoIP/regionName.c \
    GeoIP/timeZone.c \
+   GeoIPImpl.cpp \
    GeoIPPlugin.cpp \
    QGeoIP.cpp \
 

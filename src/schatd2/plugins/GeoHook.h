@@ -16,22 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GEOIP_H_
-#define GEOIP_H_
+#ifndef GEOHOOK_H_
+#define GEOHOOK_H_
 
 #include <QList>
 #include <QVariantMap>
 
 #include "schat.h"
 
-class SCHAT_EXPORT GeoIP
+class SCHAT_EXPORT GeoHook
 {
 public:
-  GeoIP();
-  virtual ~GeoIP();
+  GeoHook();
+  virtual ~GeoHook();
 
-  inline static void add(GeoIP *hook)    { m_hooks.append(hook); }
-  inline static void remove(GeoIP *hook) { m_hooks.removeAll(hook); }
+  inline static void add(GeoHook *hook)    { m_hooks.append(hook); }
+  inline static void remove(GeoHook *hook) { m_hooks.removeAll(hook); }
 
   static QVariantMap geo(const QString &ip);
 
@@ -39,7 +39,7 @@ protected:
   virtual void geo(const QString &ip, QVariantMap &out);
 
 private:
-  static QList<GeoIP*> m_hooks; ///< Хуки.
+  static QList<GeoHook*> m_hooks; ///< Хуки.
 };
 
-#endif /* GEOIP_H_ */
+#endif /* GEOHOOK_H_ */

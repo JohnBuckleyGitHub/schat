@@ -16,26 +16,26 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "plugins/GeoIP.h"
+#include "plugins/GeoHook.h"
 
-QList<GeoIP*> GeoIP::m_hooks;
+QList<GeoHook*> GeoHook::m_hooks;
 
-GeoIP::GeoIP()
+GeoHook::GeoHook()
 {
   add(this);
 }
 
 
-GeoIP::~GeoIP()
+GeoHook::~GeoHook()
 {
   remove(this);
 }
 
 
-QVariantMap GeoIP::geo(const QString &ip)
+QVariantMap GeoHook::geo(const QString &ip)
 {
   QVariantMap out;
-  foreach (GeoIP *hook, m_hooks) {
+  foreach (GeoHook *hook, m_hooks) {
     hook->geo(ip, out);
   }
 
@@ -43,6 +43,6 @@ QVariantMap GeoIP::geo(const QString &ip)
 }
 
 
-void GeoIP::geo(const QString & /*ip*/, QVariantMap & /*out*/)
+void GeoHook::geo(const QString & /*ip*/, QVariantMap & /*out*/)
 {
 }
