@@ -14,6 +14,7 @@ copy ..\..\out\plugins\History.dll in\plugins\
 copy ..\..\out\plugins\Messages.dll in\plugins\
 copy ..\..\out\plugins\RawFeeds.dll in\plugins\
 copy ..\..\out\plugins\Profile.dll in\plugins\
+copy ..\..\out\plugins\GeoIP.dll in\plugins\
 
 copy ..\..\res\doc\*.html in\doc\
 
