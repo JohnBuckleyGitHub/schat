@@ -16,14 +16,32 @@
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 SCHAT_DAEMON_LIB = 1
-QT = core network sql
+QT = core network
+
+DEFINES += GEOIPDATADIR=\\\"./res\\\"
+
+win32 {
+    DEFINES += _CRT_SECURE_NO_WARNINGS
+    LIBS += -lwsock32 -lws2_32
+}
 
 HEADERS  = \
+   GeoIP/GeoIP.h \
+   GeoIP/GeoIP_internal.h \
+   GeoIP/GeoIPCity.h \
+   GeoIP/global.h \
+   GeoIP/types.h \
    GeoIPPlugin.h \
    GeoIPPlugin_p.h \
+   QGeoIP.h \
 
 SOURCES  = \
+   GeoIP/GeoIP.c \
+   GeoIP/GeoIPCity.c \
+   GeoIP/regionName.c \
+   GeoIP/timeZone.c \
    GeoIPPlugin.cpp \
+   QGeoIP.cpp \
 
 unix:!macx {
   target.path += $$SCHAT_PREFIX/usr/share/schatd2/plugins

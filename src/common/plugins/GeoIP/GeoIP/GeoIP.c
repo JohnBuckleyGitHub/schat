@@ -44,6 +44,28 @@ static geoipv6_t IPV6_NULL;
 #include <stdint.h>     /* For uint32_t */
 #endif
 
+#if defined(_WIN32)
+#include <io.h>
+#include <stdio.h>
+
+#if defined(_MSC_VER)
+typedef long ssize_t;
+#endif
+
+ssize_t
+pread(int fd, void *buf, size_t count, off_t offset)
+{
+    ssize_t retval ;
+    off_t saved_pos = lseek (fd, 0, SEEK_CUR);
+
+    lseek (fd, offset, SEEK_SET);
+    retval = read (fd, buf, count);
+    lseek (fd, saved_pos, SEEK_SET);
+
+    return retval;
+}
+#endif
+
 #ifndef        INADDR_NONE
 #define        INADDR_NONE     -1
 #endif
@@ -245,7 +267,7 @@ static int _GeoIP_inet_pton(int af, const char *src, void *dst)
         memset(&hints, 0, sizeof(struct addrinfo)); 
         hints.ai_family = af; 
  
-        if (getaddrinfo(src, NULL, &hints, &res) != 0) 
+        if (getaddrinfo(src, NULL, &hints, &res) != 0)
         { 
                 fprintf(stderr, "Couldn't resolve host %s\n", src); 
                 return -1; 
@@ -611,7 +633,7 @@ int _check_mtime(GeoIP *gi) {
                   call it more than once a second */ 
                 GetSystemTimeAsFileTime(&ft); 
                 t = FILETIME_TO_USEC(ft) / 1000 / 1000; 
-                if (t == gi->last_mtime_check){ 
+                if (t == (ULONGLONG) gi->last_mtime_check){
                         return 0; 
                 } 
                 gi->last_mtime_check = t; 
@@ -1579,7 +1601,7 @@ void GeoIPRegion_delete (GeoIPRegion *gir) {
 /* GeoIP Organization, ISP and AS Number Edition private method */
 static
 char *_get_name (GeoIP* gi, unsigned long ipnum) {
-	int seek_org;
+  unsigned int seek_org;
 	char buf[MAX_ORG_RECORD_LENGTH];
 	char * org_buf, * buf_pointer;
 	int record_pointer;
@@ -1600,7 +1622,7 @@ char *_get_name (GeoIP* gi, unsigned long ipnum) {
 	}
 
 	seek_org = _GeoIP_seek_record(gi, ipnum);
-	if (seek_org == gi->databaseSegments[0])		
+	if (seek_org == gi->databaseSegments[0])
 		return NULL;
 
 	record_pointer = seek_org + (2 * gi->record_length - 1) * gi->databaseSegments[0];
@@ -1628,7 +1650,7 @@ char *_get_name (GeoIP* gi, unsigned long ipnum) {
 }
 
 char *_get_name_v6 (GeoIP* gi, geoipv6_t ipnum) {
-  int seek_org;
+  unsigned int seek_org;
   char buf[MAX_ORG_RECORD_LENGTH];
   char * org_buf, * buf_pointer;
   int record_pointer;
@@ -1710,7 +1732,7 @@ char **GeoIP_range_by_ip (GeoIP* gi, const char *addr) {
 	unsigned long right_seek;
 	unsigned long mask;
 	int orig_netmask;
-	int target_value;
+	unsigned int target_value;
 	char **ret;
 	
 	if (addr == NULL) {
@@ -1933,7 +1955,7 @@ unsigned GeoIP_num_countries(void)
 
 const char * GeoIP_lib_version(void)
 {
-       return PACKAGE_VERSION;
+       return "1.4.8";
 }
 
 int GeoIP_cleanup(void)

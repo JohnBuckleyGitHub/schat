@@ -19,9 +19,9 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <GeoIP.h>
-#include <GeoIP_internal.h>
-#include <GeoIPCity.h>
+#include "GeoIP.h"
+#include "GeoIP_internal.h"
+#include "GeoIPCity.h"
 #if !defined(_WIN32)
 #include <unistd.h>
 #include <netdb.h>
@@ -35,11 +35,16 @@
 #include <stdint.h>	/* For uint32_t */
 #endif
 
-static
-const int       FULL_RECORD_LENGTH = 50;
 
+#if defined(_WIN32) && defined(_MSC_VER)
+#define FULL_RECORD_LENGTH 50
+#define CITYCONFIDENCE_FIXED_RECORD 4
+#define CITYCONFIDENCEDIST_FIXED_RECORD 6
+#else
+static const int FULL_RECORD_LENGTH = 50;
 static const int CITYCONFIDENCE_FIXED_RECORD = 4;
 static const int CITYCONFIDENCEDIST_FIXED_RECORD = 6;
+#endif
 
 
 static
@@ -70,6 +75,7 @@ _extract_record(GeoIP * gi, unsigned int seek_record, int *next_record_ptr)
      ? CITYCONFIDENCE_FIXED_RECORD
      : CITYCONFIDENCEDIST_FIXED_RECORD);
 
+    int t;
     //allocate max rec size, even for CITYCONFIDENCE_FIXED_RECORD
       //+4 is the max_record_length
 	unsigned char   tmp_fixed_record[CITYCONFIDENCEDIST_FIXED_RECORD + 4];
@@ -97,7 +103,7 @@ _extract_record(GeoIP * gi, unsigned int seek_record, int *next_record_ptr)
 	gi->databaseType == GEOIP_CITYCONFIDENCEDIST_EDITION
 	? ((tmp_fixed_record[4] + (tmp_fixed_record[5] << 8)) & 0x3ff) : 0x3ff;
 
-      int             t = fixed_rec_size - gi->record_length;
+  t = fixed_rec_size - gi->record_length;
       
     record_pointer = dseg + tmp_fixed_record[t] +
 	(tmp_fixed_record[t + 1] << 8) + (tmp_fixed_record[t + 2] << 16) ;
@@ -118,6 +124,7 @@ _extract_record(GeoIP * gi, unsigned int seek_record, int *next_record_ptr)
 
     }
     else {
+      int t;
       record_buf = gi->cache + (long) record_pointer;
 
       record->country_conf = record_buf[0];
@@ -129,7 +136,7 @@ _extract_record(GeoIP * gi, unsigned int seek_record, int *next_record_ptr)
 	gi->databaseType == GEOIP_CITYCONFIDENCEDIST_EDITION
 	? ((record_buf[4] + (record_buf[5] << 8)) & 0x3ff) : 0x3ff;
 
-      int             t = fixed_rec_size - gi->record_length;
+      t = fixed_rec_size - gi->record_length;
 
         record_pointer = dseg + record_buf[t] +
 	(record_buf[t + 1] << 8) + (record_buf[t + 2] << 16) ;
