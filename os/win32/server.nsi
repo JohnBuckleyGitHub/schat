@@ -86,6 +86,7 @@ Section
   SetOutPath "$INSTDIR\plugins"
   File "${SCHAT_SOURCE}\plugins\GenericNode.dll"
   File "${SCHAT_SOURCE}\plugins\Messages.dll"
+  File "${SCHAT_SOURCE}\plugins\GeoIP.dll"
 
   SetOutPath "$INSTDIR\plugins\qt\sqldrivers"
   File "${SCHAT_SOURCE}\plugins\qt\sqldrivers\qsqlite4.dll"
@@ -94,6 +95,7 @@ Section
   File "${SCHAT_SOURCE}\doc\ChangeLog.html"
   File "${SCHAT_SOURCE}\doc\ChangeLog.GenericNode.html"
   File "${SCHAT_SOURCE}\doc\ChangeLog.Messages.html"
+  File "${SCHAT_SOURCE}\doc\ChangeLog.GeoIP.html"
 
   WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "DisplayName"     "${SCHAT_NAME}"
   WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "UnInstallString" "$INSTDIR\uninstall.exe"
@@ -131,10 +133,12 @@ Section "Uninstall"
   Delete "$INSTDIR\plugins\qt\sqldrivers\qsqlite4.dll"
   Delete "$INSTDIR\plugins\GenericNode.dll"
   Delete "$INSTDIR\plugins\Messages.dll"
+  Delete "$INSTDIR\plugins\GeoIP.dll"
 
   Delete "$INSTDIR\doc\ChangeLog.html"
   Delete "$INSTDIR\doc\ChangeLog.GenericNode.html"
   Delete "$INSTDIR\doc\ChangeLog.Messages.html"
+  Delete "$INSTDIR\doc\ChangeLog.GeoIP.html"
 
   RMDir "$INSTDIR\plugins\qt\sqldrivers"
   RMDir "$INSTDIR\plugins\qt"
