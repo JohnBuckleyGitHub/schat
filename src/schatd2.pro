@@ -22,3 +22,4 @@ SUBDIRS  = \
     schatd2 \
     common/plugins/GenericNode \
     common/plugins/Messages \
+    common/plugins/GeoIP \
