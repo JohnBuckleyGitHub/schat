@@ -2,6 +2,7 @@
 <qresource prefix="/">
   <file alias="css/about.css">html/css/about.min.css</file>
   <file alias="css/ChatView.css">html/css/ChatView.min.css</file>
+  <file alias="css/flags.css">html/css/flags.min.css</file>
   <file alias="css/input.css">html/css/input.css</file>
   <file alias="css/server.css">html/css/server.min.css</file>
   <file alias="css/ui.css">html/css/ui.min.css</file>
@@ -97,6 +98,7 @@
   <file>html/User.html</file>
   <file>images/color.png</file>
   <file>images/color-map.png</file>
+  <file>images/flags.png</file>
   <file>images/logo128.png</file>
   <file>images/os.png</file>
   <file>images/progress.gif</file>
