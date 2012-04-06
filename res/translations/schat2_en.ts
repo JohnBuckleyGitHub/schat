@@ -471,7 +471,7 @@
 <context>
     <name>Profile</name>
     <message>
-        <location filename="../../src/schat2/Profile.cpp" line="56"/>
+        <location filename="../../src/schat2/Profile.cpp" line="78"/>
         <source>Full name</source>
         <translation type="unfinished"></translation>
     </message>
@@ -500,6 +500,14 @@
     <message>
         <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="96"/>
         <source>Gender:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ProfileTr</name>
+    <message>
+        <location filename="../../src/schat2/Profile.cpp" line="43"/>
+        <source>Full name</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -586,7 +594,7 @@
 <context>
     <name>ServerTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="139"/>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="140"/>
         <source>Network</source>
         <translation type="unfinished"></translation>
     </message>
