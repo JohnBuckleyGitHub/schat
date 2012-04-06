@@ -32,3 +32,10 @@ void ProfileChatView::initImpl(ChatView *view)
   if (SimpleID::typeOf(view->id()) == SimpleID::UserId)
     view->addJS(LS("qrc:/js/Profile/Profile.js"));
 }
+
+
+void ProfileChatView::loadFinishedImpl(ChatView *view)
+{
+  if (SimpleID::typeOf(view->id()) == SimpleID::UserId)
+    view->evaluateJavaScript(LS("Loader.loadCSS('qrc:/css/flags.css');"));
+}

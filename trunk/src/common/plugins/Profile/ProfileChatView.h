@@ -30,6 +30,7 @@ public:
 
 protected:
   void initImpl(ChatView *view);
+  void loadFinishedImpl(ChatView *view);
 };
 
 #endif /* PROFILECHATVIEW_H_ */
