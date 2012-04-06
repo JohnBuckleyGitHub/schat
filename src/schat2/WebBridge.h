@@ -25,6 +25,7 @@
 #include "Channel.h"
 
 class FeedNotify;
+class WebBridgeTr;
 
 class SCHAT_CORE_EXPORT WebBridge : public QObject
 {
@@ -32,6 +33,7 @@ class SCHAT_CORE_EXPORT WebBridge : public QObject
 
 public:
   WebBridge(QObject *parent = 0);
+  ~WebBridge();
   inline static WebBridge *i() { return m_self; }
 
   Q_INVOKABLE QString channel(const QString &id) const;
@@ -48,13 +50,12 @@ public:
 
   void retranslate();
 
-  static QHash<QString, QString> translations;
-
 signals:
   void retranslated();
 
 private:
   static WebBridge *m_self; ///< Указатель на себя.
+  WebBridgeTr *m_tr;        ///< Класс перевода строк.
 };
 
 #endif /* WEBBRIDGE_H_ */

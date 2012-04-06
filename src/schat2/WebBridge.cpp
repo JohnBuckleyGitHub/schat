@@ -18,6 +18,8 @@
 
 #include <QDebug>
 
+#include <QCoreApplication>
+
 #include "ChatNotify.h"
 #include "ChatUrls.h"
 #include "client/ChatClient.h"
@@ -27,16 +29,49 @@
 #include "net/SimpleID.h"
 #include "Profile.h"
 #include "sglobal.h"
+#include "Tr.h"
 #include "WebBridge.h"
 
 WebBridge *WebBridge::m_self = 0;
-QHash<QString, QString> WebBridge::translations;
+
+class WebBridgeTr : public Tr
+{
+  Q_DECLARE_TR_FUNCTIONS(WebBridgeTr)
+
+public:
+  WebBridgeTr() : Tr() {}
+
+protected:
+  QString valueImpl(const QString &key) const
+  {
+    if (key == LS("my_computers"))           return tr("My Computers");
+    else if (key == LS("my_computers_desc")) return tr("These are the computers currently linked to your account.");
+    else if (key == LS("computer_name"))     return tr("Computer name");
+    else if (key == LS("last_activity"))     return tr("Last Activity");
+    else if (key == LS("actions"))           return tr("Actions");
+    else if (key == LS("unlink"))            return tr("Unlink");
+    else if (key == LS("version"))           return tr("<b>Version:</b>");
+    else if (key == LS("last_ip"))           return tr("<b>Last IP Address:</b>");
+    else if (key == LS("profile"))           return tr("Profile");
+    else if (key == LS("connections"))       return tr("Connections");
+    else if (key == LS("user_offline"))      return tr("User offline");
+    return QString();
+  }
+};
+
 
 WebBridge::WebBridge(QObject *parent)
   : QObject(parent)
 {
   m_self = this;
+  m_tr = new WebBridgeTr();
   retranslate();
+}
+
+
+WebBridge::~WebBridge()
+{
+  delete m_tr;
 }
 
 
@@ -48,10 +83,7 @@ QString WebBridge::channel(const QString &id) const
 
 QString WebBridge::translate(const QString &key) const
 {
-  if (key.startsWith(LS("field-")))
-    return Profile::translate(key.mid(6));
-
-  return translations.value(key, key);
+  return Tr::value(key);
 }
 
 
@@ -170,18 +202,5 @@ QVariantMap WebBridge::feed(const FeedNotify &notify)
 
 void WebBridge::retranslate()
 {
-  translations[LS("my_computers")]      = tr("My Computers");
-  translations[LS("my_computers_desc")] = tr("These are the computers currently linked to your account.");
-  translations[LS("computer_name")]     = tr("Computer name");
-  translations[LS("last_activity")]     = tr("Last Activity");
-  translations[LS("actions")]           = tr("Actions");
-  translations[LS("unlink")]            = tr("Unlink");
-  translations[LS("version")]           = tr("<b>Version:</b>");
-  translations[LS("last_ip")]           = tr("<b>Last IP Address:</b>");
-
-  translations[LS("profile")]           = tr("Profile");
-  translations[LS("connections")]       = tr("Connections");
-  translations[LS("user_offline")]      = tr("User offline");
-
   emit retranslated();
 }
