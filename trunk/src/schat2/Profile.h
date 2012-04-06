@@ -24,12 +24,15 @@
 
 #include "schat.h"
 
+class ProfileTr;
+
 class SCHAT_CORE_EXPORT Profile : public QObject
 {
   Q_OBJECT
 
 public:
   Profile(QObject *parent = 0);
+  ~Profile();
   inline static Profile *i()               { return m_self; }
   inline static void add(Profile *hook)    { if (!m_self->m_hooks.contains(hook)) m_self->m_hooks.append(hook); }
   inline static void remove(Profile *hook) { m_self->m_hooks.removeAll(hook); }
@@ -48,6 +51,7 @@ private slots:
   void ready();
 
 private:
+  ProfileTr *m_tr;                    ///< Класс перевода строк.
   QList<Profile*> m_hooks;            ///< Хуки.
   static Profile *m_self;             ///< Указатель на себя.
   static QMap<int, QString> m_fields; ///< Поддерживаемые поля.

@@ -18,13 +18,34 @@
 
 #include <QDebug>
 
+#include <QApplication>
+
 #include "client/ChatClient.h"
 #include "client/ClientFeeds.h"
 #include "Profile.h"
 #include "sglobal.h"
+#include "Tr.h"
 
 QMap<int, QString> Profile::m_fields;
 Profile *Profile::m_self = 0;
+
+class ProfileTr : public Tr
+{
+  Q_DECLARE_TR_FUNCTIONS(ProfileTr)
+
+public:
+  ProfileTr() : Tr() { m_prefix = LS("field-"); }
+
+protected:
+  QString valueImpl(const QString &key) const
+  {
+    if (key == LS("name"))
+      return tr("Full name");
+
+    return QString();
+  }
+};
+
 
 Profile::Profile(QObject *parent)
   : QObject(parent)
@@ -34,16 +55,16 @@ Profile::Profile(QObject *parent)
   else
     m_self = this;
 
+  m_tr = new ProfileTr();
   addField(LS("name"), 1000);
-//         << LS("bday")
-//         << LS("city")
-//         << LS("country")
-//         << LS("tel")
-//         << LS("email")
-//         << LS("site")
-//         << LS("note");
 
   connect(ChatClient::i(), SIGNAL(ready()), SLOT(ready()));
+}
+
+
+Profile::~Profile()
+{
+  delete m_tr;
 }
 
 
@@ -52,17 +73,7 @@ Profile::Profile(QObject *parent)
  */
 QString Profile::translate(const QString &field)
 {
-  if (field == LS("name"))
-    return tr("Full name");
-
-  QString result;
-  foreach (Profile *hook, m_self->m_hooks) {
-    result = hook->translateImpl(field);
-    if (!result.isEmpty())
-      return result;
-  }
-
-  return field;
+  return Tr::value(LS("field-") + field);
 }
 
 
