@@ -103,6 +103,8 @@ var Profile = {
 
 
 var Connections = {
+  onProcess: [],
+
   body: function(json) {
     Connections.read(json);
   },
@@ -130,17 +132,6 @@ var Connections = {
     $(id + " .icon-os").attr("class", "icon-os os-" + Pages.os(json.os));
     $(id + " .icon-os").attr("data-original-title", htmlspecialchars(json.osName));
     $(id + " > .connection-host").text(json.host);
-
-    if (!json.hasOwnProperty("geo") || json.geo.country == "") {
-      $(id + ' [class^="flag-"]').remove();
-      return;
-    }
-
-    var country = json.geo.country.toLowerCase();
-    if (country.length != 2)
-      return;
-
-    $(id).append(' <span><i class="flag-' + country + '"></i></span>');
   },
 
   // Чтение фида.
@@ -156,6 +147,10 @@ var Connections = {
     for (var key in connections) if (connections.hasOwnProperty(key) && key.length == 34) {
       count++;
       Connections.process(key, connections[key]);
+
+      for (var i = 0; i < Connections.onProcess.length; i++) {
+        Connections.onProcess[i](key, connections[key]);
+      }
     }
 
     $("#connections-spinner").hide();
