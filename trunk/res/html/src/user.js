@@ -130,6 +130,17 @@ var Connections = {
     $(id + " .icon-os").attr("class", "icon-os os-" + Pages.os(json.os));
     $(id + " .icon-os").attr("data-original-title", htmlspecialchars(json.osName));
     $(id + " > .connection-host").text(json.host);
+
+    if (!json.hasOwnProperty("geo") || json.geo.country == "") {
+      $(id + ' [class^="flag-"]').remove();
+      return;
+    }
+
+    var country = json.geo.country.toLowerCase();
+    if (country.length != 2)
+      return;
+
+    $(id).append(' <span><i class="flag-' + country + '"></i></span>');
   },
 
   // Чтение фида.
