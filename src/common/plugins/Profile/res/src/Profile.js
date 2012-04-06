@@ -33,6 +33,7 @@ Profile.Field.site = function(key, value) {
   Profile.addRow(key, '<a href="' + addr + '">' + title + '</a>');
 };
 
+
 Profile.Field.email = function(key, value) {
   var addr = Utils.left(htmlspecialchars(value.replace(/\s+/gi, '')), 254);
   if (addr.indexOf("mailto:") == 0)
@@ -40,3 +41,23 @@ Profile.Field.email = function(key, value) {
 
   Profile.addRow(key, '<a href="mailto:' + addr + '">' + addr + '</a>');
 };
+
+
+var ProfilePlugin = {
+  process: function(key, json) {
+    var id = "#" + key;
+    if (!json.hasOwnProperty("geo") || json.geo.country == "") {
+      $(id + ' [class^="flag-"]').remove();
+      return;
+    }
+
+    var country = json.geo.country.toLowerCase();
+    if (country.length != 2)
+      return;
+
+    $(id).append(' <span><i class="flag-' + country + '" data-original-title="' + Utils.tr('country-' + country) + '"></i></span>');
+    $(id + ' .flag-' + country).tooltip();
+  }
+};
+
+Connections.onProcess.push(ProfilePlugin.process);
