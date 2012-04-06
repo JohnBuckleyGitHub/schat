@@ -55,6 +55,7 @@ HEADERS += \
     text/PlainTextFilter.h \
     tools/OsInfo.h \
     tools/Ver.h \
+    Tr.h \
     Translation.h \
 
 SOURCES += \
@@ -90,6 +91,7 @@ SOURCES += \
     text/PlainTextFilter.cpp \
     tools/OsInfo.cpp \
     tools/Ver.cpp \
+    Tr.cpp \
     Translation.cpp \
 
 !contains( SCHAT_LITTLE_CLIENT, 1 ) {
