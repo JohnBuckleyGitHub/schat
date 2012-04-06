@@ -23,12 +23,10 @@ HEADERS  = \
    ProfileChatView.h \
    ProfilePlugin.h \
    ProfilePlugin_p.h \
-   ProfilePluginFields.h \
 
 SOURCES  = \
    ProfileChatView.cpp \
    ProfilePlugin.cpp \
-   ProfilePluginFields.cpp \
 
 RESOURCES += Profile.qrc
 

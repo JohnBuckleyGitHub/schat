@@ -21,12 +21,18 @@
 
 #include "plugins/ChatPlugin.h"
 
+class ProfilePluginTr;
+
 class ProfilePluginImpl : public ChatPlugin
 {
   Q_OBJECT
 
 public:
   ProfilePluginImpl(QObject *parent);
+  ~ProfilePluginImpl();
+
+private:
+  ProfilePluginTr *m_tr;
 };
 
 

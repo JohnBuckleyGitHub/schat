@@ -469,14 +469,6 @@
     </message>
 </context>
 <context>
-    <name>Profile</name>
-    <message>
-        <location filename="../../src/schat2/Profile.cpp" line="78"/>
-        <source>Full name</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>ProfileLayout</name>
     <message>
         <location filename="../../src/schat2/ui/profile/ProfileLayout.cpp" line="39"/>
