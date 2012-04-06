@@ -577,7 +577,7 @@
 <context>
     <name>ServerTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="140"/>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="139"/>
         <source>Network</source>
         <translation>Сеть</translation>
     </message>
@@ -854,59 +854,59 @@
     </message>
 </context>
 <context>
-    <name>WebBridge</name>
+    <name>WebBridgeTr</name>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="173"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="47"/>
         <source>My Computers</source>
         <translation>Мои компьютеры</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="174"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="48"/>
         <source>These are the computers currently linked to your account.</source>
         <translation>Эти компьютеры в настоящее время связаны с вашим аккаунтом.</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="175"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="49"/>
         <source>Computer name</source>
         <translation>Имя компьютера</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="176"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="50"/>
         <source>Last Activity</source>
         <translation>Последняя активность</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="177"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="51"/>
         <source>Actions</source>
         <translation>Действия</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="178"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="52"/>
         <source>Unlink</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="179"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="53"/>
         <source>&lt;b&gt;Version:&lt;/b&gt;</source>
         <translation>&lt;b&gt;Версия:&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="180"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="54"/>
         <source>&lt;b&gt;Last IP Address:&lt;/b&gt;</source>
         <translation>&lt;b&gt;IP-адрес:&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="182"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="55"/>
         <source>Profile</source>
         <translation>Профиль</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="183"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="56"/>
         <source>Connections</source>
         <translation>Подключения</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="184"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="57"/>
         <source>User offline</source>
         <translation>Пользователь не в сети</translation>
     </message>
