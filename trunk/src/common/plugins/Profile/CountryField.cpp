@@ -21,6 +21,7 @@
 
 #include "CountryField.h"
 #include "sglobal.h"
+#include "Tr.h"
 
 CountryField::CountryField(QWidget *parent)
   : ProfileField(LS("country"), parent)
@@ -31,4 +32,52 @@ CountryField::CountryField(QWidget *parent)
   mainLay->setMargin(0);
   mainLay->setSpacing(0);
   mainLay->addWidget(m_box);
+
+  load();
+}
+
+
+QIcon CountryField::icon(const QString &code, const QPixmap &layout)
+{
+  QPoint point = pos(code);
+  if (point.isNull())
+    return QIcon();
+
+  return QIcon(layout.copy(point.x(), point.y(), 16, 11));
+}
+
+
+QPoint CountryField::pos(const QString &code)
+{
+  QPoint point;
+  if (code.size() != 2)
+    return point;
+
+  char x = code.at(1).toLatin1();
+  if (x < 'a' || x > 'z')
+    return point;
+
+  char y = code.at(0).toLatin1();
+  if (y < 'a' || y > 'z')
+    return point;
+
+  point.setX(16 * (x - 'a') + 16);
+  point.setY(11 * (y - 'a') + 11);
+  return point;
+}
+
+
+void CountryField::load()
+{
+  QStringList countries;
+  countries
+    << LS("ru")
+    << LS("th")
+    << LS("us");
+
+  QPixmap layout(LS(":/images/flags.png"));
+
+  foreach (QString code, countries) {
+    m_box->addItem(icon(code, layout), Tr::value(LS("country-") + code), code);
+  }
 }
