@@ -20,11 +20,13 @@ SCHAT_CORE_LIB = 1
 QT = core gui network webkit
 
 HEADERS  = \
+   CountryField.h \
    ProfileChatView.h \
    ProfilePlugin.h \
    ProfilePlugin_p.h \
 
 SOURCES  = \
+   CountryField.cpp \
    ProfileChatView.cpp \
    ProfilePlugin.cpp \
 
