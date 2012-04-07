@@ -20,13 +20,14 @@
 #include <QtPlugin>
 
 #include "ChatCore.h"
+#include "CountryField.h"
 #include "Profile.h"
 #include "ProfileChatView.h"
 #include "ProfilePlugin.h"
 #include "ProfilePlugin_p.h"
 #include "sglobal.h"
-#include "Translation.h"
 #include "Tr.h"
+#include "Translation.h"
 
 class ProfilePluginTr : public Tr
 {
@@ -456,6 +457,8 @@ ProfilePluginImpl::ProfilePluginImpl(QObject *parent)
   Profile::addField(LS("city"),    2000);
   Profile::addField(LS("site"),    4000);
   Profile::addField(LS("email"),   4050);
+
+  ProfileFieldFactory::add(new CountryFieldCreator());
 
   ChatCore::translation()->addOther(LS("profile"));
 }

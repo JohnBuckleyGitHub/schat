@@ -16,35 +16,19 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PROFILEFIELDFACTORY_H_
-#define PROFILEFIELDFACTORY_H_
+#include <QComboBox>
+#include <QVBoxLayout>
 
-#include <QMap>
-#include <QSharedPointer>
+#include "CountryField.h"
+#include "sglobal.h"
 
-#include "schat.h"
-
-class ProfileField;
-class QWidget;
-
-class SCHAT_CORE_EXPORT ProfileFieldFactory
+CountryField::CountryField(QWidget *parent)
+  : ProfileField(LS("country"), parent)
 {
-public:
-  ProfileFieldFactory(const QString &name)
-    : m_name(name)
-  {}
-  virtual ~ProfileFieldFactory() {}
+  m_box = new QComboBox(this);
 
-  static ProfileField* create(const QString &field, QWidget *parent = 0);
-  static void add(ProfileFieldFactory *hook);
-
-protected:
-  virtual ProfileField* createImpl(const QString &field, QWidget *parent = 0);
-
-  QString m_name;
-
-private:
-  static QMap<QString, QSharedPointer<ProfileFieldFactory> > m_hooks;
-};
-
-#endif /* PROFILEFIELDFACTORY_H_ */
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->setMargin(0);
+  mainLay->setSpacing(0);
+  mainLay->addWidget(m_box);
+}

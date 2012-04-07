@@ -16,35 +16,35 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PROFILEFIELDFACTORY_H_
-#define PROFILEFIELDFACTORY_H_
+#ifndef COUNTRYFIELD_H_
+#define COUNTRYFIELD_H_
 
-#include <QMap>
-#include <QSharedPointer>
+#include "ui/profile/ProfileField.h"
+#include "ui/profile/ProfileFieldFactory.h"
 
-#include "schat.h"
+class QComboBox;
 
-class ProfileField;
-class QWidget;
-
-class SCHAT_CORE_EXPORT ProfileFieldFactory
+class CountryField : public ProfileField
 {
+  Q_OBJECT
+
 public:
-  ProfileFieldFactory(const QString &name)
-    : m_name(name)
-  {}
-  virtual ~ProfileFieldFactory() {}
-
-  static ProfileField* create(const QString &field, QWidget *parent = 0);
-  static void add(ProfileFieldFactory *hook);
-
-protected:
-  virtual ProfileField* createImpl(const QString &field, QWidget *parent = 0);
-
-  QString m_name;
+  CountryField(QWidget *parent = 0);
 
 private:
-  static QMap<QString, QSharedPointer<ProfileFieldFactory> > m_hooks;
+  QComboBox *m_box;
 };
 
-#endif /* PROFILEFIELDFACTORY_H_ */
+
+class CountryFieldCreator : public ProfileFieldFactory
+{
+public:
+  CountryFieldCreator()
+  : ProfileFieldFactory(QLatin1String("country"))
+  {}
+
+protected:
+  ProfileField* createImpl(const QString & /*field*/, QWidget *parent = 0) { return new CountryField(parent); }
+};
+
+#endif /* СOUNTRYFIELD_H_ */
