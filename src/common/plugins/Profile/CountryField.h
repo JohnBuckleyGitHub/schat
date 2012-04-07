@@ -32,6 +32,10 @@ public:
   CountryField(QWidget *parent = 0);
 
 private:
+  QIcon icon(const QString &code, const QPixmap &layout);
+  QPoint pos(const QString &code);
+  void load();
+
   QComboBox *m_box;
 };
 
