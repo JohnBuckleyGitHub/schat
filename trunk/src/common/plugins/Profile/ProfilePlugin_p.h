@@ -21,6 +21,7 @@
 
 #include "plugins/ChatPlugin.h"
 
+class CountryTr;
 class ProfilePluginTr;
 
 class ProfilePluginImpl : public ChatPlugin
@@ -32,6 +33,7 @@ public:
   ~ProfilePluginImpl();
 
 private:
+  CountryTr *m_country;
   ProfilePluginTr *m_tr;
 };
 
