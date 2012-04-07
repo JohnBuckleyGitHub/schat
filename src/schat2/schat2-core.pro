@@ -80,6 +80,7 @@ HEADERS = \
     ui/network/SecurityQuestion.h \
     ui/network/SignUpWidget.h \
     ui/profile/ProfileField.h \
+    ui/profile/ProfileFieldFactory.h \
     ui/profile/ProfileLayout.h \
     ui/profile/TextField.h \
     ui/SendWidget.h \
@@ -159,6 +160,7 @@ SOURCES = \
     ui/network/SecurityQuestion.cpp \
     ui/network/SignUpWidget.cpp \
     ui/profile/ProfileField.cpp \
+    ui/profile/ProfileFieldFactory.cpp \
     ui/profile/ProfileLayout.cpp \
     ui/profile/TextField.cpp \
     ui/SendWidget.cpp \

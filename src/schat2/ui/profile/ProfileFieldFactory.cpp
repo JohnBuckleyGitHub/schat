@@ -16,26 +16,33 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "net/SimpleID.h"
-#include "ProfileChatView.h"
-#include "ui/tabs/ChatView.h"
-#include "sglobal.h"
+#include "ui/profile/ProfileFieldFactory.h"
+#include "ui/profile/TextField.h"
 
-ProfileChatView::ProfileChatView(QObject *parent)
-  : ChatViewHooks(parent)
+QMap<QString, QSharedPointer<ProfileFieldFactory> > ProfileFieldFactory::m_hooks;
+
+
+ProfileField* ProfileFieldFactory::create(const QString &field, QWidget *parent)
 {
+  if (m_hooks.contains(field))
+    return m_hooks.value(field)->createImpl(field, parent);
+
+  return new TextField(field, parent);
 }
 
 
-void ProfileChatView::initImpl(ChatView *view)
+void ProfileFieldFactory::add(ProfileFieldFactory *hook)
 {
-//  if (SimpleID::typeOf(view->id()) == SimpleID::UserId)
-//    view->addJS(LS("qrc:/js/Profile/Profile.js"));
+  if (hook->m_name.isEmpty()) {
+    delete hook;
+    return;
+  }
+
+  m_hooks[hook->m_name] = QSharedPointer<ProfileFieldFactory>(hook);
 }
 
 
-void ProfileChatView::loadFinishedImpl(ChatView *view)
+ProfileField* ProfileFieldFactory::createImpl(const QString & /*field*/, QWidget * /*parent*/)
 {
-  if (SimpleID::typeOf(view->id()) == SimpleID::UserId)
-    view->evaluateJavaScript(LS("Loader.loadCSS('qrc:/css/flags.css');"));
+  return 0;
 }

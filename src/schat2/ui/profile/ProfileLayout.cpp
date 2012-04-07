@@ -27,8 +27,8 @@
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
 #include "ui/profile/ProfileField.h"
+#include "ui/profile/ProfileFieldFactory.h"
 #include "ui/profile/ProfileLayout.h"
-#include "ui/profile/TextField.h"
 
 ProfileLayout::ProfileLayout(QWidget *parent)
   : QWidget(parent)
@@ -74,7 +74,10 @@ void ProfileLayout::add(const QString &field)
   if (index == -1)
     return;
 
-  ProfileField *widget = new TextField(field, this);
+  ProfileField *widget = ProfileFieldFactory::create(field, this);
+  if (!widget)
+    return;
+
   m_fields[field] = widget;
 
   m_layout->addWidget(widget->label(), index, 0);

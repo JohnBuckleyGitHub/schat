@@ -38,7 +38,8 @@ public:
 protected:
   QString valueImpl(const QString &key) const
   {
-    if (key == LS("city"))       return tr("City");
+    if (key == LS("country"))    return tr("Country");
+    else if (key == LS("city"))  return tr("City");
     else if (key == LS("site"))  return tr("Site");
     else if (key == LS("email")) return tr("E-Mail");
     return QString();
@@ -451,9 +452,10 @@ ProfilePluginImpl::ProfilePluginImpl(QObject *parent)
   m_country = new CountryTr();
   new ProfileChatView(this);
 
-  Profile::addField(LS("city"), 2000);
-  Profile::addField(LS("site"), 4000);
-  Profile::addField(LS("email"), 4050);
+  Profile::addField(LS("country"), 1900);
+  Profile::addField(LS("city"),    2000);
+  Profile::addField(LS("site"),    4000);
+  Profile::addField(LS("email"),   4050);
 
   ChatCore::translation()->addOther(LS("profile"));
 }
