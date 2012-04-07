@@ -16,26 +16,34 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "net/SimpleID.h"
-#include "ProfileChatView.h"
-#include "ui/tabs/ChatView.h"
-#include "sglobal.h"
+#ifndef PROFILEFIELDFACTORY_H_
+#define PROFILEFIELDFACTORY_H_
 
-ProfileChatView::ProfileChatView(QObject *parent)
-  : ChatViewHooks(parent)
+#include <QMap>
+#include <QSharedPointer>
+
+#include "schat.h"
+
+class ProfileField;
+class QWidget;
+
+class SCHAT_CORE_EXPORT ProfileFieldFactory
 {
-}
+public:
+  ProfileFieldFactory(const QString &name)
+    : m_name(name)
+  {}
 
+  static ProfileField* create(const QString &field, QWidget *parent = 0);
+  static void add(ProfileFieldFactory *hook);
 
-void ProfileChatView::initImpl(ChatView *view)
-{
-//  if (SimpleID::typeOf(view->id()) == SimpleID::UserId)
-//    view->addJS(LS("qrc:/js/Profile/Profile.js"));
-}
+protected:
+  virtual ProfileField* createImpl(const QString &field, QWidget *parent = 0);
 
+  QString m_name;
 
-void ProfileChatView::loadFinishedImpl(ChatView *view)
-{
-  if (SimpleID::typeOf(view->id()) == SimpleID::UserId)
-    view->evaluateJavaScript(LS("Loader.loadCSS('qrc:/css/flags.css');"));
-}
+private:
+  static QMap<QString, QSharedPointer<ProfileFieldFactory> > m_hooks;
+};
+
+#endif /* PROFILEFIELDFACTORY_H_ */
