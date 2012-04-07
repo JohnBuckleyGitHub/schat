@@ -16,9 +16,18 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-Profile.Field.city = function(key, value) {
-  Profile.addRow(key, Utils.left(htmlspecialchars(Utils.simplified(value)), 128));
+Profile.Field.country = function(key, value) {
+  if (value.length != 2)
+    return;
+
+  var name = Utils.tr("country-" + value);
+  if (name == "country-" + value)
+    return;
+
+  Profile.addRow(key, '<i class="flag-' + value + '"></i> <span data-tr="country-' + value + '">' + name + '</span>');
 };
+
+Profile.Field.city = Profile.Field.name;
 
 Profile.Field.site = function(key, value) {
   var addr = Utils.left(htmlspecialchars(value.replace(/\s+/gi, '')), 254);

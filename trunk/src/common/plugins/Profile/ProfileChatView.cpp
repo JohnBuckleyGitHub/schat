@@ -29,8 +29,8 @@ ProfileChatView::ProfileChatView(QObject *parent)
 
 void ProfileChatView::initImpl(ChatView *view)
 {
-//  if (SimpleID::typeOf(view->id()) == SimpleID::UserId)
-//    view->addJS(LS("qrc:/js/Profile/Profile.js"));
+  if (SimpleID::typeOf(view->id()) == SimpleID::UserId)
+    view->addJS(LS("qrc:/js/Profile/Profile.js"));
 }
 
 
