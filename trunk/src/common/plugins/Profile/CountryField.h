@@ -30,6 +30,7 @@ class CountryField : public ProfileField
 
 public:
   CountryField(QWidget *parent = 0);
+  void retranslateUi();
 
 protected:
   void setData(const QVariant &value);

@@ -39,6 +39,28 @@ CountryField::CountryField(QWidget *parent)
 }
 
 
+void CountryField::retranslateUi()
+{
+  ProfileField::retranslateUi();
+  m_box->disconnect(this);
+
+  QVariant data = m_box->itemData(m_box->currentIndex());
+  m_box->removeItem(0);
+
+  int size = m_box->count();
+  for (int i = 0; i < size; ++i) {
+    m_box->setItemText(i, Tr::value(LS("country-") + m_box->itemData(i).toString()));
+  }
+
+  m_box->model()->sort(0);
+  QPixmap layout(LS(":/images/flags.png"));
+  m_box->insertItem(0, icon(LS("zz"), layout), tr("Not selected"));
+  m_box->setCurrentIndex(m_box->findData(data));
+
+  connect(m_box, SIGNAL(currentIndexChanged(int)), SLOT(indexChanged(int)));
+}
+
+
 void CountryField::setData(const QVariant &value)
 {
   if (value.type() != QVariant::String)
@@ -376,6 +398,8 @@ void CountryField::load()
   foreach (QString code, countries) {
     m_box->addItem(icon(code, layout), Tr::value(LS("country-") + code), code);
   }
+
+  m_box->model()->sort(0);
 
   m_box->insertItem(0, icon(LS("zz"), layout), tr("Not selected"));
   m_box->setCurrentIndex(0);
