@@ -79,7 +79,7 @@ protected:
           case 't': return tr("Austria");
           case 'u': return tr("Australia");
           case 'w': return tr("Aruba");
-          case 'x': return tr("Åland Islands");
+          case 'x': return tr("Aland Islands");
           case 'z': return tr("Azerbaijan");
         }
         break;
@@ -95,7 +95,7 @@ protected:
           case 'h': return tr("Bahrain");
           case 'i': return tr("Burundi");
           case 'j': return tr("Benin");
-          case 'l': return tr("Saint Barthélemy");
+          case 'l': return tr("Saint Barthelemy");
           case 'm': return tr("Bermuda");
           case 'n': return tr("Brunei");
           case 'o': return tr("Bolivia");
@@ -118,7 +118,7 @@ protected:
           case 'f': return tr("Central African Republic");
           case 'g': return tr("Congo");
           case 'h': return tr("Switzerland");
-          case 'i': return tr("Côte d'Ivoire");
+          case 'i': return tr("Cote d'Ivoire");
           case 'k': return tr("Cook Islands");
           case 'l': return tr("Chile");
           case 'm': return tr("Cameroon");
@@ -127,7 +127,7 @@ protected:
           case 'r': return tr("Costa Rica");
           case 'u': return tr("Cuba");
           case 'v': return tr("Cape Verde");
-          case 'w': return tr("Curaçao");
+          case 'w': return tr("Curacao");
           case 'x': return tr("Christmas Island");
           case 'y': return tr("Cyprus");
           case 'z': return tr("Czech Republic");
@@ -337,7 +337,7 @@ protected:
 
       case 'r':
         switch (second) {
-          case 'e': return tr("Réunion");
+          case 'e': return tr("Reunion");
           case 'o': return tr("Romania");
           case 's': return tr("Serbia");
           case 'u': return tr("Russia");
@@ -363,7 +363,7 @@ protected:
           case 'o': return tr("Somalia");
           case 'r': return tr("Suriname");
           case 's': return tr("South Sudan");
-          case 't': return tr("São Tomé and Príncipe");
+          case 't': return tr("Sao Tome and Principe");
           case 'v': return tr("El Salvador");
           case 'x': return tr("Sint Maarten");
           case 'y': return tr("Syria");

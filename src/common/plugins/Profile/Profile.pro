@@ -46,6 +46,7 @@ unix {
   INSTALLS += target translations
 }
 
+TRANSLATIONS += ../../../../res/translations/profile_en.ts
 TRANSLATIONS += ../../../../res/translations/profile_ru.ts
 CODECFORTR = UTF-8
 
