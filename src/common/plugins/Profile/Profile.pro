@@ -33,7 +33,8 @@ SOURCES  = \
 RESOURCES += Profile.qrc
 
 unix {
-  translations.files = ../../../../res/translations/profile_ru.qm
+  translations.files = ../../../../res/translations/profile_en.qm
+  translations.files += ../../../../res/translations/profile_ru.qm
   
   macx {
     translations.path += ../../../../out/SimpleChat2.app/Contents/Resources/translations
