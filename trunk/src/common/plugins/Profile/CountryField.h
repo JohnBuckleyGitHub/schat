@@ -31,6 +31,12 @@ class CountryField : public ProfileField
 public:
   CountryField(QWidget *parent = 0);
 
+protected:
+  void setData(const QVariant &value);
+
+private slots:
+  void indexChanged(int index);
+
 private:
   QIcon icon(const QString &code, const QPixmap &layout);
   QPoint pos(const QString &code);

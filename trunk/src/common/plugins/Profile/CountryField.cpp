@@ -34,6 +34,34 @@ CountryField::CountryField(QWidget *parent)
   mainLay->addWidget(m_box);
 
   load();
+
+  connect(m_box, SIGNAL(currentIndexChanged(int)), SLOT(indexChanged(int)));
+}
+
+
+void CountryField::setData(const QVariant &value)
+{
+  if (value.type() != QVariant::String)
+    return;
+
+  QString code = value.toString();
+  if (code.size() != 2)
+    return;
+
+  int index = m_box->findData(code);
+  if (index == -1)
+    index = 0;
+
+  m_box->setCurrentIndex(index);
+}
+
+
+void CountryField::indexChanged(int index)
+{
+  if (index == 0)
+    apply(QString());
+  else
+    apply(m_box->itemData(index));
 }
 
 
@@ -69,7 +97,7 @@ QPoint CountryField::pos(const QString &code)
 
 void CountryField::load()
 {
-  QStringList countries;
+  QStringList countries; // ISO 3166-1 alpha-2
   countries
     << LS("ru")
     << LS("th")
@@ -80,4 +108,7 @@ void CountryField::load()
   foreach (QString code, countries) {
     m_box->addItem(icon(code, layout), Tr::value(LS("country-") + code), code);
   }
+
+  m_box->insertItem(0, icon(LS("zz"), layout), tr("Not selected"));
+  m_box->setCurrentIndex(0);
 }
