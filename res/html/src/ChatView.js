@@ -67,6 +67,16 @@ var Utils = {
   log: function(text) {
     var date = new Date();
     console.log(DateTime.time(date) + DateTime.seconds(date) + "." + date.getMilliseconds() + " " + text);
+  },
+
+  row: function(label, value) {
+    if (typeof value !== "string" || value === "")
+      return '';
+
+    var out = '<div class="field-row field-' + label + '">';
+    out += '<span class="field-row-label"><span data-tr="' + label + '">' + Utils.tr(label) + '</span>:</span> ';
+    out += '<span class="field-row-value">' + value + '</span>';
+    return out;
   }
 };
 
@@ -438,6 +448,10 @@ $(document).ready(function() {
 
     $('#modal').modal();
     e.preventDefault();
+  });
+
+  $('#modal').on('hidden', function () {
+    $('#modal-body *').remove();
   });
 
   Loader.load(jsfiles);

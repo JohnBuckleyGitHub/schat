@@ -919,6 +919,16 @@
         <source>User offline</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="58"/>
+        <source>Version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="59"/>
+        <source>OS</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>WelcomeTab</name>

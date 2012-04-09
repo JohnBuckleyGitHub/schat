@@ -55,6 +55,8 @@ protected:
     else if (key == LS("profile"))           return tr("Profile");
     else if (key == LS("connections"))       return tr("Connections");
     else if (key == LS("user_offline"))      return tr("User offline");
+    else if (key == LS("chat_version"))      return tr("Version");
+    else if (key == LS("os_name"))           return tr("OS");
     return QString();
   }
 };
