@@ -9,6 +9,7 @@
   <script src="qrc:/js/ChatView.js"></script>
   <script src="qrc:/js/user.js"></script>
   <script src="qrc:/js/bootstrap-tooltip.js"></script>
+  <script src="qrc:/js/bootstrap-modal.js"></script>
 </head>
 <body id="body" class="no-seconds no-service no-topic-author">
   <div class="tabbable">
@@ -46,5 +47,19 @@
       </div>
     </div>
   </div>
+
+  <div id="modal-wrapper">
+    <div id="modal-center">
+      <div class="modal" id="modal">
+        <div id="modal-header">
+          <a class="close" data-dismiss="modal">×</a>
+          <h3></h3>
+        </div>
+        <div id="modal-body">
+        </div>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
