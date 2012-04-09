@@ -910,6 +910,16 @@
         <source>User offline</source>
         <translation>Пользователь не в сети</translation>
     </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="58"/>
+        <source>Version</source>
+        <translation>Версия</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="59"/>
+        <source>OS</source>
+        <translation>ОС</translation>
+    </message>
 </context>
 <context>
     <name>WelcomeTab</name>

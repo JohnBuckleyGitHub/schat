@@ -69,4 +69,4 @@ var ProfilePlugin = {
   }
 };
 
-Connections.onProcess.push(ProfilePlugin.process);
+UserHooks.process.push(ProfilePlugin.process);
