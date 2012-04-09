@@ -28,15 +28,6 @@ h3 {
   padding: 4px 0 10px 20px;
 }
 
-#profile-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-
-#profile-table td {
-  padding: 4px 8px;
-}
-
 #user-offline {
   color: #5b5d6d;
 }
