@@ -19,11 +19,7 @@
 var Profile = {
   // Добавление поля профиля.
   addRow: function(key, html) {
-    var out = '<tr class="profile-row" id="field-' + key + '">' +
-      '<td class="field-label"><span data-tr="field-' + key + '">' + Utils.tr('field-' + key) + '</span>:</td>' +
-      '<td class="field-value">' + html + '</td></tr>';
-
-    $("#profile-table > tbody").append(out);
+    $('#profile-table').append(Utils.row('field-' + key, html));
   },
 
 
@@ -54,7 +50,7 @@ var Profile = {
     if (!json.hasOwnProperty("head"))
       return;
 
-    $(".profile-row").remove();
+    $("#profile-table *").remove();
 
     var fields = SimpleChat.fields();
     for (var i = 0; i < fields.length; i++) {
@@ -71,6 +67,7 @@ var Profile = {
       } catch (e) {}
     }
 
+    Profile.retranslate();
     $("#main-spinner").hide();
   },
 
@@ -91,6 +88,11 @@ var Profile = {
       return;
 
     Profile.read(SimpleChat.feed(Settings.id, "profile"));
+  },
+
+
+  retranslate: function() {
+    Utils.labels($('#profile-table .field-row-label'));
   },
 
 
@@ -202,6 +204,7 @@ Pages.onInfo.push(Connections.reload);
 try {
   ChatView.feed.connect(Profile.feed);
   ChatView.reload.connect(Profile.reload);
+  SimpleChat.retranslated.connect(Profile.retranslate);
 
   ChatView.feed.connect(Connections.feed);
   ChatView.reload.connect(Connections.reload);
