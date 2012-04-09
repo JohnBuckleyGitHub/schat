@@ -470,4 +470,5 @@ a:active, a:hover {
 
 .field-row-label {
   color: #5b5d6d;
+  display:inline-block;
 }
