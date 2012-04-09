@@ -190,11 +190,9 @@ Modal.connection = function(e) {
     return;
 
   var json = feed.connections[id];
-  console.log(json.version);
 
-  $("#modal-body").append(Utils.row('chat_version', htmlspecialchars(json.version)));
-  $("#modal-body").append(Utils.row('os_name', '<i class="icon-os os-' + Pages.os(json.os) + '"></i> ' + htmlspecialchars(json.osName)));
-
+  $('#modal-body').append(Utils.row('chat_version', htmlspecialchars(json.version)));
+  $('#modal-body').append(Utils.row('os_name', '<i class="icon-os os-' + Pages.os(json.os) + '"></i> ' + htmlspecialchars(json.osName)));
 };
 
 

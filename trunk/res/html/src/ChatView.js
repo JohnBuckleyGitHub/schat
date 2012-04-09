@@ -77,6 +77,20 @@ var Utils = {
     out += '<span class="field-row-label"><span data-tr="' + label + '">' + Utils.tr(label) + '</span>:</span> ';
     out += '<span class="field-row-value">' + value + '</span>';
     return out;
+  },
+
+
+  labels: function(obj) {
+    var max = 0;
+    var current = 0;
+
+    obj.each(function() {
+      current = $(this).width();
+      if (current > max)
+        max = current;
+    });
+
+    obj.width(max + 4);
   }
 };
 
@@ -452,6 +466,10 @@ $(document).ready(function() {
 
   $('#modal').on('hidden', function () {
     $('#modal-body *').remove();
+  });
+
+  $('#modal').on('shown', function () {
+    Utils.labels($('#modal-body .field-row-label'));
   });
 
   Loader.load(jsfiles);
