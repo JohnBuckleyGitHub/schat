@@ -127,11 +127,12 @@ var Connections = {
 
   process: function(key, json) {
     var id = "#" + key;
-    $("#connections").append('<div class="connection-row bottom-line" id="' + key + '"><i class="icon-os"></i> <span class="connection-host"></span></div>');
+    $("#connections").append('<div class="connection-row bottom-line" id="' + key + '"><i class="icon-os"></i> <a href="#" class="connection-host modal-toggle"></a></div>');
 
     $(id + " .icon-os").attr("class", "icon-os os-" + Pages.os(json.os));
     $(id + " .icon-os").attr("data-original-title", htmlspecialchars(json.osName));
     $(id + " > .connection-host").text(json.host);
+    $(id + " > .connection-host").data({id:key, handler:'connection'});
   },
 
   // Чтение фида.
@@ -174,6 +175,12 @@ var Connections = {
     Utils.retranslate();
   }
 };
+
+
+Modal.connection = function(e) {
+  $('#modal-header h3').text(e.target.innerText);
+};
+
 
 Pages.onInfo.push(Profile.reload);
 Pages.onInfo.push(Connections.reload);

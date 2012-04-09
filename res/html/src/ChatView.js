@@ -403,6 +403,10 @@ var Loader = {
 };
 
 
+var Modal = {
+};
+
+
 $(document).ready(function() {
   //$.fx.off = true;
 
@@ -423,6 +427,18 @@ $(document).ready(function() {
     Loader.done();
     return;
   }
+
+  $('body').on('click.modal', '.modal-toggle', function ( e ) {
+    if ($(this).data().hasOwnProperty('handler')) {
+      try {
+        Modal[$(this).data().handler](e);
+      }
+      catch (e) {}
+    }
+
+    $('#modal').modal();
+    e.preventDefault();
+  });
 
   Loader.load(jsfiles);
 });
