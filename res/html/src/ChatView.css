@@ -470,5 +470,10 @@ a:active, a:hover {
 
 .field-row-label {
   color: #5b5d6d;
+}
+
+.field-row-label, .field-row-value {
   display:inline-block;
+  min-height: 16px;
+  vertical-align: middle;
 }
