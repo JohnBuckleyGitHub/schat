@@ -66,7 +66,31 @@ var ProfilePlugin = {
 
     $(id).append(' <span><i class="flag-' + country + '" data-original-title="' + Utils.tr('country-' + country) + '"></i></span>');
     $(id + ' .flag-' + country).tooltip();
+  },
+
+
+  connection: function(json) {
+    console.log(json);
+    if (!json.hasOwnProperty('geo') || json.geo.country === '')
+      return;
+
+    var country = json.geo.country.toLowerCase();
+    if (country.length != 2)
+      return;
+
+    $('#modal-body').append(Utils.row('field-country', '<i class="flag-' + country + '"></i> '
+      + '<span data-tr="country-' + country + '">' + Utils.tr('country-' + country) + '</span>'));
+
+    if (json.geo.org != '') {
+      var org = json.geo.org;
+      var index = org.indexOf(' ');
+        if (index == -1)
+          return;
+
+      $('#modal-body').append(Utils.row('field-isp', Utils.left(org.slice(index), 100)));
+    }
   }
 };
 
 UserHooks.process.push(ProfilePlugin.process);
+UserHooks.connection.push(ProfilePlugin.connection);

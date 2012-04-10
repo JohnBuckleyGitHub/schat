@@ -43,6 +43,7 @@ protected:
     else if (key == LS("city"))  return tr("City");
     else if (key == LS("site"))  return tr("Site");
     else if (key == LS("email")) return tr("E-Mail");
+    else if (key == LS("isp"))   return tr("ISP");
     return QString();
   }
 };

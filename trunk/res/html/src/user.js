@@ -178,7 +178,8 @@ var Connections = {
 
 
 var UserHooks = {
-  process: []
+  process: [],
+  connection: []
 };
 
 
@@ -195,6 +196,10 @@ Modal.connection = function(e) {
 
   $('#modal-body').append(Utils.row('chat_version', htmlspecialchars(json.version)));
   $('#modal-body').append(Utils.row('os_name', '<i class="icon-os os-' + Pages.os(json.os) + '"></i> ' + htmlspecialchars(json.osName)));
+
+  for (var i = 0; i < UserHooks.connection.length; i++) {
+    UserHooks.connection[i](json);
+  }
 };
 
 
