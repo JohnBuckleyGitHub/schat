@@ -21,6 +21,7 @@ copy ..\..\res\doc\*.html in\doc\
 copy ..\..\res\translations\ru.png in\translations\
 copy ..\..\res\translations\schat2_en.qm in\translations\
 copy ..\..\res\translations\schat2_ru.qm in\translations\
+copy ..\..\res\translations\profile_en.qm in\translations\
 copy ..\..\res\translations\profile_ru.qm in\translations\
 
 pause
