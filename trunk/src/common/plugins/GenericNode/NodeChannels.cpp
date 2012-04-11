@@ -250,8 +250,9 @@ int NodeChannels::update()
   int updates = 0;
 
   if (m_user->name() != m_packet->text()) {
-    if (!Ch::rename(m_user, m_packet->text()))
-      return Notice::ObjectAlreadyExists;
+    int result = Ch::rename(m_user, m_packet->text());
+    if (result != Notice::OK)
+      return result;
 
     updates++;
   }
