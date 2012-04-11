@@ -402,6 +402,14 @@
     </message>
 </context>
 <context>
+    <name>NickEdit</name>
+    <message>
+        <location filename="../../src/schat2/ui/fields/NickEdit.cpp" line="79"/>
+        <source>Nickname is already in use</source>
+        <translation>Ник уже занят</translation>
+    </message>
+</context>
+<context>
     <name>OfflineLogin</name>
     <message>
         <location filename="../../src/schat2/ui/network/OfflineLogin.cpp" line="90"/>

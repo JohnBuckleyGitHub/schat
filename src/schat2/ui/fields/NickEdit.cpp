@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QLabel>
+
 #include "Channel.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
@@ -28,6 +30,7 @@
 
 NickEdit::NickEdit(QWidget *parent)
   : LineEdit(parent)
+  , m_error(0)
 {
   setText(ChatClient::io()->nick());
 
@@ -57,8 +60,10 @@ void NickEdit::editingFinished()
 
 void NickEdit::notice(const ChannelNotice &notice)
 {
-  if (notice.status() == Notice::OK)
+  if (notice.status() == Notice::OK) {
+    makeRed(false);
     return;
+  }
 
   if (notice.command() != LS("update"))
     return;
@@ -67,6 +72,13 @@ void NickEdit::notice(const ChannelNotice &notice)
     return;
 
   makeRed();
+
+  if (!m_error && notice.status() == Notice::ObjectAlreadyExists) {
+    m_error = new QLabel(this);
+    m_error->setPixmap(QPixmap(LS(":/images/exclamation-red-frame.png")));
+    setToolTip(tr("Nickname is already in use"));
+    addWidget(m_error, RightSide);
+  }
 }
 
 
@@ -87,8 +99,14 @@ void NickEdit::makeRed(bool red)
 {
   QPalette palette = this->palette();
 
-  if (!red)
+  if (!red) {
     palette.setColor(QPalette::Active, QPalette::Base, Qt::white);
+    if (m_error) {
+      removeWidget(m_error);
+      delete m_error;
+      m_error = 0;
+    }
+  }
   else
     palette.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
 
