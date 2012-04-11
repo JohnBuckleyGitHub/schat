@@ -61,7 +61,7 @@ QByteArray Hosts::currentId() const
 
 QByteArray Hosts::id(const QByteArray &publicId) const
 {
-  if (SimpleID::typeOf(publicId) != SimpleID::MessageId)
+  if (SimpleID::typeOf(publicId) != SimpleID::HostId)
     return m_sockets.publicId();
 
   return publicId;
@@ -76,7 +76,7 @@ QList<quint64> Hosts::sockets() const
 
 QList<quint64> Hosts::sockets(const QByteArray &publicId) const
 {
-  if (SimpleID::typeOf(publicId) == SimpleID::MessageId)
+  if (SimpleID::typeOf(publicId) == SimpleID::HostId)
     return m_sockets.ids().value(publicId);
 
   return QList<quint64>();
