@@ -22,6 +22,7 @@
 #include "arora/lineedit.h"
 
 class ChannelNotice;
+class QLabel;
 
 /*!
  * Виджет редактирования ника пользователя.
@@ -41,6 +42,8 @@ private slots:
 
 private:
   void makeRed(bool red = true);
+
+  QLabel *m_error; ///< Виджет для отображения ошибки.
 };
 
 #endif /* NICKEDIT_H_ */
