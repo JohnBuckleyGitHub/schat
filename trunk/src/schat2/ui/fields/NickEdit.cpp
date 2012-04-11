@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,7 +22,9 @@
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
+#include "sglobal.h"
 #include "ui/fields/NickEdit.h"
+#include "net/packets/ChannelNotice.h"
 
 NickEdit::NickEdit(QWidget *parent)
   : LineEdit(parent)
@@ -34,6 +36,7 @@ NickEdit::NickEdit(QWidget *parent)
   connect(this, SIGNAL(editingFinished()), SLOT(editingFinished()));
   connect(this, SIGNAL(textChanged(const QString &)), SLOT(textChanged()));
   connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
+  connect(ChatClient::channels(), SIGNAL(notice(const ChannelNotice &)), SLOT(notice(const ChannelNotice &)));
 }
 
 
@@ -44,7 +47,7 @@ void NickEdit::editingFinished()
 
   if (ChatClient::state() != ChatClient::Online) {
     ChatClient::io()->setNick(text());
-    ChatCore::settings()->setValue("Profile/Nick", ChatClient::channel()->name());
+    ChatCore::settings()->setValue(LS("Profile/Nick"), ChatClient::channel()->name());
     return;
   }
 
@@ -52,18 +55,39 @@ void NickEdit::editingFinished()
 }
 
 
+void NickEdit::notice(const ChannelNotice &notice)
+{
+  if (notice.status() == Notice::OK)
+    return;
+
+  if (notice.command() != LS("update"))
+    return;
+
+  if (notice.sender() != ChatClient::id())
+    return;
+
+  makeRed();
+}
+
+
 void NickEdit::settingsChanged(const QString &key, const QVariant &value)
 {
-  if (key == "Profile/Nick")
+  if (key == LS("Profile/Nick"))
     setText(value.toString());
 }
 
 
 void NickEdit::textChanged()
 {
+  makeRed(!Channel::isValidName(text()));
+}
+
+
+void NickEdit::makeRed(bool red)
+{
   QPalette palette = this->palette();
 
-  if (Channel::isValidName(text()))
+  if (!red)
     palette.setColor(QPalette::Active, QPalette::Base, Qt::white);
   else
     palette.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
