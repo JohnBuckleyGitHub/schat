@@ -16,7 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
+#include "debugstream.h"
 
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
@@ -187,21 +187,21 @@ void ClientChannels::notice(int type)
 
   m_packet = &packet;
   QString cmd = m_packet->command();
-  qDebug() << cmd << m_packet->text() << m_packet->status() << Notice::status(m_packet->status());
+  SCHAT_DEBUG_STREAM("ClientChannels::notice()" << cmd << m_packet->text() << m_packet->status() << Notice::status(m_packet->status()));
 
-  if (cmd == "channel")
+  if (cmd == LS("channel"))
     channel();
 
-  else if (cmd == "info")
+  else if (cmd == LS("info"))
     add();
 
-  else if (cmd == "+")
+  else if (cmd == LS("+"))
     joined();
 
-  else if (cmd == "-")
+  else if (cmd == LS("-"))
     part();
 
-  else if (cmd == "quit")
+  else if (cmd == LS("quit"))
     quit();
 
   emit notice(packet);

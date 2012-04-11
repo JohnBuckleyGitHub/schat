@@ -21,6 +21,8 @@
 
 #include "arora/lineedit.h"
 
+class ChannelNotice;
+
 /*!
  * Виджет редактирования ника пользователя.
  */
@@ -33,8 +35,12 @@ public:
 
 private slots:
   void editingFinished();
+  void notice(const ChannelNotice &notice);
   void settingsChanged(const QString &key, const QVariant &value);
   void textChanged();
+
+private:
+  void makeRed(bool red = true);
 };
 
 #endif /* NICKEDIT_H_ */
