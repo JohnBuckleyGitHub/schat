@@ -355,6 +355,14 @@ a:active, a:hover {
   background-position: -80px 0;
 }
 
+.os-opensuse {
+  background-position: -96px 0;
+}
+
+.os-fedora {
+  background-position: -112px 0;
+}
+
 .os-unknown {
   background:none;
 }

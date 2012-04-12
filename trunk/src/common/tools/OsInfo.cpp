@@ -132,6 +132,16 @@ void OsInfo::detectLinux(QString &name)
     if (file.open(QIODevice::ReadOnly))
       name += LS(" ") + file.read(64).trimmed();
   }
+  else if (QFile::exists(LS("/etc/os-release"))) {
+    QSettings s(LS("/etc/os-release"), QSettings::IniFormat);
+    QString id = s.value(LS("NAME")).toString();
+    if (id == LS("openSUSE"))
+      m_type = OpenSUSE;
+
+    QString desc = s.value(LS("PRETTY_NAME")).toString();
+    if (!desc.isEmpty())
+      name = desc;
+  }
 
   if (name.isEmpty()) {
     utsname buf;
