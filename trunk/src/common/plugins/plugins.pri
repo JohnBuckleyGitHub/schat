@@ -22,11 +22,13 @@ DEPENDPATH += \
     . \
     ../ \
     ../../ \
+    ../../../3rdparty \
 
 INCLUDEPATH += \
     . \
     ../ \
     ../../ \
+    ../../../3rdparty \
 
 CONFIG(debug, debug|release) { 
   RCC_DIR = ../../../../tmp/$${TEMPLATE}/$${TARGET}/debug/rcc

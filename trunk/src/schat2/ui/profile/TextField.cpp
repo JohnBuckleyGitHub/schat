@@ -41,10 +41,8 @@ TextField::TextField(const QString &field, QWidget *parent)
 
 void TextField::editingFinished()
 {
-  if (!apply(m_edit->text()))
-    return;
-
-  m_spinner->start();
+  if (apply(m_edit->text()))
+    m_spinner->start();
 }
 
 

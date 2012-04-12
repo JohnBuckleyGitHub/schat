@@ -17,21 +17,24 @@
  */
 
 #include <QComboBox>
-#include <QVBoxLayout>
+#include <QHBoxLayout>
 
 #include "CountryField.h"
 #include "sglobal.h"
 #include "Tr.h"
+#include "ui/Spinner.h"
 
 CountryField::CountryField(QWidget *parent)
   : ProfileField(LS("country"), parent)
 {
   m_box = new QComboBox(this);
+  m_spinner = new Spinner(this);
 
-  QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->setMargin(0);
-  mainLay->setSpacing(0);
-  mainLay->addWidget(m_box);
+  m_mainLay = new QHBoxLayout(this);
+  m_mainLay->setMargin(0);
+  m_mainLay->setSpacing(0);
+  m_mainLay->addWidget(m_box);
+  m_mainLay->addWidget(m_spinner);
 
   load();
 
@@ -63,6 +66,9 @@ void CountryField::retranslateUi()
 
 void CountryField::setData(const QVariant &value)
 {
+  m_spinner->stop();
+  m_mainLay->setSpacing(0);
+
   if (value.type() != QVariant::String)
     return;
 
@@ -80,10 +86,14 @@ void CountryField::setData(const QVariant &value)
 
 void CountryField::indexChanged(int index)
 {
-  if (index == 0)
-    apply(QString());
-  else
-    apply(m_box->itemData(index));
+  QString code;
+  if (index > 0)
+    code = m_box->itemData(index).toString();
+
+  if (apply(code)) {
+    m_mainLay->setSpacing(4);
+    m_spinner->start();
+  }
 }
 
 

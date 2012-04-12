@@ -23,6 +23,8 @@
 #include "ui/profile/ProfileFieldFactory.h"
 
 class QComboBox;
+class QHBoxLayout;
+class Spinner;
 
 class CountryField : public ProfileField
 {
@@ -44,6 +46,8 @@ private:
   void load();
 
   QComboBox *m_box;
+  QHBoxLayout *m_mainLay; ///< Компоновщик.
+  Spinner *m_spinner;     ///< Отображает состояние подключения.
 };
 
 
