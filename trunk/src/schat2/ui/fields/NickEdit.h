@@ -23,6 +23,7 @@
 
 class ChannelNotice;
 class QLabel;
+class Spinner;
 
 /*!
  * Виджет редактирования ника пользователя.
@@ -42,8 +43,10 @@ private slots:
 
 private:
   void makeRed(bool red = true);
+  void spinner(bool start = true);
 
-  QLabel *m_error; ///< Виджет для отображения ошибки.
+  QLabel *m_error;    ///< Виджет для отображения ошибки.
+  Spinner *m_spinner; ///< Отображает состояние подключения.
 };
 
 #endif /* NICKEDIT_H_ */
