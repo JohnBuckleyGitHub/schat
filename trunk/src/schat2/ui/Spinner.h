@@ -28,6 +28,10 @@ class SCHAT_CORE_EXPORT Spinner : public QProgressIndicator
 
 public:
   Spinner(QWidget* parent = 0);
+
+public slots:
+  void start();
+  void stop();
 };
 
 #endif /* SPINNER_H_ */
