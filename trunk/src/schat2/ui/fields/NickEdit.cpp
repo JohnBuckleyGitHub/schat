@@ -59,6 +59,9 @@ void NickEdit::editingFinished()
     return;
   }
 
+  if (ChatClient::io()->nick() == text())
+    return;
+
   spinner();
   ChatClient::channels()->nick(text());
 }
