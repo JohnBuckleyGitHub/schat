@@ -75,12 +75,18 @@ void NickEdit::notice(const ChannelNotice &notice)
     return;
   }
 
-  if (notice.command() == LS("update") && notice.status() == Notice::ObjectAlreadyExists) {
-    makeRed();
-    setToolTip(tr("Nickname is already in use"));
-    m_error->setVisible(true);
-    addWidget(m_error, RightSide);
-    spinner(false);
+  if (notice.command() == LS("update")) {
+    if (notice.status() == Notice::ObjectAlreadyExists) {
+      makeRed();
+      setToolTip(tr("Nickname is already in use"));
+      m_error->setVisible(true);
+      addWidget(m_error, RightSide);
+      spinner(false);
+    }
+    else {
+      makeRed(false);
+      spinner(false);
+    }
   }
 }
 
