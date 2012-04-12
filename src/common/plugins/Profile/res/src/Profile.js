@@ -70,7 +70,6 @@ var ProfilePlugin = {
 
 
   connection: function(json) {
-    console.log(json);
     if (!json.hasOwnProperty('geo') || json.geo.country === '')
       return;
 

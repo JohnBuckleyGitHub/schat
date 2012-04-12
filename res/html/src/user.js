@@ -38,6 +38,9 @@ var Profile = {
     if (json.name !== "profile")
       return;
 
+    if (json.id !== Settings.id)
+      return;
+
     try {
       Profile[json.type](json.data);
     }
@@ -117,6 +120,9 @@ var Connections = {
       return;
 
     if (json.name !== "user")
+      return;
+
+    if (json.id !== Settings.id)
       return;
 
     try {

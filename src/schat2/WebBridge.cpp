@@ -197,7 +197,7 @@ QVariantMap WebBridge::feed(const FeedNotify &notify)
   out[LS("status")] = notify.status();
   out[LS("name")]   = notify.name();
   out[LS("own")]    = notify.channel() == ChatClient::id();
-  out[LS("id")]     = SimpleID::encode(notify.channel());
+  out[LS("id")]     = QString(SimpleID::encode(notify.channel()));
   return out;
 }
 
