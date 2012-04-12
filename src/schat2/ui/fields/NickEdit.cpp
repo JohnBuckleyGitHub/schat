@@ -24,17 +24,22 @@
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
+#include "net/packets/ChannelNotice.h"
 #include "sglobal.h"
 #include "ui/fields/NickEdit.h"
-#include "net/packets/ChannelNotice.h"
+#include "ui/Spinner.h"
 
 NickEdit::NickEdit(QWidget *parent)
   : LineEdit(parent)
-  , m_error(0)
 {
   setText(ChatClient::io()->nick());
-
   setMaxLength(Channel::MaxNameLength);
+
+  m_error = new QLabel(this);
+  m_error->setPixmap(QPixmap(LS(":/images/exclamation-red-frame.png")));
+  m_error->setVisible(false);
+
+  m_spinner = new Spinner(this);
 
   connect(this, SIGNAL(editingFinished()), SLOT(editingFinished()));
   connect(this, SIGNAL(textChanged(const QString &)), SLOT(textChanged()));
@@ -54,30 +59,28 @@ void NickEdit::editingFinished()
     return;
   }
 
+  spinner();
   ChatClient::channels()->nick(text());
 }
 
 
 void NickEdit::notice(const ChannelNotice &notice)
 {
-  if (notice.status() == Notice::OK) {
-    makeRed(false);
-    return;
-  }
-
-  if (notice.command() != LS("update"))
-    return;
-
   if (notice.sender() != ChatClient::id())
     return;
 
-  makeRed();
+  if (notice.command() == LS("info") && notice.status() == Notice::OK) {
+    makeRed(false);
+    spinner(false);
+    return;
+  }
 
-  if (!m_error && notice.status() == Notice::ObjectAlreadyExists) {
-    m_error = new QLabel(this);
-    m_error->setPixmap(QPixmap(LS(":/images/exclamation-red-frame.png")));
+  if (notice.command() == LS("update") && notice.status() == Notice::ObjectAlreadyExists) {
+    makeRed();
     setToolTip(tr("Nickname is already in use"));
+    m_error->setVisible(true);
     addWidget(m_error, RightSide);
+    spinner(false);
   }
 }
 
@@ -101,14 +104,25 @@ void NickEdit::makeRed(bool red)
 
   if (!red) {
     palette.setColor(QPalette::Active, QPalette::Base, Qt::white);
-    if (m_error) {
-      removeWidget(m_error);
-      delete m_error;
-      m_error = 0;
-    }
+    removeWidget(m_error);
+    setToolTip(QString());
   }
   else
     palette.setColor(QPalette::Active, QPalette::Base, QColor(255, 102, 102));
 
   setPalette(palette);
+}
+
+
+void NickEdit::spinner(bool start)
+{
+  if (start) {
+    m_spinner->setVisible(true);
+    m_spinner->startAnimation();
+    addWidget(m_spinner, RightSide);
+  }
+  else {
+    m_spinner->stopAnimation();
+    removeWidget(m_spinner);
+  }
 }
