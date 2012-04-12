@@ -47,8 +47,8 @@ private slots:
   void notify(const Notify &notify);
 
 protected:
+  bool apply(const QVariant &value);
   virtual void setData(const QVariant &value);
-  void apply(const QVariant &value);
 
   QLabel *m_label;
 

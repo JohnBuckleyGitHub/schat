@@ -126,12 +126,11 @@ void NickEdit::makeRed(bool red)
 void NickEdit::spinner(bool start)
 {
   if (start) {
-    m_spinner->setVisible(true);
-    m_spinner->startAnimation();
+    m_spinner->start();
     addWidget(m_spinner, RightSide);
   }
   else {
-    m_spinner->stopAnimation();
+    m_spinner->stop();
     removeWidget(m_spinner);
   }
 }

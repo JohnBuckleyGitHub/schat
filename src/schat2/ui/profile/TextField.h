@@ -21,7 +21,8 @@
 
 #include "ui/profile/ProfileField.h"
 
-class QLineEdit;
+class LineEdit;
+class Spinner;
 
 class SCHAT_CORE_EXPORT TextField : public ProfileField
 {
@@ -36,7 +37,8 @@ private slots:
 protected:
   void setData(const QVariant &value);
 
-  QLineEdit *m_edit;
+  LineEdit *m_edit;   ///< Поле редактирования.
+  Spinner *m_spinner; ///< Отображает состояние подключения.
 };
 
 #endif /* TEXTFIELD_H_ */

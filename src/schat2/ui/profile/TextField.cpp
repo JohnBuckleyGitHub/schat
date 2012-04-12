@@ -16,17 +16,20 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QLineEdit>
 #include <QVariant>
 #include <QVBoxLayout>
 
+#include "arora/lineedit.h"
 #include "ui/profile/TextField.h"
+#include "ui/Spinner.h"
 
 TextField::TextField(const QString &field, QWidget *parent)
   : ProfileField(field, parent)
 {
-  m_edit = new QLineEdit(this);
+  m_edit = new LineEdit(this);
+  m_spinner = new Spinner(this);
 
+  m_edit->addWidget(m_spinner, LineEdit::RightSide);
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->setMargin(0);
   mainLay->setSpacing(0);
@@ -38,11 +41,15 @@ TextField::TextField(const QString &field, QWidget *parent)
 
 void TextField::editingFinished()
 {
-  apply(m_edit->text());
+  if (!apply(m_edit->text()))
+    return;
+
+  m_spinner->start();
 }
 
 
 void TextField::setData(const QVariant &value)
 {
+  m_spinner->stop();
   m_edit->setText(value.toString());
 }

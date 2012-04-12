@@ -87,21 +87,21 @@ void ProfileField::notify(const Notify &notify)
 }
 
 
-void ProfileField::setData(const QVariant &)
-{
-}
-
-
-void ProfileField::apply(const QVariant &value)
+bool ProfileField::apply(const QVariant &value)
 {
   FeedPtr feed = ChatClient::channel()->feed(LS("profile"), false);
   if (!feed)
-    return;
+    return false;
 
   if (feed->data().value(m_field) == value)
-    return;
+    return false;
 
   QVariantMap query;
   query[m_field] = value;
-  ChatClient::feeds()->query(LS("profile"), LS("x-set"), query);
+  return ChatClient::feeds()->query(LS("profile"), LS("x-set"), query);
+}
+
+
+void ProfileField::setData(const QVariant &)
+{
 }

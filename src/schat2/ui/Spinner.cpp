@@ -23,4 +23,19 @@ Spinner::Spinner(QWidget* parent)
 {
   setAnimationDelay(100);
   setMaximumSize(16, 16);
+  setVisible(false);
+}
+
+
+void Spinner::start()
+{
+  setVisible(true);
+  startAnimation();
+}
+
+
+void Spinner::stop()
+{
+  stopAnimation();
+  setVisible(false);
 }
