@@ -121,6 +121,12 @@ var Pages = {
     if (code == 43)
       return "debian";
 
+    if (code == 44)
+      return "opensuse";
+
+    if (code == 45)
+      return "fedora";
+
     if (code >= 40)
       return "linux";
 

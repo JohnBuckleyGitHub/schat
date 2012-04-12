@@ -28,13 +28,15 @@ class SCHAT_EXPORT OsInfo
 public:
   ///< Тип операционной системы.
   enum OsType {
-    Unknown = 0,  ///< Неизвестная операционная система.
-    Windows = 1,  ///< Windows, диапазон от 1 до 19.
-    MacOSX  = 20, ///< Mac OS X, диапазон от 20 до 39.
-    Linux   = 40, ///< Linux, диапазон от 40 до 79.
-    Ubuntu  = 41, ///< Ubuntu Linux.
-    Gentoo  = 42, ///< Gentoo Linux.
-    Debian  = 43  ///< Debian GNU/Linux
+    Unknown  = 0,  ///< Неизвестная операционная система.
+    Windows  = 1,  ///< Windows, диапазон от 1 до 19.
+    MacOSX   = 20, ///< Mac OS X, диапазон от 20 до 39.
+    Linux    = 40, ///< Linux, диапазон от 40 до 79.
+    Ubuntu   = 41, ///< Ubuntu.
+    Gentoo   = 42, ///< Gentoo Linux.
+    Debian   = 43, ///< Debian GNU/Linux.
+    OpenSUSE = 44, ///< openSUSE.
+    Fedora   = 45  ///< Fedora.
   };
 
   static int type();
