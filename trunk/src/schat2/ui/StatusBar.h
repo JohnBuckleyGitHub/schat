@@ -29,8 +29,8 @@ class LoginIcon;
 class NetworkWidget;
 class Notify;
 class QLabel;
-class QProgressIndicator;
 class QWidgetAction;
+class Spinner;
 class StatusWidget;
 
 class SCHAT_CORE_EXPORT StatusBar : public QStatusBar
@@ -61,8 +61,8 @@ private:
   QLabel *m_icon;                 ///< Главная иконка.
   QLabel *m_label;                ///< Информация о состоянии.
   QLabel *m_secure;               ///< Иконка безопасного соединения.
-  QProgressIndicator *m_progress; ///< Отображает состояние подключения.
   QWidgetAction *m_urlAction;     ///< Действие для добавления в меню поля ввода адреса сервера.
+  Spinner *m_spinner;             ///< Отображает состояние подключения.
   StatusWidget *m_status;         ///< Виджет выбора статуса.
 };
 

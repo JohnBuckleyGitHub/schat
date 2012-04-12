@@ -33,21 +33,17 @@
 #include "hooks/ChannelMenu.h"
 #include "net/packets/Notice.h"
 #include "NetworkManager.h"
-#include "QProgressIndicator/QProgressIndicator.h"
 #include "sglobal.h"
 #include "ui/LoginIcon.h"
 #include "ui/network/NetworkWidget.h"
+#include "ui/Spinner.h"
 #include "ui/StatusBar.h"
 #include "ui/StatusWidget.h"
 
 StatusBar::StatusBar(QWidget *parent)
   : QStatusBar(parent)
 {
-  m_progress = new QProgressIndicator(this);
-  m_progress->setAnimationDelay(100);
-  m_progress->setMaximumSize(16, 16);
-  m_progress->startAnimation();
-
+  m_spinner = new Spinner(this);
   m_icon = new QLabel(this);
   m_login = new LoginIcon(this);
   m_secure = new QLabel(this);
@@ -64,7 +60,7 @@ StatusBar::StatusBar(QWidget *parent)
 
   m_status = new StatusWidget(this);
 
-  addWidget(m_progress);
+  addWidget(m_spinner);
   addWidget(m_icon);
   addWidget(m_login);
   addWidget(m_secure);
@@ -116,13 +112,13 @@ void StatusBar::clientStateChanged(int state)
 {
   if (state == SimpleClient::ClientConnecting) {
     m_icon->setVisible(false);
-    m_progress->setVisible(true);
-    m_progress->startAnimation();
+    m_spinner->setVisible(true);
+    m_spinner->startAnimation();
   }
   else {
     m_icon->setVisible(true);
-    m_progress->setVisible(false);
-    m_progress->stopAnimation();
+    m_spinner->setVisible(false);
+    m_spinner->stopAnimation();
   }
 
   if (state != SimpleClient::ClientOnline)
