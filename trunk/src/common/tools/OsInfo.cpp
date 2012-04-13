@@ -123,7 +123,7 @@ void OsInfo::detectLinux(QString &name)
     m_type = Gentoo;
     QFile file(LS("/etc/gentoo-release"));
     if (file.open(QIODevice::ReadOnly))
-      name = file.read(256).trimmed();
+      name = file.read(128).trimmed();
   }
   else if (QFile::exists(LS("/etc/debian_version"))) {
     m_type = Debian;
@@ -141,6 +141,17 @@ void OsInfo::detectLinux(QString &name)
     QString desc = s.value(LS("PRETTY_NAME")).toString();
     if (!desc.isEmpty())
       name = desc;
+  }
+  else if (QFile::exists(LS("/etc/fedora-release"))) {
+    m_type = Fedora;
+    QFile file(LS("/etc/fedora-release"));
+    if (file.open(QIODevice::ReadOnly))
+      name = file.read(128).trimmed();
+  }
+  else if (QFile::exists(LS("/etc/redhat-release"))) {
+    QFile file(LS("/etc/redhat-release"));
+    if (file.open(QIODevice::ReadOnly))
+      name = file.read(128).trimmed();
   }
 
   if (name.isEmpty()) {
