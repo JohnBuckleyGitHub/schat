@@ -20,7 +20,6 @@
 #define SPINNER_H_
 
 #include "QProgressIndicator/QProgressIndicator.h"
-#include "schat.h"
 
 class SCHAT_CORE_EXPORT Spinner : public QProgressIndicator
 {
