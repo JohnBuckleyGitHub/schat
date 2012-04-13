@@ -311,6 +311,7 @@ void Ch::userChannelImpl(ChatChannel channel, const AuthRequest &data, const QSt
     hook->userChannelImpl(channel, data, host, created);
   }
 
+  m_cache.add(channel);
   channel->setSynced(true);
 }
 
