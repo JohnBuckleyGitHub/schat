@@ -141,8 +141,6 @@ FeedQueryReply NodeAccountFeed::login(const QVariantMap &json)
   // Формирования ответа.
   FeedQueryReply reply     = FeedQueryReply(Notice::OK);
   reply.json[LS("action")] = LS("login");
-  reply.json[LS("nick")]   = DataBase::nick(account.channel());
-  reply.json[LS("cookie")] = SimpleID::encode(account.cookie());
   return reply;
 }
 
@@ -296,8 +294,6 @@ FeedQueryReply NodeAccountFeed::reset(const QVariantMap &json)
   // Формирования ответа.
   FeedQueryReply reply     = FeedQueryReply(Notice::OK);
   reply.json[LS("action")] = LS("reset");
-  reply.json[LS("nick")]   = DataBase::nick(account.channel());
-  reply.json[LS("cookie")] = SimpleID::encode(account.cookie());
   return reply;
 }
 
