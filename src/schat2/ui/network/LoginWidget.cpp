@@ -100,7 +100,7 @@ void LoginWidget::login()
     return;
 
   m_login->setProgress();
-  ChatClient::feeds()->query(LS("account"), LS("login"), RegCmds::request(LS("login"), m_nameEdit->text(), m_passwordEdit->text()));
+  ChatClient::i()->login(m_nameEdit->text(), m_passwordEdit->text());
 }
 
 

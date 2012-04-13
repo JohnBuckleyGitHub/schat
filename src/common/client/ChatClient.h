@@ -69,6 +69,11 @@ public:
   static QDataStream *stream();
   static qint64 date();
 
+  bool login(const QString &account, const QString &password);
+  inline bool login()                    { return login(m_account, m_password); }
+  inline const QString& account() const  { return m_account; }
+  inline const QString& password() const { return m_password; }
+
 signals:
   void offline();
   void online();
@@ -92,10 +97,12 @@ private:
   ClientChannels *m_channels; ///< Каналы.
   ClientFeeds *m_feeds;       ///< Обработчик фидов.
   ClientMessages *m_messages; ///< Обработчик сообщений.
+  Hooks::Client *m_hooks;     ///< Хуки.
   QByteArray m_id;            ///< Предыдущий идентификатор сервера.
+  QString m_account;          ///< Зарегистрированный аккаунт пользователя.
+  QString m_password;         ///< Пароль пользователя.
   SimpleClient *m_client;     ///< Клиент чата.
   static ChatClient *m_self;  ///< Указатель на себя.
-  Hooks::Client *m_hooks;     ///< Хуки.
 };
 
 #endif /* CHATCLIENT_H_ */

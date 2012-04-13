@@ -23,6 +23,8 @@
 #include "client/ClientMessages.h"
 #include "client/SimpleClient.h"
 #include "DateTime.h"
+#include "net/SimpleID.h"
+#include "sglobal.h"
 
 ChatClient *ChatClient::m_self = 0;
 
@@ -59,6 +61,44 @@ qint64 ChatClient::date()
     out = DateTime::utc();
 
   return out;
+}
+
+
+/*!
+ * Подключение к серверу по имени и паролю.
+ * Если клиент подключен к серверу, происходит запрос \b login к фиду \b account.
+ * Ответ на него не обрабатывается в этом классе.
+ *
+ * \param account  Зарегистрированный аккаунт пользователя.
+ * \param password Пароль пользователя.
+ *
+ * \return \b false если произошла ошибка.
+ */
+bool ChatClient::login(const QString &account, const QString &password)
+{
+  if (account.isEmpty())
+    return false;
+
+  if (password.isEmpty())
+    return false;
+
+  m_account = account.simplified().toLower().remove(LC(' '));
+  m_password = password;
+
+  if (state() == Online) {
+    QVariantMap data;
+    data[LS("name")] = m_account;
+    data[LS("pass")] = SimpleID::encode(SimpleID::password(password));
+
+    return feeds()->query(LS("account"), LS("login"), data);
+  }
+
+  if (state() == Offline) {
+    io()->setAccount(m_account, m_password);
+    return open();
+  }
+
+  return false;
 }
 
 

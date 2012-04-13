@@ -314,16 +314,8 @@ void NetworkManager::notify(const Notify &notify)
   }
   else if (notify.type() == Notify::FeedReply) {
     const FeedNotify &n = static_cast<const FeedNotify &>(notify);
-    if (n.name() == LS("account")) {
-      if (n.channel() != ChatClient::id())
-        return;
-
-      if (n.json().isEmpty())
-        return;
-
-      if (n.action() == LS("login") || n.action() == LS("reset"))
-        login(n.json());
-    }
+    if (n.match(ChatClient::id(), LS("account"), LS("login"))) /// \bug Действие reset больше не обрабатывается.
+      login();
   }
 }
 
@@ -378,24 +370,10 @@ void NetworkManager::load()
 }
 
 
-void NetworkManager::login(const QVariantMap &data)
+void NetworkManager::login()
 {
-  Network item = this->item(ChatClient::serverId());
-  if (!item)
-    return;
-
-  QString nick = data.value(LS("nick")).toString();
-  if (nick.isEmpty())
-    return;
-
-  QByteArray cookie = SimpleID::decode(data.value(LS("cookie")).toString().toLatin1());
-  if (SimpleID::typeOf(cookie) != SimpleID::CookieId)
-    return;
-
   ChatClient::io()->leave();
-  ChatClient::io()->setNick(nick);
-  item->setCookie(cookie);
-  ChatClient::open();
+  ChatClient::i()->login();
 }
 
 
