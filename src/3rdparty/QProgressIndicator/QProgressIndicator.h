@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <QColor>
 
+#include "schat.h"
+
 /*! 
     \class QProgressIndicator
     \brief The QProgressIndicator class lets an application display a progress indicator to show that a lengthy task is under way. 
@@ -11,7 +13,7 @@
     Progress indicators are indeterminate and do nothing more than spin to show that the application is busy.
     \sa QProgressBar
 */
-class QProgressIndicator : public QWidget
+class SCHAT_CORE_EXPORT QProgressIndicator : public QWidget
 {
     Q_OBJECT
     Q_PROPERTY(int delay READ animationDelay WRITE setAnimationDelay)
