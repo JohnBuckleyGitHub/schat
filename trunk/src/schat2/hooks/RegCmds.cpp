@@ -37,7 +37,11 @@ RegCmds::RegCmds(QObject *parent)
 bool RegCmds::command(const QByteArray &dest, const ClientCmd &cmd)
 {
   QString command = cmd.command().toLower();
-  if (command == LS("reg") || command == LS("login")) {
+  if (command == LS("login")) {
+    ClientCmd body(cmd.body());
+    ChatClient::i()->login(body.command(), body.body());
+  }
+  else if (command == LS("reg")) {
     ClientCmd body(cmd.body());
     if (!body.isValid())
       return true;
