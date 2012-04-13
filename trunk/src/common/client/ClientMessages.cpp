@@ -158,7 +158,9 @@ void ClientMessages::readText(MessagePacket packet)
 
   if (ChatClient::state() == ChatClient::Online) {
     if (!user || !user->isSynced()) {
-      ChatClient::channels()->join(packet->sender());
+      if (!m_pending.contains(packet->sender()))
+        ChatClient::channels()->join(packet->sender());
+
       m_pending[packet->sender()].append(packet);
       return;
     }
