@@ -70,9 +70,11 @@ public:
   static qint64 date();
 
   bool login(const QString &account, const QString &password);
-  inline bool login()                    { return login(m_account, m_password); }
-  inline const QString& account() const  { return m_account; }
-  inline const QString& password() const { return m_password; }
+  inline bool login()                              { return login(m_account, m_password); }
+  inline const QString& account() const            { return m_account; }
+  inline const QString& password() const           { return m_password; }
+  inline static void setAccount(const QString &account)   { m_self->m_account = account; }
+  inline static void setPassword(const QString &password) { m_self->m_password = password; }
 
 signals:
   void offline();

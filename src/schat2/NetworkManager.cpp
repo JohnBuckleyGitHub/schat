@@ -314,7 +314,7 @@ void NetworkManager::notify(const Notify &notify)
   }
   else if (notify.type() == Notify::FeedReply) {
     const FeedNotify &n = static_cast<const FeedNotify &>(notify);
-    if (n.match(ChatClient::id(), LS("account"), LS("login"))) /// \bug Действие reset больше не обрабатывается.
+    if (n.match(ChatClient::id(), LS("account"), LS("login")) || n.match(ChatClient::id(), LS("account"), LS("reset")))
       login();
   }
 }

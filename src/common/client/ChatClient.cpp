@@ -76,25 +76,25 @@ qint64 ChatClient::date()
  */
 bool ChatClient::login(const QString &account, const QString &password)
 {
+  m_account = account;
+  m_password = password;
+
   if (account.isEmpty())
     return false;
 
   if (password.isEmpty())
     return false;
 
-  m_account = account.simplified().toLower().remove(LC(' '));
-  m_password = password;
-
   if (state() == Online) {
     QVariantMap data;
-    data[LS("name")] = m_account;
+    data[LS("name")] = account;
     data[LS("pass")] = SimpleID::encode(SimpleID::password(password));
 
     return feeds()->query(LS("account"), LS("login"), data);
   }
 
   if (state() == Offline) {
-    io()->setAccount(m_account, m_password);
+    io()->setAccount(account, password);
     return open();
   }
 
