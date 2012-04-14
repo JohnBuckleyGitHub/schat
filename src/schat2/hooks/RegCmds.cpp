@@ -40,13 +40,11 @@ bool RegCmds::command(const QByteArray &dest, const ClientCmd &cmd)
   if (command == LS("login")) {
     ClientCmd body(cmd.body());
     ChatClient::i()->login(body.command(), body.body());
+    return true;
   }
   else if (command == LS("reg")) {
     ClientCmd body(cmd.body());
-    if (!body.isValid())
-      return true;
-
-    ChatClient::feeds()->query(LS("account"), command, request(command, body.command(), body.body()));
+    reg(body.command(), body.body());
     return true;
   }
   else if (command == LS("sign")) {
@@ -72,23 +70,6 @@ bool RegCmds::command(const QByteArray &dest, const ClientCmd &cmd)
 }
 
 
-QVariantMap RegCmds::request(const QString &action, const QString &name, const QString &password)
-{
-  if (name.isEmpty())
-    return QVariantMap();
-
-  if (password.isEmpty())
-    return QVariantMap();
-
-  QVariantMap out;
-  out[LS("action")] = action;
-  out[LS("name")]   = name.simplified().toLower().remove(LC(' '));
-  out[LS("pass")]   = SimpleID::encode(SimpleID::password(password));
-
-  return out;
-}
-
-
 void RegCmds::signOut()
 {
   if (ChatClient::state() != ChatClient::Online)
@@ -103,4 +84,22 @@ void RegCmds::signOut()
   ChatClient::io()->leave();
   item->setCookie(QByteArray());
   ChatClient::open();
+}
+
+
+void RegCmds::reg(const QString &name, const QString &password)
+{
+  if (ChatClient::state() != ChatClient::Online)
+    return;
+
+  if (name.isEmpty())
+    return;
+
+  if (password.isEmpty())
+    return;
+
+  QVariantMap data;
+  data[LS("name")] = name;
+  data[LS("pass")] = SimpleID::encode(SimpleID::password(password));
+  ChatClient::feeds()->query(LS("account"), LS("reg"), data);
 }
