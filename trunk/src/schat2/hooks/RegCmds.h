@@ -29,8 +29,10 @@ public:
   RegCmds(QObject *parent = 0);
   bool command(const QByteArray &dest, const ClientCmd &cmd);
 
-  static QVariantMap request(const QString &action, const QString &name, const QString &password);
   static void signOut();
+
+private:
+  void reg(const QString &name, const QString &password);
 };
 
 #endif /* REGCMDS_H_ */
