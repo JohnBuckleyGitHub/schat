@@ -1,0 +1,214 @@
+Index: src/3rdparty/jdns/qjdns.cpp
+===================================================================
+--- src/3rdparty/jdns/qjdns.cpp	(revision 1714)
++++ src/3rdparty/jdns/qjdns.cpp	(working copy)
+@@ -21,6 +21,13 @@
+  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
++#include <QMetaType>
++#include <QPointer>
++#include <QStringList>
++#include <QTime>
++#include <QTimer>
++#include <QUdpSocket>
++
+ #include "qjdns.h"
+ 
+ #include <time.h>
+@@ -113,9 +120,9 @@
+ 		return QHostAddress(addr->addr.v4);
+ }
+ 
+-static QJDns::Record import_record(const jdns_rr_t *in)
++static QJDnsRecord import_record(const jdns_rr_t *in)
+ {
+-	QJDns::Record out;
++	QJDnsRecord out;
+ 
+ 	out.owner = QByteArray((const char *)in->owner);
+ 	out.ttl = in->ttl;
+@@ -169,7 +176,7 @@
+ 	return out;
+ }
+ 
+-static jdns_rr_t *export_record(const QJDns::Record &in)
++static jdns_rr_t *export_record(const QJDnsRecord &in)
+ {
+ 	jdns_rr_t *out = jdns_rr_new();
+ 
+@@ -251,14 +258,14 @@
+ //----------------------------------------------------------------------------
+ // QJDns::Record
+ //----------------------------------------------------------------------------
+-QJDns::Record::Record()
++QJDnsRecord::QJDnsRecord()
+ {
+ 	ttl = 0;
+ 	type = -1;
+ 	haveKnown = false;
+ }
+ 
+-bool QJDns::Record::verify() const
++bool QJDnsRecord::verify() const
+ {
+ 	jdns_rr_t *rr = export_record(*this);
+ 	int ok = jdns_rr_verify(rr);
+@@ -300,7 +307,7 @@
+ 	{
+ 	public:
+ 		int id;
+-		QJDns::Response response;
++		QJDnsResponse response;
+ 		bool do_cancel;
+ 	};
+ 
+@@ -531,7 +538,7 @@
+ 				}
+ 				else
+ 				{
+-					QJDns::Response out_response;
++					QJDnsResponse out_response;
+ 					for(int n = 0; n < e->response->answerCount; ++n)
+ 						out_response.answerRecords += import_record(e->response->answerRecords[n]);
+ 					LateResponse lr;
+@@ -1012,7 +1019,7 @@
+ 	d->process();
+ }
+ 
+-int QJDns::publishStart(PublishMode m, const Record &record)
++int QJDns::publishStart(PublishMode m, const QJDnsRecord &record)
+ {
+ 	jdns_rr_t *rr = export_record(record);
+ 
+@@ -1028,7 +1035,7 @@
+ 	return id;
+ }
+ 
+-void QJDns::publishUpdate(int id, const Record &record)
++void QJDns::publishUpdate(int id, const QJDnsRecord &record)
+ {
+ 	jdns_rr_t *rr = export_record(record);
+ 
+Index: src/3rdparty/jdns/qjdns.h
+===================================================================
+--- src/3rdparty/jdns/qjdns.h	(revision 1714)
++++ src/3rdparty/jdns/qjdns.h	(working copy)
+@@ -26,11 +26,46 @@
+ #ifndef QJDNS_H
+ #define QJDNS_H
+ 
+-#include <QtCore>
+-#include <QtNetwork>
++#include <QHostAddress>
++#include <QObject>
+ 
+-class QJDns : public QObject
++#include "schat.h"
++
++class QJDnsRecord
+ {
++public:
++  QByteArray owner;
++  int ttl;
++  int type;
++  QByteArray rdata;
++  bool haveKnown;
++
++  // known
++  QHostAddress address;    // for A, Aaaa
++  QByteArray name;         // for Mx, Srv, Cname, Ptr, Ns
++  int priority;            // for Mx, Srv
++  int weight;              // for Srv
++  int port;                // for Srv
++  QList<QByteArray> texts; // for Txt
++  QByteArray cpu;          // for Hinfo
++  QByteArray os;           // for Hinfo
++
++  QJDnsRecord();
++  bool verify() const;
++};
++
++
++class QJDnsResponse
++{
++public:
++  QList<QJDnsRecord> answerRecords;
++  QList<QJDnsRecord> authorityRecords;
++  QList<QJDnsRecord> additionalRecords;
++};
++
++
++class SCHAT_EXPORT QJDns : public QObject
++{
+ 	Q_OBJECT
+ public:
+ 	enum Mode
+@@ -74,6 +109,10 @@
+ 		int port;
+ 
+ 		NameServer();
++		NameServer(const QHostAddress &address, int port = 53)
++		: address(address)
++		, port(port)
++		{}
+ 	};
+ 
+ 	class DnsHost
+@@ -91,37 +130,6 @@
+ 		QList<DnsHost> hosts;
+ 	};
+ 
+-	class Record
+-	{
+-	public:
+-		QByteArray owner;
+-		int ttl;
+-		int type;
+-		QByteArray rdata;
+-		bool haveKnown;
+-
+-		// known
+-		QHostAddress address;    // for A, Aaaa
+-		QByteArray name;         // for Mx, Srv, Cname, Ptr, Ns
+-		int priority;            // for Mx, Srv
+-		int weight;              // for Srv
+-		int port;                // for Srv
+-		QList<QByteArray> texts; // for Txt
+-		QByteArray cpu;          // for Hinfo
+-		QByteArray os;           // for Hinfo
+-
+-		Record();
+-		bool verify() const;
+-	};
+-
+-	class Response
+-	{
+-	public:
+-		QList<Record> answerRecords;
+-		QList<Record> authorityRecords;
+-		QList<Record> additionalRecords;
+-	};
+-
+ 	QJDns(QObject *parent = 0);
+ 	~QJDns();
+ 
+@@ -138,14 +146,14 @@
+ 	void queryCancel(int id);
+ 
+ 	// for multicast mode only
+-	int publishStart(PublishMode m, const Record &record);
+-	void publishUpdate(int id, const Record &record);
++	int publishStart(PublishMode m, const QJDnsRecord &record);
++	void publishUpdate(int id, const QJDnsRecord &record);
+ 	void publishCancel(int id);
+ 
+ signals:
+-	void resultsReady(int id, const QJDns::Response &results);
++	void resultsReady(int id, const QJDnsResponse &results);
+ 	void published(int id);
+-	void error(int id, QJDns::Error e);
++	void error(int id, int e);
+ 	void shutdownFinished();
+ 	void debugLinesReady();
+ 
