@@ -16,12 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QApplication>
 #include <QFile>
-
-#include <QTextDocument>
 
 #include "ChatAlerts.h"
 #include "ChatNotify.h"
@@ -55,6 +51,7 @@ ChannelBaseTab::ChannelBaseTab(ClientChannel channel, TabType type, TabWidget *p
   setIcon(channelIcon());
 
   connect(ChatClient::channels(), SIGNAL(channel(const ChannelInfo &)), SLOT(channel(const ChannelInfo &)));
+  connect(ChatClient::channels(), SIGNAL(part(const QByteArray &, const QByteArray &)), SLOT(part(const QByteArray &, const QByteArray &)));
   connect(ChatClient::i(), SIGNAL(offline()), SLOT(offline()));
   connect(ChatAlerts::i(), SIGNAL(alert(const Alert &)), SLOT(alert(const Alert &)));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
@@ -153,6 +150,22 @@ void ChannelBaseTab::offline()
 {
   setOnline(false);
   add(ServiceMessage::quit(ChatClient::id()));
+}
+
+
+void ChannelBaseTab::part(const QByteArray &channel, const QByteArray &user)
+{
+  if (id() != channel)
+    return;
+
+  if (ChatClient::id() != user)
+    return;
+
+  int index = m_tabs->indexOf(this);
+  if (index == -1)
+    return;
+
+  m_tabs->closeTab(index);
 }
 
 

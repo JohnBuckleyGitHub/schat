@@ -53,6 +53,7 @@ private slots:
   void channel(const ChannelInfo &info);
   void notify(const Notify &notify);
   void offline();
+  void part(const QByteArray &channel, const QByteArray &user);
 
 protected:
   QIcon channelIcon() const;

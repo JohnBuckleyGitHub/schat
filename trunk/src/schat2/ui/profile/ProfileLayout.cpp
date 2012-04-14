@@ -62,8 +62,6 @@ void ProfileLayout::retranslateUi()
 
 /*!
  * Добавления поля редактирования профиля.
- *
- * \todo Добавить поддержку фабрики для создания редакторов в плагинах.
  */
 void ProfileLayout::add(const QString &field)
 {
