@@ -34,6 +34,7 @@ class SCHAT_EXPORT ChatDNS : public QObject
 
 public:
   ChatDNS(QObject *parent = 0);
+  inline const QUrl& url() const  { return m_url; }
   inline QList<QUrl> urls() const { return m_a.keys(); }
   void open(const QUrl &url);
 

@@ -93,6 +93,9 @@ protected slots:
   virtual void requestAuth();
   void released();
 
+private slots:
+  void lookedUp();
+
 private:
   Q_DECLARE_PRIVATE(AbstractClient);
 };

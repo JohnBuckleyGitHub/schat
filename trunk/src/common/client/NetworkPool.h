@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,40 +22,25 @@
 #include <QObject>
 #include <QUrl>
 
-class AbstractClient;
-class QJDns;
-class QJDnsResponse;
-
 class NetworkPool : public QObject
 {
   Q_OBJECT
 
 public:
-  NetworkPool(AbstractClient *client);
-  bool open(const QUrl &url);
+  NetworkPool(QObject *parent = 0);
   inline bool hasLast() const { return m_last != -1; }
-  inline int count() const { return m_urls.size(); }
-  inline QUrl url() const { return m_url; }
-  inline void setLast() { m_last = m_current; }
+  inline int count() const    { return m_urls.size(); }
+  inline void setLast()       { m_last = m_current; }
   QUrl last() const;
   QUrl next() const;
   QUrl random() const;
   void reset();
-
-private slots:
-  void error(int id, int e);
-  void ready(int id, const QJDnsResponse &results);
-  void shutdownFinished();
+  void setUrls(const QList<QUrl> &urls);
 
 private:
-  QJDns *dns();
-
-  AbstractClient *m_client; ///< Указатель на объект клиента чата.
   int m_last;               ///< Индекс последнего сервера к которому было осуществлено успешное подключение.
   mutable int m_current;    ///< Индекс текущего Url.
-  QJDns *m_jdns;            ///< JDNS объект.
   QList<QUrl> m_urls;       ///< Пул адресов.
-  QUrl m_url;               ///< Главный url адрес.
 };
 
 #endif /* NETWORKPOOL_H_ */
