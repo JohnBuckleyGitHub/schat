@@ -123,5 +123,3 @@ contains( SCHAT_QDNS, 1 ) {
 else {
     DEFINES += SCHAT_NO_QDNS
 }
-
-include(../3rdparty/jdns/jdns.pri)
