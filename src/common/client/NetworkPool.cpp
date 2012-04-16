@@ -18,25 +18,20 @@
 
 #include "client/AbstractClient.h"
 #include "client/NetworkPool.h"
-#include "jdns/qjdns.h"
 
-NetworkPool::NetworkPool(QObject *parent)
-  : QObject(parent)
-  , m_last(-1)
+NetworkPool::NetworkPool()
+  : m_last(-1)
   , m_current(-1)
 {
 }
 
 
-/*!
- * Получение последнего адреса.
- */
-QUrl NetworkPool::last() const
+QUrl NetworkPool::current() const
 {
-  if (m_last == -1 || m_last >= m_urls.size())
-    return next();
+  if (m_current == -1 || m_current >= m_urls.size())
+    return m_urls.at(0);
 
-  return m_urls.at(m_last);
+  return m_urls.at(m_current);
 }
 
 

@@ -40,6 +40,7 @@ AbstractClientPrivate::AbstractClientPrivate()
   , server(new Channel())
   , collisions(0)
   , reconnects(0)
+  , pool(new NetworkPool())
   , reconnectTimer(new QBasicTimer())
   , uniqueId(SimpleID::uniqueId())
 {
@@ -54,6 +55,7 @@ AbstractClientPrivate::~AbstractClientPrivate()
     reconnectTimer->stop();
 
   delete reconnectTimer;
+  delete pool;
 }
 
 
@@ -118,7 +120,6 @@ bool AbstractClientPrivate::authReply(const AuthReply &reply)
     channel->account()->setCookie(reply.cookie);
 
     cookie = reply.cookie;
-    pool->setLast();
     authId.clear();
 
     if (channel->status().value() == Status::Offline)
@@ -206,7 +207,6 @@ AbstractClient::AbstractClient(QObject *parent)
 {
   Q_D(AbstractClient);
   d->dns = new ChatDNS(this);
-  d->pool = new NetworkPool(this);
 
   connect(this, SIGNAL(requestAuth(quint64)), SLOT(requestAuth()));
   connect(this, SIGNAL(released(quint64)), SLOT(released()));
@@ -219,7 +219,6 @@ AbstractClient::AbstractClient(AbstractClientPrivate &dd, QObject *parent)
 {
   Q_D(AbstractClient);
   d->dns = new ChatDNS(this);
-  d->pool = new NetworkPool(this);
 
   connect(this, SIGNAL(requestAuth(quint64)), SLOT(requestAuth()));
   connect(this, SIGNAL(released(quint64)), SLOT(released()));
@@ -267,7 +266,7 @@ bool AbstractClient::openUrl(const QUrl &url, const QByteArray &cookie, OpenOpti
     return true;
   }
 
-  QUrl u = d->pool->next();
+  QUrl u = d->pool->current();
   qDebug() << "++++++++++++++++++++++++++++++";
   qDebug() << u.toString();
   qDebug() << "++++++++++++++++++++++++++++++";
@@ -468,8 +467,8 @@ void AbstractClient::timerEvent(QTimerEvent *event)
   Q_D(AbstractClient);
   if (event->timerId() == d->reconnectTimer->timerId()) {
     QUrl url;
-    if (d->reconnects <= Protocol::MaxFastReconnects && d->pool->hasLast())
-      url = d->pool->last();
+    if (d->reconnects <= Protocol::MaxFastReconnects)
+      url = d->pool->current();
     else
       url = d->pool->next();
 
