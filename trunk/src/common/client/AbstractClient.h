@@ -27,6 +27,7 @@
 #include "schat.h"
 
 class AbstractClientPrivate;
+class ChatDNS;
 class PacketReader;
 
 class SCHAT_EXPORT AbstractClient : public SimpleSocket
@@ -57,6 +58,7 @@ public:
   bool send(const QList<QByteArray> &packets);
   bool send(Packet packet, bool echo = false);
 
+  ChatDNS* dns();
   ClientChannel channel() const;
   ClientChannel server() const;
   ClientState clientState() const;

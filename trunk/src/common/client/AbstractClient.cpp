@@ -307,6 +307,12 @@ bool AbstractClient::send(Packet packet, bool echo)
 }
 
 
+ChatDNS* AbstractClient::dns()
+{
+  return d_func()->dns;
+}
+
+
 ClientChannel AbstractClient::channel() const
 {
   return d_func()->channel;
