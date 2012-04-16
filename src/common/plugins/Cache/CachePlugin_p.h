@@ -34,6 +34,7 @@ public:
 private slots:
   void notify(const Notify &notify);
   void open();
+  void ready();
 
 private:
   void load(ClientChannel channel);

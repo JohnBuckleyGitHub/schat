@@ -22,6 +22,7 @@
 #include <QHostInfo>
 
 #include "net/dns/ChatDNS.h"
+#include "net/Protocol.h"
 #include "sglobal.h"
 
 #if !defined(SCHAT_NO_QDNS)
@@ -61,7 +62,7 @@ void ChatDNS::open(const QUrl &url)
   }
 
 # if defined(SCHAT_NO_QDNS)
-  m_url.setPort(7667);
+  m_url.setPort(Protocol::DefaultPort);
   m_srv.append(m_url);
 # endif
 
@@ -92,7 +93,7 @@ void ChatDNS::handleServers()
     }
     else {
       QUrl url = m_url;
-      url.setPort(7667);
+      url.setPort(Protocol::DefaultPort);
       m_srv.append(url);
     }
 
@@ -188,7 +189,7 @@ void ChatDNS::store()
   QMapIterator<QUrl, QUrl> i(m_a);
   while (i.hasNext()) {
     i.next();
-    map.append(i.key().toString());
+    map.append(i.key().host() + LS(":") + QString::number(i.key().port(Protocol::DefaultPort)));
   }
 
   m_cache[key] = map;
