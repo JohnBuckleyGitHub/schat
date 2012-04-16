@@ -20,6 +20,7 @@
 
 #include <QHostAddress>
 #include <QHostInfo>
+#include <QStringList>
 
 #include "net/dns/ChatDNS.h"
 #include "net/Protocol.h"
@@ -141,10 +142,12 @@ void ChatDNS::a()
 
 void ChatDNS::done()
 {
+  if (m_a.isEmpty())
+    failback();
+  else
+    store();
+
   qDebug() << "ChatDNS::done()" << m_a;
-
-  store();
-
   emit finished();
 }
 
@@ -176,6 +179,33 @@ QString ChatDNS::toKey() const
     out += LS(":") + QString::number(m_url.port());
 
   return out;
+}
+
+
+void ChatDNS::failback()
+{
+  QString key = toKey();
+  if (key.isEmpty())
+    return;
+
+  if (!m_cache.contains(key))
+    return;
+
+  QVariantList list = m_cache.value(key).toList();
+  if (list.isEmpty())
+    return;
+
+  for (int i = 0; i < list.size(); ++i) {
+    QStringList record = list.at(i).toString().split(':');
+    if (record.size() != 2)
+      continue;
+
+    QUrl url = m_url;
+    url.setHost(record.at(0));
+    url.setPort(record.at(1).toInt());
+    if (url.isValid())
+      m_a[url] = url;
+  }
 }
 
 

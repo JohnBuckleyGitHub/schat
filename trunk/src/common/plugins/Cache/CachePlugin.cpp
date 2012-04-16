@@ -49,6 +49,8 @@ Cache::Cache(QObject *parent)
   connect(ChatClient::i(), SIGNAL(online()), SLOT(open()));
   connect(ChatClient::i(), SIGNAL(ready()), SLOT(ready()));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+
+  loadCache();
 }
 
 
@@ -64,6 +66,9 @@ void Cache::notify(const Notify &notify)
 
     CacheDB::add(ChatClient::server());
     CacheDB::add(ChatClient::channel());
+
+    ChatClient::io()->dns()->setCache(QVariantMap());
+    ready();
   }
 }
 
@@ -88,11 +93,16 @@ void Cache::open()
 
 void Cache::ready()
 {
-  QString fileName = ChatCore::locations()->path(FileLocations::ConfigPath) + LS("/.") + ChatCore::locations()->path(FileLocations::BaseName) + LS("/dns.cache");
-  QFile file(fileName);
+  QFile file(dnsCache());
   if (file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
     file.write(JSON::generate(ChatClient::io()->dns()->cache()));
   }
+}
+
+
+QString Cache::dnsCache() const
+{
+  return ChatCore::locations()->path(FileLocations::ConfigPath) + LS("/.") + ChatCore::locations()->path(FileLocations::BaseName) + LS("/dns.cache");
 }
 
 
@@ -114,6 +124,16 @@ void Cache::load(ClientChannel channel)
 
   channel->setData(exist->data());
   FeedStorage::load(channel.data());
+}
+
+
+void Cache::loadCache()
+{
+  QFile file(dnsCache());
+  if (file.open(QIODevice::ReadOnly)) {
+    QVariantMap data = JSON::parse(file.readAll()).toMap();
+    ChatClient::io()->dns()->setCache(data);
+  }
 }
 
 
