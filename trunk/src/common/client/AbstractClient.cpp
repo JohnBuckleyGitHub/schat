@@ -268,9 +268,6 @@ bool AbstractClient::openUrl(const QUrl &url, const QByteArray &cookie, OpenOpti
   }
 
   QUrl u = d->pool->current();
-  qDebug() << "++++++++++++++++++++++++++++++";
-  qDebug() << u.toString();
-  qDebug() << "++++++++++++++++++++++++++++++";
   connectToHost(u.host(), u.port(Protocol::DefaultPort));
   return true;
 }
@@ -515,7 +512,6 @@ void AbstractClient::released()
 
 void AbstractClient::lookedUp()
 {
-  qDebug() << "AbstractClient::lookedUp()";
   Q_D(AbstractClient);
   d->pool->setUrls(d->dns->urls());
   if (!d->pool->count()) {
@@ -527,8 +523,5 @@ void AbstractClient::lookedUp()
   }
 
   QUrl url = d->pool->random();
-  qDebug() << "--------------------------------";
-  qDebug() << url.toString();
-  qDebug() << "--------------------------------";
   connectToHost(url.host(), url.port(Protocol::DefaultPort));
 }
