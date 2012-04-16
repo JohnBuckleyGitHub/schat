@@ -1,0 +1,160 @@
+/* $Id$
+ * IMPOMEZIA Simple Chat
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <QDebug>
+
+#include <QHostAddress>
+#include <QHostInfo>
+
+#include "net/dns/ChatDNS.h"
+#include "sglobal.h"
+
+#if !defined(SCHAT_NO_QDNS)
+# include "net/dns/qdnslookup.h"
+#endif
+
+ChatDNS::ChatDNS(QObject *parent)
+  : QObject(parent)
+{
+# if !defined(SCHAT_NO_QDNS)
+  m_dns = new QDnsLookup(this);
+  connect(m_dns, SIGNAL(finished()), SLOT(handleServers()));
+# endif
+}
+
+
+void ChatDNS::open(const QUrl &url)
+{
+  qDebug() << "ChatDNS::open()" << url.toString() << url.port() << QHostAddress(url.host());
+
+  m_url = url;
+  m_a.clear();
+  m_srv.clear();
+
+  // Для ip адреса нет необходимости в DNS запросах.
+  if (!QHostAddress(url.host()).isNull()) {
+    m_a[url] = url;
+    done();
+    return;
+  }
+
+  // Если указан порт нет необходимости в получении SRV записей.
+  if (url.port() != -1) {
+    m_srv.append(url);
+    a();
+    return;
+  }
+
+# if defined(SCHAT_NO_QDNS)
+  m_url.setPort(7667);
+  m_srv.append(m_url);
+# endif
+
+  srv();
+}
+
+
+void ChatDNS::handleServers()
+{
+# if !defined(SCHAT_NO_QDNS)
+  if (m_dns->type() == QDnsLookup::A) {
+    foreach (const QDnsHostAddressRecord &record, m_dns->hostAddressRecords()) {
+      QUrl url = m_current;
+      url.setHost(record.value().toString());
+      m_a[url] = m_current;
+    }
+
+    a();
+  }
+  else if (m_dns->type() == QDnsLookup::SRV) {
+    if (m_dns->error() == QDnsLookup::NoError) {
+      foreach (const QDnsServiceRecord &record, m_dns->serviceRecords()) {
+        QUrl url = m_url;
+        url.setHost(record.target());
+        url.setPort(record.port());
+        m_srv.append(url);
+      }
+    }
+    else {
+      QUrl url = m_url;
+      url.setPort(7667);
+      m_srv.append(url);
+    }
+
+    a();
+  }
+# endif
+}
+
+
+void ChatDNS::lookedUp(const QHostInfo &host)
+{
+# if defined(SCHAT_NO_QDNS)
+  foreach (const QHostAddress &address, host.addresses()) {
+    QUrl url = m_current;
+    url.setHost(address.toString());
+    m_a[url] = m_current;
+  }
+
+  a();
+# else
+  Q_UNUSED(host)
+# endif
+}
+
+
+void ChatDNS::a()
+{
+  qDebug() << "ChatDNS::a()";
+
+  if (m_srv.isEmpty()) {
+    done();
+    return;
+  }
+
+  m_current = m_srv.takeFirst();
+# if !defined(SCHAT_NO_QDNS)
+  m_dns->setType(QDnsLookup::A);
+  m_dns->setName(m_current.host());
+  m_dns->lookup();
+#else
+  QHostInfo::lookupHost(m_current.host(), this, SLOT(lookedUp(QHostInfo)));
+# endif
+}
+
+
+void ChatDNS::done()
+{
+  qDebug() << "ChatDNS::done()" << m_a;
+
+  emit finished();
+}
+
+
+void ChatDNS::srv()
+{
+  qDebug() << "ChatDNS::srv()";
+
+# if !defined(SCHAT_NO_QDNS)
+  m_dns->setType(QDnsLookup::SRV);
+  m_dns->setName(LS("_schat._tcp.") + m_url.host());
+  m_dns->lookup();
+# else
+  a();
+# endif
+}

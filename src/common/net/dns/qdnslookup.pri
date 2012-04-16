@@ -15,30 +15,17 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SCHAT_CONSOLE = 1
-SCHAT_DEBUG   = 1
-SCHAT_USE_SSL = 1
-SCHAT_QDNS    = 1
+HEADERS += \
+    net/dns/qdnslookup.h \
+    net/dns/qdnslookup_p.h \
 
-TEMPLATE = lib
-QT = core network
-TARGET = schat-client
-DEFINES += SCHAT_LIBRARY
-win32:RC_FILE = client.rc
-
-unix {
-  macx {
-    target.path += ../../out/SimpleChat2.app/Contents/Frameworks/
-  } else {
-    target.path += $$SCHAT_PREFIX/usr/lib
-  }
-
-  INSTALLS += target
+SOURCES += \
+    net/dns/qdnslookup.cpp \
+    
+win32 {
+    SOURCES += net/dns/qdnslookup_win.cpp
+    LIBS += -ldnsapi -lws2_32
 }
-
-TRANSLATIONS += ../../res/translations/schat2-client_en.ts
-TRANSLATIONS += ../../res/translations/schat2-client_ru.ts
-CODECFORTR = UTF-8
-
-include(../common/client.pri)
-include(../common/common.pri)
+unix {
+    SOURCES += net/dns/qdnslookup_unix.cpp
+}
