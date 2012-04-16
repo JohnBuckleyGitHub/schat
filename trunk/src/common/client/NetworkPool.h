@@ -19,19 +19,14 @@
 #ifndef NETWORKPOOL_H_
 #define NETWORKPOOL_H_
 
-#include <QObject>
 #include <QUrl>
 
-class NetworkPool : public QObject
+class NetworkPool
 {
-  Q_OBJECT
-
 public:
-  NetworkPool(QObject *parent = 0);
-  inline bool hasLast() const { return m_last != -1; }
-  inline int count() const    { return m_urls.size(); }
-  inline void setLast()       { m_last = m_current; }
-  QUrl last() const;
+  NetworkPool();
+  inline int count() const { return m_urls.size(); }
+  QUrl current() const;
   QUrl next() const;
   QUrl random() const;
   void reset();
