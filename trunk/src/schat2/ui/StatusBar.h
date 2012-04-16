@@ -53,6 +53,7 @@ private slots:
 private:
   void menu(const QPoint &point);
   void retranslateUi();
+  void setError();
   void updateStyleSheet();
 
   LoginIcon *m_login;             ///< Иконка авторизации по имени и паролю.

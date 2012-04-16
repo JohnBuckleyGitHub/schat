@@ -5,8 +5,8 @@
 <context>
     <name>CountryField</name>
     <message>
-        <location filename="../../src/common/plugins/Profile/CountryField.cpp" line="57"/>
-        <location filename="../../src/common/plugins/Profile/CountryField.cpp" line="404"/>
+        <location filename="../../src/common/plugins/Profile/CountryField.cpp" line="60"/>
+        <location filename="../../src/common/plugins/Profile/CountryField.cpp" line="411"/>
         <source>Not selected</source>
         <translation type="unfinished"></translation>
     </message>

@@ -50,7 +50,8 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
   }
 
   QVariantMap error;
-  error[LS("type")]   = authType;
+  error[LS("type")]   = LS("auth");
+  error[LS("auth")]   = authType;
   error[LS("status")] = reply.status;
   error[LS("data")]   = reply.json;
   json[LS("error")]   = error;
@@ -117,13 +118,6 @@ const QString& SimpleClient::account() const
 {
   Q_D(const SimpleClient);
   return d->account;
-}
-
-
-const QVariantMap& SimpleClient::json() const
-{
-  Q_D(const SimpleClient);
-  return d->json;
 }
 
 

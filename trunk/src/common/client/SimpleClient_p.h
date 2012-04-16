@@ -42,7 +42,6 @@ public:
   int authType;          ///< Тип авторизации.
   QByteArray password;   ///< Пароль.
   QString account;       ///< Имя аккаунта пользователя.
-  QVariantMap json;      ///< Дополнительные данные.
 };
 
 #endif /* SIMPLECLIENT_P_H_ */
