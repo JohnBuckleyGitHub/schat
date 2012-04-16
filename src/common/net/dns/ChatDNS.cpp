@@ -42,8 +42,6 @@ ChatDNS::ChatDNS(QObject *parent)
 
 void ChatDNS::open(const QUrl &url)
 {
-  qDebug() << "ChatDNS::open()" << url.toString() << url.port() << QHostAddress(url.host());
-
   m_url = url;
   m_a.clear();
   m_srv.clear();
@@ -122,8 +120,6 @@ void ChatDNS::lookedUp(const QHostInfo &host)
 
 void ChatDNS::a()
 {
-  qDebug() << "ChatDNS::a()";
-
   if (m_srv.isEmpty()) {
     done();
     return;
@@ -147,15 +143,12 @@ void ChatDNS::done()
   else
     store();
 
-  qDebug() << "ChatDNS::done()" << m_a;
   emit finished();
 }
 
 
 void ChatDNS::srv()
 {
-  qDebug() << "ChatDNS::srv()";
-
 # if !defined(SCHAT_NO_QDNS)
   m_dns->setType(QDnsLookup::SRV);
   m_dns->setName(LS("_schat._tcp.") + m_url.host());
