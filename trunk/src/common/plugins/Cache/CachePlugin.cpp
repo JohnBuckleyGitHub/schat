@@ -19,6 +19,7 @@
 #include <QDebug>
 
 #include <QtPlugin>
+#include <QFile>
 
 #include "CacheChannels.h"
 #include "CacheDB.h"
@@ -28,9 +29,14 @@
 #include "ChatNotify.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
+#include "client/SimpleClient.h"
 #include "feeds/CacheFeeds.h"
 #include "feeds/CacheFeedStorage.h"
+#include "net/dns/ChatDNS.h"
 #include "NetworkManager.h"
+#include "sglobal.h"
+#include "FileLocations.h"
+#include "JSON.h"
 
 Cache::Cache(QObject *parent)
   : ChatPlugin(parent)
@@ -41,6 +47,7 @@ Cache::Cache(QObject *parent)
   open();
 
   connect(ChatClient::i(), SIGNAL(online()), SLOT(open()));
+  connect(ChatClient::i(), SIGNAL(ready()), SLOT(ready()));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 }
 
@@ -76,6 +83,16 @@ void Cache::open()
 //  ChatClient::server()->setId(ChatClient::serverId());
   load(ChatClient::server());
   load(ChatClient::channel());
+}
+
+
+void Cache::ready()
+{
+  QString fileName = ChatCore::locations()->path(FileLocations::ConfigPath) + LS("/.") + ChatCore::locations()->path(FileLocations::BaseName) + LS("/dns.cache");
+  QFile file(fileName);
+  if (file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+    file.write(JSON::generate(ChatClient::io()->dns()->cache()));
+  }
 }
 
 
