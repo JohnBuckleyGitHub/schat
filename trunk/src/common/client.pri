@@ -33,6 +33,7 @@ HEADERS += \
     Gender.h \
     JSON.h \
     k8json/k8json.h \
+    net/dns/ChatDNS.h \
     net/PacketReader.h \
     net/packets/auth.h \
     net/packets/ChannelNotice.h \
@@ -74,6 +75,7 @@ SOURCES += \
     Gender.cpp \
     JSON.cpp \
     k8json/k8json.cpp \
+    net/dns/ChatDNS.cpp \
     net/PacketReader.cpp \
     net/packets/auth.cpp \
     net/packets/ChannelNotice.cpp \
@@ -113,6 +115,13 @@ SOURCES += \
     client/ClientHooks.cpp \
     client/ClientMessages.cpp \
     client/SimpleClient.cpp \
+}
+
+contains( SCHAT_QDNS, 1 ) {
+    include(../common/net/dns/qdnslookup.pri)
+}
+else {
+    DEFINES += SCHAT_NO_QDNS
 }
 
 include(../3rdparty/jdns/jdns.pri)
