@@ -66,6 +66,7 @@ public:
   const QString& nick() const;
   const QString& serverName() const;
   const QUrl& url() const;
+  const QVariantMap& json() const;
   inline bool openUrl(const QString &url, const QByteArray &cookie = QByteArray(), OpenOptions options = SaveUrl) { return openUrl(QUrl(url), cookie, options); }
   PacketReader *reader();
   void lock();

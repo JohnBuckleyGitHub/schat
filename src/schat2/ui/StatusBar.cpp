@@ -191,8 +191,26 @@ void StatusBar::retranslateUi()
     m_icon->setToolTip(tr("Connected"));
   }
   else if (state == ChatClient::Error) {
+    setError();
+  }
+}
+
+
+void StatusBar::setError()
+{
+  QVariantMap error = ChatClient::io()->json().value(LS("error")).toMap();
+  QString type = error.value(LS("type")).toString();
+  if (type == LS("auth")) {
+    m_label->setText(tr("Authorization Error"));
+    m_icon->setToolTip(Notice::status(error.value(LS("auth")).toInt()));
+  }
+  else if (type == LS("dns")) {
+    m_label->setText(tr("Server not found‎"));
+    m_icon->setToolTip(QString());
+  }
+  else {
     m_label->setText(tr("Error"));
-    m_icon->setToolTip(Notice::status(ChatClient::io()->json().value(LS("error")).toMap().value(LS("status")).toInt()));
+    m_icon->setToolTip(QString());
   }
 }
 

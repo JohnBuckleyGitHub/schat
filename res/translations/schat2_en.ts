@@ -413,7 +413,7 @@
 <context>
     <name>NickEdit</name>
     <message>
-        <location filename="../../src/schat2/ui/fields/NickEdit.cpp" line="79"/>
+        <location filename="../../src/schat2/ui/fields/NickEdit.cpp" line="84"/>
         <source>Nickname is already in use</source>
         <translation type="unfinished"></translation>
     </message>
@@ -739,23 +739,33 @@
 <context>
     <name>StatusBar</name>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="183"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="179"/>
         <source>Encrypted connection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="187"/>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="188"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="183"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="184"/>
         <source>No connection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="195"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="191"/>
         <source>Connected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="198"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="204"/>
+        <source>Authorization Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="208"/>
+        <source>Server not found‎</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="211"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>

@@ -31,6 +31,7 @@
 #include "net/packets/Notice.h"
 #include "net/PacketWriter.h"
 #include "net/Protocol.h"
+#include "sglobal.h"
 
 AbstractClientPrivate::AbstractClientPrivate()
   : clientState(AbstractClient::ClientOffline)
@@ -302,50 +303,43 @@ bool AbstractClient::send(const QList<QByteArray> &packets)
 
 bool AbstractClient::send(Packet packet, bool echo)
 {
-  Q_D(AbstractClient);
-  return send(packet->data(d->sendStream, echo));
+  return send(packet->data(d_func()->sendStream, echo));
 }
 
 
 ClientChannel AbstractClient::channel() const
 {
-  Q_D(const AbstractClient);
-  return d->channel;
+  return d_func()->channel;
 }
 
 
 ClientChannel AbstractClient::server() const
 {
-  Q_D(const AbstractClient);
-  return d->server;
+  return d_func()->server;
 }
 
 
 AbstractClient::ClientState AbstractClient::clientState() const
 {
-  Q_D(const AbstractClient);
-  return d->clientState;
+  return d_func()->clientState;
 }
 
 
 AbstractClient::ClientState AbstractClient::previousState() const
 {
-  Q_D(const AbstractClient);
-  return d->previousState;
+  return d_func()->previousState;
 }
 
 
 const QByteArray& AbstractClient::cookie() const
 {
-  Q_D(const AbstractClient);
-  return d->cookie;
+  return d_func()->cookie;
 }
 
 
 const QByteArray& AbstractClient::uniqueId() const
 {
-  Q_D(const AbstractClient);
-  return d->uniqueId;
+  return d_func()->uniqueId;
 }
 
 
@@ -365,29 +359,31 @@ const QString& AbstractClient::nick() const
 
 const QString& AbstractClient::serverName() const
 {
-  Q_D(const AbstractClient);
-  return d->server->name();
+  return d_func()->server->name();
 }
 
 
 const QUrl& AbstractClient::url() const
 {
-  Q_D(const AbstractClient);
-  return d->url;
+  return d_func()->url;
+}
+
+
+const QVariantMap& AbstractClient::json() const
+{
+  return d_func()->json;
 }
 
 
 PacketReader *AbstractClient::reader()
 {
-  Q_D(const AbstractClient);
-  return d->reader;
+  return d_func()->reader;
 }
 
 
 void AbstractClient::lock()
 {
-  Q_D(AbstractClient);
-  d->sendLock = true;
+  d_func()->sendLock = true;
 }
 
 
@@ -404,8 +400,7 @@ void AbstractClient::setUniqueId(const QByteArray &id)
   if (SimpleID::typeOf(id) != SimpleID::UniqueUserId)
     return;
 
-  Q_D(AbstractClient);
-  d->uniqueId = id;
+  d_func()->uniqueId = id;
 }
 
 
@@ -517,6 +512,14 @@ void AbstractClient::lookedUp()
   qDebug() << "AbstractClient::lookedUp()";
   Q_D(AbstractClient);
   d->pool->setUrls(d->dns->urls());
+  if (!d->pool->count()) {
+    QVariantMap error;
+    error[LS("type")]    = LS("dns");
+    d->json[LS("error")] = error;
+    d->setClientState(ClientError);
+    return;
+  }
+
   QUrl url = d->pool->random();
   qDebug() << "--------------------------------";
   qDebug() << url.toString();

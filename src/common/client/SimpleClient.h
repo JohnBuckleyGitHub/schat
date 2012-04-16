@@ -33,7 +33,6 @@ public:
   explicit SimpleClient(QObject *parent = 0);
   ~SimpleClient();
   const QString &account() const;
-  const QVariantMap& json() const;
   void leave();
   void setAccount(const QString &account, const QString &password);
   void setCookieAuth(bool allow);
