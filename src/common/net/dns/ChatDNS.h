@@ -19,9 +19,9 @@
 #ifndef CHATDNS_H_
 #define CHATDNS_H_
 
-#include <QMap>
 #include <QObject>
 #include <QUrl>
+#include <QVariantMap>
 
 #include "schat.h"
 
@@ -34,8 +34,9 @@ class SCHAT_EXPORT ChatDNS : public QObject
 
 public:
   ChatDNS(QObject *parent = 0);
-  inline const QUrl& url() const  { return m_url; }
-  inline QList<QUrl> urls() const { return m_a.keys(); }
+  inline const QUrl& url() const          { return m_url; }
+  inline const QVariantMap& cache() const { return m_cache; }
+  inline QList<QUrl> urls() const         { return m_a.keys(); }
   void open(const QUrl &url);
 
 signals:
@@ -50,11 +51,15 @@ private:
   void done();
   void srv();
 
+  QString toKey() const;
+  void store();
+
   QDnsLookup *m_dns;    ///< Объект для DNS запросов.
   QList<QUrl> m_srv;    ///< SRV записи.
   QMap<QUrl, QUrl> m_a; ///< A записи.
   QUrl m_current;       ///< Текущий адрес.
   QUrl m_url;           ///< Основной URL.
+  QVariantMap m_cache;  ///< Кэш успешних запросов.
 };
 
 #endif /* CHATDNS_H_ */

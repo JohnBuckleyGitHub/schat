@@ -142,6 +142,8 @@ void ChatDNS::done()
 {
   qDebug() << "ChatDNS::done()" << m_a;
 
+  store();
+
   emit finished();
 }
 
@@ -157,4 +159,37 @@ void ChatDNS::srv()
 # else
   a();
 # endif
+}
+
+
+/*!
+ * Преобразование текущего адреса в ключ в кэше.
+ */
+QString ChatDNS::toKey() const
+{
+  if (!QHostAddress(m_url.host()).isNull())
+    return QString();
+
+  QString out = m_url.host();
+  if (m_url.port() != -1)
+    out += LS(":") + QString::number(m_url.port());
+
+  return out;
+}
+
+
+void ChatDNS::store()
+{
+  QString key = toKey();
+  if (key.isEmpty())
+    return;
+
+  QVariantList map;
+  QMapIterator<QUrl, QUrl> i(m_a);
+  while (i.hasNext()) {
+    i.next();
+    map.append(i.key().toString());
+  }
+
+  m_cache[key] = map;
 }
