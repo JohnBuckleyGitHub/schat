@@ -25,6 +25,7 @@
 #include "client/AbstractClient_p.h"
 #include "client/NetworkPool.h"
 #include "debugstream.h"
+#include "net/dns/ChatDNS.h"
 #include "net/PacketReader.h"
 #include "net/packets/auth.h"
 #include "net/packets/Notice.h"
@@ -203,22 +204,26 @@ void AbstractClientPrivate::startReconnectTimer()
 AbstractClient::AbstractClient(QObject *parent)
   : SimpleSocket(*new AbstractClientPrivate(), parent)
 {
+  Q_D(AbstractClient);
+  d->dns = new ChatDNS(this);
+  d->pool = new NetworkPool(this);
+
   connect(this, SIGNAL(requestAuth(quint64)), SLOT(requestAuth()));
   connect(this, SIGNAL(released(quint64)), SLOT(released()));
-
-  Q_D(AbstractClient);
-  d->pool = new NetworkPool(this);
+  connect(d->dns, SIGNAL(finished()), SLOT(lookedUp()));
 }
 
 
 AbstractClient::AbstractClient(AbstractClientPrivate &dd, QObject *parent)
   : SimpleSocket(dd, parent)
 {
+  Q_D(AbstractClient);
+  d->dns = new ChatDNS(this);
+  d->pool = new NetworkPool(this);
+
   connect(this, SIGNAL(requestAuth(quint64)), SLOT(requestAuth()));
   connect(this, SIGNAL(released(quint64)), SLOT(released()));
-
-  Q_D(AbstractClient);
-  d->pool = new NetworkPool(this);
+  connect(d->dns, SIGNAL(finished()), SLOT(lookedUp()));
 }
 
 
@@ -257,13 +262,16 @@ bool AbstractClient::openUrl(const QUrl &url, const QByteArray &cookie, OpenOpti
 
   d->setClientState(ClientConnecting);
 
-  if (d->pool->open(url))
+  if (options & SaveUrl) {
+    d->dns->open(url);
     return true;
+  }
 
-  if (options & SaveUrl)
-    d->pool->reset();
-
-  connectToHost(url.host(), url.port(Protocol::DefaultPort));
+  QUrl u = d->pool->next();
+  qDebug() << "++++++++++++++++++++++++++++++";
+  qDebug() << u.toString();
+  qDebug() << "++++++++++++++++++++++++++++++";
+  connectToHost(u.host(), u.port(Protocol::DefaultPort));
   return true;
 }
 
@@ -502,4 +510,17 @@ void AbstractClient::released()
   }
 
   d->startReconnectTimer();
+}
+
+
+void AbstractClient::lookedUp()
+{
+  qDebug() << "AbstractClient::lookedUp()";
+  Q_D(AbstractClient);
+  d->pool->setUrls(d->dns->urls());
+  QUrl url = d->pool->random();
+  qDebug() << "--------------------------------";
+  qDebug() << url.toString();
+  qDebug() << "--------------------------------";
+  connectToHost(url.host(), url.port(Protocol::DefaultPort));
 }

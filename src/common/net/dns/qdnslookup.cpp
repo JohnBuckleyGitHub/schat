@@ -288,6 +288,7 @@ QDnsLookup::QDnsLookup(Type type, const QString &name, QObject *parent)
 
 QDnsLookup::~QDnsLookup()
 {
+  delete d_ptr;
 }
 
 /*!
