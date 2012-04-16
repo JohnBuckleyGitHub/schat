@@ -34,9 +34,10 @@ class SCHAT_EXPORT ChatDNS : public QObject
 
 public:
   ChatDNS(QObject *parent = 0);
-  inline const QUrl& url() const          { return m_url; }
-  inline const QVariantMap& cache() const { return m_cache; }
-  inline QList<QUrl> urls() const         { return m_a.keys(); }
+  inline const QUrl& url() const                 { return m_url; }
+  inline const QVariantMap& cache() const        { return m_cache; }
+  inline QList<QUrl> urls() const                { return m_a.keys(); }
+  inline void setCache(const QVariantMap &cache) { m_cache = cache; }
   void open(const QUrl &url);
 
 signals:
@@ -52,6 +53,7 @@ private:
   void srv();
 
   QString toKey() const;
+  void failback();
   void store();
 
   QDnsLookup *m_dns;    ///< Объект для DNS запросов.
