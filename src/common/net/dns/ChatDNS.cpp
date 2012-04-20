@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QHostAddress>
 #include <QHostInfo>
 #include <QStringList>
@@ -35,6 +33,7 @@ ChatDNS::ChatDNS(QObject *parent)
 {
 # if !defined(SCHAT_NO_QDNS)
   m_dns = new QDnsLookup(this);
+  m_dns->setType(QDnsLookup::SRV);
   connect(m_dns, SIGNAL(finished()), SLOT(handleServers()));
 # endif
 }
@@ -72,16 +71,7 @@ void ChatDNS::open(const QUrl &url)
 void ChatDNS::handleServers()
 {
 # if !defined(SCHAT_NO_QDNS)
-  if (m_dns->type() == QDnsLookup::A) {
-    foreach (const QDnsHostAddressRecord &record, m_dns->hostAddressRecords()) {
-      QUrl url = m_current;
-      url.setHost(record.value().toString());
-      m_a[url] = m_current;
-    }
-
-    a();
-  }
-  else if (m_dns->type() == QDnsLookup::SRV) {
+  if (m_dns->type() == QDnsLookup::SRV) {
     if (m_dns->error() == QDnsLookup::NoError) {
       foreach (const QDnsServiceRecord &record, m_dns->serviceRecords()) {
         QUrl url = m_url;
@@ -102,9 +92,11 @@ void ChatDNS::handleServers()
 }
 
 
+/*!
+ * Завершение получения информации об A записях.
+ */
 void ChatDNS::lookedUp(const QHostInfo &host)
 {
-# if defined(SCHAT_NO_QDNS)
   foreach (const QHostAddress &address, host.addresses()) {
     QUrl url = m_current;
     url.setHost(address.toString());
@@ -112,9 +104,6 @@ void ChatDNS::lookedUp(const QHostInfo &host)
   }
 
   a();
-# else
-  Q_UNUSED(host)
-# endif
 }
 
 
@@ -126,13 +115,7 @@ void ChatDNS::a()
   }
 
   m_current = m_srv.takeFirst();
-# if !defined(SCHAT_NO_QDNS)
-  m_dns->setType(QDnsLookup::A);
-  m_dns->setName(m_current.host());
-  m_dns->lookup();
-#else
   QHostInfo::lookupHost(m_current.host(), this, SLOT(lookedUp(QHostInfo)));
-# endif
 }
 
 
@@ -150,7 +133,6 @@ void ChatDNS::done()
 void ChatDNS::srv()
 {
 # if !defined(SCHAT_NO_QDNS)
-  m_dns->setType(QDnsLookup::SRV);
   m_dns->setName(LS("_schat._tcp.") + m_url.host());
   m_dns->lookup();
 # else
