@@ -16,13 +16,15 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+set -e
+
 function build() {
   local target=$1
   mkdir debian
   cp -fr ../os/ubuntu/$target/* debian
   cp -f $target.pro src.pro
   cat debian/changelog.in | sed "s/##RDATE##/`date -R`/g" | sed "s/##DIST##/`lsb_release -cs`/g" > debian/changelog
-  dpkg-buildpackage
+  dpkg-buildpackage -us -uc
   rm -Rf debian
 }
 
