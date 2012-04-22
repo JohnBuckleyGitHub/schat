@@ -41,6 +41,7 @@
 #define CITYCONFIDENCE_FIXED_RECORD 4
 #define CITYCONFIDENCEDIST_FIXED_RECORD 6
 #pragma warning( disable : 4996 )
+#pragma warning( disable : 4013 )
 #else
 static const int FULL_RECORD_LENGTH = 50;
 static const int CITYCONFIDENCE_FIXED_RECORD = 4;
