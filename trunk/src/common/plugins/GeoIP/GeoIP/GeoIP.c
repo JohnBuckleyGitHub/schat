@@ -50,9 +50,10 @@ static geoipv6_t IPV6_NULL;
 
 #if defined(_MSC_VER)
 typedef long ssize_t;
+#pragma warning( disable : 4996 )
 #endif
 
-ssize_t
+extern ssize_t
 pread(int fd, void *buf, size_t count, off_t offset)
 {
     ssize_t retval ;
