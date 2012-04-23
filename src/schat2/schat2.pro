@@ -15,8 +15,8 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SCHAT_CONSOLE = 1
-SCHAT_DEBUG   = 1
+SCHAT_CONSOLE = 0
+SCHAT_DEBUG   = 0
 SCHAT_USE_SSL = 1
 
 include(schat2.pri)

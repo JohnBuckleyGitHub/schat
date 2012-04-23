@@ -91,7 +91,7 @@ def MakeDebBuilder():
 
 def MakeWinBuilder():
   f = BuildFactory()
-  f.addStep(SVN(mode='full', method='clobber', repourl='http://schat.googlecode.com/svn/trunk/'))
+  f.addSteps(svn_co)
   f.addStep(ShellCommand(name="qmake", command=["qmake", "-r"]))
   f.addStep(Compile(command=["nmake"]))
   env = {
@@ -107,9 +107,11 @@ def MakeWinBuilder():
   
   dir = SCHAT_RELEASE_BASE + "/" + SCHAT_VERSION
   f.addStep(FileUpload(
+    mode=0644,
     slavesrc="os/win32/out/schat2-" + SCHAT_VERSION + ".exe",
     masterdest=dir + "/schat2-" + SCHAT_VERSION + ".exe"))
   f.addStep(FileUpload(
+    mode=0644,
     slavesrc="os/win32/out/schat2-server-" + SCHAT_VERSION + ".exe",
     masterdest=dir + "/schat2-server-" + SCHAT_VERSION + ".exe"))
   return f
