@@ -16,7 +16,7 @@
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 SCHAT_RESOURCES = 1
-SCHAT_DEBUG     = 1
+SCHAT_DEBUG     = 0
 SCHAT_USE_SSL   = 1
 
 TEMPLATE = lib
