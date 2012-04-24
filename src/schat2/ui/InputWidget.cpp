@@ -16,8 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QAbstractTextDocumentLayout>
 #include <QAction>
-#include <QApplication>
 #include <QFile>
 #include <QKeyEvent>
 #include <QMenu>
@@ -27,6 +27,7 @@
 
 #include "ChatCore.h"
 #include "ChatNotify.h"
+#include "sglobal.h"
 #include "text/HtmlFilter.h"
 #include "text/PlainTextFilter.h"
 #include "ui/ChatIcons.h"
@@ -35,11 +36,9 @@
 
 InputWidget::InputWidget(QWidget *parent)
   : QTextEdit(parent)
-  , m_emptySend(false)
-  , m_scalable(true)
+  , m_resizable(true)
   , m_current(0)
-  , m_lines(0)
-  , m_maxLines(5)
+  , m_lines(1)
   , m_menu(0)
 {
   #if defined(Q_OS_MAC)
@@ -49,9 +48,9 @@ InputWidget::InputWidget(QWidget *parent)
   #endif
   m_default = currentCharFormat();
 
-  setHeight(1);
+  setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-  QFile file(QLatin1String(":/css/input.css"));
+  QFile file(LS(":/css/input.css"));
   if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
     document()->setDefaultStyleSheet(file.readAll());
   }
@@ -73,15 +72,22 @@ ColorButton *InputWidget::color()
 }
 
 
-void InputWidget::adjustHeight()
+QSize InputWidget::minimumSizeHint() const
 {
-  m_scalable = false;
-  setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+  QSize hint = QTextEdit::minimumSizeHint();
+  hint.setHeight(textHeight(m_lines));
+  return hint;
+}
 
-  while (verticalScrollBar()->isVisible() && m_lines < m_maxLines) {
-    setHeight(m_lines + 1);
-    setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-  }
+
+QSize InputWidget::sizeHint() const
+{
+  QSize hint = QTextEdit::sizeHint();
+  int height = textHeight(!m_resizable ? m_lines : 0);
+  if (height < 200)
+    hint.setHeight(textHeight(!m_resizable ? m_lines : 0));;
+
+  return hint;
 }
 
 
@@ -210,6 +216,20 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
 }
 
 
+void InputWidget::resizeEvent(QResizeEvent *event)
+{
+  QTextEdit::resizeEvent(event);
+  updateGeometry();
+}
+
+
+void InputWidget::showEvent(QShowEvent *event)
+{
+  QTextEdit::showEvent(event);
+  updateGeometry();
+}
+
+
 /*!
  * Очистка документа.
  */
@@ -240,14 +260,9 @@ void InputWidget::send()
 
   QString out = filter.filter(html);
   clear();
-  setHeight(1);
 
-  if (PlainTextFilter::filter(out).isEmpty()) {
-    if (m_emptySend)
-      emit send(out);
-
+  if (PlainTextFilter::filter(out).isEmpty())
     return;
-  }
 
   if (m_history.isEmpty() || m_history.last() != html) {
     if (m_history.size() == 10)
@@ -361,12 +376,16 @@ void InputWidget::setUnderline(bool underline)
 
 void InputWidget::textChanged()
 {
-  if (!m_scalable)
-    return;
+  updateGeometry();
+}
 
-  int lineCount = document()->lineCount();
-  if (m_lines != lineCount)
-    setHeight(lineCount);
+
+int InputWidget::textHeight(int lines) const
+{
+  if (lines > 0)
+    return fontMetrics().height() * lines + (frameWidth() + qRound(document()->documentMargin())) * 2;
+  else
+    return qRound(document()->documentLayout()->documentSize().height()) + frameWidth() * 2;
 }
 
 
@@ -380,7 +399,7 @@ void InputWidget::createActions()
 
   m_toolBar = new QToolBar(this);
   m_toolBar->setIconSize(QSize(16, 16));
-  m_toolBar->setStyleSheet("QToolBar { margin:0px; border:0px; }");
+  m_toolBar->setStyleSheet(LS("QToolBar { margin:0px; border:0px; }"));
 
   m_action = new QWidgetAction(this);
   m_action->setDefaultWidget(m_toolBar);
@@ -462,36 +481,4 @@ void InputWidget::retranslateUi()
   m_format.at(Italic)->setText(tr("Italic"));
   m_format.at(Underline)->setText(tr("Underline"));
   m_format.at(Strike)->setText(tr("Strikeout"));
-}
-
-
-void InputWidget::setHeight(int lines)
-{
-  #if defined(Q_OS_MAC)
-  static const int correction = 4;
-  #else
-  static const int correction = 2;
-  #endif
-
-  if (lines > m_maxLines) {
-    lines = m_maxLines;
-    if (lines > 2)
-      setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-  }
-  else
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-  if (m_lines == lines)
-    return;
-
-  m_lines = lines;
-  --lines;
-  int fontSize = QFontInfo(currentFont()).pixelSize();
-  int height = (fontSize * 2 - correction) + fontSize * lines;
-  if (m_lines > 1) {
-    height += 2 * m_lines;
-  }
-
-  setMinimumHeight(height);
-  setMaximumHeight(height);
 }

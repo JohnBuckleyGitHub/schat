@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -39,11 +39,10 @@ public:
 
   InputWidget(QWidget *parent = 0);
   ColorButton *color();
-  inline QAction *action(Actions action) { return m_format.at(action); }
-  inline QStringList history() const { return m_history; }
-  inline void setEmptySend(bool enable) { m_emptySend = enable; }
-  inline void setMaxLines(int lines) { m_maxLines = lines; }
-  void adjustHeight();
+  inline QAction *action(Actions action)    { return m_format.at(action); }
+  inline const QStringList& history() const { return m_history; }
+  QSize minimumSizeHint() const;
+  QSize sizeHint() const;
   void setMsg(int index);
 
 signals:
@@ -55,6 +54,8 @@ protected:
   void contextMenuEvent(QContextMenuEvent *event);
   void focusOutEvent(QFocusEvent *event);
   void keyPressEvent(QKeyEvent *event);
+  void resizeEvent(QResizeEvent *event);
+  void showEvent(QShowEvent *event);
 
 public slots:
   void clear();
@@ -72,19 +73,17 @@ private slots:
   void textChanged();
 
 private:
+  int textHeight(int lines = 0) const;
   void createActions();
   void mergeFormat(const QTextCharFormat &format);
   void nextMsg();
   void prevMsg();
   void retranslateUi();
-  void setHeight(int lines);
 
-  bool m_emptySend;          ///< true если разрешена отправка пустого текста.
-  bool m_scalable;           ///< true если виджет может автоматически изменять свои размеры.
+  bool m_resizable;          ///< true если виджет может автоматически изменять свои размеры.
   ColorButton *m_color;      ///< Кнопка выбора цвета.
   int m_current;             ///< Текущее сообщение в истории.
-  int m_lines;               ///< Высота текста в строчках.
-  int m_maxLines;            ///< Максимальное количество строк.
+  int m_lines;               ///< Минимальная высота текста в строчках.
   QAction *m_clear;          ///< Clear.
   QAction *m_copy;           ///< Copy.
   QAction *m_cut;            ///< Cut.
