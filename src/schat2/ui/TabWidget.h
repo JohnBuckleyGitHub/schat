@@ -71,6 +71,7 @@ protected:
   bool event(QEvent *event);
   void changeEvent(QEvent *event);
   void contextMenuEvent(QContextMenuEvent *event);
+  void keyPressEvent(QKeyEvent *event);
   void mouseReleaseEvent(QMouseEvent *event);
 
 private slots:
