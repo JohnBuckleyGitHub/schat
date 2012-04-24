@@ -399,6 +399,11 @@ bool InputWidget::bypass(QKeyEvent *event)
   if ((event->key() == Qt::Key_Tab || event->key() == Qt::Key_Backtab) && event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
     return true;
 
+  if (event->modifiers() == Qt::ControlModifier) {
+    if (event->key() == Qt::Key_W)
+      return true;
+  }
+
   return false;
 }
 

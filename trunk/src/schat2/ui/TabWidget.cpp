@@ -257,6 +257,19 @@ void TabWidget::contextMenuEvent(QContextMenuEvent *event)
 }
 
 
+void TabWidget::keyPressEvent(QKeyEvent *event)
+{
+  if (event->modifiers() == Qt::ControlModifier) {
+    if (event->key() == Qt::Key_W) {
+      if (currentIndex() != -1 && tabsClosable())
+        closeTab(currentIndex());
+    }
+  }
+
+  QTabWidget::keyPressEvent(event);
+}
+
+
 /*!
  * Закрытие вкладок средней кнопкой мыши.
  */
