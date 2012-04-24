@@ -68,6 +68,16 @@ c = BuildmasterConfig = {
 }
 
 
+c['properties'] = {
+  'version': SCHAT_VERSION,
+  'suffix':  ''
+}
+
+
+if not SCHAT_RELEASE:
+  c['properties']['suffix'] = '-dev'
+
+
 c['schedulers'] = [
   ForceScheduler(
     name="force",
@@ -87,23 +97,16 @@ def MakeDebBuilder():
   f.addStep(ShellCommand(name="deb", command=["bash", "build.sh"], workdir="build/os/ubuntu"))
   
   f.addStep(FileUpload(
-    mode = 0644,
-    slavesrc = WithProperties("os/ubuntu/deb/schat2_" + SCHAT_VERSION + "-1~%(codename)s_%(arch)s.deb"),
-    masterdest=DebMasterFileName("schat2"),
+    mode       = 0644,
+    slavesrc   = WithProperties('os/ubuntu/deb/schat2_%(version)s-1~%(codename)s_%(arch)s.deb'),
+    masterdest = UploadFileName('schat2_%(version)s-1~%(codename)s%(suffix)s_%(arch)s.deb'),
   ))
   f.addStep(FileUpload(
-    mode=0644,
-    slavesrc=WithProperties("os/ubuntu/deb/schatd2_" + SCHAT_VERSION + "-1~%(codename)s_%(arch)s.deb"),
-    masterdest=DebMasterFileName("schatd2")
+    mode       = 0644,
+    slavesrc   = WithProperties('os/ubuntu/deb/schatd2_%(version)s-1~%(codename)s_%(arch)s.deb'),
+    masterdest = UploadFileName('schatd2_%(version)s-1~%(codename)s%(suffix)s_%(arch)s.deb'),
   ))
   return f
-
-
-def DebMasterFileName(base):
-  if SCHAT_RELEASE:
-    return WithProperties(SCHAT_UPLOAD_BASE + "/" + base + "_" + SCHAT_VERSION + "-1~%(codename)s_%(arch)s.deb")
-  else:
-    return WithProperties(SCHAT_UPLOAD_BASE + "/" + base + "_" + SCHAT_VERSION + ".%(got_revision)s-1~%(codename)s~dev_%(arch)s.deb")
 
 
 def MakeWinBuilder():
@@ -123,56 +126,52 @@ def MakeWinBuilder():
   f.addStep(ShellCommand(name='sign dist', command=["cmd", "/c", "sign_dist.cmd"], workdir="build/os/win32", env=env))
   
   f.addStep(FileUpload(
-    mode=0644,
-    slavesrc="os/win32/out/schat2-" + SCHAT_VERSION + ".exe",
-    masterdest=WinMasterFileName("schat2")))
+    mode       = 0644,
+    slavesrc   = WithProperties('os/win32/out/schat2-%(version)s.exe'),
+    masterdest = UploadFileName('schat2-%(version)s%(suffix)s.exe'),
+  ))
   f.addStep(FileUpload(
-    mode=0644,
-    slavesrc="os/win32/out/schat2-server-" + SCHAT_VERSION + ".exe",
-    masterdest=WinMasterFileName("schat2-server")))
+    mode       = 0644,
+    slavesrc   = WithProperties('os/win32/out/schat2-server-%(version)s.exe'),
+    masterdest = UploadFileName('schat2-server-%(version)s%(suffix)s.exe'),
+  ))
   return f
-
-
-def WinMasterFileName(base):
-  if SCHAT_RELEASE:
-    return SCHAT_UPLOAD_BASE + "/" + base + "-" + SCHAT_VERSION + ".exe"
-  else:
-    return WithProperties(SCHAT_UPLOAD_BASE + "/" + base + "-" + SCHAT_VERSION + ".%(got_revision)s-dev.exe")
 
 
 def MakeMacBuilder():
   f = BuildFactory()
   f.addSteps(svn_co)
-  f.addStep(ShellCommand(name="dmg", command=["bash", "deploy.sh"], workdir="build/os/macosx"))
+  f.addStep(ShellCommand(name='dmg', command=['bash', 'deploy.sh'], workdir='build/os/macosx'))
   f.addStep(FileUpload(
-    mode=0644,
-    slavesrc = "os/macosx/dmg/SimpleChat2-" + SCHAT_VERSION + ".dmg",
-    masterdest = MacMasterFileName()))
+    mode       = 0644,
+    slavesrc   = WithProperties('os/macosx/dmg/SimpleChat2-%(version)s.dmg'),
+    masterdest = UploadFileName('SimpleChat2-%(version)s%(suffix)s.dmg'),
+  ))
   return f;
-
-
-def MacMasterFileName():
-  if SCHAT_RELEASE:
-    return SCHAT_UPLOAD_BASE + "/SimpleChat2-" + SCHAT_VERSION + ".dmg"
-  else:
-    return WithProperties(SCHAT_UPLOAD_BASE + "/SimpleChat2-" + SCHAT_VERSION + ".%(got_revision)s-dev.dmg")
   
 
 def MakeSrcBuilder():
   f = BuildFactory()
   f.addSteps(svn_co)
-  f.addStep(ShellCommand(name="tarball", command=["bash", "os/source/tarball.sh"], env = {'SCHAT_SOURCE': SrcFileName()}))
+  f.addStep(ShellCommand(
+    name    = 'tarball',
+    command = ['bash', 'os/source/tarball.sh'],
+    env     = {'SCHAT_SOURCE': WithProperties('schat2-src-%(version)s%(suffix)s')},
+  ))
   f.addStep(FileUpload(
-    mode=0644,
-    slavesrc=SrcFileName("", ".tar.bz2"),
-    masterdest=SrcFileName(SCHAT_UPLOAD_BASE + "/", ".tar.bz2")))
+    mode       = 0644,
+    slavesrc   = WithProperties('schat2-src-%(version)s%(suffix)s.tar.bz2'),
+    masterdest = UploadFileName('schat2-src-%(version)s%(suffix)s.tar.bz2'),
+  ))
   return f;
 
-def SrcFileName(prefix = "", suffix = ""):
+
+def UploadFileName(file):
   if SCHAT_RELEASE:
-    return prefix + "schat2-src-" + SCHAT_VERSION + suffix
+    return WithProperties(SCHAT_UPLOAD_BASE + '/' + file)
   else:
-    return WithProperties(prefix + "schat2-src-" + SCHAT_VERSION + ".%(got_revision)s-dev" + suffix)
+    return WithProperties(SCHAT_UPLOAD_BASE + '/r%(got_revision)s/' + file)
+
 
 c['builders'] = [
   BuilderConfig(name="lucid",
