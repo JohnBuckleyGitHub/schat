@@ -73,6 +73,7 @@ private slots:
   void textChanged();
 
 private:
+  bool bypass(QKeyEvent *event);
   int textHeight(int lines = 0) const;
   void createActions();
   void mergeFormat(const QTextCharFormat &format);
