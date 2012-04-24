@@ -18,6 +18,7 @@
 
 #include <QAbstractTextDocumentLayout>
 #include <QAction>
+#include <QApplication>
 #include <QFile>
 #include <QKeyEvent>
 #include <QMenu>
@@ -33,6 +34,7 @@
 #include "ui/ChatIcons.h"
 #include "ui/ColorButton.h"
 #include "ui/InputWidget.h"
+#include "ui/TabWidget.h"
 
 InputWidget::InputWidget(QWidget *parent)
   : QTextEdit(parent)
@@ -156,6 +158,12 @@ void InputWidget::focusOutEvent(QFocusEvent *event)
 
 void InputWidget::keyPressEvent(QKeyEvent *event)
 {
+  if (bypass(event)) {
+    QApplication::postEvent(TabWidget::i(), new QKeyEvent(event->type(), event->key(), event->modifiers(), event->text(), event->isAutoRepeat(), event->count()));
+    event->ignore();
+    return;
+  }
+
   int key = event->key();
   Qt::KeyboardModifiers modifiers = event->modifiers();
 
@@ -377,6 +385,21 @@ void InputWidget::setUnderline(bool underline)
 void InputWidget::textChanged()
 {
   updateGeometry();
+}
+
+
+/*!
+ * Пересылка клавиатурных сочетаний которые не должны обрабатыватся полем ввода текста.
+ */
+bool InputWidget::bypass(QKeyEvent *event)
+{
+  if (event->key() == Qt::Key_Tab && event->modifiers() == Qt::ControlModifier)
+    return true;
+
+  if ((event->key() == Qt::Key_Tab || event->key() == Qt::Key_Backtab) && event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
+    return true;
+
+  return false;
 }
 
 
