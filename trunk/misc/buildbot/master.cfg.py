@@ -5,7 +5,7 @@ from buildbot.buildslave import BuildSlave
 from buildbot.changes.svnpoller import SVNPoller, split_file_alwaystrunk
 from buildbot.config import BuilderConfig
 from buildbot.process.factory import BuildFactory
-from buildbot.process.properties import WithProperties
+from buildbot.process.properties import WithProperties, Property
 from buildbot.schedulers.forcesched import ForceScheduler
 from buildbot.status import html, web
 from buildbot.steps.shell import Compile, ShellCommand
@@ -112,19 +112,59 @@ def MakeDebBuilder():
 def MakeWinBuilder():
   f = BuildFactory()
   f.addSteps(svn_co)
-  f.addStep(ShellCommand(name="qmake", command=["qmake", "-r"]))
-  f.addStep(Compile(command=["nmake"]))
+  f.addStep(ShellCommand(
+    name          = 'revision',
+    command       = ['cmd', '/c', 'revision.cmd'],
+    workdir       = "build/os/win32",
+    env           = { 'SCHAT_REVISION': Property('got_revision') },
+    haltOnFailure = True,
+  ))
+  f.addStep(ShellCommand(
+    name          = 'qmake',
+    command       = ['qmake', '-r'],
+    haltOnFailure = True,
+  ))
+  f.addStep(Compile(
+    command       = ['nmake'],
+    haltOnFailure = True,
+  ))
   env = {
     'SCHAT_SIGN_FILE':     schat_passwords.SIGN_FILE,
     'SCHAT_SIGN_PASSWORD': schat_passwords.SIGN_PASSWORD,
     'SCHAT_VERSION':       SCHAT_VERSION,
   }
-  f.addStep(ShellCommand(name='sign', command=["cmd", "/c", "sign.cmd"], workdir="build/os/win32", env=env))
-  f.addStep(ShellCommand(name='prepare', command=["cmd", "/c", "prepare.cmd"], workdir="build/os/win32"))
-  f.addStep(ShellCommand(name='nsis', command=["makensis", "setup.nsi"], workdir="build/os/win32"))
-  f.addStep(ShellCommand(name='nsis', command=["makensis", "server.nsi"], workdir="build/os/win32"))
-  f.addStep(ShellCommand(name='sign dist', command=["cmd", "/c", "sign_dist.cmd"], workdir="build/os/win32", env=env))
-  
+  f.addStep(ShellCommand(
+    name          = 'sign',
+    command       = ['cmd', '/c', 'sign.cmd'],
+    workdir       = 'build/os/win32',
+    env           = env,
+    haltOnFailure = True,
+  ))
+  f.addStep(ShellCommand(
+    name          = 'prepare',
+    command       = ['cmd', '/c', 'prepare.cmd'],
+    workdir       = 'build/os/win32',
+    haltOnFailure = True,
+  ))
+  f.addStep(ShellCommand(
+    name          = 'nsis',
+    command       = ['makensis', 'setup.nsi'],
+    workdir       = 'build/os/win32',
+    haltOnFailure = True,
+  ))
+  f.addStep(ShellCommand(
+    name          = 'nsis',
+    command       = ['makensis', 'server.nsi'],
+    workdir       = 'build/os/win32',
+    haltOnFailure = True,
+  ))
+  f.addStep(ShellCommand(
+    name          = 'sign dist',
+    command       = ['cmd', '/c', 'sign_dist.cmd'],
+    workdir       = 'build/os/win32',
+    env           = env,
+    haltOnFailure = True,
+  ))
   f.addStep(FileUpload(
     mode       = 0644,
     slavesrc   = WithProperties('os/win32/out/schat2-%(version)s.exe'),

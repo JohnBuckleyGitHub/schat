@@ -23,6 +23,7 @@
 !include "engine\schat.nsh"
 !include "engine\page-options.nsh"
 !include "engine\update.nsh"
+!include "engine\revision.nsh"
 
 !define SCHAT_META
 !include "engine\sections.nsh"
@@ -41,9 +42,9 @@ SetCompressorDictSize 10
 VIProductVersion "${SCHAT_VERSION}.${SCHAT_REVISION}"
 VIAddVersionKey  "CompanyName"      "IMPOMEZIA"
 VIAddVersionKey  "FileDescription"  "${SCHAT_NAME} Installer"
-VIAddVersionKey  "FileVersion"      "${SCHAT_VERSION}.${SCHAT_REVISION}"
+VIAddVersionKey  "FileVersion"      "${SCHAT_VERSION}"
 VIAddVersionKey  "LegalCopyright"   "${SCHAT_COPYRIGHT}"
-VIAddVersionKey  "OriginalFilename" "${SCHAT_OUT_FILENAME}"
+VIAddVersionKey  "OriginalFilename" "schat2-${SCHAT_VERSION}.exe"
 VIAddVersionKey  "ProductName"      "${SCHAT_NAME}"
 VIAddVersionKey  "ProductVersion"   "${SCHAT_VERSION}"
 
