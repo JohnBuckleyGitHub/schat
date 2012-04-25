@@ -38,10 +38,10 @@ RequestExecutionLevel user
 SetCompressor /SOLID lzma
 SetCompressorDictSize 10
 
-VIProductVersion "${SCHAT_VERSION}.0"
+VIProductVersion "${SCHAT_VERSION}.${SCHAT_REVISION}"
 VIAddVersionKey  "CompanyName"      "IMPOMEZIA"
 VIAddVersionKey  "FileDescription"  "${SCHAT_NAME} Installer"
-VIAddVersionKey  "FileVersion"      "${SCHAT_VERSION}"
+VIAddVersionKey  "FileVersion"      "${SCHAT_VERSION}.${SCHAT_REVISION}"
 VIAddVersionKey  "LegalCopyright"   "${SCHAT_COPYRIGHT}"
 VIAddVersionKey  "OriginalFilename" "${SCHAT_OUT_FILENAME}"
 VIAddVersionKey  "ProductName"      "${SCHAT_NAME}"
