@@ -15,13 +15,21 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS += \
-    common/plugins/GenericNode \
-    common/plugins/Messages \
-    common/plugins/GeoIP \
-    common/plugins/Cache \
-    common/plugins/History \
-    common/plugins/Profile \
-    common/plugins/RawFeeds \
+SCHAT_CLIENT_LIB = 1
+SCHAT_CORE_LIB = 1
+QT = core gui network sql
 
-win32:SUBDIRS += common/plugins/Update
+HEADERS  = \
+   UpdatePlugin.h \
+   UpdatePlugin_p.h \
+
+SOURCES  = \
+   UpdatePlugin.cpp \
+
+unix {
+  macx:target.path += ../../../../out/SimpleChat2.app/Contents/PlugIns/
+  !macx:target.path += $$SCHAT_PREFIX/usr/share/schat2/plugins
+  INSTALLS += target
+}
+
+include(../plugins.pri)
