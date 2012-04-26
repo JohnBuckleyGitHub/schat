@@ -40,6 +40,7 @@ class AboutDialog : public QDialog
 
 public:
   AboutDialog(QWidget *parent = 0);
+  ~AboutDialog();
 
 protected:
   #if defined(Q_WS_WIN)

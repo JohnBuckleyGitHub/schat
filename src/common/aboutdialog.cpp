@@ -88,6 +88,14 @@ AboutDialog::AboutDialog(QWidget *parent)
 }
 
 
+AboutDialog::~AboutDialog()
+{
+# if defined(Q_WS_WIN)
+  QtWin::release(this);
+# endif
+}
+
+
 #if defined(Q_WS_WIN)
 bool AboutDialog::winEvent(MSG *message, long *result)
 {

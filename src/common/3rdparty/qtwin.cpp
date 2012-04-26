@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  * Copyright © 2009 Nokia Corporation and/or its subsidiary(-ies).
  * <http://labs.trolltech.com/blogs/2009/09/15/using-blur-behind-on-windows/>
  *
@@ -118,37 +118,6 @@ bool QtWin::isCompositionEnabled()
 }
 
 /*!
-  * Enables Blur behind on a Widget.
-  *
-  * \a enable tells if the blur should be enabled or not
-  */
-bool QtWin::enableBlurBehindWindow(QWidget *widget, bool enable)
-{
-    Q_ASSERT(widget);
-    bool result = false;
-#ifdef Q_WS_WIN
-    if (resolveLibs()) {
-        DWM_BLURBEHIND bb = {0};
-        HRESULT hr = S_OK;
-        bb.fEnable = enable;
-        bb.dwFlags = DWM_BB_ENABLE;
-        bb.hRgnBlur = NULL;
-        widget->setAttribute(Qt::WA_TranslucentBackground, enable);
-        widget->setAttribute(Qt::WA_NoSystemBackground, enable);
-        hr = pDwmEnableBlurBehindWindow(widget->winId(), &bb);
-        if (SUCCEEDED(hr)) {
-            result = true;
-            windowNotifier()->addWidget(widget);
-        }
-    }
-#else
-    Q_UNUSED(widget)
-    Q_UNUSED(enable)
-#endif
-    return result;
-}
-
-/*!
   * ExtendFrameIntoClientArea.
   *
   * This controls the rendering of the frame inside the window.
@@ -208,6 +177,12 @@ QColor QtWin::colorizatinColor()
     }
 #endif
     return resultColor;
+}
+
+
+void QtWin::release(QWidget *widget)
+{
+  windowNotifier()->removeWidget(widget);
 }
 
 #ifdef Q_WS_WIN

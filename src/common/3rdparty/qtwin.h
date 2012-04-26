@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  * Copyright © 2009 Nokia Corporation and/or its subsidiary(-ies).
  * <http://labs.trolltech.com/blogs/2009/09/15/using-blur-behind-on-windows/>
  *
@@ -43,12 +43,12 @@ class WindowNotifier;
 class QtWin
 {
 public:
-    static bool enableBlurBehindWindow(QWidget *widget, bool enable = true);
     static bool extendFrameIntoClientArea(QWidget *widget,
                                           int left = -1, int top = -1,
                                           int right = -1, int bottom = -1);
     static bool isCompositionEnabled();
     static QColor colorizatinColor();
+    static void release(QWidget *widget);
 
 private:
     static WindowNotifier *windowNotifier();
