@@ -33,7 +33,6 @@ copy ..\..\out\schatd.dll in\
 copy ..\..\misc\tools\server.crt in\
 copy ..\..\misc\tools\server.key in\
 
-
 copy ..\..\out\plugins\Cache.dll in\plugins\
 copy ..\..\out\plugins\GenericNode.dll in\plugins\
 copy ..\..\out\plugins\History.dll in\plugins\
@@ -41,6 +40,7 @@ copy ..\..\out\plugins\Messages.dll in\plugins\
 copy ..\..\out\plugins\RawFeeds.dll in\plugins\
 copy ..\..\out\plugins\Profile.dll in\plugins\
 copy ..\..\out\plugins\GeoIP.dll in\plugins\
+copy ..\..\out\plugins\Update.dll in\plugins\
 
 copy ..\..\res\doc\*.html in\doc\
 
