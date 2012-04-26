@@ -46,6 +46,8 @@ ${L} sec_History            "History"
 ${L} desc_History           "Плагін History"
 ${L} sec_Profile            "Profile"
 ${L} desc_Profile           "Плагін Profile"
+${L} sec_Update             "Update"
+${L} desc_Update            "Плагін Update"
 ${L} sec_RawFeeds           "Raw Feeds"
 ${L} desc_RawFeeds          "Плагін Raw Feeds"
 
