@@ -16,14 +16,78 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QTimer>
 #include <QtPlugin>
 
+#include "ChatCore.h"
+#include "ChatSettings.h"
+#include "sglobal.h"
 #include "UpdatePlugin.h"
 #include "UpdatePlugin_p.h"
+#include "version.h"
 
 UpdatePluginImpl::UpdatePluginImpl(QObject *parent)
   : ChatPlugin(parent)
+  , m_state(Idle)
+  , m_current(0)
+  , m_prefix(LS("Update"))
 {
+  ChatCore::settings()->setLocalDefault(m_prefix + LS("/Url"), LS("http://buildbot.local/update.json"));
+
+  QTimer::singleShot(0, this, SLOT(check()));
+}
+
+
+void UpdatePluginImpl::check()
+{
+  if (m_state != Idle)
+    return;
+
+  if (!SCHAT_REVISION)
+    return;
+
+  m_state = DownloadJSON;
+  m_rawJSON.clear();
+  m_url = ChatCore::settings()->value(m_prefix + LS("/Url")).toUrl();
+  if (!m_url.isValid())
+    return;
+
+  QTimer::singleShot(0, this, SLOT(startDownload()));
+}
+
+
+void UpdatePluginImpl::finished()
+{
+  qDebug() << "";
+  qDebug() << "--- [Update] finished()" << m_rawJSON;
+  qDebug() << "";
+
+  m_current->deleteLater();
+  m_state = Idle;
+}
+
+
+void UpdatePluginImpl::readyRead()
+{
+  qDebug() << "";
+  qDebug() << "--- [Update] readyRead()" << SCHAT_REVISION;
+  qDebug() << "";
+
+  if (m_state == DownloadJSON)
+    m_rawJSON.append(m_current->readAll());
+}
+
+
+void UpdatePluginImpl::startDownload()
+{
+  QNetworkRequest request(m_url);
+  m_current = m_manager.get(request);
+  connect(m_current, SIGNAL(finished()), SLOT(finished()));
+  connect(m_current, SIGNAL(readyRead()), SLOT(readyRead()));
 }
 
 

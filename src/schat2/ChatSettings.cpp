@@ -55,6 +55,15 @@ void ChatSettings::init()
 }
 
 
+void ChatSettings::setLocalDefault(const QString &key, const QVariant &value)
+{
+  setDefault(key, value);
+
+  if (!m_local.contains(key))
+    m_local.append(key);
+}
+
+
 void ChatSettings::setValue(const QString &key, const QVariant &value, bool notify)
 {
   if (QSettings::value(key, m_default.value(key)) == value)
@@ -142,13 +151,4 @@ void ChatSettings::set(const QString &key, const QVariant &value)
   QVariantMap query;
   query[key] = value;
   ChatClient::feeds()->query(LS("settings"), LS("x-set"), query);
-}
-
-
-void ChatSettings::setLocalDefault(const QString &key, const QVariant &value)
-{
-  setDefault(key, value);
-
-  if (!m_local.contains(key))
-    m_local.append(key);
 }

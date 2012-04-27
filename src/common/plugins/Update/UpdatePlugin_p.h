@@ -19,14 +19,40 @@
 #ifndef UPDATEPLUGIN_P_H_
 #define UPDATEPLUGIN_P_H_
 
+#include <QNetworkAccessManager>
+#include <QUrl>
+
 #include "plugins/ChatPlugin.h"
+
+class QNetworkReply;
 
 class UpdatePluginImpl : public ChatPlugin
 {
   Q_OBJECT
 
 public:
+  /// Состояние закачки.
+  enum DownloadState {
+    Idle,          ///< Нет активной закачки.
+    DownloadJSON,  ///< Закачка JSON файла с информацией об обновлении.
+    DownloadUpdate ///< Закачка файла обновления.
+  };
+
   UpdatePluginImpl(QObject *parent);
+
+public slots:
+  void check();
+  void finished();
+  void readyRead();
+  void startDownload();
+
+private:
+  DownloadState m_state;           ///< Состояние закачки.
+  QByteArray m_rawJSON;            ///< Сырые JSON данные.
+  QNetworkAccessManager m_manager; ///< Менеджер доступа к сети.
+  QNetworkReply *m_current;        ///< Текущий ответ за запрос скачивания файла.
+  QString m_prefix;                ///< Префикс настроек.
+  QUrl m_url;                      ///< Текущий адрес.
 };
 
 #endif /* UPDATEPLUGIN_P_H_ */
