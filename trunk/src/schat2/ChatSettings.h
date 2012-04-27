@@ -33,6 +33,7 @@ class SCHAT_CORE_EXPORT ChatSettings : public Settings
 public:
   ChatSettings(const QString &fileName, QObject *parent = 0);
   void init();
+  void setLocalDefault(const QString &key, const QVariant &value);
   void setValue(const QString &key, const QVariant &value, bool notify = true);
 
 private slots:
@@ -43,7 +44,6 @@ private:
   void set();
   void set(const FeedNotify &notify);
   void set(const QString &key, const QVariant &value);
-  void setLocalDefault(const QString &key, const QVariant &value);
 
   QStringList m_local; ///< Список ключей локальных настроек.
 };
