@@ -19,6 +19,7 @@
 #ifndef UPDATEPLUGIN_P_H_
 #define UPDATEPLUGIN_P_H_
 
+#include <QFile>
 #include <QNetworkAccessManager>
 #include <QUrl>
 
@@ -38,21 +39,48 @@ public:
     DownloadUpdate ///< Закачка файла обновления.
   };
 
+  /// Статус проверки обновлений.
+  enum Status {
+    Unknown,         ///< Обновления не проверялись.
+    Unsupported,     ///< Обновления для текущей платформы не поддерживаются.
+    CheckError,      ///< Не удалось получить информацию об обновлениях.
+    NoUpdates,       ///< Нет доступных обновлений, установлена последняя версия.
+    UpdateAvailable, ///< Доступно обновление.
+    DownloadError,   ///< Ошибка при скачивании обновления.
+    UpdateReady      ///< Обновление скачано и готово к применению.
+  };
+
   UpdatePluginImpl(QObject *parent);
+  inline Status status() const { return m_status; }
+
+signals:
+  void done(int status);
 
 public slots:
   void check();
+  void download();
   void finished();
   void readyRead();
   void startDownload();
 
 private:
+  void readJSON();
+  void setDone(Status status);
+
   DownloadState m_state;           ///< Состояние закачки.
   QByteArray m_rawJSON;            ///< Сырые JSON данные.
   QNetworkAccessManager m_manager; ///< Менеджер доступа к сети.
   QNetworkReply *m_current;        ///< Текущий ответ за запрос скачивания файла.
   QString m_prefix;                ///< Префикс настроек.
   QUrl m_url;                      ///< Текущий адрес.
+  Status m_status;                 ///< Статус проверки обновлений.
+
+  // Информация об обновлении.
+  int m_revision;                  ///< SVN ревизия.
+  int m_size;                      ///< Размер обновлений.
+  QByteArray m_hash;               ///< SHA1 контрольная сумма обновлений.
+  QFile m_file;                    ///< Файл обновлений.
+  QString m_version;               ///< Доступная версия.
 };
 
 #endif /* UPDATEPLUGIN_P_H_ */
