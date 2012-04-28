@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -31,6 +31,11 @@ class ChatApp : public QApplication
 public:
   ChatApp(int &argc, char **argv);
   ~ChatApp();
+  void show();
+
+# if defined(Q_WS_WIN)
+  static bool selfUpdate();
+# endif
 
 private:
   ChatCore *m_core;     ///< Глобальный объект чата.
