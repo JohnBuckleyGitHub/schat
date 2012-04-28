@@ -19,6 +19,7 @@
 #include <QDebug>
 
 #include <QApplication>
+#include <QCryptographicHash>
 #include <QFileInfo>
 #include <QNetworkReply>
 #include <QNetworkRequest>
@@ -45,8 +46,18 @@ UpdatePluginImpl::UpdatePluginImpl(QObject *parent)
   ChatCore::settings()->setLocalDefault(m_prefix + LS("/Url"),          LS("http://buildbot.local/update.json"));
   ChatCore::settings()->setLocalDefault(m_prefix + LS("/Channel"),      LS("devel"));
   ChatCore::settings()->setLocalDefault(m_prefix + LS("/AutoDownload"), true);
+  ChatCore::settings()->setLocalDefault(m_prefix + LS("/Ready"),        false);
+  ChatCore::settings()->setLocalDefault(m_prefix + LS("/Version"),      LS(""));
+  ChatCore::settings()->setLocalDefault(m_prefix + LS("/Revision"),     0);
 
+  m_sha1 = new QCryptographicHash(QCryptographicHash::Sha1);
   QTimer::singleShot(0, this, SLOT(check()));
+}
+
+
+UpdatePluginImpl::~UpdatePluginImpl()
+{
+  delete m_sha1;
 }
 
 
@@ -82,15 +93,14 @@ void UpdatePluginImpl::check()
 }
 
 
+/*!
+ * Запуск загрузки обновления.
+ */
 void UpdatePluginImpl::download()
 {
   m_state = DownloadUpdate;
-
-  QString fileName = QFileInfo(m_url.path()).fileName();
-  if (fileName.isEmpty())
-    fileName = LS("update.exe");
-
-  m_file.setFileName(QApplication::applicationDirPath() + LS("/.schat2/") + fileName);
+  m_sha1->reset();
+  m_file.setFileName(QApplication::applicationDirPath() + LS("/.schat2/schat2-") + m_version + LS(".") + QString::number(m_revision) + LS(".exe"));
   if (!m_file.open(QIODevice::WriteOnly))
     return setDone(DownloadError);
 
@@ -108,7 +118,7 @@ void UpdatePluginImpl::finished()
     if (m_state == DownloadJSON)
       readJSON();
     else
-      setDone(DownloadError);
+      checkUpdate();
   }
   else
     setDone(m_state == DownloadJSON ? CheckError : DownloadError);
@@ -123,10 +133,13 @@ void UpdatePluginImpl::readyRead()
   qDebug() << "--- [Update] readyRead()" << m_current->bytesAvailable();
   qDebug() << "";
 
-  if (m_state == DownloadJSON)
-    m_rawJSON.append(m_current->readAll());
+  if (m_state == DownloadUpdate) {
+    QByteArray data = m_current->readAll();
+    m_sha1->addData(data);
+    m_file.write(data);
+  }
   else
-    m_file.write(m_current->readAll());
+    m_rawJSON.append(m_current->readAll());
 }
 
 
@@ -136,6 +149,19 @@ void UpdatePluginImpl::startDownload()
   m_current = m_manager.get(request);
   connect(m_current, SIGNAL(finished()), SLOT(finished()));
   connect(m_current, SIGNAL(readyRead()), SLOT(readyRead()));
+}
+
+
+void UpdatePluginImpl::checkUpdate()
+{
+  m_file.close();
+  if (m_hash == m_sha1->result()) {
+    ChatCore::settings()->setValue(m_prefix + LS("/Version"),  m_version);
+    ChatCore::settings()->setValue(m_prefix + LS("/Revision"), m_revision);
+    setDone(UpdateReady);
+  }
+  else
+    setDone(DownloadError);
 }
 
 
@@ -195,6 +221,8 @@ void UpdatePluginImpl::setDone(Status status)
 
   if (m_file.isOpen())
     m_file.close();
+
+  ChatCore::settings()->setValue(m_prefix + LS("/Ready"), status == UpdateReady);
 
   emit done(status);
 }
