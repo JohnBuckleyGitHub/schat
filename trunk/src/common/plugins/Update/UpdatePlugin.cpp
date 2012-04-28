@@ -85,7 +85,7 @@ void UpdatePluginImpl::check()
   m_hash.clear();
   m_version.clear();
 
-  m_url = ChatCore::settings()->value(m_prefix + LS("/Url")).toUrl();
+  m_url = QUrl(ChatCore::settings()->value(m_prefix + LS("/Url")).toString() + LC('?') + QString::number(QDateTime::currentDateTime().toTime_t()));
   if (!m_url.isValid())
     return setDone(CheckError);;
 
