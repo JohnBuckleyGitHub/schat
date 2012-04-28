@@ -41,6 +41,10 @@
 !macro OPTIONS_PAGE_FUNC
 !if ${SCHAT_PAGE_OPTIONS} == 1
 Function SettingsPage
+  ${If} $update == true
+    Abort
+  ${EndIf}
+
   !insertmacro MUI_HEADER_TEXT "$(STR200)" "$(STR201)"
 
   nsDialogs::Create /NOUNLOAD 1018

@@ -76,12 +76,17 @@ VIAddVersionKey  "ProductVersion"   "${SCHAT_VERSION}"
 
 !insertmacro MUI_RESERVEFILE_LANGDLL
 
+!define MUI_PAGE_CUSTOMFUNCTION_PRE updatePre
 !insertmacro MUI_PAGE_WELCOME
+!define MUI_PAGE_CUSTOMFUNCTION_PRE updatePre
 !insertmacro MUI_PAGE_LICENSE "license.txt"
+!define MUI_PAGE_CUSTOMFUNCTION_PRE updatePre
 !insertmacro MUI_PAGE_COMPONENTS
+!define MUI_PAGE_CUSTOMFUNCTION_PRE updatePre
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro OPTIONS_PAGE
 !insertmacro MUI_PAGE_INSTFILES
+!define MUI_PAGE_CUSTOMFUNCTION_PRE updatePre
 !insertmacro MUI_PAGE_FINISH
 
 !ifdef Core
@@ -121,6 +126,10 @@ Section
   WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "HelpLink"        "${SCHAT_WEB_SITE}"
   WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "URLUpdateInfo"   "${SCHAT_WEB_SITE}"
   WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "DisplayVersion"  "${SCHAT_VERSION}"
+
+  ${If} $update == true
+    Exec '"$INSTDIR\schat2.exe"'
+  ${EndIf}
 SectionEnd
 
 
@@ -174,8 +183,10 @@ SectionEnd
 !insertmacro GetParent
 
 Function .onInit
-  !insertmacro MUI_LANGDLL_DISPLAY
   !insertmacro UPDATE_CMD
+  ${If} $update == false
+  !insertmacro MUI_LANGDLL_DISPLAY
+  ${EndIf}
 
   !insertmacro OPTIONS_PAGE_INIT
   !include "engine\sections.nsh"
@@ -196,3 +207,9 @@ FunctionEnd
 !insertmacro INSERT_TRANSLATIONS
 !insertmacro FIND_RUNNING
 !insertmacro UN_FIND_RUNNING
+
+Function updatePre
+  ${If} $update == true
+    Abort
+  ${EndIf}
+FunctionEnd

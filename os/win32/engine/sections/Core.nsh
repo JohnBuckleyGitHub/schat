@@ -21,6 +21,7 @@ ${Name} Core
 ${Body}
 ${Section}
   SectionIn RO
+  !insertmacro KILL_ALL "schat2.exe"
 
   SetOutPath "$INSTDIR"
   File "${SCHAT_SOURCE}\schat2.exe"

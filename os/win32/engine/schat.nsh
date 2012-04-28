@@ -19,6 +19,8 @@
 !ifndef SCHAT_NSH_
 !define SCHAT_NSH_
 
+Var update
+
 !include "engine\translations.nsh"
 !AddPluginDir "contrib\plugins"
 
@@ -135,7 +137,9 @@
   ${Unless} ${Errors}
     ${GetParent} "$EXEDIR" $R0
     StrCpy $INSTDIR $R0
+    StrCpy $update true
   ${Else}
+    StrCpy $update false
     !if ${SCHAT_CHECK_RUN} == 1
      call findRunningChat
     !endif
