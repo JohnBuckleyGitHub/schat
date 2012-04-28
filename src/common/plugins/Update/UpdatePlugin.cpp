@@ -25,12 +25,14 @@
 #include <QNetworkRequest>
 #include <QTimer>
 #include <QtPlugin>
+#include <qwebkitversion.h>
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
 #include "FileLocations.h"
 #include "JSON.h"
 #include "sglobal.h"
+#include "tools/OsInfo.h"
 #include "tools/Ver.h"
 #include "UpdatePlugin.h"
 #include "UpdatePlugin_p.h"
@@ -146,6 +148,12 @@ void UpdatePluginImpl::readyRead()
 void UpdatePluginImpl::startDownload()
 {
   QNetworkRequest request(m_url);
+  request.setRawHeader("Referer", m_url.toEncoded());
+  request.setRawHeader("User-Agent", QString("Mozilla/5.0 (%1) Qt/%2 AppleWebKit/%3 Simple Chat/%4")
+      .arg(OsInfo::json().value(LS("os")).toString())
+      .arg(qVersion())
+      .arg(qWebKitVersion())
+      .arg(QCoreApplication::applicationVersion()).toLatin1());
   m_current = m_manager.get(request);
   connect(m_current, SIGNAL(finished()), SLOT(finished()));
   connect(m_current, SIGNAL(readyRead()), SLOT(readyRead()));
