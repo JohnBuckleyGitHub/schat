@@ -11,6 +11,7 @@ from buildbot.status import html, web
 from buildbot.steps.shell import Compile, ShellCommand
 from buildbot.steps.source.svn import SVN
 from buildbot.steps.transfer import FileUpload
+from buildbot.steps.master import MasterShellCommand
 
 import schat_passwords
 import os
@@ -81,7 +82,7 @@ if not SCHAT_RELEASE:
 c['schedulers'] = [
   ForceScheduler(
     name="force",
-    builderNames=["lucid", "lucid64", "win32", "macosx", "source"]
+    builderNames=["lucid", "lucid64", "win32", "macosx", "source", "devel"]
   ),
 ]
 
@@ -206,6 +207,22 @@ def MakeSrcBuilder():
   return f;
 
 
+def MakeDevelBuilder():
+  f = BuildFactory()
+  f.addStep(MasterShellCommand(
+    name    = 'Create Update Channel',
+    command = [
+      'php',
+      'devel.php',
+      '--channel', 'devel',
+      '--version', Property('version'),
+      '--rev',     Property('revision'),
+      '--os',      'win32',
+    ]
+  ))
+  return f;
+
+
 def UploadFileName(file):
   if SCHAT_RELEASE:
     return WithProperties(SCHAT_UPLOAD_BASE + '/' + file)
@@ -239,5 +256,9 @@ c['builders'] = [
   BuilderConfig(name="source",
     slavenames=["master"],
     factory=MakeSrcBuilder()
+  ),
+  BuilderConfig(name="devel",
+    slavenames=["master"],
+    factory=MakeDevelBuilder()
   ),
 ]

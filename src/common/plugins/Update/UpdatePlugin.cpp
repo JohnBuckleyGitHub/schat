@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QApplication>
 #include <QCryptographicHash>
 #include <QFileInfo>
@@ -45,8 +43,8 @@ UpdatePluginImpl::UpdatePluginImpl(QObject *parent)
   , m_prefix(LS("Update"))
   , m_status(Unknown)
 {
-  ChatCore::settings()->setLocalDefault(m_prefix + LS("/Url"),          LS("http://buildbot.local/update.json"));
-  ChatCore::settings()->setLocalDefault(m_prefix + LS("/Channel"),      LS("devel"));
+  ChatCore::settings()->setLocalDefault(m_prefix + LS("/Url"),          LS("http://download.schat.me/schat2/update.json"));
+  ChatCore::settings()->setLocalDefault(m_prefix + LS("/Channel"),      LS("stable"));
   ChatCore::settings()->setLocalDefault(m_prefix + LS("/AutoDownload"), true);
   ChatCore::settings()->setLocalDefault(m_prefix + LS("/Ready"),        false);
   ChatCore::settings()->setLocalDefault(m_prefix + LS("/Version"),      LS(""));
@@ -112,10 +110,6 @@ void UpdatePluginImpl::download()
 
 void UpdatePluginImpl::finished()
 {
-  qDebug() << "";
-  qDebug() << "--- [Update] finished()" << m_rawJSON << m_current->error() << m_current->errorString();
-  qDebug() << "";
-
   if (!m_current->error()) {
     if (m_state == DownloadJSON)
       readJSON();
@@ -131,10 +125,6 @@ void UpdatePluginImpl::finished()
 
 void UpdatePluginImpl::readyRead()
 {
-  qDebug() << "";
-  qDebug() << "--- [Update] readyRead()" << m_current->bytesAvailable();
-  qDebug() << "";
-
   if (m_state == DownloadUpdate) {
     QByteArray data = m_current->readAll();
     m_sha1->addData(data);
@@ -223,7 +213,6 @@ void UpdatePluginImpl::readJSON()
 
 void UpdatePluginImpl::setDone(Status status)
 {
-  qDebug() << "== setDone()" << status;
   m_status = status;
   m_state = Idle;
 
