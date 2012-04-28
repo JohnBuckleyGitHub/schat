@@ -25,6 +25,7 @@
 
 #include "plugins/ChatPlugin.h"
 
+class QCryptographicHash;
 class QNetworkReply;
 
 class UpdatePluginImpl : public ChatPlugin
@@ -51,6 +52,7 @@ public:
   };
 
   UpdatePluginImpl(QObject *parent);
+  ~UpdatePluginImpl();
   inline Status status() const { return m_status; }
 
 signals:
@@ -64,11 +66,13 @@ public slots:
   void startDownload();
 
 private:
+  void checkUpdate();
   void readJSON();
   void setDone(Status status);
 
   DownloadState m_state;           ///< Состояние закачки.
   QByteArray m_rawJSON;            ///< Сырые JSON данные.
+  QCryptographicHash *m_sha1;      ///< Класс для проверки SHA1 хеша файла.
   QNetworkAccessManager m_manager; ///< Менеджер доступа к сети.
   QNetworkReply *m_current;        ///< Текущий ответ за запрос скачивания файла.
   QString m_prefix;                ///< Префикс настроек.
