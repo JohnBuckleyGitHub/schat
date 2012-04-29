@@ -43,11 +43,13 @@ c = BuildmasterConfig = {
   'buildbotURL':  "http://buildbot.schat.me/",
   'slavePortnum': 9989,
   'slaves': [
-    BuildSlave("lucid",   schat_passwords.LUCID),
-    BuildSlave("lucid64", schat_passwords.LUCID64),
-    BuildSlave("win32",   schat_passwords.WIN32),
-    BuildSlave("macosx",  schat_passwords.MACOSX),
-    BuildSlave("master",  schat_passwords.MASTER),
+    BuildSlave("lucid",     schat_passwords.LUCID),
+    BuildSlave("lucid64",   schat_passwords.LUCID64),
+    BuildSlave("win32",     schat_passwords.WIN32),
+    BuildSlave("macosx",    schat_passwords.MACOSX),
+    BuildSlave("master",    schat_passwords.MASTER),
+    BuildSlave("precise",   schat_passwords.PRECISE),
+    BuildSlave("precise64", schat_passwords.PRECISE64),
   ],
   'change_source': [
     SVNPoller(
@@ -82,7 +84,7 @@ if not SCHAT_RELEASE:
 c['schedulers'] = [
   ForceScheduler(
     name="force",
-    builderNames=["lucid", "lucid64", "win32", "macosx", "source", "update"]
+    builderNames=["lucid", "lucid64", "win32", "macosx", "source", "precise", "precise64", "update"]
   ),
 ]
 
@@ -243,6 +245,20 @@ c['builders'] = [
     factory=MakeDebBuilder(),
     properties={
       'codename': "lucid",
+      'arch': "amd64",
+  }),
+  BuilderConfig(name="precise",
+    slavenames=["precise"],
+    factory=MakeDebBuilder(),
+    properties={
+      'codename': "precise",
+      'arch': "i386",
+  }),
+  BuilderConfig(name="precise64",
+    slavenames=["precise64"],
+    factory=MakeDebBuilder(),
+    properties={
+      'codename': "precise",
       'arch': "amd64",
   }),
   BuilderConfig(name="win32",
