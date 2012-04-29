@@ -82,7 +82,7 @@ if not SCHAT_RELEASE:
 c['schedulers'] = [
   ForceScheduler(
     name="force",
-    builderNames=["lucid", "lucid64", "win32", "macosx", "source", "devel"]
+    builderNames=["lucid", "lucid64", "win32", "macosx", "source", "update"]
   ),
 ]
 
@@ -213,11 +213,11 @@ def MakeDevelBuilder():
     name    = 'Create Update Channel',
     command = [
       'php',
-      'devel.php',
-      '--channel', 'devel',
-      '--version', Property('version'),
-      '--rev',     Property('revision'),
-      '--os',      'win32',
+      'update.php',
+      '--channel',  Property('channel', default = 'devel'),
+      '--version',  Property('version'),
+      '--revision', Property('revision'),
+      '--os',       Property('os', default = 'win32'),
     ]
   ))
   return f;
@@ -257,7 +257,7 @@ c['builders'] = [
     slavenames=["master"],
     factory=MakeSrcBuilder()
   ),
-  BuilderConfig(name="devel",
+  BuilderConfig(name="update",
     slavenames=["master"],
     factory=MakeDevelBuilder()
   ),
