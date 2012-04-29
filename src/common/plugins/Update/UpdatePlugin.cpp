@@ -177,30 +177,30 @@ void UpdatePluginImpl::readJSON()
   if (json.isEmpty())
     return setDone(CheckError);
 
-  m_version = json.value(LS("version")).toString();
+  QVariantMap os = json.value(LS("win32")).toMap();
+  if (os.isEmpty())
+    return setDone(CheckError);
+
+  m_version = os.value(LS("version")).toString();
   if (m_version.isEmpty() || Ver(m_version) < LS("1.99.25"))
     return setDone(CheckError);
 
-  m_revision = json.value(LS("rev")).toInt();
+  m_revision = os.value(LS("revision")).toInt();
   if (m_revision < 1)
     return setDone(CheckError);
 
   if (SCHAT_REVISION >= m_revision)
     return setDone(NoUpdates);
 
-  QVariantMap file = json.value(LS("win32")).toMap();
-  if (file.isEmpty())
-    return setDone(CheckError);
-
-  m_url = file.value(LS("file")).toUrl();
+  m_url = os.value(LS("file")).toUrl();
   if (!m_url.isValid())
     return setDone(CheckError);
 
-  m_size = file.value(LS("size")).toInt();
+  m_size = os.value(LS("size")).toInt();
   if (m_size < 1)
     return setDone(CheckError);
 
-  m_hash = QByteArray::fromHex(file.value(LS("hash")).toByteArray());
+  m_hash = QByteArray::fromHex(os.value(LS("hash")).toByteArray());
   if (m_hash.size() != 20)
     return setDone(CheckError);
 
