@@ -88,7 +88,10 @@ class Update
    */
   private function fileUrl()
   {
-    return 'http://download.schat.me/schat2/snapshots/' . $this->version . '/r' . $this->revision . '/schat2-' . $this->version . '-dev.exe';
+    if ($this->channel == 'stable')
+      return 'http://impomezia.s3.amazonaws.com/schat/' . $this->version . '/schat2-' . $this->version . '.exe';
+    else
+      return 'http://download.schat.me/schat2/snapshots/' . $this->version . '/r' . $this->revision . '/schat2-' . $this->version . '-dev.exe';
   }
 }
 
