@@ -247,6 +247,14 @@ def MakeReleaseBuilder():
       '--os',       Property('os', default = 'win32'),
     ]
   ))
+  f.addStep(MasterShellCommand(
+    name    = 'Update Site',
+    command = [
+      'php',
+      'site.php',
+      '--version',  SCHAT_VERSION,
+    ]
+  ))
   return f;
 
 
