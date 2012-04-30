@@ -84,7 +84,7 @@ if not SCHAT_RELEASE:
 c['schedulers'] = [
   ForceScheduler(
     name="force",
-    builderNames=["lucid", "lucid64", "win32", "macosx", "source", "precise", "precise64", "update"]
+    builderNames=["lucid", "lucid64", "win32", "macosx", "source", "precise", "precise64", "update", "release"]
   ),
 ]
 
@@ -225,6 +225,31 @@ def MakeDevelBuilder():
   return f;
 
 
+def MakeReleaseBuilder():
+  f = BuildFactory()
+  f.addStep(MasterShellCommand(
+    name    = 'Upload',
+    command = [
+      'bash',
+      'upload.sh',
+      SCHAT_VERSION,
+      Property('revision'),
+    ],
+  ))
+  f.addStep(MasterShellCommand(
+    name    = 'Create Update Channel',
+    command = [
+      'php',
+      'update.php',
+      '--channel',  Property('channel', default = 'stable'),
+      '--version',  SCHAT_VERSION,
+      '--revision', Property('revision'),
+      '--os',       Property('os', default = 'win32'),
+    ]
+  ))
+  return f;
+
+
 def UploadFileName(file):
   if SCHAT_RELEASE:
     return WithProperties(SCHAT_UPLOAD_BASE + '/' + file)
@@ -276,5 +301,9 @@ c['builders'] = [
   BuilderConfig(name="update",
     slavenames=["master"],
     factory=MakeDevelBuilder()
+  ),
+  BuilderConfig(name="release",
+    slavenames=["master"],
+    factory=MakeReleaseBuilder()
   ),
 ]
