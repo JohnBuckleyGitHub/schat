@@ -1,24 +1,24 @@
+/* $Id
+ * IMPOMEZIA Simple Chat
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2003 Justin Karneges <justin@affinix.com> (from KVIrc source code)
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #ifndef _IDLE_H_
 #define _IDLE_H_
-/*
- * Idle.h - detect desktop idle time
- * Copyright (C) 2003  Justin Karneges
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- */
 
 #include <QObject>
 #include <QCursor>
@@ -27,6 +27,9 @@
 
 class IdlePlatform;
 
+/*!
+ * Определяет время неактивности, для установки автоматического статуса Away.
+ */
 class Idle: public QObject
 {
   Q_OBJECT
@@ -35,11 +38,10 @@ public:
   Idle(QObject *parent = 0);
   ~Idle();
 
-  bool isActive() const;
-  bool usingPlatform() const;
+  inline bool isActive() const      { return m_timer.isActive(); }
+  inline bool usingPlatform() const { return m_platform; }
   void start();
   void stop();
-  int secondsIdle();
 
 signals:
   void secondsIdle(int);
@@ -48,11 +50,22 @@ private slots:
   void doCheck();
 
 private:
-  class Private;
-  Private *d;
+  int secondsIdle();
+
+  IdlePlatform *m_platform; ///< Платформозависимая реализация.
+  int m_idleTime;           ///< Время простоя.
+  QDateTime m_since;        ///< Время последней активности.
+  QDateTime m_startTime;    ///< Время запуска.
+  QPoint m_lastPos;         ///< Последняя позиция мыши.
+  QTimer m_timer;           ///< Таймер для проверки неактивности.
 };
 
-class IdlePlatform {
+
+/*!
+ * Базовый интерфейс для платформозависимого определения времени неактивности.
+ */
+class IdlePlatform
+{
 public:
   IdlePlatform();
   ~IdlePlatform();
@@ -63,21 +76,6 @@ public:
 private:
   class Private;
   Private *d;
-};
-
-class Idle::Private {
-public:
-  Private()
-  {
-  }
-
-  QPoint lastMousePos;
-  QDateTime idleSince;
-
-  bool active;
-  int idleTime;
-  QDateTime startTime;
-  QTimer checkTimer;
 };
 
 #endif
