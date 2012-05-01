@@ -23,6 +23,7 @@
 #include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
 #include "hooks/ChannelsImpl.h"
+#include "sglobal.h"
 #include "ui/TabWidget.h"
 
 namespace Hooks
@@ -49,9 +50,11 @@ void ChannelsImpl::add(ClientChannel channel, const ChannelInfo &info, const QVa
   Q_UNUSED(json)
 
   if (info.id() == ChatClient::id()) {
-    ChatCore::settings()->setValue("Profile/Nick",   ChatClient::io()->nick());
-    ChatCore::settings()->setValue("Profile/Gender", channel->gender().raw());
-    ChatCore::settings()->setValue("Profile/Status", channel->status().value());
+    ChatCore::settings()->setValue(LS("Profile/Nick"),   ChatClient::io()->nick());
+    ChatCore::settings()->setValue(LS("Profile/Gender"), channel->gender().raw());
+
+    if (channel->status().value() != Status::AutoAway)
+      ChatCore::settings()->setValue(LS("Profile/Status"), channel->status().value());
   }
 
   if (info.id() == ChatClient::serverId() && info.option() & ChannelInfo::Renamed)

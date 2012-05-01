@@ -87,7 +87,7 @@ void UpdatePluginImpl::check()
 
   m_url = QUrl(ChatCore::settings()->value(m_prefix + LS("/Url")).toString() + LC('?') + QString::number(QDateTime::currentDateTime().toTime_t()));
   if (!m_url.isValid())
-    return setDone(CheckError);;
+    return setDone(CheckError);
 
   QTimer::singleShot(0, this, SLOT(startDownload()));
 }

@@ -37,14 +37,15 @@ class Idle: public QObject
 public:
   Idle(QObject *parent = 0);
   ~Idle();
-
   inline bool isActive() const      { return m_timer.isActive(); }
   inline bool usingPlatform() const { return m_platform; }
-  void start();
-  void stop();
 
 signals:
   void secondsIdle(int);
+
+public slots:
+  void start();
+  void stop();
 
 private slots:
   void doCheck();
