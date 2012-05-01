@@ -17,14 +17,18 @@
 
 SCHAT_CLIENT_LIB = 1
 SCHAT_CORE_LIB = 1
-QT = core
+QT = core gui
 
 HEADERS  = \
+   Idle.h \
    IdlePlugin.h \
    IdlePlugin_p.h \
 
 SOURCES  = \
+   Idle.cpp \
    IdlePlugin.cpp \
+   
+win32:SOURCES += idle_win.cpp
 
 unix {
   macx:target.path += ../../../../out/SimpleChat2.app/Contents/PlugIns/

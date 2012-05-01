@@ -16,15 +16,28 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "IdlePlugin.h"
-#include "IdlePlugin_p.h"
+#include <QDebug>
 
 #include <QtPlugin>
+
+#include "Idle.h"
+#include "IdlePlugin.h"
+#include "IdlePlugin_p.h"
 
 IdlePluginImpl::IdlePluginImpl(QObject *parent)
   : ChatPlugin(parent)
 {
+  m_idle = new Idle(this);
+  m_idle->start();
+  connect(m_idle, SIGNAL(secondsIdle(int)), SLOT(idle(int)));
 }
+
+
+void IdlePluginImpl::idle(int seconds)
+{
+  qDebug() << " ............... IdlePluginImpl::idle()" << seconds;
+}
+
 
 ChatPlugin *IdlePlugin::create()
 {

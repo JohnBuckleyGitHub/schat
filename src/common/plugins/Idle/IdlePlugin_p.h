@@ -21,8 +21,7 @@
 
 #include "plugins/ChatPlugin.h"
 
-class QCryptographicHash;
-class QNetworkReply;
+class Idle;
 
 class IdlePluginImpl : public ChatPlugin
 {
@@ -30,6 +29,12 @@ class IdlePluginImpl : public ChatPlugin
 
 public:
   IdlePluginImpl(QObject *parent);
+
+private slots:
+  void idle(int seconds);
+
+private:
+  Idle *m_idle;
 };
 
 #endif /* IDLEPLUGIN_P_H_ */
