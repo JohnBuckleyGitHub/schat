@@ -41,6 +41,7 @@ copy ..\..\out\plugins\RawFeeds.dll in\plugins\
 copy ..\..\out\plugins\Profile.dll in\plugins\
 copy ..\..\out\plugins\GeoIP.dll in\plugins\
 copy ..\..\out\plugins\Update.dll in\plugins\
+copy ..\..\out\plugins\Idle.dll in\plugins\
 
 copy ..\..\res\doc\*.html in\doc\
 

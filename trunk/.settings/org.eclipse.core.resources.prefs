@@ -1,4 +1,4 @@
-#Thu Apr 26 23:44:43 ICT 2012
+#Tue May 01 20:34:14 ICT 2012
 eclipse.preferences.version=1
 encoding//os/win32/engine/core.nsh=WINDOWS-1251
 encoding//os/win32/engine/default.nsh=WINDOWS-1251
@@ -9,6 +9,7 @@ encoding//os/win32/engine/sections/Cache.nsh=WINDOWS-1251
 encoding//os/win32/engine/sections/Core.nsh=WINDOWS-1251
 encoding//os/win32/engine/sections/Emoticons.Kolobok.nsh=WINDOWS-1251
 encoding//os/win32/engine/sections/History.nsh=WINDOWS-1251
+encoding//os/win32/engine/sections/Idle.nsh=WINDOWS-1251
 encoding//os/win32/engine/sections/Profile.nsh=WINDOWS-1251
 encoding//os/win32/engine/sections/Qt.nsh=WINDOWS-1251
 encoding//os/win32/engine/sections/Update.nsh=WINDOWS-1251

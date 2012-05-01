@@ -231,4 +231,4 @@ ChatPlugin *UpdatePlugin::create()
   return m_plugin;
 }
 
-Q_EXPORT_PLUGIN2(Cache, UpdatePlugin);
+Q_EXPORT_PLUGIN2(Update, UpdatePlugin);

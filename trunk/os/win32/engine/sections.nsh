@@ -50,6 +50,7 @@ ${mod} Emoticons.Kolobok
 ${mod} Cache
 ${mod} History
 ${mod} Profile
+${mod} Idle
 ${mod} Update
 ${mod} RawFeeds
 !ifdef SCHAT_SECTIONS

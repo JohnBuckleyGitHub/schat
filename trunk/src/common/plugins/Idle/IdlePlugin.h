@@ -16,16 +16,32 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#ifndef IDLEPLUGIN_H_
+#define IDLEPLUGIN_H_
 
-#include "revision.h"
+#include "ChatApi.h"
+#include "CoreApi.h"
 
-#define SCHAT_VERSION      "1.99.26"
-#define SCHAT_VERSION_RC   1,99,26,SCHAT_REVISION
-#define SCHAT_NAME         "Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "schat.me"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2012 IMPOMEZIA"
+class IdlePlugin : public QObject, CoreApi, ChatApi
+{
+  Q_OBJECT
+  Q_INTERFACES(CoreApi ChatApi)
 
-#endif /*VERSION_H_*/
+public:
+  QVariantMap header() const
+  {
+    QVariantMap out = CoreApi::header();
+    out["Id"]       = "Idle";
+    out["Name"]     = "Idle";
+    out["Version"]  = "0.1.0";
+    out["Site"]     = "http://wiki.schat.me/Plugin/Idle";
+    out["Desc"]     = "Idle Detect Plugin";
+    out["Required"] = "1.99.26";
+
+    return out;
+  }
+
+  ChatPlugin *create();
+};
+
+#endif /* IDLEPLUGIN_H_ */
