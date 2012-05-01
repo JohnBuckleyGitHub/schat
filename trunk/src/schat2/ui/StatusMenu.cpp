@@ -24,6 +24,7 @@
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
+#include "sglobal.h"
 #include "ui/ChatIcons.h"
 #include "ui/StatusMenu.h"
 
@@ -47,6 +48,7 @@ StatusMenu::StatusMenu(QWidget *parent)
 
   connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
   connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged()));
+  connect(ChatClient::channels(), SIGNAL(channel(const ChannelInfo &)), SLOT(channel(const ChannelInfo &)));
   connect(m_group, SIGNAL(triggered(QAction *)), SLOT(statusChanged(QAction *)));
 }
 
@@ -82,6 +84,13 @@ void StatusMenu::changeEvent(QEvent *event)
 }
 
 
+void StatusMenu::channel(const ChannelInfo &info)
+{
+  if (ChatClient::id() == info.id())
+    reload();
+}
+
+
 void StatusMenu::clientStateChanged()
 {
   reload();
@@ -95,7 +104,7 @@ void StatusMenu::settingsChanged(const QString &key, const QVariant &value)
 {
   Q_UNUSED(value)
 
-  if (key == "Profile/Status" || key == "Profile/Gender") {
+  if (key == LS("Profile/Status") || key == LS("Profile/Gender")) {
     reload();
   }
 }
@@ -109,7 +118,7 @@ void StatusMenu::statusChanged(QAction *action)
 
 void StatusMenu::addStatus(int status)
 {
-  QAction *action = m_group->addAction("");
+  QAction *action = m_group->addAction(QString());
   action->setData(status);
   action->setCheckable(true);
   m_statuses.insert(status, action);
@@ -125,7 +134,7 @@ void StatusMenu::addStatus(int status)
 void StatusMenu::applyStatus(int status)
 {
   ChatClient::channel()->status() = status;
-  ChatCore::settings()->setValue("Profile/Status", ChatClient::channel()->status().value());
+  ChatCore::settings()->setValue(LS("Profile/Status"), ChatClient::channel()->status().value());
 
   if (ChatClient::state() == ChatClient::Online) {
     ChatClient::channels()->update();

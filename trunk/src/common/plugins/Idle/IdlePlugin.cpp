@@ -20,22 +20,58 @@
 
 #include <QtPlugin>
 
+#include "ChatCore.h"
+#include "ChatSettings.h"
+#include "client/ChatClient.h"
+#include "client/ClientChannels.h"
 #include "Idle.h"
 #include "IdlePlugin.h"
 #include "IdlePlugin_p.h"
+#include "sglobal.h"
 
 IdlePluginImpl::IdlePluginImpl(QObject *parent)
   : ChatPlugin(parent)
+  , m_autoAway(0)
 {
+  ChatCore::settings()->setDefault(LS("AutoAway"), 600);
+
   m_idle = new Idle(this);
-  m_idle->start();
   connect(m_idle, SIGNAL(secondsIdle(int)), SLOT(idle(int)));
+
+  QTimer::singleShot(0, this, SLOT(start()));
 }
 
 
 void IdlePluginImpl::idle(int seconds)
 {
   qDebug() << " ............... IdlePluginImpl::idle()" << seconds;
+
+  if (m_autoAway == seconds) {
+    away();
+  }
+  else if (seconds == 0 && ChatClient::channel()->status().value() == Status::AutoAway)
+    away(false);
+}
+
+
+void IdlePluginImpl::start()
+{
+  m_autoAway = ChatCore::settings()->value(LS("AutoAway")).toInt();
+  if (m_autoAway < 1)
+    return;
+
+  m_idle->start();
+}
+
+
+void IdlePluginImpl::away(bool away)
+{
+  int status = Status::AutoAway;
+  if (!away)
+    status = ChatCore::settings()->value(LS("Profile/Status")).toInt();
+
+  ChatClient::channel()->status() = status;
+  ChatClient::channels()->update();
 }
 
 

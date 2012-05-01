@@ -32,9 +32,13 @@ public:
 
 private slots:
   void idle(int seconds);
+  void start();
 
 private:
-  Idle *m_idle;
+  void away(bool away = true);
+
+  Idle *m_idle;   ///< Объект определяющий время бездействия.
+  int m_autoAway; ///< Время в секундах до перехода в статус Auto Away.
 };
 
 #endif /* IDLEPLUGIN_P_H_ */
