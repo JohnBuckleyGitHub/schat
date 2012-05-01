@@ -26,10 +26,13 @@ HEADERS  = \
 
 SOURCES  = \
    Idle.cpp \
-   Idle_stub.cpp \
    IdlePlugin.cpp \
    
-#win32:SOURCES += idle_win.cpp
+win32 {
+  SOURCES += idle_win.cpp
+} else {
+  SOURCES += idle_stub.cpp
+}
 
 unix {
   macx:target.path += ../../../../out/SimpleChat2.app/Contents/PlugIns/
