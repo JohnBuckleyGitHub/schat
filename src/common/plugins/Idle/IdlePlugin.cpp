@@ -16,16 +16,21 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#include "IdlePlugin.h"
+#include "IdlePlugin_p.h"
 
-#include "revision.h"
+#include <QtPlugin>
 
-#define SCHAT_VERSION      "1.99.26"
-#define SCHAT_VERSION_RC   1,99,26,SCHAT_REVISION
-#define SCHAT_NAME         "Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "schat.me"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2012 IMPOMEZIA"
+IdlePluginImpl::IdlePluginImpl(QObject *parent)
+  : ChatPlugin(parent)
+{
+}
 
-#endif /*VERSION_H_*/
+ChatPlugin *IdlePlugin::create()
+{
+  m_plugin = new IdlePluginImpl(this);
+  return m_plugin;
+}
+
+
+Q_EXPORT_PLUGIN2(Idle, IdlePlugin);

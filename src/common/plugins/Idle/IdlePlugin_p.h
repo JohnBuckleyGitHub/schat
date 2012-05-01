@@ -16,16 +16,20 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#ifndef IDLEPLUGIN_P_H_
+#define IDLEPLUGIN_P_H_
 
-#include "revision.h"
+#include "plugins/ChatPlugin.h"
 
-#define SCHAT_VERSION      "1.99.26"
-#define SCHAT_VERSION_RC   1,99,26,SCHAT_REVISION
-#define SCHAT_NAME         "Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "schat.me"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2012 IMPOMEZIA"
+class QCryptographicHash;
+class QNetworkReply;
 
-#endif /*VERSION_H_*/
+class IdlePluginImpl : public ChatPlugin
+{
+  Q_OBJECT
+
+public:
+  IdlePluginImpl(QObject *parent);
+};
+
+#endif /* IDLEPLUGIN_P_H_ */

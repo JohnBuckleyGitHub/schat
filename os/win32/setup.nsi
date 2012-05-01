@@ -24,5 +24,6 @@
 !define Profile
 !define RawFeeds
 !define Update
+!define Idle
 
 !include "engine\core.nsh"
