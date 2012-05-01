@@ -24,4 +24,5 @@ SUBDIRS  = \
     common/plugins/Cache \
     common/plugins/History \
     common/plugins/Profile \
+    common/plugins/Idle \
     common/plugins/RawFeeds \
