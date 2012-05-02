@@ -36,7 +36,9 @@ IdlePluginImpl::IdlePluginImpl(QObject *parent)
   ChatCore::settings()->setDefault(LS("AutoAway"), 600);
 
   m_idle = new Idle(this);
+
   connect(m_idle, SIGNAL(secondsIdle(int)), SLOT(idle(int)));
+  connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
 
   QTimer::singleShot(0, this, SLOT(start()));
 }
@@ -46,11 +48,29 @@ void IdlePluginImpl::idle(int seconds)
 {
   qDebug() << " ............... IdlePluginImpl::idle()" << seconds;
 
-  if (m_autoAway == seconds) {
+  int status = ChatClient::channel()->status().value();
+  if (m_autoAway <= seconds && status != Status::AutoAway) {
     away();
   }
-  else if (seconds == 0 && ChatClient::channel()->status().value() == Status::AutoAway)
+  else if (seconds == 0 && status == Status::AutoAway)
     away(false);
+}
+
+
+void IdlePluginImpl::settingsChanged(const QString &key, const QVariant &value)
+{
+  if (key != LS("AutoAway"))
+    return;
+
+  int autoAway = value.toInt();
+  if (m_autoAway == autoAway)
+    return;
+
+  m_autoAway = autoAway;
+  if (m_autoAway < 1 && m_idle->isActive())
+    m_idle->stop();
+  else if (m_autoAway >= 1 && !m_idle->isActive())
+    m_idle->start();
 }
 
 

@@ -47,7 +47,7 @@ UpdatePluginImpl::UpdatePluginImpl(QObject *parent)
   ChatCore::settings()->setLocalDefault(m_prefix + LS("/Channel"),      LS("stable"));
   ChatCore::settings()->setLocalDefault(m_prefix + LS("/AutoDownload"), true);
   ChatCore::settings()->setLocalDefault(m_prefix + LS("/Ready"),        false);
-  ChatCore::settings()->setLocalDefault(m_prefix + LS("/Version"),      LS(""));
+  ChatCore::settings()->setLocalDefault(m_prefix + LS("/Version"),      QString());
   ChatCore::settings()->setLocalDefault(m_prefix + LS("/Revision"),     0);
 
   m_sha1 = new QCryptographicHash(QCryptographicHash::Sha1);
