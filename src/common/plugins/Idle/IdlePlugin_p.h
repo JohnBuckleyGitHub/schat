@@ -32,6 +32,7 @@ public:
 
 private slots:
   void idle(int seconds);
+  void settingsChanged(const QString &key, const QVariant &value);
   void start();
 
 private:
