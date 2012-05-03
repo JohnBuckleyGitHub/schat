@@ -196,7 +196,8 @@ void AbstractClientPrivate::startReconnectTimer()
     reconnectTimer->start(Protocol::NormalReconnectTime, q);
   }
   else {
-    reconnectTimer->start(Protocol::SlowReconnectTime, q);
+    reconnects = 0;
+    dns->open(url);
   }
 
   ++reconnects;
