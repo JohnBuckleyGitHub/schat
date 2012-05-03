@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -41,9 +41,8 @@ public:
     MaxServerIdleTime = 40000,   ///< Время по истечении, которого сервер разорвёт соединение если не происходит обмена данных.
     FastReconnectTime = 1000,    ///< Задержка после разрыва соединения для быстрой попытки восстановить связь.
     MaxFastReconnects = 2,       ///< Максимальное количество попыток для использования FastReconnectTime.
-    NormalReconnectTime = 10000, ///< Стандартный интервал попыток восстановить соединение.
-    MaxNormalReconnects = 10,    ///< Число попыток восстановить соединение с нормальным интервалом.
-    SlowReconnectTime = 60000    ///< Время между попытками восстановить соединение по истечении MaxFastReconnects + MaxNormalReconnects.
+    NormalReconnectTime = 6000,  ///< Стандартный интервал попыток восстановить соединение.
+    MaxNormalReconnects = 8,     ///< Число попыток восстановить соединение с нормальным интервалом.
   };
 
   /*!
