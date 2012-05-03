@@ -1,0 +1,13 @@
+Source: schat2
+Section: net
+Priority: extra
+Maintainer: Alexander Sedov <impomezia@gmail.com>
+Build-Depends: debhelper (>= 7)
+Standards-Version: 3.8.3
+Homepage: http://schat.me
+
+Package: schat2
+Architecture: any 
+Depends: ${shlibs:Depends}, ${misc:Depends}, libqt4-sql-sqlite (>= 4:4.6.1)
+Description: IMPOMEZIA Simple Chat Client
+ Simple and powerful cross-platform client-server chat for local networks and the Internet.
