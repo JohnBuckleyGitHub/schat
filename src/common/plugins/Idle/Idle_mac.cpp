@@ -2,6 +2,7 @@
  * IMPOMEZIA Simple Chat
  * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  * Copyright © 2003 Justin Karneges <justin@affinix.com> (from KVIrc source code)
+ * Copyright © 2003 Stanford University <http://www.cocoabuilder.com/archive/cocoa/120261-system-idle-time.html#120354>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
