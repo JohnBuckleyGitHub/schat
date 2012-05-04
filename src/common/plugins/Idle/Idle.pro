@@ -33,6 +33,7 @@ include(Idle.pri)
 unix {
   macx {
     SOURCES += idle_mac.cpp
+    LIBS += -framework IOKit -framework Cocoa
   }
   else {
     SOURCES += idle_x11.cpp
