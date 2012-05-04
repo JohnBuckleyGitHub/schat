@@ -15,43 +15,4 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SCHAT_CLIENT_LIB = 1
-SCHAT_CORE_LIB = 1
-QT = core gui
-
-HEADERS  = \
-   Idle.h \
-   IdlePlugin.h \
-   IdlePlugin_p.h \
-
-SOURCES  = \
-   Idle.cpp \
-   IdlePlugin.cpp \
-
-include(Idle.pri)
-
-unix {
-  macx {
-    SOURCES += idle_mac.cpp
-  }
-  else {
-    SOURCES += idle_x11.cpp
-    contains( SCHAT_XSS, 1 ) {
-      LIBS += -lXss
-    else {
-      DEFINES += SCHAT_NO_XSS
-    }
-  }
-} else:win32 {
-  SOURCES += idle_win.cpp
-} else {
-  SOURCES += idle_stub.cpp
-}
-
-unix {
-  macx:target.path += ../../../../out/SimpleChat2.app/Contents/PlugIns/
-  !macx:target.path += $$SCHAT_PREFIX/usr/share/schat2/plugins
-  INSTALLS += target
-}
-
-include(../plugins.pri)
+SCHAT_XSS = 1
