@@ -38,7 +38,7 @@ unix {
     SOURCES += idle_x11.cpp
     contains( SCHAT_XSS, 1 ) {
       LIBS += -lXss
-    else {
+    } else {
       DEFINES += SCHAT_NO_XSS
     }
   }
