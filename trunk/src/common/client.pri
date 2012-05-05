@@ -46,6 +46,7 @@ HEADERS += \
     net/SimpleSocket_p.h \
     net/TransportReader.h \
     net/TransportWriter.h \
+    Path.h \
     Plugins.h \
     schat.h \
     Settings.h \
@@ -86,6 +87,7 @@ SOURCES += \
     net/SimpleSocket.cpp \
     net/TransportReader.cpp \
     net/TransportWriter.cpp \
+    Path.cpp \
     Plugins.cpp \
     Settings.cpp \
     text/HtmlFilter.cpp \
@@ -95,6 +97,10 @@ SOURCES += \
     tools/Ver.cpp \
     Tr.cpp \
     Translation.cpp \
+
+win32: SOURCES      += Path_win.cpp
+unix:!macx: SOURCES += Path_unix.cpp
+macx: SOURCES       += Path_mac.cpp
 
 !contains( SCHAT_LITTLE_CLIENT, 1 ) {
   HEADERS += \
