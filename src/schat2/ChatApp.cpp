@@ -26,6 +26,7 @@
 #include "ChatApp.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "Path.h"
 #include "sglobal.h"
 #include "ui/ChatWindow.h"
 #include "version.h"
@@ -46,6 +47,8 @@ ChatApp::ChatApp(int &argc, char **argv)
 
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
   QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
+
+  Path::init();
 
   QPalette palette = this->palette();
   palette.setColor(QPalette::Inactive, QPalette::Highlight, palette.color(QPalette::Highlight));
