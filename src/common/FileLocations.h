@@ -24,6 +24,9 @@
 
 #include "schat.h"
 
+/*!
+ * \deprecated Этот класс должен быть заменён на класс Path.
+ */
 class SCHAT_EXPORT FileLocations : public QObject
 {
   Q_OBJECT

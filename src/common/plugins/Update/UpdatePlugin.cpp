@@ -27,8 +27,8 @@
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
-#include "FileLocations.h"
 #include "JSON.h"
+#include "Path.h"
 #include "sglobal.h"
 #include "tools/OsInfo.h"
 #include "tools/Ver.h"
@@ -75,7 +75,10 @@ void UpdatePluginImpl::check()
   if (!SCHAT_REVISION)
     return setDone(Unsupported);
 
-  if (ChatCore::locations()->path(FileLocations::BaseName) != LS("schat2"))
+  if (!Path::isPortable())
+    return setDone(Unsupported);
+
+  if (Path::app() != LS("schat2"))
     return setDone(Unsupported);
 
   m_state = DownloadJSON;
