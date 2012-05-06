@@ -35,3 +35,16 @@ QString Path::data(Scope scope)
 
   return LS("/usr/share/") + m_app;
 }
+
+
+QStringList Path::plugins()
+{
+  QStringList out;
+  out.append(data(SystemScope) + LS("/plugins/qt"));
+  out.append(data(SystemScope) + LS("/plugins"));
+
+  if (!isPortable())
+    out.append(data() + LS("/plugins"));
+
+  return out;
+}

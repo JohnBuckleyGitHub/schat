@@ -30,3 +30,16 @@ QString Path::data(Scope scope)
 
   return QDir::cleanPath(m_appDirPath + LS("/../Resources"));
 }
+
+
+QStringList Path::plugins()
+{
+  QStringList out;
+  out.append(QDir::cleanPath(m_appDirPath + LS("/../PlugIns")) + LS("/qt"));
+  out.append(QDir::cleanPath(m_appDirPath + LS("/../PlugIns")));
+
+  if (!isPortable())
+    out.append(data() + LS("/plugins"));
+
+  return out;
+}
