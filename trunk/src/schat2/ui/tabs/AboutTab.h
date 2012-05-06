@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 
 #include "ui/tabs/AbstractTab.h"
 
+class AboutTr;
 class QUrl;
 class QWebView;
 
@@ -30,15 +31,21 @@ class AboutTab : public AbstractTab
 
 public:
   AboutTab(TabWidget *parent);
+  ~AboutTab();
+
+  Q_INVOKABLE QString path(const QString &type) const;
+  Q_INVOKABLE QString version(const QString &type) const;
 
 private slots:
   void linkClicked(const QUrl &url);
+  void populateJavaScriptWindowObject();
 
 private:
   QString fileUrl(const QString &fileName) const;
   void retranslateUi();
 
-  QWebView *m_view;
+  AboutTr *m_tr;    ///< Класс перевода строк.
+  QWebView *m_view; ///< Главный виджет.
 };
 
 #endif /* ABOUTTAB_H_ */
