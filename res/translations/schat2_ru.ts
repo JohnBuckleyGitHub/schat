@@ -5,49 +5,47 @@
 <context>
     <name>AboutTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="73"/>
+        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="149"/>
         <source>About</source>
         <translation>О Simple Chat</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="79"/>
-        <source>All rights reserved.</source>
-        <translation>Все права защищены.</translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="80"/>
-        <source>License</source>
-        <translation>Лицензия</translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="81"/>
-        <source>Site</source>
-        <translation>Сайт</translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="82"/>
-        <source>Paths</source>
-        <translation>Пути</translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="83"/>
-        <source>Third parties</source>
-        <translation>Третьи стороны</translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="84"/>
-        <source>Preferences</source>
-        <translation>Настройки</translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="88"/>
+        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="113"/>
         <source> (32 bit)</source>
         <translation> (32 бит)</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="88"/>
+        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="113"/>
         <source> (64 bit)</source>
         <translation> (64 бит)</translation>
+    </message>
+</context>
+<context>
+    <name>AboutTr</name>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="49"/>
+        <source>Paths</source>
+        <translation>Пути</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="50"/>
+        <source>Third parties</source>
+        <translation>Третьи стороны</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="51"/>
+        <source>This software is released under the terms of the &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0-standalone.html&quot;&gt;GNU General Public License&lt;/a&gt; version 3.</source>
+        <translation>Это программное обеспечение предоставляется на условиях &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0-standalone.html&quot;&gt;GNU General Public License&lt;/a&gt; версии 3.</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="52"/>
+        <source>All rights reserved.</source>
+        <translation>Все права защищены.</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="53"/>
+        <source>Preferences</source>
+        <translation>Настройки</translation>
     </message>
 </context>
 <context>
@@ -221,56 +219,56 @@
 <context>
     <name>InputWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="375"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="456"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="422"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="503"/>
         <source>Cut</source>
         <translation>Вырезать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="376"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="457"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="423"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="504"/>
         <source>Copy</source>
         <translation>Копировать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="377"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="458"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="424"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="505"/>
         <source>Paste</source>
         <translation>Вставить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="378"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="459"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="425"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="506"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="379"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="460"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="426"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="507"/>
         <source>Select All</source>
         <translation>Выделить всё</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="389"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="461"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="436"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="508"/>
         <source>Bold</source>
         <translation>Полужирный</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="395"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="462"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="442"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="509"/>
         <source>Italic</source>
         <translation>Курсив</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="401"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="463"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="448"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="510"/>
         <source>Underline</source>
         <translation>Подчёркнутый</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="407"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="464"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="454"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="511"/>
         <source>Strikeout</source>
         <translation>Зачёркнутый</translation>
     </message>
@@ -756,7 +754,7 @@
         <translation>Сервер не найден</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="211"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="212"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
@@ -764,27 +762,27 @@
 <context>
     <name>StatusMenu</name>
     <message>
-        <location filename="../../src/schat2/ui/StatusMenu.cpp" line="58"/>
+        <location filename="../../src/schat2/ui/StatusMenu.cpp" line="60"/>
         <source>Offline</source>
         <translation>Не в сети</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusMenu.cpp" line="62"/>
+        <location filename="../../src/schat2/ui/StatusMenu.cpp" line="64"/>
         <source>Away</source>
         <translation>Отсутствую</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusMenu.cpp" line="65"/>
+        <location filename="../../src/schat2/ui/StatusMenu.cpp" line="67"/>
         <source>Do not disturb</source>
         <translation>Не беспокоить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusMenu.cpp" line="68"/>
+        <location filename="../../src/schat2/ui/StatusMenu.cpp" line="70"/>
         <source>Free for Chat</source>
         <translation>Готов общаться</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusMenu.cpp" line="71"/>
+        <location filename="../../src/schat2/ui/StatusMenu.cpp" line="73"/>
         <source>Online</source>
         <translation>В сети</translation>
     </message>
