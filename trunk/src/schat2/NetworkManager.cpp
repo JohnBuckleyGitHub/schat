@@ -26,9 +26,9 @@
 #include "ChatSettings.h"
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
-#include "FileLocations.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
+#include "Path.h"
 #include "sglobal.h"
 
 NetworkItem::NetworkItem()
@@ -76,7 +76,7 @@ NetworkItem* NetworkItem::item()
 
 void NetworkItem::read()
 {
-  QSettings settings(ChatCore::locations()->path(FileLocations::ConfigFile), QSettings::IniFormat);
+  QSettings settings(Path::config(), QSettings::IniFormat);
   settings.setIniCodec("UTF-8");
 
   settings.beginGroup(SimpleID::encode(m_id));
@@ -89,7 +89,7 @@ void NetworkItem::read()
 
 void NetworkItem::write()
 {
-  QSettings settings(ChatCore::locations()->path(FileLocations::ConfigFile), QSettings::IniFormat);
+  QSettings settings(Path::config(), QSettings::IniFormat);
   settings.setIniCodec("UTF-8");
   settings.beginGroup(SimpleID::encode(m_id));
   settings.setValue(LS("Auth"),    auth());
@@ -236,7 +236,7 @@ QString NetworkManager::root(const QByteArray &id) const
   if (id.isEmpty())
     return QString();
 
-  QString out = ChatCore::locations()->path(FileLocations::ConfigPath) + LS("/.") + ChatCore::locations()->path(FileLocations::BaseName) + LC('/') + SimpleID::encode(id);
+  QString out = Path::cache() + LC('/') + SimpleID::encode(id);
   if (!QFile::exists(out))
     QDir().mkpath(out);
 
@@ -339,7 +339,7 @@ void NetworkManager::load()
     return;
 
   QList<QByteArray> invalids;
-  Settings settings(ChatCore::locations()->path(FileLocations::ConfigFile), this);
+  Settings settings(Path::config(), this);
 
   // Чтение данных серверов.
   for (int i = 0; i < m_networks.data.size(); ++i) {

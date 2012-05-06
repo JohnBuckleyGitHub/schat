@@ -37,7 +37,6 @@ private slots:
   void ready();
 
 private:
-  QString dnsCache() const;
   void load(ClientChannel channel);
   void loadCache();
 };
