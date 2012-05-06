@@ -19,6 +19,8 @@
 VERSION="1.99.27"
 TARGET="SimpleChat2"
 
+set -e
+
 cd ../..
 qmake -r
 make -j9
