@@ -40,6 +40,7 @@ ${Section}
 
   WriteRegStr HKCU "${SCHAT_REGKEY}" "" $INSTDIR
   WriteUninstaller "$INSTDIR\uninstall.exe"
+  WriteINIStr "$INSTDIR\schat2.init" "General" "Portable" true
 ${SectionEnd}
 ${BodyEnd}
 

@@ -34,7 +34,6 @@
 #include "client/ClientMessages.h"
 #include "client/SimpleClient.h"
 #include "feeds/FeedStorage.h"
-#include "FileLocations.h"
 #include "hooks/ChannelMenu.h"
 #include "hooks/ChannelMenuImpl.h"
 #include "hooks/ChannelsImpl.h"
@@ -48,6 +47,7 @@
 #include "hooks/UserMenuImpl.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
+#include "Path.h"
 #include "Profile.h"
 #include "sglobal.h"
 #include "text/HtmlFilter.h"
@@ -67,9 +67,7 @@ ChatCore::ChatCore(QObject *parent)
   qsrand(QDateTime::currentDateTime().toTime_t());
 
   new ChatUrls(this);
-
-  m_locations = new FileLocations(this);
-  m_settings = new ChatSettings(m_locations->path(FileLocations::ConfigFile), this);
+  m_settings = new ChatSettings(Path::config(), this);
 
   loadTranslation();
 
@@ -156,6 +154,6 @@ void ChatCore::start()
 void ChatCore::loadTranslation()
 {
   m_translation = new Translation(this);
-  m_translation->setSearch(QStringList() << (m_locations->path(FileLocations::SharePath) + LS("/translations")) << (m_locations->path(FileLocations::ConfigPath) + LS("/translations")));
+  m_translation->setSearch(QStringList() << (Path::data(Path::SystemScope) + LS("/translations")) << (Path::data() + LS("/translations")));
   m_translation->load(m_settings->value(QLatin1String("Translation")).toString());
 }

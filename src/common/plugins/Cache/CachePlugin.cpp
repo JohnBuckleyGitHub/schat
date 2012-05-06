@@ -30,11 +30,11 @@
 #include "client/SimpleClient.h"
 #include "feeds/CacheFeeds.h"
 #include "feeds/CacheFeedStorage.h"
+#include "JSON.h"
 #include "net/dns/ChatDNS.h"
 #include "NetworkManager.h"
+#include "Path.h"
 #include "sglobal.h"
-#include "FileLocations.h"
-#include "JSON.h"
 
 Cache::Cache(QObject *parent)
   : ChatPlugin(parent)
@@ -91,16 +91,10 @@ void Cache::open()
 
 void Cache::ready()
 {
-  QFile file(dnsCache());
+  QFile file(Path::cache() + LS("/dns.cache"));
   if (file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
     file.write(JSON::generate(ChatClient::io()->dns()->cache()));
   }
-}
-
-
-QString Cache::dnsCache() const
-{
-  return ChatCore::locations()->path(FileLocations::ConfigPath) + LS("/.") + ChatCore::locations()->path(FileLocations::BaseName) + LS("/dns.cache");
 }
 
 
@@ -127,7 +121,7 @@ void Cache::load(ClientChannel channel)
 
 void Cache::loadCache()
 {
-  QFile file(dnsCache());
+  QFile file(Path::cache() + LS("/dns.cache"));
   if (file.open(QIODevice::ReadOnly)) {
     QVariantMap data = JSON::parse(file.readAll()).toMap();
     ChatClient::io()->dns()->setCache(data);

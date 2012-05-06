@@ -40,6 +40,7 @@ public:
   inline static bool isPortable()    { return m_portable; }
   inline static QString app()        { return m_app; }
   inline static QString appDirPath() { return m_appDirPath; }
+  static QString cache();
   static QString config();
   static QString data(Scope scope = UserScope);
 

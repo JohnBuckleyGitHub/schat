@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QtPlugin>
 
 #include "ChatCore.h"
@@ -46,8 +44,6 @@ IdlePluginImpl::IdlePluginImpl(QObject *parent)
 
 void IdlePluginImpl::idle(int seconds)
 {
-  qDebug() << " ............... IdlePluginImpl::idle()" << seconds;
-
   int status = ChatClient::channel()->status().value();
   int diff = seconds - m_autoAway; // Уведомления могут приходить не каждую секунду.
   if ((diff >= 0 && diff < 5) && status != Status::AutoAway) {

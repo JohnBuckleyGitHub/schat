@@ -19,6 +19,7 @@
 #include <QDebug>
 
 #include <QCoreApplication>
+#include <QDir>
 #include <QFileInfo>
 #include <QSettings>
 
@@ -37,6 +38,21 @@ void Path::init()
   QSettings s(m_appDirPath + LC('/') + m_app + LS(".init"), QSettings::IniFormat);
   s.setIniCodec("UTF-8");
   m_portable = s.value(LS("Portable"), false).toBool();
+
+  QDir().mkpath(data());
+  QDir().mkpath(cache());
+}
+
+
+/*!
+ * Возвращает папку для размещения кешей.
+ */
+QString Path::cache()
+{
+  if (isPortable())
+    return data() + LS("/.") + app();
+
+  return data();
 }
 
 

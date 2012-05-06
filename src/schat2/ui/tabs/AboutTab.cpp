@@ -26,10 +26,10 @@
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
-#include "FileLocations.h"
+#include "Path.h"
+#include "ui/ChatIcons.h"
 #include "ui/tabs/AboutTab.h"
 #include "version.h"
-#include "ui/ChatIcons.h"
 
 AboutTab::AboutTab(TabWidget *parent)
   : AbstractTab(QByteArray(), AboutType, parent)
@@ -82,7 +82,7 @@ void AboutTab::retranslateUi()
     page.replace("%paths%", tr("Paths"));
     page.replace("%3rdparty%", tr("Third parties"));
     page.replace("%preferences%", tr("Preferences"));
-    page.replace("%preferences-file%", fileUrl(ChatCore::i()->locations()->path(FileLocations::ConfigFile)));
+    page.replace("%preferences-file%", fileUrl(Path::config()));
 
     page.replace("%edition%", QLibraryInfo::licensee());
     page.replace("%qt-version%", qVersion() + (QSysInfo::WordSize == 32 ? tr(" (32 bit)") : tr(" (64 bit)")));

@@ -16,7 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "FileLocations.h"
 #include "Settings.h"
 
 Settings::Settings(const QString &fileName, QObject *parent)
