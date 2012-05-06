@@ -28,10 +28,10 @@
 #include "DataBase.h"
 #include "DateTime.h"
 #include "feeds/FeedStorage.h"
-#include "FileLocations.h"
 #include "JSON.h"
 #include "net/SimpleID.h"
 #include "NodeLog.h"
+#include "Path.h"
 #include "sglobal.h"
 #include "Storage.h"
 
@@ -45,12 +45,10 @@ DataBase::DataBase(QObject *parent)
 
 int DataBase::start()
 {
-  QSqlDatabase db = QSqlDatabase::addDatabase(QLatin1String("QSQLITE"));
-  QDir dir(Storage::i()->locations()->path(FileLocations::VarPath));
-  if (!dir.exists())
-    dir.mkpath(dir.absolutePath());
+  QSqlDatabase db = QSqlDatabase::addDatabase(LS("QSQLITE"));
+  QDir().mkpath(Storage::varPath());
 
-  db.setDatabaseName(dir.absolutePath() + QLatin1String("/") + Storage::i()->locations()->path(FileLocations::BaseName) + QLatin1String(".sqlite"));
+  db.setDatabaseName(Storage::varPath() + LC('/') + Path::app() + LS(".sqlite"));
   if (!db.open()) {
     SCHAT_LOG_FATAL() << "Could not open DataBase file" << db.databaseName() << ":" << db.lastError();
     QCoreApplication::exit(-1);

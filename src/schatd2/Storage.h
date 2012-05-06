@@ -25,7 +25,6 @@
 #include "net/SimpleID.h"
 #include "ServerChannel.h"
 
-class FileLocations;
 class NodeLog;
 class ServerData;
 class Settings;
@@ -37,12 +36,13 @@ class SCHAT_EXPORT Storage : public QObject
 public:
   Storage(QObject *parent = 0);
   ~Storage();
-  inline static FileLocations *locations() { return m_self->m_locations; }
   inline static QByteArray privateId()     { return m_self->m_privateId; }
   inline static QByteArray serverId()      { return m_self->m_id; }
   inline static Settings *settings()       { return m_self->m_settings; }
   inline static Storage *i()               { return m_self; }
+  static QString etcPath();
   static QString serverName();
+  static QString varPath();
 
   int load();
   int start();
@@ -51,7 +51,6 @@ private:
   void setDefaultSslConf();
   void setMaxOpenFiles(int max);
 
-  FileLocations *m_locations;                    ///< Схема размещения файлов.
   NodeLog *m_log;                                ///< Журнал.
   QByteArray m_id;                               ///< Публичный идентификатор сервера.
   QByteArray m_privateId;                        ///< Приватный идентификатор сервера.

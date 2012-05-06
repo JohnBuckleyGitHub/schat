@@ -22,7 +22,6 @@
 #include <QSqlQuery>
 
 #include "cores/Core.h"
-#include "FileLocations.h"
 #include "net/packets/MessageNotice.h"
 #include "NodeMessagesDB.h"
 #include "sglobal.h"
@@ -40,7 +39,7 @@ NodeMessagesDB::NodeMessagesDB()
 bool NodeMessagesDB::open()
 {
   QSqlDatabase db = QSqlDatabase::addDatabase(LS("QSQLITE"), m_id);
-  db.setDatabaseName(Storage::locations()->path(FileLocations::VarPath) + LS("/messages.sqlite"));
+  db.setDatabaseName(Storage::varPath() + LS("/messages.sqlite"));
   if (!db.open())
     return false;
 
