@@ -41,6 +41,10 @@ void Path::init()
 
   QDir().mkpath(data());
   QDir().mkpath(cache());
+
+  foreach (QString path, plugins()) {
+    QCoreApplication::addLibraryPath(path);
+  }
 }
 
 

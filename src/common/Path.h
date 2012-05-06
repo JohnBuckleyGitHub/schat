@@ -19,7 +19,7 @@
 #ifndef PATH_H_
 #define PATH_H_
 
-#include <QString>
+#include <QStringList>
 
 #include "schat.h"
 
@@ -43,6 +43,7 @@ public:
   static QString cache();
   static QString config();
   static QString data(Scope scope = UserScope);
+  static QStringList plugins();
 
 private:
   static bool m_portable;      ///< \b true если все файлы чат хранит в своей папке.
