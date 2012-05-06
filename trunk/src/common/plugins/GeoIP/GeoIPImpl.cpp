@@ -17,17 +17,17 @@
  */
 
 #include "GeoIPImpl.h"
+#include "Path.h"
 #include "QGeoIP.h"
-#include "Storage.h"
-#include "FileLocations.h"
 #include "sglobal.h"
+#include "Storage.h"
 
 GeoIPImpl::GeoIPImpl()
   : GeoHook()
 {
   m_geo = new QGeoIP();
 
-  QString path = Storage::locations()->path(FileLocations::SharePath) + LS("/res/");
+  QString path = Path::data(Path::SystemScope) + LS("/res/");
   m_geo->open(path + LS("GeoLiteCity.dat"), path + LS("GeoIPASNum.dat"));
 }
 

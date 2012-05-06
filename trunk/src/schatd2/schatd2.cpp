@@ -22,13 +22,14 @@
 #include "NodeInit.h"
 #include "version.h"
 
-
 int main(int argc, char *argv[])
 {
   QCoreApplication app(argc, argv);
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
   app.setApplicationName(SCHAT_NAME);
   app.setApplicationVersion(SCHAT_VERSION);
+  app.setOrganizationName(SCHAT_ORGANIZATION);
+  app.setOrganizationDomain(SCHAT_DOMAIN);
 
   NodeInit *init = new NodeInit();
   int result = app.exec();

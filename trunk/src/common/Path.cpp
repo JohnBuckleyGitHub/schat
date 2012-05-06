@@ -67,3 +67,15 @@ QString Path::config()
 {
   return data() + LC('/') + app() + LS(".conf");
 }
+
+
+QString Path::file(const QString &path, const QString &name)
+{
+  if (name.isEmpty())
+    return name;
+
+  if (!QFileInfo(name).isRelative())
+    return name;
+
+  return QDir::cleanPath(path + LC('/') + name);
+}

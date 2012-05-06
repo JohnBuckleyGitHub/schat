@@ -31,13 +31,14 @@
 #include "DateTime.h"
 #include "debugstream.h"
 #include "feeds/FeedStorage.h"
-#include "FileLocations.h"
 #include "net/packets/auth.h"
 #include "net/Protocol.h"
 #include "net/SimpleID.h"
 #include "NodeLog.h"
 #include "Normalize.h"
+#include "Path.h"
 #include "Settings.h"
+#include "sglobal.h"
 #include "Storage.h"
 
 Storage *Storage::m_self = 0;
@@ -46,22 +47,20 @@ Storage::Storage(QObject *parent)
   : QObject(parent)
 {
   m_self = this;
-
+  Path::init();
   Normalize::init();
 
   new Ch(this);
 
-  m_locations = new FileLocations(this);
-
   // Инициализация настроек по умолчанию.
-  m_settings = new Settings(m_locations->path(FileLocations::ConfigFile), this);
-  m_settings->setDefault("Certificate",  QLatin1String("server.crt"));
-  m_settings->setDefault("Listen",       QStringList("0.0.0.0:7667"));
-  m_settings->setDefault("LogLevel",     2);
-  m_settings->setDefault("MaxOpenFiles", 0);
-  m_settings->setDefault("PrivateId",    QString(SimpleID::encode(SimpleID::uniqueId())));
-  m_settings->setDefault("PrivateKey",   QLatin1String("server.key"));
-  m_settings->setDefault("Workers",      0);
+  m_settings = new Settings(etcPath() + LC('/') + Path::app() + LS(".conf"), this);
+  m_settings->setDefault(LS("Certificate"),  LS("server.crt"));
+  m_settings->setDefault(LS("Listen"),       QStringList("0.0.0.0:7667"));
+  m_settings->setDefault(LS("LogLevel"),     2);
+  m_settings->setDefault(LS("MaxOpenFiles"), 0);
+  m_settings->setDefault(LS("PrivateId"),    QString(SimpleID::encode(SimpleID::uniqueId())));
+  m_settings->setDefault(LS("PrivateKey"),   LS("server.key"));
+  m_settings->setDefault(LS("Workers"),      0);
 
   m_log = new NodeLog;
   new FeedStorage(this);
@@ -74,11 +73,33 @@ Storage::~Storage()
 }
 
 
+QString Storage::etcPath()
+{
+# if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
+  if (!Path::isPortable())
+    return LS("/etc/") + Path::app();
+# endif
+
+  return Path::data();
+}
+
+
 QString Storage::serverName()
 {
   qDebug() << "serverName()" << Ch::server()->name();
 
   return Ch::server()->name();
+}
+
+
+QString Storage::varPath()
+{
+# if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
+  if (!Path::isPortable())
+    return LS("/var/lib/") + Path::app();
+# endif
+
+  return Path::cache();
 }
 
 
@@ -95,12 +116,18 @@ int Storage::load()
  */
 int Storage::start()
 {
-  m_log->open(m_locations->file(FileLocations::LogPath, m_locations->path(FileLocations::BaseName) + ".log"), static_cast<NodeLog::Level>(m_settings->value("LogLevel").toInt()));
+  QString logPath = Path::cache();
+# if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
+  if (!Path::isPortable())
+    logPath = LS("/var/log/") + Path::app();
+# endif
+
+  m_log->open(logPath + LC('/') + Path::app() + LS(".log"), static_cast<NodeLog::Level>(m_settings->value(LS("LogLevel")).toInt()));
 
   setDefaultSslConf();
-  setMaxOpenFiles(m_settings->value("MaxOpenFiles").toInt());
+  setMaxOpenFiles(m_settings->value(LS("MaxOpenFiles")).toInt());
 
-  m_privateId = m_settings->value("PrivateId").toString().toUtf8();
+  m_privateId = m_settings->value(LS("PrivateId")).toString().toUtf8();
   m_id = SimpleID::make(m_privateId, SimpleID::ServerId);
 
   DataBase::start();
@@ -114,11 +141,11 @@ void Storage::setDefaultSslConf()
   if (!QSslSocket::supportsSsl())
     return;
 
-  QString crtFile = m_locations->file(FileLocations::ConfigPath, m_settings->value(QLatin1String("Certificate")).toString());
+  QString crtFile = Path::file(etcPath(), m_settings->value(LS("Certificate")).toString());
   if (crtFile.isEmpty())
     return;
 
-  QString keyFile = m_locations->file(FileLocations::ConfigPath, m_settings->value(QLatin1String("PrivateKey")).toString());
+  QString keyFile = Path::file(etcPath(), m_settings->value(LS("PrivateKey")).toString());
   if (crtFile.isEmpty())
     return;
 

@@ -43,6 +43,7 @@ public:
   static QString cache();
   static QString config();
   static QString data(Scope scope = UserScope);
+  static QString file(const QString &path, const QString &name);
   static QStringList plugins();
 
 private:
