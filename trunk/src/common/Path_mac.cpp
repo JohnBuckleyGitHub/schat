@@ -16,7 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDesktopServices>
 #include <QDir>
 #include <QFileInfo>
 
@@ -26,7 +25,7 @@
 QString Path::data(Scope scope)
 {
   if (scope == UserScope && !m_portable)
-    return QFileInfo(QDesktopServices::storageLocation(QDesktopServices::DataLocation)).absolutePath() + LC('/') + m_app;
+    return QDir::homePath() + LS("/Library/Application Support/IMPOMEZIA/") + m_app;
 
   return QDir::cleanPath(m_appDirPath + LS("/../Resources"));
 }
