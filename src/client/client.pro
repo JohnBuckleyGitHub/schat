@@ -15,11 +15,6 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SCHAT_CONSOLE = 1
-SCHAT_DEBUG   = 1
-SCHAT_USE_SSL = 1
-SCHAT_QDNS    = 1
-
 TEMPLATE = lib
 QT = core network
 TARGET = schat-client
@@ -40,5 +35,6 @@ TRANSLATIONS += ../../res/translations/schat2-client_en.ts
 TRANSLATIONS += ../../res/translations/schat2-client_ru.ts
 CODECFORTR = UTF-8
 
+include(../common/config.pri)
 include(../common/client.pri)
 include(../common/common.pri)

@@ -16,8 +16,6 @@
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 SCHAT_RESOURCES = 1
-SCHAT_DEBUG     = 1
-SCHAT_USE_SSL   = 1
 
 TEMPLATE = lib
 QT = core gui network webkit
@@ -204,4 +202,5 @@ unix {
   INSTALLS += target
 }
 
+include(../common/config.pri)
 include(../common/common.pri)

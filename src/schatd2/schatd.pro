@@ -16,8 +16,6 @@
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 SCHAT_RESOURCES = 0
-SCHAT_DEBUG     = 1
-SCHAT_USE_SSL   = 1
 
 TEMPLATE = lib
 QT = core network sql
@@ -89,4 +87,5 @@ unix:!macx {
   INSTALLS += target
 }
 
+include(../common/config.pri)
 include(../common/common.pri)
