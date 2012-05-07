@@ -764,94 +764,94 @@ typedef bool (*generatorCB) (void *udata, QString &err, QByteArray &res, const Q
 
 _K8_JSON_COMPLEX_WORD bool generateExCB (void *udata, generatorCB cb, QString &err, QByteArray &res, const QVariant &val, int indent) {
   switch (val.type()) {
-    case QVariant::Invalid: res += "null"; break;
-    case QVariant::Bool: res += (val.toBool() ? "true" : "false"); break;
-    case QVariant::Char: res += quote(QString(val.toChar())).toUtf8(); break;
-    case QVariant::Double: res += QByteArray::number(val.toDouble()); break; //CHECKME: is '.' always '.'?
-    case QVariant::Int: res += QByteArray::number(val.toInt()); break;
-    case QVariant::LongLong: res += QByteArray::number(val.toLongLong()); break;
-    case QVariant::UInt: res += QByteArray::number(val.toUInt()); break;
+    case QVariant::Invalid:   res += QLatin1String("null"); break;
+    case QVariant::Bool:      res += (val.toBool() ? QLatin1String("true") : QLatin1String("false")); break;
+    case QVariant::Char:      res += quote(QString(val.toChar())).toUtf8(); break;
+    case QVariant::Double:    res += QByteArray::number(val.toDouble()); break; //CHECKME: is '.' always '.'?
+    case QVariant::Int:       res += QByteArray::number(val.toInt()); break;
+    case QVariant::LongLong:  res += QByteArray::number(val.toLongLong()); break;
+    case QVariant::UInt:      res += QByteArray::number(val.toUInt()); break;
     case QVariant::ULongLong: res += QByteArray::number(val.toULongLong()); break;
-    case QVariant::String: res += quote(val.toString()).toUtf8(); break;
+    case QVariant::String:    res += quote(val.toString()).toUtf8(); break;
     case QVariant::ByteArray: res += quote(val.toByteArray()); break;
+
     case QVariant::Map: {
-      //for (int c = indent; c > 0; c--) res += ' ';
-      res += "{";
-      indent++; bool comma = false;
+      res += '{';
+      bool comma = false;
       QVariantMap m(val.toMap());
-      QVariantMap::const_iterator i;
-      for (i = m.constBegin(); i != m.constEnd(); ++i) {
-        if (comma) res += ",\n"; else { res += '\n'; comma = true; }
-        for (int c = indent; c > 0; c--) res += ' ';
+      QMapIterator<QString, QVariant> i(m);
+      while (i.hasNext()) {
+        i.next();
+        if (comma)
+          res += ',';
+        else
+          comma = true;
+
         res += quote(i.key()).toUtf8();
-        res += ": ";
-        if (!generateExCB(udata, cb, err, res, i.value(), indent)) return false;
-      }
-      indent--;
-      if (comma) {
-        res += '\n';
-        for (int c = indent; c > 0; c--) res += ' ';
+        res += ':';
+        if (!generateExCB(udata, cb, err, res, i.value(), indent))
+          return false;
       }
       res += '}';
-      indent--;
-      } break;
+    }
+    break;
+
     case QVariant::Hash: {
-      //for (int c = indent; c > 0; c--) res += ' ';
-      res += "{";
-      indent++; bool comma = false;
+      res += '{';
+      bool comma = false;
       QVariantHash m(val.toHash());
-      QVariantHash::const_iterator i;
-      for (i = m.constBegin(); i != m.constEnd(); ++i) {
-        if (comma) res += ",\n"; else { res += '\n'; comma = true; }
-        for (int c = indent; c > 0; c--) res += ' ';
+      QHashIterator<QString, QVariant> i(m);
+      while (i.hasNext()) {
+        i.next();
+        if (comma)
+          res += ',';
+        else
+          comma = true;
+
         res += quote(i.key()).toUtf8();
-        res += ": ";
-        if (!generateExCB(udata, cb, err, res, i.value(), indent)) return false;
-      }
-      indent--;
-      if (comma) {
-        res += '\n';
-        for (int c = indent; c > 0; c--) res += ' ';
+        res += ':';
+        if (!generateExCB(udata, cb, err, res, i.value(), indent))
+          return false;
       }
       res += '}';
-      indent--;
-      } break;
+    }
+    break;
+
     case QVariant::List: {
-      //for (int c = indent; c > 0; c--) res += ' ';
-      res += "[";
-      indent++; bool comma = false;
+      res += '[';
+      bool comma = false;
       QVariantList m(val.toList());
       foreach (const QVariant &v, m) {
-        if (comma) res += ",\n"; else { res += '\n'; comma = true; }
-        for (int c = indent; c > 0; c--) res += ' ';
-        if (!generateExCB(udata, cb, err, res, v, indent)) return false;
+        if (comma)
+          res += ',';
+        else
+          comma = true;
+
+        if (!generateExCB(udata, cb, err, res, v, indent))
+          return false;
       }
-      indent--;
-      if (comma) {
-        res += '\n';
-        for (int c = indent; c > 0; c--) res += ' ';
-      }
+
       res += ']';
-      indent--;
-      } break;
+    }
+    break;
+
     case QVariant::StringList: {
-      //for (int c = indent; c > 0; c--) res += ' ';
-      res += "[";
-      indent++; bool comma = false;
+      res += '[';
+      bool comma = false;
+
       QStringList m(val.toStringList());
       foreach (const QString &v, m) {
-        if (comma) res += ",\n"; else { res += '\n'; comma = true; }
-        for (int c = indent; c > 0; c--) res += ' ';
+        if (comma)
+          res += ',';
+        else
+          comma = true;
+
         res += quote(v).toUtf8();
       }
-      indent--;
-      if (comma) {
-        res += '\n';
-        for (int c = indent; c > 0; c--) res += ' ';
-      }
       res += ']';
-      indent--;
-      } break;
+    }
+    break;
+
     default:
       if (cb) return cb(udata, err, res, val, indent);
       err = QString("invalid variant type: %1").arg(val.typeName());

@@ -179,11 +179,12 @@ void SimpleClient::newPacketsImpl()
 {
   Q_D(SimpleClient);
   SCHAT_DEBUG_STREAM(this << "newPacketsImpl()" << d->readQueue.size())
-//  int size = 0;
-//  for (int i = 0; i < d->readQueue.size(); ++i) {
-//    size += d->readQueue.at(i).size();
-//  }
-//  SCHAT_DEBUG_STREAM(this << "newPacketsImpl() TOTAL SIZE" << size)
+# if defined(SCHAT_DEBUG)
+  int size = 0;
+  for (int i = 0; i < d->readQueue.size(); ++i)
+    size += d->readQueue.at(i).size();
+  SCHAT_DEBUG_STREAM(this << "newPacketsImpl() TOTAL SIZE" << size)
+# endif
 
   while (!d->readQueue.isEmpty()) {
     d->readBuffer = d->readQueue.takeFirst();
