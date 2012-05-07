@@ -50,8 +50,6 @@ NodeInit::NodeInit(QObject *parent)
 
 void NodeInit::quit()
 {
-  qDebug() << "quit()";
-
   if (m_pool) {
     m_pool->quit();
     m_pool->wait();

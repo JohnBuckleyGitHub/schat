@@ -21,7 +21,6 @@
 #include <QDir>
 #include <QPluginLoader>
 
-#include "JSON.h"
 #include "Plugins.h"
 #include "plugins/CoreApi.h"
 #include "sglobal.h"
@@ -55,7 +54,6 @@ PluginItem::PluginItem(const QString &fileName)
   if (m_header.value(LS("Name")).toString().isEmpty())
     return;
 
-  qDebug() << "PLUGIN ITEM CREATED" << JSON::generate(m_header);
   m_valid = true;
 }
 

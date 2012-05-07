@@ -39,18 +39,12 @@ CONFIG(debug, debug|release) {
   DESTDIR = ../../out
 }
 
-contains( SCHAT_CONSOLE, 1 ) {
-  CONFIG += console
-}
-else {
-  CONFIG -= console
-}
-
 contains( SCHAT_DEBUG, 1 ) {
+  CONFIG += console
   DEFINES += SCHAT_DEBUG
 }
 
-contains( SCHAT_USE_SSL, 0 ) {
+!contains( SCHAT_SSL, 1 ) {
   DEFINES += SCHAT_NO_SSL
 }
 
