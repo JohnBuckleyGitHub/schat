@@ -745,24 +745,8 @@ const uchar *parseRecord (QVariant &res, const uchar *s, int *maxLength) {
 }
 
 
-#ifdef K8JSON_INCLUDE_GENERATOR
-# ifndef K8JSON_INCLUDE_COMPLEX_GENERATOR
-#  define _K8_JSON_COMPLEX_WORD  static
-# else
-#  define _K8_JSON_COMPLEX_WORD
-# endif
-#else
-# ifdef K8JSON_INCLUDE_COMPLEX_GENERATOR
-#  define _K8_JSON_COMPLEX_WORD
-# endif
-#endif
-
-#if defined(K8JSON_INCLUDE_COMPLEX_GENERATOR) || defined(K8JSON_INCLUDE_GENERATOR)
-# ifndef K8JSON_INCLUDE_COMPLEX_GENERATOR
-typedef bool (*generatorCB) (void *udata, QString &err, QByteArray &res, const QVariant &val, int indent);
-# endif
-
-_K8_JSON_COMPLEX_WORD bool generateExCB (void *udata, generatorCB cb, QString &err, QByteArray &res, const QVariant &val, int indent) {
+static bool generateExCB(void *udata, QByteArray &res, const QVariant &val)
+{
   switch (val.type()) {
     case QVariant::Invalid:   res += QLatin1String("null"); break;
     case QVariant::Bool:      res += (val.toBool() ? QLatin1String("true") : QLatin1String("false")); break;
@@ -789,8 +773,7 @@ _K8_JSON_COMPLEX_WORD bool generateExCB (void *udata, generatorCB cb, QString &e
 
         res += quote(i.key()).toUtf8();
         res += ':';
-        if (!generateExCB(udata, cb, err, res, i.value(), indent))
-          return false;
+        generateExCB(udata, res, i.value());
       }
       res += '}';
     }
@@ -810,8 +793,7 @@ _K8_JSON_COMPLEX_WORD bool generateExCB (void *udata, generatorCB cb, QString &e
 
         res += quote(i.key()).toUtf8();
         res += ':';
-        if (!generateExCB(udata, cb, err, res, i.value(), indent))
-          return false;
+        generateExCB(udata, res, i.value());
       }
       res += '}';
     }
@@ -827,8 +809,7 @@ _K8_JSON_COMPLEX_WORD bool generateExCB (void *udata, generatorCB cb, QString &e
         else
           comma = true;
 
-        if (!generateExCB(udata, cb, err, res, v, indent))
-          return false;
+        generateExCB(udata, res, v);
       }
 
       res += ']';
@@ -853,26 +834,19 @@ _K8_JSON_COMPLEX_WORD bool generateExCB (void *udata, generatorCB cb, QString &e
     break;
 
     default:
-      if (cb) return cb(udata, err, res, val, indent);
-      err = QString("invalid variant type: %1").arg(val.typeName());
-      return false;
+      if (val.canConvert(QVariant::String))
+        generateExCB(udata, res, val.toString());
+      else
+        res += QLatin1String("null");
   }
+
   return true;
 }
-#endif
 
 
-#ifdef K8JSON_INCLUDE_GENERATOR
-bool generateEx (QString &err, QByteArray &res, const QVariant &val, int indent) {
-  return generateExCB(0, 0, err, res, val, indent);
+bool generate(QByteArray &res, const QVariant &val)
+{
+  return generateExCB(0, res, val);
 }
-
-
-bool generate (QByteArray &res, const QVariant &val, int indent) {
-  QString err;
-  return generateExCB(0, 0, err, res, val, indent);
-}
-#endif
-
 
 }

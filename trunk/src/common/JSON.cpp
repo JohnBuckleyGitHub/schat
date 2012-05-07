@@ -28,7 +28,7 @@
 QByteArray JSON::generate(const QVariant &data)
 {
   QByteArray res;
-  K8JSON::generate(res, data, 0);
+  K8JSON::generate(res, data);
   if (res == "{}")
     return QByteArray();
 
