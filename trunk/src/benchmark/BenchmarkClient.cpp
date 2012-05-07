@@ -18,9 +18,9 @@
 
 #include "BenchmarkClient.h"
 #include "client/SimpleClient.h"
-#include "net/packets/ChannelPacket.h"
-#include "net/ServerData.h"
+#include "net/packets/ChannelNotice.h"
 #include "net/SimpleID.h"
+#include "sglobal.h"
 
 BenchmarkClient::BenchmarkClient(const QString &nick, QObject *parent)
   : QObject(parent)
@@ -56,8 +56,5 @@ bool BenchmarkClient::open(const QString &url)
 
 void BenchmarkClient::setup()
 {
-  ServerData *data = m_client->serverData();
-  if (data->features() & ServerData::AutoJoinSupport && SimpleID::typeOf(data->channelId()) == SimpleID::ChannelId) {
-    m_client->send(ChannelPacket::join(m_client->channelId(), data->channelId(), QString(), m_client->sendStream()));
-  }
+  m_client->send(ChannelNotice::request(m_client->channelId(), QByteArray(), LS("join"), LS("Main")));
 }
