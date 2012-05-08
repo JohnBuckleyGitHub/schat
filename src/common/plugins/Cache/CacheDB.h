@@ -19,32 +19,29 @@
 #ifndef CACHEDB_H_
 #define CACHEDB_H_
 
-#include <QObject>
-
 #include "Channel.h"
 
-class CacheDB : public QObject
+class CacheDB
 {
-  Q_OBJECT
-
-  CacheDB(QObject *parent = 0)
-  : QObject(parent)
-  {}
+  CacheDB() {}
 
 public:
   inline static QString id() { return m_id; }
   static bool open(const QByteArray &id, const QString &dir);
   static ClientChannel channel(const QByteArray &id, bool feeds = true);
   static ClientChannel channel(qint64 id, bool feeds = true);
-  static qint64 add(ClientChannel channel);
-  static qint64 channelKey(const QByteArray &id, int type);
+  static qint64 key(Channel *channel);
+  static qint64 key(const QByteArray &id, int type);
+  static void add(ClientChannel channel);
+  static void add(const QByteArray &id, int type, int gender, const QString &name, const QVariantMap &data);
   static void clear();
   static void close();
   static void create();
   static void saveData(Channel *channel);
-  static void update(ClientChannel channel);
 
 private:
+  static void update(int gender, const QString &name, const QVariantMap &data, qint64 key);
+
   static QString m_id; ///< Идентификатор соединения с базой.
 };
 

@@ -53,7 +53,7 @@ bool CacheDB::open(const QByteArray &id, const QString &dir)
 
 ClientChannel CacheDB::channel(const QByteArray &id, bool feeds)
 {
-  qint64 key = channelKey(id, SimpleID::typeOf(id));
+  qint64 key = CacheDB::key(id, SimpleID::typeOf(id));
   if (key == -1)
     return ClientChannel();
 
@@ -84,43 +84,36 @@ ClientChannel CacheDB::channel(qint64 id, bool feeds)
 
 
 /*!
- * Добавление или обновление канала.
+ * Возвращает ключ в таблице \b channels.
+ * Функция поддерживает кэширование ключа в канале.
  *
- * \return Ключ в таблице \b channels.
+ * \param channel Канал.
+ *
+ * \return Ключ в таблице или -1 в случае ошибки.
  */
-qint64 CacheDB::add(ClientChannel channel)
+qint64 CacheDB::key(Channel *channel)
 {
-  if (channel->key() <= 0)
-    channel->setKey(channelKey(channel->id(), channel->type()));
-
-  if (channel->key() > 0) {
-    update(channel);
+  if (channel->key() > 0)
     return channel->key();
-  }
 
-  QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(LS("INSERT INTO channels (channel, type, gender, name, data) "
-                     "VALUES (:channel, :type, :gender, :name, :data);"));
-
-  query.bindValue(LS(":channel"),    channel->id());
-  query.bindValue(LS(":type"),       channel->type());
-  query.bindValue(LS(":gender"),     channel->gender().raw());
-  query.bindValue(LS(":name"),       channel->name());
-  query.bindValue(LS(":data"),       JSON::generate(channel->data()));
-  query.exec();
-
-  if (query.numRowsAffected() <= 0)
+  qint64 key = CacheDB::key(channel->id(), channel->type());
+  if (key <= 0)
     return -1;
 
-  channel->setKey(query.lastInsertId().toLongLong());
-  return channel->key();
+  channel->setKey(key);
+  return key;
 }
 
 
 /*!
  * Возвращает ключ в таблице \b channels на основе идентификатора канала и типа канала.
+ *
+ * \param id   Идентификатор канала.
+ * \param type Тип канала.
+ *
+ * \return Ключ в таблице или -1 в случае ошибки.
  */
-qint64 CacheDB::channelKey(const QByteArray &id, int type)
+qint64 CacheDB::key(const QByteArray &id, int type)
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
   query.prepare(LS("SELECT id FROM channels WHERE channel = :id AND type = :type LIMIT 1;"));
@@ -132,6 +125,47 @@ qint64 CacheDB::channelKey(const QByteArray &id, int type)
     return -1;
 
   return query.value(0).toLongLong();
+}
+
+
+/*!
+ * Добавление или обновление канала.
+ *
+ * \return Ключ в таблице \b channels.
+ */
+void CacheDB::add(ClientChannel channel)
+{
+  qint64 key = CacheDB::key(channel.data());
+  if (key > 0) {
+    update(channel->gender().raw(), channel->name(), channel->data(), key);
+    return;
+  }
+
+  add(channel->id(), channel->type(), channel->gender().raw(), channel->name(), channel->data());
+}
+
+
+/*!
+ * Добавление канала в базу данных.
+ *
+ * \param id     Идентификатор канала.
+ * \param type   Тип канала.
+ * \param gender Пол.
+ * \param name   Имя канала.
+ * \param data   JSON данные.
+ */
+void CacheDB::add(const QByteArray &id, int type, int gender, const QString &name, const QVariantMap &data)
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.prepare(LS("INSERT INTO channels (channel, type, gender, name, data) "
+                     "VALUES (:channel, :type, :gender, :name, :data);"));
+
+  query.bindValue(LS(":channel"), id);
+  query.bindValue(LS(":type"),    type);
+  query.bindValue(LS(":gender"),  gender);
+  query.bindValue(LS(":name"),    name);
+  query.bindValue(LS(":data"),    data);
+  query.exec();
 }
 
 
@@ -197,16 +231,19 @@ void CacheDB::saveData(Channel *channel)
 
 /*!
  * Обновление информации о канале.
+ *
+ * \param gender Пол.
+ * \param name   Имя канала.
+ * \param data   JSON данные.
+ * \param key    Ключ в таблице.
  */
-void CacheDB::update(ClientChannel channel)
+void CacheDB::update(int gender, const QString &name, const QVariantMap &data, qint64 key)
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(LS("UPDATE channels SET channel = :channel, type = :type, gender = :gender, name = :name, data = :data WHERE id = :id;"));
-  query.bindValue(LS(":channel"),    channel->id());
-  query.bindValue(LS(":type"),       channel->type());
-  query.bindValue(LS(":gender"),     channel->gender().raw());
-  query.bindValue(LS(":name"),       channel->name());
-  query.bindValue(LS(":data"),       JSON::generate(channel->data()));
-  query.bindValue(LS(":id"),         channel->key());
+  query.prepare(LS("UPDATE channels SET gender = :gender, name = :name, data = :data WHERE id = :id;"));
+  query.bindValue(LS(":gender"), gender);
+  query.bindValue(LS(":name"),   name);
+  query.bindValue(LS(":data"),   JSON::generate(data));
+  query.bindValue(LS(":id"),     key);
   query.exec();
 }

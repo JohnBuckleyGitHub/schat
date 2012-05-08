@@ -78,7 +78,7 @@ qint64 CacheFeedStorage::save(FeedPtr feed, const QByteArray &json)
   QSqlQuery query(QSqlDatabase::database(CacheDB::id()));
   query.prepare(LS("INSERT INTO feeds (channel, rev, date, name, json) VALUES (:channel, :rev, :date, :name, :json);"));
 
-  query.bindValue(LS(":channel"), feed->head().channel()->key());
+  query.bindValue(LS(":channel"), CacheDB::key(feed->head().channel()));
   query.bindValue(LS(":rev"),     feed->head().rev());
   query.bindValue(LS(":date"),    feed->head().date());
   query.bindValue(LS(":name"),    feed->head().name());

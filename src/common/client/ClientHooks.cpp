@@ -198,9 +198,6 @@ void Channels::add(ClientChannel channel, const ChannelInfo &info, const QVarian
   if (channel->type() == SimpleID::ChannelId)
     channel->status() = Status::Online;
 
-  qDebug() << "---";
-  qDebug() << "--- ADD HOOK" << channel->name() << info.option() << json.keys();
-  qDebug() << "---";
   ChatClient::feeds()->hooks()->add(channel, info, json);
 
   foreach (Channels *hook, m_hooks) {
