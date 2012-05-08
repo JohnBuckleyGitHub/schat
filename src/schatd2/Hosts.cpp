@@ -179,7 +179,13 @@ void Hosts::setData(const QVariantMap &data, const QByteArray &publicId, bool sa
 }
 
 
-void Hosts::setUserData(const QVariantMap &data, const QByteArray &publicId, bool save)
+/*!
+ * Обновление фида \b user при отключении или подключении пользователя.
+ *
+ * \param data     JSON данные о подключении или пустые данные при отключении пользователя.
+ * \param publicId Публичный идентификатор подключения.
+ */
+void Hosts::setUserData(const QVariantMap &data, const QByteArray &publicId)
 {
   FeedPtr feed = user();
   QVariantMap connections = feed->data().value(LS("connections")).toMap();
@@ -191,18 +197,22 @@ void Hosts::setUserData(const QVariantMap &data, const QByteArray &publicId, boo
     connections[id] = data;
 
   feed->data()[LS("connections")] = connections;
-  if (!save)
-    return;
-
   FeedStorage::save(feed);
 
-  QVariantMap headers = Feed::merge(LS("feeds"), Feed::merge(feed->head().name(), feed->head().get(0)));
+  QList<quint64> sockets = ::Sockets::all(Ch::channel(m_channel->id()), true);
+  if (publicId.isEmpty())
+    sockets.removeAll(Core::socket());
+
+  if (sockets.isEmpty())
+    return;
+
+  QVariantMap headers = Feed::merge(LS("feeds"), Feed::merge(feed->head().name(), feed->head().get(0))); /// FIXME Необходимо передавать компактный заголовок фида.
   if (headers.isEmpty())
     return;
 
   FeedNotice packet(m_channel->id(), m_channel->id(), LS("headers"));
   packet.setData(headers);
-  Core::i()->send(::Sockets::all(Ch::channel(m_channel->id()), true), packet.data(Core::stream()));
+  Core::i()->send(sockets, packet.data(Core::stream()));
 }
 
 
