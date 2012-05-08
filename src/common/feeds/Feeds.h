@@ -39,6 +39,7 @@ public:
   inline void clear()                              { m_feeds.clear(); }
   inline void remove(const QString &name)          { m_feeds.remove(name); }
   inline void setChannel(Channel *channel)         { m_channel = channel; }
+  QVariantMap f(Channel *channel) const;
   QVariantMap headers(Channel *channel) const;
 
 private:

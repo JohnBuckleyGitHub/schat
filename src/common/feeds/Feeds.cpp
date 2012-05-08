@@ -22,6 +22,7 @@
 #include "feeds/Feeds.h"
 #include "feeds/FeedStorage.h"
 #include "net/packets/Notice.h"
+#include "sglobal.h"
 
 /*!
  * Базовая функция добавления нового фида.
@@ -54,6 +55,30 @@ bool Feeds::add(FeedPtr feed, bool save)
 
 
 /*!
+ * Получение компактных заголовков фидов для одиночного пользователя.
+ * Такие заголовки содержат только имя и время последней модификации фида.
+ *
+ * \param channel Канал-пользователь, используется для проверки прав, пользователь не получит список фидов если у него нет прав на чтение.
+ */
+QVariantMap Feeds::f(Channel *channel) const
+{
+  QVariantMap json;
+
+  QMapIterator<QString, FeedPtr> i(m_feeds);
+  while (i.hasNext()) {
+    i.next();
+    QVariantMap header = i.value()->head().get(channel);
+    if (header.isEmpty())
+      continue;
+
+    json[i.key()] = header.value(LS("date"));
+  }
+
+  return Feed::merge(LS("f"), json);
+}
+
+
+/*!
  * Получение заголовков фидов для одиночного пользователя.
  *
  * \param channel Канал-пользователь, используется для проверки прав, пользователь не получит список фидов если у него нет прав на чтение.
@@ -68,5 +93,5 @@ QVariantMap Feeds::headers(Channel *channel) const
     Feed::merge(i.key(), json, i.value()->head().get(channel));
   }
 
-  return Feed::merge("feeds", json);
+  return Feed::merge(LS("feeds"), json);
 }

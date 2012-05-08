@@ -195,6 +195,8 @@ void SimpleClient::newPacketsImpl()
     PacketReader reader(d->readStream);
     d->reader = &reader;
 
+    SCHAT_DEBUG_STREAM("CURRENT PACKET SIZE:" << d->readBuffer.size())
+
     switch (reader.type()) {
       case Protocol::AuthReplyPacket:
         d->authReply(AuthReply(d->reader));
