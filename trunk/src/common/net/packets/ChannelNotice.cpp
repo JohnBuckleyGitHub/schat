@@ -72,7 +72,7 @@ ChannelPacket ChannelNotice::channel(ClientChannel channel, ClientChannel user, 
   packet->setText(channel->name());
   packet->m_gender        = channel->gender().raw();
   packet->m_channelStatus = channel->status().value();
-  packet->setData(channel->feeds().headers(user.data()));
+  packet->setData(channel->feeds().f(user.data()));
 
   if (channel->type() == SimpleID::ChannelId)
     packet->m_channels = channel->channels().all();

@@ -16,12 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include "ChatNotify.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/ClientFeeds.h"
+#include "debugstream.h"
 #include "feeds/AccountFeed.h"
 #include "feeds/FeedStorage.h"
 #include "hooks/ClientFeedsImpl.h"
@@ -39,6 +38,8 @@ ClientFeedsImpl::ClientFeedsImpl(QObject *parent)
 
 void ClientFeedsImpl::addImpl(ClientChannel channel, const ChannelInfo & /*info*/, const QVariantMap &json)
 {
+  SCHAT_DEBUG_STREAM("ClientFeedsImpl::addImpl()" << channel->name() << json.keys())
+
   if (json.isEmpty())
     return;
 
