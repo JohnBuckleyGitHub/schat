@@ -343,11 +343,11 @@ int NodeFeeds::check(int acl)
  */
 void NodeFeeds::broadcast(FeedPtr feed, bool echo)
 {
-  QVariantMap headers = Feed::merge(LS("feeds"), Feed::merge(feed->head().name(), feed->head().get(0)));
-  if (headers.isEmpty())
+  QVariantMap json = Feed::merge(LS("f"), feed->head().f());
+  if (json.isEmpty())
     return;
 
-  FeedPacket packet = FeedNotice::reply(*m_packet, headers);
+  FeedPacket packet = FeedNotice::reply(*m_packet, json);
   packet->setDest(m_channel->id());
   packet->setCommand(LS("headers"));
   m_core->send(Sockets::all(m_channel, m_user, echo), packet);

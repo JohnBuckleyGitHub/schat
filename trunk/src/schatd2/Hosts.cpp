@@ -206,7 +206,7 @@ void Hosts::setUserData(const QVariantMap &data, const QByteArray &publicId)
   if (sockets.isEmpty())
     return;
 
-  QVariantMap headers = Feed::merge(LS("feeds"), Feed::merge(feed->head().name(), feed->head().get(0))); /// FIXME Необходимо передавать компактный заголовок фида.
+  QVariantMap headers = Feed::merge(LS("f"), feed->head().f());
   if (headers.isEmpty())
     return;
 
