@@ -49,7 +49,7 @@ public:
   void add(const QByteArray &uniqueId);
   void remove(quint64 socket);
   void setData(const QVariantMap &data, const QByteArray &publicId = QByteArray(), bool save = true);
-  void setUserData(const QVariantMap &data, const QByteArray &publicId = QByteArray(), bool save = true);
+  void setUserData(const QVariantMap &data, const QByteArray &publicId = QByteArray());
 
   static QByteArray toPublicId(const QByteArray &uniqueId);
 

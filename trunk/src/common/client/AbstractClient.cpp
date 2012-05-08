@@ -105,7 +105,7 @@ QString AbstractClientPrivate::mangleNick()
  */
 bool AbstractClientPrivate::authReply(const AuthReply &reply)
 {
-  SCHAT_DEBUG_STREAM(this << "AuthReply" << reply.status << Notice::status(reply.status) << SimpleID::encode(reply.userId))
+  SCHAT_DEBUG_STREAM(this << "AbstractClientPrivate::authReply" << reply.status << Notice::status(reply.status) << SimpleID::encode(reply.userId))
 
   if (clientState == AbstractClient::ClientOnline)
     return true;

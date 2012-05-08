@@ -178,12 +178,16 @@ void SimpleClient::requestAuth()
 void SimpleClient::newPacketsImpl()
 {
   Q_D(SimpleClient);
-  SCHAT_DEBUG_STREAM(this << "newPacketsImpl()" << d->readQueue.size())
 # if defined(SCHAT_DEBUG)
+  SCHAT_DEBUG_STREAM(this << "newPacketsImpl() BEGIN")
   int size = 0;
   for (int i = 0; i < d->readQueue.size(); ++i)
     size += d->readQueue.at(i).size();
-  SCHAT_DEBUG_STREAM(this << "newPacketsImpl() TOTAL SIZE" << size)
+
+  qDebug() << "             count:" << d->readQueue.size();
+  qDebug() << "             size: " << size << "bytes";
+  QTime t;
+  t.start();
 # endif
 
   while (!d->readQueue.isEmpty()) {
@@ -205,5 +209,6 @@ void SimpleClient::newPacketsImpl()
     }
   }
 
+  SCHAT_DEBUG_STREAM(this << "newPacketsImpl() END elapsed:" << t.elapsed() << "ms")
   emit idle();
 }
