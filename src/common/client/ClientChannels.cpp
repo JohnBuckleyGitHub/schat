@@ -75,6 +75,22 @@ bool ClientChannels::info(const QList<QByteArray> &channels)
   if (channels.isEmpty())
     return false;
 
+  if (channels.size() > 256) {
+    bool result = false;
+    int size = channels.size();
+    int pos = 0;
+
+    do {
+      result = m_client->send(ChannelNotice::info(ChatClient::id(), channels.mid(pos, 256)));
+      if (!result)
+        return result;
+
+      pos += 256;
+    } while (pos < size);
+
+    return true;
+  }
+
   return m_client->send(ChannelNotice::info(ChatClient::id(), channels));
 }
 
