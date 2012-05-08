@@ -77,15 +77,6 @@ void ClientFeedsImpl::readFeedImpl(const FeedNotice &packet)
 }
 
 
-QStringList ClientFeedsImpl::unsynced(ClientChannel channel, const QVariantMap &feeds)
-{
-  QStringList extra;
-  extra += LS("account");
-
-  return Feeds::unsynced(channel, feeds, extra);
-}
-
-
 /*!
  * Обработка получения тела фида.
  */
