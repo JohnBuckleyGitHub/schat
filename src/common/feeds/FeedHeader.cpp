@@ -45,6 +45,17 @@ bool FeedHeader::isValid() const
 }
 
 
+QVariantMap FeedHeader::f(Channel *channel) const
+{
+  QVariantMap json;
+  if (!acl().can(channel, Acl::Read))
+    return json;
+
+  json[name()] = date();
+  return json;
+}
+
+
 QVariantMap FeedHeader::get(Channel *channel)
 {
   QVariantMap acl = m_acl.get(channel);

@@ -42,6 +42,7 @@ public:
   inline qint64 rev() const                { return m_data.value(QLatin1String("rev")).toLongLong(); }
   inline QVariantMap& data()               { return m_data; }
 
+  QVariantMap f(Channel *channel = 0) const;
   QVariantMap get(Channel *channel);
   QVariantMap save();
 

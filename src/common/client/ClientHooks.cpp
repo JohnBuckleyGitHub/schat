@@ -341,7 +341,16 @@ QStringList Feeds::unsynced(ClientChannel channel, const QVariantMap &feeds, con
       continue;
     }
 
-    if (i.value().toMap().value(LS("date")).toLongLong() != feed->head().date())
+    qint64 date = 0;
+    if (i.value().type() == QVariant::LongLong)
+      date = i.value().toLongLong();
+    else if (i.value().type() == QVariant::Map)
+      date = i.value().toMap().value(LS("date")).toLongLong();
+
+    if (date == 0)
+      continue;
+
+    if (feed->head().date() != date)
       out.append(i.key());
   }
 

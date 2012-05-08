@@ -43,10 +43,10 @@ void ClientFeedsImpl::addImpl(ClientChannel channel, const ChannelInfo & /*info*
   if (json.isEmpty())
     return;
 
-  if (!json.contains(LS("feeds")))
+  if (!json.contains(LS("f")))
     return;
 
-  QVariantMap data = json.value(LS("feeds")).toMap();
+  QVariantMap data = json.value(LS("f")).toMap();
   if (data.isEmpty())
     return;
 
@@ -139,7 +139,11 @@ void ClientFeedsImpl::get(const QByteArray &id, const QStringList &feeds)
  */
 void ClientFeedsImpl::headers()
 {
-  QVariantMap feeds = m_packet->json().value(LS("feeds")).toMap();
+  QString key = LS("f");
+  if (m_packet->json().contains(LS("feeds")))
+    key = LS("feeds");
+
+  QVariantMap feeds = m_packet->json().value(key).toMap();
   if (feeds.isEmpty())
     return;
 
