@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include <QSqlDatabase>
 #include <QSqlQuery>
 
@@ -26,6 +28,38 @@
 #include "sglobal.h"
 
 QString CacheDB::m_id;
+QThreadPool CacheDB::pool;
+
+class AddChannelTask : public QRunnable
+{
+public:
+  AddChannelTask(ClientChannel channel)
+  : m_gender(channel->gender().raw())
+  , m_type(channel->type())
+  , m_id(channel->id())
+  , m_key(-1)
+  , m_name(channel->name())
+  , m_data(channel->data())
+  {
+  }
+
+  void run()
+  {
+    m_key = CacheDB::key(m_id, m_type);
+    if (m_key > 0)
+      CacheDB::update(m_gender, m_name, m_data, m_key);
+    else
+      CacheDB::add(m_id, m_type, m_gender, m_name, m_data);
+  }
+
+private:
+  int m_gender;       ///< Пол.
+  int m_type;         ///< Тип канала.
+  QByteArray m_id;    ///< Идентификатор канала.
+  qint64 m_key;       ///< Ключ в таблице.
+  QString m_name;     ///< Имя канала.
+  QVariantMap m_data; ///< JSON данные.
+};
 
 
 /*!
@@ -135,13 +169,8 @@ qint64 CacheDB::key(const QByteArray &id, int type)
  */
 void CacheDB::add(ClientChannel channel)
 {
-  qint64 key = CacheDB::key(channel.data());
-  if (key > 0) {
-    update(channel->gender().raw(), channel->name(), channel->data(), key);
-    return;
-  }
-
-  add(channel->id(), channel->type(), channel->gender().raw(), channel->name(), channel->data());
+  AddChannelTask *task = new AddChannelTask(channel);
+  pool.start(task);
 }
 
 
