@@ -31,8 +31,8 @@ public:
   void loadImpl(Channel *channel);
 
 private:
-  qint64 save(FeedPtr feed, const QByteArray &json);
-  qint64 update(FeedPtr feed, const QByteArray &json);
+  qint64 save(FeedPtr feed, const QVariantMap &data);
+  qint64 update(FeedPtr feed, const QVariantMap &data);
   void load(Channel *channel, const QString &name, qint64 id);
 };
 

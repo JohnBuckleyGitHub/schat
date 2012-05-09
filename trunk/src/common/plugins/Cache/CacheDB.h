@@ -26,6 +26,9 @@
 class QRunnable;
 class QThreadPool;
 
+/*!
+ * Интерфейс базы данных плагина \b Cache.
+ */
 class CacheDB : public QObject
 {
   Q_OBJECT
@@ -42,13 +45,14 @@ public:
   static void add(ClientChannel channel);
   static void clear();
   static void close();
-  static void create();
-  static void saveData(Channel *channel);
+  static void setData(Channel *channel);
 
 private slots:
   void start();
 
 private:
+  static void create();
+
   QList<QRunnable*> m_tasks; ///< Задачи для выполнения в отдельном потоке.
   QThreadPool *m_pool;       ///< Пул для запуска потоков.
   static CacheDB *m_self;    ///< Указатель на себя.
