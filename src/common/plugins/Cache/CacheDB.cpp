@@ -30,6 +30,9 @@
 QString CacheDB::m_id;
 CacheDB *CacheDB::m_self = 0;
 
+/*!
+ * Задача для обновления или добавления канала в базу данных.
+ */
 class AddChannelTask : public QRunnable
 {
 public:
@@ -91,6 +94,30 @@ private:
   QByteArray m_id;    ///< Идентификатор канала.
   qint64 m_key;       ///< Ключ в таблице.
   QString m_name;     ///< Имя канала.
+  QVariantMap m_data; ///< JSON данные.
+};
+
+
+class ChannelDataTask : public QRunnable
+{
+public:
+  ChannelDataTask(Channel *channel)
+  : m_key(channel->key())
+  , m_data(channel->data())
+  {
+  }
+
+  void run()
+  {
+    QSqlQuery query(QSqlDatabase::database(CacheDB::id()));
+    query.prepare(LS("UPDATE channels SET data = :data WHERE id = :id;"));
+    query.bindValue(LS(":data"), JSON::generate(m_data));
+    query.bindValue(LS(":id"),   m_key);
+    query.exec();
+  }
+
+private:
+  qint64 m_key;       ///< Ключ в таблице.
   QVariantMap m_data; ///< JSON данные.
 };
 
@@ -239,6 +266,25 @@ void CacheDB::close()
 }
 
 
+void CacheDB::setData(Channel *channel)
+{
+  if (channel->key() <= 0)
+    return;
+
+  ChannelDataTask *task = new ChannelDataTask(channel);
+  m_self->m_tasks.append(task);
+  if (m_self->m_tasks.size() == 1)
+    QTimer::singleShot(0, m_self, SLOT(start()));
+}
+
+
+void CacheDB::start()
+{
+  while (!m_tasks.isEmpty())
+    m_pool->start(m_tasks.takeFirst());
+}
+
+
 void CacheDB::create()
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
@@ -265,21 +311,4 @@ void CacheDB::create()
     "  json       BLOB"
     ");"
   ));
-}
-
-
-void CacheDB::saveData(Channel *channel)
-{
-  QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(LS("UPDATE channels SET data = :data WHERE id = :id;"));
-  query.bindValue(LS(":data"),       JSON::generate(channel->data()));
-  query.bindValue(LS(":id"),         channel->key());
-  query.exec();
-}
-
-
-void CacheDB::start()
-{
-  while (!m_tasks.isEmpty())
-    m_pool->start(m_tasks.takeFirst());
 }

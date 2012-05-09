@@ -40,13 +40,13 @@ CacheFeedStorage::CacheFeedStorage(QObject *parent)
 int CacheFeedStorage::saveImpl(FeedPtr feed)
 {
   QVariantMap feeds = feed->head().channel()->data().value(LS("feeds")).toMap();
-  qint64 id = save(feed, JSON::generate(feed->save()));
+  qint64 id = save(feed, feed->save());
   if (id == -1)
     return Notice::InternalError;
 
   feeds[feed->head().name()] = id;
   feed->head().channel()->data()[LS("feeds")] = feeds;
-  CacheDB::saveData(feed->head().channel());
+  CacheDB::setData(feed->head().channel());
 
   return Notice::OK;
 }
@@ -70,10 +70,10 @@ void CacheFeedStorage::loadImpl(Channel *channel)
 /*!
  * Запись в базу тела фида.
  */
-qint64 CacheFeedStorage::save(FeedPtr feed, const QByteArray &json)
+qint64 CacheFeedStorage::save(FeedPtr feed, const QVariantMap &data)
 {
   if (feed->head().key() > 0)
-    return update(feed, json);
+    return update(feed, data);
 
   QSqlQuery query(QSqlDatabase::database(CacheDB::id()));
   query.prepare(LS("INSERT INTO feeds (channel, rev, date, name, json) VALUES (:channel, :rev, :date, :name, :json);"));
@@ -82,7 +82,7 @@ qint64 CacheFeedStorage::save(FeedPtr feed, const QByteArray &json)
   query.bindValue(LS(":rev"),     feed->head().rev());
   query.bindValue(LS(":date"),    feed->head().date());
   query.bindValue(LS(":name"),    feed->head().name());
-  query.bindValue(LS(":json"),    json);
+  query.bindValue(LS(":json"),    JSON::generate(data));
   query.exec();
 
   if (query.numRowsAffected() <= 0)
@@ -94,13 +94,13 @@ qint64 CacheFeedStorage::save(FeedPtr feed, const QByteArray &json)
 }
 
 
-qint64 CacheFeedStorage::update(FeedPtr feed, const QByteArray &json)
+qint64 CacheFeedStorage::update(FeedPtr feed, const QVariantMap &data)
 {
   QSqlQuery query(QSqlDatabase::database(CacheDB::id()));
   query.prepare(LS("UPDATE feeds SET rev = :rev, date = :date, json = :json WHERE id = :id;"));
   query.bindValue(LS(":rev"),  feed->head().rev());
   query.bindValue(LS(":date"), feed->head().date());
-  query.bindValue(LS(":json"), json);
+  query.bindValue(LS(":json"), JSON::generate(data));
   query.bindValue(LS(":id"),   feed->head().key());
   query.exec();
 
