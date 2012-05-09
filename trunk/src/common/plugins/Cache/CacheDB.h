@@ -19,6 +19,8 @@
 #ifndef CACHEDB_H_
 #define CACHEDB_H_
 
+#include <QThreadPool>
+
 #include "Channel.h"
 
 class CacheDB
@@ -38,10 +40,11 @@ public:
   static void close();
   static void create();
   static void saveData(Channel *channel);
-
-private:
   static void update(int gender, const QString &name, const QVariantMap &data, qint64 key);
 
+  static QThreadPool pool;
+
+private:
   static QString m_id; ///< Идентификатор соединения с базой.
 };
 
