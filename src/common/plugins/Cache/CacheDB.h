@@ -19,15 +19,20 @@
 #ifndef CACHEDB_H_
 #define CACHEDB_H_
 
-#include <QThreadPool>
+#include <QObject>
 
 #include "Channel.h"
 
-class CacheDB
+class QRunnable;
+class QThreadPool;
+
+class CacheDB : public QObject
 {
-  CacheDB() {}
+  Q_OBJECT
 
 public:
+  CacheDB(QObject *parent = 0);
+
   inline static QString id() { return m_id; }
   static bool open(const QByteArray &id, const QString &dir);
   static ClientChannel channel(const QByteArray &id, bool feeds = true);
@@ -35,17 +40,19 @@ public:
   static qint64 key(Channel *channel);
   static qint64 key(const QByteArray &id, int type);
   static void add(ClientChannel channel);
-  static void add(const QByteArray &id, int type, int gender, const QString &name, const QVariantMap &data);
   static void clear();
   static void close();
   static void create();
   static void saveData(Channel *channel);
-  static void update(int gender, const QString &name, const QVariantMap &data, qint64 key);
 
-  static QThreadPool pool;
+private slots:
+  void start();
 
 private:
-  static QString m_id; ///< Идентификатор соединения с базой.
+  QList<QRunnable*> m_tasks; ///< Задачи для выполнения в отдельном потоке.
+  QThreadPool *m_pool;       ///< Пул для запуска потоков.
+  static CacheDB *m_self;    ///< Указатель на себя.
+  static QString m_id;       ///< Идентификатор соединения с базой.
 };
 
 #endif /* CACHEDB_H_ */

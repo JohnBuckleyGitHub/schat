@@ -39,6 +39,7 @@
 Cache::Cache(QObject *parent)
   : ChatPlugin(parent)
 {
+  new CacheDB(this);
   new Hooks::CacheChannels(this);
   new Hooks::CacheFeeds(this);
   new CacheFeedStorage(this);

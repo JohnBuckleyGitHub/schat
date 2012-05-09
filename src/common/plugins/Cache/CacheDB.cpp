@@ -16,10 +16,10 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QSqlDatabase>
 #include <QSqlQuery>
+#include <QThreadPool>
+#include <QTimer>
 
 #include "CacheDB.h"
 #include "feeds/FeedStorage.h"
@@ -28,7 +28,7 @@
 #include "sglobal.h"
 
 QString CacheDB::m_id;
-QThreadPool CacheDB::pool;
+CacheDB *CacheDB::m_self = 0;
 
 class AddChannelTask : public QRunnable
 {
@@ -37,7 +37,7 @@ public:
   : m_gender(channel->gender().raw())
   , m_type(channel->type())
   , m_id(channel->id())
-  , m_key(-1)
+  , m_key(channel->key())
   , m_name(channel->name())
   , m_data(channel->data())
   {
@@ -45,14 +45,47 @@ public:
 
   void run()
   {
-    m_key = CacheDB::key(m_id, m_type);
+    if (m_key <= 0)
+      m_key = CacheDB::key(m_id, m_type);
+
     if (m_key > 0)
-      CacheDB::update(m_gender, m_name, m_data, m_key);
+      update();
     else
-      CacheDB::add(m_id, m_type, m_gender, m_name, m_data);
+      add();
   }
 
 private:
+  /*!
+   * Добавление канала в базу данных.
+   */
+  void add()
+  {
+    QSqlQuery query(QSqlDatabase::database(CacheDB::id()));
+    query.prepare(LS("INSERT INTO channels (channel, type, gender, name, data) "
+                       "VALUES (:channel, :type, :gender, :name, :data);"));
+
+    query.bindValue(LS(":channel"), m_id);
+    query.bindValue(LS(":type"),    m_type);
+    query.bindValue(LS(":gender"),  m_gender);
+    query.bindValue(LS(":name"),    m_name);
+    query.bindValue(LS(":data"),    JSON::generate(m_data));
+    query.exec();
+  }
+
+  /*!
+   * Обновление информации о канале.
+   */
+  void update()
+  {
+    QSqlQuery query(QSqlDatabase::database(CacheDB::id()));
+    query.prepare(LS("UPDATE channels SET gender = :gender, name = :name, data = :data WHERE id = :id;"));
+    query.bindValue(LS(":gender"), m_gender);
+    query.bindValue(LS(":name"),   m_name);
+    query.bindValue(LS(":data"),   JSON::generate(m_data));
+    query.bindValue(LS(":id"),     m_key);
+    query.exec();
+  }
+
   int m_gender;       ///< Пол.
   int m_type;         ///< Тип канала.
   QByteArray m_id;    ///< Идентификатор канала.
@@ -60,6 +93,15 @@ private:
   QString m_name;     ///< Имя канала.
   QVariantMap m_data; ///< JSON данные.
 };
+
+
+CacheDB::CacheDB(QObject *parent)
+  : QObject(parent)
+{
+  m_self = this;
+  m_pool = new QThreadPool(this);
+  m_pool->setMaxThreadCount(1);
+}
 
 
 /*!
@@ -170,31 +212,9 @@ qint64 CacheDB::key(const QByteArray &id, int type)
 void CacheDB::add(ClientChannel channel)
 {
   AddChannelTask *task = new AddChannelTask(channel);
-  pool.start(task);
-}
-
-
-/*!
- * Добавление канала в базу данных.
- *
- * \param id     Идентификатор канала.
- * \param type   Тип канала.
- * \param gender Пол.
- * \param name   Имя канала.
- * \param data   JSON данные.
- */
-void CacheDB::add(const QByteArray &id, int type, int gender, const QString &name, const QVariantMap &data)
-{
-  QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(LS("INSERT INTO channels (channel, type, gender, name, data) "
-                     "VALUES (:channel, :type, :gender, :name, :data);"));
-
-  query.bindValue(LS(":channel"), id);
-  query.bindValue(LS(":type"),    type);
-  query.bindValue(LS(":gender"),  gender);
-  query.bindValue(LS(":name"),    name);
-  query.bindValue(LS(":data"),    data);
-  query.exec();
+  m_self->m_tasks.append(task);
+  if (m_self->m_tasks.size() == 1)
+    QTimer::singleShot(0, m_self, SLOT(start()));
 }
 
 
@@ -258,21 +278,8 @@ void CacheDB::saveData(Channel *channel)
 }
 
 
-/*!
- * Обновление информации о канале.
- *
- * \param gender Пол.
- * \param name   Имя канала.
- * \param data   JSON данные.
- * \param key    Ключ в таблице.
- */
-void CacheDB::update(int gender, const QString &name, const QVariantMap &data, qint64 key)
+void CacheDB::start()
 {
-  QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(LS("UPDATE channels SET gender = :gender, name = :name, data = :data WHERE id = :id;"));
-  query.bindValue(LS(":gender"), gender);
-  query.bindValue(LS(":name"),   name);
-  query.bindValue(LS(":data"),   JSON::generate(data));
-  query.bindValue(LS(":id"),     key);
-  query.exec();
+  while (!m_tasks.isEmpty())
+    m_pool->start(m_tasks.takeFirst());
 }

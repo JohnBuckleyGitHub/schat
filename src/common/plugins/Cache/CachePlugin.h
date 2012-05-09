@@ -33,10 +33,10 @@ public:
     QVariantMap out = CoreApi::header();
     out["Id"]       = "Cache";
     out["Name"]     = "Cache";
-    out["Version"]  = "0.2.2";
+    out["Version"]  = "0.3.0";
     out["Site"]     = "http://wiki.schat.me/Plugin/Cache";
     out["Desc"]     = "Client Cache";
-    out["Required"] = "1.99.27";
+    out["Required"] = "1.99.28";
 
     return out;
   }
