@@ -32,12 +32,12 @@
 #include "ui/ChatIcons.h"
 #include "ui/tabs/UserView.h"
 
-UserItem::UserItem(ClientChannel channel, int option)
+UserItem::UserItem(ClientChannel channel)
   : QStandardItem(ChatIcons::icon(channel), channel->name())
   , m_self(false)
   , m_channel(channel)
 {
-  if (option & UserView::SelfNick)
+  if (ChatClient::channel()->id() == channel->id())
     m_self = true;
 
   if (m_channel->status().value() != Status::Online)
@@ -75,8 +75,6 @@ void UserItem::setColor()
 
 void UserItem::setSortData()
 {
-//  setToolTip(UserUtils::toolTip(m_user));
-
   QString prefix = LS("6");
   if (m_self)
     prefix = LS("!");
@@ -91,7 +89,7 @@ void UserItem::setSortData()
 
 UserView::UserView(QWidget *parent)
   : QListView(parent)
-  , m_sortable(false)
+  , m_sortable(true)
 {
   setModel(&m_model);
   setFocusPolicy(Qt::TabFocus);
@@ -130,11 +128,7 @@ bool UserView::add(ClientChannel channel)
   if (m_channels.contains(channel->id()))
     return reload(channel);
 
-  int option = NoOptions;
-  if (m_channels.isEmpty())
-    option = SelfNick;
-
-  UserItem *item = new UserItem(channel, option);
+  UserItem *item = new UserItem(channel);
 
   m_model.appendRow(item);
   m_channels[channel->id()] = item;
@@ -178,7 +172,7 @@ bool UserView::remove(const QByteArray &id)
 
 void UserView::clear()
 {
-  m_sortable = false;
+  m_sortable = true;
   m_model.clear();
   m_channels.clear();
 }
