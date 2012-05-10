@@ -1,0 +1,8 @@
+a { text-decoration:none; }
+a:link, a:visited { color:#2988d2; }
+a:active, a:hover { color:#1e6396; }
+
+a.nick, a.nick:link, a.nick:visited {
+	font-weight:bold;
+	color:#113853;
+}
