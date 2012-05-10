@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QStringList>
@@ -210,4 +208,24 @@ void HistoryDB::create()
     "  text       TEXT,"
     "  plain      TEXT"
     ");"));
+
+  version();
+}
+
+
+/*!
+ * Добавление в базу информации о версии, в будущем эта информация может быть использована для автоматического обновления схемы базы данных.
+ */
+void HistoryDB::version()
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.exec(LS("PRAGMA user_version"));
+  if (!query.first())
+    return;
+
+  qint64 version = query.value(0).toLongLong();
+  if (!version) {
+    query.exec(LS("PRAGMA user_version = 1"));
+    version = 1;
+  }
 }

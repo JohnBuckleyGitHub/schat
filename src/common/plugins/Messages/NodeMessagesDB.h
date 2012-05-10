@@ -43,6 +43,8 @@ public:
   static void markAsRead(const QVariantList &data);
 
 private:
+  static void version();
+
   static bool m_isOpen; ///< true если база открыта.
   static QString m_id;  ///< Идентификатор сооединения с базой, это строка всегда равна "messages".
 };

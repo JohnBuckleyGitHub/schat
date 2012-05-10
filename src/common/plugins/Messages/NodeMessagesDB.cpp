@@ -59,6 +59,7 @@ bool NodeMessagesDB::open()
     "  plain      TEXT"
     ");"));
 
+  version();
   m_isOpen = true;
   return true;
 }
@@ -250,4 +251,22 @@ void NodeMessagesDB::markAsRead(const QVariantList &data)
   }
 
   db.commit();
+}
+
+
+/*!
+ * Добавление в базу информации о версии, в будущем эта информация может быть использована для автоматического обновления схемы базы данных.
+ */
+void NodeMessagesDB::version()
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.exec(LS("PRAGMA user_version"));
+  if (!query.first())
+    return;
+
+  qint64 version = query.value(0).toLongLong();
+  if (!version) {
+    query.exec(LS("PRAGMA user_version = 1"));
+    version = 1;
+  }
 }

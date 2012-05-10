@@ -56,7 +56,7 @@ int DataBase::start()
   }
 
   QSqlQuery query;
-  query.exec(QLatin1String("PRAGMA synchronous = OFF"));
+  query.exec(LS("PRAGMA synchronous = OFF"));
   QStringList tables = db.tables();
 
   if (!tables.contains(LS("accounts"))) {
@@ -80,9 +80,9 @@ int DataBase::start()
     "  permissions TEXT"
     ");"));
 
-    addGroup("master");
-    addGroup("registered");
-    addGroup("anonymous");
+    addGroup(LS("master"));
+    addGroup(LS("registered"));
+    addGroup(LS("anonymous"));
   }
 
   if (!tables.contains(LS("channels"))) {
@@ -102,6 +102,7 @@ int DataBase::start()
     noMaster = true;
   }
 
+  version();
   return 0;
 }
 
@@ -109,9 +110,9 @@ int DataBase::start()
 qint64 DataBase::addGroup(const QString &name, const QString &permissions)
 {
   QSqlQuery query;
-  query.prepare(QLatin1String("INSERT INTO groups (name, permissions) VALUES (:name, :permissions);"));
-  query.bindValue(QLatin1String(":name"), name);
-  query.bindValue(QLatin1String(":permissions"), permissions);
+  query.prepare(LS("INSERT INTO groups (name, permissions) VALUES (:name, :permissions);"));
+  query.bindValue(LS(":name"), name);
+  query.bindValue(LS(":permissions"), permissions);
   query.exec();
 
   if (query.numRowsAffected() <= 0)
@@ -124,9 +125,9 @@ qint64 DataBase::addGroup(const QString &name, const QString &permissions)
 bool DataBase::isCollision(const QByteArray &id, const QByteArray &normalized, int type)
 {
   QSqlQuery query;
-  query.prepare("SELECT channel FROM channels WHERE normalized = :normalized AND type = :type LIMIT 1;");
-  query.bindValue(":normalized", normalized);
-  query.bindValue(":type", type);
+  query.prepare(LS("SELECT channel FROM channels WHERE normalized = :normalized AND type = :type LIMIT 1;"));
+  query.bindValue(LS(":normalized"), normalized);
+  query.bindValue(LS(":type"), type);
   query.exec();
 
   if (!query.first())
@@ -198,15 +199,15 @@ qint64 DataBase::add(ChatChannel channel)
   }
 
   QSqlQuery query;
-  query.prepare("INSERT INTO channels (channel, normalized, type, gender, name, data) "
-                     "VALUES (:channel, :normalized, :type, :gender, :name, :data);");
+  query.prepare(LS("INSERT INTO channels (channel, normalized, type, gender, name, data) "
+                     "VALUES (:channel, :normalized, :type, :gender, :name, :data);"));
 
-  query.bindValue(":channel",    channel->id());
-  query.bindValue(":normalized", channel->normalized());
-  query.bindValue(":type",       channel->type());
-  query.bindValue(":gender",     channel->gender().raw());
-  query.bindValue(":name",       channel->name());
-  query.bindValue(":data",       JSON::generate(channel->data()));
+  query.bindValue(LS(":channel"),    channel->id());
+  query.bindValue(LS(":normalized"), channel->normalized());
+  query.bindValue(LS(":type"),       channel->type());
+  query.bindValue(LS(":gender"),     channel->gender().raw());
+  query.bindValue(LS(":name"),       channel->name());
+  query.bindValue(LS(":data"),       JSON::generate(channel->data()));
   query.exec();
 
   if (query.numRowsAffected() <= 0) {
@@ -239,8 +240,8 @@ qint64 DataBase::channelKey(const QByteArray &id, int type)
       return key;
 
     QSqlQuery query;
-    query.prepare("SELECT channel FROM accounts WHERE id = :id LIMIT 1;");
-    query.bindValue(":id", key);
+    query.prepare(LS("SELECT channel FROM accounts WHERE id = :id LIMIT 1;"));
+    query.bindValue(LS(":id"), key);
     query.exec();
 
     if (!query.first())
@@ -255,14 +256,14 @@ qint64 DataBase::channelKey(const QByteArray &id, int type)
   QSqlQuery query;
 
   if (SimpleID::typeOf(id) == SimpleID::NormalizedId) {
-    query.prepare("SELECT id FROM channels WHERE normalized = :id AND type = :type LIMIT 1;");
+    query.prepare(LS("SELECT id FROM channels WHERE normalized = :id AND type = :type LIMIT 1;"));
   }
   else {
-    query.prepare("SELECT id FROM channels WHERE channel = :id AND type = :type LIMIT 1;");
+    query.prepare(LS("SELECT id FROM channels WHERE channel = :id AND type = :type LIMIT 1;"));
   }
 
-  query.bindValue(":id",   id);
-  query.bindValue(":type", type);
+  query.bindValue(LS(":id"),   id);
+  query.bindValue(LS(":type"), type);
   query.exec();
 
   if (!query.first())
@@ -289,9 +290,9 @@ QString DataBase::nick(qint64 id)
 void DataBase::saveData(Channel *channel)
 {
   QSqlQuery query;
-  query.prepare("UPDATE channels SET data = :data WHERE id = :id;");
-  query.bindValue(":data",       JSON::generate(channel->data()));
-  query.bindValue(":id",         channel->key());
+  query.prepare(LS("UPDATE channels SET data = :data WHERE id = :id;"));
+  query.bindValue(LS(":data"),       JSON::generate(channel->data()));
+  query.bindValue(LS(":id"),         channel->key());
   query.exec();
 }
 
@@ -306,26 +307,26 @@ void DataBase::update(ChatChannel channel)
     return;
 
   QSqlQuery query;
-  query.prepare("UPDATE channels SET channel = :channel, normalized = :normalized, type = :type, gender = :gender, name = :name, data = :data WHERE id = :id;");
-  query.bindValue(":channel",    channel->id());
-  query.bindValue(":normalized", channel->normalized());
-  query.bindValue(":type",       channel->type());
-  query.bindValue(":gender",     channel->gender().raw());
-  query.bindValue(":name",       channel->name());
-  query.bindValue(":data",       JSON::generate(channel->data()));
-  query.bindValue(":id",         channel->key());
+  query.prepare(LS("UPDATE channels SET channel = :channel, normalized = :normalized, type = :type, gender = :gender, name = :name, data = :data WHERE id = :id;"));
+  query.bindValue(LS(":channel"),    channel->id());
+  query.bindValue(LS(":normalized"), channel->normalized());
+  query.bindValue(LS(":type"),       channel->type());
+  query.bindValue(LS(":gender"),     channel->gender().raw());
+  query.bindValue(LS(":name"),       channel->name());
+  query.bindValue(LS(":data"),       JSON::generate(channel->data()));
+  query.bindValue(LS(":id"),         channel->key());
   query.exec();
 
   if (channel->account() && channel->account()->id() > 0) {
     channel->account()->setDate(DateTime::utc());
 
-    query.prepare("UPDATE accounts SET date = :date, cookie = :cookie, name = :name, password = :password, groups = :groups WHERE id = :id;");
-    query.bindValue(":date",       channel->account()->date());
-    query.bindValue(":cookie",     channel->account()->cookie());
-    query.bindValue(":name",       channel->account()->name());
-    query.bindValue(":password",   channel->account()->password());
-    query.bindValue(":groups",     channel->account()->groups().toString());
-    query.bindValue(":id",         channel->account()->id());
+    query.prepare(LS("UPDATE accounts SET date = :date, cookie = :cookie, name = :name, password = :password, groups = :groups WHERE id = :id;"));
+    query.bindValue(LS(":date"),       channel->account()->date());
+    query.bindValue(LS(":cookie"),     channel->account()->cookie());
+    query.bindValue(LS(":name"),       channel->account()->name());
+    query.bindValue(LS(":password"),   channel->account()->password());
+    query.bindValue(LS(":groups"),     channel->account()->groups().toString());
+    query.bindValue(LS(":id"),         channel->account()->id());
     query.exec();
   }
 }
@@ -339,8 +340,8 @@ void DataBase::update(ChatChannel channel)
 Account DataBase::account(qint64 key)
 {
   QSqlQuery query;
-  query.prepare("SELECT channel, date, cookie, name, password, groups FROM accounts WHERE id = :id LIMIT 1;");
-  query.bindValue(":id", key);
+  query.prepare(LS("SELECT channel, date, cookie, name, password, groups FROM accounts WHERE id = :id LIMIT 1;"));
+  query.bindValue(LS(":id"), key);
   query.exec();
 
   if (!query.first())
@@ -368,8 +369,8 @@ qint64 DataBase::accountKey(const QByteArray &cookie)
     return -1;
 
   QSqlQuery query;
-  query.prepare("SELECT id FROM accounts WHERE cookie = :cookie LIMIT 1;");
-  query.bindValue(":cookie", cookie);
+  query.prepare(LS("SELECT id FROM accounts WHERE cookie = :cookie LIMIT 1;"));
+  query.bindValue(LS(":cookie"), cookie);
   query.exec();
 
   if (!query.first())
@@ -388,8 +389,8 @@ qint64 DataBase::accountKey(const QString &name)
     return -1;
 
   QSqlQuery query;
-  query.prepare("SELECT id FROM accounts WHERE name = :name LIMIT 1;");
-  query.bindValue(":name", name);
+  query.prepare(LS("SELECT id FROM accounts WHERE name = :name LIMIT 1;"));
+  query.bindValue(LS(":name"), name);
   query.exec();
 
   if (!query.first())
@@ -408,8 +409,8 @@ qint64 DataBase::accountKey(qint64 channel)
     return -1;
 
   QSqlQuery query;
-  query.prepare("SELECT id FROM accounts WHERE channel = :channel LIMIT 1;");
-  query.bindValue(":channel", channel);
+  query.prepare(LS("SELECT id FROM accounts WHERE channel = :channel LIMIT 1;"));
+  query.bindValue(LS(":channel"), channel);
   query.exec();
 
   if (!query.first())
@@ -428,15 +429,15 @@ qint64 DataBase::add(Account *account)
     account->setCookie(Ch::cookie());
 
   QSqlQuery query;
-  query.prepare("INSERT INTO accounts (channel, date, cookie, name, password, groups) "
-                     "VALUES (:channel, :date, :cookie, :name, :password, :groups);");
+  query.prepare(LS("INSERT INTO accounts (channel, date, cookie, name, password, groups) "
+                     "VALUES (:channel, :date, :cookie, :name, :password, :groups);"));
 
-  query.bindValue(":channel",    account->channel());
-  query.bindValue(":date",       account->date());
-  query.bindValue(":cookie",     account->cookie());
-  query.bindValue(":name",       account->name());
-  query.bindValue(":password",   account->password());
-  query.bindValue(":groups",     account->groups().toString());
+  query.bindValue(LS(":channel"),    account->channel());
+  query.bindValue(LS(":date"),       account->date());
+  query.bindValue(LS(":cookie"),     account->cookie());
+  query.bindValue(LS(":name"),       account->name());
+  query.bindValue(LS(":password"),   account->password());
+  query.bindValue(LS(":groups"),     account->groups().toString());
   query.exec();
 
   if (query.numRowsAffected() <= 0) {
@@ -447,10 +448,28 @@ qint64 DataBase::add(Account *account)
   qint64 key = query.lastInsertId().toLongLong();
   account->setId(key);
 
-  query.prepare("UPDATE channels SET account = :account WHERE id = :id;");
-  query.bindValue(":account", key);
-  query.bindValue(":id", account->channel());
+  query.prepare(LS("UPDATE channels SET account = :account WHERE id = :id;"));
+  query.bindValue(LS(":account"), key);
+  query.bindValue(LS(":id"),      account->channel());
   query.exec();
 
   return key;
+}
+
+
+/*!
+ * Добавление в базу информации о версии, в будущем эта информация может быть использована для автоматического обновления схемы базы данных.
+ */
+void DataBase::version()
+{
+  QSqlQuery query;
+  query.exec(LS("PRAGMA user_version"));
+  if (!query.first())
+    return;
+
+  qint64 version = query.value(0).toLongLong();
+  if (!version) {
+    query.exec(LS("PRAGMA user_version = 1"));
+    version = 1;
+  }
 }
