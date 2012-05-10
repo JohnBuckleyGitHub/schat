@@ -311,4 +311,24 @@ void CacheDB::create()
     "  json       BLOB"
     ");"
   ));
+
+  version();
+}
+
+
+/*!
+ * Добавление в базу информации о версии, в будущем эта информация может быть использована для автоматического обновления схемы базы данных.
+ */
+void CacheDB::version()
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.exec(LS("PRAGMA user_version"));
+  if (!query.first())
+    return;
+
+  qint64 version = query.value(0).toLongLong();
+  if (!version) {
+    query.exec(LS("PRAGMA user_version = 1"));
+    version = 1;
+  }
 }

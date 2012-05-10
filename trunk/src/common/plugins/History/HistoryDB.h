@@ -41,9 +41,11 @@ public:
   static void add(MessagePacket packet);
   static void clear();
   static void close();
-  static void create();
 
 private:
+  static void create();
+  static void version();
+
   static QString m_id; ///< Идентификатор соединения с базой.
 };
 

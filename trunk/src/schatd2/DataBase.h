@@ -57,6 +57,9 @@ public:
   static qint64 add(Account *account);
 
   static bool noMaster; /// \b true если отсутвует Master пользователь, значение устанавливается в \b true если таблицы channels не существовало и она была создана.
+
+private:
+  static void version();
 };
 
 #endif /* DATABASE_H_ */

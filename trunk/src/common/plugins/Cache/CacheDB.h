@@ -52,6 +52,7 @@ private slots:
 
 private:
   static void create();
+  static void version();
 
   QList<QRunnable*> m_tasks; ///< Задачи для выполнения в отдельном потоке.
   QThreadPool *m_pool;       ///< Пул для запуска потоков.
