@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ class ChannelInfo;
 class UserItem : public QStandardItem
 {
 public:
-  UserItem(ClientChannel channel, int option);
+  UserItem(ClientChannel channel);
   inline ClientChannel channel() { return m_channel; }
   bool reload();
 
@@ -53,18 +53,13 @@ class UserView : public QListView
   Q_OBJECT
 
 public:
-  enum AddOptions {
-    NoOptions = 0,
-    NoSort    = 1,
-    SelfNick  = 2
-  };
-
   UserView(QWidget *parent = 0);
   bool add(ClientChannel channel);
   bool reload(ClientChannel channel);
   bool remove(const QByteArray &id);
   inline bool contains(const QByteArray &id) const { return m_channels.contains(id); }
-  inline bool isSortable() const { return m_sortable; }
+  inline bool isSortable() const                   { return m_sortable; }
+  inline void setSortable(bool sortable)           { m_sortable = sortable; }
   void clear();
   void sort();
 

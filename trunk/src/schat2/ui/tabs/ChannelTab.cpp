@@ -109,10 +109,13 @@ void ChannelTab::channel(const QByteArray &id)
  */
 void ChannelTab::channels(const QList<QByteArray> &channels)
 {
+  m_userView->setSortable(false);
   foreach (QByteArray id, channels) {
     if (m_channel->channels().all().contains(id) && !m_userView->contains(id))
       m_userView->add(ChatClient::channels()->get(id));
   }
+
+  m_userView->sort();
 }
 
 
