@@ -7,13 +7,9 @@
  * To Public License, Version 2, as published by Sam Hocevar. See
  * http://sam.zoy.org/wtfpl/COPYING for more details.
  */
-#include <QDebug>
+#include <QStringList>
 
 #include "k8json.h"
-
-#if defined(K8JSON_INCLUDE_COMPLEX_GENERATOR) || defined(K8JSON_INCLUDE_GENERATOR)
-# include <QStringList>
-#endif
 
 namespace K8JSON {
 
@@ -745,8 +741,7 @@ const uchar *parseRecord (QVariant &res, const uchar *s, int *maxLength) {
 }
 
 
-static bool generateExCB(void *udata, QByteArray &res, const QVariant &val)
-{
+bool generate(QByteArray &res, const QVariant &val, int indent) {
   switch (val.type()) {
     case QVariant::Invalid:   res += QLatin1String("null"); break;
     case QVariant::Bool:      res += (val.toBool() ? QLatin1String("true") : QLatin1String("false")); break;
@@ -761,92 +756,138 @@ static bool generateExCB(void *udata, QByteArray &res, const QVariant &val)
 
     case QVariant::Map: {
       res += '{';
+      indent++;
       bool comma = false;
       QVariantMap m(val.toMap());
       QMapIterator<QString, QVariant> i(m);
       while (i.hasNext()) {
         i.next();
-        if (comma)
-          res += ',';
-        else
+        if (!comma) {
+          res += '\n';
           comma = true;
+        }
+        else
+          res += QLatin1String(",\n");
+
+        for (int c = indent; c > 0; c--)
+          res += ' ';
 
         res += quote(i.key()).toUtf8();
-        res += ':';
-        generateExCB(udata, res, i.value());
+        res += QLatin1String(": ");
+        generate(res, i.value(), indent);
+      }
+      indent--;
+      if (comma) {
+        res += '\n';
+        for (int c = indent; c > 0; c--)
+          res += ' ';
       }
       res += '}';
+      indent--;
     }
     break;
 
     case QVariant::Hash: {
       res += '{';
+      indent++;
       bool comma = false;
       QVariantHash m(val.toHash());
       QHashIterator<QString, QVariant> i(m);
       while (i.hasNext()) {
         i.next();
-        if (comma)
-          res += ',';
-        else
+        if (!comma) {
+          res += '\n';
           comma = true;
+        }
+        else
+          res += QLatin1String(",\n");
+
+        for (int c = indent; c > 0; c--)
+          res += ' ';
 
         res += quote(i.key()).toUtf8();
-        res += ':';
-        generateExCB(udata, res, i.value());
+        res += QLatin1String(": ");
+        generate(res, i.value(), indent);
+      }
+
+      indent--;
+      if (comma) {
+        res += '\n';
+        for (int c = indent; c > 0; c--)
+          res += ' ';
       }
       res += '}';
+      indent--;
     }
     break;
 
     case QVariant::List: {
       res += '[';
+      indent++;
       bool comma = false;
       QVariantList m(val.toList());
       foreach (const QVariant &v, m) {
-        if (comma)
-          res += ',';
-        else
+        if (!comma) {
+          res += '\n';
           comma = true;
+        }
+        else
+          res += QLatin1String(",\n");
 
-        generateExCB(udata, res, v);
+        for (int c = indent; c > 0; c--)
+          res += ' ';
+
+        generate(res, v, indent);
       }
 
+      indent--;
+      if (comma) {
+        res += '\n';
+        for (int c = indent; c > 0; c--)
+          res += ' ';
+      }
       res += ']';
+      indent--;
     }
     break;
 
     case QVariant::StringList: {
       res += '[';
+      indent++;
       bool comma = false;
-
       QStringList m(val.toStringList());
       foreach (const QString &v, m) {
-        if (comma)
-          res += ',';
-        else
+        if (!comma) {
+          res += '\n';
           comma = true;
+        }
+        else
+          res += QLatin1String(",\n");
 
+        for (int c = indent; c > 0; c--)
+          res += ' ';
         res += quote(v).toUtf8();
       }
+
+      indent--;
+      if (comma) {
+        res += '\n';
+        for (int c = indent; c > 0; c--)
+          res += ' ';
+      }
       res += ']';
+      indent--;
     }
     break;
 
     default:
       if (val.canConvert(QVariant::String))
-        generateExCB(udata, res, val.toString());
+        generate(res, val.toString(), indent);
       else
         res += QLatin1String("null");
   }
-
   return true;
 }
 
-
-bool generate(QByteArray &res, const QVariant &val)
-{
-  return generateExCB(0, res, val);
-}
 
 }
