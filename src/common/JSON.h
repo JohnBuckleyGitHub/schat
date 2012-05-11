@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -28,9 +28,12 @@ class SCHAT_EXPORT JSON
   JSON() {}
 
 public:
-  static QByteArray generate(const QVariant &data);
+  static QByteArray generate(const QVariant &data, bool formatted = false);
   static QString quote(const QString &text);
   static QVariant parse(const QByteArray &data);
+
+private:
+  static void gen(QByteArray &res, const QVariant &val);
 };
 
 #endif /* JSON_H_ */

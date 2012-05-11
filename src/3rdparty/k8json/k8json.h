@@ -10,20 +10,11 @@
 #ifndef K8JSON_H
 #define K8JSON_H
 
-#define K8JSON_INCLUDE_GENERATOR
-//#define K8JSON_INCLUDE_COMPLEX_GENERATOR
-
-
 #include <QHash>
 #include <QList>
 #include <QMap>
 #include <QString>
 #include <QVariant>
-
-#if defined(K8JSON_INCLUDE_COMPLEX_GENERATOR) || defined(K8JSON_INCLUDE_GENERATOR)
-# include <QByteArray>
-#endif
-
 
 namespace K8JSON {
 
@@ -78,10 +69,11 @@ const uchar *parseField (QString &fname, QVariant &fvalue, const uchar *s, int *
  */
 const uchar *parseRecord (QVariant &res, const uchar *s, int *maxLength);
 
+
 /*
  * generate JSON text from variant
  */
-bool generate(QByteArray &res, const QVariant &val);
+bool generate(QByteArray &res, const QVariant &val, int indent = 0);
 
 }
 
