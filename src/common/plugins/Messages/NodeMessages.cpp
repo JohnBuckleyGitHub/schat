@@ -51,6 +51,10 @@ bool NodeMessages::read(PacketReader *reader)
     reject(Notice::NotFound);
     return false;
   }
+  else if (m_dest->type() == SimpleID::ServerId) {
+    reject(Notice::BadRequest);
+    return false;
+  }
 
   if (m_dest->type() == SimpleID::UserId && m_dest->status().value() == Status::Offline) {
     reject(Notice::ChannelOffline);
