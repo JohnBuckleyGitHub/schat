@@ -188,6 +188,22 @@ SOURCES = \
 
 SCHAT_CLIENT_LIB = 1
 
+contains( SCHAT_QZIP, 1 ) {
+  HEADERS += qzip/qzipreader.h qzip/qzipwriter.h
+  SOURCES += qzip/qzip.cpp
+
+  contains(QT_CONFIG, system-zlib) {
+    if(unix|win32-g++*):LIBS += -lz
+    else:               LIBS += -lzlib
+  }
+  else {
+    INCLUDEPATH += $$[QT_INSTALL_PREFIX]/src/3rdparty/zlib
+  }
+}
+else {
+  DEFINES += SCHAT_NO_QZIP
+}
+
 TRANSLATIONS += ../../res/translations/schat2_en.ts
 TRANSLATIONS += ../../res/translations/schat2_ru.ts
 CODECFORTR = UTF-8
