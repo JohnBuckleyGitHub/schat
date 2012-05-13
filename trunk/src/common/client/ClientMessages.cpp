@@ -96,6 +96,9 @@ bool ClientMessages::send(const QByteArray &dest, const QString &text)
  */
 bool ClientMessages::sendText(const QByteArray &dest, const QString &text, const QString &command)
 {
+  if (SimpleID::typeOf(dest) == SimpleID::ServerId)
+    return false;
+
   MessagePacket packet(new MessageNotice(ChatClient::id(), dest, text, DateTime::utc(), randomId()));
   if (!command.isEmpty())
     packet->setCommand(command);
