@@ -15,6 +15,8 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+include(../common/config.pri)
+
 SCHAT_RESOURCES = 1
 
 TEMPLATE = lib
@@ -222,5 +224,4 @@ unix {
   INSTALLS += target
 }
 
-include(../common/config.pri)
 include(../common/common.pri)
