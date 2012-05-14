@@ -28,6 +28,7 @@
 
 class ChatPlugins;
 class ChatSettings;
+class Extensions;
 class NetworkManager;
 class SimpleClient;
 class Translation;
@@ -43,6 +44,7 @@ public:
   ~ChatCore();
   inline static ChatCore *i()                           { return m_self; }
   inline static ChatSettings *settings()                { return m_self->m_settings; }
+  inline static Extensions *extensions()                { return m_self->m_extensions; }
   inline static NetworkManager *networks()              { return m_self->m_networkManager; }
   inline static QByteArray currentId()                  { return m_self->m_currentId; }
   inline static Translation *translation()              { return m_self->m_translation; }
@@ -61,6 +63,7 @@ private:
 
   ChatPlugins *m_plugins;                         ///< Загрузчик плагинов.
   ChatSettings *m_settings;                       ///< Настройки.
+  Extensions *m_extensions;                       ///< Загрузчик расширений.
   NetworkManager *m_networkManager;               ///< Объект управляющих сетями.
   QByteArray m_currentId;                         ///< Идентификатор текущей вкладки.
   static ChatCore *m_self;                        ///< Указатель на себя.

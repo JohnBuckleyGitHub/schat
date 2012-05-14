@@ -33,6 +33,7 @@
 #include "client/ChatClient.h"
 #include "client/ClientMessages.h"
 #include "client/SimpleClient.h"
+#include "Extensions.h"
 #include "feeds/FeedStorage.h"
 #include "hooks/ChannelMenu.h"
 #include "hooks/ChannelMenuImpl.h"
@@ -68,6 +69,8 @@ ChatCore::ChatCore(QObject *parent)
 
   new ChatUrls(this);
   m_settings = new ChatSettings(Path::config(), this);
+  m_extensions = new Extensions(this);
+  Extensions::setRoot(Path::cache());
 
   loadTranslation();
 

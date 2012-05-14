@@ -35,6 +35,8 @@ HEADERS = \
     ChatPlugins.h \
     ChatSettings.h \
     ChatUrls.h \
+    Extension.h \
+    Extensions.h \
     feeds/AccountFeed.h \
     hooks/ChannelMenu.h \
     hooks/ChannelMenuImpl.h \
@@ -117,6 +119,8 @@ SOURCES = \
     ChatPlugins.cpp \
     ChatSettings.cpp \
     ChatUrls.cpp \
+    Extension.cpp \
+    Extensions.cpp \
     feeds/AccountFeed.cpp \
     hooks/ChannelMenu.cpp \
     hooks/ChannelMenuImpl.cpp \
