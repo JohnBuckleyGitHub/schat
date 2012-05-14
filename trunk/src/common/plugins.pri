@@ -22,6 +22,7 @@ SUBDIRS += \
     common/plugins/Cache \
     common/plugins/History \
     common/plugins/Profile \
+    common/plugins/Emoticons \
     common/plugins/Idle \
     common/plugins/RawFeeds \
 
