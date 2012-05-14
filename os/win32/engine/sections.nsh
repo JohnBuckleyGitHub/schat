@@ -50,6 +50,7 @@ ${mod} Emoticons.Kolobok
 ${mod} Cache
 ${mod} History
 ${mod} Profile
+${mod} Emoticons
 ${mod} Idle
 ${mod} Update
 ${mod} RawFeeds

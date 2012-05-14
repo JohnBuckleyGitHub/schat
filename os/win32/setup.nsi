@@ -22,6 +22,7 @@
 !define Cache
 !define History
 !define Profile
+!define Emoticons
 !define RawFeeds
 !define Update
 !define Idle

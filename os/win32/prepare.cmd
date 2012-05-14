@@ -39,6 +39,7 @@ copy ..\..\out\plugins\History.dll in\plugins\
 copy ..\..\out\plugins\Messages.dll in\plugins\
 copy ..\..\out\plugins\RawFeeds.dll in\plugins\
 copy ..\..\out\plugins\Profile.dll in\plugins\
+copy ..\..\out\plugins\Emoticons.dll in\plugins\
 copy ..\..\out\plugins\GeoIP.dll in\plugins\
 copy ..\..\out\plugins\Update.dll in\plugins\
 copy ..\..\out\plugins\Idle.dll in\plugins\
