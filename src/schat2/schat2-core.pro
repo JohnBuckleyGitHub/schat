@@ -37,8 +37,6 @@ HEADERS = \
     ChatPlugins.h \
     ChatSettings.h \
     ChatUrls.h \
-    Extension.h \
-    Extensions.h \
     feeds/AccountFeed.h \
     hooks/ChannelMenu.h \
     hooks/ChannelMenuImpl.h \
@@ -121,8 +119,6 @@ SOURCES = \
     ChatPlugins.cpp \
     ChatSettings.cpp \
     ChatUrls.cpp \
-    Extension.cpp \
-    Extensions.cpp \
     feeds/AccountFeed.cpp \
     hooks/ChannelMenu.cpp \
     hooks/ChannelMenuImpl.cpp \
@@ -194,9 +190,17 @@ SOURCES = \
 
 SCHAT_CLIENT_LIB = 1
 
-contains( SCHAT_QZIP, 1 ) {
-  HEADERS += qzip/qzipreader.h qzip/qzipwriter.h
-  SOURCES += qzip/qzip.cpp
+contains( SCHAT_EXTENSIONS, 1 ) {
+  HEADERS += \
+    Extension.h \
+    Extensions.h \
+    qzip/qzipreader.h \
+    qzip/qzipwriter.h \
+
+  SOURCES += \
+    Extension.cpp \
+    Extensions.cpp \
+    qzip/qzip.cpp \
 
   contains(QT_CONFIG, system-zlib) {
     if(unix|win32-g++*):LIBS += -lz
@@ -207,7 +211,7 @@ contains( SCHAT_QZIP, 1 ) {
   }
 }
 else {
-  DEFINES += SCHAT_NO_QZIP
+  DEFINES += SCHAT_NO_EXTENSIONS
 }
 
 TRANSLATIONS += ../../res/translations/schat2_en.ts

@@ -62,6 +62,7 @@ ChatCore *ChatCore::m_self = 0;
 
 ChatCore::ChatCore(QObject *parent)
   : QObject(parent)
+  , m_extensions(0)
 {
   m_self = this;
 
@@ -69,8 +70,11 @@ ChatCore::ChatCore(QObject *parent)
 
   new ChatUrls(this);
   m_settings = new ChatSettings(Path::config(), this);
+
+# if !defined(SCHAT_NO_EXTENSIONS)
   m_extensions = new Extensions(this);
   Extensions::setRoot(Path::cache());
+# endif
 
   loadTranslation();
 
@@ -110,6 +114,7 @@ ChatCore::ChatCore(QObject *parent)
 
   connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
 
+  qDebug() << config();
   QTimer::singleShot(0, this, SLOT(start()));
 }
 
@@ -122,6 +127,29 @@ ChatCore::~ChatCore()
 QByteArray ChatCore::randomId()
 {
   return SimpleID::randomId(SimpleID::MessageId, ChatClient::id());
+}
+
+
+/*!
+ * Определение опций компиляции во время выполнения.
+ */
+QStringList ChatCore::config()
+{
+  QStringList out;
+# if defined(SCHAT_DEBUG)
+  out += LS("DEBUG");
+# endif
+# if !defined(SCHAT_NO_SSL)
+  out += LS("SSL");
+# endif
+# if !defined(SCHAT_NO_QDNS)
+  out += LS("QDNS");
+# endif
+# if !defined(SCHAT_NO_EXTENSIONS)
+  out += LS("EXTENSIONS");
+# endif
+
+  return out;
 }
 
 

@@ -50,6 +50,7 @@ public:
   inline static Translation *translation()              { return m_self->m_translation; }
   inline static void setCurrentId(const QByteArray &id) { m_self->m_currentId = id; }
   static QByteArray randomId();
+  static QStringList config();
 
 public slots:
   void send(const QString &text);
