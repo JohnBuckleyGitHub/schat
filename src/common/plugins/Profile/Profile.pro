@@ -47,6 +47,11 @@ unix {
   INSTALLS += target translations
 }
 
+win32 {
+  target.path += ../../../../os/win32/schat2/plugins
+  INSTALLS += target
+}
+
 TRANSLATIONS += ../../../../res/translations/profile_en.ts
 TRANSLATIONS += ../../../../res/translations/profile_ru.ts
 CODECFORTR = UTF-8

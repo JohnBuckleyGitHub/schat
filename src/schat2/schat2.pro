@@ -48,10 +48,11 @@ DEFINES += SCHAT_WEBKIT
 SCHAT_CLIENT_LIB = 1
 SCHAT_CORE_LIB = 1
 
-unix {
-  translations.files = ../../res/translations/schat2_ru.qm
-  translations.files += ../../res/translations/ru.png
+translations.files += ../../res/translations/schat2_ru.qm
+translations.files += ../../res/translations/schat2_en.qm
+translations.files += ../../res/translations/ru.png
 
+unix {
   macx {
     translations.path += ../../out/SimpleChat2.app/Contents/Resources/translations
 
@@ -105,6 +106,38 @@ unix {
     
     INSTALLS += target applications translations icon16 icon22 icon24 icon32 icon36 icon48 icon64 icon72 icon96 icon128 icon196 icon256 icon512
   }
+}
+
+win32 {
+  translations.files += $$[QT_INSTALL_PREFIX]/translations/qt_ru.qm
+  translations.path += ../../os/win32/schat2/translations
+
+  qt.files += $$[QT_INSTALL_PREFIX]/bin/libeay32.dll
+  qt.files += $$[QT_INSTALL_PREFIX]/bin/ssleay32.dll
+  qt.files += $$[QT_INSTALL_PREFIX]/bin/libpng15.dll
+  qt.files += $$[QT_INSTALL_PREFIX]/bin/zlib1.dll
+  qt.files += $$[QT_INSTALL_PREFIX]/bin/msvcp100.dll
+  qt.files += $$[QT_INSTALL_PREFIX]/bin/msvcr100.dll 
+  qt.files += $$[QT_INSTALL_PREFIX]/bin/QtCore4.dll
+  qt.files += $$[QT_INSTALL_PREFIX]/bin/QtGui4.dll
+  qt.files += $$[QT_INSTALL_PREFIX]/bin/QtNetwork4.dll
+  qt.files += $$[QT_INSTALL_PREFIX]/bin/QtSql4.dll
+  qt.files += $$[QT_INSTALL_PREFIX]/bin/QtWebKit4.dll
+  qt.path += ../../os/win32/schat2/
+
+  imageformats.files += $$[QT_INSTALL_PREFIX]/plugins/imageformats/qgif4.dll
+  imageformats.files += $$[QT_INSTALL_PREFIX]/plugins/imageformats/qico4.dll
+  imageformats.files += $$[QT_INSTALL_PREFIX]/plugins/imageformats/qjpeg4.dll
+  imageformats.path += ../../os/win32/schat2/plugins/qt/imageformats
+  
+  sqldrivers.files += $$[QT_INSTALL_PREFIX]/plugins/sqldrivers/qsqlite4.dll
+  sqldrivers.path += ../../os/win32/schat2/plugins/qt/sqldrivers
+
+  doc.files += ../../res/doc/ChangeLog.html
+  doc.path += ../../os/win32/schat2/doc/
+
+  target.path += ../../os/win32/schat2/
+  INSTALLS += target translations qt imageformats sqldrivers doc
 }
 
 include(../common/config.pri)
