@@ -20,10 +20,12 @@ SCHAT_CORE_LIB = 1
 QT = core gui
 
 HEADERS  = \
+   EmoticonsExtension.h \
    EmoticonsPlugin.h \
    EmoticonsPlugin_p.h \
 
 SOURCES  = \
+   EmoticonsExtension.cpp \
    EmoticonsPlugin.cpp \
 
 unix {

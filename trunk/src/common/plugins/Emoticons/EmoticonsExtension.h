@@ -16,29 +16,23 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#ifndef EMOTICONSEXTENSION_H_
+#define EMOTICONSEXTENSION_H_
 
-#include "ChatCore.h"
-#include "EmoticonsExtension.h"
-#include "EmoticonsPlugin.h"
-#include "EmoticonsPlugin_p.h"
-#include "Extensions.h"
-#include "sglobal.h"
+#include "Extension.h"
 
-EmoticonsPluginImpl::EmoticonsPluginImpl(QObject *parent)
-  : ChatPlugin(parent)
+class EmoticonsExtensionFactory : public ExtensionFactory
 {
-  ChatCore::extensions()->addFactory(new EmoticonsExtensionFactory());
-}
+public:
+  EmoticonsExtensionFactory();
+  Extension* create(const QVariantMap &manifest, const QString &fileName);
+};
 
 
-ChatPlugin *EmoticonsPlugin::create()
+class EmoticonsExtension : public Extension
 {
-  if (!ChatCore::config().contains(LS("EXTENSIONS")))
-    return 0;
+public:
+  EmoticonsExtension(const QVariantMap &manifest, const QString &fileName);
+};
 
-  m_plugin = new EmoticonsPluginImpl(this);
-  return m_plugin;
-}
-
-Q_EXPORT_PLUGIN2(Emoticons, EmoticonsPlugin);
+#endif /* EMOTICONSEXTENSION_H_ */
