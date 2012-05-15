@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include "EmoticonsExtension.h"
 #include "sglobal.h"
 
@@ -36,5 +34,4 @@ Extension* EmoticonsExtensionFactory::create(const QVariantMap &manifest, const 
 EmoticonsExtension::EmoticonsExtension(const QVariantMap &manifest, const QString &fileName)
   : Extension(manifest, fileName)
 {
-  qDebug() << "EmoticonsExtension";
 }
