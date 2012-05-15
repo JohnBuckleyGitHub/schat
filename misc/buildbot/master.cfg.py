@@ -17,13 +17,7 @@ import schat_passwords
 import os
 
 SCHAT_VERSION        = "1.99.29"
-SCHAT_RELEASE        = False
-SCHAT_UPLOAD_BASE    = "/var/www/download.schat.me/htdocs/schat2/"
-
-if SCHAT_RELEASE:
-  SCHAT_UPLOAD_BASE = SCHAT_UPLOAD_BASE + SCHAT_VERSION
-else:
-  SCHAT_UPLOAD_BASE = SCHAT_UPLOAD_BASE + "snapshots/" + SCHAT_VERSION
+SCHAT_UPLOAD_BASE    = "/var/www/download.schat.me/htdocs/schat2/snapshots/" + SCHAT_VERSION
 
 authz = web.authz.Authz(
   auth=web.auth.BasicAuth(schat_passwords.WEB_USERS),
@@ -73,12 +67,8 @@ c = BuildmasterConfig = {
 
 c['properties'] = {
   'version': SCHAT_VERSION,
-  'suffix':  ''
+  'suffix':  '-dev'
 }
-
-
-if not SCHAT_RELEASE:
-  c['properties']['suffix'] = '-dev'
 
 
 c['schedulers'] = [
@@ -97,8 +87,12 @@ svn_co = [
 def MakeDebBuilder():
   f = BuildFactory()
   f.addSteps(svn_co)
-  f.addStep(ShellCommand(name="deb", command=["bash", "build.sh"], workdir="build/os/ubuntu"))
-  
+  f.addStep(ShellCommand(
+    name          = 'deb',
+    command       = ['bash', 'build.sh'],
+    workdir       = 'build/os/ubuntu',
+    haltOnFailure = True,
+  ))
   f.addStep(FileUpload(
     mode       = 0644,
     slavesrc   = WithProperties('os/ubuntu/deb/schat2_%(version)s-1~%(codename)s_%(arch)s.deb'),
@@ -184,7 +178,12 @@ def MakeWinBuilder():
 def MakeMacBuilder():
   f = BuildFactory()
   f.addSteps(svn_co)
-  f.addStep(ShellCommand(name='dmg', command=['bash', 'deploy.sh'], workdir='build/os/macosx'))
+  f.addStep(ShellCommand(
+    name          = 'dmg',
+    command       = ['bash', 'deploy.sh'],
+    workdir       = 'build/os/macosx',
+    haltOnFailure = True,
+  ))
   f.addStep(FileUpload(
     mode       = 0644,
     slavesrc   = WithProperties('os/macosx/dmg/SimpleChat2-%(version)s.dmg'),
@@ -197,9 +196,10 @@ def MakeSrcBuilder():
   f = BuildFactory()
   f.addSteps(svn_co)
   f.addStep(ShellCommand(
-    name    = 'tarball',
-    command = ['bash', 'os/source/tarball.sh'],
-    env     = {'SCHAT_SOURCE': WithProperties('schat2-src-%(version)s%(suffix)s')},
+    name          = 'tarball',
+    command       = ['bash', 'os/source/tarball.sh'],
+    env           = {'SCHAT_SOURCE': WithProperties('schat2-src-%(version)s%(suffix)s')},
+    haltOnFailure = True,
   ))
   f.addStep(FileUpload(
     mode       = 0644,
@@ -259,10 +259,7 @@ def MakeReleaseBuilder():
 
 
 def UploadFileName(file):
-  if SCHAT_RELEASE:
-    return WithProperties(SCHAT_UPLOAD_BASE + '/' + file)
-  else:
-    return WithProperties(SCHAT_UPLOAD_BASE + '/r%(got_revision)s/' + file)
+  return WithProperties(SCHAT_UPLOAD_BASE + '/r%(got_revision)s/' + file)
 
 
 c['builders'] = [
