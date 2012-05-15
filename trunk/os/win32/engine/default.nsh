@@ -52,7 +52,7 @@ ${def} OPT_ALLPROGRAMS     1
 ${def} OPT_AUTOSTART       1
 ${def} OPT_AUTODAEMONSTART 0
 
-${def} SCHAT_SOURCE        "in"
+${def} SCHAT_SOURCE        "schat2"
 ;${def} SCHAT_QTDIR         "in"
 ;${def} SCHAT_QT_BINDIR     "in"
 ;${def} SCHAT_BINDIR        "in"

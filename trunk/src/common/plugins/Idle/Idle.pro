@@ -55,4 +55,9 @@ unix {
   INSTALLS += target
 }
 
+win32 {
+  target.path += ../../../../os/win32/schat2/plugins
+  INSTALLS += target
+}
+
 include(../plugins.pri)

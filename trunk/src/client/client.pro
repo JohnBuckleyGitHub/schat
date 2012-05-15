@@ -31,6 +31,11 @@ unix {
   INSTALLS += target
 }
 
+win32 {
+  target.path += ../../os/win32/schat2/
+  INSTALLS += target
+}
+
 TRANSLATIONS += ../../res/translations/schat2-client_en.ts
 TRANSLATIONS += ../../res/translations/schat2-client_ru.ts
 CODECFORTR = UTF-8

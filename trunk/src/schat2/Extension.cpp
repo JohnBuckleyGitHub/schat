@@ -101,7 +101,7 @@ bool Extension::isInstalled() const
   if (!date.isValid())
     return false;
 
-  if (this->date() < date)
+  if (date < this->date())
     return false;
 
   return true;
