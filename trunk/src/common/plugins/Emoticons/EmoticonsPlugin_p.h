@@ -27,6 +27,9 @@ class EmoticonsPluginImpl : public ChatPlugin
 
 public:
   EmoticonsPluginImpl(QObject *parent);
+
+private slots:
+  void loaded();
 };
 
 

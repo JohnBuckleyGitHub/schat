@@ -16,9 +16,12 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include <QtPlugin>
 
 #include "ChatCore.h"
+#include "ChatSettings.h"
 #include "EmoticonsExtension.h"
 #include "EmoticonsPlugin.h"
 #include "EmoticonsPlugin_p.h"
@@ -28,7 +31,19 @@
 EmoticonsPluginImpl::EmoticonsPluginImpl(QObject *parent)
   : ChatPlugin(parent)
 {
+  ChatCore::settings()->setDefault(LS("Emoticons"), QStringList(LS("kolobok")));
   ChatCore::extensions()->addFactory(new EmoticonsExtensionFactory());
+
+  connect(ChatCore::extensions(), SIGNAL(loaded()), SLOT(loaded()));
+}
+
+
+void EmoticonsPluginImpl::loaded()
+{
+  QStringList emoticons = ChatCore::settings()->value(LS("Emoticons")).toStringList();
+  foreach (const QString &name, emoticons) {
+    ChatCore::extensions()->install(LS("emoticons/") + name);
+  }
 }
 
 

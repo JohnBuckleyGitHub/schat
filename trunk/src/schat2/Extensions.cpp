@@ -45,7 +45,7 @@ Extensions::Extensions(QObject *parent)
 Extensions::~Extensions()
 {
   qDeleteAll(m_factory);
-  qDeleteAll(m_extension);
+  qDeleteAll(m_extensions);
 }
 
 
@@ -81,12 +81,12 @@ Extension* Extensions::load(const QString &fileName, bool install)
   }
 
   QString key = extension->key();
-  if (m_extension.contains(key)) {
-    Extension *e = m_extension.value(key);
+  if (m_extensions.contains(key)) {
+    Extension *e = m_extensions.value(key);
     delete e;
   }
 
-  m_extension[key] = extension;
+  m_extensions[key] = extension;
   emit created(key);
 
   if (install)
@@ -104,6 +104,15 @@ void Extensions::addFactory(ExtensionFactory *factory)
   }
 
   m_factory[factory->type()] = factory;
+}
+
+
+void Extensions::install(const QString &key)
+{
+  if (!m_extensions.contains(key))
+    return;
+
+  install(m_extensions.value(key));
 }
 
 
@@ -132,9 +141,11 @@ void Extensions::load()
   QStringList files;
   find(files, dir);
 
-  foreach (QString file, files) {
+  foreach (const QString &file, files) {
     load(file);
   }
+
+  emit loaded();
 }
 
 
@@ -146,12 +157,12 @@ void Extensions::find(QStringList &extensions, const QString &path)
   QDir dir(path);
 
   QFileInfoList files = dir.entryInfoList(QStringList(LS("*.schat")), QDir::Files);
-  foreach (QFileInfo info, files) {
+  foreach (const QFileInfo &info, files) {
     extensions.append(info.absoluteFilePath());
   }
 
   files = dir.entryInfoList(QDir::AllDirs | QDir::NoDotAndDotDot);
-  foreach (QFileInfo info, files) {
+  foreach (const QFileInfo &info, files) {
     find(extensions, info.absoluteFilePath());
   }
 }

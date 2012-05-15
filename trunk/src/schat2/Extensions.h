@@ -36,15 +36,17 @@ public:
   Extensions(QObject *parent = 0);
   ~Extensions();
   Extension* load(const QString &fileName, bool install = false);
-  inline Extension* get(const QString &key)       { return m_extension.value(key); }
+  inline Extension* get(const QString &key)       { return m_extensions.value(key); }
   inline static QString root()                    { return m_root; }
   void addFactory(ExtensionFactory *factory);
+  void install(const QString &key);
 
   static QVariantMap manifest(const QString &fileName);
 
 signals:
   void created(const QString &key);
   void installed(const QString &key);
+  void loaded();
 
 public slots:
   void load();
@@ -53,7 +55,7 @@ private:
   void find(QStringList &extensions, const QString &path);
   void install(Extension *extension);
 
-  QHash<QString, Extension*> m_extension;      ///< Загруженные расширения.
+  QHash<QString, Extension*> m_extensions;     ///< Загруженные расширения.
   QHash<QString, ExtensionFactory*> m_factory; ///< Список объектов ExtensionFactory для создания Extension.
   QThreadPool *m_pool;                         ///< Пул потоков для запуска фоновых задач.
   static QString m_root;                       ///< Корневая директория для установки расширений.
