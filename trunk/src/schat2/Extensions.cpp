@@ -19,10 +19,13 @@
 #include <QDebug>
 
 #include <QThreadPool>
+#include <QTimer>
+#include <QDir>
 
 #include "Extension.h"
 #include "Extensions.h"
 #include "JSON.h"
+#include "Path.h"
 #include "qzip/qzipreader.h"
 #include "sglobal.h"
 
@@ -33,6 +36,9 @@ Extensions::Extensions(QObject *parent)
 {
   m_pool = new QThreadPool(this);
   m_pool->setMaxThreadCount(1);
+  m_root = Path::cache();
+
+  QTimer::singleShot(0, this, SLOT(load()));
 }
 
 
@@ -114,6 +120,40 @@ QVariantMap Extensions::manifest(const QString &fileName)
     return QVariantMap();
 
   return JSON::parse(reader.fileData(LS("manifest.json"))).toMap();
+}
+
+
+/*!
+ * Загрузка всех доступных расширений.
+ */
+void Extensions::load()
+{
+  QString dir = Path::data(Path::SystemScope) + LS("/extensions");
+  QStringList files;
+  find(files, dir);
+
+  foreach (QString file, files) {
+    load(file);
+  }
+}
+
+
+/*!
+ * Рекурсивный поиск файлов расширений.
+ */
+void Extensions::find(QStringList &extensions, const QString &path)
+{
+  QDir dir(path);
+
+  QFileInfoList files = dir.entryInfoList(QStringList(LS("*.schat")), QDir::Files);
+  foreach (QFileInfo info, files) {
+    extensions.append(info.absoluteFilePath());
+  }
+
+  files = dir.entryInfoList(QDir::AllDirs | QDir::NoDotAndDotDot);
+  foreach (QFileInfo info, files) {
+    find(extensions, info.absoluteFilePath());
+  }
 }
 
 
