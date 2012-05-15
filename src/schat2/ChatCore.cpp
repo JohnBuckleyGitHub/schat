@@ -73,7 +73,6 @@ ChatCore::ChatCore(QObject *parent)
 
 # if !defined(SCHAT_NO_EXTENSIONS)
   m_extensions = new Extensions(this);
-  Extensions::setRoot(Path::cache());
 # endif
 
   loadTranslation();

@@ -38,7 +38,6 @@ public:
   Extension* load(const QString &fileName, bool install = false);
   inline Extension* get(const QString &key)       { return m_extension.value(key); }
   inline static QString root()                    { return m_root; }
-  inline static void setRoot(const QString &root) { m_root = root; }
   void addFactory(ExtensionFactory *factory);
 
   static QVariantMap manifest(const QString &fileName);
@@ -47,7 +46,11 @@ signals:
   void created(const QString &key);
   void installed(const QString &key);
 
+public slots:
+  void load();
+
 private:
+  void find(QStringList &extensions, const QString &path);
   void install(Extension *extension);
 
   QHash<QString, Extension*> m_extension;      ///< Загруженные расширения.
