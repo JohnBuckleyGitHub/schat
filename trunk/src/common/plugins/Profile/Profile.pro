@@ -32,28 +32,26 @@ SOURCES  = \
 
 RESOURCES += Profile.qrc
 
-unix {
-  translations.files = ../../../../res/translations/profile_en.qm
-  translations.files += ../../../../res/translations/profile_ru.qm
-  
-  macx {
-    translations.path += ../../../../out/SimpleChat2.app/Contents/Resources/translations
-    target.path += ../../../../out/SimpleChat2.app/Contents/PlugIns/
-  } else {
-    translations.path = $$SCHAT_PREFIX/usr/share/schat2/translations
-    target.path += $$SCHAT_PREFIX/usr/share/schat2/plugins
-  }
-  
-  INSTALLS += target translations
+include(../plugins.pri)
+
+TRANSLATIONS += res/translations/profile_en.ts
+TRANSLATIONS += res/translations/profile_ru.ts
+CODECFORTR = UTF-8
+
+translations.files = res/translations/profile_en.qm
+translations.files += res/translations/profile_ru.qm
+
+macx {
+  translations.path += ../../../../out/SimpleChat2.app/Contents/Resources/translations
+  INSTALLS += translations
+}
+
+unix:!macx {
+  translations.path = $$SCHAT_PREFIX/usr/share/$${PLUGIN_TARGET}/translations
+  INSTALLS += translations
 }
 
 win32 {
-  target.path += ../../../../os/win32/schat2/plugins
-  INSTALLS += target
+  translations.path += ../../../../os/win32/$${PLUGIN_TARGET}/translations
+  INSTALLS += translations
 }
-
-TRANSLATIONS += ../../../../res/translations/profile_en.ts
-TRANSLATIONS += ../../../../res/translations/profile_ru.ts
-CODECFORTR = UTF-8
-
-include(../plugins.pri)

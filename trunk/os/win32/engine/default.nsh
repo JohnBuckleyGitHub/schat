@@ -53,11 +53,5 @@ ${def} OPT_AUTOSTART       1
 ${def} OPT_AUTODAEMONSTART 0
 
 ${def} SCHAT_SOURCE        "schat2"
-;${def} SCHAT_QTDIR         "in"
-;${def} SCHAT_QT_BINDIR     "in"
-;${def} SCHAT_BINDIR        "in"
-;${def} SCHAT_DATADIR       "in"
-#${def} VC90_REDIST_DIR     "C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT"
-#${def} VC100_REDIST_DIR    "C:\Windows\system32"
 
 !endif /* DEFAULT_NSH_ */
