@@ -26,13 +26,19 @@ ${Section}
 
   SetOutPath "$INSTDIR\doc"
   File "${SCHAT_SOURCE}\doc\ChangeLog.Emoticons.html"
+
+  SetOutPath "$INSTDIR\extensions\emoticons"
+  File "${SCHAT_SOURCE}\extensions\emoticons\kolobok.schat"
 ${SectionEnd}
 ${BodyEnd}
 
 ${Uninstall}
   Delete "$INSTDIR\doc\ChangeLog.Emoticons.html"
   Delete "$INSTDIR\plugins\Emoticons.dll"
+  Delete "$INSTDIR\doc\extensions\emoticons\kolobok.schat"
 
   RMDir "$INSTDIR\doc"
   RMDir "$INSTDIR\plugins"
+  RMDir "$INSTDIR\extensions\emoticons"
+  RMDir "$INSTDIR\extensions"
 ${UninstallEnd}

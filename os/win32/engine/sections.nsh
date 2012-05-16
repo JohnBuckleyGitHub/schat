@@ -31,18 +31,6 @@ ${mod} Core
 ${mod} Qt
 
 !ifdef SCHAT_SECTIONS
-  !if ${SCHAT_EMOTICON_GRP} == 1
-    SectionGroup "$(STR1004)" GroupEmoticons
-  !endif
-!endif
-${mod} Emoticons.Kolobok
-!ifdef SCHAT_SECTIONS
-  !if ${SCHAT_EMOTICON_GRP} == 1
-    SectionGroupEnd
-  !endif
-!endif
-
-!ifdef SCHAT_SECTIONS
   !if ${SCHAT_PLUGINS_GRP} == 1
     SectionGroup "$(STR1005)" GroupPlugins
   !endif
