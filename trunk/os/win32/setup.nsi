@@ -18,7 +18,6 @@
 
 !define Core
 !define Qt
-!define Emoticons.Kolobok
 !define Cache
 !define History
 !define Profile

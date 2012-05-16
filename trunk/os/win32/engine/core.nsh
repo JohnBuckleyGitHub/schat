@@ -160,10 +160,6 @@ SectionEnd
 !undef SCHAT_UNINSTALL
 !define SCHAT_DESC
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-  !if ${SCHAT_EMOTICON_GRP} == 1
-    !insertmacro MUI_DESCRIPTION_TEXT ${GroupEmoticons} $(STR1004)
-  !endif
-
   !if ${SCHAT_PLUGINS_GRP} == 1
     !insertmacro MUI_DESCRIPTION_TEXT ${GroupPlugins} $(STR1005)
   !endif

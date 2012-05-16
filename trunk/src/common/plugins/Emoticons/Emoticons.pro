@@ -29,3 +29,11 @@ SOURCES  = \
    EmoticonsPlugin.cpp \
 
 include(../plugins.pri)
+
+extensions.files += extensions/kolobok.schat
+
+macx:      extensions.path += ../../../../out/SimpleChat2.app/Contents/Resources/extensions/emoticons
+unix:!macx:extensions.path += $$SCHAT_PREFIX/usr/share/$${PLUGIN_TARGET}/extensions/emoticons
+win32:     extensions.path += ../../../../os/win32/$${PLUGIN_TARGET}/extensions/emoticons
+
+INSTALLS += extensions
