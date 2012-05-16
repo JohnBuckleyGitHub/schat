@@ -125,41 +125,11 @@ def MakeWinBuilder():
     command       = ['nmake'],
     haltOnFailure = True,
   ))
-  env = {
-    'SCHAT_SIGN_FILE':     schat_passwords.SIGN_FILE,
-    'SCHAT_SIGN_PASSWORD': schat_passwords.SIGN_PASSWORD,
-    'SCHAT_VERSION':       SCHAT_VERSION,
-  }
-  f.addStep(ShellCommand(
-    name          = 'sign',
-    command       = ['cmd', '/c', 'sign.cmd'],
-    workdir       = 'build/os/win32',
-    env           = env,
-    haltOnFailure = True,
-  ))
-  f.addStep(ShellCommand(
-    name          = 'prepare',
-    command       = ['cmd', '/c', 'prepare.cmd'],
-    workdir       = 'build/os/win32',
-    haltOnFailure = True,
-  ))
   f.addStep(ShellCommand(
     name          = 'nsis',
-    command       = ['makensis', 'setup.nsi'],
+    command       = ['cmd', '/c', 'nsis.cmd'],
     workdir       = 'build/os/win32',
-    haltOnFailure = True,
-  ))
-  f.addStep(ShellCommand(
-    name          = 'nsis',
-    command       = ['makensis', 'server.nsi'],
-    workdir       = 'build/os/win32',
-    haltOnFailure = True,
-  ))
-  f.addStep(ShellCommand(
-    name          = 'sign dist',
-    command       = ['cmd', '/c', 'sign_dist.cmd'],
-    workdir       = 'build/os/win32',
-    env           = env,
+    env           = { 'SCHAT_SIGN_FILE': schat_passwords.SIGN_FILE, 'SCHAT_SIGN_PASSWORD': schat_passwords.SIGN_PASSWORD, },
     haltOnFailure = True,
   ))
   f.addStep(FileUpload(
