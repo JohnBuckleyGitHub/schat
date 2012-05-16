@@ -26,15 +26,4 @@ HEADERS  = \
 SOURCES  = \
    UpdatePlugin.cpp \
 
-unix {
-  macx:target.path += ../../../../out/SimpleChat2.app/Contents/PlugIns/
-  !macx:target.path += $$SCHAT_PREFIX/usr/share/schat2/plugins
-  INSTALLS += target
-}
-
-win32 {
-  target.path += ../../../../os/win32/schat2/plugins
-  INSTALLS += target
-}
-
 include(../plugins.pri)

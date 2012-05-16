@@ -15,8 +15,9 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-TEMPLATE = lib
-CONFIG   += plugin
+TEMPLATE      = lib
+CONFIG        += plugin
+PLUGIN_TARGET = schat2
 
 DEPENDPATH += \
     . \
@@ -76,7 +77,26 @@ contains( SCHAT_DAEMON_LIB, 1 ) {
   } else {
     LIBS += -L../../../../out -lschatd
   }
+
+  PLUGIN_TARGET = schatd2
 }
 
 win32:RC_FILE = $${TARGET}.rc
 
+macx:contains( PLUGIN_TARGET, schat2 ) {
+  macx:target.path += ../../../../out/SimpleChat2.app/Contents/PlugIns/
+  INSTALLS += target
+}
+
+unix:!macx {
+  target.path += $$SCHAT_PREFIX/usr/share/$${PLUGIN_TARGET}/plugins
+  INSTALLS += target
+}
+
+win32 {
+  doc.files += res/doc/*.html
+  doc.path += ../../../../os/win32/$${PLUGIN_TARGET}/doc
+
+  target.path += ../../../../os/win32/$${PLUGIN_TARGET}/plugins
+  INSTALLS += target doc
+}

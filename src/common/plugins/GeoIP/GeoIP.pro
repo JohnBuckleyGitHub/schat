@@ -45,9 +45,4 @@ SOURCES  = \
    GeoIPPlugin.cpp \
    QGeoIP.cpp \
 
-unix:!macx {
-  target.path += $$SCHAT_PREFIX/usr/share/schatd2/plugins
-  INSTALLS += target
-}
-
 include(../plugins.pri)

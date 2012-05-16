@@ -23,6 +23,9 @@
 !include "engine\default.nsh"
 !include "engine\revision.nsh"
 
+!undef SCHAT_SOURCE
+!define SCHAT_SOURCE "schatd2"
+
 BrandingText "${SCHAT_COPYRIGHT}"
 Caption "${SCHAT_NAME} ${SCHAT_VERSION}"
 InstallDir "${SCHAT_INSTALLDIR}"

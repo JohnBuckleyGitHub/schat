@@ -45,6 +45,31 @@ unix:!macx {
   INSTALLS += target ssl
 }
 
+win32 {
+  qt.files += $$[QT_INSTALL_PREFIX]/bin/libeay32.dll
+  qt.files += $$[QT_INSTALL_PREFIX]/bin/ssleay32.dll
+  qt.files += $$[QT_INSTALL_PREFIX]/bin/zlib1.dll
+  qt.files += $$[QT_INSTALL_PREFIX]/bin/msvcp100.dll
+  qt.files += $$[QT_INSTALL_PREFIX]/bin/msvcr100.dll 
+  qt.files += $$[QT_INSTALL_PREFIX]/bin/QtCore4.dll
+  qt.files += $$[QT_INSTALL_PREFIX]/bin/QtNetwork4.dll
+  qt.files += $$[QT_INSTALL_PREFIX]/bin/QtSql4.dll
+  qt.path += ../../os/win32/schatd2/
+
+  sqldrivers.files += $$[QT_INSTALL_PREFIX]/plugins/sqldrivers/qsqlite4.dll
+  sqldrivers.path += ../../os/win32/schatd2/plugins/qt/sqldrivers
+
+  doc.files += ../../res/doc/ChangeLog.html
+  doc.path += ../../os/win32/schatd2/doc/
+
+  ssl.files = ../../misc/tools/server.crt
+  ssl.files += ../../misc/tools/server.key
+  ssl.path  = ../../os/win32/schatd2/
+
+  target.path += ../../os/win32/schatd2/
+  INSTALLS += target qt sqldrivers doc ssl
+}
+
 include(../common/config.pri)
 include(../common/common.pri)
 

@@ -87,5 +87,10 @@ unix:!macx {
   INSTALLS += target
 }
 
+win32 {
+  target.path += ../../os/win32/schatd2/
+  INSTALLS += target
+}
+
 include(../common/config.pri)
 include(../common/common.pri)
