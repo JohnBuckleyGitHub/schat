@@ -21,7 +21,26 @@
 
 #include <QSharedPointer>
 #include <QStringList>
+#include <QVariant>
 
+class EmoticonKey
+{
+public:
+  EmoticonKey(const QString &text)
+  : m_text(text)
+  {}
+
+  inline bool operator<(const EmoticonKey &key) const { if (m_text.size() > key.text().size()) return true; return m_text > key.text(); }
+  inline const QString& text() const                  { return m_text; }
+
+private:
+  const QString m_text;
+};
+
+
+/*!
+ * Информация о смайле.
+ */
 class EmoticonData
 {
 public:

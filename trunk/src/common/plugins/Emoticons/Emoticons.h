@@ -21,6 +21,8 @@
 
 #include <QObject>
 
+#include "EmoticonData.h"
+
 class Extension;
 
 class Emoticons : public QObject
@@ -30,6 +32,11 @@ class Emoticons : public QObject
 public:
   Emoticons(QObject *parent = 0);
   bool load(Extension *extension);
+
+private:
+  void add(Emoticon emoticon);
+
+  QMap<EmoticonKey, Emoticon> m_emoticons;
 };
 
 #endif /* EMOTICONS_H_ */
