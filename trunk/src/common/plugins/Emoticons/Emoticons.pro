@@ -23,6 +23,7 @@ HEADERS  = \
    EmoticonData.h \
    Emoticons.h \
    EmoticonsExtension.h \
+   EmoticonsFilter.h \
    EmoticonsPlugin.h \
    EmoticonsPlugin_p.h \
 
@@ -30,6 +31,7 @@ SOURCES  = \
    EmoticonData.cpp \
    Emoticons.cpp \
    EmoticonsExtension.cpp \
+   EmoticonsFilter.cpp \
    EmoticonsPlugin.cpp \
 
 include(../plugins.pri)
