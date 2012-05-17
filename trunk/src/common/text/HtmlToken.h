@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -117,8 +117,9 @@ public:
 class HtmlATag : public AbstractTag
 {
 public:
-  HtmlATag(const QString &url)
+  HtmlATag(const QString &url, const QString &title = QString())
   : AbstractTag()
+  , title(title)
   , url(url)
   {}
 
@@ -138,14 +139,18 @@ public:
 
   QString toText() const
   {
-    QString out = QLatin1String("<a href=\"") + url + QLatin1String("\"");
+    QString out = QLatin1String("<a href=\"") + url + QLatin1Char('"');
     if (!classes.isEmpty())
-      out += QLatin1String(" class=\"") + classes + QLatin1String("\"");
+      out += QLatin1String(" class=\"") + classes + QLatin1Char('"');
+
+    if (!title.isEmpty())
+      out += QLatin1String(" title=\"") + title + QLatin1Char('"');
 
     out += QLatin1String(">");
     return out;
   }
 
+  QString title;
   QString url;
 };
 

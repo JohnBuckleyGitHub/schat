@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,12 +19,13 @@
 #include <QTextDocument>
 #include <QUrl>
 
-#include "net/SimpleID.h"
-#include "text/UrlFilter.h"
 #include "ChatUrls.h"
+#include "net/SimpleID.h"
+#include "sglobal.h"
+#include "text/UrlFilter.h"
 
 UrlFilter::UrlFilter()
-  : AbstractFilter("Url")
+  : AbstractFilter(LS("Url"))
 {
 }
 
@@ -37,14 +38,14 @@ bool UrlFilter::filter(QList<HtmlToken> &tokens, QVariantHash options) const
 
   for (int i = 0; i < tokens.size(); ++i) {
 
-    if (tokens.at(i).type == HtmlToken::StartTag && tokens.at(i).tag == "a") {
+    if (tokens.at(i).type == HtmlToken::StartTag && tokens.at(i).tag == LS("a")) {
       HtmlATag tag(tokens.at(i));
 
-      if (tag.url.startsWith("chat://channel/")) {
-        tag.classes = "nick";
+      if (tag.url.startsWith(LS("chat://channel/"))) {
+        tag.classes = LS("nick");
         ClientChannel user = ChatUrls::channel(QUrl(tag.url));
         if (user) {
-          tag.classes += " " + SimpleID::encode(user->id());
+          tag.classes += LS(" ") + SimpleID::encode(user->id());
           name = user->name();
         }
 

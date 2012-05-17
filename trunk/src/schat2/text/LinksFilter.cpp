@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,14 +19,15 @@
 #include <QDebug>
 
 #include "text/LinksFilter.h"
+#include "sglobal.h"
 
 LinksFilter::LinksFilter()
-  : AbstractFilter("Links")
+  : AbstractFilter(LS("Links"))
 {
-  m_scheme += "http://";
-  m_scheme += "https://";
-  m_scheme += "ftp://";
-  m_scheme += "mailto:";
+  m_scheme += LS("http://");
+  m_scheme += LS("https://");
+  m_scheme += LS("ftp://");
+  m_scheme += LS("mailto:");
 }
 
 
@@ -38,7 +39,7 @@ bool LinksFilter::filter(QList<HtmlToken> &tokens, QVariantHash options) const
 
   for (int i = 0; i < tokens.size(); ++i) {
     HtmlToken token = tokens.at(i);
-    if (token.type == HtmlToken::Text && token.parent != "a")
+    if (token.type == HtmlToken::Text && token.parent != LS("a"))
       parse(out, token.text);
     else
       out.append(token);
@@ -51,7 +52,7 @@ bool LinksFilter::filter(QList<HtmlToken> &tokens, QVariantHash options) const
 
 QString LinksFilter::url(const QString &text, int index, int &last) const
 {
-  last = text.indexOf(' ', index);
+  last = text.indexOf(LC(' '), index);
   QString url;
   last == -1 ? url = text.mid(index) : url = text.mid(index, last - index);
   return url;
@@ -60,11 +61,11 @@ QString LinksFilter::url(const QString &text, int index, int &last) const
 
 void LinksFilter::makeUrl(QList<HtmlToken> &tokens, const QString &url, const QString &text) const
 {
-  HtmlToken a(HtmlToken::Tag, HtmlATag(url).toText());
+  HtmlToken a(HtmlToken::Tag, HtmlATag(url, url).toText());
   tokens.append(a);
 
   HtmlToken tag(text);
-  tag.parent = "a";
+  tag.parent = LS("a");
   tokens.append(tag);
 
   tokens.append(a.toEndTag());
@@ -99,15 +100,15 @@ void LinksFilter::parse(QList<HtmlToken> &tokens, const QString &text) const
 
 
   /// - Ссылки вида www.exampe.com в преобразуются в http.
-  index = text.indexOf("www.");
+  index = text.indexOf(LS("www."));
   if (index != -1) {
     url = this->url(text, index, last);
 
-    if (url.count('.') > 1) {
+    if (url.count(LC('.')) > 1) {
       if (index > 0)
         tokens.append(HtmlToken(text.left(index)));
 
-      makeUrl(tokens, "http://" + url, url);
+      makeUrl(tokens, LS("http://") + url, url);
 
       if (last != -1)
         return parse(tokens, text.mid(last));
@@ -122,19 +123,19 @@ void LinksFilter::parse(QList<HtmlToken> &tokens, const QString &text) const
   }
 
   /// - Ссылки вида user@example.com преобразуются в mailto.
-  index = text.indexOf("@");
+  index = text.indexOf(LC('@'));
   if (index != -1) {
-    int start = text.lastIndexOf(' ', index);
+    int start = text.lastIndexOf(LC(' '), index);
     QString name = text.mid(start + 1, index - start - 1);
     last = -1;
 
     if (!name.isEmpty()) {
       url = this->url(text, index, last);
-      if (url.contains('.')) {
+      if (url.contains(LC('.'))) {
         if (index > 0) {
           tokens.append(HtmlToken(text.left(index - name.size())));
 
-          makeUrl(tokens, "mailto:" + name + url, name + url);
+          makeUrl(tokens, LS("mailto:") + name + url, name + url);
 
           if (last != -1)
             return parse(tokens, text.mid(last));
