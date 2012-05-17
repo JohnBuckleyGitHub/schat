@@ -25,7 +25,7 @@
 #include "text/UrlFilter.h"
 
 UrlFilter::UrlFilter()
-  : AbstractFilter(LS("Url"))
+  : AbstractFilter(100)
 {
 }
 

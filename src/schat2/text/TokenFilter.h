@@ -19,7 +19,7 @@
 #ifndef TOKENFILTER_H_
 #define TOKENFILTER_H_
 
-#include <QHash>
+#include <QMap>
 #include <QStringList>
 #include <QVariant>
 #include <QSharedPointer>
@@ -33,19 +33,16 @@
 class SCHAT_CORE_EXPORT AbstractFilter
 {
 public:
-  inline AbstractFilter()
-  {}
-
-  inline AbstractFilter(const QString &name)
-  : m_name(name)
+  inline AbstractFilter(int weight = 0)
+  : m_weight(weight)
   {}
 
   virtual ~AbstractFilter() {}
-  inline const QString& name() const { return m_name; }
+  inline int weight() const { return m_weight; }
   virtual bool filter(QList<HtmlToken> &tokens, QVariantHash options = QVariantHash()) const = 0;
 
-protected:
-  QString m_name;
+private:
+  int m_weight;
 };
 
 
@@ -61,7 +58,7 @@ public:
   static void add(const QString &type, AbstractFilter *filter);
 
 private:
-  static QHash<QString, FilterPtr> m_filters; ///< Доступные фильтры.
+  static QMap<QString, QMap<int, FilterPtr> > m_filters; ///< Доступные фильтры.
 };
 
 
