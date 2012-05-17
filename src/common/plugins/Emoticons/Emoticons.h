@@ -32,11 +32,16 @@ class Emoticons : public QObject
 public:
   Emoticons(QObject *parent = 0);
   bool load(Extension *extension);
+  Emoticon get(const QString &key);
+  inline const QString& index() const { return m_index; }
+  QString find(const QString &text, int pos);
 
 private:
   void add(Emoticon emoticon);
+  void makeIndex();
 
-  QMap<EmoticonKey, Emoticon> m_emoticons;
+  QMap<EmoticonKey, Emoticon> m_emoticons; ///< Таблица смайлов.
+  QString m_index;                         ///< Первые символы текстовых сокращений смайлов.
 };
 
 #endif /* EMOTICONS_H_ */

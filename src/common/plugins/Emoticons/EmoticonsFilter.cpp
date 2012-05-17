@@ -18,11 +18,15 @@
 
 #include <QDebug>
 
+#include <QUrl>
+
+#include "Emoticons.h"
 #include "EmoticonsFilter.h"
 #include "sglobal.h"
 
-EmoticonsFilter::EmoticonsFilter()
+EmoticonsFilter::EmoticonsFilter(Emoticons *emoticons)
   : AbstractFilter(1000)
+  , m_emoticons(emoticons)
 {
 }
 
@@ -31,16 +35,82 @@ bool EmoticonsFilter::filter(QList<HtmlToken> &tokens, QVariantHash /*options*/)
 {
   QList<HtmlToken> out;
 
-
   for (int i = 0; i < tokens.size(); ++i) {
     HtmlToken token = tokens.at(i);
-    qDebug() << token.text;
-//    if (token.type == HtmlToken::Text && token.parent != LS("a"))
-//      parse(out, token.text);
-//    else
+    if (token.type == HtmlToken::Text && token.parent != LS("a"))
+      parse(out, token.text);
+    else
       out.append(token);
   }
 
   tokens = out;
   return false;
+}
+
+
+void EmoticonsFilter::make(QList<HtmlToken> &tokens, const QString &text) const
+{
+  Emoticon emoticon = m_emoticons->get(text);
+  if (!emoticon) {
+    tokens.append(HtmlToken(text));
+    return;
+  }
+
+  HtmlToken a(HtmlToken::Tag, HtmlATag(LS("#"), text).toText());
+  tokens.append(a);
+
+  QString img = QString(LS("<img class=\"emoticon\" title=\"%1\" alt=\"%1\" src=\"%2\" width=\"%3\" height=\"%4\" /></a>"))
+      .arg(text)
+      .arg(QUrl::fromLocalFile(emoticon->file()).toString())
+      .arg(emoticon->width())
+      .arg(emoticon->height());
+
+  HtmlToken tag(img);
+  tag.parent = LS("a");
+  tokens.append(tag);
+  tokens.append(a.toEndTag());
+}
+
+
+void EmoticonsFilter::parse(QList<HtmlToken> &tokens, const QString &text, int pos) const
+{
+  if (text.isEmpty())
+    return;
+
+  if (pos == -1) {
+    tokens.append(HtmlToken(text));
+    return;
+  }
+
+  if (text.at(pos) == LC(' ') && pos < text.size())
+    pos++;
+
+  // Возможно в этой позиции находится начало смайла.
+  if (m_emoticons->index().contains(text.at(pos))) {
+    QString t = m_emoticons->find(text, pos);
+
+    // Если текст не пустой, смайл найден.
+    if (!t.isEmpty()) {
+
+      // Смайл находится в конце строки.
+      if (pos + t.size() == text.size()) {
+        if (pos)
+          tokens.append(HtmlToken(text.left(pos)));
+
+        make(tokens, t);
+        return;
+      }
+      // Смайл находится в внутри строки и содержит после себя пробел.
+      else if (text.at(pos + t.size()) == LC(' ')) {
+        if (pos)
+          tokens.append(HtmlToken(text.left(pos)));
+
+        make(tokens, t);
+        parse(tokens, text.mid(pos + t.size()));
+        return;
+      }
+    }
+  }
+
+  parse(tokens, text, text.indexOf(LC(' '), pos + 1));
 }

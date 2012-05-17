@@ -21,11 +21,19 @@
 
 #include "text/TokenFilter.h"
 
+class Emoticons;
+
 class EmoticonsFilter : public AbstractFilter
 {
 public:
-  EmoticonsFilter();
+  EmoticonsFilter(Emoticons *emoticons);
   bool filter(QList<HtmlToken> &tokens, QVariantHash options = QVariantHash()) const;
+
+private:
+  void make(QList<HtmlToken> &tokens, const QString &text) const;
+  void parse(QList<HtmlToken> &tokens, const QString &text, int pos = 0) const;
+
+  Emoticons *m_emoticons;
 };
 
 #endif /* EMOTICONSFILTER_H_ */

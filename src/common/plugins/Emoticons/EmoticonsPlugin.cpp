@@ -38,7 +38,7 @@ EmoticonsPluginImpl::EmoticonsPluginImpl(QObject *parent)
   ChatCore::settings()->setDefault(LS("Emoticons"), QStringList(LS("kolobok")));
   ChatCore::extensions()->addFactory(new EmoticonsExtensionFactory());
 
-  TokenFilter::add(LS("channel"), new EmoticonsFilter());
+  TokenFilter::add(LS("channel"), new EmoticonsFilter(m_emoticons));
 
   connect(ChatCore::extensions(), SIGNAL(loaded()), SLOT(loaded()));
   connect(ChatCore::extensions(), SIGNAL(installed(QString)), SLOT(installed(QString)));
