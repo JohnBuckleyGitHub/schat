@@ -22,12 +22,13 @@
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "Emoticons.h"
 #include "EmoticonsExtension.h"
+#include "EmoticonsFilter.h"
 #include "EmoticonsPlugin.h"
 #include "EmoticonsPlugin_p.h"
 #include "Extensions.h"
 #include "sglobal.h"
-#include "Emoticons.h"
 
 EmoticonsPluginImpl::EmoticonsPluginImpl(QObject *parent)
   : ChatPlugin(parent)
@@ -36,6 +37,8 @@ EmoticonsPluginImpl::EmoticonsPluginImpl(QObject *parent)
 
   ChatCore::settings()->setDefault(LS("Emoticons"), QStringList(LS("kolobok")));
   ChatCore::extensions()->addFactory(new EmoticonsExtensionFactory());
+
+  TokenFilter::add(LS("channel"), new EmoticonsFilter());
 
   connect(ChatCore::extensions(), SIGNAL(loaded()), SLOT(loaded()));
   connect(ChatCore::extensions(), SIGNAL(installed(QString)), SLOT(installed(QString)));
