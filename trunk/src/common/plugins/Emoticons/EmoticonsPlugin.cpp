@@ -27,14 +27,27 @@
 #include "EmoticonsPlugin_p.h"
 #include "Extensions.h"
 #include "sglobal.h"
+#include "Emoticons.h"
 
 EmoticonsPluginImpl::EmoticonsPluginImpl(QObject *parent)
   : ChatPlugin(parent)
 {
+  m_emoticons = new Emoticons(this);
+
   ChatCore::settings()->setDefault(LS("Emoticons"), QStringList(LS("kolobok")));
   ChatCore::extensions()->addFactory(new EmoticonsExtensionFactory());
 
   connect(ChatCore::extensions(), SIGNAL(loaded()), SLOT(loaded()));
+  connect(ChatCore::extensions(), SIGNAL(installed(QString)), SLOT(installed(QString)));
+}
+
+
+void EmoticonsPluginImpl::installed(const QString &key)
+{
+  if (!key.startsWith(LS("emoticons/")))
+    return;
+
+  m_emoticons->load(ChatCore::extensions()->get(key));
 }
 
 

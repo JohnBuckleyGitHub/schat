@@ -16,27 +16,20 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef EMOTICONSPLUGIN_P_H_
-#define EMOTICONSPLUGIN_P_H_
+#ifndef EMOTICONS_H_
+#define EMOTICONS_H_
 
-#include "plugins/ChatPlugin.h"
+#include <QObject>
 
-class Emoticons;
+class Extension;
 
-class EmoticonsPluginImpl : public ChatPlugin
+class Emoticons : public QObject
 {
   Q_OBJECT
 
 public:
-  EmoticonsPluginImpl(QObject *parent);
-
-private slots:
-  void installed(const QString &key);
-  void loaded();
-
-private:
-  Emoticons *m_emoticons;
+  Emoticons(QObject *parent = 0);
+  bool load(Extension *extension);
 };
 
-
-#endif /* EMOTICONSPLUGIN_P_H_ */
+#endif /* EMOTICONS_H_ */
