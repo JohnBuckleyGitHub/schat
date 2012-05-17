@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,16 +19,16 @@
 #include "text/HtmlFilter.h"
 #include "text/TokenFilter.h"
 
-QHash<QString, FilterPtr> TokenFilter::m_filters;
+QMap<QString, QMap<int, FilterPtr> > TokenFilter::m_filters;
 
 QString TokenFilter::filter(const QString &type, const QString &text)
 {
-  HtmlFilter filter;
-  QList<HtmlToken> tokens = filter.tokenize(text);
-  QList<FilterPtr> filters = m_filters.values(type);
+  QList<HtmlToken> tokens = HtmlFilter().tokenize(text);
+  QMap<int, FilterPtr> filters = m_filters.value(type);
 
-  for (int i = 0; i < filters.size(); ++i)
-    filters.at(i)->filter(tokens);
+  foreach (FilterPtr filter, filters) {
+    filter->filter(tokens);
+  }
 
   return HtmlFilter::build(tokens);
 }
@@ -36,5 +36,5 @@ QString TokenFilter::filter(const QString &type, const QString &text)
 
 void TokenFilter::add(const QString &type, AbstractFilter *filter)
 {
-  m_filters.insertMulti(type, FilterPtr(filter));
+  m_filters[type][filter->weight()] = FilterPtr(filter);
 }

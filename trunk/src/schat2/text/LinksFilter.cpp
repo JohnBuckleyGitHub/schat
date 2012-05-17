@@ -22,7 +22,7 @@
 #include "sglobal.h"
 
 LinksFilter::LinksFilter()
-  : AbstractFilter(LS("Links"))
+  : AbstractFilter(200)
 {
   m_scheme += LS("http://");
   m_scheme += LS("https://");

@@ -22,7 +22,7 @@
 #include "sglobal.h"
 
 EmoticonsFilter::EmoticonsFilter()
-  : AbstractFilter(LS("X-Emoticons"))
+  : AbstractFilter(1000)
 {
 }
 
