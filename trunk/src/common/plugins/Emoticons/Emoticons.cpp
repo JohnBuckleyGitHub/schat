@@ -20,6 +20,7 @@
 
 #include <QFile>
 
+#include "EmoticonData.h"
 #include "Emoticons.h"
 #include "Extension.h"
 #include "JSON.h"
@@ -53,7 +54,8 @@ bool Emoticons::load(Extension *extension)
   QMapIterator<QString, QVariant> i(data);
   while (i.hasNext()) {
     i.next();
-    qDebug() << i.key() << ": " << i.value() << endl;
+    Emoticon emoticon = Emoticon(new EmoticonData(extension->root() + LC('/') + i.key(), extension->id(), i.value().toList()));
+    qDebug() << emoticon->isValid() << emoticon->file() << emoticon->width() << emoticon->height() << emoticon->texts();
   }
 
   qDebug() << "Emoticons::load()" << extension;
