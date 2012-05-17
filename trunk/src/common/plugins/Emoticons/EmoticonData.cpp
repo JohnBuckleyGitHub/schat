@@ -34,8 +34,12 @@ EmoticonData::EmoticonData(const QString &file, const QString &id, const QVarian
   m_height = data.at(1).toInt();
 
   for (int i = 2; i < data.size(); ++i) {
-    if (!m_texts.contains(data.at(i).toString()))
-      m_texts.append(data.at(i).toString());
+    QString text = data.at(i).toString();
+    if (text.isEmpty())
+      continue;
+
+    if (!m_texts.contains(text))
+      m_texts.append(text);
   }
 }
 

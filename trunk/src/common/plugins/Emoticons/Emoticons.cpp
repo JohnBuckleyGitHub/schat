@@ -59,7 +59,27 @@ bool Emoticons::load(Extension *extension)
     qDebug() << emoticon->isValid() << QFileInfo(emoticon->file()).fileName() << emoticon->width() << emoticon->height() << emoticon->texts();
   }
 
-  return false;
+
+  makeIndex();
+  return true;
+}
+
+
+Emoticon Emoticons::get(const QString &key)
+{
+  return m_emoticons.value(EmoticonKey(key));
+}
+
+
+QString Emoticons::find(const QString &text, int pos)
+{
+  QMapIterator<EmoticonKey, Emoticon> i(m_emoticons);
+  while (i.hasNext()) {
+    i.next();
+    if (text.indexOf(i.key().text(), pos) != -1)
+      return i.key().text();
+  }
+  return QString();
 }
 
 
@@ -71,4 +91,18 @@ void Emoticons::add(Emoticon emoticon)
   foreach (const QString &text, emoticon->texts()) {
     m_emoticons[EmoticonKey(text)] = emoticon;
   }
+}
+
+
+void Emoticons::makeIndex()
+{
+  m_index.clear();
+  QMapIterator<EmoticonKey, Emoticon> i(m_emoticons);
+  while (i.hasNext()) {
+    i.next();
+    if (!m_index.contains(i.key().text().at(0)))
+      m_index.append(i.key().text().at(0));
+  }
+
+  qDebug() << m_index;
 }
