@@ -22,6 +22,7 @@
 #include "plugins/ChatPlugin.h"
 
 class Emoticons;
+class QUrl;
 
 class EmoticonsPluginImpl : public ChatPlugin
 {
@@ -33,6 +34,7 @@ public:
 private slots:
   void installed(const QString &key);
   void loaded();
+  void openUrl(const QUrl &url);
 
 private:
   Emoticons *m_emoticons;

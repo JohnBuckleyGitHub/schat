@@ -17,105 +17,101 @@
  */
 
 * {
-	word-wrap:break-word;
+  word-wrap:break-word;
 }
 
 body {
-	background:#fff;
-	color:#000;
-	margin:0;
+  background:#fff;
+  color:#000;
+  margin:0;
 }
 
 #Chat {
-	margin:0;
-	padding:0;
-}
-
-img {
-	vertical-align:middle;
+  margin:0;
+  padding:0;
 }
 
 a {
-	text-decoration:none;
+  text-decoration:none;
 }
 
 a:link, a:visited {
-	color:#2988d2;
+  color:#2988d2;
 }
 
 a:active, a:hover {
-	color:#1e6396;
+  color:#1e6396;
 }
 
 ::-webkit-scrollbar {
-	width: 6px;
-	height: 6px;
-	background-color:#fff;
+  width: 6px;
+  height: 6px;
+  background-color:#fff;
 }
 
 ::-webkit-scrollbar-thumb {
-	background-color: rgba(0, 0, 0, 0.2);
-	border-radius:3px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius:3px;
 }
 
 ::-webkit-scrollbar-track {
-	border-radius:3px;
+  border-radius:3px;
 }
 
 .container {
-	margin:2px;
+  margin:2px;
 }
 
 .channel-type {
-	box-shadow: 1px 1px 0px rgba(0,0,0,0.07);
+  box-shadow: 1px 1px 0px rgba(0,0,0,0.07);
 }
 
 .blocks {
-	padding-left:0;
+  padding-left:0;
 }
 
 .date-time-block {
-	color:#a5b2c3;
-	font-size:x-small;
+  color:#a5b2c3;
+  font-size:x-small;
 }
 
 .no-seconds .seconds, .no-service .service-type, .no-topic-author #topic-extra { display:none; }
 
 .nick, .nick:link, .nick:visited {
-	font-weight:bold;
-	color:#113853;
+  font-weight:bold;
+  color:#113853;
 }
 
 .nick-block {
-	padding-right: 2px;
-	border-right: solid 1px #eee;
+  padding-right: 2px;
+  border-right: solid 1px #eee;
 }
 
 /* Входящие сообщения */
 .incoming  {
-	background-color:#f7f8f9;
-	border:1px solid #f2f4f6;
+  background-color:#f7f8f9;
+  border:1px solid #f2f4f6;
 }
 
 .incoming:hover {
-	background-color:#e6f0f5;
-	border:1px solid #dbebf1;
+  background-color:#e6f0f5;
+  border:1px solid #dbebf1;
 }
 
 /* Исходящие сообщения */
 .outgoing {
-	background:#f2ffe1;
-	border:1px solid #ebffcd;
+  background:#f2ffe1;
+  border:1px solid #ebffcd;
 }
 
 .outgoing:hover {
-	background-color:#e3ffb9;
-	border:1px solid #ddffa5;
+  background-color:#e3ffb9;
+  border:1px solid #ddffa5;
 }
 
 /* Отображение прогресс-бара для недоставленных сообщений */
 .undelivered {
-	background:url("qrc:/images/progress.gif") top right no-repeat #f2ffe1;
+  background:url("qrc:/images/progress.gif") top right no-repeat #f2ffe1;
 }
 
 /* Изменение внешнего вида для /me сообщений */
@@ -126,35 +122,35 @@ a:active, a:hover {
 
 /* Выделение красным отклонённых сообщений */
 .rejected {
-	background:#ffe1e2;
-	border:1px solid #ffd7d8;
+  background:#ffe1e2;
+  border:1px solid #ffd7d8;
 }
 
 .rejected:hover {
-	background:#ffc3c5;
-	border:1px solid #ffb9bb;
+  background:#ffc3c5;
+  border:1px solid #ffb9bb;
 }
 
 /* Выделение жёлтым офлайн сообщений */
 .offline {
-	background-color:#fbfbd1;
-	border:1px solid #f8f7ac;
+  background-color:#fbfbd1;
+  border:1px solid #f8f7ac;
 }
 
 .offline:hover {
-	background-color:#f8f7ac;
-	border:1px solid #f6f69a;
+  background-color:#f8f7ac;
+  border:1px solid #f6f69a;
 }
 
 .service-type .blocks, .info-type .blocks { border:1px solid #fff; color:#a5b2c3; }
 .service-type .nick, #topic-extra .nick { color:#a5b2c3; }
 
 .info-type .green-text {
-	color:#6bb521;
+  color:#6bb521;
 }
 
 .info-type .red-text {
-	color:#da251d;
+  color:#da251d;
 }
 
 .oh,.ot,.tt{float:left;padding:0 2% 2% 0;width:48%}.ot{width:31%}.tt{width:65%}.cl{clear:both}
