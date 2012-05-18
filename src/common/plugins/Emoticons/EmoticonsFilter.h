@@ -34,6 +34,7 @@ private:
   void parse(QList<HtmlToken> &tokens, const QString &text, int pos = 0) const;
 
   Emoticons *m_emoticons;
+  mutable int m_count;
 };
 
 #endif /* EMOTICONSFILTER_H_ */

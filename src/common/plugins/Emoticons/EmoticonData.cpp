@@ -18,6 +18,7 @@
 
 #include <QFile>
 #include <QVariant>
+#include <QTextDocument>
 
 #include "EmoticonData.h"
 #include "sglobal.h"
@@ -40,12 +41,12 @@ EmoticonData::EmoticonData(const QString &file, const QString &id, const QVarian
   m_height = icon.at(2).toInt();
 
   for (int i = 3; i < icon.size(); ++i) {
-    QString t = icon.at(i).toString();
-    if (t.isEmpty())
+    QString text = Qt::escape(icon.at(i).toString());
+    if (text.isEmpty())
       continue;
 
-    if (!m_texts.contains(t))
-      m_texts.append(t);
+    if (!m_texts.contains(text))
+      m_texts.append(text);
   }
 }
 
