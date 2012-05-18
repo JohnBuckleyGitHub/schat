@@ -54,7 +54,7 @@ bool Emoticons::load(Extension *extension)
   QMapIterator<QString, QVariant> i(data);
   while (i.hasNext()) {
     i.next();
-    Emoticon emoticon = Emoticon(new EmoticonData(extension->root() + LC('/') + i.key(), extension->id(), i.value().toList()));
+    Emoticon emoticon = Emoticon(new EmoticonData(extension->root() + LC('/') + i.key(), extension->id(), i.value().toMap()));
     add(emoticon);
     qDebug() << emoticon->isValid() << QFileInfo(emoticon->file()).fileName() << emoticon->width() << emoticon->height() << emoticon->texts();
   }
@@ -65,9 +65,25 @@ bool Emoticons::load(Extension *extension)
 }
 
 
+/*!
+ * Получение смайла по текстовому сокращению.
+ *
+ * \todo Разобраться что за WTF происходит (m_emoticons.contains() иногда возвращает false) и удалить костыль альтернативного поиска.
+ */
 Emoticon Emoticons::get(const QString &key)
 {
-  return m_emoticons.value(EmoticonKey(key));
+  EmoticonKey k(key);
+  if (m_emoticons.contains(k))
+    return m_emoticons.value(k);
+
+  QMapIterator<EmoticonKey, Emoticon> i(m_emoticons);
+  while (i.hasNext()) {
+    i.next();
+    if (i.key() == k)
+      return i.value();
+  }
+
+  return Emoticon();
 }
 
 

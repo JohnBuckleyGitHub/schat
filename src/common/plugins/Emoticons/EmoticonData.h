@@ -30,8 +30,9 @@ public:
   : m_text(text)
   {}
 
-  inline bool operator<(const EmoticonKey &key) const { if (m_text.size() > key.text().size()) return true; return m_text > key.text(); }
-  inline const QString& text() const                  { return m_text; }
+  inline bool operator<(const EmoticonKey &other) const  { if (m_text.size() > other.text().size()) return true; return m_text > other.text(); }
+  inline bool operator==(const EmoticonKey &other) const { return m_text == other.text(); }
+  inline const QString& text() const                     { return m_text; }
 
 private:
   const QString m_text;
@@ -44,7 +45,7 @@ private:
 class EmoticonData
 {
 public:
-  EmoticonData(const QString &file, const QString &id, const QVariantList &data);
+  EmoticonData(const QString &file, const QString &id, const QVariantMap &data);
   bool isValid() const;
   inline const QString& file() const      { return m_file; }
   inline const QString& id() const        { return m_id; }
