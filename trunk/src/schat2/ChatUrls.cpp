@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QDesktopServices>
 #include <QTextDocument>
 
@@ -44,7 +42,7 @@ ChatUrls::ChatUrls(QObject *parent)
 ClientChannel ChatUrls::channel(const QUrl &url)
 {
   ClientChannel channel;
-  if (url.scheme() != "chat" && url.host() != "channel")
+  if (url.scheme() != LS("chat") && url.host() != LS("channel"))
     return channel;
 
   QStringList path = ChatUrls::path(url);
@@ -59,8 +57,8 @@ ClientChannel ChatUrls::channel(const QUrl &url)
   if (channel)
     return channel;
 
-  channel = ClientChannel(new Channel(id, SimpleID::fromBase32(url.queryItemValue("name").toLatin1())));
-  channel->gender().setRaw(url.queryItemValue("gender").toInt());
+  channel = ClientChannel(new Channel(id, SimpleID::fromBase32(url.queryItemValue(LS("name")).toLatin1())));
+  channel->gender().setRaw(url.queryItemValue(LS("gender")).toInt());
   if (!channel->isValid())
     return ClientChannel();
 
@@ -70,12 +68,12 @@ ClientChannel ChatUrls::channel(const QUrl &url)
 
 QStringList ChatUrls::actions(const QUrl &url)
 {
-  if (url.scheme() != "chat")
+  if (url.scheme() != LS("chat"))
     return QStringList();
 
   QStringList out = path(url);
 
-  if (url.host() == "channel") {
+  if (url.host() == LS("channel")) {
     if (out.size() < 2)
       return QStringList();
 
@@ -90,10 +88,10 @@ QStringList ChatUrls::actions(const QUrl &url)
 QStringList ChatUrls::path(const QUrl &url)
 {
   QString path = url.path(); // В некоторых случаях путь возвращается без начального /.
-  if (path.startsWith('/'))
+  if (path.startsWith(LC('/')))
     path.remove(0, 1);
 
-  return path.split('/', QString::SkipEmptyParts);
+  return path.split(LC('/'), QString::SkipEmptyParts);
 }
 
 
@@ -105,12 +103,12 @@ QStringList ChatUrls::path(const QUrl &url)
  */
 QUrl ChatUrls::toUrl(ClientChannel channel, const QString &action)
 {
-  QUrl out("chat://channel");
+  QUrl out(LS("chat://channel"));
   out.setPath(SimpleID::encode(channel->id()) + (action.isEmpty() ? QString() : "/" + action));
 
   QList<QPair<QString, QString> > queries;
-  queries.append(QPair<QString, QString>("name",   SimpleID::toBase32(channel->name().toUtf8())));
-  queries.append(QPair<QString, QString>("gender", QString::number(channel->gender().raw())));
+  queries.append(QPair<QString, QString>(LS("name"),   SimpleID::toBase32(channel->name().toUtf8())));
+  queries.append(QPair<QString, QString>(LS("gender"), QString::number(channel->gender().raw())));
 
   out.setQueryItems(queries);
 
@@ -137,7 +135,7 @@ void ChatUrls::openChannelUrl(const QUrl &url)
     ChatNotify::start(Notify::OpenInfo, channel->id());
   }
   else if (action == LS("insert")) {
-    ChatNotify::start(Notify::InsertText, QString(LS(" <a class=\"nick\" href=\"%1\">%2</a> ")).arg(url.toString()).arg(Qt::escape(channel->name())));
+    ChatNotify::start(Notify::InsertText, QChar(QChar::Nbsp) + QString(LS("<a class=\"nick\" href=\"%1\">%2</a>")).arg(url.toString()).arg(Qt::escape(channel->name())) + QChar(QChar::Nbsp));
   }
   else if (action == LS("edit")) {
     if (actions.size() == 1)
@@ -151,25 +149,23 @@ void ChatUrls::openChannelUrl(const QUrl &url)
 
 void ChatUrls::openUrl(const QUrl &url)
 {
-  qDebug() << "-----" << url.toString();
-
-  if (url.scheme() == QLatin1String("schat")) {
+  if (url.scheme() == LS("schat")) {
     ChatClient::io()->openUrl(url);
     return;
   }
 
-  if (url.scheme() != QLatin1String("chat")) {
+  if (url.scheme() != LS("chat")) {
     QDesktopServices::openUrl(url);
     return;
   }
 
-  if (url.host() == QLatin1String("channel")) {
+  if (url.host() == LS("channel")) {
     openChannelUrl(url);
   }
-  else if (url.host() == QLatin1String("about")) {
+  else if (url.host() == LS("about")) {
     ChatNotify::start(Notify::OpenAbout);
   }
-  else if (url.host() == QLatin1String("settings")) {
+  else if (url.host() == LS("settings")) {
     ChatNotify::start(Notify::OpenSettings, url);
   }
 }

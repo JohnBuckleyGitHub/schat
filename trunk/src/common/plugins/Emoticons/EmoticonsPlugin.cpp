@@ -67,7 +67,7 @@ void EmoticonsPluginImpl::loaded()
 
 void EmoticonsPluginImpl::openUrl(const QUrl &url)
 {
-  ChatNotify::start(Notify::InsertText, LC(' ') + SimpleID::fromBase32(url.path().toLatin1()) + LC(' '));
+  ChatNotify::start(Notify::InsertText, QChar(QChar::Nbsp) + QString(SimpleID::fromBase32(url.path().toLatin1())) + QChar(QChar::Nbsp));
 }
 
 
