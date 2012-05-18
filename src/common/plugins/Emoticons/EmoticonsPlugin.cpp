@@ -16,11 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QtPlugin>
+#include <QDesktopServices>
 
 #include "ChatCore.h"
+#include "ChatNotify.h"
 #include "ChatSettings.h"
 #include "Emoticons.h"
 #include "EmoticonsExtension.h"
@@ -28,6 +28,7 @@
 #include "EmoticonsPlugin.h"
 #include "EmoticonsPlugin_p.h"
 #include "Extensions.h"
+#include "net/SimpleID.h"
 #include "sglobal.h"
 
 EmoticonsPluginImpl::EmoticonsPluginImpl(QObject *parent)
@@ -39,6 +40,7 @@ EmoticonsPluginImpl::EmoticonsPluginImpl(QObject *parent)
   ChatCore::extensions()->addFactory(new EmoticonsExtensionFactory());
 
   TokenFilter::add(LS("channel"), new EmoticonsFilter(m_emoticons));
+  QDesktopServices::setUrlHandler(LS("emoticon"), this, "openUrl");
 
   connect(ChatCore::extensions(), SIGNAL(loaded()), SLOT(loaded()));
   connect(ChatCore::extensions(), SIGNAL(installed(QString)), SLOT(installed(QString)));
@@ -60,6 +62,12 @@ void EmoticonsPluginImpl::loaded()
   foreach (const QString &name, emoticons) {
     ChatCore::extensions()->install(LS("emoticons/") + name);
   }
+}
+
+
+void EmoticonsPluginImpl::openUrl(const QUrl &url)
+{
+  ChatNotify::start(Notify::InsertText, LC(' ') + SimpleID::fromBase32(url.path().toLatin1()) + LC(' '));
 }
 
 
