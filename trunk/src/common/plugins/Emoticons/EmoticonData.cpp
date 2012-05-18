@@ -20,26 +20,35 @@
 #include <QVariant>
 
 #include "EmoticonData.h"
+#include "sglobal.h"
 
-EmoticonData::EmoticonData(const QString &file, const QString &id, const QVariantList &data)
+EmoticonData::EmoticonData(const QString &file, const QString &id, const QVariantMap &data)
   : m_height(0)
   , m_width(0)
   , m_file(file)
   , m_id(id)
 {
-  if (data.size() < 3)
+  if (data.isEmpty())
     return;
 
-  m_width = data.at(0).toInt();
-  m_height = data.at(1).toInt();
+  QVariantList size = data.value(LS("size")).toList();
+  if (size.size() < 2)
+    return;
 
-  for (int i = 2; i < data.size(); ++i) {
-    QString text = data.at(i).toString();
-    if (text.isEmpty())
+  m_width = size.at(0).toInt();
+  m_height = size.at(1).toInt();
+
+  QVariantList text = data.value(LS("text")).toList();
+  if (text.isEmpty())
+    return;
+
+  for (int i = 0; i < text.size(); ++i) {
+    QString t = text.at(i).toString();
+    if (t.isEmpty())
       continue;
 
-    if (!m_texts.contains(text))
-      m_texts.append(text);
+    if (!m_texts.contains(t))
+      m_texts.append(t);
   }
 }
 
