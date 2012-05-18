@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -30,9 +30,9 @@ class SCHAT_CORE_EXPORT ChatUrls : public QObject
 
 public:
   ChatUrls(QObject *parent = 0);
-  inline static ChatUrls *i() { return m_self; }
+  inline static ChatUrls *i()                 { return m_self; }
   inline static void open(const QString &url) { open(QUrl(url)); }
-  inline static void open(const QUrl &url) { m_self->openUrl(url); }
+  inline static void open(const QUrl &url)    { m_self->openUrl(url); }
 
   static ClientChannel channel(const QUrl &url);
   static QStringList actions(const QUrl &url);
