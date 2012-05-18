@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QUrl>
 
 #include "Emoticons.h"
@@ -34,6 +32,7 @@ EmoticonsFilter::EmoticonsFilter(Emoticons *emoticons)
 
 bool EmoticonsFilter::filter(QList<HtmlToken> &tokens, QVariantHash /*options*/) const
 {
+  m_count = 1;
   QList<HtmlToken> out;
 
   for (int i = 0; i < tokens.size(); ++i) {
@@ -57,6 +56,7 @@ void EmoticonsFilter::make(QList<HtmlToken> &tokens, const QString &text) const
     return;
   }
 
+  m_count++;
   HtmlToken a(HtmlToken::Tag, HtmlATag(LS("emoticon:") + SimpleID::toBase32(text.toUtf8()), text).toText());
   tokens.append(a);
 
@@ -78,7 +78,7 @@ void EmoticonsFilter::parse(QList<HtmlToken> &tokens, const QString &text, int p
   if (text.isEmpty())
     return;
 
-  if (pos == -1) {
+  if (pos == -1 || m_count > 6) {
     tokens.append(HtmlToken(text));
     return;
   }
