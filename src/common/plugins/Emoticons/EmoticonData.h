@@ -23,21 +23,6 @@
 #include <QStringList>
 #include <QVariant>
 
-class EmoticonKey
-{
-public:
-  EmoticonKey(const QString &text)
-  : m_text(text)
-  {}
-
-  inline bool operator<(const EmoticonKey &other) const  { if (m_text.size() > other.text().size()) return true; return m_text > other.text(); }
-  inline bool operator==(const EmoticonKey &other) const { return m_text == other.text(); }
-  inline const QString& text() const                     { return m_text; }
-
-private:
-  const QString m_text;
-};
-
 
 /*!
  * Информация о смайле.

@@ -61,57 +61,55 @@ bool Emoticons::load(Extension *extension)
 
 /*!
  * Получение смайла по текстовому сокращению.
- *
- * \todo Разобраться что за WTF происходит (m_emoticons.contains() иногда возвращает false) и удалить костыль альтернативного поиска.
  */
 Emoticon Emoticons::get(const QString &key)
 {
-  EmoticonKey k(key);
-  if (m_emoticons.contains(k))
-    return m_emoticons.value(k);
-
-  QMapIterator<EmoticonKey, Emoticon> i(m_emoticons);
-  while (i.hasNext()) {
-    i.next();
-    if (i.key() == k)
-      return i.value();
-  }
-
-  return Emoticon();
+  return m_emoticons.value(key);
 }
 
 
 QString Emoticons::find(const QString &text, int pos)
 {
-  QMapIterator<EmoticonKey, Emoticon> i(m_emoticons);
+  QChar c(text.at(pos));
+  QMapIterator<QString, Emoticon> i(m_emoticons);
   while (i.hasNext()) {
     i.next();
-    int index = text.indexOf(i.key().text());
+    if (i.key().at(0) != c)
+      continue;
+
+    int index = text.indexOf(i.key());
     if (index != -1 && index == pos)
-      return i.key().text();
+      return i.key();
   }
+
   return QString();
 }
 
 
+/*!
+ * Добавление смайла.
+ */
 void Emoticons::add(Emoticon emoticon)
 {
   if (!emoticon->isValid())
     return;
 
   foreach (const QString &text, emoticon->texts()) {
-    m_emoticons[EmoticonKey(text)] = emoticon;
+    m_emoticons[text] = emoticon;
   }
 }
 
 
+/*!
+ * Создание индекса из первых символов смайлов.
+ */
 void Emoticons::makeIndex()
 {
   m_index.clear();
-  QMapIterator<EmoticonKey, Emoticon> i(m_emoticons);
+  QMapIterator<QString, Emoticon> i(m_emoticons);
   while (i.hasNext()) {
     i.next();
-    if (!m_index.contains(i.key().text().at(0)))
-      m_index.append(i.key().text().at(0));
+    if (!m_index.contains(i.key().at(0)))
+      m_index.append(i.key().at(0));
   }
 }
