@@ -40,8 +40,8 @@ private:
   void add(Emoticon emoticon);
   void makeIndex();
 
-  QMap<EmoticonKey, Emoticon> m_emoticons; ///< Таблица смайлов.
-  QString m_index;                         ///< Первые символы текстовых сокращений смайлов.
+  QMap<QString, Emoticon> m_emoticons; ///< Таблица смайлов.
+  QString m_index;                     ///< Первые символы текстовых сокращений смайлов.
 };
 
 #endif /* EMOTICONS_H_ */
