@@ -16,9 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-#include <QFileInfo>
-
 #include <QFile>
 
 #include "Emoticons.h"
@@ -47,18 +44,15 @@ bool Emoticons::load(Extension *extension)
   if (!file.open(QIODevice::ReadOnly))
     return false;
 
-  QVariantMap data = JSON::parse(file.readAll()).toMap().value(LS("emoticons")).toMap();
+  QVariantList data = JSON::parse(file.readAll()).toMap().value(LS("emoticons")).toList();
   if (data.isEmpty())
     return false;
 
-  QMapIterator<QString, QVariant> i(data);
-  while (i.hasNext()) {
-    i.next();
-    Emoticon emoticon = Emoticon(new EmoticonData(extension->root() + LC('/') + i.key(), extension->id(), i.value().toMap()));
+  foreach (const QVariant &object, data) {
+    Emoticon emoticon = Emoticon(new EmoticonData(extension->root(), extension->id(), object.toMap()));
     add(emoticon);
-    qDebug() << emoticon->isValid() << QFileInfo(emoticon->file()).fileName() << emoticon->width() << emoticon->height() << emoticon->texts();
+//    qDebug() << emoticon->isValid() << QFileInfo(emoticon->file()).fileName() << emoticon->width() << emoticon->height() << emoticon->texts();
   }
-
 
   makeIndex();
   return true;

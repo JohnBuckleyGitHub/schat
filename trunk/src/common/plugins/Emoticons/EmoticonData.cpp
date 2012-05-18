@@ -31,19 +31,16 @@ EmoticonData::EmoticonData(const QString &file, const QString &id, const QVarian
   if (data.isEmpty())
     return;
 
-  QVariantList size = data.value(LS("size")).toList();
-  if (size.size() < 2)
+  QVariantList icon = data.value(LS("icon")).toList();
+  if (icon.size() < 4)
     return;
 
-  m_width = size.at(0).toInt();
-  m_height = size.at(1).toInt();
+  m_file   += LC('/') + icon.at(0).toString();
+  m_width  = icon.at(1).toInt();
+  m_height = icon.at(2).toInt();
 
-  QVariantList text = data.value(LS("text")).toList();
-  if (text.isEmpty())
-    return;
-
-  for (int i = 0; i < text.size(); ++i) {
-    QString t = text.at(i).toString();
+  for (int i = 3; i < icon.size(); ++i) {
+    QString t = icon.at(i).toString();
     if (t.isEmpty())
       continue;
 
