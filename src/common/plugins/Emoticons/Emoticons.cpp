@@ -76,7 +76,8 @@ QString Emoticons::find(const QString &text, int pos)
   QMapIterator<EmoticonKey, Emoticon> i(m_emoticons);
   while (i.hasNext()) {
     i.next();
-    if (text.indexOf(i.key().text(), pos) != -1)
+    int index = text.indexOf(i.key().text());
+    if (index != -1 && index == pos)
       return i.key().text();
   }
   return QString();
@@ -103,6 +104,4 @@ void Emoticons::makeIndex()
     if (!m_index.contains(i.key().text().at(0)))
       m_index.append(i.key().text().at(0));
   }
-
-  qDebug() << m_index;
 }
