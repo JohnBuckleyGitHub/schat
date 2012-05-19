@@ -17,91 +17,35 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Idle.h"
-
-#include <QLibrary>
 #include <qt_windows.h>
 
-class IdlePlatform::Private
-{
-public:
-  Private()
-  : GetLastInputInfo(0)
-  , IdleUIGetLastInputTime(0)
-  , lib(0)
-  {
-  }
-
-  BOOL (__stdcall * GetLastInputInfo)(PLASTINPUTINFO);
-  DWORD (__stdcall * IdleUIGetLastInputTime)(void);
-  QLibrary *lib;
-};
-
+#include "Idle.h"
 
 IdlePlatform::IdlePlatform()
 {
-  d = new Private;
 }
 
 
 IdlePlatform::~IdlePlatform()
 {
-  if (d->lib)
-    delete d->lib;
-
-  delete d;
 }
 
 
 bool IdlePlatform::init()
 {
-  if (d->lib)
-    return true;
-
-  void *p;
-
-  // try to find the built-in Windows 2000 function
-  d->lib = new QLibrary("user32");
-  if (d->lib->load() && (p = d->lib->resolve("GetLastInputInfo"))) {
-    d->GetLastInputInfo = (BOOL(__stdcall *)(PLASTINPUTINFO)) p;
-    return true;
-  }
-  else {
-    delete d->lib;
-    d->lib = 0;
-  }
-
-  // fall back on idleui
-  d->lib = new QLibrary("idleui");
-  if (d->lib->load() && (p = d->lib->resolve("IdleUIGetLastInputTime"))) {
-    d->IdleUIGetLastInputTime = (DWORD(__stdcall *)(void)) p;
-    return true;
-  }
-  else {
-    delete d->lib;
-    d->lib = 0;
-  }
-
-  return false;
+  return true;
 }
 
 
 int IdlePlatform::secondsIdle()
 {
-  int i;
-  if (d->GetLastInputInfo) {
-    LASTINPUTINFO li;
-    li.cbSize = sizeof(LASTINPUTINFO);
-    bool ok = d->GetLastInputInfo(&li);
-    if (!ok)
-      return 0;
-    i = li.dwTime;
-  }
-  else if (d->IdleUIGetLastInputTime) {
-    i = d->IdleUIGetLastInputTime();
-  }
-  else
-    return 0;
+  DWORD result = 0;
 
-  return (GetTickCount() - i) / 1000;
+  LASTINPUTINFO lii;
+  memset(&lii, 0, sizeof(lii));
+  lii.cbSize = sizeof(lii);
+  if (GetLastInputInfo(&lii))
+    result = lii.dwTime;
+
+  return (GetTickCount() - result ) / 1000;
 }
