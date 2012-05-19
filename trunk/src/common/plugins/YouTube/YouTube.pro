@@ -1,4 +1,4 @@
-# $Id: Emoticons.pro 2660 2012-05-17 13:14:45Z IMPOMEZIA $
+# $Id$
 # IMPOMEZIA Simple Chat
 # Copyright (c) 2008-2012 IMPOMEZIA <schat@impomezia.com>
 #
@@ -30,8 +30,7 @@ SOURCES  = \
    YouTubePlugin.cpp \
    YouTubeChatView.cpp \
 
-include(../plugins.pri)
-
 RESOURCES += \
     YouTube.qrc
 
+include(../plugins.pri)

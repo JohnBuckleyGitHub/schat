@@ -1,4 +1,4 @@
-/* IMPOMEZIA Simple Chat
+/* $Id$
  * IMPOMEZIA Simple Chat
  * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
@@ -16,7 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef YOUTUBEFILTER_H_
+#define YOUTUBEFILTER_H_
 
 #include "text/TokenFilter.h"
 
@@ -32,3 +33,5 @@ private:
   mutable int m_count;
   mutable QStringList m_urls;
 };
+
+#endif /* YOUTUBEFILTER_H_ */

@@ -1,4 +1,5 @@
-/* IMPOMEZIA Simple Chat
+/* $Id$
+ * IMPOMEZIA Simple Chat
  * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -57,7 +58,7 @@ bool YouTubeFilter::parse(QList<HtmlToken> &tokens, QList<HtmlToken> &out, const
             QUuid uuid = QUuid::createUuid();
             int posz = link.indexOf(m_urls.at(i));
             link = link.mid(posz+m_urls.at(i).length());
-            QString finalLink = QString("<br><br><a id=\"YouTubePlayerLabel_%1_%2\" href=\"javascript:ShowYouTubePlayer(\'%1\', \'%2\');\">show</a> <div id=\"YouTubePlayer_%1_%2\" style=\"display: none\"><iframe class=\"youtube-player\" type=\"text/html\" width=\"640\" height=\"385\" src=\"http://www.youtube.com/embed/%1\" frameborder=\"0\" onload=\"javascript:GetYouTubeVideoName(\'%1\', \'%2\');\"></iframe></div>").arg(link).arg(uuid.toString());
+            QString finalLink = QString("<br><a id=\"YouTubePlayerLabel_%1_%2\" href=\"javascript:ShowYouTubePlayer(\'%1\', \'%2\');\">show</a> <div id=\"YouTubePlayer_%1_%2\" style=\"display: none\"><iframe class=\"youtube-player\" type=\"text/html\" width=\"640\" height=\"385\" src=\"http://www.youtube.com/embed/%1\" frameborder=\"0\" onload=\"javascript:GetYouTubeVideoName(\'%1\', \'%2\');\"></iframe></div>").arg(link).arg(uuid.toString());
             qDebug() << finalLink;
             HtmlToken playerToken(HtmlToken::Tag, finalLink);
             out.append(playerToken);
