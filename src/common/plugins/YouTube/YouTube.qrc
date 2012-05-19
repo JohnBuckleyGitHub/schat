@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/js/YouTube_ShowHide.js</file>
+    </qresource>
+</RCC>
