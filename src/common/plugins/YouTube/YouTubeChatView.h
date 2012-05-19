@@ -1,4 +1,4 @@
-/* IMPOMEZIA Simple Chat
+/* $Id$
  * IMPOMEZIA Simple Chat
  * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
@@ -16,7 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef YOUTUBECHATVIEW_H_
+#define YOUTUBECHATVIEW_H_
 
 #include "hooks/ChatViewHooks.h"
 
@@ -29,5 +30,6 @@ public:
 
 protected:
   void initImpl(ChatView *view);
-  void loadFinishedImpl(ChatView *view);
 };
+
+#endif /* YOUTUBECHATVIEW_H_ */

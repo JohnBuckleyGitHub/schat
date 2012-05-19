@@ -1,4 +1,4 @@
-/* IMPOMEZIA Simple Chat
+/* $Id$
  * IMPOMEZIA Simple Chat
  * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
@@ -16,10 +16,10 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "YouTubeChatView.h"
-#include "ui/tabs/ChatView.h"
+#include "net/SimpleID.h"
 #include "sglobal.h"
-#include <QDebug>
+#include "ui/tabs/ChatView.h"
+#include "YouTubeChatView.h"
 
 YouTubeChatView::YouTubeChatView(QObject *parent)
   : ChatViewHooks(parent)
@@ -29,14 +29,8 @@ YouTubeChatView::YouTubeChatView(QObject *parent)
 
 void YouTubeChatView::initImpl(ChatView *view)
 {
+  if (SimpleID::typeOf(view->id()) == SimpleID::ServerId)
+    return;
+
   view->addJS(LS("qrc:/res/js/YouTube_ShowHide.js"));
-  qDebug() << "Loading JS here";
-  view->settings()->setAttribute(QWebSettings::LocalContentCanAccessRemoteUrls, true);
-  view->settings()->setAttribute(QWebSettings::LocalContentCanAccessFileUrls, true);
-
-}
-
-
-void YouTubeChatView::loadFinishedImpl(ChatView *view)
-{
 }

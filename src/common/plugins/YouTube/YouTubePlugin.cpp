@@ -1,4 +1,5 @@
-/* IMPOMEZIA Simple Chat
+/* $Id$
+ * IMPOMEZIA Simple Chat
  * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -16,18 +17,13 @@
  */
 
 #include <QtPlugin>
-#include <QDesktopServices>
 #include <QWebSettings>
 
-#include "ChatCore.h"
-#include "ChatNotify.h"
-#include "ChatSettings.h"
-#include "YouTubeFilter.h"
+#include "sglobal.h"
 #include "YouTubeChatView.h"
+#include "YouTubeFilter.h"
 #include "YouTubePlugin.h"
 #include "YouTubePlugin_p.h"
-#include "net/SimpleID.h"
-#include "sglobal.h"
 
 YouTubePluginImpl::YouTubePluginImpl(QObject *parent)
   : ChatPlugin(parent)
@@ -38,11 +34,9 @@ YouTubePluginImpl::YouTubePluginImpl(QObject *parent)
   new YouTubeChatView(this);
 }
 
+
 ChatPlugin *YouTubePlugin::create()
 {
-  if (!ChatCore::config().contains(LS("EXTENSIONS")))
-    return 0;
-
   m_plugin = new YouTubePluginImpl(this);
   return m_plugin;
 }

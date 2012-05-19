@@ -1,4 +1,5 @@
-/* IMPOMEZIA Simple Chat
+/* $Id$
+ * IMPOMEZIA Simple Chat
  * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -15,7 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#ifndef YOUTUBEPLUGIN_P_H_
+#define YOUTUBEPLUGIN_P_H_
 
 #include "plugins/ChatPlugin.h"
 
@@ -30,3 +32,5 @@ public:
 
 private:
 };
+
+#endif /* YOUTUBEPLUGIN_P_H_ */
