@@ -45,6 +45,7 @@ unix {
   }
 } else:win32 {
   SOURCES += idle_win.cpp
+  LIBS += -luser32
 } else {
   SOURCES += idle_stub.cpp
 }
