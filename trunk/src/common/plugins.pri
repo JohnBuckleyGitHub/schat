@@ -25,6 +25,6 @@ SUBDIRS += \
     common/plugins/Emoticons \
     common/plugins/Idle \
     common/plugins/RawFeeds \
-    common/plugins/Youtube \
+    common/plugins/YouTube \
 
 win32:SUBDIRS += common/plugins/Update
