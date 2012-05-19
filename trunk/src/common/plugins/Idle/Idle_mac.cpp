@@ -45,51 +45,20 @@ bool IdlePlatform::init()
 
 int IdlePlatform::secondsIdle()
 {
-  mach_port_t masterPort;
-  io_iterator_t iter;
-  io_registry_entry_t curObj;
+  static io_service_t macIOsrvc = NULL;
+  CFTypeRef property;
+  uint64_t idle_time = 0;
 
-  IOMasterPort(MACH_PORT_NULL, &masterPort);
-  IOServiceGetMatchingServices(masterPort, IOServiceMatching("IOHIDSystem"), &iter);
-  if (iter == 0)
-    return -1;
-
-  curObj = IOIteratorNext(iter);
-  if (curObj == 0)
-    return -1;
-
-  CFMutableDictionaryRef properties = 0;
-  CFTypeRef obj;
-  int result = -1;
-
-  if (IORegistryEntryCreateCFProperties(curObj, &properties, kCFAllocatorDefault, 0) == KERN_SUCCESS && properties != NULL) {
-    obj = CFDictionaryGetValue(properties, CFSTR("HIDIdleTime"));
-    CFRetain(obj);
-  } else
-    obj = NULL;
-
-  if (obj) {
-    uint64_t tHandle;
-
-    CFTypeID type = CFGetTypeID(obj);
-
-    if (type == CFDataGetTypeID())
-      CFDataGetBytes((CFDataRef) obj, CFRangeMake(0, sizeof(tHandle)), (UInt8*) &tHandle);
-    else if (type == CFNumberGetTypeID())
-      CFNumberGetValue((CFNumberRef)obj, kCFNumberSInt64Type, &tHandle);
-    else
-      return -1;
-
-    CFRelease(obj);
-
-    // essentially divides by 10^9
-    tHandle >>= 30;
-    result = tHandle;
+  if (macIOsrvc == 0) {
+    mach_port_t master;
+    IOMasterPort(MACH_PORT_NULL, &master);
+    macIOsrvc = IOServiceGetMatchingService(master, IOServiceMatching("IOHIDSystem"));
   }
 
-  /* Release our resources */
-  IOObjectRelease(curObj);
-  IOObjectRelease(iter);
-  CFRelease((CFTypeRef)properties);
-  return result;
+  property = IORegistryEntryCreateCFProperty(macIOsrvc, CFSTR("HIDIdleTime"), kCFAllocatorDefault, 0);
+  CFNumberGetValue((CFNumberRef)property, kCFNumberSInt64Type, &idle_time);
+  CFRelease(property);
+
+  /* convert nanoseconds to seconds */
+  return idle_time / 1000000000;
 }
