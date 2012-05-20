@@ -22,6 +22,8 @@ var YouTube = {
     if (!youtube.length)
       return;
 
+    youtube.data('state', 0);
+
     youtube.each(function() {
       var vid = $(this).attr('data-youtube-v');
       $(this).after(' <i data-youtube-v="' + vid + '" class="icon-spinner-small"></i>');
@@ -31,6 +33,9 @@ var YouTube = {
         dataType: 'json',
         success: function(data) {
           YouTube.setTitle(data, vid);
+        },
+        error: function() {
+          $('.icon-spinner-small[data-youtube-v="' + vid + '"]').remove();
         }
       });
     });
@@ -39,10 +44,35 @@ var YouTube = {
   setTitle: function(data, vid) {
     $('.icon-spinner-small[data-youtube-v="' + vid + '"]').remove();
 
-    var title = data.entry["title"].$t;
-    $('.youtube[data-youtube-v="' + vid + '"]').text(title);
+    var youtube = $('.youtube[data-youtube-v="' + vid + '"]');
+    youtube.text(data.entry["title"].$t);
+
+    youtube.each(function() {
+      if ($(this).data('state') === 0) {
+        $(this).data('state', 1);
+        var button = $('<a class="btn btn-youtube"><i class="icon-plus-small"></i></a>');
+        button.data('state', 0);
+
+        $(this).after(button);
+
+        button.on('click', function() {
+          YouTube.click(button);
+        });
+      }
+    });
 
     alignChat();
+  },
+
+  click: function(button) {
+    if (button.data('state') === 1) {
+      button.html('<i class="icon-plus-small"></i>');
+      button.data('state', 0);
+    }
+    else {
+      button.html('<i class="icon-minus-small"></i>');
+      button.data('state', 1);
+    }
   }
 };
 

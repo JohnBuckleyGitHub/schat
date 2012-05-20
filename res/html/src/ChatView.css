@@ -68,6 +68,7 @@ a:active, a:hover {
 
 .blocks {
   padding-left:0;
+  padding-right: 20px;
 }
 
 .date-time-block {
@@ -170,7 +171,7 @@ a:active, a:hover {
   padding: 0;
   position: fixed;
   margin: 0;
-  width: 40px;
+  width: 28px;
   outline: none;
   top: 0;
   z-index: 5;
@@ -329,6 +330,18 @@ a:active, a:hover {
 
 .icon-globe {
   background-image: url("qrc:/images/globe.png");
+}
+
+.icon-plus-small {
+  width: 7px;
+  height: 7px;
+  background-image: url("qrc:/images/plus-small.png");
+}
+
+.icon-minus-small {
+  width: 7px;
+  height: 7px;
+  background-image: url("qrc:/images/minus-small.png");
 }
 
 .os-windows {
