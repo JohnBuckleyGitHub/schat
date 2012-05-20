@@ -20,6 +20,7 @@
 
 #include <QCoreApplication>
 
+#include "ChatCore.h"
 #include "ChatNotify.h"
 #include "ChatUrls.h"
 #include "client/ChatClient.h"
@@ -80,6 +81,12 @@ WebBridge::~WebBridge()
 QString WebBridge::channel(const QString &id) const
 {
   return JSON::generate(channel(SimpleID::decode(id.toLatin1())));
+}
+
+
+QString WebBridge::randomId() const
+{
+  return SimpleID::encode(ChatCore::randomId());
 }
 
 

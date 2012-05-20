@@ -42,6 +42,7 @@ ${mod} Emoticons
 ${mod} Idle
 ${mod} Update
 ${mod} RawFeeds
+${mod} YouTube
 !ifdef SCHAT_SECTIONS
   !if ${SCHAT_PLUGINS_GRP} == 1
     SectionGroupEnd

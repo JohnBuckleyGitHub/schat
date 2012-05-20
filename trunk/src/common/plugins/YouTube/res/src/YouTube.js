@@ -50,13 +50,13 @@ var YouTube = {
     youtube.each(function() {
       if ($(this).data('state') === 0) {
         $(this).data('state', 1);
-        var button = $('<a class="btn btn-youtube"><i class="icon-plus-small"></i></a>');
-        button.data('state', 0);
 
-        $(this).after(button);
+        var id = SimpleChat.randomId();
+        $(this).after('<a class="btn btn-youtube" id="' + id + '"><i class="icon-plus-small"></i></a>');
+        $('#' + id).data('state', 0);
 
-        button.on('click', function() {
-          YouTube.click(button);
+        $('#' + id).on('click', function() {
+          YouTube.click(id, vid);
         });
       }
     });
@@ -64,15 +64,37 @@ var YouTube = {
     alignChat();
   },
 
-  click: function(button) {
+  click: function(id, vid) {
+    var button = $('#' + id);
+
     if (button.data('state') === 1) {
       button.html('<i class="icon-plus-small"></i>');
       button.data('state', 0);
+      $('#' + id + '-player').remove();
+      alignChat();
     }
     else {
+      $('.btn-youtube').html('<i class="icon-plus-small"></i>');
+      $('.btn-youtube').data('state', 0);
+      $('.youtube-player').remove();
+
       button.html('<i class="icon-minus-small"></i>');
       button.data('state', 1);
+      button.after(YouTube.player(id, vid));
+      alignChat();
     }
+  },
+
+  player: function(id, vid) {
+    return '<div class="youtube-player" id="' + id + '-player">' +
+      '<object width="480" height="360">' +
+      '<param name="movie" value="https://www.youtube.com/v/' + vid + '?fs=1">' +
+      '<param name="allowFullScreen" value="true">' +
+      '<embed src="https://www.youtube.com/v/' + vid + '?fs=1"' +
+      'type="application/x-shockwave-flash"' +
+      'allowfullscreen="true"' +
+      'width="480" height="360">' +
+      '</embed></object></div>';
   }
 };
 

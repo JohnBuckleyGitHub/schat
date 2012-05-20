@@ -51,5 +51,7 @@ ${L} sec_Update             "Update"
 ${L} desc_Update            "Update Plugin"
 ${L} sec_RawFeeds           "Raw Feeds"
 ${L} desc_RawFeeds          "Raw Feeds Plugin"
+${L} sec_YouTube            "YouTube"
+${L} desc_YouTube           "YouTube Plugin"
 
 !endif /* ENGLISH_NSH_ */

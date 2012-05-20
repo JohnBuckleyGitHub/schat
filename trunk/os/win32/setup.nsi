@@ -23,6 +23,7 @@
 !define Profile
 !define Emoticons
 !define RawFeeds
+!define YouTube
 !define Update
 !define Idle
 

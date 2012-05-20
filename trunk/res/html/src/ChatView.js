@@ -600,7 +600,8 @@ if (typeof ChatView === "undefined") {
     channel: function(id) { return "{}"; },
     translate: function(key) { return key; },
     setTabPage: function(id, page) {},
-    feed: function(id, name) { return {}; }
+    feed: function(id, name) { return {}; },
+    randomId: function() { return ''; }
   };
 
   ChatView = {
