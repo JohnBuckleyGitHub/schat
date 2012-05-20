@@ -145,9 +145,8 @@ var Pages = {
       $("#info").removeClass("active");
       alignChat();
 
-      for (var i = 0; i < Pages.onMessages.length; i++) {
+      for (var i = 0; i < Pages.onMessages.length; i++)
         Pages.onMessages[i]();
-      }
     }
     else if (page == 1) {
       $("#messages").removeClass("active");
@@ -168,6 +167,8 @@ Pages.onInfo.push(function() {
 
 // Объект сообщений.
 var Messages = {
+  onAdd: [],
+
   // Добавление сообщения пользователя.
   addChannelMessage: function(json)
   {
@@ -195,24 +196,27 @@ var Messages = {
     html += '</div>';
     html += '</div>';
 
-    Messages.addHintedRawMessage(html, json.Hint);
+    Messages.addHintedRawMessage(html, json.Hint, json.Id);
   },
 
 
   // Добавление сырого сообщения, с подсказкой по размещению.
-  addHintedRawMessage: function(html, hint)
+  addHintedRawMessage: function(html, hint, id)
   {
     if (hint.Hint == "before") {
       if (!$("#" + hint.Id).length) {
-        Messages.addRawMessage(html);
+        Messages.addRawMessage(html, id);
         return;
       }
 
       $("#" + hint.Id).before(html);
+      for (var i = 0; i < Messages.onAdd.length; i++)
+        Messages.onAdd[i](id);
+
       alignChat();
     }
     else
-      Messages.addRawMessage(html);
+      Messages.addRawMessage(html, id);
   },
 
 
@@ -231,9 +235,12 @@ var Messages = {
 
 
   // Добавление сырого сообщения.
-  addRawMessage: function (html)
+  addRawMessage: function (html, id)
   {
     $('#Chat').append(html);
+    for (var i = 0; i < Messages.onAdd.length; i++)
+      Messages.onAdd[i](id);
+
     alignChat();
   },
 
@@ -255,7 +262,7 @@ var Messages = {
     html += '</div>';
     html += '</div>';
 
-    Messages.addRawMessage(html);
+    Messages.addRawMessage(html, json.Id);
   },
 
 

@@ -1,5 +1,5 @@
-<RCC>
-    <qresource prefix="/">
-        <file>res/js/YouTube_ShowHide.js</file>
-    </qresource>
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+  <file alias="js/YouTube/YouTube.js">res/js/YouTube.min.js</file>
+</qresource>
 </RCC>

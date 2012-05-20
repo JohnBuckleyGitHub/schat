@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright (c) 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,22 +16,14 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef YOUTUBEFILTER_H_
-#define YOUTUBEFILTER_H_
+var YouTube = {
+  onAdd: function(id) {
+    var youtube = $('#' + id + ' .youtube');
+    if (!youtube.length)
+      return;
 
-#include "text/TokenFilter.h"
-
-class YouTubeFilter : public AbstractFilter
-{
-public:
-  YouTubeFilter();
-  bool filter(QList<HtmlToken> &tokens, QVariantHash options = QVariantHash()) const;
-
-private:
-  void make(QList<HtmlToken> &tokens, const QString &text) const;
-  bool parse(QList<HtmlToken> &tokens, QList<HtmlToken> &out, const QString &text) const;
-
-  QStringList m_hosts;
+    console.log(youtube);
+  }
 };
 
-#endif /* YOUTUBEFILTER_H_ */
+Messages.onAdd.push(YouTube.onAdd);
