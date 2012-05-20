@@ -32,5 +32,5 @@ void YouTubeChatView::initImpl(ChatView *view)
   if (SimpleID::typeOf(view->id()) == SimpleID::ServerId)
     return;
 
-  view->addJS(LS("qrc:/res/js/YouTube_ShowHide.js"));
+  view->addJS(LS("qrc:/js/YouTube/YouTube.js"));
 }
