@@ -295,6 +295,10 @@ a:active, a:hover {
   background-image: url("qrc:/images/spinner.gif");
 }
 
+.icon-spinner-small {
+  background-image: url("qrc:/images/spinner-small.gif");
+}
+
 .icon-unknown {
   background-image: url("qrc:/webkit/resources/missingImage.png");
 }

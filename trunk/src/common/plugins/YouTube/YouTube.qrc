@@ -1,5 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
+  <file alias="css/YouTube/YouTube.css">res/css/YouTube.min.css</file>
   <file alias="js/YouTube/YouTube.js">res/js/YouTube.min.js</file>
+  <file alias="images/YouTube/YouTube.png">res/images/YouTube.png</file>
 </qresource>
 </RCC>
