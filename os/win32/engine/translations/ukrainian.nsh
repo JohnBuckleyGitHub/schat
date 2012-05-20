@@ -52,5 +52,7 @@ ${L} sec_Update             "Update"
 ${L} desc_Update            "Плагін Update"
 ${L} sec_RawFeeds           "Raw Feeds"
 ${L} desc_RawFeeds          "Плагін Raw Feeds"
+${L} sec_YouTube            "YouTube"
+${L} desc_YouTube           "Плагін YouTube"
 
 !endif /* UKRAINIAN_NSH_ */

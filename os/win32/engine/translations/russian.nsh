@@ -51,5 +51,7 @@ ${L} sec_Update             "Update"
 ${L} desc_Update            "Плагин Update"
 ${L} sec_RawFeeds           "Raw Feeds"
 ${L} desc_RawFeeds          "Плагин Raw Feeds"
+${L} sec_YouTube            "YouTube"
+${L} desc_YouTube           "Плагин YouTube"
 
 !endif /* RUSSIAN_NSH_ */

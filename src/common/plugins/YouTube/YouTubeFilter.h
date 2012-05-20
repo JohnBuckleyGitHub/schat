@@ -29,7 +29,6 @@ public:
 
 private:
   void make(QList<HtmlToken> &tokens, const QString &text) const;
-  bool parse(QList<HtmlToken> &tokens, QList<HtmlToken> &out, const QString &text) const;
 
   QStringList m_hosts;
 };
