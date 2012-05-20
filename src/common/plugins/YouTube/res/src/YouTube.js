@@ -22,7 +22,27 @@ var YouTube = {
     if (!youtube.length)
       return;
 
-    console.log(youtube);
+    youtube.each(function() {
+      var vid = $(this).attr('data-youtube-v');
+      $(this).after(' <i data-youtube-v="' + vid + '" class="icon-spinner-small"></i>');
+
+      $.ajax({
+        url: 'http://gdata.youtube.com/feeds/api/videos/' + vid + '?alt=json',
+        dataType: 'json',
+        success: function(data) {
+          YouTube.setTitle(data, vid);
+        }
+      });
+    });
+  },
+
+  setTitle: function(data, vid) {
+    $('.icon-spinner-small[data-youtube-v="' + vid + '"]').remove();
+
+    var title = data.entry["title"].$t;
+    $('.youtube[data-youtube-v="' + vid + '"]').text(title);
+
+    alignChat();
   }
 };
 

@@ -17,12 +17,10 @@
  */
 
 #include <QUrl>
-#include <QUuid>
 
-#include "YouTubeFilter.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
-#include <QDebug>
+#include "YouTubeFilter.h"
 
 YouTubeFilter::YouTubeFilter()
   : AbstractFilter(950)
@@ -39,7 +37,8 @@ bool YouTubeFilter::filter(QList<HtmlToken> &tokens, QVariantHash /*options*/) c
     if (tokens.at(i).type == HtmlToken::StartTag && tokens.at(i).tag == LS("a")) {
       HtmlATag tag(tokens.at(i));
 
-      QUrl url(tag.url);
+      QString u = tag.url.replace(LS("&amp;"), LS("&"));
+      QUrl url(u);
       if (!m_hosts.contains(url.host()))
         continue;
 
