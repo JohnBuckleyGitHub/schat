@@ -36,7 +36,7 @@ public:
     out["Version"]  = "0.1.0";
     out["Site"]     = "http://wiki.schat.me/Plugin/YouTube";
     out["Desc"]     = "YouTube Plugin";
-    out["Required"] = "1.99.29";
+    out["Required"] = "1.99.30";
 
     return out;
   }

@@ -282,13 +282,8 @@ var Messages = {
     if (json === undefined)
       return '';
 
-    var out = '<a class="nick ';
-    out += json.Id + '" href="';
-    out += json.Url + '">';
-    out += htmlspecialchars(json.Name);
-    out += '</a>';
-
-    return out;
+    return '<a class="nick ' + json.Id + ' color-' + json.Color +  '" href="' + json.Url + '">'
+      + htmlspecialchars(json.Name)  + '</a>';
   },
 
 
