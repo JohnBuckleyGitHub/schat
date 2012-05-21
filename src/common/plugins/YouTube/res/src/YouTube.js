@@ -82,6 +82,7 @@ var YouTube = {
       button.data('state', 1);
       button.after(YouTube.player(id, vid));
       alignChat();
+      document.getElementById(id).scrollIntoView();
     }
   },
 
