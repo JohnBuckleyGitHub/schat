@@ -321,15 +321,18 @@ var Messages = {
     }
   },
 
-
-  // Обновление имени канала.
-  updateChannelName: function(data)
+  rename: function(data)
   {
-    var json = JSON.parse(data);
+    var a = $('a.' + data.Id);
+    a.attr('href', data.Url);
+    a.html(htmlspecialchars(data.Name));
+  },
 
-    var a = $('a.' + json.Id);
-    a.attr('href', json.Url);
-    a.html(htmlspecialchars(json.Name));
+  recolor: function(data)
+  {
+    var a = $('a.' + data.Id);
+    a.removeClassRegEx(/^color-/);
+    a.addClass('color-' + data.Color);
   }
 };
 
@@ -590,6 +593,24 @@ function htmlspecialchars (string, quote_style, charset, double_encode) {
   return string;
 }
 
+/// http://www.websanova.com/tutorials/jquery/jquery-remove-class-by-regular-expression
+(function ($) {
+  $.fn.removeClassRegEx = function (regex) {
+    var classes = $(this).attr('class');
+
+    if (!classes || !regex) return false;
+
+    var classArray = [];
+    classes = classes.split(' ');
+
+    for (var i = 0, len = classes.length; i < len; i++)
+      if (!classes[i].match(regex)) classArray.push(classes[i])
+
+    $(this).attr('class', classArray.join(' '));
+  };
+})(jQuery);
+
+
 if (typeof ChatView === "undefined") {
   SimpleChat = {
     channel: function(id) { return "{}"; },
@@ -608,4 +629,6 @@ else {
   ChatView.reload.connect(Messages.reload);
   ChatView.message.connect(Messages.addMessage);
   SimpleChat.retranslated.connect(Utils.retranslate);
+  SimpleChat.renamed.connect(Messages.rename);
+  SimpleChat.recolored.connect(Messages.recolor);
 }

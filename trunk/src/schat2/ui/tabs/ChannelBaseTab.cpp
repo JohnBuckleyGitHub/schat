@@ -124,9 +124,6 @@ void ChannelBaseTab::alert(const Alert &alert)
 
 void ChannelBaseTab::channel(const ChannelInfo &info)
 {
-  if (info.option() != ChannelInfo::Updated)
-    rename(info.id());
-
   if (info.id() != id())
     return;
 
@@ -200,10 +197,4 @@ void ChannelBaseTab::reload()
 {
   setIcon(channelIcon());
   setText(m_channel->name());
-}
-
-
-void ChannelBaseTab::rename(const QByteArray &id)
-{
-  m_chatView->evaluateJavaScript(LS("Messages.updateChannelName(") + JSON::quote(JSON::generate(WebBridge::channel(id))) + LS(");"));
 }
