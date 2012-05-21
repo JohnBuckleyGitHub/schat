@@ -31,6 +31,8 @@
 #include "sglobal.h"
 #include "text/HtmlFilter.h"
 #include "text/PlainTextFilter.h"
+#include "text/TokenFilter.h"
+#include "text/UrlFilter.h"
 #include "ui/ChatIcons.h"
 #include "ui/ColorButton.h"
 #include "ui/InputWidget.h"
@@ -59,6 +61,8 @@ InputWidget::InputWidget(QWidget *parent)
 
   document()->setDocumentMargin(2);
   setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+  TokenFilter::add(LS("input"), new UrlFilter());
 
   connect(this, SIGNAL(textChanged()), SLOT(textChanged()));
   connect(this, SIGNAL(cursorPositionChanged()), SLOT(cursorPositionChanged()));
@@ -153,6 +157,17 @@ void InputWidget::focusOutEvent(QFocusEvent *event)
 
   if (!m_menu)
     emit focusOut();
+}
+
+
+void InputWidget::insertFromMimeData(const QMimeData *source)
+{
+  if (source->hasHtml()) {
+    insertHtml(TokenFilter::filter(LS("input"), source->html()) + QChar(QChar::Nbsp));
+    return;
+  }
+
+  QTextEdit::insertFromMimeData(source);
 }
 
 
