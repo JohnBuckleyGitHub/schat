@@ -47,19 +47,21 @@ var YouTube = {
     var youtube = $('.youtube[data-youtube-v="' + vid + '"]');
     youtube.text(data.entry["title"].$t);
 
-    youtube.each(function() {
-      if ($(this).data('state') === 0) {
-        $(this).data('state', 1);
+    if (YouTube.isFlashInstalled()) {
+      youtube.each(function() {
+        if ($(this).data('state') === 0) {
+          $(this).data('state', 1);
 
-        var id = SimpleChat.randomId();
-        $(this).after('<a class="btn btn-youtube" id="' + id + '"><i class="icon-plus-small"></i></a>');
-        $('#' + id).data('state', 0);
+          var id = SimpleChat.randomId();
+          $(this).after('<a class="btn btn-youtube" id="' + id + '"><i class="icon-plus-small"></i></a>');
+          $('#' + id).data('state', 0);
 
-        $('#' + id).on('click', function() {
-          YouTube.click(id, vid);
-        });
-      }
-    });
+          $('#' + id).on('click', function() {
+            YouTube.click(id, vid);
+          });
+        }
+      });
+    }
 
     alignChat();
   },
@@ -96,6 +98,18 @@ var YouTube = {
       'allowfullscreen="true"' +
       'width="480" height="360">' +
       '</embed></object></div>';
+  },
+
+  isFlashInstalled: function() {
+    if (navigator.plugins && navigator.plugins.length > 0) {
+      var type = 'application/x-shockwave-flash';
+      var mimeTypes = navigator.mimeTypes;
+      if (mimeTypes && mimeTypes[type] && mimeTypes[type].enabledPlugin && mimeTypes[type].enabledPlugin.description) {
+        return true;
+      }
+    }
+
+    return false;
   }
 };
 
