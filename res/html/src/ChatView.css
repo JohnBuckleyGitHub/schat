@@ -88,6 +88,30 @@ a:active, a:hover {
   border-right: solid 1px #eee;
 }
 
+.color-black, .color-black:link, .color-black:visited {
+  color: #0a2232;
+}
+
+.color-gray, .color-gray:link, .color-gray:visited {
+  color: #675656;
+}
+
+.color-green, .color-green:link, .color-green:visited {
+  color: #348956;
+}
+
+.color-red, .color-red:link, .color-red:visited {
+  color: #922c2e;
+}
+
+.color-white, .color-white:link, .color-white:visited {
+  color: #6f6f6f;
+}
+
+.color-yellow, .color-yellow:link, .color-yellow:visited {
+  color: #92652c;
+}
+
 /* Входящие сообщения */
 .incoming  {
   background-color:#f7f8f9;

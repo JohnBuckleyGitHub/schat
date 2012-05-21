@@ -44,8 +44,10 @@ bool UrlFilter::filter(QList<HtmlToken> &tokens, QVariantHash options) const
         tag.classes = LS("nick");
         ClientChannel user = ChatUrls::channel(QUrl(tag.url));
         if (user) {
-          tag.classes += LS(" ") + SimpleID::encode(user->id());
+          tag.classes += LC(' ') + SimpleID::encode(user->id());
           name = user->name();
+
+          tag.classes += LS(" color-") + Gender::colorToString(user->gender().color());
         }
 
         tokens[i].text = tag.toText();
