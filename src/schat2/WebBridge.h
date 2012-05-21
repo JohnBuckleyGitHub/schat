@@ -24,6 +24,7 @@
 
 #include "Channel.h"
 
+class ChannelInfo;
 class FeedNotify;
 class WebBridgeTr;
 
@@ -52,7 +53,12 @@ public:
   void retranslate();
 
 signals:
+  void recolored(const QVariantMap &data);
+  void renamed(const QVariantMap &data);
   void retranslated();
+
+private slots:
+  void channel(const ChannelInfo &info);
 
 private:
   static WebBridge *m_self; ///< Указатель на себя.

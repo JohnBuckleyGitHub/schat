@@ -59,7 +59,6 @@ protected:
   QIcon channelIcon() const;
   QString page() const;
   virtual void reload();
-  void rename(const QByteArray &id);
 
   bool m_joined;           ///< \b true если пользователь уже вошёл в канал.
   ChatView *m_chatView;    ///< Виджет отображающий текст чата.

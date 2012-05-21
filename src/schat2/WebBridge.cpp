@@ -69,6 +69,8 @@ WebBridge::WebBridge(QObject *parent)
   m_self = this;
   m_tr = new WebBridgeTr();
   retranslate();
+
+  connect(ChatClient::channels(), SIGNAL(channel(ChannelInfo)), SLOT(channel(ChannelInfo)));
 }
 
 
@@ -213,4 +215,14 @@ QVariantMap WebBridge::feed(const FeedNotify &notify)
 void WebBridge::retranslate()
 {
   emit retranslated();
+}
+
+
+void WebBridge::channel(const ChannelInfo &info)
+{
+  QVariantMap data = WebBridge::channel(info.id());
+  if (info.option() == ChannelInfo::New || info.option() == ChannelInfo::Renamed)
+    emit renamed(data);
+
+  emit recolored(data);
 }
