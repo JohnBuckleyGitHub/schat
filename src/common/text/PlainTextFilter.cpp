@@ -16,27 +16,28 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "sglobal.h"
 #include "text/PlainTextFilter.h"
 
 QString PlainTextFilter::filter(const QString &text)
 {
   QString out = text;
 
-  out.replace(QLatin1Char('\n'), "");
-  out.replace(QLatin1String("</p>"), QLatin1String("\n"), Qt::CaseInsensitive);
-  out.replace(QLatin1String("<br />"), QLatin1String("\n"), Qt::CaseInsensitive);
+  out.replace(LC('\n'), QString());
+  out.replace(LS("</p>"), LS("\n"), Qt::CaseInsensitive);
+  out.replace(LS("<br />"), LS("\n"), Qt::CaseInsensitive);
 
-  removeTag(out, QLatin1String("style"));
-  removeTag(out, QLatin1String("script"));
+  removeTag(out, LS("style"));
+  removeTag(out, LS("script"));
 
   int lt = 0;
   int gt = 0;
   forever {
-    lt = out.indexOf(QLatin1Char('<'), lt);
+    lt = out.indexOf(LC('<'), lt);
     if (lt == -1)
       break;
 
-    gt = out.indexOf(QLatin1Char('>'), lt);
+    gt = out.indexOf(LC('>'), lt);
     if (gt == -1) {
       out.remove(lt, out.size() - lt);
       break;
@@ -45,12 +46,12 @@ QString PlainTextFilter::filter(const QString &text)
     out.remove(lt, gt - lt + 1);
   }
 
-  out.replace(QLatin1String("&gt;"),   QLatin1String(">"));
-  out.replace(QLatin1String("&lt;"),   QLatin1String("<"));
-  out.replace(QLatin1String("&quot;"), QLatin1String("\""));
-  out.replace(QLatin1String("&nbsp;"), QLatin1String(" "));
-  out.replace(QLatin1String("&amp;"),  QLatin1String("&"));
-  out.replace(QChar(QChar::Nbsp),      QLatin1String(" "));
+  out.replace(LS("&gt;"),         LS(">"));
+  out.replace(LS("&lt;"),         LS("<"));
+  out.replace(LS("&quot;"),       LS("\""));
+  out.replace(LS("&nbsp;"),       LS(" "));
+  out.replace(LS("&amp;"),        LS("&"));
+  out.replace(QChar(QChar::Nbsp), LS(" "));
   out = out.trimmed();
   return out;
 }
