@@ -135,7 +135,10 @@ void ChatUrls::openChannelUrl(const QUrl &url)
     ChatNotify::start(Notify::OpenInfo, channel->id());
   }
   else if (action == LS("insert")) {
-    ChatNotify::start(Notify::InsertText, QChar(QChar::Nbsp) + QString(LS("<a class=\"nick\" href=\"%1\">%2</a>")).arg(url.toString()).arg(Qt::escape(channel->name())) + QChar(QChar::Nbsp));
+    ChatNotify::start(Notify::InsertText, QChar(QChar::Nbsp) + QString(LS("<a class=\"nick color-%1\" href=\"%2\">%3</a>"))
+        .arg(Gender::colorToString(channel->gender().color()))
+        .arg(url.toString())
+        .arg(Qt::escape(channel->name())) + QChar(QChar::Nbsp));
   }
   else if (action == LS("edit")) {
     if (actions.size() == 1)
