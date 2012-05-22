@@ -21,9 +21,9 @@
 
 QMap<QString, QMap<int, FilterPtr> > TokenFilter::m_filters;
 
-QString TokenFilter::filter(const QString &type, const QString &text)
+QString TokenFilter::filter(const QString &type, const QString &text, const QVariantHash &options)
 {
-  QList<HtmlToken> tokens = HtmlFilter().tokenize(text);
+  QList<HtmlToken> tokens = HtmlFilter(options).tokenize(text);
   QMap<int, FilterPtr> filters = m_filters.value(type);
 
   foreach (FilterPtr filter, filters) {

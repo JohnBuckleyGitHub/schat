@@ -19,6 +19,8 @@
 #ifndef HTMLFILTER_H_
 #define HTMLFILTER_H_
 
+#include <QVariant>
+
 #include "schat.h"
 #include "text/HtmlToken.h"
 
@@ -38,6 +40,7 @@ public:
     AllowSpanTag = 2         ///< Разрешить поддержку тега span.
   };
 
+  HtmlFilter(const QVariantHash &options);
   HtmlFilter(int options = NoOptions, int sizeLimit = 8000, int breaksLimit = 20);
   QList<HtmlToken> tokenize(const QString &text) const;
   QString filter(const QString &text) const;
