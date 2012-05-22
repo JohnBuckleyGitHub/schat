@@ -163,7 +163,13 @@ void InputWidget::focusOutEvent(QFocusEvent *event)
 void InputWidget::insertFromMimeData(const QMimeData *source)
 {
   if (source->hasHtml()) {
-    insertHtml(TokenFilter::filter(LS("input"), source->html()) + QChar(QChar::Nbsp));
+    QVariantHash options;
+    options[LS("span")] = true;
+
+    QString html = TokenFilter::filter(LS("input"), source->html(), options);
+    if (!html.isEmpty())
+      insertHtml(html + QChar(QChar::Nbsp));
+
     return;
   }
 
