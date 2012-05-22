@@ -48,11 +48,13 @@ public:
 
 private:
   bool isLastIsBreak(const QList<HtmlToken> &tokens) const;
+  bool isSpace(const HtmlToken &token) const;
   int endTag(const QString &tag, QList<HtmlToken> &tokens, int pos = 0) const;
   QString prepare(const QString &text) const;
   void makeTextToken(QList<HtmlToken> &tokens, const QString &text) const;
   void optimize(QList<HtmlToken> &tokens) const;
   void tokenize(const QString &text, QList<HtmlToken> &tokens) const;
+  void trimmed(QList<HtmlToken> &tokens) const;
   void truncate(QList<HtmlToken> &tokens, int pos) const;
 
   int m_breaksLimit;       ///< Ограничение на число переносов строк.

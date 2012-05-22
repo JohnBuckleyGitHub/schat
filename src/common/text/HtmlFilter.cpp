@@ -71,6 +71,7 @@ QList<HtmlToken> HtmlFilter::tokenize(const QString &text) const
     }
   }
 
+  trimmed(tokens);
   return tokens;
 }
 
@@ -118,6 +119,21 @@ bool HtmlFilter::isLastIsBreak(const QList<HtmlToken> &tokens) const
     if (text.simplified().isEmpty())
       return true;
   }
+
+  return false;
+}
+
+
+bool HtmlFilter::isSpace(const HtmlToken &token) const
+{
+  if (token.text.isEmpty())
+    return true;
+
+  if (token.text == LS(" "))
+    return true;
+
+  if (token.tag == LS("br"))
+    return true;
 
   return false;
 }
@@ -389,14 +405,26 @@ void HtmlFilter::tokenize(const QString &text, QList<HtmlToken> &tokens) const
     }
   }
 
-  if (!tokens.isEmpty() && tokens.first().text == LS(" "))
-    tokens.removeFirst();
+  trimmed(tokens);
+}
 
-  if (!tokens.isEmpty() && tokens.last().text.isEmpty())
-    tokens.removeLast();
 
-  if (!tokens.isEmpty() && tokens.last().tag == LS("br"))
-    tokens.removeLast();
+
+void HtmlFilter::trimmed(QList<HtmlToken> &tokens) const
+{
+  forever {
+    if (!tokens.isEmpty() && isSpace(tokens.first()))
+      tokens.removeFirst();
+    else
+      break;
+  }
+
+  forever {
+    if (!tokens.isEmpty() && isSpace(tokens.last()))
+      tokens.removeLast();
+    else
+      break;
+  }
 }
 
 
