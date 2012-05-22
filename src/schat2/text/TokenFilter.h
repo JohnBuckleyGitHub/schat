@@ -54,7 +54,7 @@ class SCHAT_CORE_EXPORT TokenFilter
   TokenFilter() {}
 
 public:
-  static QString filter(const QString &type, const QString &text);
+  static QString filter(const QString &type, const QString &text, const QVariantHash &options = QVariantHash());
   static void add(const QString &type, AbstractFilter *filter);
 
 private:

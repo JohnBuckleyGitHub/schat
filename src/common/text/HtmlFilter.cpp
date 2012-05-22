@@ -22,6 +22,20 @@
 #include "text/HtmlFilter.h"
 #include "text/PlainTextFilter.h"
 
+HtmlFilter::HtmlFilter(const QVariantHash &options)
+  : m_options(NoOptions)
+{
+  m_sizeLimit = options.value(LS("size"), 8000).toInt();
+  m_breaksLimit = options.value(LS("breaks"), 20).toInt();
+
+  if (options.value(LS("nbsp"), false) == true)
+    m_options |= ConvertSpacesToNbsp;
+
+  if (options.value(LS("span"), false) == true)
+    m_options |= AllowSpanTag;
+}
+
+
 HtmlFilter::HtmlFilter(int options, int sizeLimit, int breaksLimit)
   : m_breaksLimit(breaksLimit)
   , m_options(options)
@@ -334,8 +348,11 @@ void HtmlFilter::tokenize(const QString &text, QList<HtmlToken> &tokens) const
     HtmlToken token(HtmlToken::Tag, text.mid(lt, pos - lt));
 
     // Закрывающий тег p преобразуется в тег br.
-    if (token.type == HtmlToken::EndTag && token.tag == LS("p")) {
+    if (token.type == HtmlToken::EndTag && (token.tag == LS("p") || token.tag == LS("div"))) {
       if (!tokens.isEmpty()) {
+        if (token.tag == LS("div"))
+          m_br++;
+
         if (isLastIsBreak(tokens))
           continue;
 
