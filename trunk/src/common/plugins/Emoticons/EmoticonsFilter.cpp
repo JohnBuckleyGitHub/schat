@@ -115,3 +115,37 @@ void EmoticonsFilter::parse(QList<HtmlToken> &tokens, const QString &text, int p
 
   parse(tokens, text, text.indexOf(LC(' '), pos + 1));
 }
+
+
+EmoticonsInputFilter::EmoticonsInputFilter()
+  : AbstractFilter(50)
+{
+}
+
+
+bool EmoticonsInputFilter::filter(QList<HtmlToken> &tokens, QVariantHash /*options*/) const
+{
+  QList<HtmlToken> out;
+  m_delete = false;
+
+  for (int i = 0; i < tokens.size(); ++i) {
+    HtmlToken token = tokens.at(i);
+    if (tokens.at(i).type == HtmlToken::StartTag && tokens.at(i).tag == LS("a")) {
+      HtmlATag tag(tokens.at(i));
+
+      if (tag.url.startsWith(LS("emoticon:"))) {
+        m_delete = true;
+        continue;
+      }
+    }
+    else if (m_delete && tokens.at(i).type == HtmlToken::EndTag && tokens.at(i).tag == LS("a")) {
+      m_delete = false;
+      continue;
+    }
+
+    out.append(token);
+  }
+
+  tokens = out;
+  return false;
+}
