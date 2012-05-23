@@ -33,6 +33,9 @@ HtmlFilter::HtmlFilter(const QVariantHash &options)
 
   if (options.value(LS("span"), false) == true)
     m_options |= AllowSpanTag;
+
+  if (options.value(LS("img"), false) == true)
+    m_options |= AllowImgTag;
 }
 
 
@@ -339,6 +342,9 @@ void HtmlFilter::tokenize(const QString &text, QList<HtmlToken> &tokens) const
   if (m_options & AllowSpanTag)
     safe.append(LS("span"));
 
+  if (m_options & AllowImgTag)
+    safe.append(LS("img"));
+
   safe.append(LS("a"));
   safe.append(LS("font"));
 
@@ -399,9 +405,16 @@ void HtmlFilter::tokenize(const QString &text, QList<HtmlToken> &tokens) const
     }
 
     if (safe.contains(token.tag)) {
-      m_optimize = true;
-      tokens.append(token);
-      m_br = 0;
+      if ((m_options & AllowImgTag) && token.tag == LS("img")) {
+        HtmlImgTag tag(token);
+        if (tag.valid)
+          tokens.append(HtmlToken(tag.toText()));
+      }
+      else {
+        m_optimize = true;
+        tokens.append(token);
+        m_br = 0;
+      }
     }
   }
 

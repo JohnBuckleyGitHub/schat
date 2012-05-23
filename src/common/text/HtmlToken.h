@@ -180,4 +180,30 @@ public:
   QString color;
 };
 
+
+class HtmlImgTag : public AbstractTag
+{
+public:
+  HtmlImgTag(const HtmlToken &token)
+  : AbstractTag()
+  {
+    if (token.type != HtmlToken::StartTag)
+      return;
+
+    if (token.tag != QLatin1String("img"))
+      return;
+
+    alt = attr(token.text, QLatin1String("alt="));
+    if (!alt.isEmpty())
+      valid = true;
+  }
+
+  QString toText() const
+  {
+    return QChar(QChar::Nbsp) + alt;
+  }
+
+  QString alt;
+};
+
 #endif /* HTMLTOKEN_H_ */
