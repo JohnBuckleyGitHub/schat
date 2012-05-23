@@ -31,7 +31,7 @@ ${Section}
   File "${SCHAT_SOURCE}\QtSql4.dll"
   File "${SCHAT_SOURCE}\QtWebKit4.dll"
   File "${SCHAT_SOURCE}\ssleay32.dll"
-  File "${SCHAT_SOURCE}\zlib1.dll"
+  File "${SCHAT_SOURCE}\zlib.dll"
 
   !if ${SCHAT_VC100} == 1
     File "${SCHAT_SOURCE}\msvcp100.dll"
@@ -59,6 +59,7 @@ ${Uninstall}
   Delete "$INSTDIR\QtWebKit4.dll"
   Delete "$INSTDIR\ssleay32.dll"
   Delete "$INSTDIR\zlib1.dll"
+  Delete "$INSTDIR\zlib.dll"
   Delete "$INSTDIR\msvcp100.dll"
   Delete "$INSTDIR\msvcr100.dll"
   Delete "$INSTDIR\plugins\qt\imageformats\qgif4.dll"

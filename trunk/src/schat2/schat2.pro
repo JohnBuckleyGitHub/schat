@@ -115,7 +115,7 @@ win32 {
   qt.files += $$[QT_INSTALL_PREFIX]/bin/libeay32.dll
   qt.files += $$[QT_INSTALL_PREFIX]/bin/ssleay32.dll
   qt.files += $$[QT_INSTALL_PREFIX]/bin/libpng15.dll
-  qt.files += $$[QT_INSTALL_PREFIX]/bin/zlib1.dll
+  qt.files += $$[QT_INSTALL_PREFIX]/bin/zlib.dll
   qt.files += $$[QT_INSTALL_PREFIX]/bin/msvcp100.dll
   qt.files += $$[QT_INSTALL_PREFIX]/bin/msvcr100.dll 
   qt.files += $$[QT_INSTALL_PREFIX]/bin/QtCore4.dll
