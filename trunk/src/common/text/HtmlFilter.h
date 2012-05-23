@@ -37,7 +37,8 @@ public:
   enum Options {
     NoOptions = 0,           ///< Нет специальных опций.
     ConvertSpacesToNbsp = 1, ///< Конвертировать двойные пробелы в неразрывный пробел.
-    AllowSpanTag = 2         ///< Разрешить поддержку тега span.
+    AllowSpanTag = 2,        ///< Разрешить поддержку тега span.
+    AllowImgTag = 4          ///< Добавляет поддержку img тега, он будет преобразован в текст равный атрибуту alt.
   };
 
   HtmlFilter(const QVariantHash &options);

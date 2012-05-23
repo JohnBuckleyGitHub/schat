@@ -165,6 +165,7 @@ void InputWidget::insertFromMimeData(const QMimeData *source)
   if (source->hasHtml()) {
     QVariantHash options;
     options[LS("span")] = true;
+    options[LS("img")] = true;
 
     QString html = TokenFilter::filter(LS("input"), source->html(), options);
     if (!html.isEmpty())

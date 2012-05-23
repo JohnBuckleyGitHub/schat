@@ -60,7 +60,7 @@ void EmoticonsFilter::make(QList<HtmlToken> &tokens, const QString &text) const
   HtmlToken a(HtmlToken::Tag, HtmlATag(LS("emoticon:") + SimpleID::toBase32(text.toUtf8()), text).toText());
   tokens.append(a);
 
-  QString img = QString(LS("<img class=\"emoticon\" title=\"%1\" alt=\"%1\" src=\"%2\" width=\"%3\" height=\"%4\" /></a>"))
+  QString img = QString(LS("<img class=\"emoticon\" title=\"%1\" alt=\"%1\" src=\"%2\" width=\"%3\" height=\"%4\" />"))
       .arg(text)
       .arg(QUrl::fromLocalFile(emoticon->file()).toString())
       .arg(emoticon->width())
