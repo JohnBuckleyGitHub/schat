@@ -31,10 +31,8 @@ LinksFilter::LinksFilter()
 }
 
 
-bool LinksFilter::filter(QList<HtmlToken> &tokens, QVariantHash options) const
+bool LinksFilter::filter(QList<HtmlToken> &tokens, const QVariantHash &/*options*/) const
 {
-  Q_UNUSED(options)
-
   QList<HtmlToken> out;
 
   for (int i = 0; i < tokens.size(); ++i) {

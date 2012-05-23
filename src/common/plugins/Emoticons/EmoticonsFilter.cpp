@@ -30,7 +30,7 @@ EmoticonsFilter::EmoticonsFilter(Emoticons *emoticons)
 }
 
 
-bool EmoticonsFilter::filter(QList<HtmlToken> &tokens, QVariantHash /*options*/) const
+bool EmoticonsFilter::filter(QList<HtmlToken> &tokens, const QVariantHash &/*options*/) const
 {
   m_count = 1;
   QList<HtmlToken> out;
@@ -123,7 +123,7 @@ EmoticonsInputFilter::EmoticonsInputFilter()
 }
 
 
-bool EmoticonsInputFilter::filter(QList<HtmlToken> &tokens, QVariantHash /*options*/) const
+bool EmoticonsInputFilter::filter(QList<HtmlToken> &tokens, const QVariantHash &/*options*/) const
 {
   QList<HtmlToken> out;
   m_delete = false;

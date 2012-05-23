@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ class LinksFilter : public AbstractFilter
 {
 public:
   LinksFilter();
-  bool filter(QList<HtmlToken> &tokens, QVariantHash options = QVariantHash()) const;
+  bool filter(QList<HtmlToken> &tokens, const QVariantHash &options = QVariantHash()) const;
 
 private:
   QString url(const QString &text, int index, int &last) const;

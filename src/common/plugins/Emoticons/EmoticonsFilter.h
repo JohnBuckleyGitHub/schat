@@ -27,7 +27,7 @@ class EmoticonsFilter : public AbstractFilter
 {
 public:
   EmoticonsFilter(Emoticons *emoticons);
-  bool filter(QList<HtmlToken> &tokens, QVariantHash options = QVariantHash()) const;
+  bool filter(QList<HtmlToken> &tokens, const QVariantHash &options = QVariantHash()) const;
 
 private:
   void make(QList<HtmlToken> &tokens, const QString &text) const;
@@ -42,7 +42,7 @@ class EmoticonsInputFilter : public AbstractFilter
 {
 public:
   EmoticonsInputFilter();
-  bool filter(QList<HtmlToken> &tokens, QVariantHash options = QVariantHash()) const;
+  bool filter(QList<HtmlToken> &tokens, const QVariantHash &options = QVariantHash()) const;
 
 private:
   mutable bool m_delete;

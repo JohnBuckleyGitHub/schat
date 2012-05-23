@@ -39,7 +39,7 @@ public:
 
   virtual ~AbstractFilter() {}
   inline int weight() const { return m_weight; }
-  virtual bool filter(QList<HtmlToken> &tokens, QVariantHash options = QVariantHash()) const = 0;
+  virtual bool filter(QList<HtmlToken> &tokens, const QVariantHash &options = QVariantHash()) const = 0;
 
 private:
   int m_weight;

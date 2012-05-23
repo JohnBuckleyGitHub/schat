@@ -30,10 +30,8 @@ UrlFilter::UrlFilter()
 }
 
 
-bool UrlFilter::filter(QList<HtmlToken> &tokens, QVariantHash options) const
+bool UrlFilter::filter(QList<HtmlToken> &tokens, const QVariantHash &/*options*/) const
 {
-  Q_UNUSED(options)
-
   QString name;
 
   for (int i = 0; i < tokens.size(); ++i) {

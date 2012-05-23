@@ -29,7 +29,7 @@ YouTubeFilter::YouTubeFilter()
 }
 
 
-bool YouTubeFilter::filter(QList<HtmlToken> &tokens, QVariantHash /*options*/) const
+bool YouTubeFilter::filter(QList<HtmlToken> &tokens, const QVariantHash &/*options*/) const
 {
   QString name;
 
