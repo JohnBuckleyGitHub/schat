@@ -40,6 +40,7 @@ EmoticonsPluginImpl::EmoticonsPluginImpl(QObject *parent)
   ChatCore::extensions()->addFactory(new EmoticonsExtensionFactory());
 
   TokenFilter::add(LS("channel"), new EmoticonsFilter(m_emoticons));
+  TokenFilter::add(LS("input"), new EmoticonsInputFilter());
   QDesktopServices::setUrlHandler(LS("emoticon"), this, "openUrl");
 
   connect(ChatCore::extensions(), SIGNAL(loaded()), SLOT(loaded()));

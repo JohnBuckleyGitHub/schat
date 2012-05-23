@@ -37,4 +37,15 @@ private:
   mutable int m_count;
 };
 
+
+class EmoticonsInputFilter : public AbstractFilter
+{
+public:
+  EmoticonsInputFilter();
+  bool filter(QList<HtmlToken> &tokens, QVariantHash options = QVariantHash()) const;
+
+private:
+  mutable bool m_delete;
+};
+
 #endif /* EMOTICONSFILTER_H_ */
