@@ -25,7 +25,7 @@ class YouTubeFilter : public AbstractFilter
 {
 public:
   YouTubeFilter();
-  bool filter(QList<HtmlToken> &tokens, QVariantHash options = QVariantHash()) const;
+  bool filter(QList<HtmlToken> &tokens, const QVariantHash &options = QVariantHash()) const;
 
 private:
   void make(QList<HtmlToken> &tokens, const QString &text) const;
