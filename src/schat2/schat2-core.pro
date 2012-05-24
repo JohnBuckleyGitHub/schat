@@ -101,6 +101,7 @@ HEADERS = \
     ui/tabs/ServerTab.h \
     ui/tabs/SettingsTab.h \
     ui/tabs/SettingsTab_p.h \
+    ui/tabs/SettingsTabHook.h \
     ui/tabs/UserView.h \
     ui/tabs/WelcomeTab.h \
     ui/TabsToolBar.h \
@@ -181,6 +182,7 @@ SOURCES = \
     ui/tabs/ProgressTab.cpp \
     ui/tabs/ServerTab.cpp \
     ui/tabs/SettingsTab.cpp \
+    ui/tabs/SettingsTabHook.cpp \
     ui/tabs/UserView.cpp \
     ui/tabs/WelcomeTab.cpp \
     ui/TabsToolBar.cpp \

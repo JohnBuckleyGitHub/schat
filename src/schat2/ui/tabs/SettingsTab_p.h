@@ -22,6 +22,8 @@
 #include <QWidget>
 #include <QIcon>
 
+#include "ui/tabs/SettingsTabHook.h"
+
 class ChatSettings;
 class GenderField;
 class LanguageField;
@@ -31,33 +33,11 @@ class ProfileLayout;
 class QCheckBox;
 class QLabel;
 
-/*!
- * Базовый класс для страниц настроек.
- */
-class AbstractSettingsPage : public QWidget
-{
-  Q_OBJECT
-
-public:
-  AbstractSettingsPage(const QIcon &icon, const QString &id, QWidget *parent = 0);
-  AbstractSettingsPage(QWidget *parent = 0);
-  inline QIcon icon() const { return m_icon; }
-  inline QString id() const { return m_id; }
-  inline QString name() const { return m_name; }
-  virtual void retranslateUi() {}
-
-protected:
-  ChatSettings *m_settings; ///< Указатель на объект настроек.
-  QIcon m_icon;             ///< Иконка.
-  QString m_id;             ///< Идентификатор.
-  QString m_name;           ///< Имя страницы настроек.
-};
-
 
 /*!
  * Страница настройки профиля.
  */
-class ProfilePage : public AbstractSettingsPage
+class ProfilePage : public SettingsPage
 {
   Q_OBJECT
 
@@ -79,7 +59,7 @@ private:
 /*!
  * Страница настройки профиля.
  */
-class NetworkPage : public AbstractSettingsPage
+class NetworkPage : public SettingsPage
 {
   Q_OBJECT
 
@@ -97,7 +77,7 @@ private:
 /*!
  * Страница настройки профиля.
  */
-class LocalePage : public AbstractSettingsPage
+class LocalePage : public SettingsPage
 {
   Q_OBJECT
 

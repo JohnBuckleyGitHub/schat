@@ -55,6 +55,7 @@
 #include "text/PlainTextFilter.h"
 #include "Translation.h"
 #include "ui/ChatIcons.h"
+#include "ui/tabs/SettingsTabHook.h"
 #include "WebBridge.h"
 
 ChatCore *ChatCore::m_self = 0;
@@ -94,6 +95,7 @@ ChatCore::ChatCore(QObject *parent)
   new ServerMenuImpl(this);
 
   new ChatViewHooks(this);
+  new SettingsTabHook(this);
 
   new ChatAlerts(this);
 

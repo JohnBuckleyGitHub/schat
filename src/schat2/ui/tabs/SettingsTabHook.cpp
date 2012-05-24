@@ -16,40 +16,29 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SETTINGSTAB_H_
-#define SETTINGSTAB_H_
+#include "ChatCore.h"
+#include "ui/tabs/SettingsTabHook.h"
 
-#include "ui/tabs/AbstractTab.h"
+SettingsTabHook *SettingsTabHook::m_self = 0;
 
-class QListWidget;
-class QListWidgetItem;
-class QPushButton;
-class QStackedWidget;
-class QUrl;
-class SettingsPage;
-
-class SettingsTab : public AbstractTab
+SettingsPage::SettingsPage(const QIcon &icon, const QString &id, QWidget *parent)
+  : QWidget(parent)
+  , m_settings(ChatCore::settings())
+  , m_icon(icon)
+  , m_id(id)
 {
-  Q_OBJECT
+}
 
-public:
-  SettingsTab(TabWidget *parent);
-  void addPage(SettingsPage *page);
-  void openUrl(const QUrl &url);
 
-protected:
-  void showEvent(QShowEvent *event);
+SettingsPage::SettingsPage(QWidget *parent)
+  : QWidget(parent)
+  , m_settings(ChatCore::settings())
+{
+}
 
-private slots:
-  void pageChanged(QListWidgetItem *current, QListWidgetItem *previous);
 
-private:
-  void retranslateUi();
-
-  QList<QListWidgetItem *> m_items;
-  QListWidget *m_contents;
-  QStackedWidget *m_pages;
-  QStringList m_ids; ///< Идентификаторы страниц настроек.
-};
-
-#endif /* SETTINGSTAB_H_ */
+SettingsTabHook::SettingsTabHook(QObject *parent)
+  : QObject(parent)
+{
+  m_self = this;
+}
