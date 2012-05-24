@@ -41,24 +41,9 @@
 #include "ui/tabs/SettingsTab.h"
 #include "ui/tabs/SettingsTab_p.h"
 
-AbstractSettingsPage::AbstractSettingsPage(const QIcon &icon, const QString &id, QWidget *parent)
-  : QWidget(parent)
-  , m_settings(ChatCore::settings())
-  , m_icon(icon)
-  , m_id(id)
-{
-}
-
-
-AbstractSettingsPage::AbstractSettingsPage(QWidget *parent)
-  : QWidget(parent)
-  , m_settings(ChatCore::settings())
-{
-}
-
 
 ProfilePage::ProfilePage(QWidget *parent)
-  : AbstractSettingsPage(SCHAT_ICON(Profile), LS("profile"), parent)
+  : SettingsPage(SCHAT_ICON(Profile), LS("profile"), parent)
 {
   m_profileLabel = new QLabel(this);
   m_nickLabel = new QLabel(this);
@@ -100,7 +85,7 @@ void ProfilePage::retranslateUi()
 
 
 NetworkPage::NetworkPage(QWidget *parent)
-  : AbstractSettingsPage(SCHAT_ICON(Globe), LS("network"), parent)
+  : SettingsPage(SCHAT_ICON(Globe), LS("network"), parent)
 {
   m_networkLabel = new QLabel(this);
   m_network = new NetworkWidget(this);
@@ -127,7 +112,7 @@ void NetworkPage::retranslateUi()
 
 
 LocalePage::LocalePage(QWidget *parent)
-  : AbstractSettingsPage(SCHAT_ICON(Locale), LS("locale"), parent)
+  : SettingsPage(SCHAT_ICON(Locale), LS("locale"), parent)
 {
   m_localeLabel = new QLabel(this);
 
@@ -162,14 +147,11 @@ SettingsTab::SettingsTab(TabWidget *parent)
   m_contents = new QListWidget(this);
   m_contents->setSpacing(1);
   m_contents->setFrameShape(QFrame::NoFrame);
-  m_apply = new QPushButton(SCHAT_ICON(OK), tr("Apply"), this);
-  m_apply->setVisible(false);
   m_pages = new QStackedWidget(this);
 
   QGridLayout *mainLay = new QGridLayout(this);
   mainLay->addWidget(m_contents, 0, 0);
-  mainLay->addWidget(m_apply, 1, 0);
-  mainLay->addWidget(m_pages, 0, 1, 2, 1);
+  mainLay->addWidget(m_pages, 0, 1);
   mainLay->setMargin(0);
   mainLay->setSpacing(0);
   mainLay->setColumnStretch(0, 1);
@@ -187,7 +169,7 @@ SettingsTab::SettingsTab(TabWidget *parent)
 }
 
 
-void SettingsTab::addPage(AbstractSettingsPage *page)
+void SettingsTab::addPage(SettingsPage *page)
 {
   if (m_ids.contains(page->id()))
     return;
@@ -240,11 +222,10 @@ void SettingsTab::pageChanged(QListWidgetItem *current, QListWidgetItem *previou
 void SettingsTab::retranslateUi()
 {
   for (int i = 0; i < m_ids.size(); ++i) {
-    AbstractSettingsPage *page = static_cast<AbstractSettingsPage *>(static_cast<QScrollArea *>(m_pages->widget(i))->widget());
+    SettingsPage *page = static_cast<SettingsPage *>(static_cast<QScrollArea *>(m_pages->widget(i))->widget());
     page->retranslateUi();
     m_contents->item(i)->setText(page->name());
   }
 
-  m_apply->setText(tr("Apply"));
   setText(tr("Preferences"));
 }
