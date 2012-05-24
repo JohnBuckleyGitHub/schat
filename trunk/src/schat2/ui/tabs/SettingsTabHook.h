@@ -59,7 +59,7 @@ public:
 
   virtual ~SettingsPageCreator() {}
   inline int weight() const { return m_weight; }
-  virtual SettingsPage* page(QWidget *parent = 0);
+  virtual SettingsPage* page(QWidget *) { return 0; }
 
 private:
   int m_weight;

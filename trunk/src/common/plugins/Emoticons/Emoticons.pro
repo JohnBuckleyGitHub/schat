@@ -24,6 +24,7 @@ HEADERS  = \
    Emoticons.h \
    EmoticonsExtension.h \
    EmoticonsFilter.h \
+   EmoticonsPage.h \
    EmoticonsPlugin.h \
    EmoticonsPlugin_p.h \
 
@@ -32,7 +33,10 @@ SOURCES  = \
    Emoticons.cpp \
    EmoticonsExtension.cpp \
    EmoticonsFilter.cpp \
+   EmoticonsPage.cpp \
    EmoticonsPlugin.cpp \
+
+RESOURCES += Emoticons.qrc
 
 include(../plugins.pri)
 

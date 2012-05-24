@@ -30,6 +30,7 @@
 #include "Extensions.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
+#include "EmoticonsPage.h"
 
 EmoticonsPluginImpl::EmoticonsPluginImpl(QObject *parent)
   : ChatPlugin(parent)
@@ -42,6 +43,8 @@ EmoticonsPluginImpl::EmoticonsPluginImpl(QObject *parent)
   TokenFilter::add(LS("channel"), new EmoticonsFilter(m_emoticons));
   TokenFilter::add(LS("input"), new EmoticonsInputFilter());
   QDesktopServices::setUrlHandler(LS("emoticon"), this, "openUrl");
+
+  SettingsTabHook::add(new EmoticonsPageCreator());
 
   connect(ChatCore::extensions(), SIGNAL(loaded()), SLOT(loaded()));
   connect(ChatCore::extensions(), SIGNAL(installed(QString)), SLOT(installed(QString)));

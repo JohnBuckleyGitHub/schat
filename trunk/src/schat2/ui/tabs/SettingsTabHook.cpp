@@ -38,13 +38,6 @@ SettingsPage::SettingsPage(QWidget *parent)
 }
 
 
-SettingsPage* SettingsPageCreator::page(QWidget */*parent*/)
-{
-  return 0;
-}
-
-
-
 SettingsTabHook::SettingsTabHook(QObject *parent)
   : QObject(parent)
 {
