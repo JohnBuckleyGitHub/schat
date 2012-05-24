@@ -17,6 +17,7 @@
  */
 
 #include "ChatCore.h"
+#include "hooks/SettingsTabImpl.h"
 #include "ui/tabs/SettingsTabHook.h"
 
 SettingsTabHook *SettingsTabHook::m_self = 0;
@@ -37,8 +38,37 @@ SettingsPage::SettingsPage(QWidget *parent)
 }
 
 
+SettingsPage* SettingsPageCreator::page(QWidget */*parent*/)
+{
+  return 0;
+}
+
+
+
 SettingsTabHook::SettingsTabHook(QObject *parent)
   : QObject(parent)
 {
   m_self = this;
+
+  add(new ProfilePageCreator());
+  add(new NetworkPageCreator());
+  add(new LocalePageCreator());
+}
+
+
+SettingsTabHook::~SettingsTabHook()
+{
+  qDeleteAll(m_pages);
+}
+
+
+bool SettingsTabHook::add(SettingsPageCreator *creator)
+{
+  if (m_self->m_pages.contains(creator->weight())) {
+    delete creator;
+    return false;
+  }
+
+  m_self->m_pages[creator->weight()] = creator;
+  return true;
 }
