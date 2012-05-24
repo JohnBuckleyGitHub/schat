@@ -29,6 +29,10 @@ ${Section}
 
   SetOutPath "$INSTDIR\extensions\emoticons"
   File "${SCHAT_SOURCE}\extensions\emoticons\kolobok.schat"
+
+  SetOutPath "$INSTDIR\translations"
+  File "${SCHAT_SOURCE}\translations\emoticons_en.qm"
+  File "${SCHAT_SOURCE}\translations\emoticons_ru.qm"
 ${SectionEnd}
 ${BodyEnd}
 
@@ -36,9 +40,12 @@ ${Uninstall}
   Delete "$INSTDIR\doc\ChangeLog.Emoticons.html"
   Delete "$INSTDIR\plugins\Emoticons.dll"
   Delete "$INSTDIR\doc\extensions\emoticons\kolobok.schat"
+  Delete "$INSTDIR\translations\emoticons_en.qm"
+  Delete "$INSTDIR\translations\emoticons_ru.qm"
 
   RMDir "$INSTDIR\doc"
   RMDir "$INSTDIR\plugins"
   RMDir "$INSTDIR\extensions\emoticons"
   RMDir "$INSTDIR\extensions"
+  RMDir "$INSTDIR\translations"
 ${UninstallEnd}

@@ -228,56 +228,56 @@
 <context>
     <name>InputWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="422"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="503"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="444"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="525"/>
         <source>Cut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="423"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="504"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="445"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="526"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="424"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="505"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="446"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="527"/>
         <source>Paste</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="425"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="506"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="447"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="528"/>
         <source>Clear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="426"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="507"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="448"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="529"/>
         <source>Select All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="436"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="508"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="458"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="530"/>
         <source>Bold</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="442"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="509"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="464"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="531"/>
         <source>Italic</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="448"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="510"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="470"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="532"/>
         <source>Underline</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="454"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="511"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="476"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="533"/>
         <source>Strikeout</source>
         <translation type="unfinished"></translation>
     </message>
@@ -285,8 +285,8 @@
 <context>
     <name>LocalePage</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="154"/>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="155"/>
+        <location filename="../../src/schat2/hooks/SettingsTabImpl.cpp" line="138"/>
+        <location filename="../../src/schat2/hooks/SettingsTabImpl.cpp" line="139"/>
         <source>Language</source>
         <translation type="unfinished"></translation>
     </message>
@@ -360,8 +360,8 @@
 <context>
     <name>NetworkPage</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="124"/>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="125"/>
+        <location filename="../../src/schat2/hooks/SettingsTabImpl.cpp" line="102"/>
+        <location filename="../../src/schat2/hooks/SettingsTabImpl.cpp" line="103"/>
         <source>Network</source>
         <translation type="unfinished"></translation>
     </message>
@@ -485,18 +485,18 @@
 <context>
     <name>ProfilePage</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="92"/>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="94"/>
+        <location filename="../../src/schat2/hooks/SettingsTabImpl.cpp" line="64"/>
+        <location filename="../../src/schat2/hooks/SettingsTabImpl.cpp" line="66"/>
         <source>Profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="95"/>
+        <location filename="../../src/schat2/hooks/SettingsTabImpl.cpp" line="67"/>
         <source>Nick:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="96"/>
+        <location filename="../../src/schat2/hooks/SettingsTabImpl.cpp" line="68"/>
         <source>Gender:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -649,14 +649,8 @@
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="165"/>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="248"/>
-        <source>Apply</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="184"/>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="249"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="57"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="124"/>
         <source>Preferences</source>
         <translation type="unfinished"></translation>
     </message>
@@ -881,67 +875,67 @@
 <context>
     <name>WebBridgeTr</name>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="47"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="48"/>
         <source>My Computers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="48"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="49"/>
         <source>These are the computers currently linked to your account.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="49"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="50"/>
         <source>Computer name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="50"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="51"/>
         <source>Last Activity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="51"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="52"/>
         <source>Actions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="52"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="53"/>
         <source>Unlink</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="53"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="54"/>
         <source>&lt;b&gt;Version:&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="54"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="55"/>
         <source>&lt;b&gt;Last IP Address:&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="55"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="56"/>
         <source>Profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="56"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="57"/>
         <source>Connections</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="57"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="58"/>
         <source>User offline</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="58"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="59"/>
         <source>Version</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="59"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="60"/>
         <source>OS</source>
         <translation type="unfinished"></translation>
     </message>
