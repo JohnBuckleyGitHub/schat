@@ -16,130 +16,19 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QCheckBox>
 #include <QDebug>
-#include <QEvent>
 #include <QGridLayout>
-#include <QLabel>
 #include <QListWidget>
-#include <QPushButton>
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QStackedWidget>
-#include <QToolButton>
 
-#include "ChatCore.h"
 #include "ChatSettings.h"
 #include "ChatUrls.h"
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
-#include "ui/fields/GenderField.h"
-#include "ui/fields/LanguageField.h"
-#include "ui/fields/NickEdit.h"
-#include "ui/network/NetworkWidget.h"
-#include "ui/profile/ProfileLayout.h"
 #include "ui/tabs/SettingsTab.h"
-#include "ui/tabs/SettingsTab_p.h"
-
-
-ProfilePage::ProfilePage(QWidget *parent)
-  : SettingsPage(SCHAT_ICON(Profile), LS("profile"), parent)
-{
-  m_profileLabel = new QLabel(this);
-  m_nickLabel = new QLabel(this);
-  m_nickEdit = new NickEdit(this);
-
-  m_genderLabel = new QLabel(this);
-  m_genderField = new GenderField(this);
-
-  m_layout = new ProfileLayout(this);
-
-  QGridLayout *profileLay = new QGridLayout;
-  profileLay->addWidget(m_nickLabel, 0, 0);
-  profileLay->addWidget(m_nickEdit, 0, 1, 1, 2);
-  profileLay->addWidget(m_genderLabel, 1, 0);
-  profileLay->addWidget(m_genderField, 1, 1);
-  profileLay->addWidget(m_layout->button(), 1, 2);
-  profileLay->setContentsMargins(10, 0, 3, 0);
-
-  QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(m_profileLabel);
-  mainLay->addLayout(profileLay);
-  mainLay->addWidget(m_layout);
-  mainLay->addStretch();
-
-  retranslateUi();
-}
-
-
-void ProfilePage::retranslateUi()
-{
-  m_name = tr("Profile");
-
-  m_profileLabel->setText(LS("<b>") + tr("Profile") + LS("</b>"));
-  m_nickLabel->setText(tr("Nick:"));
-  m_genderLabel->setText(tr("Gender:"));
-
-  m_layout->retranslateUi();
-}
-
-
-NetworkPage::NetworkPage(QWidget *parent)
-  : SettingsPage(SCHAT_ICON(Globe), LS("network"), parent)
-{
-  m_networkLabel = new QLabel(this);
-  m_network = new NetworkWidget(this);
-
-  QVBoxLayout *networkLay = new QVBoxLayout;
-  networkLay->addWidget(m_network);
-  networkLay->setContentsMargins(10, 0, 3, 0);
-
-  QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(m_networkLabel);
-  mainLay->addLayout(networkLay);
-  mainLay->addStretch();
-  mainLay->addStretch();
-
-  retranslateUi();
-}
-
-
-void NetworkPage::retranslateUi()
-{
-  m_name = tr("Network");
-  m_networkLabel->setText(LS("<b>") + tr("Network") + LS("</b>"));
-}
-
-
-LocalePage::LocalePage(QWidget *parent)
-  : SettingsPage(SCHAT_ICON(Locale), LS("locale"), parent)
-{
-  m_localeLabel = new QLabel(this);
-
-  m_language = new LanguageField(this);
-  m_language->setMinimumWidth(m_language->width() + 20);
-
-  QHBoxLayout *languageLay = new QHBoxLayout;
-  languageLay->addWidget(m_language);
-  languageLay->addStretch();
-  languageLay->setContentsMargins(10, 0, 3, 0);
-
-  QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(m_localeLabel);
-  mainLay->addLayout(languageLay);
-  mainLay->addStretch();
-  mainLay->addStretch();
-
-  retranslateUi();
-}
-
-
-void LocalePage::retranslateUi()
-{
-  m_name = tr("Language");
-  m_localeLabel->setText(LS("<b>") + tr("Language") + LS("</b>"));
-}
-
+#include "ui/tabs/SettingsTabHook.h"
 
 SettingsTab::SettingsTab(TabWidget *parent)
   : AbstractTab(QByteArray(), SettingsType, parent)
@@ -157,9 +46,11 @@ SettingsTab::SettingsTab(TabWidget *parent)
   mainLay->setColumnStretch(0, 1);
   mainLay->setColumnStretch(1, 4);
 
-  addPage(new ProfilePage(this));
-  addPage(new NetworkPage(this));
-  addPage(new LocalePage(this));
+  QMapIterator<int, SettingsPageCreator *> i(SettingsTabHook::i()->pages());
+  while (i.hasNext()) {
+    i.next();
+    addPage(i.value()->page(this));
+  }
 
   m_contents->setCurrentRow(0);
   setIcon(SCHAT_ICON(Settings));
@@ -171,6 +62,9 @@ SettingsTab::SettingsTab(TabWidget *parent)
 
 void SettingsTab::addPage(SettingsPage *page)
 {
+  if (!page)
+    return;
+
   if (m_ids.contains(page->id()))
     return;
 

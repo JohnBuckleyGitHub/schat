@@ -48,6 +48,7 @@ HEADERS = \
     hooks/MessagesImpl.h \
     hooks/RegCmds.h \
     hooks/ServerMenuImpl.h \
+    hooks/SettingsTabImpl.h \
     hooks/UserMenuImpl.h \
     messages/ChannelMessage.h \
     messages/Message.h \
@@ -100,7 +101,6 @@ HEADERS = \
     ui/tabs/ProgressTab.h \
     ui/tabs/ServerTab.h \
     ui/tabs/SettingsTab.h \
-    ui/tabs/SettingsTab_p.h \
     ui/tabs/SettingsTabHook.h \
     ui/tabs/UserView.h \
     ui/tabs/WelcomeTab.h \
@@ -131,6 +131,7 @@ SOURCES = \
     hooks/MessagesImpl.cpp \
     hooks/RegCmds.cpp \
     hooks/ServerMenuImpl.cpp \
+    hooks/SettingsTabImpl.cpp \
     hooks/UserMenuImpl.cpp \
     messages/ChannelMessage.cpp \
     messages/Message.cpp \

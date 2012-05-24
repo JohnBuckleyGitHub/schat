@@ -21,6 +21,7 @@
 
 #include <QWidget>
 #include <QIcon>
+#include <QMap>
 
 #include "schat.h"
 
@@ -49,16 +50,36 @@ protected:
 };
 
 
+class SettingsPageCreator
+{
+public:
+  inline SettingsPageCreator(int weight = 0)
+  : m_weight(weight)
+  {}
+
+  virtual ~SettingsPageCreator() {}
+  inline int weight() const { return m_weight; }
+  virtual SettingsPage* page(QWidget *parent = 0);
+
+private:
+  int m_weight;
+};
+
+
 class SCHAT_CORE_EXPORT SettingsTabHook : public QObject
 {
   Q_OBJECT
 
 public:
   SettingsTabHook(QObject *parent = 0);
-  inline static SettingsTabHook *i() { return m_self; }
+  ~SettingsTabHook();
+  inline const QMap<int, SettingsPageCreator *>& pages() const { return m_pages; }
+  inline static SettingsTabHook *i()                           { return m_self; }
+  static bool add(SettingsPageCreator *creator);
 
 private:
-  static SettingsTabHook *m_self; ///< Указатель на себя.
+  QMap<int, SettingsPageCreator *> m_pages; ///< Страницы настроек.
+  static SettingsTabHook *m_self;           ///< Указатель на себя.
 };
 
 #endif /* SETTINGSTABHOOK_H_ */

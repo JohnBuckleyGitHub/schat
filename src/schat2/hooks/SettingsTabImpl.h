@@ -16,23 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SETTINGSTAB_P_H_
-#define SETTINGSTAB_P_H_
-
-#include <QWidget>
-#include <QIcon>
+#ifndef SETTINGSTABIMPL_H_
+#define SETTINGSTABIMPL_H_
 
 #include "ui/tabs/SettingsTabHook.h"
 
-class ChatSettings;
 class GenderField;
 class LanguageField;
 class NetworkWidget;
 class NickEdit;
 class ProfileLayout;
-class QCheckBox;
 class QLabel;
-
 
 /*!
  * Страница настройки профиля.
@@ -56,8 +50,19 @@ private:
 };
 
 
+class ProfilePageCreator : public SettingsPageCreator
+{
+public:
+  ProfilePageCreator()
+  : SettingsPageCreator(1000)
+  {}
+
+  SettingsPage* page(QWidget *parent = 0);
+};
+
+
 /*!
- * Страница настройки профиля.
+ * Страница настройки сетей.
  */
 class NetworkPage : public SettingsPage
 {
@@ -74,8 +79,19 @@ private:
 };
 
 
+class NetworkPageCreator : public SettingsPageCreator
+{
+public:
+  NetworkPageCreator()
+  : SettingsPageCreator(2000)
+  {}
+
+  SettingsPage* page(QWidget *parent = 0);
+};
+
+
 /*!
- * Страница настройки профиля.
+ * Страница настройки языка.
  */
 class LocalePage : public SettingsPage
 {
@@ -92,4 +108,14 @@ private:
 };
 
 
-#endif /* SETTINGSTAB_P_H_ */
+class LocalePageCreator : public SettingsPageCreator
+{
+public:
+  LocalePageCreator()
+  : SettingsPageCreator(10000)
+  {}
+
+  SettingsPage* page(QWidget *parent = 0);
+};
+
+#endif /* SETTINGSTABIMPL_H_ */
