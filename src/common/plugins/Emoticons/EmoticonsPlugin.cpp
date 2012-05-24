@@ -25,12 +25,13 @@
 #include "Emoticons.h"
 #include "EmoticonsExtension.h"
 #include "EmoticonsFilter.h"
+#include "EmoticonsPage.h"
 #include "EmoticonsPlugin.h"
 #include "EmoticonsPlugin_p.h"
 #include "Extensions.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
-#include "EmoticonsPage.h"
+#include "Translation.h"
 
 EmoticonsPluginImpl::EmoticonsPluginImpl(QObject *parent)
   : ChatPlugin(parent)
@@ -48,6 +49,8 @@ EmoticonsPluginImpl::EmoticonsPluginImpl(QObject *parent)
 
   connect(ChatCore::extensions(), SIGNAL(loaded()), SLOT(loaded()));
   connect(ChatCore::extensions(), SIGNAL(installed(QString)), SLOT(installed(QString)));
+
+  ChatCore::translation()->addOther(LS("emoticons"));
 }
 
 

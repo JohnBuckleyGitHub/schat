@@ -40,10 +40,20 @@ RESOURCES += Emoticons.qrc
 
 include(../plugins.pri)
 
-extensions.files += extensions/kolobok.schat
+TRANSLATIONS += res/translations/emoticons_en.ts
+TRANSLATIONS += res/translations/emoticons_ru.ts
+CODECFORTR = UTF-8
 
+translations.files = res/translations/emoticons_en.qm
+translations.files += res/translations/emoticons_ru.qm
+
+macx:      translations.path += ../../../../out/SimpleChat2.app/Contents/Resources/translations
+unix:!macx:translations.path = $$SCHAT_PREFIX/usr/share/$${PLUGIN_TARGET}/translations
+win32:     translations.path += ../../../../os/win32/$${PLUGIN_TARGET}/translations
+
+extensions.files += extensions/kolobok.schat
 macx:      extensions.path += ../../../../out/SimpleChat2.app/Contents/Resources/extensions/emoticons
 unix:!macx:extensions.path += $$SCHAT_PREFIX/usr/share/$${PLUGIN_TARGET}/extensions/emoticons
 win32:     extensions.path += ../../../../os/win32/$${PLUGIN_TARGET}/extensions/emoticons
 
-INSTALLS += extensions
+INSTALLS += extensions translations
