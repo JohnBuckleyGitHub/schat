@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,14 +20,17 @@
 #define SENDWIDGET_H_
 
 #include <QWidget>
+#include <QMap>
 
 #include "schat.h"
+#include "ui/ToolBarAction.h"
 
 class InputWidget;
 class Notify;
 class QMenu;
 class QToolBar;
 class QToolButton;
+class SendWidget;
 
 class SCHAT_CORE_EXPORT SendWidget : public QWidget
 {
@@ -35,7 +38,9 @@ class SCHAT_CORE_EXPORT SendWidget : public QWidget
 
 public:
   SendWidget(QWidget *parent = 0);
-  inline InputWidget *input() { return m_input; }
+  inline InputWidget *input()                           { return m_input; }
+  inline static SendWidget *i()                         { return m_self; }
+  inline static void add(ToolBarActionCreator *creator) { m_self->add(creator->weight(), creator); }
   void setInputFocus();
 
 signals:
@@ -55,15 +60,18 @@ private slots:
   void showHistoryMenu();
 
 private:
+  void add(int weight, ToolBarActionCreator *creator);
   void fillToolBar();
   void retranslateUi();
   void updateStyleSheet();
 
-  InputWidget *m_input;      ///< Виджет ввода текста.
-  QAction *m_sendAction;     ///< Кнопка отправки.
-  QMenu *m_history;          ///< Меню отправленных сообщений.
-  QToolBar *m_toolBar;       ///< Панель инструментов.
-  QToolButton *m_sendButton; ///< Кнопка отправки.
+  InputWidget *m_input;               ///< Виджет ввода текста.
+  QAction *m_sendAction;              ///< Кнопка отправки.
+  QMap<int, ToolBarAction> m_actions; ///< Отсортированная таблица всех доступных действий.
+  QMenu *m_history;                   ///< Меню отправленных сообщений.
+  QToolBar *m_toolBar;                ///< Панель инструментов.
+  QToolButton *m_sendButton;          ///< Кнопка отправки.
+  static SendWidget *m_self;          ///< Указатель на себя.
 };
 
 #endif /* SENDWIDGET_H_ */

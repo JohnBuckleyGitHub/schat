@@ -55,13 +55,16 @@ SettingsTabHook::~SettingsTabHook()
 }
 
 
-bool SettingsTabHook::add(SettingsPageCreator *creator)
+void SettingsTabHook::add(SettingsPageCreator *creator)
 {
-  if (m_self->m_pages.contains(creator->weight())) {
-    delete creator;
-    return false;
-  }
+  m_self->add(creator->weight(), creator);
+}
 
-  m_self->m_pages[creator->weight()] = creator;
-  return true;
+
+void SettingsTabHook::add(int weight, SettingsPageCreator *creator)
+{
+  if (m_pages.contains(weight))
+    add(++weight, creator);
+  else
+    m_pages[weight] = creator;
 }
