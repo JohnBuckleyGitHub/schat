@@ -31,3 +31,10 @@ QAction* ToolBarActionCreator::createAction(QObject *parent) const
   Q_UNUSED(parent)
   return 0;
 }
+
+
+QWidget* ToolBarActionCreator::createWidget(QWidget *parent) const
+{
+  Q_UNUSED(parent)
+  return 0;
+}

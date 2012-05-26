@@ -40,12 +40,13 @@ public:
   ToolBarActionCreator(int weight, const QString &name = QString());
   virtual ~ToolBarActionCreator() {}
   inline bool isActionType() const       { return m_type == Action; }
-  inline QAction* action() const         { return m_action; }
   inline const QString& name() const     { return m_name; }
   inline int weight() const              { return m_weight; }
+  inline QAction* action() const         { return m_action; }
   inline Type type() const               { return m_type; }
   inline void setAction(QAction *action) { m_action = action; }
   virtual QAction* createAction(QObject *parent = 0) const;
+  virtual QWidget* createWidget(QWidget *parent = 0) const;
 
 protected:
   QString m_name;    ///< Машинное имя действия.
