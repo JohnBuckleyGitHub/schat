@@ -82,12 +82,53 @@ private:
 };
 
 
+/*!
+ * Действия для установки цвета текста.
+ */
+class ColorAction : public ToolBarActionCreator
+{
+public:
+  ColorAction()
+  : ToolBarActionCreator(2000, LS("color"))
+  {
+    m_type = Widget;
+  }
+
+  QWidget* createWidget(QWidget *parent) const
+  {
+    Q_UNUSED(parent)
+    return SendWidget::i()->input()->color();
+  }
+};
+
+
+/*!
+ * Растяжка, делящая панель инструментов на 2 половины.
+ */
+class StretchAction : public ToolBarActionCreator
+{
+public:
+  StretchAction()
+  : ToolBarActionCreator(10000, LS("stretch"))
+  {
+    m_type = Widget;
+  }
+
+  QWidget* createWidget(QWidget *parent) const
+  {
+    QWidget *stretch = new QWidget(parent);
+    stretch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+    return stretch;
+  }
+};
+
+
 SendWidget::SendWidget(QWidget *parent)
   : QWidget(parent)
 {
   m_self = this;
 
-  m_layout << LS("bold") << LS("italic") << LS("underline") << LS("strike");
+  m_layout << LS("bold") << LS("italic") << LS("underline") << LS("strike") << LS("color") << LS("stretch");
 
   m_toolBar = new QToolBar(this);
   m_toolBar->setIconSize(QSize(16, 16));
@@ -104,6 +145,8 @@ SendWidget::SendWidget(QWidget *parent)
   add(new TextEditAction(InputWidget::Italic));
   add(new TextEditAction(InputWidget::Underline));
   add(new TextEditAction(InputWidget::Strike));
+  add(new ColorAction());
+  add(new StretchAction());
 
   updateStyleSheet();
   fillToolBar();
@@ -137,11 +180,11 @@ void SendWidget::insertHtml(const QString &text)
 
 bool SendWidget::event(QEvent *event)
 {
-  #if defined(Q_WS_WIN)
+# if defined(Q_WS_WIN)
   if (event->type() == QEvent::ApplicationPaletteChange) {
     updateStyleSheet();
   }
-  #endif
+# endif
 
   return QWidget::event(event);
 }
@@ -256,6 +299,8 @@ void SendWidget::add(ToolBarAction action)
     qa = action->createAction(this);
     m_toolBar->insertAction(before(action->weight()), qa);
   }
+  else
+    qa = m_toolBar->insertWidget(before(action->weight()), action->createWidget(this));
 
   action->setAction(qa);
 }
@@ -270,18 +315,11 @@ void SendWidget::fillToolBar()
     add(action);
   }
 
-  m_toolBar->addSeparator();
-  m_toolBar->addWidget(m_input->color());
-
   m_history = new QMenu(this);
 
   m_sendButton = new QToolButton(this);
   m_sendButton->setAutoRaise(true);
   m_sendButton->setIcon(SCHAT_ICON(Send));
-
-  QWidget *stretch = new QWidget(this);
-  stretch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-  m_toolBar->addWidget(stretch);
   m_sendAction = m_toolBar->addWidget(m_sendButton);
 
   connect(m_sendButton, SIGNAL(clicked()), m_input, SLOT(send()));
