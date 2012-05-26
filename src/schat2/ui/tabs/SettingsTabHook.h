@@ -75,9 +75,11 @@ public:
   ~SettingsTabHook();
   inline const QMap<int, SettingsPageCreator *>& pages() const { return m_pages; }
   inline static SettingsTabHook *i()                           { return m_self; }
-  static bool add(SettingsPageCreator *creator);
+  static void add(SettingsPageCreator *creator);
 
 private:
+  void add(int weight, SettingsPageCreator *creator);
+
   QMap<int, SettingsPageCreator *> m_pages; ///< Страницы настроек.
   static SettingsTabHook *m_self;           ///< Указатель на себя.
 };

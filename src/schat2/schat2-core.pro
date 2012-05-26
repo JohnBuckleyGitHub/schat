@@ -106,6 +106,7 @@ HEADERS = \
     ui/tabs/WelcomeTab.h \
     ui/TabsToolBar.h \
     ui/TabWidget.h \
+    ui/ToolBarAction.h \
     ui/TrayIcon.h \
     WebBridge.h \
 
@@ -188,6 +189,7 @@ SOURCES = \
     ui/tabs/WelcomeTab.cpp \
     ui/TabsToolBar.cpp \
     ui/TabWidget.cpp \
+    ui/ToolBarAction.cpp \
     ui/TrayIcon.cpp \
     WebBridge.cpp \
 

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -30,9 +30,13 @@
 #include "ui/SendWidget.h"
 #include "ui/ChatIcons.h"
 
+SendWidget *SendWidget::m_self = 0;
+
 SendWidget::SendWidget(QWidget *parent)
   : QWidget(parent)
 {
+  m_self = this;
+
   m_toolBar = new QToolBar(this);
   m_toolBar->setIconSize(QSize(16, 16));
 
@@ -140,6 +144,15 @@ void SendWidget::showHistoryMenu()
 }
 
 
+void SendWidget::add(int weight, ToolBarActionCreator *creator)
+{
+  if (m_actions.contains(weight))
+    add(++weight, creator);
+  else
+    m_actions[weight] = ToolBarAction(creator);
+}
+
+
 /*!
  * Заполнение панели инструментов.
  */
@@ -176,11 +189,11 @@ void SendWidget::retranslateUi()
 
 void SendWidget::updateStyleSheet()
 {
-  #if !defined(Q_OS_MAC)
-  #if defined(Q_WS_WIN)
-  m_toolBar->setStyleSheet(QString("QToolBar { background-color: %1; margin:0px; border:0px; }").arg(palette().color(QPalette::Window).name()));
-  #else
-  m_toolBar->setStyleSheet("QToolBar { margin:0px; border:0px; }");
-  #endif
-  #endif
+# if !defined(Q_OS_MAC)
+#  if defined(Q_WS_WIN)
+    m_toolBar->setStyleSheet(QString("QToolBar { background-color: %1; margin:0px; border:0px; }").arg(palette().color(QPalette::Window).name()));
+#  else
+    m_toolBar->setStyleSheet("QToolBar { margin:0px; border:0px; }");
+#  endif
+# endif
 }
