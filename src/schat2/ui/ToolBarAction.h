@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -40,18 +40,20 @@ public:
   ToolBarActionCreator(int weight, const QString &name = QString());
   virtual ~ToolBarActionCreator() {}
   inline bool isActionType() const       { return m_type == Action; }
-  inline const QAction* action() const   { return m_action; }
+  inline QAction* action() const         { return m_action; }
   inline const QString& name() const     { return m_name; }
   inline int weight() const              { return m_weight; }
   inline Type type() const               { return m_type; }
   inline void setAction(QAction *action) { m_action = action; }
-  virtual QAction* createAction(QObject *parent) const;
+  virtual QAction* createAction(QObject *parent = 0) const;
+
+protected:
+  QString m_name;    ///< Машинное имя действия.
+  Type m_type;       ///< Тип действия \sa Type.
 
 private:
   int m_weight;      ///< Вес, используется для задания порядка.
   QAction *m_action; ///< Действие, равно 0 если действие не размещено на тулбаре.
-  QString m_name;    ///< Машинное имя действия.
-  Type m_type;       ///< Тип действия \sa Type.
 };
 
 typedef QSharedPointer<ToolBarActionCreator> ToolBarAction;

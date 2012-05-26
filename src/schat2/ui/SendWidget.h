@@ -41,6 +41,7 @@ public:
   inline InputWidget *input()                           { return m_input; }
   inline static SendWidget *i()                         { return m_self; }
   inline static void add(ToolBarActionCreator *creator) { m_self->add(creator->weight(), creator); }
+  void add(const QString &actionName);
   void setInputFocus();
 
 signals:
@@ -60,18 +61,22 @@ private slots:
   void showHistoryMenu();
 
 private:
+  QAction* before(int weight);
   void add(int weight, ToolBarActionCreator *creator);
+  void add(ToolBarAction action);
   void fillToolBar();
   void retranslateUi();
   void updateStyleSheet();
 
-  InputWidget *m_input;               ///< Виджет ввода текста.
-  QAction *m_sendAction;              ///< Кнопка отправки.
-  QMap<int, ToolBarAction> m_actions; ///< Отсортированная таблица всех доступных действий.
-  QMenu *m_history;                   ///< Меню отправленных сообщений.
-  QToolBar *m_toolBar;                ///< Панель инструментов.
-  QToolButton *m_sendButton;          ///< Кнопка отправки.
-  static SendWidget *m_self;          ///< Указатель на себя.
+  InputWidget *m_input;                 ///< Виджет ввода текста.
+  QAction *m_sendAction;                ///< Кнопка отправки.
+  QMap<int, ToolBarAction> m_actions;   ///< Отсортированная таблица всех доступных действий.
+  QMap<QString, ToolBarAction> m_names; ///< Таблица имён действий.
+  QMenu *m_history;                     ///< Меню отправленных сообщений.
+  QStringList m_layout;                 ///< Список действий размещённых на тулбаре.
+  QToolBar *m_toolBar;                  ///< Панель инструментов.
+  QToolButton *m_sendButton;            ///< Кнопка отправки.
+  static SendWidget *m_self;            ///< Указатель на себя.
 };
 
 #endif /* SENDWIDGET_H_ */

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,9 +19,10 @@
 #include "ui/ToolBarAction.h"
 
 ToolBarActionCreator::ToolBarActionCreator(int weight, const QString &name)
-  : m_weight(weight)
-  , m_name(name)
+  : m_name(name)
   , m_type(Action)
+  , m_weight(weight)
+  , m_action(0)
 {
 }
 

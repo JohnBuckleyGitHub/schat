@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include <QEvent>
 #include <QMenu>
 #include <QToolBar>
@@ -24,18 +26,68 @@
 
 #include "ChatCore.h"
 #include "ChatNotify.h"
+#include "sglobal.h"
 #include "text/PlainTextFilter.h"
+#include "ui/ChatIcons.h"
 #include "ui/ColorButton.h"
 #include "ui/InputWidget.h"
 #include "ui/SendWidget.h"
-#include "ui/ChatIcons.h"
 
 SendWidget *SendWidget::m_self = 0;
+
+/*!
+ * Действия для форматирования текста в поле ввода.
+ */
+class TextEditAction : public ToolBarActionCreator
+{
+public:
+  TextEditAction(InputWidget::Actions action)
+  : ToolBarActionCreator(1000 + action * 10)
+  , m_inputAction(action)
+  {
+    switch (action) {
+      case InputWidget::Bold:
+        m_name = LS("bold");
+        break;
+
+      case InputWidget::Italic:
+        m_name = LS("italic");
+        break;
+
+      case InputWidget::Underline:
+        m_name = LS("underline");
+        break;
+
+      case InputWidget::Strike:
+        m_name = LS("strike");
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  QAction* createAction(QObject *parent) const
+  {
+    Q_UNUSED(parent)
+
+    if (m_name.isEmpty())
+      return 0;
+
+    return SendWidget::i()->input()->action(m_inputAction);
+  }
+
+private:
+  InputWidget::Actions m_inputAction;
+};
+
 
 SendWidget::SendWidget(QWidget *parent)
   : QWidget(parent)
 {
   m_self = this;
+
+  m_layout << LS("bold") << LS("italic") << LS("underline") << LS("strike");
 
   m_toolBar = new QToolBar(this);
   m_toolBar->setIconSize(QSize(16, 16));
@@ -48,12 +100,26 @@ SendWidget::SendWidget(QWidget *parent)
   mainLay->setMargin(0);
   mainLay->setSpacing(0);
 
+  add(new TextEditAction(InputWidget::Bold));
+  add(new TextEditAction(InputWidget::Italic));
+  add(new TextEditAction(InputWidget::Underline));
+  add(new TextEditAction(InputWidget::Strike));
+
   updateStyleSheet();
   fillToolBar();
   retranslateUi();
 
   connect(m_input, SIGNAL(send(const QString &)), SLOT(sendMsg(const QString &)));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+}
+
+
+void SendWidget::add(const QString &actionName)
+{
+  if (!m_names.contains(actionName))
+    return;
+
+  add(m_names.value(actionName));
 }
 
 
@@ -144,12 +210,54 @@ void SendWidget::showHistoryMenu()
 }
 
 
+QAction* SendWidget::before(int weight)
+{
+  QList<int> keys = m_actions.keys();
+  int index = keys.indexOf(weight);
+  if (index == -1)
+    return 0;
+
+  for (int i = index; i < keys.size(); ++i) {
+    QAction *action = m_actions.value(keys.at(i))->action();
+    if (action)
+      return action;
+  }
+
+  return 0;
+}
+
+
 void SendWidget::add(int weight, ToolBarActionCreator *creator)
 {
-  if (m_actions.contains(weight))
+  if (m_actions.contains(weight)) {
     add(++weight, creator);
-  else
-    m_actions[weight] = ToolBarAction(creator);
+    return;
+  }
+
+  ToolBarAction action = ToolBarAction(creator);
+  m_actions[weight] = action;
+  m_names[action->name()] = action;
+}
+
+
+/*!
+ * Добавления действия на панель инструментов.
+ */
+void SendWidget::add(ToolBarAction action)
+{
+  if (!action)
+    return;
+
+  if (action->action())
+    return;
+
+  QAction *qa = 0;
+  if (action->type() == ToolBarActionCreator::Action) {
+    qa = action->createAction(this);
+    m_toolBar->insertAction(before(action->weight()), qa);
+  }
+
+  action->setAction(qa);
 }
 
 
@@ -158,10 +266,10 @@ void SendWidget::add(int weight, ToolBarActionCreator *creator)
  */
 void SendWidget::fillToolBar()
 {
-  m_toolBar->addAction(m_input->action(InputWidget::Bold));
-  m_toolBar->addAction(m_input->action(InputWidget::Italic));
-  m_toolBar->addAction(m_input->action(InputWidget::Underline));
-  m_toolBar->addAction(m_input->action(InputWidget::Strike));
+  foreach (const QString &action, m_layout) {
+    add(action);
+  }
+
   m_toolBar->addSeparator();
   m_toolBar->addWidget(m_input->color());
 
