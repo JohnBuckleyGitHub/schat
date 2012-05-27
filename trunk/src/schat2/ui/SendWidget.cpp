@@ -26,102 +26,14 @@
 
 #include "ChatCore.h"
 #include "ChatNotify.h"
+#include "hooks/ToolBarActions.h"
 #include "sglobal.h"
 #include "text/PlainTextFilter.h"
 #include "ui/ChatIcons.h"
-#include "ui/ColorButton.h"
 #include "ui/InputWidget.h"
 #include "ui/SendWidget.h"
 
 SendWidget *SendWidget::m_self = 0;
-
-/*!
- * Действия для форматирования текста в поле ввода.
- */
-class TextEditAction : public ToolBarActionCreator
-{
-public:
-  TextEditAction(InputWidget::Actions action)
-  : ToolBarActionCreator(1000 + action * 10)
-  , m_inputAction(action)
-  {
-    switch (action) {
-      case InputWidget::Bold:
-        m_name = LS("bold");
-        break;
-
-      case InputWidget::Italic:
-        m_name = LS("italic");
-        break;
-
-      case InputWidget::Underline:
-        m_name = LS("underline");
-        break;
-
-      case InputWidget::Strike:
-        m_name = LS("strike");
-        break;
-
-      default:
-        break;
-    }
-  }
-
-  QAction* createAction(QObject *parent) const
-  {
-    Q_UNUSED(parent)
-
-    if (m_name.isEmpty())
-      return 0;
-
-    return SendWidget::i()->input()->action(m_inputAction);
-  }
-
-private:
-  InputWidget::Actions m_inputAction;
-};
-
-
-/*!
- * Действия для установки цвета текста.
- */
-class ColorAction : public ToolBarActionCreator
-{
-public:
-  ColorAction()
-  : ToolBarActionCreator(2000, LS("color"))
-  {
-    m_type = Widget;
-  }
-
-  QWidget* createWidget(QWidget *parent) const
-  {
-    Q_UNUSED(parent)
-    return SendWidget::i()->input()->color();
-  }
-};
-
-
-/*!
- * Растяжка, делящая панель инструментов на 2 половины.
- */
-class StretchAction : public ToolBarActionCreator
-{
-public:
-  StretchAction()
-  : ToolBarActionCreator(10000, LS("stretch"))
-  {
-    m_type = Widget;
-  }
-
-  QWidget* createWidget(QWidget *parent) const
-  {
-    QWidget *stretch = new QWidget(parent);
-    stretch->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-    return stretch;
-  }
-};
-
 
 SendWidget::SendWidget(QWidget *parent)
   : QWidget(parent)
