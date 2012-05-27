@@ -108,3 +108,15 @@ QWidget* SendAction::createWidget(QWidget *parent) const
 {
   return new SendButton(parent);
 }
+
+
+QIcon SendAction::icon() const
+{
+  return SCHAT_ICON(Send);
+}
+
+
+QString SendAction::title() const
+{
+  return tr("Send");
+}

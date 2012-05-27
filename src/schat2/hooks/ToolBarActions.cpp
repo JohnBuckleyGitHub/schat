@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QAction>
+
 #include "hooks/ToolBarActions.h"
 #include "sglobal.h"
 #include "ui/ColorButton.h"
@@ -63,6 +65,26 @@ QAction* TextEditAction::createAction(QObject *parent) const
 }
 
 
+QIcon TextEditAction::icon() const
+{
+  QAction *action = createAction();
+  if (action)
+    return action->icon();
+
+  return ToolBarActionCreator::icon();
+}
+
+
+QString TextEditAction::title() const
+{
+  QAction *action = createAction();
+  if (action)
+    return action->text();
+
+  return ToolBarActionCreator::title();
+}
+
+
 ColorAction::ColorAction()
   : ToolBarActionCreator(ColorWeight, LS("color"), WidgetType)
 {
@@ -73,6 +95,18 @@ QWidget* ColorAction::createWidget(QWidget *parent) const
 {
   Q_UNUSED(parent)
   return SendWidget::i()->input()->color();
+}
+
+
+QIcon ColorAction::icon() const
+{
+  return QIcon(LS(":/images/color.png"));
+}
+
+
+QString ColorAction::title() const
+{
+  return tr("Text color");
 }
 
 

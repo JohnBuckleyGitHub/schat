@@ -126,8 +126,11 @@ void SendWidget::contextMenuEvent(QContextMenuEvent *event)
     QMenu *addMenu = menu.addMenu(SCHAT_ICON(Add), tr("Add"));
 
     foreach (const QString &name, available) {
-      QAction *a = addMenu->addAction(name);
-      a->setData(name);
+      ToolBarAction action = m_names.value(name);
+      if (action) {
+        QAction *a = addMenu->addAction(action->icon(), action->title());
+        a->setData(name);
+      }
     }
   }
 
