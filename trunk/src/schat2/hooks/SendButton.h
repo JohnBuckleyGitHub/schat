@@ -16,25 +16,43 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef SENDBUTTON_H_
+#define SENDBUTTON_H_
+
+#include <QToolButton>
+
 #include "ui/ToolBarAction.h"
 
-ToolBarActionCreator::ToolBarActionCreator(int weight, const QString &name, Flags flags)
-  : m_flags(flags)
-  , m_name(name)
-  , m_weight(weight)
-  , m_action(0)
+class SendButton : public QToolButton
 {
-}
+  Q_OBJECT
 
-QAction* ToolBarActionCreator::createAction(QObject *parent) const
+public:
+  SendButton(QWidget *parent = 0);
+
+protected:
+  void changeEvent(QEvent *event);
+
+private slots:
+  void sendMsg();
+  void showItem();
+  void showMenu();
+
+private:
+  void retranslateUi();
+
+  QMenu *m_history; ///< Меню отправленных сообщений.
+};
+
+
+/*!
+ * Растяжка, делящая панель инструментов на 2 половины.
+ */
+class SendAction : public ToolBarActionCreator
 {
-  Q_UNUSED(parent)
-  return 0;
-}
+public:
+  SendAction();
+  QWidget* createWidget(QWidget *parent) const;
+};
 
-
-QWidget* ToolBarActionCreator::createWidget(QWidget *parent) const
-{
-  Q_UNUSED(parent)
-  return 0;
-}
+#endif /* SENDBUTTON_H_ */

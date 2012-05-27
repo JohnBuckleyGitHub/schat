@@ -569,9 +569,9 @@
     </message>
 </context>
 <context>
-    <name>SendWidget</name>
+    <name>SendButton</name>
     <message>
-        <location filename="../../src/schat2/ui/SendWidget.cpp" line="173"/>
+        <location filename="../../src/schat2/hooks/SendButton.cpp" line="94"/>
         <source>Send</source>
         <translation type="unfinished"></translation>
     </message>

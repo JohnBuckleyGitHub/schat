@@ -16,20 +16,16 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QEvent>
 #include <QMenu>
 #include <QToolBar>
-#include <QToolButton>
 #include <QVBoxLayout>
 
 #include "ChatCore.h"
 #include "ChatNotify.h"
+#include "hooks/SendButton.h"
 #include "hooks/ToolBarActions.h"
 #include "sglobal.h"
-#include "text/PlainTextFilter.h"
-#include "ui/ChatIcons.h"
 #include "ui/InputWidget.h"
 #include "ui/SendWidget.h"
 
@@ -40,7 +36,7 @@ SendWidget::SendWidget(QWidget *parent)
 {
   m_self = this;
 
-  m_layout << LS("bold") << LS("italic") << LS("underline") << LS("strike") << LS("color") << LS("stretch");
+  m_layout << LS("bold") << LS("italic") << LS("underline") << LS("strike") << LS("color") << LS("stretch") << LS("send");
 
   m_toolBar = new QToolBar(this);
   m_toolBar->setIconSize(QSize(16, 16));
@@ -59,12 +55,15 @@ SendWidget::SendWidget(QWidget *parent)
   add(new TextEditAction(InputWidget::Strike));
   add(new ColorAction());
   add(new StretchAction());
+  add(new SendAction());
 
   updateStyleSheet();
-  fillToolBar();
-  retranslateUi();
 
-  connect(m_input, SIGNAL(send(const QString &)), SLOT(sendMsg(const QString &)));
+  foreach (const QString &action, m_layout) {
+    add(action);
+  }
+
+  connect(m_input, SIGNAL(send(const QString &)), SIGNAL(send(const QString &)));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 }
 
@@ -102,15 +101,6 @@ bool SendWidget::event(QEvent *event)
 }
 
 
-void SendWidget::changeEvent(QEvent *event)
-{
-  if (event->type() == QEvent::LanguageChange)
-    retranslateUi();
-
-  QWidget::changeEvent(event);
-}
-
-
 void SendWidget::notify(const Notify &notify)
 {
   if (notify.type() == Notify::InsertText)
@@ -120,51 +110,9 @@ void SendWidget::notify(const Notify &notify)
 }
 
 
-void SendWidget::sendMsg(const QString &text)
-{
-  m_history->clear();
-  emit send(text);
-
-  if (m_sendButton->menu())
-    return;
-
-  m_sendButton->setPopupMode(QToolButton::MenuButtonPopup);
-  m_sendButton->setMenu(m_history);
-  m_toolBar->removeAction(m_sendAction);
-  m_toolBar->addAction(m_sendAction);
-}
-
-
-void SendWidget::showHistoryItem()
-{
-  QAction *action = qobject_cast<QAction *>(sender());
-  if (action)
-    m_input->setMsg(action->data().toInt());
-}
-
-
 /*!
- * Показ меню истории отправленных сообщений.
- *
- * \todo ! Добавить кнопку очистки истории.
+ * Определяет действие, которое находится, после действия с весом \p weight.
  */
-void SendWidget::showHistoryMenu()
-{
-  if (!m_history->isEmpty())
-    return;
-
-  QStringList history = m_input->history();
-  QFontMetrics fm = fontMetrics();
-  QAction *action = 0;
-
-  for (int i = history.size() - 1; i >= 0; --i) {
-    action = m_history->addAction(fm.elidedText(PlainTextFilter::filter(history.at(i)), Qt::ElideMiddle, 150));
-    action->setData(i);
-    connect(action, SIGNAL(triggered()), SLOT(showHistoryItem()));
-  }
-}
-
-
 QAction* SendWidget::before(int weight)
 {
   QList<int> keys = m_actions.keys();
@@ -207,41 +155,17 @@ void SendWidget::add(ToolBarAction action)
     return;
 
   QAction *qa = 0;
-  if (action->type() == ToolBarActionCreator::Action) {
+  if (action->flags() & ToolBarActionCreator::ActionType) {
     qa = action->createAction(this);
     m_toolBar->insertAction(before(action->weight()), qa);
   }
-  else
+  else if (action->flags() & ToolBarActionCreator::WidgetType)
     qa = m_toolBar->insertWidget(before(action->weight()), action->createWidget(this));
 
+  if (qa)
+    qa->setData(action->name());
+
   action->setAction(qa);
-}
-
-
-/*!
- * Заполнение панели инструментов.
- */
-void SendWidget::fillToolBar()
-{
-  foreach (const QString &action, m_layout) {
-    add(action);
-  }
-
-  m_history = new QMenu(this);
-
-  m_sendButton = new QToolButton(this);
-  m_sendButton->setAutoRaise(true);
-  m_sendButton->setIcon(SCHAT_ICON(Send));
-  m_sendAction = m_toolBar->addWidget(m_sendButton);
-
-  connect(m_sendButton, SIGNAL(clicked()), m_input, SLOT(send()));
-  connect(m_history, SIGNAL(aboutToShow()), SLOT(showHistoryMenu()));
-}
-
-
-void SendWidget::retranslateUi()
-{
-  m_sendButton->setToolTip(tr("Send"));
 }
 
 
