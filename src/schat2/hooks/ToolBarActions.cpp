@@ -17,10 +17,10 @@
  */
 
 #include "hooks/ToolBarActions.h"
-#include "ui/InputWidget.h"
 #include "sglobal.h"
-#include "ui/SendWidget.h"
 #include "ui/ColorButton.h"
+#include "ui/InputWidget.h"
+#include "ui/SendWidget.h"
 
 TextEditAction::TextEditAction(int action)
   : ToolBarActionCreator(1000 + action * 10)
@@ -61,9 +61,8 @@ QAction* TextEditAction::createAction(QObject *parent) const
 
 
 ColorAction::ColorAction()
-  : ToolBarActionCreator(2000, LS("color"))
+  : ToolBarActionCreator(2000, LS("color"), WidgetType)
 {
-  m_type = Widget;
 }
 
 
@@ -75,9 +74,8 @@ QWidget* ColorAction::createWidget(QWidget *parent) const
 
 
 StretchAction::StretchAction()
-  : ToolBarActionCreator(10000, LS("stretch"))
+  : ToolBarActionCreator(10000, LS("stretch"), WidgetType | Permanent)
 {
-  m_type = Widget;
 }
 
 

@@ -29,8 +29,6 @@ class InputWidget;
 class Notify;
 class QMenu;
 class QToolBar;
-class QToolButton;
-class SendWidget;
 
 class SCHAT_CORE_EXPORT SendWidget : public QWidget
 {
@@ -52,30 +50,21 @@ public slots:
 
 protected:
   bool event(QEvent *event);
-  void changeEvent(QEvent *event);
 
 private slots:
   void notify(const Notify &notify);
-  void sendMsg(const QString &text);
-  void showHistoryItem();
-  void showHistoryMenu();
 
 private:
   QAction* before(int weight);
   void add(int weight, ToolBarActionCreator *creator);
   void add(ToolBarAction action);
-  void fillToolBar();
-  void retranslateUi();
   void updateStyleSheet();
 
   InputWidget *m_input;                 ///< Виджет ввода текста.
-  QAction *m_sendAction;                ///< Кнопка отправки.
   QMap<int, ToolBarAction> m_actions;   ///< Отсортированная таблица всех доступных действий.
   QMap<QString, ToolBarAction> m_names; ///< Таблица имён действий.
-  QMenu *m_history;                     ///< Меню отправленных сообщений.
   QStringList m_layout;                 ///< Список действий размещённых на тулбаре.
   QToolBar *m_toolBar;                  ///< Панель инструментов.
-  QToolButton *m_sendButton;            ///< Кнопка отправки.
   static SendWidget *m_self;            ///< Указатель на себя.
 };
 

@@ -47,6 +47,7 @@ HEADERS = \
     hooks/CommandsImpl.h \
     hooks/MessagesImpl.h \
     hooks/RegCmds.h \
+    hooks/SendButton.h \
     hooks/ServerMenuImpl.h \
     hooks/SettingsTabImpl.h \
     hooks/ToolBarActions.h \
@@ -132,6 +133,7 @@ SOURCES = \
     hooks/CommandsImpl.cpp \
     hooks/MessagesImpl.cpp \
     hooks/RegCmds.cpp \
+    hooks/SendButton.cpp \
     hooks/ServerMenuImpl.cpp \
     hooks/SettingsTabImpl.cpp \
     hooks/ToolBarActions.cpp \

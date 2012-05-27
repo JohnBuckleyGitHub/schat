@@ -31,32 +31,36 @@ class QAction;
 class SCHAT_CORE_EXPORT ToolBarActionCreator
 {
 public:
-  /// Тип действия.
-  enum Type {
-    Action, ///< QAction.
-    Widget  ///< QWidget.
+  /// Флаги определяющие возможности и поведение.
+  enum Flag {
+    NoFlags    = 0, ///< Нет флагов.
+    ActionType = 1, ///< QAction.
+    WidgetType = 2, ///< QWidget.
+    Permanent  = 4  ///< Действие не может быть удалено.
   };
 
-  ToolBarActionCreator(int weight, const QString &name = QString());
+  Q_DECLARE_FLAGS(Flags, Flag)
+
+  ToolBarActionCreator(int weight, const QString &name = QString(), Flags flags = ActionType);
   virtual ~ToolBarActionCreator() {}
-  inline bool isActionType() const       { return m_type == Action; }
   inline const QString& name() const     { return m_name; }
+  inline Flags flags() const             { return m_flags; }
   inline int weight() const              { return m_weight; }
   inline QAction* action() const         { return m_action; }
-  inline Type type() const               { return m_type; }
   inline void setAction(QAction *action) { m_action = action; }
   virtual QAction* createAction(QObject *parent = 0) const;
   virtual QWidget* createWidget(QWidget *parent = 0) const;
 
 protected:
+  Flags m_flags;     ///< Флаги \sa Flags.
   QString m_name;    ///< Машинное имя действия.
-  Type m_type;       ///< Тип действия \sa Type.
 
 private:
   int m_weight;      ///< Вес, используется для задания порядка.
   QAction *m_action; ///< Действие, равно 0 если действие не размещено на тулбаре.
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(ToolBarActionCreator::Flags)
 typedef QSharedPointer<ToolBarActionCreator> ToolBarAction;
 
 #endif /* TOOLBARACTION_H_ */
