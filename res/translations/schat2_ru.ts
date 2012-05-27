@@ -562,7 +562,13 @@
 <context>
     <name>SendButton</name>
     <message>
-        <location filename="../../src/schat2/hooks/SendButton.cpp" line="94"/>
+        <location filename="../../src/schat2/hooks/SendButton.cpp" line="33"/>
+        <location filename="../../src/schat2/hooks/SendButton.cpp" line="97"/>
+        <source>Empty</source>
+        <translation>Пусто</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/hooks/SendButton.cpp" line="96"/>
         <source>Send</source>
         <translation>Отправить</translation>
     </message>
