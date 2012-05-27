@@ -27,7 +27,7 @@ EmoticonsButton::EmoticonsButton(QWidget *parent)
 
 
 EmoticonsAction::EmoticonsAction()
-  : ToolBarActionCreator(1100, LS("emoticons"), WidgetType)
+  : ToolBarActionCreator(1100, LS("emoticons"), WidgetType | AutoShow | AutoDelete)
 {
 }
 

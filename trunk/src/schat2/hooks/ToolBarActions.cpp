@@ -23,7 +23,7 @@
 #include "ui/SendWidget.h"
 
 TextEditAction::TextEditAction(int action)
-  : ToolBarActionCreator(1000 + action * 10)
+  : ToolBarActionCreator(TextEditWeight + action * 10)
   , m_inputAction(action)
 {
   switch (action) {
@@ -46,6 +46,9 @@ TextEditAction::TextEditAction(int action)
     default:
       break;
   }
+
+  if (action != InputWidget::Strike)
+    m_flags |= AutoShow;
 }
 
 
@@ -61,7 +64,7 @@ QAction* TextEditAction::createAction(QObject *parent) const
 
 
 ColorAction::ColorAction()
-  : ToolBarActionCreator(2000, LS("color"), WidgetType)
+  : ToolBarActionCreator(ColorWeight, LS("color"), WidgetType)
 {
 }
 
@@ -74,7 +77,7 @@ QWidget* ColorAction::createWidget(QWidget *parent) const
 
 
 StretchAction::StretchAction()
-  : ToolBarActionCreator(10000, LS("stretch"), WidgetType | Permanent)
+  : ToolBarActionCreator(StretchWeight, LS("stretch"), WidgetType | Permanent | AutoShow)
 {
 }
 

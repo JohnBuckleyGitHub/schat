@@ -45,6 +45,7 @@ ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
   setDefault(LS("Display/Service"),            false);
   setDefault(LS("Labs/StaticTrayAlerts"),      false);
   setDefault(LS("Translation"),                LS("auto"));
+  setDefault(LS("ToolBarActions"),             QStringList());
 }
 
 

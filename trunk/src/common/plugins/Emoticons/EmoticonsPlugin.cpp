@@ -86,7 +86,6 @@ void EmoticonsPluginImpl::openUrl(const QUrl &url)
 void EmoticonsPluginImpl::start()
 {
   SendWidget::add(new EmoticonsAction());
-  SendWidget::add(LS("emoticons"));
 }
 
 

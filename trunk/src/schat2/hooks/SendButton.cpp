@@ -99,7 +99,7 @@ void SendButton::retranslateUi()
 
 
 SendAction::SendAction()
-  : ToolBarActionCreator(11000, LS("send"), WidgetType)
+  : ToolBarActionCreator(11000, LS("send"), WidgetType | AutoShow | AutoDelete)
 {
 }
 

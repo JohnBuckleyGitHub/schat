@@ -38,8 +38,7 @@ public:
   SendWidget(QWidget *parent = 0);
   inline InputWidget *input()                           { return m_input; }
   inline static SendWidget *i()                         { return m_self; }
-  inline static void add(ToolBarActionCreator *creator) { m_self->add(creator->weight(), creator); }
-  static void add(const QString &actionName);
+  static void add(ToolBarActionCreator *creator, bool refill = true);
   void setInputFocus();
 
 signals:
@@ -50,14 +49,18 @@ public slots:
 
 protected:
   bool event(QEvent *event);
+  void contextMenuEvent(QContextMenuEvent *event);
 
 private slots:
   void notify(const Notify &notify);
+  void settingsChanged(const QString &key, const QVariant &value);
 
 private:
   QAction* before(int weight);
-  void add(int weight, ToolBarActionCreator *creator);
+  void add(int weight, ToolBarActionCreator *creator, bool refill = true);
   void add(ToolBarAction action);
+  void refill();
+  void remove(ToolBarAction action);
   void updateStyleSheet();
 
   InputWidget *m_input;                 ///< Виджет ввода текста.

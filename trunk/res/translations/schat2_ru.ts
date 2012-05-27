@@ -574,6 +574,14 @@
     </message>
 </context>
 <context>
+    <name>SendWidget</name>
+    <message>
+        <location filename="../../src/schat2/ui/SendWidget.cpp" line="128"/>
+        <source>Remove</source>
+        <translation>Удалить</translation>
+    </message>
+</context>
+<context>
     <name>ServerMenuImpl</name>
     <message>
         <location filename="../../src/schat2/hooks/ServerMenuImpl.cpp" line="46"/>
