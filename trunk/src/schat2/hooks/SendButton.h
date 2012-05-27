@@ -41,6 +41,7 @@ private slots:
 private:
   void retranslateUi();
 
+  QAction *m_empty; ///< Действие которое отображается когда список недавних сообщений пуст.
   QMenu *m_history; ///< Меню отправленных сообщений.
 };
 

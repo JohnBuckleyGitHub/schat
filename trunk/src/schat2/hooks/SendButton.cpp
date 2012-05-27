@@ -30,6 +30,8 @@ SendButton::SendButton(QWidget *parent)
   : QToolButton(parent)
 {
   m_history = new QMenu(this);
+  m_empty = m_history->addAction(tr("Empty"));
+  m_empty->setEnabled(false);
 
   setAutoRaise(true);
   setIcon(SCHAT_ICON(Send));
@@ -92,6 +94,7 @@ void SendButton::showMenu()
 void SendButton::retranslateUi()
 {
   setToolTip(tr("Send"));
+  m_empty->setText(tr("Empty"));
 }
 
 
