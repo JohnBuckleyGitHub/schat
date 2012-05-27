@@ -16,41 +16,23 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SENDBUTTON_H_
-#define SENDBUTTON_H_
+#include "EmoticonsButton.h"
+#include "sglobal.h"
 
-#include <QToolButton>
-
-#include "ui/ToolBarAction.h"
-
-class SendButton : public QToolButton
+EmoticonsButton::EmoticonsButton(QWidget *parent)
+  : QToolButton(parent)
 {
-  Q_OBJECT
-
-public:
-  SendButton(QWidget *parent = 0);
-
-protected:
-  void changeEvent(QEvent *event);
-
-private slots:
-  void sendMsg();
-  void showItem();
-  void showMenu();
-
-private:
-  void retranslateUi();
-
-  QAction *m_empty; ///< Действие которое отображается когда список недавних сообщений пуст.
-  QMenu *m_history; ///< Меню отправленных сообщений.
-};
+  setIcon(QIcon(LS(":/images/emoticons/edit.png")));
+}
 
 
-class SendAction : public ToolBarActionCreator
+EmoticonsAction::EmoticonsAction()
+  : ToolBarActionCreator(1100, LS("emoticons"), WidgetType)
 {
-public:
-  SendAction();
-  QWidget* createWidget(QWidget *parent) const;
-};
+}
 
-#endif /* SENDBUTTON_H_ */
+
+QWidget* EmoticonsAction::createWidget(QWidget *parent) const
+{
+  return new EmoticonsButton(parent);
+}

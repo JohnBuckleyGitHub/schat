@@ -22,6 +22,7 @@ QT = core gui
 HEADERS  = \
    EmoticonData.h \
    Emoticons.h \
+   EmoticonsButton.h \
    EmoticonsExtension.h \
    EmoticonsFilter.h \
    EmoticonsPage.h \
@@ -31,6 +32,7 @@ HEADERS  = \
 SOURCES  = \
    EmoticonData.cpp \
    Emoticons.cpp \
+   EmoticonsButton.cpp \
    EmoticonsExtension.cpp \
    EmoticonsFilter.cpp \
    EmoticonsPage.cpp \

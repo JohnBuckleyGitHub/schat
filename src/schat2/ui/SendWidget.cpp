@@ -70,10 +70,10 @@ SendWidget::SendWidget(QWidget *parent)
 
 void SendWidget::add(const QString &actionName)
 {
-  if (!m_names.contains(actionName))
+  if (!m_self->m_names.contains(actionName))
     return;
 
-  add(m_names.value(actionName));
+  m_self->add(m_self->m_names.value(actionName));
 }
 
 
