@@ -31,12 +31,22 @@ class QAction;
 class SCHAT_CORE_EXPORT ToolBarActionCreator
 {
 public:
+  /// Вес стандартных действий.
+  enum StandartWeight {
+    TextEditWeight = 1000,
+    ColorWeight    = 2000,
+    StretchWeight  = 10000,
+    SendWeight     = 11000
+  };
+
   /// Флаги определяющие возможности и поведение.
   enum Flag {
-    NoFlags    = 0, ///< Нет флагов.
-    ActionType = 1, ///< QAction.
-    WidgetType = 2, ///< QWidget.
-    Permanent  = 4  ///< Действие не может быть удалено.
+    NoFlags    = 0,  ///< Нет флагов.
+    ActionType = 1,  ///< QAction.
+    WidgetType = 2,  ///< QWidget.
+    Permanent  = 4,  ///< Действие не может быть удалено.
+    AutoShow   = 8,  ///< Действие будет по умолчанию отображено на панели инструментов.
+    AutoDelete = 16  ///< Автоматически удалять созданное действие при удалении с панели инструментов.
   };
 
   Q_DECLARE_FLAGS(Flags, Flag)

@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QContextMenuEvent>
 #include <QEvent>
 #include <QMenu>
 #include <QToolBar>
@@ -23,11 +24,13 @@
 
 #include "ChatCore.h"
 #include "ChatNotify.h"
+#include "ChatSettings.h"
 #include "hooks/SendButton.h"
 #include "hooks/ToolBarActions.h"
 #include "sglobal.h"
 #include "ui/InputWidget.h"
 #include "ui/SendWidget.h"
+#include "ui/ChatIcons.h"
 
 SendWidget *SendWidget::m_self = 0;
 
@@ -36,7 +39,7 @@ SendWidget::SendWidget(QWidget *parent)
 {
   m_self = this;
 
-  m_layout << LS("bold") << LS("italic") << LS("underline") << LS("strike") << LS("color") << LS("stretch") << LS("send");
+  m_layout = SCHAT_OPTION(LS("ToolBarActions")).toStringList();
 
   m_toolBar = new QToolBar(this);
   m_toolBar->setIconSize(QSize(16, 16));
@@ -49,31 +52,26 @@ SendWidget::SendWidget(QWidget *parent)
   mainLay->setMargin(0);
   mainLay->setSpacing(0);
 
-  add(new TextEditAction(InputWidget::Bold));
-  add(new TextEditAction(InputWidget::Italic));
-  add(new TextEditAction(InputWidget::Underline));
-  add(new TextEditAction(InputWidget::Strike));
-  add(new ColorAction());
-  add(new StretchAction());
-  add(new SendAction());
+  add(new TextEditAction(InputWidget::Bold), false);
+  add(new TextEditAction(InputWidget::Italic), false);
+  add(new TextEditAction(InputWidget::Underline), false);
+  add(new TextEditAction(InputWidget::Strike), false);
+  add(new ColorAction(), false);
+  add(new StretchAction(), false);
+  add(new SendAction(), false);
 
   updateStyleSheet();
-
-  foreach (const QString &action, m_layout) {
-    add(action);
-  }
+  refill();
 
   connect(m_input, SIGNAL(send(const QString &)), SIGNAL(send(const QString &)));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+  connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
 }
 
 
-void SendWidget::add(const QString &actionName)
+void SendWidget::add(ToolBarActionCreator *creator, bool refill)
 {
-  if (!m_self->m_names.contains(actionName))
-    return;
-
-  m_self->add(m_self->m_names.value(actionName));
+  m_self->add(creator->weight(), creator, refill);
 }
 
 
@@ -101,12 +99,63 @@ bool SendWidget::event(QEvent *event)
 }
 
 
+/*!
+ * Контекстное меню.
+ */
+void SendWidget::contextMenuEvent(QContextMenuEvent *event)
+{
+  QWidget::contextMenuEvent(event);
+
+  QAction *a = m_toolBar->actionAt(event->pos());
+  if (!a)
+    return;
+
+  QString name = a->data().toString();
+  if (name.isEmpty())
+    return;
+
+  ToolBarAction action = m_names.value(name);
+  if (!action)
+    return;
+
+  QMenu menu(this);
+  QAction *remove = 0;
+  if (!(action->flags() & ToolBarActionCreator::Permanent))
+    remove = menu.addAction(SCHAT_ICON(Remove), tr("Remove"));
+
+  QAction *result = menu.exec(event->globalPos());
+  if (!result)
+    return;
+
+  // Удаление кнопки.
+  if (remove == result) {
+    this->remove(action);
+
+    if (action->flags() & ToolBarActionCreator::AutoShow)
+      m_layout.append(LC('-') + name);
+    else
+      m_layout.removeAll(name);
+
+    ChatCore::settings()->setValue(LS("ToolBarActions"), m_layout);
+  }
+}
+
+
 void SendWidget::notify(const Notify &notify)
 {
   if (notify.type() == Notify::InsertText)
     insertHtml(notify.data().toString());
   else if (notify.type() == Notify::SetSendFocus)
     m_input->setFocus();
+}
+
+
+void SendWidget::settingsChanged(const QString &key, const QVariant &value)
+{
+  if (key == LS("ToolBarActions")) {
+    m_layout = value.toStringList();
+    refill();
+  }
 }
 
 
@@ -130,7 +179,7 @@ QAction* SendWidget::before(int weight)
 }
 
 
-void SendWidget::add(int weight, ToolBarActionCreator *creator)
+void SendWidget::add(int weight, ToolBarActionCreator *creator, bool refill)
 {
   if (m_actions.contains(weight)) {
     add(++weight, creator);
@@ -140,6 +189,9 @@ void SendWidget::add(int weight, ToolBarActionCreator *creator)
   ToolBarAction action = ToolBarAction(creator);
   m_actions[weight] = action;
   m_names[action->name()] = action;
+
+  if (refill)
+    this->refill();
 }
 
 
@@ -166,6 +218,37 @@ void SendWidget::add(ToolBarAction action)
     qa->setData(action->name());
 
   action->setAction(qa);
+}
+
+
+void SendWidget::refill()
+{
+  QMapIterator<int, ToolBarAction> i(m_actions);
+  while (i.hasNext()) {
+    i.next();
+    if (i.value()->flags() & ToolBarActionCreator::AutoShow) {
+      m_layout.contains(LC('-') + i.value()->name()) ? remove(i.value()) : add(i.value());
+    }
+    else {
+      !m_layout.contains(i.value()->name()) ? remove(i.value()) : add(i.value());
+    }
+  }
+}
+
+
+void SendWidget::remove(ToolBarAction action)
+{
+  if (!action)
+    return;
+
+  if (!action->action())
+    return;
+
+  m_toolBar->removeAction(action->action());
+  if (action->flags() & ToolBarActionCreator::AutoDelete)
+    action->action()->deleteLater();
+
+  action->setAction(0);
 }
 
 
