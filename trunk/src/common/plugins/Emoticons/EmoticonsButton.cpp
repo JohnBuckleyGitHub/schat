@@ -16,13 +16,33 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QEvent>
+
 #include "EmoticonsButton.h"
 #include "sglobal.h"
 
 EmoticonsButton::EmoticonsButton(QWidget *parent)
   : QToolButton(parent)
 {
+  setAutoRaise(true);
   setIcon(QIcon(LS(":/images/emoticons/edit.png")));
+
+  retranslateUi();
+}
+
+
+void EmoticonsButton::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  QWidget::changeEvent(event);
+}
+
+
+void EmoticonsButton::retranslateUi()
+{
+  setToolTip(tr("Emoticons"));
 }
 
 
@@ -35,4 +55,16 @@ EmoticonsAction::EmoticonsAction()
 QWidget* EmoticonsAction::createWidget(QWidget *parent) const
 {
   return new EmoticonsButton(parent);
+}
+
+
+QIcon EmoticonsAction::icon() const
+{
+  return QIcon(LS(":/images/emoticons/edit.png"));
+}
+
+
+QString EmoticonsAction::title() const
+{
+  return tr("Emoticons");
 }

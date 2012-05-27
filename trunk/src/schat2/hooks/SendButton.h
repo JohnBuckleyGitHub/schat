@@ -19,6 +19,7 @@
 #ifndef SENDBUTTON_H_
 #define SENDBUTTON_H_
 
+#include <QApplication>
 #include <QToolButton>
 
 #include "ui/ToolBarAction.h"
@@ -48,9 +49,13 @@ private:
 
 class SendAction : public ToolBarActionCreator
 {
+  Q_DECLARE_TR_FUNCTIONS(SendAction)
+
 public:
   SendAction();
   QWidget* createWidget(QWidget *parent) const;
+  QIcon icon() const;
+  QString title() const;
 };
 
 #endif /* SENDBUTTON_H_ */

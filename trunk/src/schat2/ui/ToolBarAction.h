@@ -19,6 +19,7 @@
 #ifndef TOOLBARACTION_H_
 #define TOOLBARACTION_H_
 
+#include <QIcon>
 #include <QSharedPointer>
 
 #include "schat.h"
@@ -57,6 +58,8 @@ public:
   inline Flags flags() const             { return m_flags; }
   inline int weight() const              { return m_weight; }
   inline QAction* action() const         { return m_action; }
+  inline virtual QIcon icon() const      { return QIcon(); }
+  inline virtual QString title() const   { return m_name; }
   inline void setAction(QAction *action) { m_action = action; }
   virtual QAction* createAction(QObject *parent = 0) const;
   virtual QWidget* createWidget(QWidget *parent = 0) const;

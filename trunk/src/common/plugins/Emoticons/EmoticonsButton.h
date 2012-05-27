@@ -19,6 +19,7 @@
 #ifndef EMOTICONSBUTTON_H_
 #define EMOTICONSBUTTON_H_
 
+#include <QApplication>
 #include <QToolButton>
 
 #include "ui/ToolBarAction.h"
@@ -29,14 +30,24 @@ class EmoticonsButton : public QToolButton
 
 public:
   EmoticonsButton(QWidget *parent = 0);
+
+protected:
+  void changeEvent(QEvent *event);
+
+private:
+  void retranslateUi();
 };
 
 
 class EmoticonsAction : public ToolBarActionCreator
 {
+  Q_DECLARE_TR_FUNCTIONS(EmoticonsAction)
+
 public:
   EmoticonsAction();
   QWidget* createWidget(QWidget *parent) const;
+  QIcon icon() const;
+  QString title() const;
 };
 
 #endif /* EMOTICONSBUTTON_H_ */

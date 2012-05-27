@@ -152,9 +152,17 @@
     </message>
 </context>
 <context>
+    <name>ColorAction</name>
+    <message>
+        <location filename="../../src/schat2/hooks/ToolBarActions.cpp" line="109"/>
+        <source>Text color</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ColorButton</name>
     <message>
-        <location filename="../../src/schat2/ui/ColorButton.cpp" line="140"/>
+        <location filename="../../src/schat2/ui/ColorButton.cpp" line="136"/>
         <source>Text color</source>
         <translation type="unfinished"></translation>
     </message>
@@ -569,6 +577,14 @@
     </message>
 </context>
 <context>
+    <name>SendAction</name>
+    <message>
+        <location filename="../../src/schat2/hooks/SendButton.cpp" line="121"/>
+        <source>Send</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SendButton</name>
     <message>
         <location filename="../../src/schat2/hooks/SendButton.cpp" line="33"/>
@@ -585,7 +601,12 @@
 <context>
     <name>SendWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/SendWidget.cpp" line="128"/>
+        <location filename="../../src/schat2/ui/SendWidget.cpp" line="126"/>
+        <source>Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/SendWidget.cpp" line="138"/>
         <source>Remove</source>
         <translation type="unfinished"></translation>
     </message>

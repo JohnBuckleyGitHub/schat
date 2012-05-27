@@ -19,6 +19,8 @@
 #ifndef TOOLBARACTIONS_H_
 #define TOOLBARACTIONS_H_
 
+#include <QApplication>
+
 #include "ui/ToolBarAction.h"
 
 /*!
@@ -28,7 +30,9 @@ class TextEditAction : public ToolBarActionCreator
 {
 public:
   TextEditAction(int action);
-  QAction* createAction(QObject *parent) const;
+  QAction* createAction(QObject *parent = 0) const;
+  QIcon icon() const;
+  QString title() const;
 
 private:
   int m_inputAction;
@@ -40,9 +44,13 @@ private:
  */
 class ColorAction : public ToolBarActionCreator
 {
+  Q_DECLARE_TR_FUNCTIONS(ColorAction)
+
 public:
   ColorAction();
   QWidget* createWidget(QWidget *parent) const;
+  QIcon icon() const;
+  QString title() const;
 };
 
 
