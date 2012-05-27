@@ -56,7 +56,8 @@ private slots:
   void settingsChanged(const QString &key, const QVariant &value);
 
 private:
-  QAction* before(int weight);
+  QAction* before(int weight) const;
+  QStringList available() const;
   void add(int weight, ToolBarActionCreator *creator, bool refill = true);
   void add(ToolBarAction action);
   void refill();

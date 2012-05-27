@@ -119,9 +119,23 @@ void SendWidget::contextMenuEvent(QContextMenuEvent *event)
     return;
 
   QMenu menu(this);
+  QStringList available = this->available();
   QAction *remove = 0;
+
+  if (!available.isEmpty()) {
+    QMenu *addMenu = menu.addMenu(SCHAT_ICON(Add), tr("Add"));
+
+    foreach (const QString &name, available) {
+      QAction *a = addMenu->addAction(name);
+      a->setData(name);
+    }
+  }
+
   if (!(action->flags() & ToolBarActionCreator::Permanent))
     remove = menu.addAction(SCHAT_ICON(Remove), tr("Remove"));
+
+  if (menu.actions().isEmpty())
+    return;
 
   QAction *result = menu.exec(event->globalPos());
   if (!result)
@@ -137,6 +151,20 @@ void SendWidget::contextMenuEvent(QContextMenuEvent *event)
       m_layout.removeAll(name);
 
     ChatCore::settings()->setValue(LS("ToolBarActions"), m_layout);
+  }
+  // Добавление кнопки.
+  else if (result->data().type() == QVariant::String) {
+    ToolBarAction action = m_names.value(result->data().toString());
+    if (action) {
+      add(action);
+
+      if (action->flags() & ToolBarActionCreator::AutoShow)
+        m_layout.removeAll(LC('-') + action->name());
+      else
+        m_layout.append(action->name());
+
+      ChatCore::settings()->setValue(LS("ToolBarActions"), m_layout);
+    }
   }
 }
 
@@ -162,7 +190,7 @@ void SendWidget::settingsChanged(const QString &key, const QVariant &value)
 /*!
  * Определяет действие, которое находится, после действия с весом \p weight.
  */
-QAction* SendWidget::before(int weight)
+QAction* SendWidget::before(int weight) const
 {
   QList<int> keys = m_actions.keys();
   int index = keys.indexOf(weight);
@@ -176,6 +204,20 @@ QAction* SendWidget::before(int weight)
   }
 
   return 0;
+}
+
+
+QStringList SendWidget::available() const
+{
+  QStringList out;
+  QMapIterator<int, ToolBarAction> i(m_actions);
+  while (i.hasNext()) {
+    i.next();
+    if (!i.value()->action())
+      out.append(i.value()->name());
+  }
+
+  return out;
 }
 
 
