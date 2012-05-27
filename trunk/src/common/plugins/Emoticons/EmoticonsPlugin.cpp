@@ -18,11 +18,13 @@
 
 #include <QtPlugin>
 #include <QDesktopServices>
+#include <QTimer>
 
 #include "ChatCore.h"
 #include "ChatNotify.h"
 #include "ChatSettings.h"
 #include "Emoticons.h"
+#include "EmoticonsButton.h"
 #include "EmoticonsExtension.h"
 #include "EmoticonsFilter.h"
 #include "EmoticonsPage.h"
@@ -32,6 +34,7 @@
 #include "net/SimpleID.h"
 #include "sglobal.h"
 #include "Translation.h"
+#include "ui/SendWidget.h"
 
 EmoticonsPluginImpl::EmoticonsPluginImpl(QObject *parent)
   : ChatPlugin(parent)
@@ -51,6 +54,8 @@ EmoticonsPluginImpl::EmoticonsPluginImpl(QObject *parent)
   connect(ChatCore::extensions(), SIGNAL(installed(QString)), SLOT(installed(QString)));
 
   ChatCore::translation()->addOther(LS("emoticons"));
+
+  QTimer::singleShot(0, this, SLOT(start()));
 }
 
 
@@ -75,6 +80,13 @@ void EmoticonsPluginImpl::loaded()
 void EmoticonsPluginImpl::openUrl(const QUrl &url)
 {
   ChatNotify::start(Notify::InsertText, QChar(QChar::Nbsp) + QString(SimpleID::fromBase32(url.path().toLatin1())) + QChar(QChar::Nbsp));
+}
+
+
+void EmoticonsPluginImpl::start()
+{
+  SendWidget::add(new EmoticonsAction());
+  SendWidget::add(LS("emoticons"));
 }
 
 

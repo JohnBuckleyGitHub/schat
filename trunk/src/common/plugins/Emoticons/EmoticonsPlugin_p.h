@@ -35,6 +35,7 @@ private slots:
   void installed(const QString &key);
   void loaded();
   void openUrl(const QUrl &url);
+  void start();
 
 private:
   Emoticons *m_emoticons;

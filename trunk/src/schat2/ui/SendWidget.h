@@ -39,7 +39,7 @@ public:
   inline InputWidget *input()                           { return m_input; }
   inline static SendWidget *i()                         { return m_self; }
   inline static void add(ToolBarActionCreator *creator) { m_self->add(creator->weight(), creator); }
-  void add(const QString &actionName);
+  static void add(const QString &actionName);
   void setInputFocus();
 
 signals:
