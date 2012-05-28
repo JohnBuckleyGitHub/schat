@@ -16,43 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef EMOTICONSBUTTON_H_
-#define EMOTICONSBUTTON_H_
+#ifndef EMOTICONSTABS_H_
+#define EMOTICONSTABS_H_
 
-#include <QApplication>
-#include <QToolButton>
+#include <QTabWidget>
 
-#include "ui/ToolBarAction.h"
-
-class EmoticonsTabs;
-
-class EmoticonsButton : public QToolButton
+class EmoticonsTabs : public QTabWidget
 {
   Q_OBJECT
 
 public:
-  EmoticonsButton(QWidget *parent = 0);
-
-protected:
-  void changeEvent(QEvent *event);
-
-private:
-  void retranslateUi();
-
-  EmoticonsTabs *m_tabs; ///< Виджет выбора смайлов.
-  QMenu *m_menu;         ///< Меню для показа виджета выбора смайлов.
+  EmoticonsTabs(QWidget *parent = 0);
 };
 
-
-class EmoticonsAction : public ToolBarActionCreator
-{
-  Q_DECLARE_TR_FUNCTIONS(EmoticonsAction)
-
-public:
-  EmoticonsAction();
-  QWidget* createWidget(QWidget *parent) const;
-  QIcon icon() const;
-  QString title() const;
-};
-
-#endif /* EMOTICONSBUTTON_H_ */
+#endif /* EMOTICONSTABS_H_ */

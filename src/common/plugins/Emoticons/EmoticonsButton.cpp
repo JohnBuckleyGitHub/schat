@@ -17,15 +17,27 @@
  */
 
 #include <QEvent>
+#include <QMenu>
+#include <QWidgetAction>
 
 #include "EmoticonsButton.h"
 #include "sglobal.h"
+#include "EmoticonsTabs.h"
 
 EmoticonsButton::EmoticonsButton(QWidget *parent)
   : QToolButton(parent)
 {
+  m_menu = new QMenu(this);
+  m_tabs = new EmoticonsTabs(this);
+
+  QWidgetAction *action = new QWidgetAction(this);
+  action->setDefaultWidget(m_tabs);
+  m_menu->addAction(action);
+
   setAutoRaise(true);
   setIcon(QIcon(LS(":/images/emoticons/edit.png")));
+  setPopupMode(QToolButton::InstantPopup);
+  setMenu(m_menu);
 
   retranslateUi();
 }
