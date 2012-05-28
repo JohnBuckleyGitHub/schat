@@ -33,15 +33,18 @@ public:
   Emoticons(QObject *parent = 0);
   bool load(Extension *extension);
   Emoticon get(const QString &key);
-  inline const QString& index() const { return m_index; }
+  inline const QString& index() const                   { return m_index; }
+  inline QList<Emoticon> theme(const QString &id) const { return m_themes.value(id); }
   QString find(const QString &text, int pos);
+  QStringList themes() const;
 
 private:
-  void add(Emoticon emoticon);
+  void add(Emoticon emoticon, QList<Emoticon> &theme);
   void makeIndex();
 
-  QMap<QString, Emoticon> m_emoticons; ///< Таблица смайлов.
-  QString m_index;                     ///< Первые символы текстовых сокращений смайлов.
+  QMap<QString, Emoticon> m_emoticons;      ///< Таблица смайлов.
+  QMap<QString, QList<Emoticon> > m_themes; ///< Темы смайлов.
+  QString m_index;                          ///< Первые символы текстовых сокращений смайлов.
 };
 
 #endif /* EMOTICONS_H_ */

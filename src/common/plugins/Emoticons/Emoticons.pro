@@ -23,6 +23,7 @@ HEADERS  = \
    EmoticonData.h \
    Emoticons.h \
    EmoticonsButton.h \
+   EmoticonSelector.h \
    EmoticonsExtension.h \
    EmoticonsFilter.h \
    EmoticonsPage.h \
@@ -34,6 +35,7 @@ SOURCES  = \
    EmoticonData.cpp \
    Emoticons.cpp \
    EmoticonsButton.cpp \
+   EmoticonSelector.cpp \
    EmoticonsExtension.cpp \
    EmoticonsFilter.cpp \
    EmoticonsPage.cpp \

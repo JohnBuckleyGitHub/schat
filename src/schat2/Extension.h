@@ -76,6 +76,7 @@ public:
   inline const QString& fileName() const     { return m_fileName; }
   inline const QVariantMap& manifest() const { return m_manifest; }
   inline QString id() const                  { return m_manifest.value(QLatin1String("id")).toString(); }
+  inline QString name() const                { return m_manifest.value(QLatin1String("name")).toString(); }
   inline QString type() const                { return m_manifest.value(QLatin1String("type")).toString(); }
   QDateTime date() const;
   QString key() const;
