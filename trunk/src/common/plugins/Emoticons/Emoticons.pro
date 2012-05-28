@@ -28,6 +28,7 @@ HEADERS  = \
    EmoticonsPage.h \
    EmoticonsPlugin.h \
    EmoticonsPlugin_p.h \
+   EmoticonsTabs.h \
 
 SOURCES  = \
    EmoticonData.cpp \
@@ -37,6 +38,7 @@ SOURCES  = \
    EmoticonsFilter.cpp \
    EmoticonsPage.cpp \
    EmoticonsPlugin.cpp \
+   EmoticonsTabs.cpp \
 
 RESOURCES += Emoticons.qrc
 
