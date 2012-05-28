@@ -22,8 +22,9 @@
 #include "EmoticonsPage.h"
 #include "sglobal.h"
 
-EmoticonsPage::EmoticonsPage(QWidget *parent)
+EmoticonsPage::EmoticonsPage(Emoticons *emoticons, QWidget *parent)
   : SettingsPage(QIcon(LS(":/images/emoticons/icon.png")), LS("emoticons"), parent)
+  , m_emoticons(emoticons)
 {
   m_label = new QLabel(this);
 
@@ -45,5 +46,5 @@ void EmoticonsPage::retranslateUi()
 
 SettingsPage* EmoticonsPageCreator::page(QWidget *parent)
 {
-  return new EmoticonsPage(parent);
+  return new EmoticonsPage(m_emoticons, parent);
 }

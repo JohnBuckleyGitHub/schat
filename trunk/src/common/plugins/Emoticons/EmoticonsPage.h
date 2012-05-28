@@ -21,6 +21,7 @@
 
 #include "ui/tabs/SettingsTabHook.h"
 
+class Emoticons;
 class QLabel;
 
 class EmoticonsPage : public SettingsPage
@@ -28,11 +29,12 @@ class EmoticonsPage : public SettingsPage
   Q_OBJECT
 
 public:
-  EmoticonsPage(QWidget *parent = 0);
+  EmoticonsPage(Emoticons *emoticons, QWidget *parent = 0);
 
 private:
   void retranslateUi();
 
+  Emoticons *m_emoticons;
   QLabel *m_label;
 };
 
@@ -40,11 +42,15 @@ private:
 class EmoticonsPageCreator : public SettingsPageCreator
 {
 public:
-  EmoticonsPageCreator()
+  EmoticonsPageCreator(Emoticons *emoticons)
   : SettingsPageCreator(5000)
+  , m_emoticons(emoticons)
   {}
 
   SettingsPage* page(QWidget *parent = 0);
+
+private:
+  Emoticons *m_emoticons;
 };
 
 #endif /* EMOTICONSPAGE_H_ */

@@ -16,39 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
+#ifndef EMOTICONSELECTOR_H_
+#define EMOTICONSELECTOR_H_
 
-#include <QTabBar>
+#include <QWidget>
 
-#include "ChatCore.h"
-#include "Emoticons.h"
-#include "EmoticonSelector.h"
-#include "EmoticonsTabs.h"
-#include "Extension.h"
-#include "Extensions.h"
-#include "sglobal.h"
-
-EmoticonsTabs::EmoticonsTabs(Emoticons *emoticons, QWidget *parent)
-  : QTabWidget(parent)
-  , m_emoticons(emoticons)
+class EmoticonSelector : public QWidget
 {
-//  tabBar()->setVisible(false);
-  setDocumentMode(true);
+  Q_OBJECT
 
-  QStringList themes = m_emoticons->themes();
-  if (themes.isEmpty())
-    return;
+public:
+  EmoticonSelector(QWidget *parent = 0);
+};
 
-  foreach (const QString &theme, themes) {
-    Extension* ext = ChatCore::extensions()->get(LS("emoticons/") + theme);
-    if (ext)
-      addTab(new EmoticonSelector(this), ext->name());
-  }
-
-}
-
-
-EmoticonsTabs::~EmoticonsTabs()
-{
-  qDebug() << "~~ ~EmoticonsTabs()";
-}
+#endif /* EMOTICONSELECTOR_H_ */

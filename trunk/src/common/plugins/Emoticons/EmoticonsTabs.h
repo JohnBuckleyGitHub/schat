@@ -21,12 +21,18 @@
 
 #include <QTabWidget>
 
+class Emoticons;
+
 class EmoticonsTabs : public QTabWidget
 {
   Q_OBJECT
 
 public:
-  EmoticonsTabs(QWidget *parent = 0);
+  EmoticonsTabs(Emoticons *emoticons, QWidget *parent = 0);
+  ~EmoticonsTabs();
+
+private:
+  Emoticons *m_emoticons;
 };
 
 #endif /* EMOTICONSTABS_H_ */

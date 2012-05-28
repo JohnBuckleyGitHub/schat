@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include <QEvent>
 #include <QMenu>
 #include <QWidgetAction>
@@ -24,15 +26,11 @@
 #include "sglobal.h"
 #include "EmoticonsTabs.h"
 
-EmoticonsButton::EmoticonsButton(QWidget *parent)
+EmoticonsButton::EmoticonsButton(Emoticons *emoticons, QWidget *parent)
   : QToolButton(parent)
+  , m_emoticons(emoticons)
 {
   m_menu = new QMenu(this);
-  m_tabs = new EmoticonsTabs(this);
-
-  QWidgetAction *action = new QWidgetAction(this);
-  action->setDefaultWidget(m_tabs);
-  m_menu->addAction(action);
 
   setAutoRaise(true);
   setIcon(QIcon(LS(":/images/emoticons/edit.png")));
@@ -40,6 +38,9 @@ EmoticonsButton::EmoticonsButton(QWidget *parent)
   setMenu(m_menu);
 
   retranslateUi();
+
+  connect(m_menu, SIGNAL(aboutToHide()), SLOT(menuAboutToHide()));
+  connect(m_menu, SIGNAL(aboutToShow()), SLOT(menuAboutToShow()));
 }
 
 
@@ -52,21 +53,44 @@ void EmoticonsButton::changeEvent(QEvent *event)
 }
 
 
+void EmoticonsButton::menuAboutToHide()
+{
+  qDebug() << " -- EmoticonsButton::menuAboutToHide()";
+
+  QList<QAction *> actions = m_menu->actions();
+  foreach (QAction *action, actions) {
+    m_menu->removeAction(action);
+    action->deleteLater();
+  }
+}
+
+
+void EmoticonsButton::menuAboutToShow()
+{
+  qDebug() << " ++ EmoticonsButton::menuAboutToShow()";
+
+  QWidgetAction *action = new QWidgetAction(this);
+  action->setDefaultWidget(new EmoticonsTabs(m_emoticons, this));
+  m_menu->addAction(action);
+}
+
+
 void EmoticonsButton::retranslateUi()
 {
   setToolTip(tr("Emoticons"));
 }
 
 
-EmoticonsAction::EmoticonsAction()
+EmoticonsAction::EmoticonsAction(Emoticons *emoticons)
   : ToolBarActionCreator(1100, LS("emoticons"), WidgetType | AutoShow | AutoDelete)
+  , m_emoticons(emoticons)
 {
 }
 
 
 QWidget* EmoticonsAction::createWidget(QWidget *parent) const
 {
-  return new EmoticonsButton(parent);
+  return new EmoticonsButton(m_emoticons, parent);
 }
 
 

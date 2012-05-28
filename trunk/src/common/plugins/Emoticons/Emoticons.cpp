@@ -16,8 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+#include <QFileInfo>
+
 #include <QFile>
 
+#include "ChatCore.h"
+#include "ChatSettings.h"
 #include "Emoticons.h"
 #include "Extension.h"
 #include "JSON.h"
@@ -48,13 +53,17 @@ bool Emoticons::load(Extension *extension)
   if (data.isEmpty())
     return false;
 
+  QList<Emoticon> theme;
   foreach (const QVariant &object, data) {
     Emoticon emoticon = Emoticon(new EmoticonData(extension->root(), extension->id(), object.toMap()));
-    add(emoticon);
-//    qDebug() << emoticon->isValid() << QFileInfo(emoticon->file()).fileName() << emoticon->width() << emoticon->height() << emoticon->texts();
+    add(emoticon, theme);
+
+    qDebug() << emoticon->isValid() << QFileInfo(emoticon->file()).fileName() << emoticon->width() << emoticon->height() << emoticon->texts();
   }
 
+  m_themes[extension->id()] = theme;
   makeIndex();
+
   return true;
 }
 
@@ -87,9 +96,26 @@ QString Emoticons::find(const QString &text, int pos)
 
 
 /*!
+ * Получение списка тем смайлов.
+ * Первой в списке идёт последняя загруженная тема.
+ */
+QStringList Emoticons::themes() const
+{
+  QStringList out;
+  QStringList list = ChatCore::settings()->value(LS("Emoticons")).toStringList();
+  for (int i = list.size() - 1; i >= 0; --i) {
+    if (m_themes.contains(list.at(i)))
+      out.append(list.at(i));
+  }
+
+  return out;
+}
+
+
+/*!
  * Добавление смайла.
  */
-void Emoticons::add(Emoticon emoticon)
+void Emoticons::add(Emoticon emoticon, QList<Emoticon> &theme)
 {
   if (!emoticon->isValid())
     return;
@@ -97,6 +123,8 @@ void Emoticons::add(Emoticon emoticon)
   foreach (const QString &text, emoticon->texts()) {
     m_emoticons[text] = emoticon;
   }
+
+  theme.append(emoticon);
 }
 
 

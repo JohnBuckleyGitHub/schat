@@ -24,6 +24,7 @@
 
 #include "ui/ToolBarAction.h"
 
+class Emoticons;
 class EmoticonsTabs;
 
 class EmoticonsButton : public QToolButton
@@ -31,16 +32,20 @@ class EmoticonsButton : public QToolButton
   Q_OBJECT
 
 public:
-  EmoticonsButton(QWidget *parent = 0);
+  EmoticonsButton(Emoticons *emoticons, QWidget *parent = 0);
 
 protected:
   void changeEvent(QEvent *event);
 
+private slots:
+  void menuAboutToHide();
+  void menuAboutToShow();
+
 private:
   void retranslateUi();
 
-  EmoticonsTabs *m_tabs; ///< Виджет выбора смайлов.
-  QMenu *m_menu;         ///< Меню для показа виджета выбора смайлов.
+  Emoticons *m_emoticons; ///< Указатель на менеджер смайлов.
+  QMenu *m_menu;          ///< Меню для показа виджета выбора смайлов.
 };
 
 
@@ -49,10 +54,13 @@ class EmoticonsAction : public ToolBarActionCreator
   Q_DECLARE_TR_FUNCTIONS(EmoticonsAction)
 
 public:
-  EmoticonsAction();
+  EmoticonsAction(Emoticons *emoticons);
   QWidget* createWidget(QWidget *parent) const;
   QIcon icon() const;
   QString title() const;
+
+private:
+  Emoticons *m_emoticons;
 };
 
 #endif /* EMOTICONSBUTTON_H_ */
