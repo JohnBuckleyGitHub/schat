@@ -48,7 +48,7 @@ EmoticonsPluginImpl::EmoticonsPluginImpl(QObject *parent)
   TokenFilter::add(LS("input"), new EmoticonsInputFilter());
   QDesktopServices::setUrlHandler(LS("emoticon"), this, "openUrl");
 
-  SettingsTabHook::add(new EmoticonsPageCreator(m_emoticons));
+//  SettingsTabHook::add(new EmoticonsPageCreator(m_emoticons));
 
   connect(ChatCore::extensions(), SIGNAL(loaded()), SLOT(loaded()));
   connect(ChatCore::extensions(), SIGNAL(installed(QString)), SLOT(installed(QString)));

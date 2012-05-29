@@ -36,11 +36,13 @@ public:
 protected:
   void enterEvent(QEvent *event);
   void leaveEvent(QEvent *event);
+  void mousePressEvent(QMouseEvent *event);
   void mouseReleaseEvent(QMouseEvent *event);
 
 private:
   void updateStyleSheet(bool hover = false);
 
+  bool m_ready;
   QString m_text;
 };
 
