@@ -27,6 +27,7 @@
 
 EmoticonLabel::EmoticonLabel(Emoticon emoticon, QWidget *parent)
   : QLabel(parent)
+  , m_ready(false)
 {
   QMovie *movie = new QMovie(emoticon->file(), QByteArray(), this);
   setMovie(movie);
@@ -55,8 +56,18 @@ void EmoticonLabel::leaveEvent(QEvent *event)
 }
 
 
+void EmoticonLabel::mousePressEvent(QMouseEvent *event)
+{
+  m_ready = true;
+  QLabel::mousePressEvent(event);
+}
+
+
 void EmoticonLabel::mouseReleaseEvent(QMouseEvent *event)
 {
+  if (!m_ready)
+    return;
+
   ChatNotify::start(Notify::InsertText, QChar(QChar::Nbsp) + m_text + QChar(QChar::Nbsp));
   QLabel::mouseReleaseEvent(event);
 }
