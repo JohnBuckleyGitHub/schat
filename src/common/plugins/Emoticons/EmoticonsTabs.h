@@ -29,7 +29,6 @@ class EmoticonsTabs : public QTabWidget
 
 public:
   EmoticonsTabs(Emoticons *emoticons, QWidget *parent = 0);
-  ~EmoticonsTabs();
 
 private:
   Emoticons *m_emoticons;

@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QTabBar>
 
 #include "ChatCore.h"
@@ -32,7 +30,7 @@ EmoticonsTabs::EmoticonsTabs(Emoticons *emoticons, QWidget *parent)
   : QTabWidget(parent)
   , m_emoticons(emoticons)
 {
-//  tabBar()->setVisible(false);
+  tabBar()->setVisible(false);
   setDocumentMode(true);
 
   QStringList themes = m_emoticons->themes();
@@ -42,13 +40,11 @@ EmoticonsTabs::EmoticonsTabs(Emoticons *emoticons, QWidget *parent)
   foreach (const QString &theme, themes) {
     Extension* ext = ChatCore::extensions()->get(LS("emoticons/") + theme);
     if (ext)
-      addTab(new EmoticonSelector(this), ext->name());
+      addTab(new EmoticonSelector(theme, m_emoticons, this), ext->name());
   }
 
-}
-
-
-EmoticonsTabs::~EmoticonsTabs()
-{
-  qDebug() << "~~ ~EmoticonsTabs()";
+  if (count() > 1) {
+    tabBar()->setVisible(true);
+    setDocumentMode(false);
+  }
 }
