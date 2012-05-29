@@ -19,14 +19,45 @@
 #ifndef EMOTICONSELECTOR_H_
 #define EMOTICONSELECTOR_H_
 
-#include <QWidget>
+#include <QLabel>
 
-class EmoticonSelector : public QWidget
+#include "EmoticonData.h"
+
+class Emoticons;
+class QGridLayout;
+
+class EmoticonLabel : public QLabel
 {
   Q_OBJECT
 
 public:
-  EmoticonSelector(QWidget *parent = 0);
+  EmoticonLabel(Emoticon emoticon, QWidget *parent);
+
+protected:
+  void enterEvent(QEvent *event);
+  void leaveEvent(QEvent *event);
+  void mouseReleaseEvent(QMouseEvent *event);
+
+private:
+  void updateStyleSheet(bool hover = false);
+
+  QString m_text;
+};
+
+
+class EmoticonSelector : public QFrame
+{
+  Q_OBJECT
+
+public:
+  EmoticonSelector(const QString &theme, Emoticons *emoticons, QWidget *parent = 0);
+
+private:
+  void fill();
+
+  Emoticons *m_emoticons; ///< Указатель на менеджер смайлов.
+  QGridLayout *m_layout;  ///< Компоновщик смайлов.
+  QString m_theme;        ///< Идентификатор темы смайликов.
 };
 
 #endif /* EMOTICONSELECTOR_H_ */
