@@ -159,14 +159,14 @@ void ClientMessages::readText(MessagePacket packet)
   /// до момента получения информации об отправителе.
   ClientChannel user = ChatClient::channels()->get(packet->sender());
 
-  if (ChatClient::state() == ChatClient::Online) {
-    if (!user || !user->isSynced()) {
-      if (!m_pending.contains(packet->sender()))
-        ChatClient::channels()->join(packet->sender());
+  if (ChatClient::state() == ChatClient::Online && (!user || !user->isSynced())) {
+    if (!m_pending.contains(packet->sender()))
+      ChatClient::channels()->join(packet->sender());
 
-      m_pending[packet->sender()].append(packet);
+    m_pending[packet->sender()].append(packet);
+
+    if (!user)
       return;
-    }
   }
   else if (!user)
     return;
