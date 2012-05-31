@@ -18,8 +18,6 @@
 CONFIG   += ordered
 TEMPLATE = subdirs
 SUBDIRS  = \
-    schatd2/schatd.pro \
-    schatd2 \
     client \
     schat2/schat2-core.pro \
     schat2 \
