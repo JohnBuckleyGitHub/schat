@@ -16,9 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-#include <QFileInfo>
-
 #include <QFile>
 
 #include "ChatCore.h"
@@ -57,8 +54,6 @@ bool Emoticons::load(Extension *extension)
   foreach (const QVariant &object, data) {
     Emoticon emoticon = Emoticon(new EmoticonData(extension->root(), extension->id(), object.toMap()));
     add(emoticon, theme);
-
-    qDebug() << emoticon->isValid() << QFileInfo(emoticon->file()).fileName() << emoticon->width() << emoticon->height() << emoticon->texts();
   }
 
   m_themes[extension->id()] = theme;
