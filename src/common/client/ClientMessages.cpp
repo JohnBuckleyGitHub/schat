@@ -81,11 +81,15 @@ bool ClientMessages::send(const QByteArray &dest, const QString &text)
 
   /// Для обработки обычных команд используется хук: Hooks::Messages::command(const QByteArray &dest, const ClientCmd &cmd).
   QStringList commands = (LS(" ") + plain).split(LS(" /"), QString::SkipEmptyParts);
+  int matches = 0;
   for (int i = 0; i < commands.size(); ++i) {
     ClientCmd cmd(commands.at(i));
-    if (cmd.isValid())
-      m_hooks->command(dest, cmd);
+    if (cmd.isValid() && m_hooks->command(dest, cmd))
+      matches++;
   }
+
+  if (!matches)
+    return sendText(dest, text);;
 
   return true;
 }
