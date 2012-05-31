@@ -24,6 +24,7 @@ SUBDIRS += \
     common/plugins/Profile \
     common/plugins/Emoticons \
     common/plugins/Idle \
+    common/plugins/SendFile \
     common/plugins/RawFeeds \
     common/plugins/YouTube \
 
