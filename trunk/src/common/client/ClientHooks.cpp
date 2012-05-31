@@ -41,7 +41,7 @@ QString Messages::remove(const QString &cmd, const QString &msg)
 {
   QString c = cmd;
   int index = msg.indexOf(c, 0, Qt::CaseInsensitive);
-  if (index == -1 && c.endsWith(' ')) {
+  if (index == -1 && c.endsWith(LC(' '))) {
     c = c.left(c.size() - 1);
     index = msg.indexOf(c, 0, Qt::CaseInsensitive);
   }
@@ -122,13 +122,13 @@ bool Messages::command(const QByteArray &dest, const QString &text, const QStrin
       return true;
   }
 
-  if (plain.startsWith("/me ", Qt::CaseInsensitive)) {
-    ChatClient::messages()->sendText(dest, remove("/me ", text), "me");
+  if (plain.startsWith(LS("/me "), Qt::CaseInsensitive)) {
+    ChatClient::messages()->sendText(dest, remove(LS("/me "), text), LS("me"));
     return true;
   }
 
-  if (plain.startsWith("/say ", Qt::CaseInsensitive)) {
-    ChatClient::messages()->sendText(dest, remove("/say ", text), "say");
+  if (plain.startsWith(LS("/say "), Qt::CaseInsensitive)) {
+    ChatClient::messages()->sendText(dest, remove(LS("/say "), text), LS("say"));
     return true;
   }
 
