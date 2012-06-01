@@ -30,6 +30,7 @@ class SendFileCmd : public Hooks::Messages
 public:
   SendFileCmd(SendFilePluginImpl *parent = 0);
   bool command(const QByteArray &dest, const ClientCmd &cmd);
+  void readText(MessagePacket packet);
 
 private:
   SendFilePluginImpl *m_plugin;

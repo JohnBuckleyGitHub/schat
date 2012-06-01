@@ -18,6 +18,7 @@
 
 #include "DateTime.h"
 #include "net/packets/MessageNotice.h"
+#include "net/SimpleID.h"
 #include "sglobal.h"
 
 MessageNotice::MessageNotice()
@@ -32,6 +33,9 @@ MessageNotice::MessageNotice(const QByteArray &sender, const QByteArray &dest, c
 {
   m_type = MessageType;
   setText(text);
+
+  if (SimpleID::typeOf(dest) == SimpleID::UserId)
+    m_direction = Client2Client;
 
   if (time == 0)
     m_date = DateTime::utc();

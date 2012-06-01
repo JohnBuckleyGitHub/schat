@@ -23,9 +23,11 @@ HEADERS  = \
    SendFileCmd.h \
    SendFilePlugin.h \
    SendFilePlugin_p.h \
+   SendFileTransaction.h \
 
 SOURCES  = \
    SendFileCmd.cpp \
    SendFilePlugin.cpp \
+   SendFileTransaction.cpp \
 
 include(../plugins.pri)

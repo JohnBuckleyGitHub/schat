@@ -49,6 +49,10 @@ MessagesImpl::MessagesImpl(QObject *parent)
  */
 void MessagesImpl::readText(MessagePacket packet)
 {
+  QString command = packet->command();
+  if (command != LS("m") && command != LS("me") && command != LS("say"))
+    return;
+
   ChannelMessage message(packet);
 
   if (TabWidget::i())
@@ -58,7 +62,6 @@ void MessagesImpl::readText(MessagePacket packet)
     return;
 
   if (packet->sender() != ChatClient::id() || !m_undelivered.contains(packet->id())) {
-    qDebug() << " ~~ START ALERT ~~";
     MessageAlert alert(message);
     ChatAlerts::start(alert);
   }
