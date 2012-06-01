@@ -19,7 +19,6 @@
 #ifndef CHATCORE_H_
 #define CHATCORE_H_
 
-#include <QIcon>
 #include <QObject>
 #include <QUrl>
 #include <QVariant>
