@@ -16,23 +16,32 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#include <QDebug>
 
+#include "client/ChatClient.h"
+#include "client/ClientCmd.h"
+#include "client/ClientMessages.h"
+#include "net/SimpleID.h"
 #include "SendFileCmd.h"
-#include "SendFilePlugin.h"
-#include "SendFilePlugin_p.h"
+#include "sglobal.h"
 
-SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
-  : ChatPlugin(parent)
+SendFileCmd::SendFileCmd(QObject *parent)
+  : Messages(parent)
 {
-  new SendFileCmd(this);
+  ChatClient::messages()->hooks()->add(this);
 }
 
 
-ChatPlugin *SendFilePlugin::create()
+bool SendFileCmd::command(const QByteArray &dest, const ClientCmd &cmd)
 {
-  m_plugin = new SendFilePluginImpl(this);
-  return m_plugin;
-}
+  if (SimpleID::typeOf(dest) != SimpleID::UserId)
+    return false;
 
-Q_EXPORT_PLUGIN2(SendFile, SendFilePlugin);
+  QString command = cmd.command().toLower();
+  if (command == LS("send")) {
+    qDebug() << "SEND FILE:" << cmd.body();
+    return true;
+  }
+
+  return false;
+}

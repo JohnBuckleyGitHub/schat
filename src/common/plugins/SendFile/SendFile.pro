@@ -20,10 +20,12 @@ SCHAT_CORE_LIB = 1
 QT = core network
 
 HEADERS  = \
+   SendFileCmd.h \
    SendFilePlugin.h \
    SendFilePlugin_p.h \
 
 SOURCES  = \
+   SendFileCmd.cpp \
    SendFilePlugin.cpp \
 
 include(../plugins.pri)
