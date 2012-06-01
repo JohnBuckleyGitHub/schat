@@ -105,7 +105,7 @@ AbstractTab *TabWidget::widget(int index) const
 }
 
 
-ClientChannel TabWidget::channel(const QByteArray &id)
+ClientChannel TabWidget::channel(const QByteArray &id) const
 {
   if (m_channels.contains(id))
     return m_channels.value(id)->channel();
@@ -162,21 +162,10 @@ ChannelBaseTab *TabWidget::channelTab(const QByteArray &id, bool create, bool sh
  */
 void TabWidget::add(const Message &message, bool create)
 {
-  QByteArray id = message.tab();
-  if (!Channel::isCompatibleId(id))
+  if (!m_self)
     return;
 
-  if (m_channels.contains(id)) {
-    m_channels.value(id)->add(message);
-  }
-  else if (SimpleID::typeOf(id) == SimpleID::ServerId) {
-    m_serverTab->chatView()->add(message);
-  }
-  else if (SimpleID::typeOf(id) == SimpleID::UserId) {
-    ChannelBaseTab *tab = channelTab(id, create, false);
-    if (tab)
-      tab->add(message);
-  }
+  m_self->addImpl(message, create);
 }
 
 
@@ -399,6 +388,29 @@ int TabWidget::addChatTab(AbstractTab *tab)
 
   setCurrentIndex(index);
   return index;
+}
+
+
+/*!
+ * Добавление нового сообщения.
+ */
+void TabWidget::addImpl(const Message &message, bool create)
+{
+  QByteArray id = message.tab();
+  if (!Channel::isCompatibleId(id))
+    return;
+
+  if (m_channels.contains(id)) {
+    m_channels.value(id)->add(message);
+  }
+  else if (SimpleID::typeOf(id) == SimpleID::ServerId) {
+    m_serverTab->chatView()->add(message);
+  }
+  else if (SimpleID::typeOf(id) == SimpleID::UserId) {
+    ChannelBaseTab *tab = channelTab(id, create, false);
+    if (tab)
+      tab->add(message);
+  }
 }
 
 

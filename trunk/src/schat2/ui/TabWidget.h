@@ -53,13 +53,13 @@ class SCHAT_CORE_EXPORT TabWidget : public QTabWidget
 public:
   TabWidget(QWidget *parent = 0);
   AbstractTab *widget(int index) const;
-  ClientChannel channel(const QByteArray &id);
-  inline ServerTab *serverTab() { return m_serverTab; }
-  inline TabBar *tabBar()       { return m_tabBar; }
-  static TabWidget *i()         { return m_self; }
+  ClientChannel channel(const QByteArray &id) const;
+  inline ServerTab *serverTab() const { return m_serverTab; }
+  inline TabBar *tabBar() const       { return m_tabBar; }
+  static TabWidget *i()               { return m_self; }
 
   ChannelBaseTab *channelTab(const QByteArray &id, bool create = true, bool show = true);
-  void add(const Message &message, bool create = true);
+  static void add(const Message &message, bool create = true);
 
 signals:
   void pageChanged(int type, bool visible);
@@ -85,6 +85,7 @@ private slots:
 
 private:
   int addChatTab(AbstractTab *tab);
+  void addImpl(const Message &message, bool create = true);
   void createToolBars();
   void lastTab();
   void retranslateUi();

@@ -44,7 +44,7 @@ void FeedsImpl::readFeedImpl(const FeedNotice &packet)
 
   if (TabWidget::i()) {
     RawFeedsMessage message(packet);
-    TabWidget::i()->add(message, false);
+    TabWidget::add(message, false);
   }
 }
 
