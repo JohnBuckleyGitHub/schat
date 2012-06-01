@@ -16,23 +16,18 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#ifndef SENDFILECMD_H_
+#define SENDFILECMD_H_
 
-#include "SendFileCmd.h"
-#include "SendFilePlugin.h"
-#include "SendFilePlugin_p.h"
+#include "client/ClientHooks.h"
 
-SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
-  : ChatPlugin(parent)
+class SendFileCmd : public Hooks::Messages
 {
-  new SendFileCmd(this);
-}
+  Q_OBJECT
 
+public:
+  SendFileCmd(QObject *parent = 0);
+  bool command(const QByteArray &dest, const ClientCmd &cmd);
+};
 
-ChatPlugin *SendFilePlugin::create()
-{
-  m_plugin = new SendFilePluginImpl(this);
-  return m_plugin;
-}
-
-Q_EXPORT_PLUGIN2(SendFile, SendFilePlugin);
+#endif /* SENDFILECMD_H_ */
