@@ -54,9 +54,7 @@ void MessagesImpl::readText(MessagePacket packet)
     return;
 
   ChannelMessage message(packet);
-
-  if (TabWidget::i())
-    TabWidget::i()->add(message);
+  TabWidget::add(message);
 
   if (packet->status() == Notice::Found || packet->status() == Notice::Read)
     return;
@@ -80,9 +78,7 @@ void MessagesImpl::sendText(MessagePacket packet)
   message.data()[LS("Status")] = LS("undelivered");
 
   m_undelivered[packet->id()] = packet;
-
-  if (TabWidget::i())
-    TabWidget::i()->add(message);
+  TabWidget::add(message);
 }
 
 
@@ -102,8 +98,7 @@ void MessagesImpl::clientStateChanged(int state, int previousState)
       ChannelMessage message(i.value());
       message.data()[LS("Status")] = LS("rejected");
 
-      if (TabWidget::i())
-        TabWidget::i()->add(message);
+      TabWidget::add(message);
     }
 
     m_undelivered.clear();

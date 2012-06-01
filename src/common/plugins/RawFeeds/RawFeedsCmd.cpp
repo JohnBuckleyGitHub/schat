@@ -105,7 +105,7 @@ void RawFeedsCmd::localFeeds(const QByteArray &dest)
     return;
 
   RawFeedsMessage message(dest, LS("headers"), Feed::merge(LS("feeds"), json));
-  TabWidget::i()->add(message, false);
+  TabWidget::add(message, false);
 }
 
 
