@@ -21,13 +21,18 @@
 
 #include "client/ClientHooks.h"
 
+class SendFilePluginImpl;
+
 class SendFileCmd : public Hooks::Messages
 {
   Q_OBJECT
 
 public:
-  SendFileCmd(QObject *parent = 0);
+  SendFileCmd(SendFilePluginImpl *parent = 0);
   bool command(const QByteArray &dest, const ClientCmd &cmd);
+
+private:
+  SendFilePluginImpl *m_plugin;
 };
 
 #endif /* SENDFILECMD_H_ */

@@ -23,10 +23,12 @@
 #include "client/ClientMessages.h"
 #include "net/SimpleID.h"
 #include "SendFileCmd.h"
+#include "SendFilePlugin_p.h"
 #include "sglobal.h"
 
-SendFileCmd::SendFileCmd(QObject *parent)
+SendFileCmd::SendFileCmd(SendFilePluginImpl *parent)
   : Messages(parent)
+  , m_plugin(parent)
 {
   ChatClient::messages()->hooks()->add(this);
 }
@@ -40,6 +42,7 @@ bool SendFileCmd::command(const QByteArray &dest, const ClientCmd &cmd)
   QString command = cmd.command().toLower();
   if (command == LS("send")) {
     qDebug() << "SEND FILE:" << cmd.body();
+    m_plugin->sendFile(dest, cmd.body());
     return true;
   }
 

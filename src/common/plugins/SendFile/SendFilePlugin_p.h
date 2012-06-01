@@ -19,6 +19,8 @@
 #ifndef SENDFILEPLUGIN_P_H_
 #define SENDFILEPLUGIN_P_H_
 
+#include <QVariant>
+
 #include "plugins/ChatPlugin.h"
 
 class SendFilePluginImpl : public ChatPlugin
@@ -27,6 +29,8 @@ class SendFilePluginImpl : public ChatPlugin
 
 public:
   SendFilePluginImpl(QObject *parent);
+  bool send(const QByteArray &dest, const QVariantMap &data, QByteArray &id);
+  bool sendFile(const QByteArray &dest, const QString &file);
 };
 
 #endif /* SENDFILEPLUGIN_P_H_ */

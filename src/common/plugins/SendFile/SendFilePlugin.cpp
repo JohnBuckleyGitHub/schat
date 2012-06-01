@@ -16,16 +16,60 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
 #include <QtPlugin>
 
 #include "SendFileCmd.h"
 #include "SendFilePlugin.h"
 #include "SendFilePlugin_p.h"
+#include "ChatCore.h"
+#include "net/SimpleID.h"
+#include "DateTime.h"
+#include "sglobal.h"
+#include "client/ChatClient.h"
+#include "net/packets/MessageNotice.h"
+#include "client/SimpleClient.h"
 
 SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
   : ChatPlugin(parent)
 {
   new SendFileCmd(this);
+}
+
+
+/*!
+ * Базовая функция отправки.
+ */
+bool SendFilePluginImpl::send(const QByteArray &dest, const QVariantMap &data, QByteArray &id)
+{
+  if (SimpleID::typeOf(dest) != SimpleID::UserId)
+    return false;
+
+  if (id.isEmpty())
+    id = ChatCore::randomId();
+
+  MessagePacket packet(new MessageNotice(ChatClient::id(), dest, QString(), DateTime::utc(), id));
+  packet->setCommand(LS("file"));
+  packet->setData(data);
+
+  return ChatClient::io()->send(packet, true);
+}
+
+
+/*!
+ * Отправка одиночного файла.
+ *
+ * \param dest Идентификатор получателя.
+ * \param file Файл, который будет отправлен.
+ */
+bool SendFilePluginImpl::sendFile(const QByteArray &dest, const QString &file)
+{
+  qDebug() << file;
+  QByteArray id;
+  QVariantMap data;
+  data[LS("action")] = LS("file");
+
+  return send(dest, data, id);
 }
 
 
