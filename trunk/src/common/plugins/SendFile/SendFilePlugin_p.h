@@ -29,7 +29,7 @@ class SendFilePluginImpl : public ChatPlugin
 
 public:
   SendFilePluginImpl(QObject *parent);
-  bool send(const QByteArray &dest, const QVariantMap &data, QByteArray &id);
+  bool send(const QByteArray &dest, const QVariantMap &data, const QByteArray &id);
   bool sendFile(const QByteArray &dest, const QString &file);
 };
 

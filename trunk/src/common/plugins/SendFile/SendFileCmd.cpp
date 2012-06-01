@@ -48,3 +48,12 @@ bool SendFileCmd::command(const QByteArray &dest, const ClientCmd &cmd)
 
   return false;
 }
+
+
+void SendFileCmd::readText(MessagePacket packet)
+{
+  if (packet->command() != LS("file"))
+    return;
+
+  qDebug() << "READ TEXT" << packet->raw();
+}

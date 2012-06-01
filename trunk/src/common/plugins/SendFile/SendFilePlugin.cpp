@@ -29,6 +29,7 @@
 #include "client/ChatClient.h"
 #include "net/packets/MessageNotice.h"
 #include "client/SimpleClient.h"
+#include "SendFileTransaction.h"
 
 SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
   : ChatPlugin(parent)
@@ -40,13 +41,10 @@ SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
 /*!
  * Базовая функция отправки.
  */
-bool SendFilePluginImpl::send(const QByteArray &dest, const QVariantMap &data, QByteArray &id)
+bool SendFilePluginImpl::send(const QByteArray &dest, const QVariantMap &data, const QByteArray &id)
 {
   if (SimpleID::typeOf(dest) != SimpleID::UserId)
     return false;
-
-  if (id.isEmpty())
-    id = ChatCore::randomId();
 
   MessagePacket packet(new MessageNotice(ChatClient::id(), dest, QString(), DateTime::utc(), id));
   packet->setCommand(LS("file"));
@@ -64,12 +62,11 @@ bool SendFilePluginImpl::send(const QByteArray &dest, const QVariantMap &data, Q
  */
 bool SendFilePluginImpl::sendFile(const QByteArray &dest, const QString &file)
 {
-  qDebug() << file;
-  QByteArray id;
-  QVariantMap data;
-  data[LS("action")] = LS("file");
+  SendFile::Transaction transaction(dest, file);
+  if (!transaction.isValid())
+    return false;
 
-  return send(dest, data, id);
+  return send(dest, transaction.toReceiver(), transaction.id());
 }
 
 
