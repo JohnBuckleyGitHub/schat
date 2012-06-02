@@ -17,7 +17,7 @@
 
 SCHAT_CLIENT_LIB = 1
 SCHAT_CORE_LIB = 1
-QT = core network
+QT = core network gui
 
 HEADERS  = \
    SendFileCmd.h \

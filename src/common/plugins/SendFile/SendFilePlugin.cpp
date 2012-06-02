@@ -19,17 +19,19 @@
 #include <QDebug>
 #include <QtPlugin>
 
+#include "ChatCore.h"
+#include "client/ChatClient.h"
+#include "client/SimpleClient.h"
+#include "DateTime.h"
+#include "messages/Message.h"
+#include "net/packets/MessageNotice.h"
+#include "net/SimpleID.h"
 #include "SendFileCmd.h"
 #include "SendFilePlugin.h"
 #include "SendFilePlugin_p.h"
-#include "ChatCore.h"
-#include "net/SimpleID.h"
-#include "DateTime.h"
-#include "sglobal.h"
-#include "client/ChatClient.h"
-#include "net/packets/MessageNotice.h"
-#include "client/SimpleClient.h"
 #include "SendFileTransaction.h"
+#include "sglobal.h"
+#include "ui/TabWidget.h"
 
 SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
   : ChatPlugin(parent)
@@ -66,7 +68,18 @@ bool SendFilePluginImpl::sendFile(const QByteArray &dest, const QString &file)
   if (!transaction.isValid())
     return false;
 
-  return send(dest, transaction.toReceiver(), transaction.id());
+  if (send(dest, transaction.toReceiver(), transaction.id())) {
+    Message message(transaction.id(), dest, LS("file"), LS("addServiceMessage"));
+    message.setAuthor(ChatClient::id());
+    message.setDate();
+    message.data()[LS("Text")] = transaction.fileName();
+    message.data()[LS("Role")] = LS("sender");
+    TabWidget::add(message);
+
+    return true;
+  }
+
+  return false;
 }
 
 

@@ -41,17 +41,24 @@ bool Transaction::addLocalFile(const QString &name)
     return false;
 
   QFileInfo info(name);
-  m_files.append(File(info.absoluteFilePath(), info.size()));
+  m_file.name = info.absoluteFilePath();
+  m_file.size = info.size();
   return true;
 }
 
 
 bool Transaction::isValid() const
 {
-  if (m_files.isEmpty())
+  if (m_file.name.isEmpty())
     return false;
 
   return true;
+}
+
+
+QString Transaction::fileName() const
+{
+  return QFileInfo(m_file.name).fileName();
 }
 
 
@@ -61,19 +68,12 @@ bool Transaction::isValid() const
 QVariantMap Transaction::toReceiver() const
 {
   QVariantMap json;
-  if (m_files.isEmpty())
+  if (!isValid())
     return json;
 
-  QVariantList files;
-  foreach (const File &file, m_files) {
-    QVariantMap data;
-    data[LS("name")] = QFileInfo(file.name).fileName();
-    data[LS("size")] = file.size;
-    files.append(data);
-  }
-
-  json[LS("action")] = m_files.size() == 1 ? LS("file") : LS("files");
-  json[LS("files")]  = files;
+  json[LS("action")] = LS("file");
+  json[LS("name")]   = fileName();
+  json[LS("size")]   = m_file.size;
 
   return json;
 }

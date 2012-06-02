@@ -28,15 +28,14 @@
 #include "sglobal.h"
 
 ServiceMessage::ServiceMessage(const QString &text, const QByteArray &user)
-  : Message()
+  : Message(ChatCore::randomId())
 {
   m_data[LS("Type")] = LS("service");
-  m_data[LS("Id")]   = QString(SimpleID::encode(ChatCore::randomId()));
   m_data[LS("Text")] = text;
   m_data[LS("Date")] = ChatClient::date();
   m_data[LS("Func")] = LS("addServiceMessage");
 
-  author(user);
+  setAuthor(user);
 }
 
 
