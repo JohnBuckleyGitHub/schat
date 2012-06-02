@@ -23,6 +23,7 @@
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "DateTime.h"
+#include "hooks/ChatViewHooks.h"
 #include "messages/Message.h"
 #include "net/packets/MessageNotice.h"
 #include "net/SimpleID.h"
@@ -31,12 +32,16 @@
 #include "SendFilePlugin_p.h"
 #include "SendFileTransaction.h"
 #include "sglobal.h"
+#include "ui/tabs/ChatView.h"
 #include "ui/TabWidget.h"
 
 SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
   : ChatPlugin(parent)
 {
   new SendFileCmd(this);
+
+  connect(ChatViewHooks::i(), SIGNAL(initHook(ChatView*)), SLOT(init(ChatView*)));
+  connect(ChatViewHooks::i(), SIGNAL(loadFinishedHook(ChatView*)), SLOT(loadFinished(ChatView*)));
 }
 
 
@@ -80,6 +85,20 @@ bool SendFilePluginImpl::sendFile(const QByteArray &dest, const QString &file)
   }
 
   return false;
+}
+
+
+void SendFilePluginImpl::init(ChatView *view)
+{
+  if (SimpleID::typeOf(view->id()) == SimpleID::UserId)
+    view->addJS(LS("qrc:/js/SendFile/SendFile.js"));
+}
+
+
+void SendFilePluginImpl::loadFinished(ChatView *view)
+{
+  if (SimpleID::typeOf(view->id()) == SimpleID::UserId)
+    view->addCSS(LS("qrc:/css/SendFile/SendFile.css"));
 }
 
 
