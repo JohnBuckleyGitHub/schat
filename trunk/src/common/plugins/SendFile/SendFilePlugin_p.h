@@ -22,6 +22,7 @@
 #include <QVariant>
 
 #include "plugins/ChatPlugin.h"
+#include "SendFileTransaction.h"
 
 class ChatView;
 
@@ -37,6 +38,9 @@ public:
 private slots:
   void init(ChatView *view);
   void loadFinished(ChatView *view);
+
+private:
+  QHash<QByteArray, SendFileTransaction> m_outgoing; ///< Отправленные файлы.
 };
 
 #endif /* SENDFILEPLUGIN_P_H_ */

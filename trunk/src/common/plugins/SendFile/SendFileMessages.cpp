@@ -22,11 +22,11 @@
 #include "client/ClientCmd.h"
 #include "client/ClientMessages.h"
 #include "net/SimpleID.h"
-#include "SendFileCmd.h"
+#include "SendFileMessages.h"
 #include "SendFilePlugin_p.h"
 #include "sglobal.h"
 
-SendFileCmd::SendFileCmd(SendFilePluginImpl *parent)
+SendFileMessages::SendFileMessages(SendFilePluginImpl *parent)
   : Messages(parent)
   , m_plugin(parent)
 {
@@ -34,7 +34,7 @@ SendFileCmd::SendFileCmd(SendFilePluginImpl *parent)
 }
 
 
-bool SendFileCmd::command(const QByteArray &dest, const ClientCmd &cmd)
+bool SendFileMessages::command(const QByteArray &dest, const ClientCmd &cmd)
 {
   if (SimpleID::typeOf(dest) != SimpleID::UserId)
     return false;
@@ -50,7 +50,7 @@ bool SendFileCmd::command(const QByteArray &dest, const ClientCmd &cmd)
 }
 
 
-void SendFileCmd::readText(MessagePacket packet)
+void SendFileMessages::readText(MessagePacket packet)
 {
   if (packet->command() != LS("file"))
     return;
