@@ -15,3 +15,17 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
+Messages.addFileMessage = function(json) {
+  console.log(json);
+
+  var html = '<div class="container ' + json.Type + '-type" id="' + json.Id + '">';
+  html += '<div class="blocks ' + json.Direction + '">';
+  html += '<div class="file-sender">' + DateTime.template(json.Date, json.Day) + Messages.nameBlock(json.Author) + '</div>';
+  html += '<div class="file-block"><span class="file-name">' + json.File + '</span><br><span class="file-state">&nbsp;</span></div>';
+  html += '<div class="file-buttons btn-group"></div>';
+  html += '<div class="file-progress"><div class="bar"></div></div><div style="clear:both;"></div>';
+  html += '</div></div>';
+
+  Messages.addHintedRawMessage(html, json.Hint, json.Id);
+};
