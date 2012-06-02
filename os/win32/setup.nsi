@@ -22,6 +22,7 @@
 !define History
 !define Profile
 !define Emoticons
+!define SendFile
 !define RawFeeds
 !define YouTube
 !define Update
