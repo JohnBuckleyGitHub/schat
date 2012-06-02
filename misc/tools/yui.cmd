@@ -21,4 +21,7 @@ java -jar yuicompressor.jar ..\..\src\common\plugins\Profile\res\src\flags.css -
 
 java -jar yuicompressor.jar ..\..\src\common\plugins\YouTube\res\src\YouTube.js -o ..\..\src\common\plugins\YouTube\res\js\YouTube.min.js
 java -jar yuicompressor.jar ..\..\src\common\plugins\YouTube\res\src\YouTube.css -o ..\..\src\common\plugins\YouTube\res\css\YouTube.min.css
+
+java -jar yuicompressor.jar ..\..\src\common\plugins\SendFile\res\src\SendFile.js -o ..\..\src\common\plugins\SendFile\res\js\SendFile.min.js
+java -jar yuicompressor.jar ..\..\src\common\plugins\SendFile\res\src\SendFile.css -o ..\..\src\common\plugins\SendFile\res\css\SendFile.min.css
 pause

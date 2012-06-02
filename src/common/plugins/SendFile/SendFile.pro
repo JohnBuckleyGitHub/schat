@@ -17,7 +17,7 @@
 
 SCHAT_CLIENT_LIB = 1
 SCHAT_CORE_LIB = 1
-QT = core network gui
+QT = core network gui webkit
 
 HEADERS  = \
    SendFileCmd.h \
@@ -29,5 +29,7 @@ SOURCES  = \
    SendFileCmd.cpp \
    SendFilePlugin.cpp \
    SendFileTransaction.cpp \
+
+RESOURCES += SendFile.qrc
 
 include(../plugins.pri)
