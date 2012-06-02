@@ -30,13 +30,18 @@ class SCHAT_CORE_EXPORT Message
 {
 public:
   Message();
+  Message(const QByteArray &id, const QByteArray &tab = QByteArray(), const QString &type = QString(), const QString &func = QString());
+  virtual ~Message() {}
+
   inline const QByteArray& tab() const   { return m_tab; }
   inline const QVariantMap& data() const { return m_data; };
   inline QVariantMap& data()             { return m_data; };
   inline virtual bool isValid() const    { return true; }
+  void setAuthor(const QByteArray &id);
+  void setDate(qint64 date = 0);
+  void setId(const QByteArray &id);
 
 protected:
-  void author(const QByteArray &id);
 
   QByteArray m_tab;   ///< Идентификатор вкладки в котором будет отображено сообщение.
   QVariantMap m_data; ///< JSON данные.

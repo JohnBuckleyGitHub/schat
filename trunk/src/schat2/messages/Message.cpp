@@ -16,10 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ChatUrls.h"
-#include "client/ChatClient.h"
-#include "client/ClientChannels.h"
-#include "JSON.h"
+#include "DateTime.h"
 #include "messages/Message.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
@@ -30,10 +27,44 @@ Message::Message()
 }
 
 
-void Message::author(const QByteArray &id)
+Message::Message(const QByteArray &id, const QByteArray &tab, const QString &type, const QString &func)
+  : m_tab(tab)
+{
+  setId(id);
+
+  if (!type.isEmpty())
+    m_data[LS("Type")] = type;
+
+  if (!type.isEmpty())
+    m_data[LS("Func")] = func;
+}
+
+
+/*!
+ * Установка автора сообщения.
+ */
+void Message::setAuthor(const QByteArray &id)
 {
   QVariantMap data = WebBridge::channel(id);
 
   if (!data.isEmpty())
     m_data[LS("Author")] = data;
+}
+
+
+void Message::setDate(qint64 date)
+{
+  if (!date)
+    date = DateTime::utc();
+
+  m_data[LS("Date")] = date;
+}
+
+
+/*!
+ * Установка идентификатора сообщения.
+ */
+void Message::setId(const QByteArray &id)
+{
+  m_data[LS("Id")] = QString(SimpleID::encode(id));
 }

@@ -20,7 +20,6 @@
 #define SENDFILETRANSACTION_H_
 
 #include <QString>
-#include <QList>
 
 namespace SendFile {
 
@@ -59,13 +58,15 @@ public:
   Transaction(const QByteArray &dest, const QString &file);
   bool addLocalFile(const QString &name);
   bool isValid() const;
+  inline const File& file() const     { return m_file; }
   inline const QByteArray& id() const { return m_id; }
+  QString fileName() const;
   QVariantMap toReceiver() const;
 
 private:
   QByteArray m_id;     ///< Идентификатор транзакции.
   QByteArray m_user;   ///< Идентификатор отправителя или получателя в зависимости от роли.
-  QList<File> m_files; ///< Список файлов.
+  File m_file;         ///< Список файлов.
   Role m_role;         ///< Роль класса.
 };
 
