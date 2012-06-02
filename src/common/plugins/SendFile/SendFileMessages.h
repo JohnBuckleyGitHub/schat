@@ -16,19 +16,19 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SENDFILECMD_H_
-#define SENDFILECMD_H_
+#ifndef SENDFILEMESSAGES_H_
+#define SENDFILEMESSAGES_H_
 
 #include "client/ClientHooks.h"
 
 class SendFilePluginImpl;
 
-class SendFileCmd : public Hooks::Messages
+class SendFileMessages : public Hooks::Messages
 {
   Q_OBJECT
 
 public:
-  SendFileCmd(SendFilePluginImpl *parent = 0);
+  SendFileMessages(SendFilePluginImpl *parent = 0);
   bool command(const QByteArray &dest, const ClientCmd &cmd);
   void readText(MessagePacket packet);
 
@@ -36,4 +36,4 @@ private:
   SendFilePluginImpl *m_plugin;
 };
 
-#endif /* SENDFILECMD_H_ */
+#endif /* SENDFILEMESSAGES_H_ */

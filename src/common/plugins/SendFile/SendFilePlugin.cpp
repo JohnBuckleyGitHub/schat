@@ -27,10 +27,9 @@
 #include "messages/Message.h"
 #include "net/packets/MessageNotice.h"
 #include "net/SimpleID.h"
-#include "SendFileCmd.h"
+#include "SendFileMessages.h"
 #include "SendFilePlugin.h"
 #include "SendFilePlugin_p.h"
-#include "SendFileTransaction.h"
 #include "sglobal.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/TabWidget.h"
@@ -38,7 +37,7 @@
 SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
   : ChatPlugin(parent)
 {
-  new SendFileCmd(this);
+  new SendFileMessages(this);
 
   connect(ChatViewHooks::i(), SIGNAL(initHook(ChatView*)), SLOT(init(ChatView*)));
   connect(ChatViewHooks::i(), SIGNAL(loadFinishedHook(ChatView*)), SLOT(loadFinished(ChatView*)));
@@ -69,18 +68,19 @@ bool SendFilePluginImpl::send(const QByteArray &dest, const QVariantMap &data, c
  */
 bool SendFilePluginImpl::sendFile(const QByteArray &dest, const QString &file)
 {
-  SendFile::Transaction transaction(dest, file);
-  if (!transaction.isValid())
+  SendFileTransaction transaction(new SendFile::Transaction(dest, file));
+  if (!transaction->isValid())
     return false;
 
-  if (send(dest, transaction.toReceiver(), transaction.id())) {
-    Message message(transaction.id(), dest, LS("file"), LS("addFileMessage"));
+  if (send(dest, transaction->toReceiver(), transaction->id())) {
+    Message message(transaction->id(), dest, LS("file"), LS("addFileMessage"));
     message.setAuthor(ChatClient::id());
     message.setDate();
-    message.data()[LS("File")]      = transaction.fileName();
+    message.data()[LS("File")]      = transaction->fileName();
     message.data()[LS("Direction")] = LS("outgoing");
     TabWidget::add(message);
 
+    m_outgoing[transaction->id()] = transaction;
     return true;
   }
 

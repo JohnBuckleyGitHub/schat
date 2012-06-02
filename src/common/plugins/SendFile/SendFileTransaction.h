@@ -19,6 +19,7 @@
 #ifndef SENDFILETRANSACTION_H_
 #define SENDFILETRANSACTION_H_
 
+#include <QSharedPointer>
 #include <QString>
 
 namespace SendFile {
@@ -71,5 +72,7 @@ private:
 };
 
 } // namespace SendFile
+
+typedef QSharedPointer<SendFile::Transaction> SendFileTransaction;
 
 #endif /* SENDFILETRANSACTION_H_ */
