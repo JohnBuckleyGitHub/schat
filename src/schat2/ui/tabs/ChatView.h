@@ -39,6 +39,7 @@ public:
 
   inline const QByteArray& id() const { return m_id; }
   void add(const Message &msg);
+  void addCSS(const QString &file);
   void copy();
   void evaluateJavaScript(const QString &func, const QVariant &param);
   void evaluateJavaScript(const QString &js);

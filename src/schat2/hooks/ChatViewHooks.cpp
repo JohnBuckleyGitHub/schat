@@ -41,6 +41,8 @@ void ChatViewHooks::addImpl(ChatView *view)
   foreach (ChatViewHooks *hook, m_hooks) {
     hook->addImpl(view);
   }
+
+  emit addHook(view);
 }
 
 
@@ -52,6 +54,8 @@ void ChatViewHooks::initImpl(ChatView *view)
   foreach (ChatViewHooks *hook, m_hooks) {
     hook->initImpl(view);
   }
+
+  emit initHook(view);
 }
 
 
@@ -63,11 +67,11 @@ void ChatViewHooks::loadFinishedImpl(ChatView *view)
   if (m_self != this)
     return;
 
-  emit loadFinishedHook(view);
-
   foreach (ChatViewHooks *hook, m_hooks) {
     hook->loadFinishedImpl(view);
   }
+
+  emit loadFinishedHook(view);
 }
 
 
@@ -80,5 +84,6 @@ void ChatViewHooks::removeImpl(ChatView *view)
     hook->removeImpl(view);
   }
 
+  emit removeHook(view);
   m_views.removeAll(view);
 }
