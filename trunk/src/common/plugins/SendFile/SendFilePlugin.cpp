@@ -74,11 +74,11 @@ bool SendFilePluginImpl::sendFile(const QByteArray &dest, const QString &file)
     return false;
 
   if (send(dest, transaction.toReceiver(), transaction.id())) {
-    Message message(transaction.id(), dest, LS("file"), LS("addServiceMessage"));
+    Message message(transaction.id(), dest, LS("file"), LS("addFileMessage"));
     message.setAuthor(ChatClient::id());
     message.setDate();
-    message.data()[LS("Text")] = transaction.fileName();
-    message.data()[LS("Role")] = LS("sender");
+    message.data()[LS("File")]      = transaction.fileName();
+    message.data()[LS("Direction")] = LS("outgoing");
     TabWidget::add(message);
 
     return true;
