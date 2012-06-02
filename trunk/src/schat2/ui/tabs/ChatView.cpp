@@ -87,6 +87,15 @@ void ChatView::add(const Message &msg)
 }
 
 
+/*!
+ * Добавление нового CSS файла.
+ */
+void ChatView::addCSS(const QString &file)
+{
+  evaluateJavaScript(LS("Loader.loadCSS(\"") + file + LS("\");"));
+}
+
+
 void ChatView::copy()
 {
   triggerPageAction(QWebPage::Copy);

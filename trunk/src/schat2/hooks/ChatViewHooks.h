@@ -41,7 +41,10 @@ public:
   inline static void remove(ChatViewHooks *hook)  { m_self->m_hooks.removeAll(hook); }
 
 signals:
+  void addHook(ChatView *view);
+  void initHook(ChatView *view);
   void loadFinishedHook(ChatView *view);
+  void removeHook(ChatView *view);
 
 protected:
   virtual void addImpl(ChatView *view);

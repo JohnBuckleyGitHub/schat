@@ -22,7 +22,9 @@
 #include "RawFeedsCmd.h"
 #include "RawFeedsPlugin.h"
 #include "RawFeedsPlugin_p.h"
-#include "RawFeedsChatView.h"
+#include "sglobal.h"
+#include "ui/tabs/ChatView.h"
+#include "hooks/ChatViewHooks.h"
 
 RawFeeds::RawFeeds(QObject *parent)
   : ChatPlugin(parent)
@@ -30,7 +32,22 @@ RawFeeds::RawFeeds(QObject *parent)
 {
   new Hooks::RawFeedsCmd(this);
   new Hooks::FeedsImpl(this);
-  new RawFeedsChatView(this);
+
+  connect(ChatViewHooks::i(), SIGNAL(initHook(ChatView*)), SLOT(init(ChatView*)));
+  connect(ChatViewHooks::i(), SIGNAL(loadFinishedHook(ChatView*)), SLOT(loadFinished(ChatView*)));
+}
+
+
+void RawFeeds::init(ChatView *view)
+{
+  view->addJS(LS("qrc:/js/RawFeeds/KelpJSONView.js"));
+  view->addJS(LS("qrc:/js/RawFeeds/RawFeeds.js"));
+}
+
+
+void RawFeeds::loadFinished(ChatView *view)
+{
+  view->addCSS(LS("qrc:/css/RawFeeds/RawFeeds.css"));
 }
 
 

@@ -21,6 +21,8 @@
 
 #include "plugins/ChatPlugin.h"
 
+class ChatView;
+
 class RawFeeds : public ChatPlugin
 {
   Q_OBJECT
@@ -29,6 +31,10 @@ public:
   RawFeeds(QObject *parent);
   inline bool isEnabled() const        { return m_enabled; }
   inline void setEnabled(bool enabled) { m_enabled = enabled; }
+
+private slots:
+  void init(ChatView *view);
+  void loadFinished(ChatView *view);
 
 private:
   bool m_enabled;
