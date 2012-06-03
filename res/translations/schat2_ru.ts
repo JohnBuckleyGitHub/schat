@@ -109,44 +109,44 @@
 <context>
     <name>ChatView</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="173"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="182"/>
         <source>Display</source>
         <translation>Отображать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="331"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="349"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="340"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="358"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="332"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="350"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="341"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="359"/>
         <source>Reload</source>
         <translation>Обновить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="337"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="346"/>
         <source>Seconds</source>
         <translation>Секунды</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="340"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="349"/>
         <source>Service messages</source>
         <translation>Сервисные сообщения</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="347"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="356"/>
         <source>Copy</source>
         <translation>Копировать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="348"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="357"/>
         <source>Copy Link</source>
         <translation>Копировать ссылку</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="351"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="360"/>
         <source>Select All</source>
         <translation>Выделить всё</translation>
     </message>
@@ -626,47 +626,47 @@
 <context>
     <name>ServiceMessage</name>
     <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="54"/>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="53"/>
         <source>Successfully connected to &lt;b&gt;%1&lt;/b&gt;</source>
         <translation>Успешно подключены к &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="63"/>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="62"/>
         <source>Connection lost</source>
         <translation>Соединение потеряно</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="80"/>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="79"/>
         <source>has joined</source>
         <comment>Female</comment>
         <translation>зашла</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="82"/>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="81"/>
         <source>has joined</source>
         <comment>Male</comment>
         <translation>зашёл</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="99"/>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="98"/>
         <source>has left</source>
         <comment>Female</comment>
         <translation>вышла</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="101"/>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="100"/>
         <source>has left</source>
         <comment>Male</comment>
         <translation>вышел</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="118"/>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="117"/>
         <source>has quit chat</source>
         <comment>Female</comment>
         <translation>вышла из чата</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="120"/>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="119"/>
         <source>has quit chat</source>
         <comment>Male</comment>
         <translation>вышел из чата</translation>
@@ -819,7 +819,7 @@
 <context>
     <name>TabWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="247"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="236"/>
         <source>Close Tab</source>
         <translation>Закрыть</translation>
     </message>
