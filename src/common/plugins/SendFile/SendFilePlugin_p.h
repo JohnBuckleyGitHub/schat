@@ -39,11 +39,16 @@ public:
   bool sendFile(const QByteArray &dest, const QString &file);
   void read(const MessagePacket &packet);
 
+signals:
+  void cancelled(const QString &id);
+
 private slots:
   void init(ChatView *view);
   void loadFinished(ChatView *view);
+  void openUrl(const QUrl &url);
 
 private:
+  void cancel(const QByteArray &id);
   void incomingFile(const MessagePacket &packet);
 
   QHash<QByteArray, SendFileTransaction> m_incoming; ///< Входящие файлы.

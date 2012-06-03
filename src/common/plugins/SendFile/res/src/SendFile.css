@@ -36,6 +36,14 @@
   float: left;
 }
 
+.file-name {
+  font-weight: bold;
+}
+
+.file-state {
+  color: rgba(0, 0, 50, .5);
+}
+
 .file-progress {
   height: 8px;
   width: 100px;
