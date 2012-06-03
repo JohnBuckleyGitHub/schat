@@ -19,12 +19,8 @@
 var SendFileUtils = {
   button: function(name, id)
   {
-    if (name === 'cancel') {
-      return '<a class="btn btn-small btn-file-cancel" data-tr="file-cancel" href="chat-sendfile:cancel/' +
-        id + '">' + Utils.tr('file-cancel') + '</a>';
-    }
-
-    return '';
+    return '<a class="btn btn-small btn-file-' + name + '" data-tr="file-' + name + '" href="chat-sendfile:'
+       + name + '/' + id + '">' + Utils.tr('file-' + name) + '</a>';
   },
 
   setStateText: function(id, text)
@@ -59,6 +55,10 @@ Messages.addFileMessage = function(json)
 
   if (json.Direction === 'outgoing') {
     SendFileUtils.setStateText(id, 'file-waiting');
+  }
+  else {
+    $('#' + id + ' .file-state').html(SimpleChat.bytesToHuman(json.Size));
+    $('#' + id + ' .file-buttons').prepend(SendFileUtils.button('saveas', id));
   }
 };
 

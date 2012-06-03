@@ -19,5 +19,10 @@
         <source>Cancelled</source>
         <translation>Отменено</translation>
     </message>
+    <message>
+        <location filename="../../SendFilePlugin.cpp" line="56"/>
+        <source>Save as</source>
+        <translation>Сохранить как</translation>
+    </message>
 </context>
 </TS>
