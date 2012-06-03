@@ -48,8 +48,9 @@ class SCHAT_EXPORT AuthReply
 public:
   /// Поля данных.
   enum Fields {
-    BasicFields = 0,
-    JSonField = 1
+    BasicFields = 0, ///< Поля по умолчанию.
+    JSonField = 1,   ///< Присутствует поле с JSON данными.
+    HostField = 4    ///< Адрес с которого был подключен клиент. \since 1.99.32.
   };
 
   AuthReply()
@@ -69,6 +70,8 @@ public:
   QString serverName;    ///< Имя сервера.
   QString account;       ///< Имя аккаунта пользователя.
   QVariantMap json;      ///< JSON данные.
+  QString host;          ///< IP адрес клиента.
+  QByteArray hostId;     ///< Идентификатор хоста клиента.
 };
 
 

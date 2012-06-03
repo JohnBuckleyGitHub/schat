@@ -313,6 +313,7 @@ void Core::accept(const AuthResult &result)
   QList<QByteArray> packets;
   if (result.packet) {
     NodeAuthReply reply(result, channel);
+    reply.host = packetsEvent()->address.toString();
     packets.append(reply.data(m_sendStream));
   }
 

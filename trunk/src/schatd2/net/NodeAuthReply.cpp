@@ -34,5 +34,6 @@ NodeAuthReply::NodeAuthReply(const AuthResult &result, ChatChannel channel)
     userId     = channel->id();
     cookie     = channel->account()->cookie();
     account    = channel->account()->name();
+    hostId     = channel->hosts().currentId();
   }
 }
