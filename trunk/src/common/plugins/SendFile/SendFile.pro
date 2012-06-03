@@ -32,4 +32,14 @@ SOURCES  = \
 
 RESOURCES += SendFile.qrc
 
+TRANSLATIONS += res/translations/sendfile_en.ts
+TRANSLATIONS += res/translations/sendfile_ru.ts
+CODECFORTR = UTF-8
+
+macx:      translations.path += ../../../../out/SimpleChat2.app/Contents/Resources/translations
+unix:!macx:translations.path = $$SCHAT_PREFIX/usr/share/$${PLUGIN_TARGET}/translations
+win32:     translations.path += ../../../../os/win32/$${PLUGIN_TARGET}/translations
+
+INSTALLS += translations
+
 include(../plugins.pri)

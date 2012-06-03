@@ -55,5 +55,12 @@ void SendFileMessages::readText(MessagePacket packet)
   if (packet->command() != LS("file"))
     return;
 
+  if (SimpleID::typeOf(packet->id()) != SimpleID::MessageId)
+    return;
+
+  if (packet->raw().isEmpty())
+    return;
+
   qDebug() << "READ TEXT" << packet->raw();
+  m_plugin->read(packet);
 }

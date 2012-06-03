@@ -26,13 +26,20 @@ ${Section}
 
   SetOutPath "$INSTDIR\doc"
   File "${SCHAT_SOURCE}\doc\ChangeLog.SendFile.html"
+  
+  SetOutPath "$INSTDIR\translations"
+  File "${SCHAT_SOURCE}\translations\sendfile_en.qm"
+  File "${SCHAT_SOURCE}\translations\sendfile_ru.qm"
 ${SectionEnd}
 ${BodyEnd}
 
 ${Uninstall}
   Delete "$INSTDIR\doc\ChangeLog.SendFile.html"
   Delete "$INSTDIR\plugins\SendFile.dll"
+  Delete "$INSTDIR\translations\sendfile_en.qm"
+  Delete "$INSTDIR\translations\sendfile_ru.qm"
 
   RMDir "$INSTDIR\doc"
   RMDir "$INSTDIR\plugins"
+  RMDir "$INSTDIR\translations"
 ${UninstallEnd}

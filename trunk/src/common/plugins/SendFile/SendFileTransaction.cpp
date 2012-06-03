@@ -35,6 +35,16 @@ Transaction::Transaction(const QByteArray &dest, const QString &file)
 }
 
 
+Transaction::Transaction(const QByteArray &sender, const QByteArray &id, const QVariantMap &data)
+  : m_id(id)
+  , m_user(sender)
+  , m_role(ReceiverRole)
+{
+  m_file.name = data.value(LS("name")).toString();
+  m_file.size = data.value(LS("size")).toLongLong();
+}
+
+
 bool Transaction::addLocalFile(const QString &name)
 {
   if (!QFile::exists(name))
@@ -70,10 +80,9 @@ QVariantMap Transaction::toReceiver() const
   QVariantMap json;
   if (!isValid())
     return json;
-
-  json[LS("action")] = LS("file");
-  json[LS("name")]   = fileName();
-  json[LS("size")]   = m_file.size;
+;
+  json[LS("name")] = fileName();
+  json[LS("size")] = m_file.size;
 
   return json;
 }

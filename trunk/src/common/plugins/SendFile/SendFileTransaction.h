@@ -51,12 +51,13 @@ struct File
 
 
 /*!
- * Содержит информацию о передаче об одиночной передаче файлов.
+ * Содержит информацию о передаче файла.
  */
 class Transaction
 {
 public:
   Transaction(const QByteArray &dest, const QString &file);
+  Transaction(const QByteArray &sender, const QByteArray &id, const QVariantMap &data);
   bool addLocalFile(const QString &name);
   bool isValid() const;
   inline const File& file() const     { return m_file; }

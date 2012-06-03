@@ -21,10 +21,12 @@
 
 #include <QVariant>
 
+#include "net/packets/MessageNotice.h"
 #include "plugins/ChatPlugin.h"
 #include "SendFileTransaction.h"
 
 class ChatView;
+class SendFileTr;
 
 class SendFilePluginImpl : public ChatPlugin
 {
@@ -32,15 +34,21 @@ class SendFilePluginImpl : public ChatPlugin
 
 public:
   SendFilePluginImpl(QObject *parent);
-  bool send(const QByteArray &dest, const QVariantMap &data, const QByteArray &id);
+  ~SendFilePluginImpl();
+
   bool sendFile(const QByteArray &dest, const QString &file);
+  void read(const MessagePacket &packet);
 
 private slots:
   void init(ChatView *view);
   void loadFinished(ChatView *view);
 
 private:
+  void incomingFile(const MessagePacket &packet);
+
+  QHash<QByteArray, SendFileTransaction> m_incoming; ///< Входящие файлы.
   QHash<QByteArray, SendFileTransaction> m_outgoing; ///< Отправленные файлы.
+  SendFileTr *m_tr;                                  ///< Класс перевода строк.
 };
 
 #endif /* SENDFILEPLUGIN_P_H_ */

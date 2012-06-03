@@ -17,7 +17,10 @@
  */
 
 #include <QDebug>
+
+#include <QWebFrame>
 #include <QtPlugin>
+#include <QCoreApplication>
 
 #include "ChatCore.h"
 #include "client/ChatClient.h"
@@ -31,32 +34,44 @@
 #include "SendFilePlugin.h"
 #include "SendFilePlugin_p.h"
 #include "sglobal.h"
+#include "Tr.h"
+#include "Translation.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/TabWidget.h"
+
+class SendFileTr : public Tr
+{
+  Q_DECLARE_TR_FUNCTIONS(WebBridgeTr)
+
+public:
+  SendFileTr() : Tr() { m_prefix = LS("file-"); }
+
+protected:
+  QString valueImpl(const QString &key) const
+  {
+    if (key == LS("waiting")) return tr("Waiting");
+    else if (key == LS("cancel")) return tr("Cancel");
+    return QString();
+  }
+};
+
 
 SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
   : ChatPlugin(parent)
 {
+  m_tr = new SendFileTr();
   new SendFileMessages(this);
+
+  ChatCore::translation()->addOther(LS("sendfile"));
 
   connect(ChatViewHooks::i(), SIGNAL(initHook(ChatView*)), SLOT(init(ChatView*)));
   connect(ChatViewHooks::i(), SIGNAL(loadFinishedHook(ChatView*)), SLOT(loadFinished(ChatView*)));
 }
 
 
-/*!
- * Базовая функция отправки.
- */
-bool SendFilePluginImpl::send(const QByteArray &dest, const QVariantMap &data, const QByteArray &id)
+SendFilePluginImpl::~SendFilePluginImpl()
 {
-  if (SimpleID::typeOf(dest) != SimpleID::UserId)
-    return false;
-
-  MessagePacket packet(new MessageNotice(ChatClient::id(), dest, QString(), DateTime::utc(), id));
-  packet->setCommand(LS("file"));
-  packet->setData(data);
-
-  return ChatClient::io()->send(packet, true);
+  delete m_tr;
 }
 
 
@@ -68,11 +83,18 @@ bool SendFilePluginImpl::send(const QByteArray &dest, const QVariantMap &data, c
  */
 bool SendFilePluginImpl::sendFile(const QByteArray &dest, const QString &file)
 {
+  if (SimpleID::typeOf(dest) != SimpleID::UserId)
+    return false;
+
   SendFileTransaction transaction(new SendFile::Transaction(dest, file));
   if (!transaction->isValid())
     return false;
 
-  if (send(dest, transaction->toReceiver(), transaction->id())) {
+  MessagePacket packet(new MessageNotice(ChatClient::id(), dest, LS("file"), DateTime::utc(), transaction->id()));
+  packet->setCommand(packet->text());
+  packet->setData(transaction->toReceiver());
+
+  if (ChatClient::io()->send(packet, true)) {
     Message message(transaction->id(), dest, LS("file"), LS("addFileMessage"));
     message.setAuthor(ChatClient::id());
     message.setDate();
@@ -88,10 +110,26 @@ bool SendFilePluginImpl::sendFile(const QByteArray &dest, const QString &file)
 }
 
 
+/*!
+ * Чтение входящего пакета.
+ */
+void SendFilePluginImpl::read(const MessagePacket &packet)
+{
+  if (m_outgoing.contains(packet->id()))
+    return;
+
+  if (packet->text() == LS("file"))
+    incomingFile(packet);
+}
+
+
 void SendFilePluginImpl::init(ChatView *view)
 {
-  if (SimpleID::typeOf(view->id()) == SimpleID::UserId)
-    view->addJS(LS("qrc:/js/SendFile/SendFile.js"));
+  if (SimpleID::typeOf(view->id()) != SimpleID::UserId)
+    return;
+
+  view->addJS(LS("qrc:/js/SendFile/SendFile.js"));
+  view->page()->mainFrame()->addToJavaScriptWindowObject(LS("SendFile"), this);
 }
 
 
@@ -99,6 +137,26 @@ void SendFilePluginImpl::loadFinished(ChatView *view)
 {
   if (SimpleID::typeOf(view->id()) == SimpleID::UserId)
     view->addCSS(LS("qrc:/css/SendFile/SendFile.css"));
+}
+
+
+/*!
+ * Обработка нового входящего файла.
+ */
+void SendFilePluginImpl::incomingFile(const MessagePacket &packet)
+{
+  SendFileTransaction transaction(new SendFile::Transaction(packet->sender(), packet->id(), packet->json()));
+  if (!transaction->isValid())
+    return;
+
+  Message message(packet->id(), packet->sender(), LS("file"), LS("addFileMessage"));
+  message.setAuthor(packet->sender());
+  message.setDate();
+  message.data()[LS("File")]      = transaction->fileName();
+  message.data()[LS("Direction")] = LS("incoming");
+  TabWidget::add(message);
+
+  m_incoming[transaction->id()] = transaction;
 }
 
 
