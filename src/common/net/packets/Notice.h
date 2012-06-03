@@ -76,7 +76,8 @@ public:
     Client2Server = 115, ///< 's'
     Server2Client = 99,  ///< 'c'
     Client2Client = 67,  ///< 'C'
-    Server2Server = 83   ///< 'S'
+    Server2Server = 83,  ///< 'S'
+    Internal      = 73   ///< 'I' Аналогично Client2Client, но не должно кешироватся.
   };
 
   Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 date = 0, const QByteArray &id = QByteArray(), const QVariantMap &data = QVariantMap());

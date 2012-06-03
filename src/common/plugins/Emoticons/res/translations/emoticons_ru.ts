@@ -5,7 +5,7 @@
 <context>
     <name>EmoticonsAction</name>
     <message>
-        <location filename="../../EmoticonsButton.cpp" line="69"/>
+        <location filename="../../EmoticonsButton.cpp" line="105"/>
         <source>Emoticons</source>
         <translation>Смайлики</translation>
     </message>
@@ -13,7 +13,7 @@
 <context>
     <name>EmoticonsButton</name>
     <message>
-        <location filename="../../EmoticonsButton.cpp" line="45"/>
+        <location filename="../../EmoticonsButton.cpp" line="80"/>
         <source>Emoticons</source>
         <translation>Смайлики</translation>
     </message>
@@ -21,7 +21,7 @@
 <context>
     <name>EmoticonsPage</name>
     <message>
-        <location filename="../../EmoticonsPage.cpp" line="40"/>
+        <location filename="../../EmoticonsPage.cpp" line="41"/>
         <source>Emoticons</source>
         <translation>Смайлики</translation>
     </message>

@@ -185,6 +185,7 @@ void SendFilePluginImpl::cancel(const QByteArray &id)
 
   MessagePacket packet(new MessageNotice(ChatClient::id(), transaction->user(), LS("cancel"), DateTime::utc(), transaction->id()));
   packet->setCommand(LS("file"));
+  packet->setDirection(Notice::Internal);
   ChatClient::io()->send(packet, true);
 
   emit cancelled(SimpleID::encode(id));

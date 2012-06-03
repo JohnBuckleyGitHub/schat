@@ -56,6 +56,9 @@ bool NodeMessages::read(PacketReader *reader)
     return false;
   }
 
+  if (packet.direction() == Notice::Internal)
+    return true;
+
   if (m_dest->type() == SimpleID::UserId && m_dest->status().value() == Status::Offline) {
     reject(Notice::ChannelOffline);
     NodeMessagesDB::add(packet, Notice::ChannelOffline);
