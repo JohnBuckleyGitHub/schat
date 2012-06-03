@@ -18,9 +18,10 @@
 
 #include <QDebug>
 
-#include <QWebFrame>
-#include <QtPlugin>
 #include <QCoreApplication>
+#include <QDesktopServices>
+#include <QtPlugin>
+#include <QWebFrame>
 
 #include "ChatCore.h"
 #include "client/ChatClient.h"
@@ -49,8 +50,9 @@ public:
 protected:
   QString valueImpl(const QString &key) const
   {
-    if (key == LS("waiting")) return tr("Waiting");
-    else if (key == LS("cancel")) return tr("Cancel");
+    if (key == LS("waiting"))        return tr("Waiting");
+    else if (key == LS("cancel"))    return tr("Cancel");
+    else if (key == LS("cancelled")) return tr("Cancelled");
     return QString();
   }
 };
@@ -63,6 +65,7 @@ SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
   new SendFileMessages(this);
 
   ChatCore::translation()->addOther(LS("sendfile"));
+  QDesktopServices::setUrlHandler(LS("chat-sendfile"), this, "openUrl");
 
   connect(ChatViewHooks::i(), SIGNAL(initHook(ChatView*)), SLOT(init(ChatView*)));
   connect(ChatViewHooks::i(), SIGNAL(loadFinishedHook(ChatView*)), SLOT(loadFinished(ChatView*)));
@@ -137,6 +140,28 @@ void SendFilePluginImpl::loadFinished(ChatView *view)
 {
   if (SimpleID::typeOf(view->id()) == SimpleID::UserId)
     view->addCSS(LS("qrc:/css/SendFile/SendFile.css"));
+}
+
+
+void SendFilePluginImpl::openUrl(const QUrl &url)
+{
+  QStringList path = url.path().split(LC('/'));
+  if (path.size() < 2)
+    return;
+
+  QString action = path.at(0);
+  QByteArray id = SimpleID::decode(path.at(1));
+  if (SimpleID::typeOf(id) != SimpleID::MessageId)
+    return;
+
+  if (action == LS("cancel"))
+    cancel(id);
+}
+
+
+void SendFilePluginImpl::cancel(const QByteArray &id)
+{
+  emit cancelled(SimpleID::encode(id));
 }
 
 

@@ -5,14 +5,19 @@
 <context>
     <name>WebBridgeTr</name>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="51"/>
+        <location filename="../../SendFilePlugin.cpp" line="53"/>
         <source>Waiting</source>
         <translation>Ожидание</translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="52"/>
+        <location filename="../../SendFilePlugin.cpp" line="54"/>
         <source>Cancel</source>
         <translation>Отменить</translation>
+    </message>
+    <message>
+        <location filename="../../SendFilePlugin.cpp" line="55"/>
+        <source>Cancelled</source>
+        <translation>Отменено</translation>
     </message>
 </context>
 </TS>

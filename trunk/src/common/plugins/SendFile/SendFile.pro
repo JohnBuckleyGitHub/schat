@@ -32,6 +32,8 @@ SOURCES  = \
 
 RESOURCES += SendFile.qrc
 
+include(../plugins.pri)
+
 TRANSLATIONS += res/translations/sendfile_en.ts
 TRANSLATIONS += res/translations/sendfile_ru.ts
 CODECFORTR = UTF-8
@@ -44,5 +46,3 @@ unix:!macx:translations.path = $$SCHAT_PREFIX/usr/share/$${PLUGIN_TARGET}/transl
 win32:     translations.path += ../../../../os/win32/$${PLUGIN_TARGET}/translations
 
 INSTALLS += translations
-
-include(../plugins.pri)
