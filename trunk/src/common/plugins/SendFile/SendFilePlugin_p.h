@@ -48,12 +48,12 @@ private slots:
   void openUrl(const QUrl &url);
 
 private:
+  void cancel(const MessagePacket &packet);
   void cancel(const QByteArray &id);
   void incomingFile(const MessagePacket &packet);
 
-  QHash<QByteArray, SendFileTransaction> m_incoming; ///< Входящие файлы.
-  QHash<QByteArray, SendFileTransaction> m_outgoing; ///< Отправленные файлы.
-  SendFileTr *m_tr;                                  ///< Класс перевода строк.
+  QHash<QByteArray, SendFileTransaction> m_transactions; ///< Отправленные файлы и входящие файлы.
+  SendFileTr *m_tr;                                      ///< Класс перевода строк.
 };
 
 #endif /* SENDFILEPLUGIN_P_H_ */
