@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include "client/ChatClient.h"
 #include "client/ClientCmd.h"
 #include "client/ClientMessages.h"
@@ -41,7 +39,6 @@ bool SendFileMessages::command(const QByteArray &dest, const ClientCmd &cmd)
 
   QString command = cmd.command().toLower();
   if (command == LS("send")) {
-    qDebug() << "SEND FILE:" << cmd.body();
     m_plugin->sendFile(dest, cmd.body());
     return true;
   }
@@ -58,9 +55,5 @@ void SendFileMessages::readText(MessagePacket packet)
   if (SimpleID::typeOf(packet->id()) != SimpleID::MessageId)
     return;
 
-  if (packet->raw().isEmpty())
-    return;
-
-  qDebug() << "READ TEXT" << packet->raw();
   m_plugin->read(packet);
 }

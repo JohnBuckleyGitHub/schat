@@ -105,7 +105,7 @@ bool SendFilePluginImpl::sendFile(const QByteArray &dest, const QString &file)
     message.data()[LS("Direction")] = LS("outgoing");
     TabWidget::add(message);
 
-    m_outgoing[transaction->id()] = transaction;
+    m_transactions[transaction->id()] = transaction;
     return true;
   }
 
@@ -118,11 +118,10 @@ bool SendFilePluginImpl::sendFile(const QByteArray &dest, const QString &file)
  */
 void SendFilePluginImpl::read(const MessagePacket &packet)
 {
-  if (m_outgoing.contains(packet->id()))
-    return;
-
   if (packet->text() == LS("file"))
     incomingFile(packet);
+  else if (packet->text() == LS("cancel"))
+    cancel(packet);
 }
 
 
@@ -159,8 +158,35 @@ void SendFilePluginImpl::openUrl(const QUrl &url)
 }
 
 
+/*!
+ * Обработка отмены передачи файла вызванной удалённым клиентом.
+ */
+void SendFilePluginImpl::cancel(const MessagePacket &packet)
+{
+  SendFileTransaction transaction = m_transactions.value(packet->id());
+  if (!transaction)
+    return;
+
+  m_transactions.remove(packet->id());
+  emit cancelled(SimpleID::encode(packet->id()));
+}
+
+
+/*!
+ * Обработка локально вызванной отмены передачи файла.
+ */
 void SendFilePluginImpl::cancel(const QByteArray &id)
 {
+  SendFileTransaction transaction = m_transactions.value(id);
+  if (!transaction)
+    return;
+
+  m_transactions.remove(id);
+
+  MessagePacket packet(new MessageNotice(ChatClient::id(), transaction->user(), LS("cancel"), DateTime::utc(), transaction->id()));
+  packet->setCommand(LS("file"));
+  ChatClient::io()->send(packet, true);
+
   emit cancelled(SimpleID::encode(id));
 }
 
@@ -170,6 +196,9 @@ void SendFilePluginImpl::cancel(const QByteArray &id)
  */
 void SendFilePluginImpl::incomingFile(const MessagePacket &packet)
 {
+  if (m_transactions.contains(packet->id()))
+    return;
+
   SendFileTransaction transaction(new SendFile::Transaction(packet->sender(), packet->id(), packet->json()));
   if (!transaction->isValid())
     return;
@@ -181,7 +210,7 @@ void SendFilePluginImpl::incomingFile(const MessagePacket &packet)
   message.data()[LS("Direction")] = LS("incoming");
   TabWidget::add(message);
 
-  m_incoming[transaction->id()] = transaction;
+  m_transactions[transaction->id()] = transaction;
 }
 
 

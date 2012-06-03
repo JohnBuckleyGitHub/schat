@@ -60,8 +60,10 @@ public:
   Transaction(const QByteArray &sender, const QByteArray &id, const QVariantMap &data);
   bool addLocalFile(const QString &name);
   bool isValid() const;
-  inline const File& file() const     { return m_file; }
-  inline const QByteArray& id() const { return m_id; }
+  inline const File& file() const       { return m_file; }
+  inline const QByteArray& id() const   { return m_id; }
+  inline const QByteArray& user() const { return m_user; }
+  inline Role role() const              { return m_role; }
   QString fileName() const;
   QVariantMap toReceiver() const;
 
