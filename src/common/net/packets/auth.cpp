@@ -50,6 +50,11 @@ AuthReply::AuthReply(PacketReader *reader)
 
   if (fields & JSonField)
     json = reader->json().toMap();
+
+  if (fields & HostField) {
+    host = reader->text();
+    hostId = reader->id();
+  }
 }
 
 
@@ -57,6 +62,9 @@ QByteArray AuthReply::data(QDataStream *stream) const
 {
   if (!json.isEmpty())
     fields |= JSonField;
+
+  if (!host.isEmpty())
+    fields |= HostField;
 
   PacketWriter writer(stream, Protocol::AuthReplyPacket, serverId, userId);
   writer.put(fields);
@@ -73,6 +81,11 @@ QByteArray AuthReply::data(QDataStream *stream) const
 
   if (fields & JSonField)
     writer.put(json);
+
+  if (fields & HostField) {
+    writer.put(host);
+    writer.putId(hostId);
+  }
 
   return writer.data();
 }

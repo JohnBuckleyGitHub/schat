@@ -40,7 +40,9 @@ SimpleClientPrivate::~SimpleClientPrivate()
 bool SimpleClientPrivate::authReply(const AuthReply &reply)
 {
   AbstractClientPrivate::authReply(reply);
-  json[LS("id")] = SimpleID::encode(reply.serverId);
+  json[LS("id")]     = SimpleID::encode(reply.serverId);
+  json[LS("host")]   = reply.host;
+  json[LS("hostId")] = reply.hostId;
 
   if (reply.status == Notice::OK) {
     account.clear();
