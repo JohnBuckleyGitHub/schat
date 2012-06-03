@@ -53,6 +53,7 @@ protected:
     if (key == LS("waiting"))        return tr("Waiting");
     else if (key == LS("cancel"))    return tr("Cancel");
     else if (key == LS("cancelled")) return tr("Cancelled");
+    else if (key == LS("saveas"))    return tr("Save as");
     return QString();
   }
 };
@@ -208,6 +209,7 @@ void SendFilePluginImpl::incomingFile(const MessagePacket &packet)
   message.setAuthor(packet->sender());
   message.setDate();
   message.data()[LS("File")]      = transaction->fileName();
+  message.data()[LS("Size")]      = transaction->file().size;
   message.data()[LS("Direction")] = LS("incoming");
   TabWidget::add(message);
 

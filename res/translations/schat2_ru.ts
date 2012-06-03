@@ -899,6 +899,28 @@
     </message>
 </context>
 <context>
+    <name>WebBridge</name>
+    <message numerus="yes">
+        <location filename="../../src/schat2/WebBridge.cpp" line="86"/>
+        <source>%n byte</source>
+        <translation>
+            <numerusform>%n байт</numerusform>
+            <numerusform>%n байта</numerusform>
+            <numerusform>%n байт</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="88"/>
+        <source>%1 kB</source>
+        <translation>%1 КБ</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="90"/>
+        <source>%1 MB</source>
+        <translation>%1 МБ</translation>
+    </message>
+</context>
+<context>
     <name>WebBridgeTr</name>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="48"/>

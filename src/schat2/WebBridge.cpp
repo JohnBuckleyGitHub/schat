@@ -80,6 +80,17 @@ WebBridge::~WebBridge()
 }
 
 
+QString WebBridge::bytesToHuman(qint64 size)
+{
+  if (size < 1024)
+    return tr("%n byte", "", size);
+  else if (size < 1048576)
+    return tr("%1 kB").arg((int) size / 1024);
+  else
+    return tr("%1 MB").arg((double) size / 1048576, 0, 'f', 2);
+}
+
+
 QString WebBridge::channel(const QString &id) const
 {
   return JSON::generate(channel(SimpleID::decode(id.toLatin1())));
