@@ -76,7 +76,7 @@ Transaction::Transaction(const QByteArray &dest, const QByteArray &id, const QSt
   , m_user(dest)
   , m_role(SenderRole)
 {
-  addLocalFile(file);
+  setLocalFile(file);
 }
 
 
@@ -94,7 +94,16 @@ Transaction::Transaction(const QByteArray &sender, const QByteArray &id, const Q
 }
 
 
-bool Transaction::addLocalFile(const QString &name)
+bool Transaction::isValid() const
+{
+  if (m_file.name.isEmpty())
+    return false;
+
+  return true;
+}
+
+
+bool Transaction::setLocalFile(const QString &name)
 {
   if (!QFile::exists(name))
     return false;
@@ -102,15 +111,6 @@ bool Transaction::addLocalFile(const QString &name)
   QFileInfo info(name);
   m_file.name = info.absoluteFilePath();
   m_file.size = info.size();
-  return true;
-}
-
-
-bool Transaction::isValid() const
-{
-  if (m_file.name.isEmpty())
-    return false;
-
   return true;
 }
 
@@ -135,6 +135,12 @@ QVariantMap Transaction::toReceiver() const
   json[LS("hosts")] = m_local.toJSON();
 
   return json;
+}
+
+
+void Transaction::saveAs(const QString &name)
+{
+  m_file.name = name;
 }
 
 } // namespace SendFile
