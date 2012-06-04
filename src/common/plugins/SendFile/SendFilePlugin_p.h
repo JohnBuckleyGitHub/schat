@@ -40,6 +40,7 @@ public:
   void read(const MessagePacket &packet);
 
 signals:
+  void accepted(const QString &id, const QString &fileName);
   void cancelled(const QString &id);
 
 private slots:
@@ -53,6 +54,7 @@ private:
   void cancel(const MessagePacket &packet);
   void cancel(const QByteArray &id);
   void incomingFile(const MessagePacket &packet);
+  void saveAs(const QByteArray &id);
 
   QHash<QByteArray, SendFileTransaction> m_transactions; ///< Отправленные файлы и входящие файлы.
   quint16 m_port;                                        ///< Порт который будет использоваться для передачи файлов.

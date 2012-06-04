@@ -23,6 +23,7 @@
 #include <QtPlugin>
 #include <QWebFrame>
 #include <QHostAddress>
+#include <QFileDialog>
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
@@ -52,10 +53,11 @@ public:
 protected:
   QString valueImpl(const QString &key) const
   {
-    if (key == LS("waiting"))        return tr("Waiting");
-    else if (key == LS("cancel"))    return tr("Cancel");
-    else if (key == LS("cancelled")) return tr("Cancelled");
-    else if (key == LS("saveas"))    return tr("Save as");
+    if (key == LS("waiting"))         return tr("Waiting");
+    else if (key == LS("cancel"))     return tr("Cancel");
+    else if (key == LS("cancelled"))  return tr("Cancelled");
+    else if (key == LS("saveas"))     return tr("Save as");
+    else if (key == LS("connecting")) return tr("Connecting...");
     return QString();
   }
 };
@@ -65,6 +67,9 @@ SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
   : ChatPlugin(parent)
   , m_port(0)
 {
+  ChatCore::settings()->setLocalDefault(LS("SendFile/Port"), 0);
+  ChatCore::settings()->setLocalDefault(LS("SendFile/Dir"), QDir::fromNativeSeparators(QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation)));
+
   m_port = getPort();
 
   m_tr = new SendFileTr();
@@ -168,23 +173,22 @@ void SendFilePluginImpl::openUrl(const QUrl &url)
 
   if (action == LS("cancel"))
     cancel(id);
+  else if (action == LS("saveas"))
+    saveAs(id);
 }
 
 
 /*!
- * Определение порта для передачи файлов, если порт не определён в настройках, используется случайный порт в диапазоне от 20000 до 65536.
+ * Определение порта для передачи файлов, если порт не определён в настройках, используется случайный порт в диапазоне от 49152 до 65536.
  */
 quint16 SendFilePluginImpl::getPort() const
 {
   QString key = LS("SendFile/Port");
-  quint16 port = 0;
-
-  ChatCore::settings()->setLocalDefault(key, 0);
-  port = SCHAT_OPTION(key).toInt();
+  quint16 port = SCHAT_OPTION(key).toInt();
 
   if (!port) {
     qrand();
-    port = qrand() % 45536 + 20000;
+    port = qrand() % 16383 + 49152;
     ChatCore::settings()->setValue(key, port);
   }
 
@@ -255,6 +259,29 @@ void SendFilePluginImpl::incomingFile(const MessagePacket &packet)
   TabWidget::add(message);
 
   m_transactions[transaction->id()] = transaction;
+}
+
+
+/*!
+ * Выбор места сохранения файла.
+ */
+void SendFilePluginImpl::saveAs(const QByteArray &id)
+{
+  SendFileTransaction transaction = m_transactions.value(id);
+  if (!transaction)
+    return;
+
+  QDir dir(SCHAT_OPTION(LS("SendFile/Dir")).toString());
+  if (!dir.exists())
+    dir.setPath(QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation));
+
+  QString fileName = dir.path() + LC('/') + transaction->fileName();
+  fileName = QFileDialog::getSaveFileName(TabWidget::i(), tr("Save"), fileName, LS("*.") + QFileInfo(fileName).suffix() + LS(";;*.*"));
+  if (fileName.isEmpty())
+    return;
+
+  ChatCore::settings()->setValue(LS("SendFile/Dir"), QFileInfo(fileName).absolutePath());
+  emit accepted(SimpleID::encode(transaction->id()), QFileInfo(fileName).fileName());
 }
 
 
