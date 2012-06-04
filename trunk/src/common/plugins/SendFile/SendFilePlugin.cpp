@@ -22,8 +22,10 @@
 #include <QDesktopServices>
 #include <QtPlugin>
 #include <QWebFrame>
+#include <QHostAddress>
 
 #include "ChatCore.h"
+#include "ChatSettings.h"
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "DateTime.h"
@@ -61,7 +63,10 @@ protected:
 
 SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
   : ChatPlugin(parent)
+  , m_port(0)
 {
+  m_port = getPort();
+
   m_tr = new SendFileTr();
   new SendFileMessages(this);
 
@@ -90,9 +95,11 @@ bool SendFilePluginImpl::sendFile(const QByteArray &dest, const QString &file)
   if (SimpleID::typeOf(dest) != SimpleID::UserId)
     return false;
 
-  SendFileTransaction transaction(new SendFile::Transaction(dest, file));
+  SendFileTransaction transaction(new SendFile::Transaction(dest, ChatCore::randomId(), file));
   if (!transaction->isValid())
     return false;
+
+  transaction->setLocal(localHosts());
 
   MessagePacket packet(new MessageNotice(ChatClient::id(), dest, LS("file"), DateTime::utc(), transaction->id()));
   packet->setCommand(packet->text());
@@ -119,6 +126,11 @@ bool SendFilePluginImpl::sendFile(const QByteArray &dest, const QString &file)
  */
 void SendFilePluginImpl::read(const MessagePacket &packet)
 {
+  qDebug() << "----------------";
+  qDebug() << "command:" << packet->command();
+  qDebug() << "text:   " << packet->text();
+  qDebug() << "json:   " << packet->raw();
+  qDebug() << "----------------";
   if (packet->text() == LS("file"))
     incomingFile(packet);
   else if (packet->text() == LS("cancel"))
@@ -156,6 +168,33 @@ void SendFilePluginImpl::openUrl(const QUrl &url)
 
   if (action == LS("cancel"))
     cancel(id);
+}
+
+
+/*!
+ * Определение порта для передачи файлов, если порт не определён в настройках, используется случайный порт в диапазоне от 20000 до 65536.
+ */
+quint16 SendFilePluginImpl::getPort() const
+{
+  QString key = LS("SendFile/Port");
+  quint16 port = 0;
+
+  ChatCore::settings()->setLocalDefault(key, 0);
+  port = SCHAT_OPTION(key).toInt();
+
+  if (!port) {
+    qrand();
+    port = qrand() % 45536 + 20000;
+    ChatCore::settings()->setValue(key, port);
+  }
+
+  return port;
+}
+
+
+SendFile::Hosts SendFilePluginImpl::localHosts() const
+{
+  return SendFile::Hosts(ChatClient::io()->json().value(LS("host")).toString(), m_port, ChatClient::io()->localAddress().toString(), m_port);
 }
 
 
@@ -204,6 +243,8 @@ void SendFilePluginImpl::incomingFile(const MessagePacket &packet)
   SendFileTransaction transaction(new SendFile::Transaction(packet->sender(), packet->id(), packet->json()));
   if (!transaction->isValid())
     return;
+
+  transaction->setLocal(localHosts());
 
   Message message(packet->id(), packet->sender(), LS("file"), LS("addFileMessage"));
   message.setAuthor(packet->sender());
