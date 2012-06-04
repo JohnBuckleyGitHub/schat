@@ -140,6 +140,8 @@ void SendFilePluginImpl::read(const MessagePacket &packet)
     incomingFile(packet);
   else if (packet->text() == LS("cancel"))
     cancel(packet);
+  else if (packet->text() == LS("accept"))
+    accept(packet);
 }
 
 
@@ -178,6 +180,15 @@ void SendFilePluginImpl::openUrl(const QUrl &url)
 }
 
 
+MessagePacket SendFilePluginImpl::reply(const SendFileTransaction &transaction, const QString &text)
+{
+  MessagePacket packet(new MessageNotice(ChatClient::id(), transaction->user(), text, DateTime::utc(), transaction->id()));
+  packet->setCommand(LS("file"));
+  packet->setDirection(Notice::Internal);
+  return packet;
+}
+
+
 /*!
  * Определение порта для передачи файлов, если порт не определён в настройках, используется случайный порт в диапазоне от 49152 до 65536.
  */
@@ -202,6 +213,21 @@ SendFile::Hosts SendFilePluginImpl::localHosts() const
 }
 
 
+void SendFilePluginImpl::accept(const MessagePacket &packet)
+{
+  SendFileTransaction transaction = m_transactions.value(packet->id());
+  if (!transaction || transaction->role() != SendFile::SenderRole)
+    return;
+
+  SendFile::Hosts hosts(packet->json().value(LS("hosts")).toList());
+  if (!hosts.isValid())
+    return;
+
+  transaction->setRemote(hosts);
+  emit accepted(SimpleID::encode(transaction->id()), transaction->fileName());
+}
+
+
 /*!
  * Обработка отмены передачи файла вызванной удалённым клиентом.
  */
@@ -213,26 +239,6 @@ void SendFilePluginImpl::cancel(const MessagePacket &packet)
 
   m_transactions.remove(packet->id());
   emit cancelled(SimpleID::encode(packet->id()));
-}
-
-
-/*!
- * Обработка локально вызванной отмены передачи файла.
- */
-void SendFilePluginImpl::cancel(const QByteArray &id)
-{
-  SendFileTransaction transaction = m_transactions.value(id);
-  if (!transaction)
-    return;
-
-  m_transactions.remove(id);
-
-  MessagePacket packet(new MessageNotice(ChatClient::id(), transaction->user(), LS("cancel"), DateTime::utc(), transaction->id()));
-  packet->setCommand(LS("file"));
-  packet->setDirection(Notice::Internal);
-  ChatClient::io()->send(packet, true);
-
-  emit cancelled(SimpleID::encode(id));
 }
 
 
@@ -263,6 +269,22 @@ void SendFilePluginImpl::incomingFile(const MessagePacket &packet)
 
 
 /*!
+ * Обработка локально вызванной отмены передачи файла.
+ */
+void SendFilePluginImpl::cancel(const QByteArray &id)
+{
+  SendFileTransaction transaction = m_transactions.value(id);
+  if (!transaction)
+    return;
+
+  m_transactions.remove(id);
+  ChatClient::io()->send(reply(transaction, LS("cancel")), true);
+
+  emit cancelled(SimpleID::encode(id));
+}
+
+
+/*!
  * Выбор места сохранения файла.
  */
 void SendFilePluginImpl::saveAs(const QByteArray &id)
@@ -280,8 +302,15 @@ void SendFilePluginImpl::saveAs(const QByteArray &id)
   if (fileName.isEmpty())
     return;
 
+  transaction->saveAs(fileName);
   ChatCore::settings()->setValue(LS("SendFile/Dir"), QFileInfo(fileName).absolutePath());
   emit accepted(SimpleID::encode(transaction->id()), QFileInfo(fileName).fileName());
+
+  MessagePacket packet = reply(transaction, LS("accept"));
+  QVariantMap data;
+  data[LS("hosts")] = transaction->local().toJSON();
+  packet->setData(data);
+  ChatClient::io()->send(packet, true);
 }
 
 

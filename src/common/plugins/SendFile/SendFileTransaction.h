@@ -98,8 +98,8 @@ class Transaction
 public:
   Transaction(const QByteArray &dest, const QByteArray &id, const QString &file);
   Transaction(const QByteArray &sender, const QByteArray &id, const QVariantMap &data);
-  bool addLocalFile(const QString &name);
   bool isValid() const;
+  bool setLocalFile(const QString &name);
   inline const File& file() const           { return m_file; }
   inline const Hosts& local() const         { return m_local; }
   inline const Hosts& remote() const        { return m_remote; }
@@ -110,6 +110,7 @@ public:
   inline void setRemote(const Hosts &hosts) { m_remote = hosts; }
   QString fileName() const;
   QVariantMap toReceiver() const;
+  void saveAs(const QString &name);
 
 private:
   File m_file;         ///< Список файлов.

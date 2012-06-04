@@ -49,11 +49,16 @@ private slots:
   void openUrl(const QUrl &url);
 
 private:
+  MessagePacket reply(const SendFileTransaction &transaction, const QString &text);
   quint16 getPort() const;
   SendFile::Hosts localHosts() const;
+
+  void accept(const MessagePacket &packet);
   void cancel(const MessagePacket &packet);
-  void cancel(const QByteArray &id);
   void incomingFile(const MessagePacket &packet);
+
+  // Реакция на действия пользователя.
+  void cancel(const QByteArray &id);
   void saveAs(const QByteArray &id);
 
   QHash<QByteArray, SendFileTransaction> m_transactions; ///< Отправленные файлы и входящие файлы.
