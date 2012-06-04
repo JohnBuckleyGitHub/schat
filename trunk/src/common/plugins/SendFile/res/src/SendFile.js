@@ -36,6 +36,14 @@ var SendFileUtils = {
     SendFileUtils.setStateText(id, 'file-cancelled');
     $('#' + id + ' .file-buttons').remove();
     $('#' + id + ' .file-progress').remove();
+  },
+
+  accepted: function(id, fileName)
+  {
+    console.log(fileName);
+    SendFileUtils.setStateText(id, 'file-connecting');
+    $('#' + id + ' .file-name').text(fileName);
+    $('#' + id + ' .btn-file-saveas').remove();
   }
 };
 
@@ -70,4 +78,5 @@ if (typeof SendFile === "undefined") {
 }
 else {
   SendFile.cancelled.connect(SendFileUtils.cancelled);
+  SendFile.accepted.connect(SendFileUtils.accepted);
 }
