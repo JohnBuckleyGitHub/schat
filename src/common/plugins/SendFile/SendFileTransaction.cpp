@@ -18,19 +18,64 @@
 
 #include <QFile>
 #include <QFileInfo>
+#include <QHostAddress>
 
-#include "ChatCore.h"
 #include "SendFileTransaction.h"
 #include "sglobal.h"
 
 namespace SendFile {
 
-Transaction::Transaction(const QByteArray &dest, const QString &file)
-  : m_user(dest)
+Hosts::Hosts(const QVariantList &json)
+  : m_externalPort(0)
+  , m_internalPort(0)
+{
+  if (json.size() != 4)
+    return;
+
+  m_externalAddress = json.at(0).toString();
+  m_externalPort    = json.at(1).toInt();
+  m_internalAddress = json.at(2).toString();
+  m_internalPort    = json.at(3).toInt();
+}
+
+
+bool Hosts::isValid() const
+{
+  if (!m_externalPort)
+    return false;
+
+  if (!m_internalPort)
+    return false;
+
+  if (QHostAddress(m_externalAddress).isNull())
+    return false;
+
+  if (QHostAddress(m_internalPort).isNull())
+    return false;
+
+  return true;
+}
+
+
+QVariantList Hosts::toJSON() const
+{
+  QVariantList out;
+  if (!isValid())
+    return out;
+
+  out.append(m_externalAddress);
+  out.append(m_externalPort);
+  out.append(m_internalAddress);
+  out.append(m_internalPort);
+  return out;
+}
+
+
+Transaction::Transaction(const QByteArray &dest, const QByteArray &id, const QString &file)
+  : m_id(id)
+  , m_user(dest)
   , m_role(SenderRole)
 {
-  m_id = ChatCore::randomId();
-
   addLocalFile(file);
 }
 
@@ -40,6 +85,10 @@ Transaction::Transaction(const QByteArray &sender, const QByteArray &id, const Q
   , m_user(sender)
   , m_role(ReceiverRole)
 {
+  m_remote = Hosts(data.value(LS("hosts")).toList());
+  if (!m_remote.isValid())
+    return;
+
   m_file.name = data.value(LS("name")).toString();
   m_file.size = data.value(LS("size")).toLongLong();
 }
@@ -80,9 +129,10 @@ QVariantMap Transaction::toReceiver() const
   QVariantMap json;
   if (!isValid())
     return json;
-;
-  json[LS("name")] = fileName();
-  json[LS("size")] = m_file.size;
+
+  json[LS("name")]  = fileName();
+  json[LS("size")]  = m_file.size;
+  json[LS("hosts")] = m_local.toJSON();
 
   return json;
 }

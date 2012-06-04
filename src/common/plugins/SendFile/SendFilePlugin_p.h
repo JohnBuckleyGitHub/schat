@@ -48,11 +48,14 @@ private slots:
   void openUrl(const QUrl &url);
 
 private:
+  quint16 getPort() const;
+  SendFile::Hosts localHosts() const;
   void cancel(const MessagePacket &packet);
   void cancel(const QByteArray &id);
   void incomingFile(const MessagePacket &packet);
 
   QHash<QByteArray, SendFileTransaction> m_transactions; ///< Отправленные файлы и входящие файлы.
+  quint16 m_port;                                        ///< Порт который будет использоваться для передачи файлов.
   SendFileTr *m_tr;                                      ///< Класс перевода строк.
 };
 
