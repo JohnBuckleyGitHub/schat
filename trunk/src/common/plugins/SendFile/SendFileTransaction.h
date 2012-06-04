@@ -21,6 +21,7 @@
 
 #include <QSharedPointer>
 #include <QString>
+#include <QVariant>
 
 namespace SendFile {
 
