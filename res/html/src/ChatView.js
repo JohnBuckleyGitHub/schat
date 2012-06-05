@@ -617,7 +617,8 @@ if (typeof ChatView === "undefined") {
     translate: function(key) { return key; },
     setTabPage: function(id, page) {},
     feed: function(id, name) { return {}; },
-    randomId: function() { return ''; }
+    randomId: function() { return ''; },
+    bytesToHuman: function(size) { return '0 bytes'; }
   };
 
   ChatView = {
