@@ -28,8 +28,8 @@ namespace SendFile {
 
 Worker::Worker(quint16 port, QObject *parent)
   : QTcpServer(parent)
+  , m_port(port)
 {
-  listen(QHostAddress::Any, port);
 }
 
 
@@ -42,6 +42,9 @@ void Worker::addTask(const QVariantMap &data)
 
   if (!task->init())
     return;
+
+  if (task->transaction()->role() == SenderRole && !isListening())
+    listen(QHostAddress::Any, m_port);
 
   qDebug() << "check ok";
 }
