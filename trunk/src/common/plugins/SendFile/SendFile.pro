@@ -23,12 +23,18 @@ HEADERS  = \
    SendFileMessages.h \
    SendFilePlugin.h \
    SendFilePlugin_p.h \
+   SendFileTask.h \
+   SendFileThread.h \
    SendFileTransaction.h \
+   SendFileWorker.h \
 
 SOURCES  = \
    SendFileMessages.cpp \
    SendFilePlugin.cpp \
+   SendFileTask.cpp \
+   SendFileThread.cpp \
    SendFileTransaction.cpp \
+   SendFileWorker.cpp \
 
 RESOURCES += SendFile.qrc
 
