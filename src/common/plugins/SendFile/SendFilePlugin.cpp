@@ -37,6 +37,7 @@
 #include "SendFileMessages.h"
 #include "SendFilePlugin.h"
 #include "SendFilePlugin_p.h"
+#include "SendFileThread.h"
 #include "sglobal.h"
 #include "Tr.h"
 #include "Translation.h"
@@ -78,6 +79,8 @@ SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
   ChatCore::translation()->addOther(LS("sendfile"));
   QDesktopServices::setUrlHandler(LS("chat-sendfile"), this, "openUrl");
 
+  m_thread = new SendFile::Thread(m_port);
+
   connect(ChatViewHooks::i(), SIGNAL(initHook(ChatView*)), SLOT(init(ChatView*)));
   connect(ChatViewHooks::i(), SIGNAL(loadFinishedHook(ChatView*)), SLOT(loadFinished(ChatView*)));
 }
@@ -111,6 +114,8 @@ bool SendFilePluginImpl::sendFile(const QByteArray &dest, const QString &file)
   packet->setData(transaction->toReceiver());
 
   if (ChatClient::io()->send(packet, true)) {
+    m_thread->add(transaction);
+
     Message message(transaction->id(), dest, LS("file"), LS("addFileMessage"));
     message.setAuthor(ChatClient::id());
     message.setDate();

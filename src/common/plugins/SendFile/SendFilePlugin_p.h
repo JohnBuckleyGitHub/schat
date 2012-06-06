@@ -28,6 +28,10 @@
 class ChatView;
 class SendFileTr;
 
+namespace SendFile {
+  class Thread;
+}
+
 class SendFilePluginImpl : public ChatPlugin
 {
   Q_OBJECT
@@ -63,6 +67,7 @@ private:
 
   QHash<QByteArray, SendFileTransaction> m_transactions; ///< Отправленные файлы и входящие файлы.
   quint16 m_port;                                        ///< Порт который будет использоваться для передачи файлов.
+  SendFile::Thread *m_thread;                            ///< Рабочий поток передачи файлов.
   SendFileTr *m_tr;                                      ///< Класс перевода строк.
 };
 

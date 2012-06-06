@@ -99,6 +99,7 @@ class Transaction
 public:
   Transaction(const QByteArray &dest, const QByteArray &id, const QString &file);
   Transaction(const QByteArray &sender, const QByteArray &id, const QVariantMap &data);
+  Transaction(const QVariantMap &data);
   bool isValid() const;
   bool setLocalFile(const QString &name);
   inline const File& file() const           { return m_file; }
@@ -110,6 +111,7 @@ public:
   inline void setLocal(const Hosts &hosts)  { m_local = hosts; }
   inline void setRemote(const Hosts &hosts) { m_remote = hosts; }
   QString fileName() const;
+  QVariantMap toMap() const;
   QVariantMap toReceiver() const;
   void saveAs(const QString &name);
 

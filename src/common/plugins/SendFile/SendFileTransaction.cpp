@@ -20,6 +20,7 @@
 #include <QFileInfo>
 #include <QHostAddress>
 
+#include "net/SimpleID.h"
 #include "SendFileTransaction.h"
 #include "sglobal.h"
 
@@ -94,6 +95,21 @@ Transaction::Transaction(const QByteArray &sender, const QByteArray &id, const Q
 }
 
 
+Transaction::Transaction(const QVariantMap &data)
+{
+  m_local  = Hosts(data.value(LS("local")).toList());
+  m_remote = Hosts(data.value(LS("remote")).toList());
+  m_role   = static_cast<SendFile::Role>(data.value(LS("role")).toInt());
+  m_id     = data.value(LS("id")).toByteArray();
+  if (SimpleID::typeOf(m_id) != SimpleID::MessageId)
+    return;
+
+  m_user      = data.value(LS("user")).toByteArray();
+  m_file.name = data.value(LS("name")).toString();
+  m_file.size = data.value(LS("size")).toLongLong();
+}
+
+
 bool Transaction::isValid() const
 {
   if (m_file.name.isEmpty())
@@ -118,6 +134,23 @@ bool Transaction::setLocalFile(const QString &name)
 QString Transaction::fileName() const
 {
   return QFileInfo(m_file.name).fileName();
+}
+
+
+/*!
+ * Сериализация в QVariantMap, используется для передачи в рабочий поток.
+ */
+QVariantMap Transaction::toMap() const
+{
+  QVariantMap out;
+  out[LS("role")]   = m_role;
+  out[LS("id")]     = m_id;
+  out[LS("user")]   = m_user;
+  out[LS("name")]   = m_file.name;
+  out[LS("size")]   = m_file.size;
+  out[LS("local")]  = m_local.toJSON();
+  out[LS("remote")] = m_remote.toJSON();
+  return out;
 }
 
 
