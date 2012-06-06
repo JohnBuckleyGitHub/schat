@@ -40,6 +40,9 @@ public:
 
 public slots:
   void addTask(const QVariantMap &data);
+
+private:
+  quint16 m_port; ///< Порт для передачи данных.
 };
 
 } // namespace SendFile
