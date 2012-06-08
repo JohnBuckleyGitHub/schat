@@ -47,7 +47,6 @@ public:
 
 private slots:
   void accepted();
-  void rejected();
 
 private:
   void discovery(const QString &host, quint16 port);

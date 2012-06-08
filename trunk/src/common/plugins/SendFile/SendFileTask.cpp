@@ -81,6 +81,10 @@ void Task::setSocket(Socket *socket)
   m_socket = socket;
   m_socket->accept();
   m_socket->setFile(m_transaction->role(), m_file);
+
+  foreach (Socket *socket, m_discovery) {
+    socket->leave(true);
+  }
 }
 
 
@@ -103,18 +107,6 @@ void Task::accepted()
 }
 
 
-void Task::rejected()
-{
-  qDebug() << "Task::rejected()" << m_discovery.indexOf(qobject_cast<Socket*>(sender()));
-  Socket *socket = qobject_cast<Socket*>(sender());
-  if (!socket)
-    return;
-
-  m_discovery.removeAll(socket);
-  socket->deleteLater();
-}
-
-
 /*!
  * Попытка подключения к удалённой стороне.
  *
@@ -127,7 +119,6 @@ void Task::discovery(const QString &host, quint16 port)
 
   Socket *socket = new Socket(host, port, m_transaction->id(), this);
   connect(socket, SIGNAL(accepted()), SLOT(accepted()));
-  connect(socket, SIGNAL(rejected()), SLOT(rejected()));
   m_discovery.append(socket);
 }
 

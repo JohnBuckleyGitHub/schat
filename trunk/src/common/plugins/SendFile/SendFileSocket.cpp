@@ -316,7 +316,8 @@ void Socket::readHandshake()
   }
   else if (code == 'R') {
     leave();
-    emit rejected();
+    setMode(DiscoveringMode);
+    m_timer->start(2000, this);
   }
   else if (code == 'A') {
     setMode(DataMode);
