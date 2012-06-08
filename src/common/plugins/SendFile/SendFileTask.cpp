@@ -16,19 +16,23 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <qDebug>
+
 #include <QFile>
 #include <QBuffer>
 #include <QUdpSocket>
 
+#include "SendFileSocket.h"
 #include "SendFileTask.h"
-#include "SendFileWorker.h"
 #include "SendFileTransaction.h"
+#include "SendFileWorker.h"
 
 namespace SendFile {
 
 Task::Task(Worker *worker, const QVariantMap &data)
   : QObject(worker)
   , m_file(0)
+  , m_socket(0)
   , m_worker(worker)
 {
   m_transaction = new Transaction(data);
@@ -44,7 +48,87 @@ Task::~Task()
 
 bool Task::init()
 {
-  return m_file->open(m_transaction->role() ? QIODevice::WriteOnly : QIODevice::ReadOnly);
+  if (!m_file->open(m_transaction->role() ? QIODevice::WriteOnly : QIODevice::ReadOnly))
+    return false;
+
+  discovery();
+  return true;
+}
+
+
+void Task::setSocket(Socket *socket)
+{
+  if (m_socket)
+    return;
+
+  m_socket = socket;
+  m_socket->accept();
+  m_socket->setFile(m_transaction->role(), m_file);
+}
+
+
+void Task::accepted()
+{
+  qDebug() << "Task::accepted()" << m_discovery.indexOf(qobject_cast<Socket*>(sender()));
+  Socket *socket = qobject_cast<Socket*>(sender());
+  if (!socket)
+    return;
+
+  if (!m_socket) {
+    m_socket = socket;
+    m_socket->setFile(m_transaction->role(), m_file);
+    m_discovery.removeAll(socket);
+  }
+
+  foreach (Socket *socket, m_discovery) {
+    socket->leave(true);
+  }
+}
+
+
+void Task::rejected()
+{
+  qDebug() << "Task::rejected()" << m_discovery.indexOf(qobject_cast<Socket*>(sender()));
+  Socket *socket = qobject_cast<Socket*>(sender());
+  if (!socket)
+    return;
+
+  m_discovery.removeAll(socket);
+  socket->deleteLater();
+}
+
+
+/*!
+ * Попытка подключения к удалённой стороне.
+ */
+void Task::discovery()
+{
+  if (!m_transaction->remote().isValid())
+    return;
+
+  QString host = m_transaction->remote().address(Internal);
+  quint16 port = m_transaction->remote().port(Internal);
+  discovery(host, port);
+
+  if (m_transaction->remote().address() != host || m_transaction->remote().port() != port)
+    discovery(m_transaction->remote().address(), m_transaction->remote().port());
+}
+
+
+/*!
+ * Попытка подключения к удалённой стороне.
+ *
+ * \param host Адрес удалённой стороны.
+ * \param port Порт удалённой стороны.
+ */
+void Task::discovery(const QString &host, quint16 port)
+{
+  qDebug() << "Task::discovery()" << host << port;
+
+  Socket *socket = new Socket(host, port, m_transaction->id(), this);
+  connect(socket, SIGNAL(accepted()), SLOT(accepted()));
+  connect(socket, SIGNAL(rejected()), SLOT(rejected()));
+  m_discovery.append(socket);
 }
 
 } // namespace SendFile

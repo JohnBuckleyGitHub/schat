@@ -41,8 +41,15 @@ public:
 public slots:
   void addTask(const QVariantMap &data);
 
+private slots:
+  void handshake(const QByteArray &id);
+
+protected:
+  void incomingConnection(int socketDescriptor);
+
 private:
-  quint16 m_port; ///< Порт для передачи данных.
+  QHash<QByteArray, SendFileTask> m_tasks; ///< Задачи по передаче файлов, по одной на файл.
+  quint16 m_port;                          ///< Порт для передачи данных.
 };
 
 } // namespace SendFile
