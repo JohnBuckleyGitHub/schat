@@ -21,8 +21,9 @@
 #include <QDateTime>
 #define TIMESTAMP QDateTime::currentDateTime().toString("hh:mm:ss.zzz").toLatin1().constData()
 
-#include "SendFileWorker.h"
+#include "SendFileSocket.h"
 #include "SendFileTask.h"
+#include "SendFileWorker.h"
 
 namespace SendFile {
 
@@ -30,9 +31,13 @@ Worker::Worker(quint16 port, QObject *parent)
   : QTcpServer(parent)
   , m_port(port)
 {
+  listen(QHostAddress::Any, m_port);
 }
 
 
+/*!
+ * Добавление задачи.
+ */
 void Worker::addTask(const QVariantMap &data)
 {
   qDebug() << TIMESTAMP << "Worker::add()                      " << QThread::currentThread();
@@ -43,10 +48,42 @@ void Worker::addTask(const QVariantMap &data)
   if (!task->init())
     return;
 
-  if (task->transaction()->role() == SenderRole && !isListening())
-    listen(QHostAddress::Any, m_port);
-
   qDebug() << "check ok";
+  m_tasks[task->transaction()->id()] = task;
+}
+
+
+/*!
+ * Обработка запроса на авторизацию.
+ */
+void Worker::handshake(const QByteArray &id)
+{
+  qDebug() << "sender" << sender();
+  Socket *socket = qobject_cast<Socket*>(sender());
+  if (!socket)
+    return;
+
+  if (!m_tasks.contains(id))
+    socket->reject();
+
+  SendFileTask task = m_tasks.value(id);
+  if (!task || task->socket())
+    socket->reject();
+
+  task->setSocket(socket);
+}
+
+
+void Worker::incomingConnection(int socketDescriptor)
+{
+  qDebug() << TIMESTAMP << "Worker::incomingConnection()       " << QThread::currentThread() << socketDescriptor;
+  Socket *socket = new Socket(this);
+  if (!socket->setSocketDescriptor(socketDescriptor)) {
+    socket->deleteLater();
+    return;
+  }
+
+  connect(socket, SIGNAL(handshake(QByteArray)), SLOT(handshake(QByteArray)));
 }
 
 } // namespace SendFile

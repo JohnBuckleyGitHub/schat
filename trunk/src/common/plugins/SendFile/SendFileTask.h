@@ -25,6 +25,7 @@
 #include <QVariant>
 
 class QFile;
+class Socket;
 
 namespace SendFile {
 
@@ -38,13 +39,24 @@ class Task : public QObject
 public:
   Task(Worker *worker, const QVariantMap &data);
   ~Task();
-  inline Transaction *transaction() const { return m_transaction; }
   bool init();
+  inline Socket *socket() const           { return m_socket; }
+  inline Transaction *transaction() const { return m_transaction; }
+  void setSocket(Socket *socket);
+
+private slots:
+  void accepted();
+  void rejected();
 
 private:
-  QFile *m_file;              ///< Открытый файл.
-  Transaction *m_transaction; ///< Транзакция.
-  Worker *m_worker;           ///< Указатель на объект Worker.
+  void discovery();
+  void discovery(const QString &host, quint16 port);
+
+  QFile *m_file;               ///< Открытый файл.
+  QList<Socket *> m_discovery; ///< Список сокетов находящихся в состоянии поиска.
+  Socket *m_socket;            ///< Сокет для передачи данных.
+  Transaction *m_transaction;  ///< Транзакция.
+  Worker *m_worker;            ///< Указатель на объект Worker.
 };
 
 } // namespace SendFile

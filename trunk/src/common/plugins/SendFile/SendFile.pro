@@ -23,6 +23,7 @@ HEADERS  = \
    SendFileMessages.h \
    SendFilePlugin.h \
    SendFilePlugin_p.h \
+   SendFileSocket.h \
    SendFileTask.h \
    SendFileThread.h \
    SendFileTransaction.h \
@@ -31,6 +32,7 @@ HEADERS  = \
 SOURCES  = \
    SendFileMessages.cpp \
    SendFilePlugin.cpp \
+   SendFileSocket.cpp \
    SendFileTask.cpp \
    SendFileThread.cpp \
    SendFileTransaction.cpp \
