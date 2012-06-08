@@ -42,6 +42,7 @@ public slots:
   void addTask(const QVariantMap &data);
 
 private slots:
+  void accepted();
   void handshake(const QByteArray &id);
 
 protected:

@@ -63,8 +63,22 @@ void Worker::addTask(const QVariantMap &data)
 }
 
 
+void Worker::accepted()
+{
+  qDebug() << "Worker::accepted()";
+
+  Socket *socket = qobject_cast<Socket*>(sender());
+  if (!socket)
+    return;
+
+  SendFileTask task = m_tasks.value(socket->id());
+  if (task)
+    task->setSocket(socket);
+}
+
+
 /*!
- * Обработка запроса на авторизацию.
+ * Обработка запроса на авторизацию от входящего подключения.
  */
 void Worker::handshake(const QByteArray &id)
 {
@@ -80,7 +94,7 @@ void Worker::handshake(const QByteArray &id)
   if (!task || task->socket())
     socket->reject();
   else
-    task->setSocket(socket);
+    socket->accept();
 }
 
 
@@ -93,6 +107,7 @@ void Worker::incomingConnection(int socketDescriptor)
     return;
   }
 
+  connect(socket, SIGNAL(accepted()), SLOT(accepted()));
   connect(socket, SIGNAL(handshake(QByteArray)), SLOT(handshake(QByteArray)));
 }
 

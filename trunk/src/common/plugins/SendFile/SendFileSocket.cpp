@@ -72,17 +72,18 @@ Socket::~Socket()
 }
 
 
-void Socket::accept()
+void Socket::accept(char code)
 {
+  qDebug() << "Socket::accept()" << this;
+
   qint32 size = 1;
   QByteArray data;
 
   data.reserve(size + 4);
   data.append((char*)&size, 4);
-  data.append('A');
+  data.append(code);
 
   write(data);
-  setMode(DataMode);
 }
 
 
@@ -244,7 +245,7 @@ void Socket::readyRead()
   forever {
     if (m_mode == DataMode && m_role == ReceiverRole) {
       qint64 bytes = bytesAvailable();
-      qDebug() << "WRITE DATA" << m_file->write(read(bytes));
+      m_file->write(read(bytes));
       m_file->flush();
       return;
     }
@@ -320,6 +321,11 @@ void Socket::readHandshake()
     m_timer->start(2000, this);
   }
   else if (code == 'A') {
+    setMode(DataMode);
+    accept('a');
+    emit accepted();
+  }
+  else if (code == 'a') {
     setMode(DataMode);
     emit accepted();
   }
