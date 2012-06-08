@@ -48,6 +48,8 @@ protected:
   void incomingConnection(int socketDescriptor);
 
 private:
+  void updateTask(const QByteArray &id, const QVariantMap &data);
+
   QHash<QByteArray, SendFileTask> m_tasks; ///< Задачи по передаче файлов, по одной на файл.
   quint16 m_port;                          ///< Порт для передачи данных.
 };

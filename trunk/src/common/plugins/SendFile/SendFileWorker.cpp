@@ -20,10 +20,12 @@
 #include <QDebug>
 #include <QDateTime>
 #define TIMESTAMP QDateTime::currentDateTime().toString("hh:mm:ss.zzz").toLatin1().constData()
+#include "net/SimpleID.h"
 
 #include "SendFileSocket.h"
 #include "SendFileTask.h"
 #include "SendFileWorker.h"
+#include "sglobal.h"
 
 namespace SendFile {
 
@@ -41,6 +43,14 @@ Worker::Worker(quint16 port, QObject *parent)
 void Worker::addTask(const QVariantMap &data)
 {
   qDebug() << TIMESTAMP << "Worker::add()                      " << QThread::currentThread();
+  qDebug() << "^^^^^" << SimpleID::encode(data.value("id").toByteArray());
+
+  QByteArray id = data.value("id").toByteArray();
+  if (m_tasks.contains(id)) {
+    updateTask(id, data);
+    return;
+  }
+
   SendFileTask task(new Task(this, data));
   if (!task->transaction()->isValid())
     return;
@@ -49,7 +59,7 @@ void Worker::addTask(const QVariantMap &data)
     return;
 
   qDebug() << "check ok";
-  m_tasks[task->transaction()->id()] = task;
+  m_tasks[id] = task;
 }
 
 
@@ -58,7 +68,7 @@ void Worker::addTask(const QVariantMap &data)
  */
 void Worker::handshake(const QByteArray &id)
 {
-  qDebug() << "sender" << sender();
+  qDebug() << "Worker::handshake()" << sender();
   Socket *socket = qobject_cast<Socket*>(sender());
   if (!socket)
     return;
@@ -69,8 +79,8 @@ void Worker::handshake(const QByteArray &id)
   SendFileTask task = m_tasks.value(id);
   if (!task || task->socket())
     socket->reject();
-
-  task->setSocket(socket);
+  else
+    task->setSocket(socket);
 }
 
 
@@ -84,6 +94,25 @@ void Worker::incomingConnection(int socketDescriptor)
   }
 
   connect(socket, SIGNAL(handshake(QByteArray)), SLOT(handshake(QByteArray)));
+}
+
+
+void Worker::updateTask(const QByteArray &id, const QVariantMap &data)
+{
+  qDebug() << "Worker::updateTask()";
+
+  SendFileTask task = m_tasks.value(id);
+  if (!task)
+    return;
+
+  if (task->transaction()->role() == SenderRole && !task->transaction()->remote().isValid()) {
+    qDebug() << "setRemote(())";
+    Hosts hosts(data.value(LS("remote")).toList());
+    if (hosts.isValid()) {
+      task->transaction()->setRemote(hosts);
+      task->discovery();
+    }
+  }
 }
 
 } // namespace SendFile
