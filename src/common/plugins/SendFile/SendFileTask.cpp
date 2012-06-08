@@ -75,11 +75,11 @@ void Task::discovery()
 
 void Task::setSocket(Socket *socket)
 {
+  qDebug() << "Task::setSocket()" << m_socket;
   if (m_socket)
-    return;
+    m_socket->leave(true);
 
   m_socket = socket;
-  m_socket->accept();
   m_socket->setFile(m_transaction->role(), m_file);
 
   foreach (Socket *socket, m_discovery) {

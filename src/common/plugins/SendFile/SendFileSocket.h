@@ -43,7 +43,8 @@ public:
   Socket(QObject *parent = 0);
   Socket(const QString& host, quint16 port, const QByteArray &id, QObject *parent = 0);
   ~Socket();
-  void accept();
+  inline const QByteArray& id() const { return m_id; }
+  void accept(char code = 'A');
   void leave(bool remove = false);
   void reject();
   void setFile(int role, QFile *file);
