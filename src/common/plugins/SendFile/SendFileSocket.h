@@ -52,7 +52,6 @@ signals:
   void accepted();
   void finished();
   void handshake(const QByteArray &id);
-  void rejected();
 
 protected:
   void timerEvent(QTimerEvent *event);
