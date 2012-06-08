@@ -56,6 +56,23 @@ bool Task::init()
 }
 
 
+/*!
+ * Попытка подключения к удалённой стороне.
+ */
+void Task::discovery()
+{
+  if (m_socket || !m_transaction->remote().isValid())
+    return;
+
+  QString host = m_transaction->remote().address(Internal);
+  quint16 port = m_transaction->remote().port(Internal);
+  discovery(host, port);
+
+  if (m_transaction->remote().address() != host || m_transaction->remote().port() != port)
+    discovery(m_transaction->remote().address(), m_transaction->remote().port());
+}
+
+
 void Task::setSocket(Socket *socket)
 {
   if (m_socket)
@@ -95,23 +112,6 @@ void Task::rejected()
 
   m_discovery.removeAll(socket);
   socket->deleteLater();
-}
-
-
-/*!
- * Попытка подключения к удалённой стороне.
- */
-void Task::discovery()
-{
-  if (!m_transaction->remote().isValid())
-    return;
-
-  QString host = m_transaction->remote().address(Internal);
-  quint16 port = m_transaction->remote().port(Internal);
-  discovery(host, port);
-
-  if (m_transaction->remote().address() != host || m_transaction->remote().port() != port)
-    discovery(m_transaction->remote().address(), m_transaction->remote().port());
 }
 
 

@@ -218,6 +218,10 @@ SendFile::Hosts SendFilePluginImpl::localHosts() const
 }
 
 
+/*!
+ * Принятие удалённой стороной входящего файла.
+ * В поле \b hosts передаются адреса и порты удалённой стороны.
+ */
 void SendFilePluginImpl::accept(const MessagePacket &packet)
 {
   SendFileTransaction transaction = m_transactions.value(packet->id());
@@ -229,6 +233,7 @@ void SendFilePluginImpl::accept(const MessagePacket &packet)
     return;
 
   transaction->setRemote(hosts);
+  m_thread->add(transaction);
   emit accepted(SimpleID::encode(transaction->id()), transaction->fileName());
 }
 
@@ -308,6 +313,8 @@ void SendFilePluginImpl::saveAs(const QByteArray &id)
     return;
 
   transaction->saveAs(fileName);
+  m_thread->add(transaction);
+
   ChatCore::settings()->setValue(LS("SendFile/Dir"), QFileInfo(fileName).absolutePath());
   emit accepted(SimpleID::encode(transaction->id()), QFileInfo(fileName).fileName());
 

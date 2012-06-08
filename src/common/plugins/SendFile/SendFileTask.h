@@ -42,6 +42,7 @@ public:
   bool init();
   inline Socket *socket() const           { return m_socket; }
   inline Transaction *transaction() const { return m_transaction; }
+  void discovery();
   void setSocket(Socket *socket);
 
 private slots:
@@ -49,7 +50,6 @@ private slots:
   void rejected();
 
 private:
-  void discovery();
   void discovery(const QString &host, quint16 port);
 
   QFile *m_file;               ///< Открытый файл.
