@@ -26,9 +26,9 @@
 #include "SendFileSocket.h"
 #include "SendFileTransaction.h"
 
-#define DISCOVERY_TIMEOUT 8000
-#define HANDSHAKE_TIMEOUT 8000
-#define RECONNECT_TIMEOUT 500
+#define DISCOVERY_TIMEOUT 15000
+#define HANDSHAKE_TIMEOUT 15000
+#define RECONNECT_TIMEOUT 1000
 
 namespace SendFile {
 
@@ -38,6 +38,8 @@ Socket::Socket(QObject *parent)
   , m_release(false)
   , m_role(-1)
   , m_mode(HandshakeMode)
+  , m_file(0)
+  , m_size(0)
   , m_port(0)
   , m_nextBlockSize(0)
 {
@@ -52,6 +54,8 @@ Socket::Socket(const QString& host, quint16 port, const QByteArray &id, QObject 
   , m_role(-1)
   , m_mode(UnknownMode)
   , m_id(id)
+  , m_file(0)
+  , m_size(0)
   , m_host(host)
   , m_port(port)
   , m_nextBlockSize(0)
@@ -129,11 +133,12 @@ void Socket::reject()
 }
 
 
-void Socket::setFile(int role, QFile *file)
+void Socket::setFile(int role, QFile *file, qint64 size)
 {
   qDebug() << "Socket::setFile" << role << file->fileName() << file->size();
   m_role = role;
   m_file = file;
+  m_size = size;
 
   if (!role)
     write(file->readAll());
@@ -232,21 +237,19 @@ void Socket::error(QAbstractSocket::SocketError socketError)
 }
 
 
-/*!
- * Слот вызывается при получении новых данных.
- * Если данных достаточно для чтения транспортного пакета происходит чтение пакета.
- *
- * \sa readTransport()
- */
 void Socket::readyRead()
 {
-  qDebug() << "readyRead()                       " << this << bytesAvailable();
+//  qDebug() << "readyRead()                       " << this << bytesAvailable();
 
   forever {
     if (m_mode == DataMode && m_role == ReceiverRole) {
       qint64 bytes = bytesAvailable();
+      qint64 pos = m_file->pos();
+      if (pos + bytes > m_size)
+        bytes = m_size - pos;
+
       m_file->write(read(bytes));
-      m_file->flush();
+      progress(pos + bytes);
       return;
     }
 
@@ -260,8 +263,7 @@ void Socket::readyRead()
     if (bytesAvailable() < m_nextBlockSize)
       break;
 
-    if (m_mode == HandshakeMode && m_nextBlockSize)
-      readHandshake();
+    readPacket();
 
     if (m_nextBlockSize) {
       read(m_nextBlockSize);
@@ -279,6 +281,28 @@ void Socket::init()
   connect(this, SIGNAL(disconnected()), SLOT(disconnected()));
   connect(this, SIGNAL(error(QAbstractSocket::SocketError)), SLOT(error(QAbstractSocket::SocketError)));
   connect(this, SIGNAL(readyRead()), SLOT(readyRead()));
+}
+
+
+void Socket::progress(qint64 pos)
+{
+  emit progress(pos, m_size);
+
+  qint32 size = 9;
+  QByteArray data;
+
+  data.reserve(size + 4);
+  data.append((char*)&size, 4);
+  data.append('P');
+  data.append((char*)&pos, 8);
+
+  write(data);
+
+  if (pos == m_size) {
+    m_file->close();
+    leave();
+    emit finished();
+  }
 }
 
 
@@ -301,15 +325,15 @@ void Socket::setMode(Mode mode)
 }
 
 
-void Socket::readHandshake()
+void Socket::readPacket()
 {
   char code;
   getChar(&code);
   m_nextBlockSize--;
-  qDebug() << code;
+//  qDebug() << code;
 
   if (code == 'H' && m_nextBlockSize >= 21) {
-    m_nextBlockSize += 21;
+    m_nextBlockSize -= 21;
     m_id = read(21);
     if (SimpleID::typeOf(m_id) == SimpleID::MessageId) {
       emit handshake(m_id);
@@ -329,6 +353,18 @@ void Socket::readHandshake()
     setMode(DataMode);
     emit accepted();
   }
+  else if (code == 'P' && m_nextBlockSize >= 8) {
+    m_nextBlockSize -= 8;
+    qint64 pos;
+    read((char*)&pos, 8);
+    emit progress(pos, m_size);
+
+    if (pos == m_size) {
+      leave();
+      emit finished();
+    }
+  }
+
 }
 
 } // namespace SendFile

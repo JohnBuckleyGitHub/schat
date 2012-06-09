@@ -47,12 +47,13 @@ public:
   void accept(char code = 'A');
   void leave(bool remove = false);
   void reject();
-  void setFile(int role, QFile *file);
+  void setFile(int role, QFile *file, qint64 size);
 
 signals:
   void accepted();
   void finished();
   void handshake(const QByteArray &id);
+  void progress(qint64 current, qint64 total);
 
 protected:
   void timerEvent(QTimerEvent *event);
@@ -66,8 +67,9 @@ private slots:
 
 private:
   void init();
+  void progress(qint64 pos);
+  void readPacket();
   void setMode(Mode mode);
-  void readHandshake();
 
   bool m_release;          ///< true если сокет находится в состоянии закрытия.
   int m_role;              ///< Роль сокета, отправитель или получатель файла.
@@ -75,6 +77,7 @@ private:
   QBasicTimer *m_timer;    ///< Таймер обслуживающий соединение.
   QByteArray m_id;         ///< Идентификатор транзакции.
   QFile *m_file;           ///< Файл для записи или чтения.
+  qint64 m_size;           ///< Размер файла.
   QString m_host;          ///< Адрес удалённой стороны.
   quint16 m_port;          ///< Порт удалённой стороны.
   quint32 m_nextBlockSize; ///< Размер следующего блока данных.

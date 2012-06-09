@@ -42,7 +42,10 @@ public:
 
 signals:
   void addTask(const QVariantMap &data);
+  void finished(const QByteArray &id, qint64 elapsed);
+  void progress(const QByteArray &id, qint64 current, qint64 total, int percent);
   void ready();
+  void started(const QByteArray &id, qint64 time);
 
 protected:
   void run();
