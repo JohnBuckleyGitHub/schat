@@ -58,6 +58,8 @@ protected:
     else if (key == LS("user_offline"))      return tr("User offline");
     else if (key == LS("chat_version"))      return tr("Version");
     else if (key == LS("os_name"))           return tr("OS");
+    else if (key == LS("kB"))                return tr("kB");
+    else if (key == LS("MB"))                return tr("MB");
     return QString();
   }
 };
@@ -80,14 +82,31 @@ WebBridge::~WebBridge()
 }
 
 
-QString WebBridge::bytesToHuman(qint64 size)
+QString WebBridge::bytesToHuman(qint64 size, bool html)
 {
-  if (size < 1024)
-    return tr("%n byte", "", size);
-  else if (size < 1048576)
-    return tr("%1 kB").arg((int) size / 1024);
+  QString num;
+  QString key;
+  if (size < 1048576) {
+    if (!size)
+      num = LS("0");
+    else if (size && size < 1024)
+      num = LS("1");
+    else
+      num = QString::number((int) size / 1024);
+
+    key = LS("kB");
+  }
+  else {
+    num = QString::number((double) size / 1048576, 'f', 2);
+    key = LS("MB");
+  }
+
+  if (html)
+    num += LS(" <span data-tr=\"") + key + LS("\">") + Tr::value(key) + LS("</span>");
   else
-    return tr("%1 MB").arg((double) size / 1048576, 0, 'f', 2);
+    num += LC(' ') + Tr::value(key);
+
+  return num;
 }
 
 

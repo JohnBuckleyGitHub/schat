@@ -908,27 +908,6 @@
     </message>
 </context>
 <context>
-    <name>WebBridge</name>
-    <message numerus="yes">
-        <location filename="../../src/schat2/WebBridge.cpp" line="86"/>
-        <source>%n byte</source>
-        <translation>
-            <numerusform>%n byte</numerusform>
-            <numerusform>%n bytes</numerusform>
-        </translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="88"/>
-        <source>%1 kB</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="90"/>
-        <source>%1 MB</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>WebBridgeTr</name>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="48"/>
@@ -993,6 +972,16 @@
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="60"/>
         <source>OS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="61"/>
+        <source>kB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="62"/>
+        <source>MB</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
