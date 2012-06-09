@@ -38,6 +38,11 @@ class Worker : public QTcpServer
 public:
   Worker(quint16 port, QObject *parent = 0);
 
+signals:
+  void finished(const QByteArray &id, qint64 elapsed);
+  void progress(const QByteArray &id, qint64 current, qint64 total, int percent);
+  void started(const QByteArray &id, qint64 time);
+
 public slots:
   void addTask(const QVariantMap &data);
 

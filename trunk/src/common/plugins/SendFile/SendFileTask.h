@@ -24,6 +24,7 @@
 #include <QSharedPointer>
 #include <QVariant>
 
+class QBasicTimer;
 class QFile;
 class Socket;
 
@@ -45,13 +46,27 @@ public:
   void discovery();
   void setSocket(Socket *socket);
 
+signals:
+  void finished(const QByteArray &id, qint64 elapsed);
+  void progress(const QByteArray &id, qint64 current, qint64 total, int percent);
+  void started(const QByteArray &id, qint64 time);
+
+protected:
+  void timerEvent(QTimerEvent *event);
+
 private slots:
   void accepted();
+  void finished();
+  void progress(qint64 current);
 
 private:
   void discovery(const QString &host, quint16 port);
+  void start();
 
+  QBasicTimer *m_timer;        ///< Таймер для обновления прогресса загрузки.
   QFile *m_file;               ///< Открытый файл.
+  qint64 m_pos;                ///< Текущая отправленная или полученная позиция.
+  qint64 m_time;               ///< Время начала передачи файла.
   QList<Socket *> m_discovery; ///< Список сокетов находящихся в состоянии поиска.
   Socket *m_socket;            ///< Сокет для передачи данных.
   Transaction *m_transaction;  ///< Транзакция.

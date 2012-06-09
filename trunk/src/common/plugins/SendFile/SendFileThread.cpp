@@ -66,6 +66,9 @@ void Thread::run()
 void Thread::workerReady()
 {
   connect(this, SIGNAL(addTask(const QVariantMap &)), m_worker, SLOT(addTask(const QVariantMap &)));
+  connect(m_worker, SIGNAL(finished(QByteArray, qint64)), SIGNAL(finished(QByteArray, qint64)));
+  connect(m_worker, SIGNAL(progress(QByteArray, qint64, qint64, int)), SIGNAL(progress(QByteArray, qint64, qint64, int)));
+  connect(m_worker, SIGNAL(started(QByteArray, qint64)), SIGNAL(started(QByteArray, qint64)));
 
   while (!m_pending.isEmpty())
     emit addTask(m_pending.takeFirst()->toMap());

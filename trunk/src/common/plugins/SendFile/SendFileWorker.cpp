@@ -58,6 +58,9 @@ void Worker::addTask(const QVariantMap &data)
   if (!task->init())
     return;
 
+  connect(task.data(), SIGNAL(finished(QByteArray, qint64)), SIGNAL(finished(QByteArray, qint64)));
+  connect(task.data(), SIGNAL(progress(QByteArray, qint64, qint64, int)), SIGNAL(progress(QByteArray, qint64, qint64, int)));
+  connect(task.data(), SIGNAL(started(QByteArray, qint64)), SIGNAL(started(QByteArray, qint64)));
   qDebug() << "check ok";
   m_tasks[id] = task;
 }

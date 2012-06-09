@@ -18,23 +18,29 @@
 
 #include <QDebug>
 
-#include <QFile>
+#include <QBasicTimer>
 #include <QBuffer>
+#include <QFile>
+#include <QTimerEvent>
 #include <QUdpSocket>
 
 #include "SendFileSocket.h"
 #include "SendFileTask.h"
 #include "SendFileTransaction.h"
 #include "SendFileWorker.h"
+#include "DateTime.h"
 
 namespace SendFile {
 
 Task::Task(Worker *worker, const QVariantMap &data)
   : QObject(worker)
   , m_file(0)
+  , m_pos(0)
+  , m_time(0)
   , m_socket(0)
   , m_worker(worker)
 {
+  m_timer = new QBasicTimer();
   m_transaction = new Transaction(data);
   m_file = new QFile(m_transaction->file().name, this);
 }
@@ -42,6 +48,10 @@ Task::Task(Worker *worker, const QVariantMap &data)
 
 Task::~Task()
 {
+  if (m_timer->isActive())
+    m_timer->stop();
+
+  delete m_timer;
   delete m_transaction;
 }
 
@@ -80,11 +90,23 @@ void Task::setSocket(Socket *socket)
     m_socket->leave(true);
 
   m_socket = socket;
-  m_socket->setFile(m_transaction->role(), m_file);
+  start();
 
   foreach (Socket *socket, m_discovery) {
     socket->leave(true);
   }
+}
+
+
+void Task::timerEvent(QTimerEvent *event)
+{
+  if (event->timerId() != m_timer->timerId()) {
+    QObject::timerEvent(event);
+    return;
+  }
+
+  qint64 total = m_transaction->file().size;
+  emit progress(m_transaction->id(), m_pos, total, m_pos * 100 / total);
 }
 
 
@@ -97,13 +119,27 @@ void Task::accepted()
 
   if (!m_socket) {
     m_socket = socket;
-    m_socket->setFile(m_transaction->role(), m_file);
+    start();
     m_discovery.removeAll(socket);
   }
 
   foreach (Socket *socket, m_discovery) {
     socket->leave(true);
   }
+}
+
+
+void Task::finished()
+{
+  m_timer->stop();
+  qDebug() << "ELAPSED:" << (DateTime::utc() - m_time) << "ms";
+  emit finished(m_transaction->id(), DateTime::utc() - m_time);
+}
+
+
+void Task::progress(qint64 current)
+{
+  m_pos = current;
 }
 
 
@@ -120,6 +156,18 @@ void Task::discovery(const QString &host, quint16 port)
   Socket *socket = new Socket(host, port, m_transaction->id(), this);
   connect(socket, SIGNAL(accepted()), SLOT(accepted()));
   m_discovery.append(socket);
+}
+
+
+void Task::start()
+{
+  connect(m_socket, SIGNAL(progress(qint64, qint64)), SLOT(progress(qint64)));
+  connect(m_socket, SIGNAL(finished()), SLOT(finished()));
+  m_socket->setFile(m_transaction->role(), m_file, m_transaction->file().size);
+
+  m_time = DateTime::utc();
+  m_timer->start(200, this);
+  emit started(m_transaction->id(), m_time);
 }
 
 } // namespace SendFile
