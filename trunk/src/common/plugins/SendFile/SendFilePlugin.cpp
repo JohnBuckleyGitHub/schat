@@ -80,6 +80,9 @@ SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
   QDesktopServices::setUrlHandler(LS("chat-sendfile"), this, "openUrl");
 
   m_thread = new SendFile::Thread(m_port);
+  connect(m_thread, SIGNAL(finished(QByteArray, qint64)), SLOT(finished(QByteArray)));
+  connect(m_thread, SIGNAL(progress(QByteArray, qint64, qint64, int)), SLOT(progress(QByteArray, qint64, qint64, int)));
+  connect(m_thread, SIGNAL(started(QByteArray, qint64)), SLOT(started(QByteArray)));
 
   connect(ChatViewHooks::i(), SIGNAL(initHook(ChatView*)), SLOT(init(ChatView*)));
   connect(ChatViewHooks::i(), SIGNAL(loadFinishedHook(ChatView*)), SLOT(loadFinished(ChatView*)));
@@ -182,6 +185,27 @@ void SendFilePluginImpl::openUrl(const QUrl &url)
     cancel(id);
   else if (action == LS("saveas"))
     saveAs(id);
+}
+
+
+void SendFilePluginImpl::finished(const QByteArray &id)
+{
+  Q_UNUSED(id);
+  qDebug() << " -- " << "SendFilePluginImpl::finished()";
+}
+
+
+void SendFilePluginImpl::progress(const QByteArray &id, qint64 current, qint64 total, int percent)
+{
+  Q_UNUSED(id);
+  qDebug() << " -- " << "SendFilePluginImpl::progress()" << current << "of" << total << percent << "%";
+}
+
+
+void SendFilePluginImpl::started(const QByteArray &id)
+{
+  Q_UNUSED(id);
+  qDebug() << " -- " << "SendFilePluginImpl::started()";
 }
 
 

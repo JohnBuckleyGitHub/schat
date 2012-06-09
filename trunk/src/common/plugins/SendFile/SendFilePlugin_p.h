@@ -52,6 +52,10 @@ private slots:
   void loadFinished(ChatView *view);
   void openUrl(const QUrl &url);
 
+  void finished(const QByteArray &id);
+  void progress(const QByteArray &id, qint64 current, qint64 total, int percent);
+  void started(const QByteArray &id);
+
 private:
   MessagePacket reply(const SendFileTransaction &transaction, const QString &text);
   quint16 getPort() const;
