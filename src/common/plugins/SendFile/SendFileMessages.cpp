@@ -39,7 +39,11 @@ bool SendFileMessages::command(const QByteArray &dest, const ClientCmd &cmd)
 
   QString command = cmd.command().toLower();
   if (command == LS("send")) {
-    m_plugin->sendFile(dest, cmd.body());
+    if (cmd.body().isEmpty())
+      m_plugin->sendFile(dest);
+    else
+      m_plugin->sendFile(dest, cmd.body());
+
     return true;
   }
 

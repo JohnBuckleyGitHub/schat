@@ -73,8 +73,9 @@ SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
   : ChatPlugin(parent)
   , m_port(0)
 {
-  ChatCore::settings()->setLocalDefault(LS("SendFile/Port"), 0);
-  ChatCore::settings()->setLocalDefault(LS("SendFile/Dir"), QDir::fromNativeSeparators(QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation)));
+  ChatCore::settings()->setLocalDefault(LS("SendFile/Port"),    0);
+  ChatCore::settings()->setLocalDefault(LS("SendFile/Dir"),     QString());
+  ChatCore::settings()->setLocalDefault(LS("SendFile/SendDir"), QString());
 
   m_port = getPort();
 
@@ -97,6 +98,22 @@ SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
 SendFilePluginImpl::~SendFilePluginImpl()
 {
   delete m_tr;
+}
+
+
+/*!
+ * Отправка одиночного файла, пользователю будет показан диалог открытия файла.
+ */
+bool SendFilePluginImpl::sendFile(const QByteArray &dest)
+{
+  if (SimpleID::typeOf(dest) != SimpleID::UserId)
+    return false;
+
+  QString fileName = QFileDialog::getOpenFileName(TabWidget::i(), tr("Open"), getDir(LS("SendFile/SendDir")), LS("*.*"));
+  if (fileName.isEmpty())
+    return false;
+
+  return sendFile(dest, fileName);
 }
 
 
@@ -239,6 +256,19 @@ MessagePacket SendFilePluginImpl::reply(const SendFileTransaction &transaction, 
 
 
 /*!
+ * Получение папки в соответствии с ключом настройки \p key.
+ */
+QString SendFilePluginImpl::getDir(const QString &key)
+{
+  QDir dir(SCHAT_OPTION(key).toString());
+  if (dir.path() == LS(".") || !dir.exists())
+    dir.setPath(QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation));
+
+  return dir.absolutePath();
+}
+
+
+/*!
  * Определение порта для передачи файлов, если порт не определён в настройках, используется случайный порт в диапазоне от 49152 до 65536.
  */
 quint16 SendFilePluginImpl::getPort() const
@@ -347,11 +377,7 @@ void SendFilePluginImpl::saveAs(const QByteArray &id)
   if (!transaction)
     return;
 
-  QDir dir(SCHAT_OPTION(LS("SendFile/Dir")).toString());
-  if (!dir.exists())
-    dir.setPath(QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation));
-
-  QString fileName = dir.path() + LC('/') + transaction->fileName();
+  QString fileName = getDir(LS("SendFile/Dir")) + LC('/') + transaction->fileName();
   fileName = QFileDialog::getSaveFileName(TabWidget::i(), tr("Save"), fileName, LS("*.") + QFileInfo(fileName).suffix() + LS(";;*.*"));
   if (fileName.isEmpty())
     return;
