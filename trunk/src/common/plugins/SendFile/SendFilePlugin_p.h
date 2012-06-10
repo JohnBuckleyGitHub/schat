@@ -40,6 +40,7 @@ public:
   SendFilePluginImpl(QObject *parent);
   ~SendFilePluginImpl();
 
+  bool sendFile(const QByteArray &dest);
   bool sendFile(const QByteArray &dest, const QString &file);
   void read(const MessagePacket &packet);
 
@@ -61,6 +62,7 @@ private slots:
 
 private:
   MessagePacket reply(const SendFileTransaction &transaction, const QString &text);
+  QString getDir(const QString &key);
   quint16 getPort() const;
   SendFile::Hosts localHosts() const;
 
