@@ -5,12 +5,12 @@
 <context>
     <name>SendFilePluginImpl</name>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="210"/>
+        <location filename="../../SendFilePlugin.cpp" line="218"/>
         <source>%1 of %2</source>
         <translation>%1 из %2</translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="347"/>
+        <location filename="../../SendFilePlugin.cpp" line="355"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>
@@ -46,6 +46,21 @@
         <location filename="../../SendFilePlugin.cpp" line="63"/>
         <source>File sent</source>
         <translation>Файл отправлен</translation>
+    </message>
+    <message>
+        <location filename="../../SendFilePlugin.cpp" line="64"/>
+        <source>File received.</source>
+        <translation>Файл получен.</translation>
+    </message>
+    <message>
+        <location filename="../../SendFilePlugin.cpp" line="65"/>
+        <source>Show in folder</source>
+        <translation>Показать в папке</translation>
+    </message>
+    <message>
+        <location filename="../../SendFilePlugin.cpp" line="66"/>
+        <source>Open file</source>
+        <translation>Открыть файл</translation>
     </message>
 </context>
 </TS>
