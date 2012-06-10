@@ -47,6 +47,7 @@ signals:
   void accepted(const QString &id, const QString &fileName);
   void cancelled(const QString &id);
   void progress(const QString &id, const QString &text, int percent);
+  void received(const QString &id, const QString &dir, const QString &file);
   void sent(const QString &id);
 
 private slots:

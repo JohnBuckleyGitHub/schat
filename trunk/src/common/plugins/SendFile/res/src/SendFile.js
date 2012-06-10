@@ -63,6 +63,17 @@ var SendFileUtils = {
     SendFileUtils.setStateTr(id, 'file-sent');
     $('#' + id + ' .file-buttons').remove();
     $('#' + id + ' .file-progress').remove();
+  },
+
+  received: function(id, dir, file)
+  {
+    SendFileUtils.setStateText(id, '<span data-tr="file-received">' + Utils.tr('file-received') + '</span> ' +
+      '<a href="' + dir + '" data-tr="file-show">' + Utils.tr('file-show') + '</a>');
+
+    $('#' + id + ' .file-progress').remove();
+    $('#' + id + ' .btn-file-cancel').remove();
+    $('#' + id + ' .file-buttons').prepend(SendFileUtils.button('open', id));
+    $('#' + id + ' .btn-file-open').attr('href', file);
   }
 };
 
@@ -100,4 +111,5 @@ else {
   SendFile.accepted.connect(SendFileUtils.accepted);
   SendFile.progress.connect(SendFileUtils.progress);
   SendFile.sent.connect(SendFileUtils.sent);
+  SendFile.received.connect(SendFileUtils.received);
 }

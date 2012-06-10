@@ -5,12 +5,12 @@
 <context>
     <name>SendFilePluginImpl</name>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="210"/>
+        <location filename="../../SendFilePlugin.cpp" line="218"/>
         <source>%1 of %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="347"/>
+        <location filename="../../SendFilePlugin.cpp" line="355"/>
         <source>Save</source>
         <translation type="unfinished"></translation>
     </message>
@@ -45,6 +45,21 @@
     <message>
         <location filename="../../SendFilePlugin.cpp" line="63"/>
         <source>File sent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../SendFilePlugin.cpp" line="64"/>
+        <source>File received.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../SendFilePlugin.cpp" line="65"/>
+        <source>Show in folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../SendFilePlugin.cpp" line="66"/>
+        <source>Open file</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

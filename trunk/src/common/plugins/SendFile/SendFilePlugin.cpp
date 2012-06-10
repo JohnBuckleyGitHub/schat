@@ -61,6 +61,9 @@ protected:
     else if (key == LS("saveas"))     return tr("Save as");
     else if (key == LS("connecting")) return tr("Connecting...");
     else if (key == LS("sent"))       return tr("File sent");
+    else if (key == LS("received"))   return tr("File received.");
+    else if (key == LS("show"))       return tr("Show in folder");
+    else if (key == LS("open"))       return tr("Open file");
     return QString();
   }
 };
@@ -196,7 +199,12 @@ void SendFilePluginImpl::finished(const QByteArray &id)
   if (!transaction)
     return;
 
-  if (transaction->role() == SendFile::SenderRole)
+  if (transaction->role() == SendFile::ReceiverRole) {
+    QString dir = QUrl::fromLocalFile(QFileInfo(transaction->file().name).absolutePath()).toString();
+    QString file = QUrl::fromLocalFile(transaction->file().name).toString();
+    emit received(SimpleID::encode(id), dir, file);
+  }
+  else
     emit sent(SimpleID::encode(id));
 }
 
