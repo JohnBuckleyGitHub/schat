@@ -29,6 +29,7 @@
 #define DISCOVERY_TIMEOUT 15000
 #define HANDSHAKE_TIMEOUT 15000
 #define RECONNECT_TIMEOUT 1000
+#define SENDFILE_CHUNK 1048576
 
 namespace SendFile {
 
@@ -133,6 +134,13 @@ void Socket::reject()
 }
 
 
+/*!
+ * Установка файла для записи или чтения.
+ *
+ * \param role Определяет роль отправка или получение.
+ * \param file Указатель на файл.
+ * \param size Размер файла.
+ */
 void Socket::setFile(int role, QFile *file, qint64 size)
 {
   qDebug() << "Socket::setFile" << role << file->fileName() << file->size();
@@ -141,7 +149,7 @@ void Socket::setFile(int role, QFile *file, qint64 size)
   m_size = size;
 
   if (!role)
-    write(file->readAll());
+    sendBlock();
 }
 
 
@@ -284,6 +292,15 @@ void Socket::init()
 }
 
 
+/*!
+ * Обновление прогресса записи в файл.
+ *
+ * Высылается сигнал с информацией о записанной позиции \p pos,
+ * отправителю отсылается пакет c этой же информацией, для корректного формирования прогресса и отправки новых данных.
+ * Если позиция равна размеру файла, сокет и файл закрываются.
+ *
+ * \param pos Последняя записанная позиция.
+ */
 void Socket::progress(qint64 pos)
 {
   emit progress(pos, m_size);
@@ -357,6 +374,10 @@ void Socket::readPacket()
     m_nextBlockSize -= 8;
     qint64 pos;
     read((char*)&pos, 8);
+
+    if (m_file->pos() - pos < SENDFILE_CHUNK)
+      sendBlock();
+
     emit progress(pos, m_size);
 
     if (pos == m_size) {
@@ -364,7 +385,18 @@ void Socket::readPacket()
       emit finished();
     }
   }
+}
 
+
+void Socket::sendBlock()
+{
+  if (m_file->atEnd())
+    return;
+
+  if (m_file->bytesAvailable() < SENDFILE_CHUNK)
+    write(m_file->readAll());
+  else
+    write(m_file->read(SENDFILE_CHUNK));
 }
 
 } // namespace SendFile

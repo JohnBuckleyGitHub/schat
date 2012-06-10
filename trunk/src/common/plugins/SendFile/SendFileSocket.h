@@ -70,6 +70,7 @@ private:
   void init();
   void progress(qint64 pos);
   void readPacket();
+  void sendBlock();
   void setMode(Mode mode);
 
   bool m_release;          ///< true если сокет находится в состоянии закрытия.
