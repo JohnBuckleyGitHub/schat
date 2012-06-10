@@ -23,27 +23,46 @@ var SendFileUtils = {
        + name + '/' + id + '">' + Utils.tr('file-' + name) + '</a>';
   },
 
-  setStateText: function(id, text)
+  setStateTr: function(id, text)
   {
     var state = $('#' + id + ' .file-state');
     state.html(Utils.tr(text));
     state.attr('data-tr', text);
   },
 
+  setStateText: function(id, text)
+  {
+    var state = $('#' + id + ' .file-state');
+    state.html(text);
+    state.removeAttr('data-tr');
+  },
+
   // Обработка отмены передачи файла.
   cancelled: function(id)
   {
-    SendFileUtils.setStateText(id, 'file-cancelled');
+    SendFileUtils.setStateTr(id, 'file-cancelled');
     $('#' + id + ' .file-buttons').remove();
     $('#' + id + ' .file-progress').remove();
   },
 
   accepted: function(id, fileName)
   {
-    console.log(fileName);
-    SendFileUtils.setStateText(id, 'file-connecting');
+    SendFileUtils.setStateTr(id, 'file-connecting');
     $('#' + id + ' .file-name').text(fileName);
     $('#' + id + ' .btn-file-saveas').remove();
+  },
+
+  progress: function(id, text, percent)
+  {
+    SendFileUtils.setStateText(id, text);
+    $('#' + id + ' .file-progress .bar').css('width', percent + '%');
+  },
+
+  sent: function(id)
+  {
+    SendFileUtils.setStateTr(id, 'file-sent');
+    $('#' + id + ' .file-buttons').remove();
+    $('#' + id + ' .file-progress').remove();
   }
 };
 
@@ -62,10 +81,10 @@ Messages.addFileMessage = function(json)
   Messages.addHintedRawMessage(html, json.Hint, id);
 
   if (json.Direction === 'outgoing') {
-    SendFileUtils.setStateText(id, 'file-waiting');
+    SendFileUtils.setStateTr(id, 'file-waiting');
   }
   else {
-    $('#' + id + ' .file-state').html(SimpleChat.bytesToHuman(json.Size));
+    SendFileUtils.setStateText(id, SimpleChat.bytesToHuman(json.Size));
     $('#' + id + ' .file-buttons').prepend(SendFileUtils.button('saveas', id));
   }
 };
@@ -79,4 +98,6 @@ if (typeof SendFile === "undefined") {
 else {
   SendFile.cancelled.connect(SendFileUtils.cancelled);
   SendFile.accepted.connect(SendFileUtils.accepted);
+  SendFile.progress.connect(SendFileUtils.progress);
+  SendFile.sent.connect(SendFileUtils.sent);
 }

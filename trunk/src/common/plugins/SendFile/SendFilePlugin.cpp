@@ -43,6 +43,7 @@
 #include "Translation.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/TabWidget.h"
+#include "WebBridge.h"
 
 class SendFileTr : public Tr
 {
@@ -59,6 +60,7 @@ protected:
     else if (key == LS("cancelled"))  return tr("Cancelled");
     else if (key == LS("saveas"))     return tr("Save as");
     else if (key == LS("connecting")) return tr("Connecting...");
+    else if (key == LS("sent"))       return tr("File sent");
     return QString();
   }
 };
@@ -190,22 +192,32 @@ void SendFilePluginImpl::openUrl(const QUrl &url)
 
 void SendFilePluginImpl::finished(const QByteArray &id)
 {
-  Q_UNUSED(id);
-  qDebug() << " -- " << "SendFilePluginImpl::finished()";
+  SendFileTransaction transaction = m_transactions.value(id);
+  if (!transaction)
+    return;
+
+  if (transaction->role() == SendFile::SenderRole)
+    emit sent(SimpleID::encode(id));
 }
 
 
 void SendFilePluginImpl::progress(const QByteArray &id, qint64 current, qint64 total, int percent)
 {
-  Q_UNUSED(id);
-  qDebug() << " -- " << "SendFilePluginImpl::progress()" << current << "of" << total << percent << "%";
+  SendFileTransaction transaction = m_transactions.value(id);
+  if (!transaction)
+    return;
+
+  emit progress(SimpleID::encode(id), tr("%1 of %2").arg(WebBridge::i()->bytesToHuman(current), WebBridge::i()->bytesToHuman(total)), percent);
 }
 
 
 void SendFilePluginImpl::started(const QByteArray &id)
 {
-  Q_UNUSED(id);
-  qDebug() << " -- " << "SendFilePluginImpl::started()";
+  SendFileTransaction transaction = m_transactions.value(id);
+  if (!transaction)
+    return;
+
+  progress(id, 0, transaction->file().size, 0);
 }
 
 

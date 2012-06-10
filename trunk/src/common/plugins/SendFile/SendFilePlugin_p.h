@@ -46,6 +46,8 @@ public:
 signals:
   void accepted(const QString &id, const QString &fileName);
   void cancelled(const QString &id);
+  void progress(const QString &id, const QString &text, int percent);
+  void sent(const QString &id);
 
 private slots:
   void init(ChatView *view);
