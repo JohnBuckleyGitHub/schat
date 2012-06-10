@@ -86,7 +86,7 @@ QString WebBridge::bytesToHuman(qint64 size, bool html)
 {
   QString num;
   QString key;
-  if (size < 1048576) {
+  if (size < 1000000) {
     if (!size)
       num = LS("0");
     else if (size && size < 1024)

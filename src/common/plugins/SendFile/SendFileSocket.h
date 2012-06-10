@@ -44,6 +44,7 @@ public:
   Socket(const QString& host, quint16 port, const QByteArray &id, QObject *parent = 0);
   ~Socket();
   inline const QByteArray& id() const { return m_id; }
+  inline Mode mode() const            { return m_mode; }
   void accept(char code = 'A');
   void leave(bool remove = false);
   void reject();

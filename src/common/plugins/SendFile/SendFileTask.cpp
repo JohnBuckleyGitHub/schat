@@ -86,7 +86,7 @@ void Task::discovery()
 void Task::setSocket(Socket *socket)
 {
   qDebug() << "Task::setSocket()" << m_socket;
-  if (m_socket)
+  if (m_socket && m_socket->mode() != Socket::DataMode)
     m_socket->leave(true);
 
   m_socket = socket;
