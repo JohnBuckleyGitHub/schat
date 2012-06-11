@@ -159,6 +159,9 @@ ChannelBaseTab *TabWidget::channelTab(const QByteArray &id, bool create, bool sh
 
 /*!
  * Добавление нового сообщения.
+ *
+ * \param message Сообщение.
+ * \param create  \b true если при необходимости будет создана новая вкладка.
  */
 void TabWidget::add(const Message &message, bool create)
 {
@@ -166,6 +169,29 @@ void TabWidget::add(const Message &message, bool create)
     return;
 
   m_self->addImpl(message, create);
+}
+
+
+/*!
+ * Проверка состояния вкладки, для принятия решения отображать оповещения или нет.
+ *
+ * \param id Идентификатор вкладки.
+ *
+ * \return \b true если окно чата активно и выбрана вкладка с идентификатором равным \p id.
+ */
+bool TabWidget::isActive(const QByteArray &id)
+{
+  if (!m_self)
+    return false;
+
+  if (!m_self->parentWidget()->isActiveWindow())
+    return false;
+
+  AbstractTab *tab = m_self->widget(m_self->currentIndex());
+  if (tab && tab->id() == id)
+    return true;
+
+  return false;
 }
 
 

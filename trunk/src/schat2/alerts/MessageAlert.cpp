@@ -20,14 +20,15 @@
 #include "messages/ChannelMessage.h"
 #include "net/packets/MessageNotice.h"
 #include "net/SimpleID.h"
+#include "sglobal.h"
 
 MessageAlert::MessageAlert(const ChannelMessage &message)
-  : Alert(PublicMessage, message.packet()->id(), message.packet()->date())
+  : Alert(LS("public"), message.packet()->id(), message.packet()->date(), Tab | Global)
 {
   m_tab = message.tab();
 
   if (SimpleID::typeOf(m_tab) == SimpleID::UserId)
-    m_type = PrivateMessage;
+    m_type = LS("private");
 
-  m_data["Message"] = message.data();
+  m_data[LS("Message")] = message.data();
 }

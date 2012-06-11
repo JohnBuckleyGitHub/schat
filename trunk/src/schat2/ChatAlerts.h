@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,35 +24,46 @@
 
 #include "schat.h"
 
+/*!
+ * Базовый класс для оповещений чата.
+ */
 class SCHAT_CORE_EXPORT Alert
 {
 public:
-  enum Type {
-    PublicMessage  = 0x434D, ///< "CM" Сообщение в канале от другого пользователя.
-    PrivateMessage = 0x504D, ///< "PM" Приватное сообщение от другого пользователя.
-    Connected      = 0x436F, ///< "Co" Уведомление об успешном подключении к серверу.
-    ConnectionLost = 0x434C  ///< "CL" Обработка потери соединения.
+  /// Опции оповещения.
+  enum Option {
+    NoOptions = 0, ///< Нет опций.
+    Tab       = 1, ///< Оповещение меняет состояние вкладки.
+    Global    = 2  ///< Оповещение запускает глобальное оповещение.
   };
 
-  Alert(int type);
-  Alert(int type, const QByteArray &id, qint64 date);
+  Q_DECLARE_FLAGS(Options, Option)
+
+  Alert(const QString &type, Options options = NoOptions);
+  Alert(const QString &type, const QByteArray &id, qint64 date, Options options = NoOptions);
+  Alert(const QString &type, qint64 date, Options options = NoOptions);
   virtual ~Alert() {}
 
-  inline const QByteArray id() const     { return m_id; }
-  inline const QByteArray& tab() const   { return m_tab; }
-  inline const QVariantMap& data() const { return m_data; }
-  inline int type() const                { return m_type; }
-  inline qint64 date() const             { return m_date; }
+  inline const QByteArray id() const       { return m_id; }
+  inline const QByteArray& tab() const     { return m_tab; }
+  inline const QString& type() const       { return m_type; }
+  inline const QVariantMap& data() const   { return m_data; }
+  inline Options options() const           { return m_options; }
+  inline qint64 date() const               { return m_date; }
 
-  inline QVariantMap& data()             { return m_data; }
+  inline QVariantMap& data()               { return m_data; }
+  inline void setTab(const QByteArray &id) { m_tab = id; }
 
 protected:
-  int m_type;          ///< Тип оповещения.
+  Options m_options;   ///< Опции оповещения.
   QByteArray m_id;     ///< Уникальный идентификатор оповещения.
   QByteArray m_tab;    ///< Идентификатор вкладки канала.
   qint64 m_date;       ///< Отметка времени.
+  QString m_type;      ///< Тип оповещения.
   QVariantMap m_data;  ///< JSON данные.
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Alert::Options)
 
 
 class SCHAT_CORE_EXPORT ChatAlerts : public QObject
@@ -63,9 +74,9 @@ public:
   ChatAlerts(QObject *parent = 0);
   inline static bool hasAlerts()                  { return !m_self->m_channels.isEmpty(); }
   inline static ChatAlerts *i()                   { return m_self; }
-  inline static void add(const QByteArray &id)    { m_self->addImpl(id); }
-  inline static void remove(const QByteArray &id) { m_self->removeImpl(id); }
-  inline static void start(const Alert &alert)    { m_self->startAlert(alert); }
+  static void add(const QByteArray &id);
+  static void remove(const QByteArray &id);
+  static void start(const Alert &alert);
 
 signals:
   void alert(bool alert);
@@ -76,12 +87,8 @@ private slots:
   void online();
 
 private:
-  void startAlert(const Alert &alert);
-  void addImpl(const QByteArray &id);
-  void removeImpl(const QByteArray &id);
-
-  QList<QByteArray> m_channels; ///< Список каналов для которых активно уведомление о новых сообщениях.
-  static ChatAlerts *m_self;    ///< Указатель на себя.
+  static ChatAlerts *m_self;           ///< Указатель на себя.
+  static QList<QByteArray> m_channels; ///< Список каналов для которых активно глобальное уведомление о новых сообщениях.
 };
 
 #endif /* CHATALERTS_H_ */
