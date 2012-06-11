@@ -83,9 +83,9 @@ void ServerTab::changeEvent(QEvent *event)
 
 void ServerTab::alert(const Alert &alert)
 {
-  if (alert.type() == Alert::Connected)
+  if (alert.type() == LS("online"))
     m_chatView->add(ServiceMessage::connected());
-  else if (alert.type() == Alert::ConnectionLost)
+  else if (alert.type() == LS("offline"))
     m_chatView->add(ServiceMessage::connectionLost());
 }
 

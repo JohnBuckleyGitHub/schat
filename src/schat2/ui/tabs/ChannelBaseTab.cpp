@@ -73,14 +73,12 @@ bool ChannelBaseTab::bindMenu(QMenu *menu)
 
 void ChannelBaseTab::alert(bool start)
 {
-  if (start) {
-    m_alerts++;
-    ChatAlerts::add(id());
-  }
-  else {
+  if (!start) {
     m_alerts = 0;
     ChatAlerts::remove(id());
   }
+  else
+    m_alerts++;
 
   if (m_alerts > 1)
     return;
@@ -108,17 +106,23 @@ void ChannelBaseTab::setOnline(bool online)
 }
 
 
+/*!
+ * Обработка новых уведомлений.
+ *
+ * В случае если уведомление предназначено для этой вкладки и окно не активно, запускаеся визуальное оповещение.
+ */
 void ChannelBaseTab::alert(const Alert &alert)
 {
-  if (alert.type() == Alert::PublicMessage || alert.type() == Alert::PrivateMessage) {
-    if (alert.tab() != id())
-      return;
+  if (!alert.options().testFlag(Alert::Tab) || alert.tab() != id())
+    return;
 
-    if (m_tabs->currentIndex() == m_tabs->indexOf(this) && m_tabs->parentWidget()->isActiveWindow())
-      return;
+  if (TabWidget::isActive(alert.tab()))
+    return;
 
-    this->alert();
-  }
+  this->alert();
+
+  if (m_alerts && alert.options() & Alert::Global)
+    ChatAlerts::add(id());
 }
 
 

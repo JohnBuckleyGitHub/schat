@@ -48,12 +48,12 @@ public:
 
   AbstractTab(const QByteArray &id, TabType type, TabWidget *parent);
   inline bool isDeleteOnClose() const { return m_deleteOnClose; }
-  inline bool isOnline() const { return m_online; }
-  inline QAction *action() const { return m_action; }
-  inline QByteArray id() const { return m_id; }
-  inline QIcon icon() const { return m_icon; }
-  inline QString text() const { return m_text; }
-  inline TabType type() const { return m_type; }
+  inline bool isOnline() const        { return m_online; }
+  inline const QByteArray& id() const { return m_id; }
+  inline const QIcon& icon() const    { return m_icon; }
+  inline const QString& text() const  { return m_text; }
+  inline QAction *action() const      { return m_action; }
+  inline TabType type() const         { return m_type; }
   virtual bool bindMenu(QMenu *menu) { Q_UNUSED(menu) return false; }
   virtual void setOnline(bool online = true);
   void setIcon(const QIcon &icon);
