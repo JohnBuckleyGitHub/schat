@@ -16,13 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-#include <QDateTime>
-
 #include "SendFileThread.h"
 #include "SendFileWorker.h"
-
-#define TIMESTAMP QDateTime::currentDateTime().toString("hh:mm:ss.zzz").toLatin1().constData()
 
 namespace SendFile {
 
@@ -31,8 +26,6 @@ Thread::Thread(quint16 port, QObject *parent)
   , m_port(port)
   , m_worker(0)
 {
-  qDebug() << TIMESTAMP << "Thread::Thread()                   " << currentThread();
-
   connect(this, SIGNAL(ready()), SLOT(workerReady()));
 }
 
@@ -54,6 +47,12 @@ void Thread::add(SendFileTransaction transaction)
 }
 
 
+void Thread::remove(const QByteArray &id)
+{
+  emit removeTask(id);
+}
+
+
 void Thread::run()
 {
   m_worker = new Worker(m_port);
@@ -66,6 +65,7 @@ void Thread::run()
 void Thread::workerReady()
 {
   connect(this, SIGNAL(addTask(const QVariantMap &)), m_worker, SLOT(addTask(const QVariantMap &)));
+  connect(this, SIGNAL(removeTask(QByteArray)), m_worker, SLOT(removeTask(QByteArray)));
   connect(m_worker, SIGNAL(finished(QByteArray, qint64)), SIGNAL(finished(QByteArray, qint64)));
   connect(m_worker, SIGNAL(progress(QByteArray, qint64, qint64, int)), SIGNAL(progress(QByteArray, qint64, qint64, int)));
   connect(m_worker, SIGNAL(started(QByteArray, qint64)), SIGNAL(started(QByteArray, qint64)));

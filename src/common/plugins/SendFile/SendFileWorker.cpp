@@ -65,6 +65,16 @@ void Worker::addTask(const QVariantMap &data)
 }
 
 
+void Worker::removeTask(const QByteArray &id)
+{
+  SendFileTask task = m_tasks.value(id);
+  if (task && task->socket())
+    task->socket()->leave();
+
+  m_tasks.remove(id);
+}
+
+
 void Worker::accepted()
 {
   qDebug() << "Worker::accepted()";

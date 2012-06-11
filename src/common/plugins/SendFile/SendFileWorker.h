@@ -45,6 +45,7 @@ signals:
 
 public slots:
   void addTask(const QVariantMap &data);
+  void removeTask(const QByteArray &id);
 
 private slots:
   void accepted();
