@@ -39,12 +39,14 @@ public:
   Thread(quint16 port, QObject *parent = 0);
   inline Worker *worker() const { return m_worker; }
   void add(SendFileTransaction transaction);
+  void remove(const QByteArray &id);
 
 signals:
   void addTask(const QVariantMap &data);
   void finished(const QByteArray &id, qint64 elapsed);
   void progress(const QByteArray &id, qint64 current, qint64 total, int percent);
   void ready();
+  void removeTask(const QByteArray &id);
   void started(const QByteArray &id, qint64 time);
 
 protected:

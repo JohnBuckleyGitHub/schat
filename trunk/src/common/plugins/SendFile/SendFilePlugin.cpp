@@ -318,12 +318,14 @@ void SendFilePluginImpl::accept(const MessagePacket &packet)
  */
 void SendFilePluginImpl::cancel(const MessagePacket &packet)
 {
-  SendFileTransaction transaction = m_transactions.value(packet->id());
+  QByteArray id = packet->id();
+  SendFileTransaction transaction = m_transactions.value(id);
   if (!transaction)
     return;
 
-  m_transactions.remove(packet->id());
-  emit cancelled(SimpleID::encode(packet->id()));
+  m_thread->remove(id);
+  m_transactions.remove(id);
+  emit cancelled(SimpleID::encode(id));
 }
 
 
@@ -362,6 +364,7 @@ void SendFilePluginImpl::cancel(const QByteArray &id)
   if (!transaction)
     return;
 
+  m_thread->remove(id);
   m_transactions.remove(id);
   ChatClient::io()->send(reply(transaction, LS("cancel")), true);
 

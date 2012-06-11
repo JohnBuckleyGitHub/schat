@@ -32,6 +32,13 @@ namespace SendFile {
   class Thread;
 }
 
+/*!
+ * Основной класс плагина SendFile.
+ *
+ * \todo Добавить поддержку отображения скорости передачи файла.
+ * \todo Добавить возможность ставить передачу файла на паузу.
+ * \todo Сделать возможным передачу файла в случае разрыва соединения.
+ */
 class SendFilePluginImpl : public ChatPlugin
 {
   Q_OBJECT
