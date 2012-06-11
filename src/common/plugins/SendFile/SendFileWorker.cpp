@@ -58,10 +58,9 @@ void Worker::addTask(const QVariantMap &data)
   if (!task->init())
     return;
 
-  connect(task.data(), SIGNAL(finished(QByteArray, qint64)), SIGNAL(finished(QByteArray, qint64)));
+  connect(task.data(), SIGNAL(finished(QByteArray, qint64)), SLOT(taskFinished(QByteArray, qint64)));
   connect(task.data(), SIGNAL(progress(QByteArray, qint64, qint64, int)), SIGNAL(progress(QByteArray, qint64, qint64, int)));
   connect(task.data(), SIGNAL(started(QByteArray, qint64)), SIGNAL(started(QByteArray, qint64)));
-  qDebug() << "check ok";
   m_tasks[id] = task;
 }
 
@@ -98,6 +97,19 @@ void Worker::handshake(const QByteArray &id)
     socket->reject();
   else
     socket->accept();
+}
+
+
+/*!
+ * Завершение работы задачи.
+ *
+ * \param id      Идентификатор передачи файла.
+ * \param elapsed Число миллисекунд потраченное на передачу.
+ */
+void Worker::taskFinished(const QByteArray &id, qint64 elapsed)
+{
+  emit finished(id, elapsed);
+  m_tasks.remove(id);
 }
 
 

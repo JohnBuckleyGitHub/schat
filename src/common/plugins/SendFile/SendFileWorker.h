@@ -49,6 +49,7 @@ public slots:
 private slots:
   void accepted();
   void handshake(const QByteArray &id);
+  void taskFinished(const QByteArray &id, qint64 elapsed);
 
 protected:
   void incomingConnection(int socketDescriptor);
