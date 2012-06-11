@@ -113,6 +113,7 @@ bool SendFilePluginImpl::sendFile(const QByteArray &dest)
   if (fileName.isEmpty())
     return false;
 
+  ChatCore::settings()->setValue(LS("SendFile/SendDir"), QFileInfo(fileName).absolutePath());
   return sendFile(dest, fileName);
 }
 
