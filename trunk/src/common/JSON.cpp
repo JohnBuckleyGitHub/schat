@@ -24,7 +24,9 @@
 /*!
  * Генерация JSON.
  *
- * \param data Исходные данные.
+ * \param data      Исходные данные.
+ * \param formatted \b true если необходимо форматированный результат.
+ *
  * \return Результат генерации.
  */
 QByteArray JSON::generate(const QVariant &data, bool formatted)

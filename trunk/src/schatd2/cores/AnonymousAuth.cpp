@@ -110,10 +110,10 @@ AuthResult AnonymousAuth::isCollision(const QByteArray &id, const QString &name,
  * Проверка на необходимость принудительной авторизации по имени и паролю,
  * в случае подключения зарегистрированного пользователя с нового компьютера.
  *
- * \param channel Указатель на канал пользователя.
+ * \param channel  Указатель на канал пользователя.
  * \param uniqueId Уникальный идентификатор пользователя.
  *
- * \param \b true если необходима проверка пароля.
+ * \return \b true если необходима проверка пароля.
  */
 bool AnonymousAuth::isPasswordRequired(ServerChannel *channel, const QByteArray &uniqueId)
 {
