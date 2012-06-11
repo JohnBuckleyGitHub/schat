@@ -39,6 +39,9 @@ SimpleClientPrivate::~SimpleClientPrivate()
 
 bool SimpleClientPrivate::authReply(const AuthReply &reply)
 {
+  if (clientState == AbstractClient::ClientOnline)
+    return true;
+
   AbstractClientPrivate::authReply(reply);
   json[LS("id")]     = SimpleID::encode(reply.serverId);
   json[LS("host")]   = reply.host;
