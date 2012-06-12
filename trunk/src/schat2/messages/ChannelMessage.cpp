@@ -45,8 +45,7 @@ ChannelMessage::ChannelMessage(MessagePacket packet)
     m_data["Day"] = true;
 
   setAuthor(m_packet->sender());
-
-  m_tab = detectTab();
+  m_tab = detectTab(m_packet->sender(), m_packet->dest());
 }
 
 
@@ -77,16 +76,4 @@ bool ChannelMessage::isOffline(int status)
     return true;
 
   return false;
-}
-
-
-QByteArray ChannelMessage::detectTab() const
-{
-  if (SimpleID::typeOf(m_packet->dest()) == SimpleID::ChannelId)
-    return m_packet->dest();
-
-  if (m_packet->sender() == ChatClient::id())
-    return m_packet->dest();
-
-  return m_packet->sender();
 }

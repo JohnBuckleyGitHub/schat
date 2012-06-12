@@ -18,6 +18,7 @@
 
 #include <QBasicTimer>
 #include <QMenu>
+#include <QTimer>
 #include <QTimerEvent>
 
 #include "ChatAlerts.h"
@@ -63,6 +64,9 @@ TrayIcon::TrayIcon(QObject *parent)
   connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(changed(const QString &, const QVariant &)));
 
   reload();
+
+  QTimer::singleShot(0, this, SLOT(show()));
+  QTimer::singleShot(1000, this, SLOT(show()));
 }
 
 
@@ -183,6 +187,7 @@ void TrayIcon::startAlert()
   if (m_alertIcon)
     return;
 
+  show();
   m_alertIcon = 1;
 
   if (m_staticAlerts) {

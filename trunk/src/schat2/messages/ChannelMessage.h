@@ -33,8 +33,6 @@ public:
   static bool isOffline(int status);
 
 private:
-  QByteArray detectTab() const;
-
   MessagePacket m_packet; ///< Пакет на основе которого формируется сообщение.
 };
 

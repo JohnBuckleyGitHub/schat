@@ -25,6 +25,7 @@
 #include <QHostAddress>
 #include <QFileDialog>
 
+#include "ChatAlerts.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
 #include "client/ChatClient.h"
@@ -352,6 +353,10 @@ void SendFilePluginImpl::incomingFile(const MessagePacket &packet)
   TabWidget::add(message);
 
   m_transactions[transaction->id()] = transaction;
+
+  Alert alert = Alert(LS("file"), packet->id(), packet->date(), Alert::Tab | Alert::Global);
+  alert.setTab(packet->sender(), packet->dest());
+  ChatAlerts::start(alert);
 }
 
 

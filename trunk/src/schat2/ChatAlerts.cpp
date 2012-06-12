@@ -21,6 +21,7 @@
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "DateTime.h"
+#include "messages/Message.h"
 #include "sglobal.h"
 
 ChatAlerts *ChatAlerts::m_self = 0;
@@ -50,6 +51,12 @@ Alert::Alert(const QString &type, qint64 date, Options options)
   , m_date(date)
   , m_type(type)
 {
+}
+
+
+void Alert::setTab(const QByteArray &sender, const QByteArray &dest)
+{
+  setTab(Message::detectTab(sender, dest));
 }
 
 

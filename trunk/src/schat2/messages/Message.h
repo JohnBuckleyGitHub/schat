@@ -37,12 +37,12 @@ public:
   inline const QVariantMap& data() const { return m_data; };
   inline QVariantMap& data()             { return m_data; };
   inline virtual bool isValid() const    { return true; }
+  static QByteArray detectTab(const QByteArray &sender, const QByteArray &dest);
   void setAuthor(const QByteArray &id);
   void setDate(qint64 date = 0);
   void setId(const QByteArray &id);
 
 protected:
-
   QByteArray m_tab;   ///< Идентификатор вкладки в котором будет отображено сообщение.
   QVariantMap m_data; ///< JSON данные.
 };
