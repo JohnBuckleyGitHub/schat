@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QEvent>
 #include <QMenu>
 #include <QWidgetAction>
@@ -55,8 +53,6 @@ void EmoticonsButton::changeEvent(QEvent *event)
 
 void EmoticonsButton::menuAboutToHide()
 {
-  qDebug() << " -- EmoticonsButton::menuAboutToHide()";
-
   QList<QAction *> actions = m_menu->actions();
   foreach (QAction *action, actions) {
     m_menu->removeAction(action);
@@ -67,8 +63,6 @@ void EmoticonsButton::menuAboutToHide()
 
 void EmoticonsButton::menuAboutToShow()
 {
-  qDebug() << " ++ EmoticonsButton::menuAboutToShow()";
-
   QWidgetAction *action = new QWidgetAction(this);
   action->setDefaultWidget(new EmoticonsTabs(m_emoticons, this));
   m_menu->addAction(action);

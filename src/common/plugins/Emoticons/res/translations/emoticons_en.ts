@@ -5,7 +5,7 @@
 <context>
     <name>EmoticonsAction</name>
     <message>
-        <location filename="../../EmoticonsButton.cpp" line="105"/>
+        <location filename="../../EmoticonsButton.cpp" line="99"/>
         <source>Emoticons</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13,7 +13,7 @@
 <context>
     <name>EmoticonsButton</name>
     <message>
-        <location filename="../../EmoticonsButton.cpp" line="80"/>
+        <location filename="../../EmoticonsButton.cpp" line="74"/>
         <source>Emoticons</source>
         <translation type="unfinished"></translation>
     </message>

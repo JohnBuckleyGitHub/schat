@@ -20,6 +20,7 @@ SCHAT_CORE_LIB = 1
 QT = core network gui webkit
 
 HEADERS  = \
+   SendFileAction.h \
    SendFileMessages.h \
    SendFilePlugin.h \
    SendFilePlugin_p.h \
@@ -30,6 +31,7 @@ HEADERS  = \
    SendFileWorker.h \
 
 SOURCES  = \
+   SendFileAction.cpp \
    SendFileMessages.cpp \
    SendFilePlugin.cpp \
    SendFileSocket.cpp \

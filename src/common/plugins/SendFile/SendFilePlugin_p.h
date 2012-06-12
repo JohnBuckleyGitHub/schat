@@ -58,10 +58,14 @@ signals:
   void received(const QString &id, const QString &dir, const QString &file);
   void sent(const QString &id);
 
+public slots:
+  void sendFile();
+
 private slots:
   void init(ChatView *view);
   void loadFinished(ChatView *view);
   void openUrl(const QUrl &url);
+  void start();
 
   void finished(const QByteArray &id);
   void progress(const QByteArray &id, qint64 current, qint64 total, int percent);
