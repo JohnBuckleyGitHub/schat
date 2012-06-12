@@ -828,7 +828,7 @@
 <context>
     <name>TabWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="236"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="261"/>
         <source>Close Tab</source>
         <translation type="unfinished"></translation>
     </message>
@@ -865,26 +865,26 @@
 <context>
     <name>TrayIcon</name>
     <message>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="46"/>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="81"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="47"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="85"/>
         <source>Show...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="52"/>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="82"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="53"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="86"/>
         <source>Preferences...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="53"/>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="83"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="54"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="87"/>
         <source>About...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="55"/>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="84"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="56"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="88"/>
         <source>Quit</source>
         <translation type="unfinished"></translation>
     </message>

@@ -20,10 +20,11 @@
 
 #include <QCoreApplication>
 #include <QDesktopServices>
+#include <QFileDialog>
+#include <QHostAddress>
+#include <QTimer>
 #include <QtPlugin>
 #include <QWebFrame>
-#include <QHostAddress>
-#include <QFileDialog>
 
 #include "ChatAlerts.h"
 #include "ChatCore.h"
@@ -35,6 +36,7 @@
 #include "messages/Message.h"
 #include "net/packets/MessageNotice.h"
 #include "net/SimpleID.h"
+#include "SendFileAction.h"
 #include "SendFileMessages.h"
 #include "SendFilePlugin.h"
 #include "SendFilePlugin_p.h"
@@ -42,6 +44,7 @@
 #include "sglobal.h"
 #include "Tr.h"
 #include "Translation.h"
+#include "ui/SendWidget.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/TabWidget.h"
 #include "WebBridge.h"
@@ -93,6 +96,8 @@ SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
 
   connect(ChatViewHooks::i(), SIGNAL(initHook(ChatView*)), SLOT(init(ChatView*)));
   connect(ChatViewHooks::i(), SIGNAL(loadFinishedHook(ChatView*)), SLOT(loadFinished(ChatView*)));
+
+  QTimer::singleShot(0, this, SLOT(start()));
 }
 
 
@@ -177,6 +182,12 @@ void SendFilePluginImpl::read(const MessagePacket &packet)
 }
 
 
+void SendFilePluginImpl::sendFile()
+{
+  sendFile(ChatCore::currentId());
+}
+
+
 void SendFilePluginImpl::init(ChatView *view)
 {
   if (SimpleID::typeOf(view->id()) != SimpleID::UserId)
@@ -209,6 +220,12 @@ void SendFilePluginImpl::openUrl(const QUrl &url)
     cancel(id);
   else if (action == LS("saveas"))
     saveAs(id);
+}
+
+
+void SendFilePluginImpl::start()
+{
+  SendWidget::add(new SendFileAction(this));
 }
 
 
