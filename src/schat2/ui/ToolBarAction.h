@@ -61,6 +61,7 @@ public:
   inline virtual QIcon icon() const      { return QIcon(); }
   inline virtual QString title() const   { return m_name; }
   inline void setAction(QAction *action) { m_action = action; }
+  virtual bool isVisible(const QString &type, const QByteArray &id);
   virtual QAction* createAction(QObject *parent = 0) const;
   virtual QWidget* createWidget(QWidget *parent = 0) const;
 

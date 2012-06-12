@@ -25,6 +25,7 @@
 #include "schat.h"
 #include "ui/ToolBarAction.h"
 
+class AbstractTab;
 class InputWidget;
 class Notify;
 class QMenu;
@@ -53,6 +54,7 @@ protected:
 
 private slots:
   void notify(const Notify &notify);
+  void pageChanged(AbstractTab *tab);
   void settingsChanged(const QString &key, const QVariant &value);
 
 private:

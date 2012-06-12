@@ -18,6 +18,7 @@
 
 #include <QAction>
 
+#include "net/SimpleID.h"
 #include "SendFileAction.h"
 #include "SendFilePlugin_p.h"
 #include "sglobal.h"
@@ -26,6 +27,17 @@ SendFileAction::SendFileAction(SendFilePluginImpl *plugin)
   : ToolBarActionCreator(1200, LS("file"), ActionType | AutoShow | AutoDelete)
   , m_plugin(plugin)
 {
+}
+
+
+bool SendFileAction::isVisible(const QString &type, const QByteArray &id)
+{
+  Q_UNUSED(type)
+
+  if (SimpleID::typeOf(id) == SimpleID::UserId)
+    return true;
+
+  return false;
 }
 
 

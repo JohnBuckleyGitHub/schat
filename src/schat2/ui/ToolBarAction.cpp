@@ -26,6 +26,15 @@ ToolBarActionCreator::ToolBarActionCreator(int weight, const QString &name, Flag
 {
 }
 
+
+bool ToolBarActionCreator::isVisible(const QString &type, const QByteArray &id)
+{
+  Q_UNUSED(type);
+  Q_UNUSED(id);
+  return true;
+}
+
+
 QAction* ToolBarActionCreator::createAction(QObject *parent) const
 {
   Q_UNUSED(parent)

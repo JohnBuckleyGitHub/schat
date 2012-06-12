@@ -28,9 +28,11 @@
 #include "hooks/SendButton.h"
 #include "hooks/ToolBarActions.h"
 #include "sglobal.h"
+#include "ui/ChatIcons.h"
 #include "ui/InputWidget.h"
 #include "ui/SendWidget.h"
-#include "ui/ChatIcons.h"
+#include "ui/tabs/AbstractTab.h"
+#include "ui/TabWidget.h"
 
 SendWidget *SendWidget::m_self = 0;
 
@@ -66,6 +68,7 @@ SendWidget::SendWidget(QWidget *parent)
   connect(m_input, SIGNAL(send(const QString &)), SIGNAL(send(const QString &)));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
   connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
+  connect(TabWidget::i(), SIGNAL(pageChanged(AbstractTab*)), SLOT(pageChanged(AbstractTab*)));
 }
 
 
@@ -178,6 +181,15 @@ void SendWidget::notify(const Notify &notify)
     insertHtml(notify.data().toString());
   else if (notify.type() == Notify::SetSendFocus)
     m_input->setFocus();
+}
+
+
+void SendWidget::pageChanged(AbstractTab *tab)
+{
+  foreach (const ToolBarAction &action, m_actions) {
+    if (action->action())
+      action->action()->setVisible(action->isVisible(tab->type(), tab->id()));
+  }
 }
 
 
