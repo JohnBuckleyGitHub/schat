@@ -31,6 +31,7 @@
 #include "ui/SendWidget.h"
 #include "ui/StatusBar.h"
 #include "ui/StatusMenu.h"
+#include "ui/tabs/AbstractTab.h"
 #include "ui/TabWidget.h"
 
 #if defined(Q_WS_WIN)
@@ -54,7 +55,7 @@ ChatWindow::ChatWindow(QWidget *parent)
   m_tabs = new TabWidget(this);
   m_statusBar = new StatusBar(this);
   m_send = new SendWidget(this);
-  pageChanged(-1, false);
+  m_send->setVisible(false);
 
   setStatusBar(m_statusBar);
 
@@ -75,7 +76,7 @@ ChatWindow::ChatWindow(QWidget *parent)
 
   connect(m_send, SIGNAL(send(const QString &)), ChatCore::i(), SLOT(send(const QString &)));
   connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
-  connect(m_tabs, SIGNAL(pageChanged(int, bool)), SLOT(pageChanged(int, bool)));
+  connect(m_tabs, SIGNAL(pageChanged(AbstractTab*)), SLOT(pageChanged(AbstractTab*)));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 
   setWindowTitle(QApplication::applicationName());
@@ -186,13 +187,14 @@ void ChatWindow::notify(const Notify &notify)
 }
 
 
-void ChatWindow::pageChanged(int type, bool visible)
+void ChatWindow::pageChanged(AbstractTab *tab)
 {
-  Q_UNUSED(type)
-
-  m_send->setVisible(visible);
-  if (visible)
+  if (tab->options() & AbstractTab::CanSendMessage) {
+    m_send->setVisible(true);
     m_send->setInputFocus();
+  }
+  else
+    m_send->setVisible(false);
 }
 
 

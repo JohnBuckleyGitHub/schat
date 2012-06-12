@@ -20,6 +20,7 @@
 #include <QToolButton>
 #include <QEvent>
 
+#include "sglobal.h"
 #include "ui/ChatIcons.h"
 #include "ui/tabs/AbstractTab.h"
 #include "ui/tabs/ServerTab.h"
@@ -80,9 +81,9 @@ void TabsToolBar::showMenu()
 
   for (int i = 0; i < tabs->count(); ++i) {
     AbstractTab *tab = tabs->widget(i);
-    if (tab->type() == AbstractTab::ChannelType)
+    if (tab->type() == LS("channel"))
       channels.append(tab->action());
-    else if (tab->type() == AbstractTab::PrivateType)
+    else if (tab->type() == LS("talk"))
       talks.append(tab->action());
 
     tab->action()->setChecked(currentTab == tab);

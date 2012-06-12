@@ -63,7 +63,7 @@ public:
   static void add(const Message &message, bool create = true);
 
 signals:
-  void pageChanged(int type, bool visible);
+  void pageChanged(AbstractTab *tab);
 
 public slots:
   void closeTab(int index);

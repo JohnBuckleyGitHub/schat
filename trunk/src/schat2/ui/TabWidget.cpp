@@ -299,22 +299,14 @@ void TabWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void TabWidget::currentChanged(int index)
 {
-  if (index == -1)
+  AbstractTab *tab = widget(index);
+  if (!tab)
     return;
 
-  AbstractTab *tab = widget(index);
-  bool visible = true;
-  if (tab->type() == AbstractTab::SettingsType
-      || tab->type() == AbstractTab::AboutType
-      || tab->type() == AbstractTab::WelcomeType
-      || tab->type() == AbstractTab::ProgressType) {
-    visible = false;
-  }
-
   ChatCore::setCurrentId(tab->id());
-
   stopAlert();
-  emit pageChanged(tab->type(), visible);
+
+  emit pageChanged(tab);
 }
 
 

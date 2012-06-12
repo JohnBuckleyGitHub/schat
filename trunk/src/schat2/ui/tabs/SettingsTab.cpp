@@ -31,7 +31,7 @@
 #include "ui/tabs/SettingsTabHook.h"
 
 SettingsTab::SettingsTab(TabWidget *parent)
-  : AbstractTab(QByteArray(), SettingsType, parent)
+  : AbstractTab(QByteArray(), LS("settings"), parent)
 {
   m_contents = new QListWidget(this);
   m_contents->setSpacing(1);

@@ -21,13 +21,14 @@
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "messages/ServiceMessage.h"
+#include "sglobal.h"
 #include "ui/ChatIcons.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/PrivateTab.h"
 #include "ui/TabWidget.h"
 
 PrivateTab::PrivateTab(ClientChannel channel, TabWidget *parent)
-  : ChannelBaseTab(channel, PrivateType, parent)
+  : ChannelBaseTab(channel, LS("talk"), parent)
 {
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_chatView);

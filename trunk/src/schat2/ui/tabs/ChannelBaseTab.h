@@ -36,7 +36,7 @@ class SCHAT_CORE_EXPORT ChannelBaseTab : public AbstractTab
   Q_OBJECT
 
 public:
-  ChannelBaseTab(ClientChannel channel, TabType type, TabWidget *parent);
+  ChannelBaseTab(ClientChannel channel, const QString &type, TabWidget *parent);
   ~ChannelBaseTab();
 
   inline ChatView *chatView()          { return m_chatView; }
