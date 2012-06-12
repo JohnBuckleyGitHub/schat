@@ -121,7 +121,7 @@ void ChannelBaseTab::alert(const Alert &alert)
 
   this->alert();
 
-  if (m_alerts && alert.options() & Alert::Global)
+  if (m_alerts && alert.options().testFlag(Alert::Global))
     ChatAlerts::add(id());
 }
 

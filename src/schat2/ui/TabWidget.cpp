@@ -85,7 +85,6 @@ TabWidget::TabWidget(QWidget *parent)
   showWelcome();
 
   m_tray = new TrayIcon(this);
-  QTimer::singleShot(0, m_tray, SLOT(show()));
 
   createToolBars();
   retranslateUi();

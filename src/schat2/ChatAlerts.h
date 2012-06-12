@@ -53,6 +53,7 @@ public:
 
   inline QVariantMap& data()               { return m_data; }
   inline void setTab(const QByteArray &id) { m_tab = id; }
+  void setTab(const QByteArray &sender, const QByteArray &dest);
 
 protected:
   Options m_options;   ///< Опции оповещения.

@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "client/ChatClient.h"
 #include "DateTime.h"
 #include "messages/Message.h"
 #include "net/SimpleID.h"
@@ -37,6 +38,18 @@ Message::Message(const QByteArray &id, const QByteArray &tab, const QString &typ
 
   if (!type.isEmpty())
     m_data[LS("Func")] = func;
+}
+
+
+/*!
+ * Определение идентификатора вкладки в зависимости от отправителя и получателя сообщения.
+ */
+QByteArray Message::detectTab(const QByteArray &sender, const QByteArray &dest)
+{
+  if (SimpleID::typeOf(dest) == SimpleID::ChannelId || sender == ChatClient::id())
+    return dest;
+
+  return sender;
 }
 
 
