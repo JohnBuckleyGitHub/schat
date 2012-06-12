@@ -32,29 +32,24 @@ class SCHAT_CORE_EXPORT AbstractTab : public QWidget
   Q_OBJECT
 
 public:
-  /// Тип виджета.
-  enum TabType {
-    UnknownType,
-    ChatViewType,
-    ChannelType,
-    PrivateType,
-    WelcomeType,
-    AboutType,
-    SettingsType,
-    AlertType,
-    ProgressType,
-    CustomType
+  /// Опции вкладки.
+  enum Option {
+    NoOptions      = 0, ///< Нет опций.
+    CanSendMessage = 1, ///< Вкладка поддерживает отправку сообщений.
   };
 
-  AbstractTab(const QByteArray &id, TabType type, TabWidget *parent);
+  Q_DECLARE_FLAGS(Options, Option)
+
+  AbstractTab(const QByteArray &id, const QString &type, TabWidget *parent);
   inline bool isDeleteOnClose() const { return m_deleteOnClose; }
   inline bool isOnline() const        { return m_online; }
   inline const QByteArray& id() const { return m_id; }
   inline const QIcon& icon() const    { return m_icon; }
   inline const QString& text() const  { return m_text; }
+  inline const QString& type() const  { return m_type; }
+  inline Options options() const      { return m_options; }
   inline QAction *action() const      { return m_action; }
-  inline TabType type() const         { return m_type; }
-  virtual bool bindMenu(QMenu *menu) { Q_UNUSED(menu) return false; }
+  virtual bool bindMenu(QMenu *menu)  { Q_UNUSED(menu) return false; }
   virtual void setOnline(bool online = true);
   void setIcon(const QIcon &icon);
   void setText(const QString &text);
@@ -69,6 +64,7 @@ protected:
 
   bool m_deleteOnClose; ///< true если вкладку нужно удалить после закрытия.
   bool m_online;        ///< true если вкладка "В сети".
+  Options m_options;    ///< Опции вкладки.
   QAction *m_action;    ///< Действие используемое для открытие вкладки.
   QIcon m_icon;         ///< Нормальная иконка вкладки.
   QString m_text;       ///< Заголовок вкладки.
@@ -76,7 +72,9 @@ protected:
 
 private:
   QByteArray m_id;
-  TabType m_type;
+  QString m_type;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(AbstractTab::Options)
 
 #endif /* ABSTRACTTAB_H_ */

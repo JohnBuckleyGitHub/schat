@@ -22,6 +22,7 @@
 #include <QMainWindow>
 #include <QTime>
 
+class AbstractTab;
 class ChatSettings;
 class Notify;
 class QVBoxLayout;
@@ -49,7 +50,7 @@ protected:
 private slots:
   void closeChat();
   void notify(const Notify &notify);
-  void pageChanged(int type, bool visible);
+  void pageChanged(AbstractTab *tab);
   void settingsChanged(const QString &key, const QVariant &value);
 
 private:

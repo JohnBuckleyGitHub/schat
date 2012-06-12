@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,10 +22,11 @@
 #include "ui/tabs/AbstractTab.h"
 #include "ui/TabWidget.h"
 
-AbstractTab::AbstractTab(const QByteArray &id, TabType type, TabWidget *parent)
+AbstractTab::AbstractTab(const QByteArray &id, const QString &type, TabWidget *parent)
   : QWidget(parent)
   , m_deleteOnClose(true)
   , m_online(false)
+  , m_options(NoOptions)
   , m_tabs(parent)
   , m_id(id)
   , m_type(type)

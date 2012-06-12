@@ -26,15 +26,16 @@
 #include "ChatCore.h"
 #include "client/SimpleClient.h"
 #include "NetworkManager.h"
+#include "sglobal.h"
+#include "ui/ChatIcons.h"
 #include "ui/fields/GenderField.h"
 #include "ui/fields/LanguageField.h"
 #include "ui/fields/NickEdit.h"
 #include "ui/network/NetworkWidget.h"
 #include "ui/tabs/WelcomeTab.h"
-#include "ui/ChatIcons.h"
 
 WelcomeTab::WelcomeTab(TabWidget *parent)
-  : AbstractTab(QByteArray(), WelcomeType, parent)
+  : AbstractTab(QByteArray(), LS("welcome"), parent)
   , m_languageBox(0)
   , m_languageLabel(0)
 {

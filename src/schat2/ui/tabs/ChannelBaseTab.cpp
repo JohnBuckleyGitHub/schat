@@ -35,12 +35,14 @@
 #include "ui/TabWidget.h"
 #include "WebBridge.h"
 
-ChannelBaseTab::ChannelBaseTab(ClientChannel channel, TabType type, TabWidget *parent)
+ChannelBaseTab::ChannelBaseTab(ClientChannel channel, const QString &type, TabWidget *parent)
   : AbstractTab(channel->id(), type, parent)
   , m_joined(true)
   , m_channel(channel)
   , m_alerts(0)
 {
+  m_options |= CanSendMessage;
+
   QString file = QApplication::applicationDirPath() + "/styles/test/html/" + page();
   if (QFile::exists(file))
     file = QUrl::fromLocalFile(file).toString();

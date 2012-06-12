@@ -35,8 +35,10 @@
 #include "WebBridge.h"
 
 ServerTab::ServerTab(TabWidget *parent)
-  : AbstractTab(QByteArray(), AlertType, parent)
+  : AbstractTab(QByteArray(), LS("server"), parent)
 {
+  m_options |= CanSendMessage;
+
   QString file = QApplication::applicationDirPath() + "/styles/test/html/Server.html";
   if (QFile::exists(file))
     file = QUrl::fromLocalFile(file).toString();

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 #include "client/SimpleClient.h"
 #include "hooks/ChannelMenu.h"
 #include "messages/ServiceMessage.h"
+#include "sglobal.h"
 #include "ui/InputWidget.h"
 #include "ui/tabs/ChannelBar.h"
 #include "ui/tabs/ChannelTab.h"
@@ -35,7 +36,7 @@
 #include "ui/TabWidget.h"
 
 ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
-  : ChannelBaseTab(channel, ChannelType, parent)
+  : ChannelBaseTab(channel, LS("channel"), parent)
 {
   m_bar = new ChannelBar(this);
   m_bar->setVisible(false);

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,11 +20,12 @@
 
 #include "ChatCore.h"
 #include "QProgressIndicator/QProgressIndicator.h"
-#include "ui/tabs/ProgressTab.h"
+#include "sglobal.h"
 #include "ui/ChatIcons.h"
+#include "ui/tabs/ProgressTab.h"
 
 ProgressTab::ProgressTab(TabWidget *parent)
-  : AbstractTab(QByteArray(), ProgressType, parent)
+  : AbstractTab(QByteArray(), LS("progress"), parent)
 {
   m_progress = new QProgressIndicator(this);
   m_progress->setAnimationDelay(100);
