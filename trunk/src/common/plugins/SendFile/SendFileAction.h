@@ -31,6 +31,7 @@ class SendFileAction : public ToolBarActionCreator
 
 public:
   SendFileAction(SendFilePluginImpl *plugin);
+  bool isVisible(const QString &type, const QByteArray &id);
   QAction* createAction(QObject *parent = 0) const;
   QIcon icon() const;
   QString title() const;
