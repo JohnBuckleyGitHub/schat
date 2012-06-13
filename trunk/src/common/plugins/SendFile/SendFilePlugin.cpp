@@ -89,7 +89,7 @@ SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
 
   ChatCore::translation()->addOther(LS("sendfile"));
   QDesktopServices::setUrlHandler(LS("chat-sendfile"), this, "openUrl");
-  SettingsTabHook::add(new SendFilePageCreator());
+  SettingsTabHook::add(new SendFilePageCreator(this));
 
   m_thread = new SendFile::Thread(m_port);
   connect(m_thread, SIGNAL(finished(QByteArray, qint64)), SLOT(finished(QByteArray)));

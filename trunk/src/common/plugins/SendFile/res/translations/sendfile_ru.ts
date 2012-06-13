@@ -13,9 +13,19 @@
 <context>
     <name>SendFilePage</name>
     <message>
-        <location filename="../../SendFilePage.cpp" line="35"/>
+        <location filename="../../SendFilePage.cpp" line="61"/>
         <source>File transfer</source>
         <translation>Передача файлов</translation>
+    </message>
+    <message>
+        <location filename="../../SendFilePage.cpp" line="62"/>
+        <source>Use port</source>
+        <translation>Использовать порт</translation>
+    </message>
+    <message>
+        <location filename="../../SendFilePage.cpp" line="63"/>
+        <source>for file transfer</source>
+        <translation>для передачи файлов</translation>
     </message>
 </context>
 <context>
