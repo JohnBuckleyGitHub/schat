@@ -37,6 +37,7 @@ class Thread : public QThread
 
 public:
   Thread(quint16 port, QObject *parent = 0);
+  bool setPort(quint16 port);
   inline Worker *worker() const { return m_worker; }
   void add(SendFileTransaction transaction);
   void remove(const QByteArray &id);

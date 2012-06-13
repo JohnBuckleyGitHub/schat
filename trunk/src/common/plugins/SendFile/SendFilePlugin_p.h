@@ -49,6 +49,7 @@ public:
 
   bool sendFile(const QByteArray &dest);
   bool sendFile(const QByteArray &dest, const QString &file);
+  int setPort(quint16 port);
   void read(const MessagePacket &packet);
 
 signals:
