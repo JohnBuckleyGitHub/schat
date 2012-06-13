@@ -51,7 +51,7 @@ QAction* SendFileAction::createAction(QObject *parent) const
 
 QIcon SendFileAction::icon() const
 {
-  return QIcon(LS(":/images/SendFile/attach.png"));
+  return QIcon(LS(":/images/sendfile/attach.png"));
 }
 
 

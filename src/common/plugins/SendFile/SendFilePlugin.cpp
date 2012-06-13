@@ -38,6 +38,7 @@
 #include "net/SimpleID.h"
 #include "SendFileAction.h"
 #include "SendFileMessages.h"
+#include "SendFilePage.h"
 #include "SendFilePlugin.h"
 #include "SendFilePlugin_p.h"
 #include "SendFileThread.h"
@@ -51,7 +52,7 @@
 
 class SendFileTr : public Tr
 {
-  Q_DECLARE_TR_FUNCTIONS(WebBridgeTr)
+  Q_DECLARE_TR_FUNCTIONS(SendFileTr)
 
 public:
   SendFileTr() : Tr() { m_prefix = LS("file-"); }
@@ -88,6 +89,7 @@ SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
 
   ChatCore::translation()->addOther(LS("sendfile"));
   QDesktopServices::setUrlHandler(LS("chat-sendfile"), this, "openUrl");
+  SettingsTabHook::add(new SendFilePageCreator());
 
   m_thread = new SendFile::Thread(m_port);
   connect(m_thread, SIGNAL(finished(QByteArray, qint64)), SLOT(finished(QByteArray)));
