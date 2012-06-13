@@ -520,7 +520,7 @@
 <context>
     <name>ProgressTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ProgressTab.cpp" line="44"/>
+        <location filename="../../src/schat2/ui/tabs/ProgressTab.cpp" line="45"/>
         <source>Connecting</source>
         <translation type="unfinished"></translation>
     </message>
@@ -601,12 +601,12 @@
 <context>
     <name>SendWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/SendWidget.cpp" line="126"/>
+        <location filename="../../src/schat2/ui/SendWidget.cpp" line="129"/>
         <source>Add</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/SendWidget.cpp" line="138"/>
+        <location filename="../../src/schat2/ui/SendWidget.cpp" line="141"/>
         <source>Remove</source>
         <translation type="unfinished"></translation>
     </message>
@@ -627,7 +627,7 @@
 <context>
     <name>ServerTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="140"/>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="142"/>
         <source>Network</source>
         <translation type="unfinished"></translation>
     </message>
@@ -836,20 +836,20 @@
 <context>
     <name>TabsToolBar</name>
     <message>
-        <location filename="../../src/schat2/ui/TabsToolBar.cpp" line="40"/>
-        <location filename="../../src/schat2/ui/TabsToolBar.cpp" line="109"/>
+        <location filename="../../src/schat2/ui/TabsToolBar.cpp" line="41"/>
+        <location filename="../../src/schat2/ui/TabsToolBar.cpp" line="110"/>
         <source>Menu</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabsToolBar.cpp" line="43"/>
-        <location filename="../../src/schat2/ui/TabsToolBar.cpp" line="110"/>
+        <location filename="../../src/schat2/ui/TabsToolBar.cpp" line="44"/>
+        <location filename="../../src/schat2/ui/TabsToolBar.cpp" line="111"/>
         <source>Channels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabsToolBar.cpp" line="46"/>
-        <location filename="../../src/schat2/ui/TabsToolBar.cpp" line="111"/>
+        <location filename="../../src/schat2/ui/TabsToolBar.cpp" line="47"/>
+        <location filename="../../src/schat2/ui/TabsToolBar.cpp" line="112"/>
         <source>Talks</source>
         <translation type="unfinished"></translation>
     </message>
@@ -988,32 +988,32 @@
 <context>
     <name>WelcomeTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="103"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="104"/>
         <source>Network</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="109"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="110"/>
         <source>Language</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="104"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="105"/>
         <source>Profile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="105"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="106"/>
         <source>Nick:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="106"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="107"/>
         <source>Gender:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="102"/>
+        <location filename="../../src/schat2/ui/tabs/WelcomeTab.cpp" line="103"/>
         <source>Welcome</source>
         <translation type="unfinished"></translation>
     </message>

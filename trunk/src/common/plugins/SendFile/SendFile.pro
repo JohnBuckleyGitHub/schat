@@ -22,6 +22,7 @@ QT = core network gui webkit
 HEADERS  = \
    SendFileAction.h \
    SendFileMessages.h \
+   SendFilePage.h \
    SendFilePlugin.h \
    SendFilePlugin_p.h \
    SendFileSocket.h \
@@ -33,6 +34,7 @@ HEADERS  = \
 SOURCES  = \
    SendFileAction.cpp \
    SendFileMessages.cpp \
+   SendFilePage.cpp \
    SendFilePlugin.cpp \
    SendFileSocket.cpp \
    SendFileTask.cpp \
