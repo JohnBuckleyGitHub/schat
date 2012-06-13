@@ -70,6 +70,7 @@ public:
     Slash              = 0x536C, ///< "Sl"
     TopicEdit          = 0x5445, ///< "TE"
     Key                = 0x4B65, ///< "Ke"
+    Exclamation        = 0x4578, ///< "Ex"
     ExclamationRed     = 0x4552, ///< "ER"
     ArrowRight         = 0x4152, ///< "AR"
     SignIn             = 0x5349, ///< "SI"

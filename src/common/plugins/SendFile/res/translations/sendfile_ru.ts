@@ -13,19 +13,24 @@
 <context>
     <name>SendFilePage</name>
     <message>
-        <location filename="../../SendFilePage.cpp" line="61"/>
+        <location filename="../../SendFilePage.cpp" line="76"/>
         <source>File transfer</source>
         <translation>Передача файлов</translation>
     </message>
     <message>
-        <location filename="../../SendFilePage.cpp" line="62"/>
+        <location filename="../../SendFilePage.cpp" line="77"/>
         <source>Use port</source>
         <translation>Использовать порт</translation>
     </message>
     <message>
-        <location filename="../../SendFilePage.cpp" line="63"/>
+        <location filename="../../SendFilePage.cpp" line="78"/>
         <source>for file transfer</source>
         <translation>для передачи файлов</translation>
+    </message>
+    <message>
+        <location filename="../../SendFilePage.cpp" line="79"/>
+        <source>Your changes will be applied the next time you start Simple Chat</source>
+        <translation>Изменения будут применены при следующем запуске Simple Chat</translation>
     </message>
 </context>
 <context>
@@ -36,12 +41,12 @@
         <translation>Открыть</translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="256"/>
+        <location filename="../../SendFilePlugin.cpp" line="267"/>
         <source>%1 of %2</source>
         <translation>%1 из %2</translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="409"/>
+        <location filename="../../SendFilePlugin.cpp" line="420"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>

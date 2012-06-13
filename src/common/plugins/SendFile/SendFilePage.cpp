@@ -20,10 +20,11 @@
 #include <QVBoxLayout>
 #include <QSpinBox>
 
-#include "SendFilePage.h"
-#include "sglobal.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "SendFilePage.h"
+#include "SendFilePlugin_p.h"
+#include "sglobal.h"
 
 SendFilePage::SendFilePage(SendFilePluginImpl *plugin, QWidget *parent)
   : SettingsPage(QIcon(LS(":/images/sendfile/attach.png")), LS("sendfile"), parent)
@@ -40,17 +41,28 @@ SendFilePage::SendFilePage(SendFilePluginImpl *plugin, QWidget *parent)
   m_port->setValue(SCHAT_OPTION(LS("SendFile/Port")).toInt());
   m_portLabel2 = new QLabel(this);
 
+  m_warningIcon = new QLabel(this);
+  m_warningIcon->setPixmap(QPixmap(LS(":/images/exclamation.png")));
+
+  m_warningLabel = new QLabel(this);
+  m_warningLabel->setWordWrap(true);
+  setWarning(false);
+
   QHBoxLayout *portLay = new QHBoxLayout();
   portLay->addWidget(m_portLabel);
   portLay->addWidget(m_port);
-  portLay->addWidget(m_portLabel2);
-  portLay->addStretch();
+  portLay->addWidget(m_portLabel2, 1);
   portLay->setContentsMargins(10, 0, 3, 0);
+
+  QHBoxLayout *warningLay = new QHBoxLayout();
+  warningLay->addWidget(m_warningIcon);
+  warningLay->addWidget(m_warningLabel, 1);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_label);
   mainLay->addLayout(portLay);
   mainLay->addStretch();
+  mainLay->addLayout(warningLay);
 
   retranslateUi();
 
@@ -63,6 +75,7 @@ void SendFilePage::retranslateUi()
   m_name = tr("File transfer");
   m_portLabel->setText(tr("Use port"));
   m_portLabel2->setText(tr("for file transfer"));
+  m_warningLabel->setText(tr("Your changes will be applied the next time you start Simple Chat"));
   m_label->setText(LS("<b>") + m_name + LS("</b>"));
 }
 
@@ -70,6 +83,14 @@ void SendFilePage::retranslateUi()
 void SendFilePage::portChanged(int port)
 {
   ChatCore::settings()->setValue(LS("SendFile/Port"), port);
+  setWarning(m_plugin->setPort(port) != port);
+}
+
+
+void SendFilePage::setWarning(bool visible)
+{
+  m_warningIcon->setVisible(visible);
+  m_warningLabel->setVisible(visible);
 }
 
 

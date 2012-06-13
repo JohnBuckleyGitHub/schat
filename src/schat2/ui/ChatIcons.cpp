@@ -175,6 +175,7 @@ void ChatIcons::init()
   m_icons[Slash]          = LS("slash");
   m_icons[TopicEdit]      = LS("topic-edit");
   m_icons[Key]            = LS("key");
+  m_icons[Exclamation]    = LS("exclamation");
   m_icons[ExclamationRed] = LS("exclamation-red");
   m_icons[ArrowRight]     = LS("arrow-right");
   m_icons[SignIn]         = LS("sign-in");

@@ -165,6 +165,17 @@ bool SendFilePluginImpl::sendFile(const QByteArray &dest, const QString &file)
 }
 
 
+int SendFilePluginImpl::setPort(quint16 port)
+{
+  if (m_thread->setPort(port)) {
+    m_port = port;
+    return port;
+  }
+
+  return m_port;
+}
+
+
 /*!
  * Чтение входящего пакета.
  */
