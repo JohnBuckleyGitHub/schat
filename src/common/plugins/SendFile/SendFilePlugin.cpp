@@ -21,6 +21,7 @@
 #include <QCoreApplication>
 #include <QDesktopServices>
 #include <QFileDialog>
+#include <QFileIconProvider>
 #include <QHostAddress>
 #include <QTimer>
 #include <QtPlugin>
@@ -36,6 +37,7 @@
 #include "messages/Message.h"
 #include "net/packets/MessageNotice.h"
 #include "net/SimpleID.h"
+#include "Path.h"
 #include "SendFileAction.h"
 #include "SendFileMessages.h"
 #include "SendFilePage.h"
@@ -149,6 +151,7 @@ bool SendFilePluginImpl::sendFile(const QByteArray &dest, const QString &file)
 
   if (ChatClient::io()->send(packet, true)) {
     m_thread->add(transaction);
+    m_transactions[transaction->id()] = transaction;
 
     Message message(transaction->id(), dest, LS("file"), LS("addFileMessage"));
     message.setAuthor(ChatClient::id());
@@ -157,7 +160,6 @@ bool SendFilePluginImpl::sendFile(const QByteArray &dest, const QString &file)
     message.data()[LS("Direction")] = LS("outgoing");
     TabWidget::add(message);
 
-    m_transactions[transaction->id()] = transaction;
     return true;
   }
 
@@ -192,6 +194,32 @@ void SendFilePluginImpl::read(const MessagePacket &packet)
     cancel(packet);
   else if (packet->text() == LS("accept"))
     accept(packet);
+}
+
+
+/*!
+ * Получение иконки файла.
+ *
+ * Для входящих файлов, создаётся новый пустой файл, для него получается иконка и затем файл удаляется.
+ */
+QPixmap SendFilePluginImpl::fileIcon(const QString &id)
+{
+  SendFileTransaction transaction = m_transactions.value(SimpleID::decode(id));
+  if (!transaction)
+    return QPixmap();
+
+  QFileInfo info(transaction->file().name);
+  QFileIconProvider provider;
+  if (info.isRelative()) {
+    QFile file(Path::cache() + LC('/') + transaction->fileName());
+    file.open(QIODevice::WriteOnly);
+    info.setFile(file);
+    QPixmap pixmap = provider.icon(info).pixmap(16, 16);
+    file.remove();
+    return pixmap;
+  }
+
+  return provider.icon(info).pixmap(16, 16);
 }
 
 
@@ -373,6 +401,7 @@ void SendFilePluginImpl::incomingFile(const MessagePacket &packet)
     return;
 
   transaction->setLocal(localHosts());
+  m_transactions[transaction->id()] = transaction;
 
   Message message(packet->id(), packet->sender(), LS("file"), LS("addFileMessage"));
   message.setAuthor(packet->sender());
@@ -381,8 +410,6 @@ void SendFilePluginImpl::incomingFile(const MessagePacket &packet)
   message.data()[LS("Size")]      = transaction->file().size;
   message.data()[LS("Direction")] = LS("incoming");
   TabWidget::add(message);
-
-  m_transactions[transaction->id()] = transaction;
 
   Alert alert = Alert(LS("file"), packet->id(), packet->date(), Alert::Tab | Alert::Global);
   alert.setTab(packet->sender(), packet->dest());

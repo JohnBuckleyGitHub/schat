@@ -20,6 +20,7 @@
 #define SENDFILEPLUGIN_P_H_
 
 #include <QVariant>
+#include <QPixmap>
 
 #include "net/packets/MessageNotice.h"
 #include "plugins/ChatPlugin.h"
@@ -51,6 +52,8 @@ public:
   bool sendFile(const QByteArray &dest, const QString &file);
   int setPort(quint16 port);
   void read(const MessagePacket &packet);
+
+  Q_INVOKABLE QPixmap fileIcon(const QString &id);
 
 signals:
   void accepted(const QString &id, const QString &fileName);
