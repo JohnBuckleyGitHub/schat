@@ -44,6 +44,7 @@ SOURCES  = \
 
 RESOURCES += SendFile.qrc
 
+include(../../config.pri)
 include(../plugins.pri)
 
 TRANSLATIONS += res/translations/sendfile_en.ts

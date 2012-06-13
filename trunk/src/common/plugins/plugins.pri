@@ -43,6 +43,10 @@ CONFIG(debug, debug|release) {
   DESTDIR = ../../../../out/plugins
 }
 
+contains( SCHAT_DEBUG, 1 ) {
+  DEFINES += SCHAT_DEBUG
+}
+
 contains( SCHAT_CLIENT_LIB, 1 ) {
   CONFIG(debug, debug|release) { 
     LIBS += -L../../../../out/debug -lschat-client 
