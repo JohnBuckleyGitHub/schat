@@ -22,28 +22,41 @@
 #include "ui/tabs/SettingsTabHook.h"
 
 class QLabel;
+class SendFilePluginImpl;
+class QSpinBox;
 
 class SendFilePage : public SettingsPage
 {
   Q_OBJECT
 
 public:
-  SendFilePage(QWidget *parent = 0);
+  SendFilePage(SendFilePluginImpl *plugin, QWidget *parent = 0);
   void retranslateUi();
 
+private slots:
+  void portChanged(int port);
+
 private:
-  QLabel *m_label;
+  QLabel *m_label;              ///< Надпись вверху страницы.
+  QLabel *m_portLabel;          ///< Надпись перед спинбоксом выбора порта.
+  QLabel *m_portLabel2;         ///< Надпись после спинбокса выбора порта.
+  QSpinBox *m_port;             ///< Порт для передачи файлов.
+  SendFilePluginImpl *m_plugin; ///< Указатель на объект плагина.
 };
 
 
 class SendFilePageCreator : public SettingsPageCreator
 {
 public:
-  SendFilePageCreator()
+  SendFilePageCreator(SendFilePluginImpl *plugin)
   : SettingsPageCreator(5100)
+  , m_plugin(plugin)
   {}
 
   SettingsPage* page(QWidget *parent = 0);
+
+private:
+  SendFilePluginImpl *m_plugin; ///< Указатель на объект плагина.
 };
 
 #endif /* SENDFILEPAGE_H_ */
