@@ -34,6 +34,7 @@
 
 .file-icon {
   float: left;
+  margin: 4px;
 }
 
 .file-name {

@@ -74,22 +74,48 @@ var SendFileUtils = {
     $('#' + id + ' .btn-file-cancel').remove();
     $('#' + id + ' .file-buttons').prepend(SendFileUtils.button('open', id));
     $('#' + id + ' .btn-file-open').attr('href', file);
+
+    SendFileUtils.setFileIcon(id);
+  },
+
+  /*
+   * Установка иконки файла.
+   *
+   * \param id Идентификатор сообщения.
+   */
+  setFileIcon: function(id) {
+    var imageId = $('#' + id).data('imageId');
+    try {
+      SendFile.fileIcon(id).assignToHTMLImageElement(document.getElementById(imageId));
+      $('#' + imageId).show();
+    }
+    catch (e) {
+      $('#' + imageId).hide();
+    }
   }
 };
 
 
+/*
+ * Добавление сообщения с информацией о входящем или отправленном файле.
+ */
 Messages.addFileMessage = function(json)
 {
   var id = json.Id;
+  var imageId = SimpleChat.randomId();
+
   var html = '<div class="container ' + json.Type + '-type" id="' + json.Id + '">';
   html += '<div class="blocks ' + json.Direction + '">';
   html += '<div class="file-sender">' + DateTime.template(json.Date, json.Day) + Messages.nameBlock(json.Author) + '</div>';
+  html += '<div class="file-icon"><img id="' + imageId + '" src="" width="16" height="16" alt="" /></div>';
   html += '<div class="file-block"><span class="file-name">' + json.File + '</span><br><span class="file-state">&nbsp;</span></div>';
   html += '<div class="file-buttons btn-group">' + SendFileUtils.button('cancel', id) + '</div>';
   html += '<div class="file-progress"><div class="bar"></div></div><div style="clear:both;"></div>';
   html += '</div></div>';
 
   Messages.addHintedRawMessage(html, json.Hint, id);
+  $('#' + id).data('imageId', imageId);
+  SendFileUtils.setFileIcon(id);
 
   if (json.Direction === 'outgoing') {
     SendFileUtils.setStateTr(id, 'file-waiting');
