@@ -16,19 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QBasicTimer>
-#include <QBuffer>
 #include <QFile>
 #include <QTimerEvent>
-#include <QUdpSocket>
 
+#include "DateTime.h"
+#include "debugstream.h"
+#include "net/SimpleID.h"
 #include "SendFileSocket.h"
 #include "SendFileTask.h"
 #include "SendFileTransaction.h"
 #include "SendFileWorker.h"
-#include "DateTime.h"
 
 namespace SendFile {
 
@@ -40,6 +38,8 @@ Task::Task(Worker *worker, const QVariantMap &data)
   , m_socket(0)
   , m_worker(worker)
 {
+  SCHAT_DEBUG_STREAM("[SendFile] Task::Task(), id:" << SimpleID::encode(data.value("id").toByteArray()) << this);
+
   m_timer = new QBasicTimer();
   m_transaction = new Transaction(data);
   m_file = new QFile(m_transaction->file().name, this);
@@ -48,6 +48,8 @@ Task::Task(Worker *worker, const QVariantMap &data)
 
 Task::~Task()
 {
+  SCHAT_DEBUG_STREAM("[SendFile] Task::~Task()" << this);
+
   if (m_timer->isActive())
     m_timer->stop();
 
@@ -85,7 +87,8 @@ void Task::discovery()
 
 void Task::setSocket(Socket *socket)
 {
-  qDebug() << "Task::setSocket()" << m_socket;
+  SCHAT_DEBUG_STREAM("[SendFile] Task::setSocket(), socket:" << socket << "exists:" << m_socket << this);
+
   if (m_socket && m_socket->mode() != Socket::DataMode)
     m_socket->leave(true);
 
@@ -112,10 +115,11 @@ void Task::timerEvent(QTimerEvent *event)
 
 void Task::accepted()
 {
-  qDebug() << "Task::accepted()" << m_discovery.indexOf(qobject_cast<Socket*>(sender()));
   Socket *socket = qobject_cast<Socket*>(sender());
   if (!socket)
     return;
+
+  SCHAT_DEBUG_STREAM("[SendFile] Task::accepted(), socket:" << socket << this);
 
   if (!m_socket) {
     m_socket = socket;
@@ -132,7 +136,6 @@ void Task::accepted()
 void Task::finished()
 {
   m_timer->stop();
-  qDebug() << "ELAPSED:" << (DateTime::utc() - m_time) << "ms";
   emit finished(m_transaction->id(), DateTime::utc() - m_time);
 }
 
@@ -151,7 +154,7 @@ void Task::progress(qint64 current)
  */
 void Task::discovery(const QString &host, quint16 port)
 {
-  qDebug() << "Task::discovery()" << host << port;
+  SCHAT_DEBUG_STREAM("[SendFile] Task::discovery(), host:" << host << ", port:" << port << this);
 
   Socket *socket = new Socket(host, port, m_transaction->id(), this);
   connect(socket, SIGNAL(accepted()), SLOT(accepted()));
@@ -161,6 +164,8 @@ void Task::discovery(const QString &host, quint16 port)
 
 void Task::start()
 {
+  SCHAT_DEBUG_STREAM("[SendFile] Task::start(), socket:" << m_socket << this);
+
   connect(m_socket, SIGNAL(progress(qint64, qint64)), SLOT(progress(qint64)));
   connect(m_socket, SIGNAL(finished()), SLOT(finished()));
   m_socket->setFile(m_transaction->role(), m_file, m_transaction->file().size);

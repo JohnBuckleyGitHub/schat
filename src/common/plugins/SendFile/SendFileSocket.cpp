@@ -16,12 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QBasicTimer>
 #include <QTimerEvent>
 #include <QFile>
 
+#include "debugstream.h"
 #include "net/SimpleID.h"
 #include "SendFileSocket.h"
 #include "SendFileTransaction.h"
@@ -68,7 +67,7 @@ Socket::Socket(const QString& host, quint16 port, const QByteArray &id, QObject 
 
 Socket::~Socket()
 {
-  qDebug() << "~Socket()";
+  SCHAT_DEBUG_STREAM("[SendFile] Socket::~Socket()" << this)
 
   if (m_timer->isActive())
     m_timer->stop();
@@ -79,7 +78,7 @@ Socket::~Socket()
 
 void Socket::accept(char code)
 {
-  qDebug() << "Socket::accept()" << this;
+  SCHAT_DEBUG_STREAM("[SendFile] Socket::accept(), code:" << code << this)
 
   qint32 size = 1;
   QByteArray data;
@@ -94,6 +93,7 @@ void Socket::accept(char code)
 
 void Socket::leave(bool remove)
 {
+  SCHAT_DEBUG_STREAM("[SendFile] Socket::leave(), remove:" << remove << ", state:" << state() << ", mode:" << mode() << this);
   setMode(UnknownMode);
 
   if (state() == ConnectedState) {
@@ -119,6 +119,8 @@ void Socket::leave(bool remove)
  */
 void Socket::reject()
 {
+  SCHAT_DEBUG_STREAM("[SendFile] Socket::reject()" << this)
+
   if (state() != ConnectedState)
     return;
 
@@ -143,7 +145,7 @@ void Socket::reject()
  */
 void Socket::setFile(int role, QFile *file, qint64 size)
 {
-  qDebug() << "Socket::setFile" << role << file->fileName() << file->size();
+  SCHAT_DEBUG_STREAM("[SendFile] Socket::setFile(), role:" << role << ", fileName:" << file->fileName() << ", size:" << size << this)
   m_role = role;
   m_file = file;
   m_size = size;
@@ -159,8 +161,6 @@ void Socket::timerEvent(QTimerEvent *event)
     QTcpSocket::timerEvent(event);
     return;
   }
-
-  qDebug() << "TIMER EVENT";
 
   if (m_mode == DiscoveringMode || m_mode == HandshakeMode) {
     if (state() != UnconnectedState) {
@@ -180,7 +180,7 @@ void Socket::timerEvent(QTimerEvent *event)
  */
 void Socket::connected()
 {
-  qDebug() << "connected()                       " << this;
+  SCHAT_DEBUG_STREAM("[SendFile] Socket::connected()" << this)
 
 # if QT_VERSION >= 0x040600
   setSocketOption(QAbstractSocket::KeepAliveOption, 1);
@@ -204,7 +204,7 @@ void Socket::connected()
 
 void Socket::disconnected()
 {
-  qDebug() << "disconnected()                    " << this;
+  SCHAT_DEBUG_STREAM("[SendFile] Socket::disconnected(), m_release:" << m_release << this)
   if (m_release)
     return;
 
@@ -223,7 +223,7 @@ void Socket::disconnected()
 
 void Socket::discovery()
 {
-  qDebug() << "Socket::discovery()" << m_host << m_port;
+  SCHAT_DEBUG_STREAM("[SendFile] Socket::discovery(), host:" << m_host << ", port:" << m_port << this)
   if (!m_port)
     return;
 
@@ -237,8 +237,7 @@ void Socket::discovery()
 
 void Socket::error(QAbstractSocket::SocketError socketError)
 {
-  qDebug() << "error()                           " << this;
-  qDebug() << "^^^^^" << socketError << errorString();
+  SCHAT_DEBUG_STREAM("[SendFile] Socket::error()" << socketError << errorString() << this)
 
   if (state() != ConnectedState)
     disconnected();
@@ -247,8 +246,6 @@ void Socket::error(QAbstractSocket::SocketError socketError)
 
 void Socket::readyRead()
 {
-//  qDebug() << "readyRead()                       " << this << bytesAvailable();
-
   forever {
     if (m_mode == DataMode && m_role == ReceiverRole) {
       qint64 bytes = bytesAvailable();
@@ -347,7 +344,6 @@ void Socket::readPacket()
   char code;
   getChar(&code);
   m_nextBlockSize--;
-//  qDebug() << code;
 
   if (code == 'H' && m_nextBlockSize >= 21) {
     m_nextBlockSize -= 21;
