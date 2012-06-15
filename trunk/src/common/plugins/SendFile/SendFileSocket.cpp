@@ -36,7 +36,8 @@ namespace SendFile {
 Socket::Socket(QObject *parent)
   : QTcpSocket(parent)
   , m_release(false)
-  , m_role(-1)
+  , m_serverSide(true)
+  , m_role(UnknownRole)
   , m_mode(HandshakeMode)
   , m_file(0)
   , m_size(0)
@@ -48,10 +49,11 @@ Socket::Socket(QObject *parent)
 }
 
 
-Socket::Socket(const QString& host, quint16 port, const QByteArray &id, QObject *parent)
+Socket::Socket(const QString& host, quint16 port, const QByteArray &id, int role, QObject *parent)
   : QTcpSocket(parent)
   , m_release(false)
-  , m_role(-1)
+  , m_serverSide(false)
+  , m_role(UnknownRole)
   , m_mode(UnknownMode)
   , m_id(id)
   , m_file(0)
@@ -60,8 +62,21 @@ Socket::Socket(const QString& host, quint16 port, const QByteArray &id, QObject 
   , m_port(port)
   , m_nextBlockSize(0)
 {
+  role ? m_role = ReceiverSlave : m_role = SenderSlave;
+
   init();
   discovery();
+}
+
+
+bool Socket::reconnect()
+{
+  if (m_mode == DiscoveringMode || m_mode == HandshakeMode) {
+    m_timer->start(RECONNECT_TIMEOUT, this);
+    return true;
+  }
+
+  return false;
 }
 
 
@@ -76,24 +91,50 @@ Socket::~Socket()
 }
 
 
-void Socket::accept(char code)
+void Socket::accept()
 {
-  SCHAT_DEBUG_STREAM("[SendFile] Socket::accept(), code:" << code << this)
+  SCHAT_DEBUG_STREAM("[SendFile] Socket::accept()" << this)
 
   qint32 size = 1;
   QByteArray data;
 
   data.reserve(size + 4);
   data.append((char*)&size, 4);
-  data.append(code);
+  data.append('A');
 
   write(data);
 }
 
 
-void Socket::leave(bool remove)
+void Socket::acceptSync()
 {
-  SCHAT_DEBUG_STREAM("[SendFile] Socket::leave(), remove:" << remove << ", state:" << state() << ", mode:" << mode() << this);
+  SCHAT_DEBUG_STREAM("[SendFile] Socket::acceptSync()" << this)
+
+  if (state() != ConnectedState)
+    return;
+
+  qint32 size = 1;
+  QByteArray data;
+
+  data.reserve(size + 4);
+  data.append((char*)&size, 4);
+  data.append('s');
+
+  write(data);
+  setMode(DataMode);
+}
+
+
+/*!
+ * Принудительное отключение сокета.
+ */
+void Socket::leave()
+{
+  SCHAT_DEBUG_STREAM("[SendFile] Socket::leave(), state:" << state() << " mode:" << mode() << this);
+  if (m_release)
+    return;
+
+  disconnect(SIGNAL(readyRead()));
   setMode(UnknownMode);
 
   if (state() == ConnectedState) {
@@ -108,9 +149,6 @@ void Socket::leave(bool remove)
     abort();
     disconnected();
   }
-
-  if (remove)
-    deleteLater();
 }
 
 
@@ -132,26 +170,36 @@ void Socket::reject()
   data.append('R');
 
   write(data);
-  leave(true);
+  leave();
 }
 
 
 /*!
  * Установка файла для записи или чтения.
  *
- * \param role Определяет роль отправка или получение.
  * \param file Указатель на файл.
  * \param size Размер файла.
  */
-void Socket::setFile(int role, QFile *file, qint64 size)
+void Socket::setFile(QFile *file, qint64 size)
 {
-  SCHAT_DEBUG_STREAM("[SendFile] Socket::setFile(), role:" << role << ", fileName:" << file->fileName() << ", size:" << size << this)
-  m_role = role;
+  SCHAT_DEBUG_STREAM("[SendFile] Socket::setFile(), fileName:" << file->fileName() << " size:" << size << this)
   m_file = file;
   m_size = size;
+}
 
-  if (!role)
-    sendBlock();
+
+void Socket::sync()
+{
+  SCHAT_DEBUG_STREAM("[SendFile] Socket::sync()" << this)
+
+  qint32 size = 1;
+  QByteArray data;
+
+  data.reserve(size + 4);
+  data.append((char*)&size, 4);
+  data.append('S');
+
+  write(data);
 }
 
 
@@ -189,12 +237,13 @@ void Socket::connected()
   if (m_mode == DiscoveringMode) {
     setMode(HandshakeMode);
 
-    qint32 size = 22;
+    qint32 size = 23;
     QByteArray hello;
 
     hello.reserve(size + 4);
     hello.append((char*)&size, 4);
     hello.append('H');
+    hello.append(m_role);
     hello.append(m_id);
 
     write(hello);
@@ -211,13 +260,7 @@ void Socket::disconnected()
   m_release = true;
   m_timer->stop();
 
-  if (m_mode == HandshakeMode && !m_port) {
-    deleteLater();
-    return;
-  }
-
-  if (m_mode == DiscoveringMode || m_mode == HandshakeMode)
-    m_timer->start(RECONNECT_TIMEOUT, this);
+  emit released();
 }
 
 
@@ -247,8 +290,14 @@ void Socket::error(QAbstractSocket::SocketError socketError)
 void Socket::readyRead()
 {
   forever {
-    if (m_mode == DataMode && m_role == ReceiverRole) {
+    if (m_release)
+      return;
+
+    if (m_mode == DataMode && (m_role == ReceiverMaster || m_role == ReceiverSlave)) {
       qint64 bytes = bytesAvailable();
+      if (!bytes)
+        break;
+
       qint64 pos = m_file->pos();
       if (pos + bytes > m_size)
         bytes = m_size - pos;
@@ -280,6 +329,8 @@ void Socket::readyRead()
 
 void Socket::init()
 {
+  SCHAT_DEBUG_STREAM("[SendFile] Socket::init()" << this)
+
   m_timer = new QBasicTimer();
 
   connect(this, SIGNAL(connected()), SLOT(connected()));
@@ -345,26 +396,29 @@ void Socket::readPacket()
   getChar(&code);
   m_nextBlockSize--;
 
-  if (code == 'H' && m_nextBlockSize >= 21) {
-    m_nextBlockSize -= 21;
+  if (code == 'H' && m_nextBlockSize >= 22) {
+    m_nextBlockSize -= 22;
+    char role;
+    getChar(&role);
     m_id = read(21);
-    if (SimpleID::typeOf(m_id) == SimpleID::MessageId) {
-      emit handshake(m_id);
+    if (SimpleID::typeOf(m_id) == SimpleID::MessageId && m_serverSide) {
+      SCHAT_DEBUG_STREAM("[SendFile] Socket::readPacket(), code:" << code << "role:" << role << this)
+      emit handshake(m_id, role);
     }
+  }
+  else if (code == 'S') {
+    emit syncRequest();
+  }
+  else if (code == 's') {
+    setMode(DataMode);
+    sendBlock();
   }
   else if (code == 'R') {
     leave();
     setMode(DiscoveringMode);
-    m_timer->start(2000, this);
   }
   else if (code == 'A') {
-    setMode(DataMode);
-    accept('a');
-    emit accepted();
-  }
-  else if (code == 'a') {
-    setMode(DataMode);
-    emit accepted();
+    emit acceptRequest();
   }
   else if (code == 'P' && m_nextBlockSize >= 8) {
     m_nextBlockSize -= 8;

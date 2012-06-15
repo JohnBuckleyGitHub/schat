@@ -30,13 +30,13 @@
 
 namespace SendFile {
 
-Task::Task(Worker *worker, const QVariantMap &data)
-  : QObject(worker)
+Task::Task(const QVariantMap &data)
+  : QObject(0)
+  , m_finished(false)
   , m_file(0)
   , m_pos(0)
   , m_time(0)
   , m_socket(0)
-  , m_worker(worker)
 {
   SCHAT_DEBUG_STREAM("[SendFile] Task::Task(), id:" << SimpleID::encode(data.value("id").toByteArray()) << this);
 
@@ -50,11 +50,58 @@ Task::~Task()
 {
   SCHAT_DEBUG_STREAM("[SendFile] Task::~Task()" << this);
 
+  if (m_socket)
+    qDebug() << "###############" << m_socket << m_socket->state() << m_socket->isServerSide();
+  qDebug() << "###############" << m_discovery.size();
+
+  stopDiscovery();
+
   if (m_timer->isActive())
     m_timer->stop();
 
   delete m_timer;
   delete m_transaction;
+}
+
+
+/*!
+ * Обработка приветствия от входящего подключения.
+ *
+ * \param socket Указатель на сокет.
+ * \param role   Роль удалённой стороны.
+ *
+ * \return \b false если произошла ошибка и сокет должен быть отвергнут.
+ */
+bool Task::handshake(Socket *socket, char role)
+{
+  SCHAT_DEBUG_STREAM("[SendFile] Task::handshake(), socket:" << socket << "role:" << role << this);
+
+  if (m_socket)
+    return false;
+
+  // Удалённая сторона получатель файла.
+  if (role == Socket::ReceiverSlave) {
+    if (m_transaction->role())
+      return false;
+
+    socket->setRole(Socket::SenderMaster);
+    socket->sync();
+    m_socket = socket;
+    start();
+    return true;
+  }
+  else if (role == Socket::SenderSlave) {
+    if (!m_transaction->role())
+      return false;
+
+    socket->setRole(Socket::ReceiverMaster);
+    socket->accept();
+    m_socket = socket;
+    start();
+    return true;
+  }
+
+  return false;
 }
 
 
@@ -85,22 +132,6 @@ void Task::discovery()
 }
 
 
-void Task::setSocket(Socket *socket)
-{
-  SCHAT_DEBUG_STREAM("[SendFile] Task::setSocket(), socket:" << socket << "exists:" << m_socket << this);
-
-  if (m_socket && m_socket->mode() != Socket::DataMode)
-    m_socket->leave(true);
-
-  m_socket = socket;
-  start();
-
-  foreach (Socket *socket, m_discovery) {
-    socket->leave(true);
-  }
-}
-
-
 void Task::timerEvent(QTimerEvent *event)
 {
   if (event->timerId() != m_timer->timerId()) {
@@ -128,21 +159,98 @@ void Task::accepted()
   }
 
   foreach (Socket *socket, m_discovery) {
-    socket->leave(true);
+    socket->leave();
   }
+}
+
+
+
+void Task::acceptRequest()
+{
+  Socket *socket = qobject_cast<Socket*>(sender());
+  if (!socket || socket->role() != Socket::SenderSlave)
+    return;
+
+  SCHAT_DEBUG_STREAM("[SendFile] Task::acceptRequest(), socket:" << socket << this);
+
+  if (m_socket)
+    m_socket->leave();
+
+  m_socket = socket;
+  m_discovery.removeAll(socket);
+
+  start();
+  m_socket->sync();
+  stopDiscovery();
 }
 
 
 void Task::finished()
 {
   m_timer->stop();
+  if (m_socket)
+    m_socket->leave();
+
   emit finished(m_transaction->id(), DateTime::utc() - m_time);
+  m_finished = true;
+
+  if (!m_discovery.isEmpty())
+    stopDiscovery();
+  else
+    emit released(m_transaction->id());
 }
 
 
 void Task::progress(qint64 current)
 {
+  if (!m_timer->isActive()) {
+    m_time = DateTime::utc();
+    m_timer->start(200, this);
+    emit started(m_transaction->id(), m_time);
+  }
+
   m_pos = current;
+}
+
+
+void Task::released()
+{
+  Socket *socket = qobject_cast<Socket*>(sender());
+  if (!socket)
+    return;
+
+  SCHAT_DEBUG_STREAM("[SendFile] Task::released(), socket:" << socket << this);
+
+  if (m_finished || m_socket || socket->reconnect())
+    m_discovery.removeAll(socket);
+
+  if (m_finished && m_discovery.isEmpty())
+    emit released(m_transaction->id());
+}
+
+
+/*!
+ * Обработка запроса на синхронизацию, если отправителем файла является сервер.
+ */
+void Task::syncRequest()
+{
+  Socket *socket = qobject_cast<Socket*>(sender());
+  if (!socket)
+    return;
+
+  SCHAT_DEBUG_STREAM("[SendFile] Task::syncRequest(), socket:" << socket << this);
+
+  if (socket->role() != Socket::ReceiverSlave || m_socket) {
+    socket->reject();
+    return;
+  }
+
+  m_socket = socket;
+  m_discovery.removeAll(socket);
+
+  start();
+  m_socket->acceptSync();
+  stopDiscovery();
 }
 
 
@@ -156,8 +264,10 @@ void Task::discovery(const QString &host, quint16 port)
 {
   SCHAT_DEBUG_STREAM("[SendFile] Task::discovery(), host:" << host << ", port:" << port << this);
 
-  Socket *socket = new Socket(host, port, m_transaction->id(), this);
-  connect(socket, SIGNAL(accepted()), SLOT(accepted()));
+  Socket *socket = new Socket(host, port, m_transaction->id(), m_transaction->role(), this);
+  connect(socket, SIGNAL(released()), SLOT(released()));
+  connect(socket, SIGNAL(acceptRequest()), SLOT(acceptRequest()));
+  connect(socket, SIGNAL(syncRequest()), SLOT(syncRequest()));
   m_discovery.append(socket);
 }
 
@@ -168,11 +278,16 @@ void Task::start()
 
   connect(m_socket, SIGNAL(progress(qint64, qint64)), SLOT(progress(qint64)));
   connect(m_socket, SIGNAL(finished()), SLOT(finished()));
-  m_socket->setFile(m_transaction->role(), m_file, m_transaction->file().size);
+  m_socket->setFile(m_file, m_transaction->file().size);
+}
 
-  m_time = DateTime::utc();
-  m_timer->start(200, this);
-  emit started(m_transaction->id(), m_time);
+
+
+void Task::stopDiscovery()
+{
+  foreach (Socket *socket, m_discovery) {
+    socket->leave();
+  }
 }
 
 } // namespace SendFile

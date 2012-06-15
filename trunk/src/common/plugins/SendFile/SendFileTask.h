@@ -38,17 +38,19 @@ class Task : public QObject
   Q_OBJECT
 
 public:
-  Task(Worker *worker, const QVariantMap &data);
+  Task(const QVariantMap &data);
   ~Task();
+  bool handshake(Socket *socket, char role);
   bool init();
   inline Socket *socket() const           { return m_socket; }
   inline Transaction *transaction() const { return m_transaction; }
+  inline void resetSocket()               { m_socket = 0; }
   void discovery();
-  void setSocket(Socket *socket);
 
 signals:
   void finished(const QByteArray &id, qint64 elapsed);
   void progress(const QByteArray &id, qint64 current, qint64 total, int percent);
+  void released(const QByteArray &id);
   void started(const QByteArray &id, qint64 time);
 
 protected:
@@ -56,13 +58,18 @@ protected:
 
 private slots:
   void accepted();
+  void acceptRequest();
   void finished();
   void progress(qint64 current);
+  void released();
+  void syncRequest();
 
 private:
   void discovery(const QString &host, quint16 port);
   void start();
+  void stopDiscovery();
 
+  bool m_finished;             ///< \b true если задача завершена и ожидает отключения всех сокетов.
   QBasicTimer *m_timer;        ///< Таймер для обновления прогресса загрузки.
   QFile *m_file;               ///< Открытый файл.
   qint64 m_pos;                ///< Текущая отправленная или полученная позиция.
@@ -70,7 +77,6 @@ private:
   QList<Socket *> m_discovery; ///< Список сокетов находящихся в состоянии поиска.
   Socket *m_socket;            ///< Сокет для передачи данных.
   Transaction *m_transaction;  ///< Транзакция.
-  Worker *m_worker;            ///< Указатель на объект Worker.
 };
 
 } // namespace SendFile

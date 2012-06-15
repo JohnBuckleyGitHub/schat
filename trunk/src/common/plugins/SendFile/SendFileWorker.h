@@ -48,9 +48,10 @@ public slots:
   void removeTask(const QByteArray &id);
 
 private slots:
-  void accepted();
-  void handshake(const QByteArray &id);
-  void taskFinished(const QByteArray &id, qint64 elapsed);
+  void handshake(const QByteArray &id, char role);
+  void released();
+  void remove();
+  void syncRequest();
 
 protected:
   void incomingConnection(int socketDescriptor);
@@ -59,6 +60,7 @@ private:
   void updateTask(const QByteArray &id, const QVariantMap &data);
 
   QHash<QByteArray, SendFileTask> m_tasks; ///< Задачи по передаче файлов, по одной на файл.
+  QList<SendFileTask> m_remove;            ///< Список задач ожидающих удаления.
   quint16 m_port;                          ///< Порт для передачи данных.
 };
 
