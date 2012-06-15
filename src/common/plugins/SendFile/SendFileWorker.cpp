@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QTimer>
+
 #include "debugstream.h"
 #include "net/SimpleID.h"
 #include "SendFileSocket.h"
@@ -52,49 +54,47 @@ void Worker::addTask(const QVariantMap &data)
     return;
   }
 
-  SendFileTask task(new Task(this, data));
+  SendFileTask task(new Task(data));
   if (!task->transaction()->isValid())
     return;
 
   if (!task->init())
     return;
 
-  connect(task.data(), SIGNAL(finished(QByteArray, qint64)), SLOT(taskFinished(QByteArray, qint64)));
+  connect(task.data(), SIGNAL(finished(QByteArray, qint64)), SIGNAL(finished(QByteArray, qint64)));
+  connect(task.data(), SIGNAL(released(QByteArray)), SLOT(removeTask(QByteArray)));
   connect(task.data(), SIGNAL(progress(QByteArray, qint64, qint64, int)), SIGNAL(progress(QByteArray, qint64, qint64, int)));
   connect(task.data(), SIGNAL(started(QByteArray, qint64)), SIGNAL(started(QByteArray, qint64)));
   m_tasks[id] = task;
 }
 
 
+/*!
+ * Удаление задачи.
+ *
+ * Удаление откладывается до следующего цикла обработки событий из-за высокой вероятности падения при удалении сокетов.
+ */
 void Worker::removeTask(const QByteArray &id)
 {
   SCHAT_DEBUG_STREAM("[SendFile] Worker::removeTask(), id:" << SimpleID::encode(id));
 
   SendFileTask task = m_tasks.value(id);
-  if (task && task->socket())
-    task->socket()->leave();
-
-  m_tasks.remove(id);
-}
-
-
-void Worker::accepted()
-{
-  Socket *socket = qobject_cast<Socket*>(sender());
-  if (!socket)
+  if (!task)
     return;
 
-  SCHAT_DEBUG_STREAM("[SendFile] Worker::accepted()" << socket->peerAddress().toString() << "socket:" << socket);
-  SendFileTask task = m_tasks.value(socket->id());
-  if (task)
-    task->setSocket(socket);
+  m_tasks.remove(id);
+  if (!m_remove.contains(task))
+    m_remove.append(task);
+
+  if (m_remove.size() == 1)
+    QTimer::singleShot(0, this, SLOT(remove()));
 }
 
 
 /*!
  * Обработка запроса на авторизацию от входящего подключения.
  */
-void Worker::handshake(const QByteArray &id)
+void Worker::handshake(const QByteArray &id, char role)
 {
   Socket *socket = qobject_cast<Socket*>(sender());
   if (!socket)
@@ -105,25 +105,49 @@ void Worker::handshake(const QByteArray &id)
     socket->reject();
 
   SendFileTask task = m_tasks.value(id);
-  if (!task || task->socket())
+  if (!task || !task->handshake(socket, role))
     socket->reject();
-  else
-    socket->accept();
 }
 
 
 /*!
- * Завершение работы задачи.
- *
- * \param id      Идентификатор передачи файла.
- * \param elapsed Число миллисекунд потраченное на передачу.
+ * Удаление сокета при отключении.
  */
-void Worker::taskFinished(const QByteArray &id, qint64 elapsed)
+void Worker::released()
 {
-  SCHAT_DEBUG_STREAM("[SendFile] Worker::taskFinished(), id:" << SimpleID::encode(id) << "elapsed:" << elapsed << "ms");
+  Socket *socket = qobject_cast<Socket*>(sender());
+  if (!socket)
+    return;
 
-  emit finished(id, elapsed);
-  m_tasks.remove(id);
+  SCHAT_DEBUG_STREAM("[SendFile] Worker::released(), socket:" << socket);
+  if (!socket->id().isEmpty()) {
+    SendFileTask task = m_tasks.value(socket->id());
+    if (task->socket() == socket)
+      task->resetSocket();
+  }
+
+  socket->deleteLater();
+}
+
+
+void Worker::remove()
+{
+  m_remove.clear();
+}
+
+
+void Worker::syncRequest()
+{
+  Socket *socket = qobject_cast<Socket*>(sender());
+  if (!socket)
+    return;
+
+  if (socket->role() != Socket::ReceiverMaster) {
+    socket->reject();
+    return;
+  }
+
+  socket->acceptSync();
 }
 
 
@@ -137,8 +161,9 @@ void Worker::incomingConnection(int socketDescriptor)
 
   SCHAT_DEBUG_STREAM("[SendFile] Worker::incomingConnection()" << "socket:" << socket);
 
-  connect(socket, SIGNAL(accepted()), SLOT(accepted()));
-  connect(socket, SIGNAL(handshake(QByteArray)), SLOT(handshake(QByteArray)));
+  connect(socket, SIGNAL(released()), SLOT(released()));
+  connect(socket, SIGNAL(syncRequest()), SLOT(syncRequest()));
+  connect(socket, SIGNAL(handshake(QByteArray, char)), SLOT(handshake(QByteArray, char)));
 }
 
 

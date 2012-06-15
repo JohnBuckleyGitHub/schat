@@ -40,21 +40,38 @@ public:
     FinishedMode     ///< Завершена передача файла.
   };
 
+  /// Роль сокета в передаче данных.
+  enum SocketRole {
+    UnknownRole    = 0x75, ///< 'u' Неизвестная роль.
+    SenderMaster   = 0x53, ///< 'S' Отправитель файла, серверный сокет.
+    SenderSlave    = 0x73, ///< 's' Отправитель файла, клиентский сокет.
+    ReceiverMaster = 0x52, ///< 'R' Получатель файла, серверный сокет.
+    ReceiverSlave  = 0x72  ///< 'r' Получатель файла, клиентский сокет.
+  };
+
   Socket(QObject *parent = 0);
-  Socket(const QString& host, quint16 port, const QByteArray &id, QObject *parent = 0);
+  Socket(const QString& host, quint16 port, const QByteArray &id, int role, QObject *parent = 0);
   ~Socket();
+  bool reconnect();
+  inline bool isServerSide() const    { return m_serverSide; }
+  inline char role() const            { return m_role; }
   inline const QByteArray& id() const { return m_id; }
   inline Mode mode() const            { return m_mode; }
-  void accept(char code = 'A');
-  void leave(bool remove = false);
+  inline void setRole(char role)      { m_role = role; }
+  void accept();
+  void acceptSync();
+  void leave();
   void reject();
-  void setFile(int role, QFile *file, qint64 size);
+  void setFile(QFile *file, qint64 size);
+  void sync();
 
 signals:
-  void accepted();
+  void acceptRequest();
   void finished();
-  void handshake(const QByteArray &id);
+  void handshake(const QByteArray &id, char role);
   void progress(qint64 current, qint64 total);
+  void released();
+  void syncRequest();
 
 protected:
   void timerEvent(QTimerEvent *event);
@@ -73,8 +90,9 @@ private:
   void sendBlock();
   void setMode(Mode mode);
 
-  bool m_release;          ///< true если сокет находится в состоянии закрытия.
-  int m_role;              ///< Роль сокета, отправитель или получатель файла.
+  bool m_release;          ///< \b true если сокет находится в состоянии закрытия.
+  bool m_serverSide;       ///< \b true если сокет работает на стороне сервера, иначе на строне клиента.
+  char m_role;             ///< Роль сокета в передаче данных.
   Mode m_mode;             ///< Режим работы сокета.
   QBasicTimer *m_timer;    ///< Таймер обслуживающий соединение.
   QByteArray m_id;         ///< Идентификатор транзакции.
