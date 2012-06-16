@@ -65,6 +65,9 @@ var SendFileUtils = {
     $('#' + id + ' .file-progress').remove();
   },
 
+  /*
+   * Обработка получения файла.
+   */
   received: function(id, dir, file)
   {
     SendFileUtils.setStateText(id, '<span data-tr="file-received">' + Utils.tr('file-received') + '</span> ' +
@@ -72,6 +75,7 @@ var SendFileUtils = {
 
     $('#' + id + ' .file-progress').remove();
     $('#' + id + ' .btn-file-cancel').remove();
+    $('#' + id + ' .btn-file-saveas').remove();
     $('#' + id + ' .file-buttons').prepend(SendFileUtils.button('open', id));
     $('#' + id + ' .btn-file-open').attr('href', file);
 

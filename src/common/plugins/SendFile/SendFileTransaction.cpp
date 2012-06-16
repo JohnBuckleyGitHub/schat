@@ -174,9 +174,19 @@ QVariantMap Transaction::toReceiver() const
 }
 
 
+/*!
+ * Установка имени файла для сохранения.
+ *
+ * Если размер целевого файла равен 0, файл будет создан.
+ */
 void Transaction::saveAs(const QString &name)
 {
   m_file.name = name;
+
+  if (m_file.size == 0) {
+    QFile file(name);
+    file.open(QIODevice::WriteOnly);
+  }
 }
 
 } // namespace SendFile

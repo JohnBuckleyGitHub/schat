@@ -150,7 +150,9 @@ bool SendFilePluginImpl::sendFile(const QByteArray &dest, const QString &file)
   packet->setData(transaction->toReceiver());
 
   if (ChatClient::io()->send(packet, true)) {
-    m_thread->add(transaction);
+    if (transaction->file().size > 0)
+      m_thread->add(transaction);
+
     m_transactions[transaction->id()] = transaction;
 
     Message message(transaction->id(), dest, LS("file"), LS("addFileMessage"));
@@ -353,6 +355,17 @@ SendFile::Hosts SendFilePluginImpl::localHosts() const
 }
 
 
+void SendFilePluginImpl::accept(const SendFileTransaction &transaction)
+{
+  if (transaction->file().size > 0) {
+    m_thread->add(transaction);
+    emit accepted(SimpleID::encode(transaction->id()), transaction->fileName());
+  }
+  else
+    finished(transaction->id());
+}
+
+
 /*!
  * Принятие удалённой стороной входящего файла.
  * В поле \b hosts передаются адреса и порты удалённой стороны.
@@ -368,8 +381,7 @@ void SendFilePluginImpl::accept(const MessagePacket &packet)
     return;
 
   transaction->setRemote(hosts);
-  m_thread->add(transaction);
-  emit accepted(SimpleID::encode(transaction->id()), transaction->fileName());
+  accept(transaction);
 }
 
 
@@ -450,10 +462,9 @@ void SendFilePluginImpl::saveAs(const QByteArray &id)
     return;
 
   transaction->saveAs(fileName);
-  m_thread->add(transaction);
+  accept(transaction);
 
   ChatCore::settings()->setValue(LS("SendFile/Dir"), QFileInfo(fileName).absolutePath());
-  emit accepted(SimpleID::encode(transaction->id()), QFileInfo(fileName).fileName());
 
   MessagePacket packet = reply(transaction, LS("accept"));
   QVariantMap data;
