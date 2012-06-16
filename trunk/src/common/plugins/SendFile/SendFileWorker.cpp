@@ -86,7 +86,7 @@ void Worker::removeTask(const QByteArray &id)
     task->stop();
     m_remove.append(id);
   }
-  else {
+  else if (task->isReadyToRemove()) {
     m_remove.removeAll(id);
     m_tasks.remove(id);
   }

@@ -302,6 +302,7 @@ void SendFilePluginImpl::started(const QByteArray &id)
   if (!transaction)
     return;
 
+  transaction->setStarted(true);
   progress(id, 0, transaction->file().size, 0);
 }
 
@@ -359,7 +360,7 @@ SendFile::Hosts SendFilePluginImpl::localHosts() const
 void SendFilePluginImpl::accept(const MessagePacket &packet)
 {
   SendFileTransaction transaction = m_transactions.value(packet->id());
-  if (!transaction || transaction->role() != SendFile::SenderRole)
+  if (!transaction || transaction->role() != SendFile::SenderRole || transaction->isStarted())
     return;
 
   SendFile::Hosts hosts(packet->json().value(LS("hosts")).toList());

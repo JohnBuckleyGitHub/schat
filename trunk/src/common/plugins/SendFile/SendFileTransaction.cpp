@@ -73,7 +73,8 @@ QVariantList Hosts::toJSON() const
 
 
 Transaction::Transaction(const QByteArray &dest, const QByteArray &id, const QString &file)
-  : m_id(id)
+  : m_started(false)
+  , m_id(id)
   , m_user(dest)
   , m_role(SenderRole)
 {
@@ -82,7 +83,8 @@ Transaction::Transaction(const QByteArray &dest, const QByteArray &id, const QSt
 
 
 Transaction::Transaction(const QByteArray &sender, const QByteArray &id, const QVariantMap &data)
-  : m_id(id)
+  : m_started(false)
+  , m_id(id)
   , m_user(sender)
   , m_role(ReceiverRole)
 {
@@ -96,6 +98,7 @@ Transaction::Transaction(const QByteArray &sender, const QByteArray &id, const Q
 
 
 Transaction::Transaction(const QVariantMap &data)
+  : m_started(false)
 {
   m_local  = Hosts(data.value(LS("local")).toList());
   m_remote = Hosts(data.value(LS("remote")).toList());
