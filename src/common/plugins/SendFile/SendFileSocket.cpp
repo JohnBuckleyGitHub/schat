@@ -69,17 +69,6 @@ Socket::Socket(const QString& host, quint16 port, const QByteArray &id, int role
 }
 
 
-bool Socket::reconnect()
-{
-  if (m_mode == DiscoveringMode || m_mode == HandshakeMode) {
-    m_timer->start(RECONNECT_TIMEOUT, this);
-    return true;
-  }
-
-  return false;
-}
-
-
 Socket::~Socket()
 {
   SCHAT_DEBUG_STREAM("[SendFile] Socket::~Socket()" << this)
@@ -88,6 +77,17 @@ Socket::~Socket()
     m_timer->stop();
 
   delete m_timer;
+}
+
+
+bool Socket::reconnect()
+{
+  if (m_mode == DiscoveringMode || m_mode == HandshakeMode) {
+    m_timer->start(RECONNECT_TIMEOUT, this);
+    return true;
+  }
+
+  return false;
 }
 
 
@@ -280,6 +280,7 @@ void Socket::discovery()
 
 void Socket::error(QAbstractSocket::SocketError socketError)
 {
+  Q_UNUSED(socketError)
   SCHAT_DEBUG_STREAM("[SendFile] Socket::error()" << socketError << errorString() << this)
 
   if (state() != ConnectedState)

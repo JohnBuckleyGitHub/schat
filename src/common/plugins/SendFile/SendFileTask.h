@@ -46,6 +46,7 @@ public:
   inline Transaction *transaction() const { return m_transaction; }
   inline void resetSocket()               { m_socket = 0; }
   void discovery();
+  void stop();
 
 signals:
   void finished(const QByteArray &id, qint64 elapsed);

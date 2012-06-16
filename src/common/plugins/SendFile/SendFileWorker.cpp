@@ -82,12 +82,14 @@ void Worker::removeTask(const QByteArray &id)
   if (!task)
     return;
 
-  m_tasks.remove(id);
-  if (!m_remove.contains(task))
-    m_remove.append(task);
-
-  if (m_remove.size() == 1)
-    QTimer::singleShot(0, this, SLOT(remove()));
+  if (!m_remove.contains(id)) {
+    task->stop();
+    m_remove.append(id);
+  }
+  else {
+    m_remove.removeAll(id);
+    m_tasks.remove(id);
+  }
 }
 
 
@@ -122,7 +124,7 @@ void Worker::released()
   SCHAT_DEBUG_STREAM("[SendFile] Worker::released(), socket:" << socket);
   if (!socket->id().isEmpty()) {
     SendFileTask task = m_tasks.value(socket->id());
-    if (task->socket() == socket)
+    if (task && task->socket() == socket)
       task->resetSocket();
   }
 
