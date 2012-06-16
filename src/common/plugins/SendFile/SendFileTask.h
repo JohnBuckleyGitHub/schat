@@ -42,6 +42,7 @@ public:
   ~Task();
   bool handshake(Socket *socket, char role);
   bool init();
+  bool isReadyToRemove() const;
   inline Socket *socket() const           { return m_socket; }
   inline Transaction *transaction() const { return m_transaction; }
   inline void resetSocket()               { m_socket = 0; }

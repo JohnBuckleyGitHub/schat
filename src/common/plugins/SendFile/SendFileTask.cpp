@@ -109,12 +109,21 @@ bool Task::init()
 }
 
 
+bool Task::isReadyToRemove() const
+{
+  if (m_finished && !m_timer->isActive())
+    return true;
+
+  return false;
+}
+
+
 /*!
  * Попытка подключения к удалённой стороне.
  */
 void Task::discovery()
 {
-  if (m_socket || !m_transaction->remote().isValid())
+  if (m_finished || m_socket || !m_transaction->remote().isValid())
     return;
 
   QString host = m_transaction->remote().address(Internal);
@@ -153,8 +162,10 @@ void Task::timerEvent(QTimerEvent *event)
     qint64 total = m_transaction->file().size;
     emit progress(m_transaction->id(), m_pos, total, m_pos * 100 / total);
   }
-  else
+  else {
+    m_timer->stop();
     emit released(m_transaction->id());
+  }
 }
 
 
@@ -235,10 +246,8 @@ void Task::released()
 
   SCHAT_DEBUG_STREAM("[SendFile] Task::released(), socket:" << socket << this);
 
-  if (m_finished || m_socket || socket->reconnect()) {
-    qDebug() << "STATE" << socket << socket->state();
+  if (m_finished || m_socket || socket->reconnect())
     m_discovery.removeAll(socket);
-  }
 
   if (m_finished && m_discovery.isEmpty())
     emit released(m_transaction->id());
