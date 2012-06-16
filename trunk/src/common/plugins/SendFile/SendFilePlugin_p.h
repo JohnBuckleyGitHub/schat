@@ -80,6 +80,7 @@ private:
   QString getDir(const QString &key);
   quint16 getPort() const;
   SendFile::Hosts localHosts() const;
+  void accept(const SendFileTransaction &transaction);
 
   void accept(const MessagePacket &packet);
   void cancel(const MessagePacket &packet);
