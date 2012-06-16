@@ -50,12 +50,6 @@ Task::~Task()
 {
   SCHAT_DEBUG_STREAM("[SendFile] Task::~Task()" << this);
 
-  if (m_socket)
-    qDebug() << "###############" << m_socket << m_socket->state() << m_socket->isServerSide();
-  qDebug() << "###############" << m_discovery.size();
-
-  stopDiscovery();
-
   if (m_timer->isActive())
     m_timer->stop();
 
@@ -132,6 +126,22 @@ void Task::discovery()
 }
 
 
+
+void Task::stop()
+{
+  m_finished = true;
+  QList<Socket *> sockets = findChildren<Socket *>();
+  foreach (Socket *socket, sockets) {
+    socket->leave();
+    socket->deleteLater();
+  }
+
+  m_socket = 0;
+  m_discovery.clear();
+  m_timer->start(10000, this);
+}
+
+
 void Task::timerEvent(QTimerEvent *event)
 {
   if (event->timerId() != m_timer->timerId()) {
@@ -139,8 +149,12 @@ void Task::timerEvent(QTimerEvent *event)
     return;
   }
 
-  qint64 total = m_transaction->file().size;
-  emit progress(m_transaction->id(), m_pos, total, m_pos * 100 / total);
+  if (!m_finished) {
+    qint64 total = m_transaction->file().size;
+    emit progress(m_transaction->id(), m_pos, total, m_pos * 100 / total);
+  }
+  else
+    emit released(m_transaction->id());
 }
 
 
@@ -221,8 +235,10 @@ void Task::released()
 
   SCHAT_DEBUG_STREAM("[SendFile] Task::released(), socket:" << socket << this);
 
-  if (m_finished || m_socket || socket->reconnect())
+  if (m_finished || m_socket || socket->reconnect()) {
+    qDebug() << "STATE" << socket << socket->state();
     m_discovery.removeAll(socket);
+  }
 
   if (m_finished && m_discovery.isEmpty())
     emit released(m_transaction->id());

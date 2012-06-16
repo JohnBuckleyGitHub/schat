@@ -60,7 +60,7 @@ private:
   void updateTask(const QByteArray &id, const QVariantMap &data);
 
   QHash<QByteArray, SendFileTask> m_tasks; ///< Задачи по передаче файлов, по одной на файл.
-  QList<SendFileTask> m_remove;            ///< Список задач ожидающих удаления.
+  QList<QByteArray> m_remove;              ///< Список идентификаторов задач ожидающих удаления.
   quint16 m_port;                          ///< Порт для передачи данных.
 };
 
