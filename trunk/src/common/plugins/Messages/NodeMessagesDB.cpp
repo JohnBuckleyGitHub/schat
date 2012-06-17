@@ -56,7 +56,8 @@ bool NodeMessagesDB::open()
     "  date       INTEGER,"
     "  command    TEXT,"
     "  text       TEXT,"
-    "  plain      TEXT"
+    "  plain      TEXT,"
+    "  data       BLOB"
     ");"));
 
   version();
@@ -141,15 +142,18 @@ QList<MessageId> NodeMessagesDB::last(const QByteArray &user1, const QByteArray 
 }
 
 
-QVariantList NodeMessagesDB::get(const QList<MessageId> &ids)
+/*!
+ * Получения списка сообщений по их идентификаторам.
+ */
+QList<MessageRecord> NodeMessagesDB::get(const QList<MessageId> &ids)
 {
   if (ids.isEmpty())
-    return QVariantList();
+    return QList<MessageRecord>();
 
   QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(LS("SELECT id, senderId, destId, status, command, text FROM messages WHERE messageId = :messageId AND date = :date LIMIT 1;"));
+  query.prepare(LS("SELECT id, senderId, destId, status, command, text, data FROM messages WHERE messageId = :messageId AND date = :date LIMIT 1;"));
 
-  QVariantList out;
+  QList<MessageRecord> out;
 # if QT_VERSION >= 0x040700
   out.reserve(ids.size());
 # endif
@@ -162,50 +166,52 @@ QVariantList NodeMessagesDB::get(const QList<MessageId> &ids)
     if (!query.first())
       continue;
 
-    QVariantList data;
-    data.append(ids.at(i).id());   // 0 messageId
-    data.append(query.value(1));   // 1 senderId
-    data.append(query.value(2));   // 2 destId
-    data.append(query.value(3));   // 3 status
-    data.append(ids.at(i).date()); // 4 date
-    data.append(query.value(4));   // 5 command
-    data.append(query.value(5));   // 6 text
-    data.append(query.value(0));   // 7 id
-    out.push_back(data);
+    MessageRecord record;
+    record.id        = query.value(0).toLongLong();
+    record.messageId = ids.at(i).id();
+    record.senderId  = query.value(1).toByteArray();
+    record.destId    = query.value(2).toByteArray();
+    record.status    = query.value(3).toLongLong();
+    record.date      = ids.at(i).date();
+    record.command   = query.value(4).toString();
+    record.text      = query.value(5).toString();
+    record.data      = query.value(6).toByteArray();
+    out.append(record);
   }
 
   return out;
 }
 
 
-QVariantList NodeMessagesDB::messages(QSqlQuery &query)
+QList<MessageRecord> NodeMessagesDB::messages(QSqlQuery &query)
 {
   if (!query.isActive())
-    return QVariantList();
+    return QList<MessageRecord>();
 
-  QVariantList out;
+  QList<MessageRecord> out;
 
   while (query.next()) {
-    QVariantList data;
-    data.append(query.value(1)); // 0 messageId
-    data.append(query.value(2)); // 1 senderId
-    data.append(query.value(3)); // 2 destId
-    data.append(query.value(4)); // 3 status
-    data.append(query.value(5)); // 4 date
-    data.append(query.value(6)); // 5 command
-    data.append(query.value(7)); // 6 text
-    data.append(query.value(0)); // 7 id
-    out.push_front(data);
+    MessageRecord record;
+    record.id        = query.value(0).toLongLong();
+    record.messageId = query.value(1).toByteArray();
+    record.senderId  = query.value(2).toByteArray();
+    record.destId    = query.value(3).toByteArray();
+    record.status    = query.value(4).toLongLong();
+    record.date      = query.value(5).toLongLong();
+    record.command   = query.value(6).toString();
+    record.text      = query.value(7).toString();
+    record.data      = query.value(8).toByteArray();
+    out.prepend(record);
   }
 
   return out;
 }
 
 
-QVariantList NodeMessagesDB::offline(const QByteArray &user)
+QList<MessageRecord> NodeMessagesDB::offline(const QByteArray &user)
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(LS("SELECT id, messageId, senderId, destId, status, date, command, text FROM messages WHERE destId = :destId AND status = 301 ORDER BY id DESC;"));
+  query.prepare(LS("SELECT id, messageId, senderId, destId, status, date, command, text, data FROM messages WHERE destId = :destId AND status = 301 ORDER BY id DESC;"));
   query.bindValue(LS(":destId"), user);
   query.exec();
 
@@ -216,8 +222,8 @@ QVariantList NodeMessagesDB::offline(const QByteArray &user)
 void NodeMessagesDB::add(const MessageNotice &packet, int status)
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(LS("INSERT INTO messages (messageId, senderId, destId, status, date, command, text, plain) "
-                     "VALUES (:messageId, :senderId, :destId, :status, :date, :command, :text, :plain);"));
+  query.prepare(LS("INSERT INTO messages (messageId, senderId, destId, status, date, command, text, plain, data) "
+                     "VALUES (:messageId, :senderId, :destId, :status, :date, :command, :text, :plain, :data);"));
 
   query.bindValue(LS(":messageId"), packet.id());
   query.bindValue(LS(":senderId"),  packet.sender());
@@ -227,13 +233,14 @@ void NodeMessagesDB::add(const MessageNotice &packet, int status)
   query.bindValue(LS(":command"),   packet.command());
   query.bindValue(LS(":text"),      packet.text());
   query.bindValue(LS(":plain"),     PlainTextFilter::filter(packet.text()));
+  query.bindValue(LS(":data"),      packet.raw());
   query.exec();
 }
 
 
-void NodeMessagesDB::markAsRead(const QVariantList &data)
+void NodeMessagesDB::markAsRead(const QList<MessageRecord> &records)
 {
-  if (data.isEmpty())
+  if (records.isEmpty())
     return;
 
   QSqlDatabase db = QSqlDatabase::database(m_id);
@@ -241,12 +248,12 @@ void NodeMessagesDB::markAsRead(const QVariantList &data)
   db.transaction();
   query.prepare(LS("UPDATE messages SET status = 302 WHERE id = :id;"));
 
-  for (int i = 0; i < data.size(); ++i) {
-    QVariantList msg = data.at(i).toList();
-    if (msg.isEmpty())
+  for (int i = 0; i < records.size(); ++i) {
+    const MessageRecord& record = records.at(i);
+    if (!record.id)
       continue;
 
-    query.bindValue(LS(":id"), msg.value(7));
+    query.bindValue(LS(":id"), record.id);
     query.exec();
   }
 
@@ -266,7 +273,22 @@ void NodeMessagesDB::version()
 
   qint64 version = query.value(0).toLongLong();
   if (!version) {
-    query.exec(LS("PRAGMA user_version = 1"));
-    version = 1;
+    query.exec(LS("PRAGMA user_version = 2"));
+    version = 2;
+    return;
   }
+
+  if (version == 1)
+    V2();
+}
+
+
+/*!
+ * Обновление схемы базы до версии 2.
+ */
+void NodeMessagesDB::V2()
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.exec(LS("ALTER TABLE messages ADD data BLOB"));
+  query.exec(LS("PRAGMA user_version = 2"));
 }

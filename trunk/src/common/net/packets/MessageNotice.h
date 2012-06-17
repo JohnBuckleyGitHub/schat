@@ -21,11 +21,33 @@
 
 #include "net/packets/Notice.h"
 
+struct SCHAT_EXPORT MessageRecord
+{
+  MessageRecord()
+  : id(0)
+  , status(200)
+  , date(0)
+  {}
+
+  qint64 id;
+  QByteArray messageId;
+  QByteArray senderId;
+  QByteArray destId;
+  qint64 status;
+  qint64 date;
+  QString command;
+  QString text;
+  QString plain;
+  QByteArray data;
+};
+
+
 class SCHAT_EXPORT MessageNotice : public Notice
 {
 public:
   MessageNotice();
-  MessageNotice(const QByteArray &sender, const QByteArray &dest, const QString &text, quint64 time = 0, const QByteArray &id = QByteArray());
+  MessageNotice(const MessageRecord &record);
+  MessageNotice(const QByteArray &sender, const QByteArray &dest, const QString &text, quint64 date = 0, const QByteArray &id = QByteArray());
   MessageNotice(quint16 type, PacketReader *reader);
 };
 

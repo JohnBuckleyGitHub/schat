@@ -28,8 +28,24 @@ MessageNotice::MessageNotice()
 }
 
 
-MessageNotice::MessageNotice(const QByteArray &sender, const QByteArray &dest, const QString &text, quint64 time, const QByteArray &id)
-  : Notice(sender, dest, LS("m"), time, id)
+MessageNotice::MessageNotice(const MessageRecord &record)
+: Notice(record.senderId, record.destId, record.command, record.date, record.messageId)
+{
+  m_type = MessageType;
+  setText(record.text);
+  setStatus(record.status);
+  m_raw = record.data;
+
+  if (SimpleID::typeOf(record.destId) == SimpleID::UserId)
+    m_direction = Client2Client;
+
+  if (m_date == 0)
+    m_date = DateTime::utc();
+}
+
+
+MessageNotice::MessageNotice(const QByteArray &sender, const QByteArray &dest, const QString &text, quint64 date, const QByteArray &id)
+  : Notice(sender, dest, LS("m"), date, id)
 {
   m_type = MessageType;
   setText(text);
@@ -37,7 +53,7 @@ MessageNotice::MessageNotice(const QByteArray &sender, const QByteArray &dest, c
   if (SimpleID::typeOf(dest) == SimpleID::UserId)
     m_direction = Client2Client;
 
-  if (time == 0)
+  if (date == 0)
     m_date = DateTime::utc();
 }
 
