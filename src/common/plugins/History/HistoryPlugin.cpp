@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QTime>
 #include <QTimer>
 #include <QtPlugin>
@@ -113,16 +111,13 @@ QList<MessageId> History::getLocal(const QList<MessageId> &ids)
 {
   QList<MessageId> out;
   for (int i = 0; i < ids.size(); ++i) {
-    QVariantList data = HistoryDB::get(ids.at(i));
-    if (data.isEmpty()) {
+    MessageRecord record = HistoryDB::get(ids.at(i));
+    if (!record.id) {
       out.append(ids.at(i));
       continue;
     }
 
-    MessageNotice *notice = new MessageNotice(data.at(1).toByteArray(), data.at(2).toByteArray(), data.at(6).toString(), data.at(4).toLongLong(), data.at(0).toByteArray());
-    notice->setCommand((data.at(5).toString()));
-    notice->setStatus(data.at(3).toInt());
-    ChatClient::messages()->insert(notice);
+    ChatClient::messages()->insert(new MessageNotice(record));
   }
 
   return out;

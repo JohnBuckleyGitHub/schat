@@ -37,7 +37,7 @@ public:
   static bool open(const QByteArray &id, const QString &dir);
   static int status(int status);
   static QList<MessageId> last(const QByteArray &channel, int limit);
-  static QVariantList get(const MessageId &id);
+  static MessageRecord get(const MessageId &id);
   static void add(MessagePacket packet);
   static void clear();
   static void close();
@@ -45,6 +45,8 @@ public:
 private:
   static void create();
   static void version();
+
+  static void V2();
 
   static QString m_id; ///< Идентификатор соединения с базой.
 };

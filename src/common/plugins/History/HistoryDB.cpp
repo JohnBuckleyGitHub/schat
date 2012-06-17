@@ -119,29 +119,30 @@ QList<MessageId> HistoryDB::last(const QByteArray &channel, int limit)
 }
 
 
-QVariantList HistoryDB::get(const MessageId &id)
+MessageRecord HistoryDB::get(const MessageId &id)
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(LS("SELECT id, senderId, destId, status, command, text FROM messages WHERE messageId = :messageId AND date = :date LIMIT 1;"));
+  query.prepare(LS("SELECT id, senderId, destId, status, command, text, data FROM messages WHERE messageId = :messageId AND date = :date LIMIT 1;"));
 
   query.bindValue(LS(":messageId"), id.id());
   query.bindValue(LS(":date"), id.date());
   query.exec();
 
-  QVariantList out;
   if (!query.first())
-    return out;
+    return MessageRecord();
 
-  out.append(id.id());          // 0 messageId
-  out.append(query.value(1));   // 1 senderId
-  out.append(query.value(2));   // 2 destId
-  out.append(query.value(3));   // 3 status
-  out.append(id.date());        // 4 date
-  out.append(query.value(4));   // 5 command
-  out.append(query.value(5));   // 6 text
-  out.append(query.value(0));   // 7 id
+  MessageRecord record;
+  record.id        = query.value(0).toLongLong();
+  record.messageId = id.id();
+  record.senderId  = query.value(1).toByteArray();
+  record.destId    = query.value(2).toByteArray();
+  record.status    = query.value(3).toLongLong();
+  record.date      = id.date();
+  record.command   = query.value(4).toString();
+  record.text      = query.value(5).toString();
+  record.data      = query.value(6).toByteArray();
 
-  return out;
+  return record;
 }
 
 
@@ -156,8 +157,8 @@ void HistoryDB::add(MessagePacket packet)
   if (query.first() && query.value(0).toLongLong() > 0)
     return;
 
-  query.prepare(LS("INSERT INTO messages (messageId, senderId, destId, status, date, command, text, plain) "
-                     "VALUES (:messageId, :senderId, :destId, :status, :date, :command, :text, :plain);"));
+  query.prepare(LS("INSERT INTO messages (messageId, senderId, destId, status, date, command, text, plain, data) "
+                     "VALUES (:messageId, :senderId, :destId, :status, :date, :command, :text, :plain, :data);"));
 
   query.bindValue(LS(":messageId"), packet->id());
   query.bindValue(LS(":senderId"),  packet->sender());
@@ -167,6 +168,7 @@ void HistoryDB::add(MessagePacket packet)
   query.bindValue(LS(":command"),   packet->command());
   query.bindValue(LS(":text"),      packet->text());
   query.bindValue(LS(":plain"),     PlainTextFilter::filter(packet->text()));
+  query.bindValue(LS(":data"),      packet->raw());
   query.exec();
 }
 
@@ -206,7 +208,8 @@ void HistoryDB::create()
     "  date       INTEGER,"
     "  command    TEXT,"
     "  text       TEXT,"
-    "  plain      TEXT"
+    "  plain      TEXT,"
+    "  data       BLOB"
     ");"));
 
   version();
@@ -225,7 +228,19 @@ void HistoryDB::version()
 
   qint64 version = query.value(0).toLongLong();
   if (!version) {
-    query.exec(LS("PRAGMA user_version = 1"));
-    version = 1;
+    query.exec(LS("PRAGMA user_version = 2"));
+    version = 2;
+    return;
   }
+
+  if (version == 1)
+    V2();
+}
+
+
+void HistoryDB::V2()
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.exec(LS("ALTER TABLE messages ADD data BLOB"));
+  query.exec(LS("PRAGMA user_version = 2"));
 }
