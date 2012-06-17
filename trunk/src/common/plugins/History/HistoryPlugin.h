@@ -35,10 +35,10 @@ public:
     QVariantMap out = CoreApi::header();
     out["Id"]       = "history";
     out["Name"]     = "History";
-    out["Version"]  = "0.2.1";
+    out["Version"]  = "0.2.2";
     out["Site"]     = "http://wiki.schat.me/Plugin/History";
     out["Desc"]     = "History";
-    out["Required"] = "1.99.13";
+    out["Required"] = "1.99.32";
 
     return out;
   }
