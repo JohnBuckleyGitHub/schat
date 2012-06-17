@@ -21,6 +21,7 @@
 
 #include <QString>
 
+#include "net/packets/MessageNotice.h"
 #include "text/MessageId.h"
 
 class MessageNotice;
@@ -36,14 +37,16 @@ public:
   static QList<MessageId> ids(QSqlQuery &query);
   static QList<MessageId> last(const QByteArray &channel, int limit);
   static QList<MessageId> last(const QByteArray &user1, const QByteArray &user2, int limit);
-  static QVariantList get(const QList<MessageId> &ids);
-  static QVariantList messages(QSqlQuery &query);
-  static QVariantList offline(const QByteArray &user);
+  static QList<MessageRecord> get(const QList<MessageId> &ids);
+  static QList<MessageRecord> messages(QSqlQuery &query);
+  static QList<MessageRecord> offline(const QByteArray &user);
   static void add(const MessageNotice &packet, int status = 300);
-  static void markAsRead(const QVariantList &data);
+  static void markAsRead(const QList<MessageRecord> &records);
 
 private:
   static void version();
+
+  static void V2();
 
   static bool m_isOpen; ///< true если база открыта.
   static QString m_id;  ///< Идентификатор сооединения с базой, это строка всегда равна "messages".

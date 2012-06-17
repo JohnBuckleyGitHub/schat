@@ -94,12 +94,12 @@ FeedQueryReply NodeHistoryFeed::get(const QVariantMap &json, Channel *channel)
   if (ids.isEmpty())
     return FeedQueryReply(Notice::BadRequest);
 
-  QVariantList data = NodeMessagesDB::get(ids);
-  if (data.isEmpty())
+  QList<MessageRecord> records = NodeMessagesDB::get(ids);
+  if (records.isEmpty())
     return FeedQueryReply(Notice::NotFound);
 
   FeedQueryReply reply = FeedQueryReply(Notice::OK);
-  toPackets(reply.packets, data);
+  toPackets(reply.packets, records);
   if (reply.packets.isEmpty())
     return FeedQueryReply(Notice::InternalError);
 
@@ -139,23 +139,25 @@ FeedQueryReply NodeHistoryFeed::last(const QVariantMap &json, Channel *channel)
 }
 
 
-FeedQueryReply NodeHistoryFeed::offline(const QVariantMap & /*json*/, Channel *channel)
+FeedQueryReply NodeHistoryFeed::offline(const QVariantMap &json, Channel *channel)
 {
+  Q_UNUSED(json)
+
   if (!channel)
     return FeedQueryReply(Notice::BadRequest);
 
   if (head().channel()->id() != channel->id())
     return FeedQueryReply(Notice::Forbidden);
 
-  QVariantList data = NodeMessagesDB::offline(channel->id());
-  if (data.isEmpty())
+  QList<MessageRecord> records = NodeMessagesDB::offline(channel->id());
+  if (records.isEmpty())
     return FeedQueryReply(Notice::NotFound);
 
-  QList<QByteArray> packets = toPackets(data);
+  QList<QByteArray> packets = toPackets(records);
   if (packets.isEmpty())
     return FeedQueryReply(Notice::InternalError);
 
-  NodeMessagesDB::markAsRead(data);
+  NodeMessagesDB::markAsRead(records);
   Core::send(packets);
 
   FeedQueryReply reply = FeedQueryReply(Notice::OK);
@@ -189,7 +191,7 @@ QList<MessageId> NodeHistoryFeed::last(const QVariantMap &json)
 }
 
 
-QList<QByteArray> NodeHistoryFeed::toPackets(const QVariantList &data)
+QList<QByteArray> NodeHistoryFeed::toPackets(const QList<MessageRecord> &data)
 {
   QList<QByteArray> out;
   toPackets(out, data);
@@ -197,16 +199,14 @@ QList<QByteArray> NodeHistoryFeed::toPackets(const QVariantList &data)
 }
 
 
-void NodeHistoryFeed::toPackets(QList<QByteArray> &out, const QVariantList &data)
+void NodeHistoryFeed::toPackets(QList<QByteArray> &out, const QList<MessageRecord> &records)
 {
-  for (int i = 0; i < data.size(); ++i) {
-    QVariantList msg = data.at(i).toList();
-    if (msg.isEmpty())
+  for (int i = 0; i < records.size(); ++i) {
+    const MessageRecord& record = records.at(i);
+    if (!record.id)
       continue;
 
-    MessageNotice packet(msg.at(1).toByteArray(), msg.at(2).toByteArray(), msg.at(6).toString(), msg.at(4).toLongLong(), msg.at(0).toByteArray());
-    packet.setStatus(msg.at(3).toInt());
-    packet.setCommand(msg.at(5).toString());
+    MessageNotice packet(record);
     out.append(packet.data(Core::stream()));
   }
 }

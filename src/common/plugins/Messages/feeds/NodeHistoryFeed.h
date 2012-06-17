@@ -20,6 +20,7 @@
 #define NODEHISTORYFEED_H_
 
 #include "feeds/Feed.h"
+#include "net/packets/MessageNotice.h"
 #include "text/MessageId.h"
 
 class NodeHistoryFeed : public Feed
@@ -39,8 +40,8 @@ private:
   FeedQueryReply offline(const QVariantMap &json, Channel *channel);
 
   QList<MessageId> last(const QVariantMap &json);
-  QList<QByteArray> toPackets(const QVariantList &data);
-  void toPackets(QList<QByteArray> &out, const QVariantList &data);
+  QList<QByteArray> toPackets(const QList<MessageRecord> &data);
+  void toPackets(QList<QByteArray> &out, const QList<MessageRecord> &records);
 };
 
 #endif /* NODEHISTORYFEED_H_ */

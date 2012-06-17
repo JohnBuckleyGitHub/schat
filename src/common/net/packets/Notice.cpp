@@ -123,7 +123,7 @@ bool Notice::isValid() const
  */
 QByteArray Notice::data(QDataStream *stream, bool echo) const
 {
-  if (!m_data.isEmpty())
+  if (!m_data.isEmpty() || !m_raw.isEmpty())
     m_fields |= JSonField;
 
   if (!m_text.isEmpty())
@@ -142,8 +142,12 @@ QByteArray Notice::data(QDataStream *stream, bool echo) const
 
   writer.put(m_command);
 
-  if (m_fields & JSonField)
-    writer.put(QVariant(m_data));
+  if (m_fields & JSonField) {
+    if (m_raw.isEmpty())
+      writer.put(QVariant(m_data));
+    else
+      writer.put(m_raw);
+  }
 
   if (m_fields & TextField)
     writer.put(m_text);
