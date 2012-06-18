@@ -77,7 +77,9 @@ Transaction::Transaction(const QByteArray &dest, const QByteArray &id, const QSt
   , m_visible(false)
   , m_id(id)
   , m_user(dest)
+  , m_pos(0)
   , m_role(SenderRole)
+  , m_state(UnknownState)
 {
   setLocalFile(file);
 }
@@ -88,7 +90,9 @@ Transaction::Transaction(const QByteArray &sender, const QByteArray &id, const Q
   , m_visible(false)
   , m_id(id)
   , m_user(sender)
+  , m_pos(0)
   , m_role(ReceiverRole)
+  , m_state(UnknownState)
 {
   m_remote = Hosts(data.value(LS("hosts")).toList());
   if (!m_remote.isValid())
@@ -102,6 +106,8 @@ Transaction::Transaction(const QByteArray &sender, const QByteArray &id, const Q
 Transaction::Transaction(const QVariantMap &data)
   : m_started(false)
   , m_visible(false)
+  , m_pos(0)
+  , m_state(UnknownState)
 {
   m_local  = Hosts(data.value(LS("local")).toList());
   m_remote = Hosts(data.value(LS("remote")).toList());

@@ -54,14 +54,17 @@ public:
   int setPort(quint16 port);
   void read(const MessagePacket &packet);
 
-  Q_INVOKABLE QPixmap fileIcon(const QString &id);
+  Q_INVOKABLE int role(const QString &id) const;
+  Q_INVOKABLE qint64 size(const QString &id) const;
+  Q_INVOKABLE QPixmap fileIcon(const QString &id) const;
+  Q_INVOKABLE QString fileName(const QString &id) const;
+  Q_INVOKABLE QString state(const QString &id) const;
+  Q_INVOKABLE QVariantMap fileUrls(const QString &id) const;
+  Q_INVOKABLE QVariantMap progressInfo(const QString &id) const;
 
 signals:
-  void accepted(const QString &id, const QString &fileName);
-  void cancelled(const QString &id);
   void progress(const QString &id, const QString &text, int percent);
-  void received(const QString &id, const QString &dir, const QString &file);
-  void sent(const QString &id);
+  void stateChanged(const QString &id);
 
 public slots:
   void sendFile();
@@ -83,6 +86,7 @@ private:
   quint16 getPort() const;
   SendFile::Hosts localHosts() const;
   void accept(const SendFileTransaction &transaction);
+  void setState(const SendFileTransaction &transaction, SendFile::TransactionState state);
 
   void accept(const MessagePacket &packet);
   void cancel(const MessagePacket &packet);

@@ -28,6 +28,7 @@ var SendFileUtils = {
     var state = $('#' + id + ' .file-state');
     state.html(Utils.tr(text));
     state.attr('data-tr', text);
+    state.show();
   },
 
   setStateText: function(id, text)
@@ -35,22 +36,9 @@ var SendFileUtils = {
     var state = $('#' + id + ' .file-state');
     state.html(text);
     state.removeAttr('data-tr');
+    state.show();
   },
 
-  // Обработка отмены передачи файла.
-  cancelled: function(id)
-  {
-    SendFileUtils.setStateTr(id, 'file-cancelled');
-    $('#' + id + ' .file-buttons').remove();
-    $('#' + id + ' .file-progress').remove();
-  },
-
-  accepted: function(id, fileName)
-  {
-    SendFileUtils.setStateTr(id, 'file-connecting');
-    $('#' + id + ' .file-name').text(fileName);
-    $('#' + id + ' .btn-file-saveas').remove();
-  },
 
   progress: function(id, text, percent)
   {
@@ -58,36 +46,14 @@ var SendFileUtils = {
     $('#' + id + ' .file-progress .bar').css('width', percent + '%');
   },
 
-  sent: function(id)
-  {
-    SendFileUtils.setStateTr(id, 'file-sent');
-    $('#' + id + ' .file-buttons').remove();
-    $('#' + id + ' .file-progress').remove();
-  },
-
-  /*
-   * Обработка получения файла.
-   */
-  received: function(id, dir, file)
-  {
-    SendFileUtils.setStateText(id, '<span data-tr="file-received">' + Utils.tr('file-received') + '</span> ' +
-      '<a href="' + dir + '" data-tr="file-show">' + Utils.tr('file-show') + '</a>');
-
-    $('#' + id + ' .file-progress').remove();
-    $('#' + id + ' .btn-file-cancel').remove();
-    $('#' + id + ' .btn-file-saveas').remove();
-    $('#' + id + ' .file-buttons').prepend(SendFileUtils.button('open', id));
-    $('#' + id + ' .btn-file-open').attr('href', file);
-
-    SendFileUtils.setFileIcon(id);
-  },
 
   /*
    * Установка иконки файла.
    *
-   * \param id Идентификатор сообщения.
+   * \param id Идентификатор передачи файла.
    */
-  setFileIcon: function(id) {
+  setFileIcon: function(id)
+  {
     var imageId = $('#' + id).data('imageId');
     try {
       SendFile.fileIcon(id).assignToHTMLImageElement(document.getElementById(imageId));
@@ -96,6 +62,71 @@ var SendFileUtils = {
     catch (e) {
       $('#' + imageId).hide();
     }
+  },
+
+
+  /*
+   * Обновление информации о состоянии передачи файла.
+   *
+   * \param id Идентификатор передачи файла.
+   */
+  updateState: function(id)
+  {
+    if (!$('#' + id).length)
+      return;
+
+    var role = SendFile.role(id);
+    var state = SendFile.state(id);
+
+    if (state != 'U') {
+      $('#' + id + ' .file-name').removeClass('file-only-name');
+      $('#' + id + ' .btn-small').remove();
+      $('#' + id + ' .file-progress').hide();
+    }
+
+    // Ожидание действия пользователя.
+    if (state == 'W') {
+      if (role) {
+        SendFileUtils.setStateText(id, SimpleChat.bytesToHuman(SendFile.size(id)));
+        $('#' + id + ' .file-buttons').append(SendFileUtils.button('saveas', id));
+      }
+      else
+        SendFileUtils.setStateTr(id, 'file-waiting');
+    }
+    // Обработка отмены передачи файла.
+    else if (state == 'c') {
+      SendFileUtils.setStateTr(id, 'file-cancelled');
+    }
+    // Подключение.
+    else if (state == 'C') {
+      SendFileUtils.setStateTr(id, 'file-connecting');
+      $('#' + id + ' .file-name').text(SendFile.fileName(id));
+    }
+    // Передача файла.
+    else if (state == 'T') {
+      $('#' + id + ' .file-progress').show();
+      var progress = SendFile.progressInfo(id);
+      if (progress.hasOwnProperty('text'))
+        SendFileUtils.progress(id, progress.text, progress.percent);
+    }
+    // Завершение передачи файла.
+    else if (state == 'F') {
+      if (role) {
+        var urls = SendFile.fileUrls(id);
+        SendFileUtils.setStateText(id, '<span data-tr="file-received">' + Utils.tr('file-received') + '</span> ' +
+              '<a href="' + urls.dir + '" data-tr="file-show">' + Utils.tr('file-show') + '</a>');
+
+        $('#' + id + ' .file-buttons').append(SendFileUtils.button('open', id));
+        $('#' + id + ' .btn-file-open').attr('href', urls.file);
+      }
+      else
+        SendFileUtils.setStateTr(id, 'file-sent');
+    }
+
+    if (state == 'W' || state == 'C' || state == 'T')
+      $('#' + id + ' .file-buttons').append(SendFileUtils.button('cancel', id));
+
+    alignChat();
   }
 };
 
@@ -112,34 +143,30 @@ Messages.addFileMessage = function(json)
   html += '<div class="blocks ' + json.Direction + '">';
   html += '<div class="file-sender">' + DateTime.template(json.Date, json.Day) + Messages.nameBlock(json.Author) + '</div>';
   html += '<div class="file-icon"><img id="' + imageId + '" src="" width="16" height="16" alt="" /></div>';
-  html += '<div class="file-block"><span class="file-name">' + json.File + '</span><br><span class="file-state">&nbsp;</span></div>';
-  html += '<div class="file-buttons btn-group">' + SendFileUtils.button('cancel', id) + '</div>';
+  html += '<div class="file-block"><span class="file-name file-only-name">' + json.File + '</span><br><span class="file-state">&nbsp;</span></div>';
+  html += '<div class="file-buttons btn-group"></div>';
   html += '<div class="file-progress"><div class="bar"></div></div><div style="clear:both;"></div>';
   html += '</div></div>';
 
   Messages.addHintedRawMessage(html, json.Hint, id);
   $('#' + id).data('imageId', imageId);
   SendFileUtils.setFileIcon(id);
-
-  if (json.Direction === 'outgoing') {
-    SendFileUtils.setStateTr(id, 'file-waiting');
-  }
-  else {
-    SendFileUtils.setStateText(id, SimpleChat.bytesToHuman(json.Size));
-    $('#' + id + ' .file-buttons').prepend(SendFileUtils.button('saveas', id));
-  }
 };
 
 
 if (typeof SendFile === "undefined") {
   SendFile = {
-
+    state: function(id) { return 'U'; },
+    role: function(id) { return 1; },
+    size: function(id) { return 0; },
+    fileName: function(id) { return ''; },
+    progressInfo: function(id) { return {}; },
+    fileUrls: function(id) { return {}; }
   };
 }
 else {
-  SendFile.cancelled.connect(SendFileUtils.cancelled);
-  SendFile.accepted.connect(SendFileUtils.accepted);
   SendFile.progress.connect(SendFileUtils.progress);
-  SendFile.sent.connect(SendFileUtils.sent);
-  SendFile.received.connect(SendFileUtils.received);
+  SendFile.stateChanged.connect(SendFileUtils.updateState);
 }
+
+Messages.onAdd.push(SendFileUtils.updateState);
