@@ -207,8 +207,10 @@ void TabWidget::closeTab(int index)
   AbstractTab *tab = widget(index);
 
   // Закрытие канала.
-  if (m_channels.contains(tab->id()))
+  if (m_channels.contains(tab->id())) {
+    ChatNotify::start(Notify::ChannelTabClosed, tab->id());
     m_channels.remove(tab->id());
+  }
 
   removeTab(index);
 

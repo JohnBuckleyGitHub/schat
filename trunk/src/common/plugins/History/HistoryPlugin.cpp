@@ -117,7 +117,7 @@ QList<MessageId> History::getLocal(const QList<MessageId> &ids)
       continue;
     }
 
-    ChatClient::messages()->insert(new MessageNotice(record));
+    ChatClient::messages()->insert(new MessageNotice(record, /*parse=*/true));
   }
 
   return out;

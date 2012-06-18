@@ -27,6 +27,7 @@
 #include "SendFileTransaction.h"
 
 class ChatView;
+class Notify;
 class SendFileTr;
 
 namespace SendFile {
@@ -68,6 +69,7 @@ public slots:
 private slots:
   void init(ChatView *view);
   void loadFinished(ChatView *view);
+  void notify(const Notify &notify);
   void openUrl(const QUrl &url);
   void start();
 

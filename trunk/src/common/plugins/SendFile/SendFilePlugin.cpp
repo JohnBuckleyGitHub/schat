@@ -29,6 +29,7 @@
 
 #include "ChatAlerts.h"
 #include "ChatCore.h"
+#include "ChatNotify.h"
 #include "ChatSettings.h"
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
@@ -101,6 +102,8 @@ SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
   connect(ChatViewHooks::i(), SIGNAL(initHook(ChatView*)), SLOT(init(ChatView*)));
   connect(ChatViewHooks::i(), SIGNAL(loadFinishedHook(ChatView*)), SLOT(loadFinished(ChatView*)));
 
+  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+
   QTimer::singleShot(0, this, SLOT(start()));
 }
 
@@ -154,6 +157,7 @@ bool SendFilePluginImpl::sendFile(const QByteArray &dest, const QString &file)
       m_thread->add(transaction);
 
     m_transactions[transaction->id()] = transaction;
+    transaction->setVisible();
 
     Message message(transaction->id(), dest, LS("file"), LS("addFileMessage"));
     message.setAuthor(ChatClient::id());
@@ -245,6 +249,21 @@ void SendFilePluginImpl::loadFinished(ChatView *view)
 {
   if (SimpleID::typeOf(view->id()) == SimpleID::UserId)
     view->addCSS(LS("qrc:/css/SendFile/SendFile.css"));
+}
+
+
+void SendFilePluginImpl::notify(const Notify &notify)
+{
+  if (notify.type() == Notify::ChannelTabClosed) {
+    QByteArray id = notify.data().toByteArray();
+    if (SimpleID::typeOf(id) != SimpleID::UserId)
+      return;
+
+    foreach (const SendFileTransaction &transaction, m_transactions) {
+      if ((transaction->user() == id))
+        transaction->setVisible(false);
+    }
+  }
 }
 
 
@@ -406,15 +425,22 @@ void SendFilePluginImpl::cancel(const MessagePacket &packet)
  */
 void SendFilePluginImpl::incomingFile(const MessagePacket &packet)
 {
-  if (m_transactions.contains(packet->id()))
+  SendFileTransaction transaction = m_transactions.value(packet->id());
+  // Создание новой транзакции.
+  if (!transaction) {
+    transaction = SendFileTransaction(new SendFile::Transaction(packet->sender(), packet->id(), packet->json()));
+    if (!transaction->isValid())
+      return;
+
+    transaction->setLocal(localHosts());
+    m_transactions[transaction->id()] = transaction;
+  }
+
+  // Если транзакция уже отображается нет смысла показывать её ещё раз.
+  if (transaction->isVisible())
     return;
 
-  SendFileTransaction transaction(new SendFile::Transaction(packet->sender(), packet->id(), packet->json()));
-  if (!transaction->isValid())
-    return;
-
-  transaction->setLocal(localHosts());
-  m_transactions[transaction->id()] = transaction;
+  transaction->setVisible();
 
   Message message(packet->id(), packet->sender(), LS("file"), LS("addFileMessage"));
   message.setAuthor(packet->sender());
