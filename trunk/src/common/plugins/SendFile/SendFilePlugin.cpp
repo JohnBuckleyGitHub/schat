@@ -53,6 +53,8 @@
 #include "ui/TabWidget.h"
 #include "WebBridge.h"
 
+#define SENDFILE_TRANSACTION(id) SendFileTransaction transaction = m_transactions.value(id); if (!transaction) return;
+
 class SendFileTr : public Tr
 {
   Q_DECLARE_TR_FUNCTIONS(SendFileTr)
@@ -158,6 +160,7 @@ bool SendFilePluginImpl::sendFile(const QByteArray &dest, const QString &file)
 
     m_transactions[transaction->id()] = transaction;
     transaction->setVisible();
+    transaction->setState(SendFile::WaitingState);
 
     Message message(transaction->id(), dest, LS("file"), LS("addFileMessage"));
     message.setAuthor(ChatClient::id());
@@ -165,7 +168,6 @@ bool SendFilePluginImpl::sendFile(const QByteArray &dest, const QString &file)
     message.data()[LS("File")]      = transaction->fileName();
     message.data()[LS("Direction")] = LS("outgoing");
     TabWidget::add(message);
-
     return true;
   }
 
@@ -203,12 +205,32 @@ void SendFilePluginImpl::read(const MessagePacket &packet)
 }
 
 
+int SendFilePluginImpl::role(const QString &id) const
+{
+  SendFileTransaction transaction = m_transactions.value(SimpleID::decode(id));
+  if (!transaction)
+    return SendFile::ReceiverRole;
+
+  return transaction->role();
+}
+
+
+qint64 SendFilePluginImpl::size(const QString &id) const
+{
+  SendFileTransaction transaction = m_transactions.value(SimpleID::decode(id));
+  if (!transaction)
+    return 0;
+
+  return transaction->file().size;
+}
+
+
 /*!
  * Получение иконки файла.
  *
  * Для входящих файлов, создаётся новый пустой файл, для него получается иконка и затем файл удаляется.
  */
-QPixmap SendFilePluginImpl::fileIcon(const QString &id)
+QPixmap SendFilePluginImpl::fileIcon(const QString &id) const
 {
   SendFileTransaction transaction = m_transactions.value(SimpleID::decode(id));
   if (!transaction)
@@ -226,6 +248,52 @@ QPixmap SendFilePluginImpl::fileIcon(const QString &id)
   }
 
   return provider.icon(info).pixmap(16, 16);
+}
+
+
+QString SendFilePluginImpl::fileName(const QString &id) const
+{
+  SendFileTransaction transaction = m_transactions.value(SimpleID::decode(id));
+  if (!transaction)
+    return QString();
+
+  return transaction->fileName();
+}
+
+
+QString SendFilePluginImpl::state(const QString &id) const
+{
+  SendFileTransaction transaction = m_transactions.value(SimpleID::decode(id));
+  if (!transaction)
+    return LS("U");
+
+  return QChar((char)transaction->state());
+}
+
+
+QVariantMap SendFilePluginImpl::fileUrls(const QString &id) const
+{
+  SendFileTransaction transaction = m_transactions.value(SimpleID::decode(id));
+  if (!transaction)
+    return QVariantMap();
+
+  QVariantMap out;
+  out[LS("dir")]  = QUrl::fromLocalFile(QFileInfo(transaction->file().name).absolutePath()).toString();
+  out[LS("file")] = QUrl::fromLocalFile(transaction->file().name).toString();
+  return out;
+}
+
+
+QVariantMap SendFilePluginImpl::progressInfo(const QString &id) const
+{
+  SendFileTransaction transaction = m_transactions.value(SimpleID::decode(id));
+  if (!transaction)
+    return QVariantMap();
+
+  QVariantMap out;
+  out[LS("text")]    = tr("%1 of %2").arg(WebBridge::i()->bytesToHuman(transaction->pos()), WebBridge::i()->bytesToHuman(transaction->file().size));
+  out[LS("percent")] = transaction->percent();
+  return out;
 }
 
 
@@ -293,37 +361,26 @@ void SendFilePluginImpl::start()
 
 void SendFilePluginImpl::finished(const QByteArray &id)
 {
-  SendFileTransaction transaction = m_transactions.value(id);
-  if (!transaction)
-    return;
-
-  if (transaction->role() == SendFile::ReceiverRole) {
-    QString dir = QUrl::fromLocalFile(QFileInfo(transaction->file().name).absolutePath()).toString();
-    QString file = QUrl::fromLocalFile(transaction->file().name).toString();
-    emit received(SimpleID::encode(id), dir, file);
-  }
-  else
-    emit sent(SimpleID::encode(id));
+  SENDFILE_TRANSACTION(id)
+  setState(transaction, SendFile::FinishedState);
 }
 
 
 void SendFilePluginImpl::progress(const QByteArray &id, qint64 current, qint64 total, int percent)
 {
-  SendFileTransaction transaction = m_transactions.value(id);
-  if (!transaction)
-    return;
+  SENDFILE_TRANSACTION(id)
 
+  transaction->setPos(current);
   emit progress(SimpleID::encode(id), tr("%1 of %2").arg(WebBridge::i()->bytesToHuman(current), WebBridge::i()->bytesToHuman(total)), percent);
 }
 
 
 void SendFilePluginImpl::started(const QByteArray &id)
 {
-  SendFileTransaction transaction = m_transactions.value(id);
-  if (!transaction)
-    return;
+  SENDFILE_TRANSACTION(id)
 
   transaction->setStarted(true);
+  setState(transaction, SendFile::TransferringState);
   progress(id, 0, transaction->file().size, 0);
 }
 
@@ -378,10 +435,17 @@ void SendFilePluginImpl::accept(const SendFileTransaction &transaction)
 {
   if (transaction->file().size > 0) {
     m_thread->add(transaction);
-    emit accepted(SimpleID::encode(transaction->id()), transaction->fileName());
+    setState(transaction, SendFile::ConnectingState);
   }
   else
     finished(transaction->id());
+}
+
+
+void SendFilePluginImpl::setState(const SendFileTransaction &transaction, SendFile::TransactionState state)
+{
+  transaction->setState(state);
+  emit stateChanged(SimpleID::encode(transaction->id()));
 }
 
 
@@ -409,14 +473,10 @@ void SendFilePluginImpl::accept(const MessagePacket &packet)
  */
 void SendFilePluginImpl::cancel(const MessagePacket &packet)
 {
-  QByteArray id = packet->id();
-  SendFileTransaction transaction = m_transactions.value(id);
-  if (!transaction)
-    return;
+  SENDFILE_TRANSACTION(packet->id())
 
-  m_thread->remove(id);
-  m_transactions.remove(id);
-  emit cancelled(SimpleID::encode(id));
+  m_thread->remove(packet->id());
+  setState(transaction, SendFile::CancelledState);
 }
 
 
@@ -432,6 +492,9 @@ void SendFilePluginImpl::incomingFile(const MessagePacket &packet)
     if (!transaction->isValid())
       return;
 
+    if (packet->status() == Notice::OK)
+      transaction->setState(SendFile::WaitingState);
+
     transaction->setLocal(localHosts());
     m_transactions[transaction->id()] = transaction;
   }
@@ -442,13 +505,16 @@ void SendFilePluginImpl::incomingFile(const MessagePacket &packet)
 
   transaction->setVisible();
 
-  Message message(packet->id(), packet->sender(), LS("file"), LS("addFileMessage"));
+  Message message(packet->id(), Message::detectTab(packet->sender(), packet->dest()), LS("file"), LS("addFileMessage"));
   message.setAuthor(packet->sender());
-  message.setDate();
+  message.setDate(packet->date());
   message.data()[LS("File")]      = transaction->fileName();
   message.data()[LS("Size")]      = transaction->file().size;
-  message.data()[LS("Direction")] = LS("incoming");
+  message.data()[LS("Direction")] = transaction->role() ? LS("incoming") : LS("outgoing");
   TabWidget::add(message);
+
+  if (transaction->state() != SendFile::UnknownState)
+    setState(transaction, transaction->state());
 
   Alert alert = Alert(LS("file"), packet->id(), packet->date(), Alert::Tab | Alert::Global);
   alert.setTab(packet->sender(), packet->dest());
@@ -461,15 +527,12 @@ void SendFilePluginImpl::incomingFile(const MessagePacket &packet)
  */
 void SendFilePluginImpl::cancel(const QByteArray &id)
 {
-  SendFileTransaction transaction = m_transactions.value(id);
-  if (!transaction)
-    return;
+  SENDFILE_TRANSACTION(id)
 
   m_thread->remove(id);
-  m_transactions.remove(id);
   ChatClient::io()->send(reply(transaction, LS("cancel")), true);
 
-  emit cancelled(SimpleID::encode(id));
+  setState(transaction, SendFile::CancelledState);
 }
 
 
@@ -478,9 +541,7 @@ void SendFilePluginImpl::cancel(const QByteArray &id)
  */
 void SendFilePluginImpl::saveAs(const QByteArray &id)
 {
-  SendFileTransaction transaction = m_transactions.value(id);
-  if (!transaction)
-    return;
+  SENDFILE_TRANSACTION(id)
 
   QString fileName = getDir(LS("SendFile/Dir")) + LC('/') + transaction->fileName();
   fileName = QFileDialog::getSaveFileName(TabWidget::i(), tr("Save"), fileName, LS("*.") + QFileInfo(fileName).suffix() + LS(";;*.*"));
