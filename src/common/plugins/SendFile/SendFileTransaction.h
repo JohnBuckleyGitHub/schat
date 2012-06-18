@@ -102,16 +102,21 @@ public:
   Transaction(const QVariantMap &data);
   bool isValid() const;
   bool setLocalFile(const QString &name);
-  inline bool isStarted() const             { return m_started; }
-  inline const File& file() const           { return m_file; }
-  inline const Hosts& local() const         { return m_local; }
-  inline const Hosts& remote() const        { return m_remote; }
-  inline const QByteArray& id() const       { return m_id; }
-  inline const QByteArray& user() const     { return m_user; }
-  inline Role role() const                  { return m_role; }
-  inline void setLocal(const Hosts &hosts)  { m_local = hosts; }
-  inline void setRemote(const Hosts &hosts) { m_remote = hosts; }
-  inline void setStarted(bool started)      { m_started = started; }
+
+  inline bool isStarted() const               { return m_started; }
+  inline bool isVisible() const               { return m_visible; }
+  inline const File& file() const             { return m_file; }
+  inline const Hosts& local() const           { return m_local; }
+  inline const Hosts& remote() const          { return m_remote; }
+  inline const QByteArray& id() const         { return m_id; }
+  inline const QByteArray& user() const       { return m_user; }
+  inline Role role() const                    { return m_role; }
+
+  inline void setLocal(const Hosts &hosts)    { m_local = hosts; }
+  inline void setRemote(const Hosts &hosts)   { m_remote = hosts; }
+  inline void setStarted(bool started)        { m_started = started; }
+  inline void setVisible(bool visible = true) { m_visible = visible; }
+
   QString fileName() const;
   QVariantMap toMap() const;
   QVariantMap toReceiver() const;
@@ -119,6 +124,7 @@ public:
 
 private:
   bool m_started;      ///< \b true если передача файла была запущена.
+  bool m_visible;      ///< \b true если транзакция отображается в пользовательском интерфейсе, \b false если она скрыта.
   File m_file;         ///< Список файлов.
   Hosts m_local;       ///< Локальные адреса и порты.
   Hosts m_remote;      ///< Удалёные адреса и порты.

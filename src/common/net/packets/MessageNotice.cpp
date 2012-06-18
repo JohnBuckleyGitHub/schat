@@ -17,6 +17,7 @@
  */
 
 #include "DateTime.h"
+#include "JSON.h"
 #include "net/packets/MessageNotice.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
@@ -28,13 +29,16 @@ MessageNotice::MessageNotice()
 }
 
 
-MessageNotice::MessageNotice(const MessageRecord &record)
+MessageNotice::MessageNotice(const MessageRecord &record, bool parse)
 : Notice(record.senderId, record.destId, record.command, record.date, record.messageId)
 {
   m_type = MessageType;
   setText(record.text);
   setStatus(record.status);
   m_raw = record.data;
+
+  if (parse)
+    m_data = JSON::parse(m_raw).toMap();
 
   if (SimpleID::typeOf(record.destId) == SimpleID::UserId)
     m_direction = Client2Client;
