@@ -28,6 +28,7 @@
 
 class ChatView;
 class Notify;
+class SendFileDB;
 class SendFileTr;
 
 namespace SendFile {
@@ -73,6 +74,7 @@ private slots:
   void init(ChatView *view);
   void loadFinished(ChatView *view);
   void notify(const Notify &notify);
+  void openDB();
   void openUrl(const QUrl &url);
   void start();
 
@@ -99,6 +101,7 @@ private:
   QHash<QByteArray, SendFileTransaction> m_transactions; ///< Отправленные файлы и входящие файлы.
   quint16 m_port;                                        ///< Порт который будет использоваться для передачи файлов.
   SendFile::Thread *m_thread;                            ///< Рабочий поток передачи файлов.
+  SendFileDB *m_db;                                      ///< База данных для сохранения информации о передаче файлов.
   SendFileTr *m_tr;                                      ///< Класс перевода строк.
 };
 
