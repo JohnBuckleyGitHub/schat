@@ -17,10 +17,11 @@
 
 SCHAT_CLIENT_LIB = 1
 SCHAT_CORE_LIB = 1
-QT = core network gui webkit
+QT = core network gui webkit sql
 
 HEADERS  = \
    SendFileAction.h \
+   SendFileDB.h \
    SendFileMessages.h \
    SendFilePage.h \
    SendFilePlugin.h \
@@ -33,6 +34,7 @@ HEADERS  = \
 
 SOURCES  = \
    SendFileAction.cpp \
+   SendFileDB.cpp \
    SendFileMessages.cpp \
    SendFilePage.cpp \
    SendFilePlugin.cpp \

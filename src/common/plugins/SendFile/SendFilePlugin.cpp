@@ -38,8 +38,10 @@
 #include "messages/Message.h"
 #include "net/packets/MessageNotice.h"
 #include "net/SimpleID.h"
+#include "NetworkManager.h"
 #include "Path.h"
 #include "SendFileAction.h"
+#include "SendFileDB.h"
 #include "SendFileMessages.h"
 #include "SendFilePage.h"
 #include "SendFilePlugin.h"
@@ -82,6 +84,7 @@ protected:
 SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
   : ChatPlugin(parent)
   , m_port(0)
+  , m_db(0)
 {
   ChatCore::settings()->setLocalDefault(LS("SendFile/Port"),    0);
   ChatCore::settings()->setLocalDefault(LS("SendFile/Dir"),     QString());
@@ -105,6 +108,7 @@ SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
   connect(ChatViewHooks::i(), SIGNAL(loadFinishedHook(ChatView*)), SLOT(loadFinished(ChatView*)));
 
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+  connect(ChatClient::i(), SIGNAL(online()), SLOT(openDB()));
 
   QTimer::singleShot(0, this, SLOT(start()));
 }
@@ -238,7 +242,7 @@ QPixmap SendFilePluginImpl::fileIcon(const QString &id) const
 
   QFileInfo info(transaction->file().name);
   QFileIconProvider provider;
-  if (info.isRelative()) {
+  if (info.isRelative() || !info.exists()) {
     QFile file(Path::cache() + LC('/') + transaction->fileName());
     file.open(QIODevice::WriteOnly);
     info.setFile(file);
@@ -332,6 +336,17 @@ void SendFilePluginImpl::notify(const Notify &notify)
         transaction->setVisible(false);
     }
   }
+}
+
+
+void SendFilePluginImpl::openDB()
+{
+  if (!m_db)
+    return;
+
+  QByteArray id = ChatClient::serverId();
+  if (!id.isEmpty())
+    m_db->open(id, ChatCore::networks()->root(id));
 }
 
 
@@ -446,6 +461,16 @@ void SendFilePluginImpl::setState(const SendFileTransaction &transaction, SendFi
 {
   transaction->setState(state);
   emit stateChanged(SimpleID::encode(transaction->id()));
+
+  if (state == SendFile::FinishedState || state == SendFile::CancelledState) {
+    if (!m_db) {
+      m_db = new SendFileDB(this);
+      openDB();
+    }
+
+    m_db->save(transaction);
+    m_transactions.remove(transaction->id());
+  }
 }
 
 
@@ -492,7 +517,16 @@ void SendFilePluginImpl::incomingFile(const MessagePacket &packet)
     if (!transaction->isValid())
       return;
 
-    if (packet->status() == Notice::OK)
+    if (packet->status() == Notice::Found) {
+      if (!m_db) {
+        m_db = new SendFileDB(this);
+        openDB();
+      }
+
+      m_db->restore(packet->id(), transaction);
+      transaction->setUser(Message::detectTab(packet->sender(), packet->dest()));
+    }
+    else if (packet->status() == Notice::OK)
       transaction->setState(SendFile::WaitingState);
 
     transaction->setLocal(localHosts());
@@ -512,9 +546,6 @@ void SendFilePluginImpl::incomingFile(const MessagePacket &packet)
   message.data()[LS("Size")]      = transaction->file().size;
   message.data()[LS("Direction")] = transaction->role() ? LS("incoming") : LS("outgoing");
   TabWidget::add(message);
-
-  if (transaction->state() != SendFile::UnknownState)
-    setState(transaction, transaction->state());
 
   Alert alert = Alert(LS("file"), packet->id(), packet->date(), Alert::Tab | Alert::Global);
   alert.setTab(packet->sender(), packet->dest());

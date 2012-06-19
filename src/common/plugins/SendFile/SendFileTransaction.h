@@ -129,8 +129,10 @@ public:
   inline void setLocal(const Hosts &hosts)     { m_local = hosts; }
   inline void setPos(qint64 pos)               { m_pos = pos; }
   inline void setRemote(const Hosts &hosts)    { m_remote = hosts; }
+  inline void setRole(Role role)               { m_role = role; }
   inline void setStarted(bool started)         { m_started = started; }
   inline void setState(TransactionState state) { m_state = state; }
+  inline void setUser(const QByteArray &user)  { m_user = user; }
   inline void setVisible(bool visible = true)  { m_visible = visible; }
 
   QString fileName() const;
