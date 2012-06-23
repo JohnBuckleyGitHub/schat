@@ -527,7 +527,7 @@ void SendFilePluginImpl::incomingFile(const MessagePacket &packet)
       m_db->restore(packet->id(), transaction);
       transaction->setUser(Message::detectTab(packet->sender(), packet->dest()));
     }
-    else if (packet->status() == Notice::OK)
+    else if (packet->status() == Notice::OK && !(packet->sender() == ChatClient::id() && packet->dest() != ChatClient::id()))
       transaction->setState(SendFile::WaitingState);
 
     transaction->setLocal(localHosts());
