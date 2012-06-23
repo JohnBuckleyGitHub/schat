@@ -31,6 +31,7 @@
 #include "ChatCore.h"
 #include "ChatNotify.h"
 #include "ChatSettings.h"
+#include "ChatUrls.h"
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "DateTime.h"
@@ -282,8 +283,8 @@ QVariantMap SendFilePluginImpl::fileUrls(const QString &id) const
     return QVariantMap();
 
   QVariantMap out;
-  out[LS("dir")]  = QUrl::fromLocalFile(QFileInfo(transaction->file().name).absolutePath()).toString();
-  out[LS("file")] = QUrl::fromLocalFile(transaction->file().name).toString();
+  out[LS("dir")]  = ChatUrls::fromLocalFile(QFileInfo(transaction->file().name).absolutePath()).toString();
+  out[LS("file")] = ChatUrls::fromLocalFile(transaction->file().name).toString();
   return out;
 }
 
