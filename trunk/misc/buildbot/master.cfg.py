@@ -129,7 +129,7 @@ def MakeWinBuilder():
     name          = 'nsis',
     command       = ['cmd', '/c', 'nsis.cmd'],
     workdir       = 'build/os/win32',
-    env           = { 'SCHAT_SIGN_FILE': schat_passwords.SIGN_FILE, 'SCHAT_SIGN_PASSWORD': schat_passwords.SIGN_PASSWORD, },
+    env           = { 'SCHAT_SIGN_FILE': schat_passwords.SIGN_FILE, 'SCHAT_SIGN_PASSWORD': schat_passwords.SIGN_PASSWORD, 'SCHAT_VERSION': SCHAT_VERSION, },
     haltOnFailure = True,
   ))
   f.addStep(FileUpload(
@@ -141,6 +141,11 @@ def MakeWinBuilder():
     mode       = 0644,
     slavesrc   = WithProperties('os/win32/out/schat2-server-%(version)s.exe'),
     masterdest = UploadFileName('schat2-server-%(version)s%(suffix)s.exe'),
+  ))
+  f.addStep(FileUpload(
+    mode       = 0644,
+    slavesrc   = WithProperties('os/win32/out/schat2-%(version)s.msi'),
+    masterdest = UploadFileName('schat2-%(version)s%(suffix)s.msi'),
   ))
   return f
 
