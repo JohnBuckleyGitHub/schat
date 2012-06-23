@@ -18,6 +18,11 @@
 
 #include <QDesktopServices>
 #include <QTextDocument>
+#include <QDir>
+
+#if defined(Q_OS_WIN32)
+# include <qt_windows.h>
+#endif
 
 #include "ChatNotify.h"
 #include "ChatUrls.h"
@@ -33,6 +38,24 @@ ChatUrls::ChatUrls(QObject *parent)
   : QObject(parent)
 {
   m_self = this;
+
+  QDesktopServices::setUrlHandler(LS("chat"), this, "openChatUrl");
+  QDesktopServices::setUrlHandler(LS("schat"), this, "openSChatUrl");
+
+# if defined(Q_OS_WIN32)
+  QDesktopServices::setUrlHandler(LS("file"), this, "openFileUrl");
+# endif
+}
+
+
+void ChatUrls::open(const QUrl &url)
+{
+  if (url.scheme() == LS("schat"))
+    m_self->openSChatUrl(url);
+  else if (url.scheme() == LS("chat"))
+    m_self->openChatUrl(url);
+  else
+    QDesktopServices::openUrl(url);
 }
 
 
@@ -95,6 +118,21 @@ QStringList ChatUrls::path(const QUrl &url)
 }
 
 
+QUrl ChatUrls::fromLocalFile(const QString &localFile)
+{
+  QUrl url;
+  url.setScheme(LS("file"));
+  QString deslashified = QDir::fromNativeSeparators(localFile);
+
+  if (deslashified.length() > 1 && deslashified.at(1) == LC(':') && deslashified.at(0) != LC('/'))
+    url.setPath(LC('/') + deslashified);
+  else
+    url.setPath(deslashified);
+
+  return url;
+}
+
+
 /*!
  * Преобразует канал в URL адрес.
  *
@@ -114,6 +152,47 @@ QUrl ChatUrls::toUrl(ClientChannel channel, const QString &action)
 
   return out;
 }
+
+
+/*!
+ * Открытие ссылок со схемой \b chat.
+ */
+void ChatUrls::openChatUrl(const QUrl &url)
+{
+  if (url.host() == LS("channel")) {
+    openChannelUrl(url);
+  }
+  else if (url.host() == LS("about")) {
+    ChatNotify::start(Notify::OpenAbout);
+  }
+  else if (url.host() == LS("settings")) {
+    ChatNotify::start(Notify::OpenSettings, url);
+  }
+}
+
+
+/*!
+ * Открытие ссылок со схемой \b schat.
+ */
+void ChatUrls::openSChatUrl(const QUrl &url)
+{
+  ChatClient::io()->openUrl(url);
+}
+
+
+#if defined(Q_OS_WIN32)
+void ChatUrls::openFileUrl(const QUrl &url)
+{
+  if (!url.isValid())
+    return;
+
+  QString file = url.toLocalFile();
+  if (file.isEmpty())
+    file = url.toString();
+
+  ShellExecute(0, 0, (wchar_t*)QDir::toNativeSeparators(file).utf16(), 0, 0, SW_SHOWNORMAL);
+}
+#endif
 
 
 void ChatUrls::openChannelUrl(const QUrl &url)
@@ -146,29 +225,5 @@ void ChatUrls::openChannelUrl(const QUrl &url)
 
     if (actions.at(1) == LS("topic") && channel->type() == SimpleID::ChannelId)
       ChatNotify::start(Notify::EditTopic, channel->id());
-  }
-}
-
-
-void ChatUrls::openUrl(const QUrl &url)
-{
-  if (url.scheme() == LS("schat")) {
-    ChatClient::io()->openUrl(url);
-    return;
-  }
-
-  if (url.scheme() != LS("chat")) {
-    QDesktopServices::openUrl(url);
-    return;
-  }
-
-  if (url.host() == LS("channel")) {
-    openChannelUrl(url);
-  }
-  else if (url.host() == LS("about")) {
-    ChatNotify::start(Notify::OpenAbout);
-  }
-  else if (url.host() == LS("settings")) {
-    ChatNotify::start(Notify::OpenSettings, url);
   }
 }

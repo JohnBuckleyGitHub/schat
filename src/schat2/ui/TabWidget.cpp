@@ -383,7 +383,7 @@ void TabWidget::clientStateChanged(int state, int previousState)
     int status = error.value(LS("status")).toInt();
 
     if (status == Notice::Unauthorized && !m_welcomeTab)
-      ChatUrls::open(LS("chat://settings/network"));
+      ChatUrls::open(QUrl(LS("chat://settings/network")));
   }
 }
 

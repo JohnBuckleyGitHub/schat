@@ -30,18 +30,25 @@ class SCHAT_CORE_EXPORT ChatUrls : public QObject
 
 public:
   ChatUrls(QObject *parent = 0);
-  inline static ChatUrls *i()                 { return m_self; }
-  inline static void open(const QString &url) { open(QUrl(url)); }
-  inline static void open(const QUrl &url)    { m_self->openUrl(url); }
+  inline static ChatUrls *i() { return m_self; }
+  static void open(const QUrl &url);
 
   static ClientChannel channel(const QUrl &url);
   static QStringList actions(const QUrl &url);
   static QStringList path(const QUrl &url);
+  static QUrl fromLocalFile(const QString &localFile);
   static QUrl toUrl(ClientChannel channel, const QString &action = QString());
+
+private slots:
+  void openChatUrl(const QUrl &url);
+  void openSChatUrl(const QUrl &url);
+
+# if defined(Q_OS_WIN32)
+  void openFileUrl(const QUrl &url);
+# endif
 
 private:
   void openChannelUrl(const QUrl &url);
-  void openUrl(const QUrl &url);
 
   static ChatUrls *m_self; ///< Указатель на себя.
 };
