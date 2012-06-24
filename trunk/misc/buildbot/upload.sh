@@ -23,6 +23,7 @@ cp -f $SNAPSHOTS/schatd2_$SCHAT_VERSION-1~precise-dev_amd64.deb $UPLOAD_BASE/sch
 cp -f $SNAPSHOTS/schatd2_$SCHAT_VERSION-1~precise-dev_i386.deb  $UPLOAD_BASE/schatd2_$SCHAT_VERSION-1~precise_i386.deb
 cp -f $SNAPSHOTS/SimpleChat2-$SCHAT_VERSION-dev.dmg             $UPLOAD_BASE/SimpleChat2-$SCHAT_VERSION.dmg
 cp -f $SNAPSHOTS/schat2-$SCHAT_VERSION-dev.exe                  $UPLOAD_BASE/schat2-$SCHAT_VERSION.exe
+cp -f $SNAPSHOTS/schat2-$SCHAT_VERSION-dev.msi                  $UPLOAD_BASE/schat2-$SCHAT_VERSION.msi
 cp -f $SNAPSHOTS/schat2-server-$SCHAT_VERSION-dev.exe           $UPLOAD_BASE/schat2-server-$SCHAT_VERSION.exe
 
 s3cmd put --recursive --acl-public --guess-mime-type $UPLOAD_BASE s3://impomezia/schat/

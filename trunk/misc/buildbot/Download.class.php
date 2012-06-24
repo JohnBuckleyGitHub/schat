@@ -27,6 +27,7 @@ class Download
     $this->json->windows->version   = $this->version;
     $this->fileInfo($this->json, 'windows', 'schat2-' . $this->version . '.exe');
     $this->fileInfo($this->json->windows, 'server', 'schat2-server-' . $this->version . '.exe');
+    $this->fileInfo($this->json->windows, 'msi', 'schat2-' . $this->version . '.msi');
 
     $this->json->osx->name          = 'Mac OS X';
     $this->json->osx->version       = $this->version;
