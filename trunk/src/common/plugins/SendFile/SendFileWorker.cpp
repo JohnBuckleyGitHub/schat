@@ -17,6 +17,7 @@
  */
 
 #include <QTimer>
+#include <QTimerEvent>
 
 #include "debugstream.h"
 #include "net/SimpleID.h"
@@ -31,7 +32,9 @@ Worker::Worker(quint16 port, QObject *parent)
   : QTcpServer(parent)
   , m_port(port)
 {
-  listen(QHostAddress::Any, m_port);
+  m_timer = new QBasicTimer();
+
+  start();
 
   SCHAT_DEBUG_STREAM("[SendFile] Worker::Worker(), port:" << port);
 # if defined(SCHAT_DEBUG)
@@ -41,12 +44,22 @@ Worker::Worker(quint16 port, QObject *parent)
 }
 
 
+Worker::~Worker()
+{
+  if (m_timer->isActive())
+    m_timer->stop();
+
+  delete m_timer;
+}
+
+
 /*!
  * Добавление задачи.
  */
 void Worker::addTask(const QVariantMap &data)
 {
   SCHAT_DEBUG_STREAM("[SendFile] Worker::add(), id:" << SimpleID::encode(data.value("id").toByteArray()));
+  start();
 
   QByteArray id = data.value("id").toByteArray();
   if (m_tasks.contains(id)) {
@@ -166,6 +179,31 @@ void Worker::incomingConnection(int socketDescriptor)
   connect(socket, SIGNAL(released()), SLOT(released()));
   connect(socket, SIGNAL(syncRequest()), SLOT(syncRequest()));
   connect(socket, SIGNAL(handshake(QByteArray, char)), SLOT(handshake(QByteArray, char)));
+}
+
+
+void Worker::timerEvent(QTimerEvent *event)
+{
+  if (event->timerId() != m_timer->timerId()) {
+    QTcpServer::timerEvent(event);
+    return;
+  }
+
+  start();
+}
+
+
+void Worker::start()
+{
+  SCHAT_DEBUG_STREAM("[SendFile] Worker::start()")
+  if (m_timer->isActive())
+    m_timer->stop();
+
+  if (isListening())
+    return;
+
+  if (!listen(QHostAddress::Any, m_port))
+    m_timer->start(5000, this);
 }
 
 

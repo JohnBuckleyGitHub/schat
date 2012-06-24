@@ -35,6 +35,7 @@
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "DateTime.h"
+#include "debugstream.h"
 #include "hooks/ChatViewHooks.h"
 #include "messages/Message.h"
 #include "net/packets/MessageNotice.h"
@@ -196,11 +197,13 @@ int SendFilePluginImpl::setPort(quint16 port)
  */
 void SendFilePluginImpl::read(const MessagePacket &packet)
 {
-  qDebug() << "----------------";
-  qDebug() << "command:" << packet->command();
-  qDebug() << "text:   " << packet->text();
-  qDebug() << "json:   " << packet->raw();
-  qDebug() << "----------------";
+# if defined(SCHAT_DEBUG)
+  SCHAT_DEBUG_STREAM("[SendFile] SendFilePluginImpl::read()")
+  qDebug() << "             command:" << packet->command();
+  qDebug() << "             text:   " << packet->text();
+  qDebug() << "             json:   " << packet->raw();
+# endif
+
   if (packet->text() == LS("file"))
     incomingFile(packet);
   else if (packet->text() == LS("cancel"))
