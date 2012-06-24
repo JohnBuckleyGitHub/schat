@@ -37,6 +37,7 @@ class Worker : public QTcpServer
 
 public:
   Worker(quint16 port, QObject *parent = 0);
+  ~Worker();
 
 signals:
   void finished(const QByteArray &id, qint64 elapsed);
@@ -55,10 +56,13 @@ private slots:
 
 protected:
   void incomingConnection(int socketDescriptor);
+  void timerEvent(QTimerEvent *event);
 
 private:
+  void start();
   void updateTask(const QByteArray &id, const QVariantMap &data);
 
+  QBasicTimer *m_timer;                    ///< Таймер для попыток открыть порт.
   QHash<QByteArray, SendFileTask> m_tasks; ///< Задачи по передаче файлов, по одной на файл.
   QList<QByteArray> m_remove;              ///< Список идентификаторов задач ожидающих удаления.
   quint16 m_port;                          ///< Порт для передачи данных.
