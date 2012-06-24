@@ -30,7 +30,7 @@
     <UIRef Id="WixUI_FeatureTree" />
     <!-- Sequences -->
     <!-- If a newer version of product is installed, show an error message. -->
-    <MajorUpgrade Schedule="afterInstallFinalize" DowngradeErrorMessage="A later version of [ProductName] is already installed. If you need to install this MSI, first remove program from Add/Remove Programs in Control Panel." />
+    <MajorUpgrade Schedule="afterInstallFinalize" AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A later version of [ProductName] is already installed. If you need to install this MSI, first remove program from Add/Remove Programs in Control Panel." />
     <!-- Indormation about program -->
     <Property Id="ARPHELPLINK">http://wiki.schat.me/</Property>
     <Property Id="ARPURLINFOABOUT">http://schat.me/</Property>
