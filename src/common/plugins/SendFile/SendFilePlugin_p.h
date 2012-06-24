@@ -84,6 +84,7 @@ private slots:
 
 private:
   MessagePacket reply(const SendFileTransaction &transaction, const QString &text);
+  QPixmap makeFileIcon(const QString &fileName) const;
   QString getDir(const QString &key);
   quint16 getPort() const;
   SendFile::Hosts localHosts() const;

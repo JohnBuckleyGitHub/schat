@@ -71,9 +71,10 @@ void SendFileDB::restore(const QByteArray &id, SendFileTransaction transaction)
 
   SendFile::Role role = static_cast<SendFile::Role>(query.value(0).toInt());
   SendFile::TransactionState state = static_cast<SendFile::TransactionState>(query.value(1).toInt());
+  QString fileName = query.value(2).toString();
 
-  if (role == SendFile::ReceiverRole && state == SendFile::FinishedState) {
-    QFileInfo info(query.value(2).toString());
+  if (role == SendFile::ReceiverRole && state == SendFile::FinishedState && !fileName.startsWith(LS("//"))) {
+    QFileInfo info(fileName);
     if (!info.exists())
       return;
 
@@ -83,7 +84,7 @@ void SendFileDB::restore(const QByteArray &id, SendFileTransaction transaction)
 
   transaction->setRole(role);
   transaction->setState(state);
-  transaction->setLocalFile(query.value(2).toString());
+  transaction->setFile(SendFile::File(fileName, query.value(3).toLongLong()));
 }
 
 
