@@ -241,17 +241,14 @@ QPixmap SendFilePluginImpl::fileIcon(const QString &id) const
   if (!transaction)
     return QPixmap();
 
-  QFileInfo info(transaction->file().name);
-  QFileIconProvider provider;
-  if (info.isRelative() || !info.exists()) {
-    QFile file(Path::cache() + LC('/') + transaction->fileName());
-    file.open(QIODevice::WriteOnly);
-    info.setFile(file);
-    QPixmap pixmap = provider.icon(info).pixmap(16, 16);
-    file.remove();
-    return pixmap;
-  }
+  if (transaction->file().name.startsWith(LS("//")))
+    return makeFileIcon(transaction->fileName());
 
+  QFileInfo info(transaction->file().name);
+  if (info.isRelative() || !info.exists())
+    return makeFileIcon(transaction->fileName());
+
+  QFileIconProvider provider;
   return provider.icon(info).pixmap(16, 16);
 }
 
@@ -407,6 +404,18 @@ MessagePacket SendFilePluginImpl::reply(const SendFileTransaction &transaction, 
   packet->setCommand(LS("file"));
   packet->setDirection(Notice::Internal);
   return packet;
+}
+
+
+QPixmap SendFilePluginImpl::makeFileIcon(const QString &fileName) const
+{
+  QFileIconProvider provider;
+  QFile file(Path::cache() + LC('/') + fileName);
+  file.open(QIODevice::WriteOnly);
+  QFileInfo info(file);
+  QPixmap pixmap = provider.icon(info).pixmap(16, 16);
+  file.remove();
+  return pixmap;
 }
 
 

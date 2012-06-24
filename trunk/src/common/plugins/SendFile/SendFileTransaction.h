@@ -41,12 +41,12 @@ enum AddressType {
 
 /// Состояние транзакции.
 enum TransactionState {
-  UnknownState      = 0x55, ///< 'U' Неизвестное состояние.
-  WaitingState      = 0x57, ///< 'W' Ожидание действия пользователя.
-  CancelledState    = 0x63, ///< 'c' Отправка файла отменена.
-  ConnectingState   = 0x43, ///< 'C' Идёт подключение.
-  TransferringState = 0x54, ///< 'T' Идёт передача файла.
-  FinishedState     = 0x46  ///< 'F' Передача файла успешно завершена.
+  UnknownState      = 80, ///< 'U' Неизвестное состояние.
+  WaitingState      = 87, ///< 'W' Ожидание действия пользователя.
+  CancelledState    = 99, ///< 'c' Отправка файла отменена.
+  ConnectingState   = 67, ///< 'C' Идёт подключение.
+  TransferringState = 84, ///< 'T' Идёт передача файла.
+  FinishedState     = 70  ///< 'F' Передача файла успешно завершена.
 };
 
 
@@ -126,6 +126,7 @@ public:
   inline Role role() const                     { return m_role; }
   inline TransactionState state() const        { return m_state; }
 
+  inline void setFile(const File &file)        { m_file = file; }
   inline void setLocal(const Hosts &hosts)     { m_local = hosts; }
   inline void setPos(qint64 pos)               { m_pos = pos; }
   inline void setRemote(const Hosts &hosts)    { m_remote = hosts; }
