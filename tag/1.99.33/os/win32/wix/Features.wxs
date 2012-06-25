@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?include Variables.wxi?>
+  <Fragment>
+    <Feature Id="Product" Title="Core Components" Description="Core Components" Level="1" AllowAdvertise="no" Absent="disallow" ConfigurableDirectory="INSTALLLOCATION">
+      <ComponentGroupRef Id="Core" />
+      <ComponentRef Id="StartMenuFolder" />
+    </Feature>
+    <Feature Id="Qt" Title="Qt Components" Description="Qt Components" Level="1" AllowAdvertise="no" Absent="disallow" ConfigurableDirectory="INSTALLLOCATION">
+      <ComponentGroupRef Id="Qt" />
+    </Feature>
+    <Feature Id="Plugins" Title="Main Plugins" Description="Main Plugins" Level="1" AllowAdvertise="no" ConfigurableDirectory="INSTALLLOCATION">
+      <Feature Id="Cache" Title="Cache Plugin" Description="Cache Plugin" Level="1" AllowAdvertise="no">
+        <ComponentGroupRef Id="Cache" />
+      </Feature>
+      <Feature Id="Emoticons" Title="Emoticons Plugin" Description="Emoticons Plugin" Level="1" AllowAdvertise="no">
+        <ComponentGroupRef Id="Emoticons" />
+      </Feature>
+      <Feature Id="History" Title="History Plugin" Description="History Plugin" Level="1" AllowAdvertise="no">
+        <ComponentGroupRef Id="History" />
+      </Feature>
+      <Feature Id="Idle" Title="Idle Plugin" Description="Idle Plugin" Level="1" AllowAdvertise="no">
+        <ComponentGroupRef Id="Idle" />
+      </Feature>
+      <Feature Id="Profile" Title="Profile Plugin" Description="Profile Plugin" Level="1" AllowAdvertise="no">
+        <ComponentGroupRef Id="Profile" />
+      </Feature>
+      <Feature Id="RawFeeds" Title="RawFeeds Plugin" Description="RawFeeds Plugin" Level="1" AllowAdvertise="no">
+        <ComponentGroupRef Id="RawFeeds" />
+      </Feature>
+      <Feature Id="SendFile" Title="SendFile Plugin" Description="SendFile Plugin" Level="1" AllowAdvertise="no">
+        <ComponentGroupRef Id="SendFile" />
+      </Feature>
+      <Feature Id="YouTube" Title="YouTube Plugin" Description="YouTube Plugin" Level="1" AllowAdvertise="no">
+        <ComponentGroupRef Id="YouTube" />
+      </Feature>
+    </Feature>
+  </Fragment>
+</Wix>
