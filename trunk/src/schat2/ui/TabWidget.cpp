@@ -183,14 +183,15 @@ bool TabWidget::isActive(const QByteArray &id)
   if (!m_self)
     return false;
 
-  if (!m_self->parentWidget()->isActiveWindow())
+  AbstractTab *tab = m_self->widget(m_self->currentIndex());
+  if (tab && tab->id() != id)
     return false;
 
-  AbstractTab *tab = m_self->widget(m_self->currentIndex());
-  if (tab && tab->id() == id)
-    return true;
+  QWidget *widget = m_self->parentWidget();
+  if (widget->isMinimized() || !widget->isVisible())
+    return false;
 
-  return false;
+  return widget->isActiveWindow();
 }
 
 
