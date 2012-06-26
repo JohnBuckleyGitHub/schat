@@ -60,7 +60,9 @@ public:
 
   ChannelBaseTab *channelTab(const QByteArray &id, bool create = true, bool show = true);
   static bool isActive(const QByteArray &id);
+  static bool isActiveChatWindow();
   static void add(const Message &message, bool create = true);
+  void stopAlert();
 
 signals:
   void pageChanged(AbstractTab *tab);
@@ -91,7 +93,6 @@ private:
   void lastTab();
   void retranslateUi();
   void showWelcome();
-  void stopAlert();
 
   MainToolBar *m_mainToolBar;                ///< Правая панель инструментов.
   QHash<QByteArray, ChannelBaseTab*> m_channels; ///< Таблица каналов.
