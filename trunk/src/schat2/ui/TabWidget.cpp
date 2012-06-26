@@ -24,6 +24,10 @@
 #include <QToolBar>
 #include <QToolButton>
 
+#if defined(Q_OS_WIN32)
+# include <qt_windows.h>
+#endif
+
 #include "debugstream.h"
 
 #include "actions/MenuBuilder.h"
@@ -171,6 +175,17 @@ void TabWidget::add(const Message &message, bool create)
 }
 
 
+void TabWidget::stopAlert()
+{
+  ChannelBaseTab *tab = qobject_cast<ChannelBaseTab *>(currentWidget());
+  if (!tab)
+    return;
+
+  if (tab->alerts())
+    tab->alert(false);
+}
+
+
 /*!
  * Проверка состояния вкладки, для принятия решения отображать оповещения или нет.
  *
@@ -187,11 +202,29 @@ bool TabWidget::isActive(const QByteArray &id)
   if (tab && tab->id() != id)
     return false;
 
+  return isActiveChatWindow();
+}
+
+
+bool TabWidget::isActiveChatWindow()
+{
   QWidget *widget = m_self->parentWidget();
   if (widget->isMinimized() || !widget->isVisible())
     return false;
 
+# if defined(Q_OS_WIN32)
+  if (widget->isActiveWindow()) {
+    HWND active = GetForegroundWindow();
+    if (active == widget->window()->internalWinId() || ::IsChild(active, widget->window()->internalWinId()))
+      return true;
+    else
+      return false;
+  }
+  else
+    return false;
+# else
   return widget->isActiveWindow();
+# endif
 }
 
 
@@ -476,15 +509,4 @@ void TabWidget::showWelcome()
     m_welcomeTab = new WelcomeTab(this);
     addChatTab(m_welcomeTab);
   }
-}
-
-
-void TabWidget::stopAlert()
-{
-  ChannelBaseTab *tab = qobject_cast<ChannelBaseTab *>(currentWidget());
-  if (!tab)
-    return;
-
-  if (tab->alerts())
-    tab->alert(false);
 }

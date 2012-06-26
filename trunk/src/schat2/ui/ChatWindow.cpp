@@ -95,6 +95,7 @@ void ChatWindow::showChat()
     showMaximized();
 
   activateWindow();
+  m_tabs->stopAlert();
 
   if (m_send->isVisible())
     m_send->setInputFocus();
@@ -176,7 +177,7 @@ void ChatWindow::notify(const Notify &notify)
       return;
     }
 
-    if (isActiveWindow() || qAbs(m_activationChanged.msecsTo(QTime::currentTime())) < QApplication::doubleClickInterval())
+    if (TabWidget::isActiveChatWindow() || qAbs(m_activationChanged.msecsTo(QTime::currentTime())) < QApplication::doubleClickInterval())
       hideChat();
     else
       showChat();
