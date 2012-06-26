@@ -29,6 +29,7 @@
 #include "messages/ServiceMessage.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
+#include "ui/AlertsPixmap.h"
 #include "ui/ChatIcons.h"
 #include "ui/tabs/ChannelBaseTab.h"
 #include "ui/tabs/ChatView.h"
@@ -81,9 +82,6 @@ void ChannelBaseTab::alert(bool start)
   }
   else
     m_alerts++;
-
-  if (m_alerts > 1)
-    return;
 
   setIcon(channelIcon());
 }
@@ -174,12 +172,8 @@ void ChannelBaseTab::part(const QByteArray &channel, const QByteArray &user)
 
 QIcon ChannelBaseTab::channelIcon() const
 {
-  if (m_alerts) {
-    if (m_channel->type() == SimpleID::ChannelId)
-      return SCHAT_ICON(ChannelAlert);
-
-    return ChatIcons::icon(ChatIcons::icon(m_channel, ChatIcons::OfflineStatus), LS(":/images/message-small.png"));
-  }
+  if (m_alerts)
+    return AlertsPixmap::icon(ChatIcons::icon(m_channel, ChatIcons::OfflineStatus), m_alerts);
   else
     return ChatIcons::icon(m_channel);
 }

@@ -63,6 +63,7 @@ HEADERS = \
     text/LinksFilter.h \
     text/TokenFilter.h \
     text/UrlFilter.h \
+    ui/AlertsPixmap.h \
     ui/ChatIcons.h \
     ui/ColorButton.h \
     ui/fields/GenderField.h \
@@ -148,6 +149,7 @@ SOURCES = \
     text/LinksFilter.cpp \
     text/TokenFilter.cpp \
     text/UrlFilter.cpp \
+    ui/AlertsPixmap.cpp \
     ui/ChatIcons.cpp \
     ui/ColorButton.cpp \
     ui/fields/GenderField.cpp \
