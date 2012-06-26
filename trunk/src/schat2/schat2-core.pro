@@ -240,7 +240,7 @@ unix {
 win32 {
   target.path += ../../os/win32/schat2/
   INSTALLS += target
-  LIBS += -lshell32
+  LIBS += -lshell32 -luser32
 }
 
 include(../common/common.pri)
