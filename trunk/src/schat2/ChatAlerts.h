@@ -75,6 +75,9 @@ public:
   ChatAlerts(QObject *parent = 0);
   inline static bool hasAlerts()                  { return !m_self->m_channels.isEmpty(); }
   inline static ChatAlerts *i()                   { return m_self; }
+  inline static int count(const QByteArray &id)   { return m_count.value(id); }
+  inline static int total()                       { return m_alerts; }
+  inline static QList<QByteArray>& channels()     { return m_channels; }
   static void add(const QByteArray &id);
   static void remove(const QByteArray &id);
   static void start(const Alert &alert);
@@ -82,14 +85,17 @@ public:
 signals:
   void alert(bool alert);
   void alert(const Alert &alert);
+  void countChanged(int total, int count, const QByteArray &channel);
 
 private slots:
   void offline();
   void online();
 
 private:
-  static ChatAlerts *m_self;           ///< Указатель на себя.
-  static QList<QByteArray> m_channels; ///< Список каналов для которых активно глобальное уведомление о новых сообщениях.
+  static ChatAlerts *m_self;             ///< Указатель на себя.
+  static int m_alerts;                   ///< Количество непрочитанных уведомлений.
+  static QHash<QByteArray, int> m_count; ///< Количество непрочитанных уведомлений для каждого канала.
+  static QList<QByteArray> m_channels;   ///< Сортированный список каналов для которых активно глобальное уведомление о новых сообщениях.
 };
 
 #endif /* CHATALERTS_H_ */

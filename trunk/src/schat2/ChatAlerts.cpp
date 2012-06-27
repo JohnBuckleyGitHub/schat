@@ -25,6 +25,8 @@
 #include "sglobal.h"
 
 ChatAlerts *ChatAlerts::m_self = 0;
+int ChatAlerts::m_alerts = 0;
+QHash<QByteArray, int> ChatAlerts::m_count;
 QList<QByteArray> ChatAlerts::m_channels;
 
 Alert::Alert(const QString &type, Options options)
@@ -70,23 +72,40 @@ ChatAlerts::ChatAlerts(QObject *parent)
 }
 
 
+/*!
+ * Добавление глобального уведомления для канала.
+ */
 void ChatAlerts::add(const QByteArray &id)
 {
-  if (m_channels.contains(id))
-    return;
+  m_channels.removeAll(id);
+  m_channels.prepend(id);
 
-  m_channels.append(id);
+  int count = m_count.value(id);
+  count++;
+  m_alerts++;
+  m_count[id] = count;
+
   if (m_channels.size() == 1)
     emit m_self->alert(true);
+
+  emit m_self->countChanged(m_alerts, count, id);
 }
 
 
+/*!
+ * Удаление глобального уведомления для канала.
+ */
 void ChatAlerts::remove(const QByteArray &id)
 {
+  int count = m_count.value(id);
   m_channels.removeAll(id);
+  m_count.remove(id);
+  m_alerts -= count;
 
   if (m_channels.isEmpty())
     emit m_self->alert(false);
+
+  emit m_self->countChanged(m_alerts, count, id);
 }
 
 

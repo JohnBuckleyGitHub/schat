@@ -40,7 +40,6 @@ ChannelBaseTab::ChannelBaseTab(ClientChannel channel, const QString &type, TabWi
   : AbstractTab(channel->id(), type, parent)
   , m_joined(true)
   , m_channel(channel)
-  , m_alerts(0)
 {
   m_options |= CanSendMessage;
 
@@ -74,16 +73,9 @@ bool ChannelBaseTab::bindMenu(QMenu *menu)
 }
 
 
-void ChannelBaseTab::alert(bool start)
+int ChannelBaseTab::alerts() const
 {
-  if (!start) {
-    m_alerts = 0;
-    ChatAlerts::remove(id());
-  }
-  else
-    m_alerts++;
-
-  setIcon(channelIcon());
+  return ChatAlerts::count(id());
 }
 
 
@@ -106,6 +98,13 @@ void ChannelBaseTab::setOnline(bool online)
 }
 
 
+void ChannelBaseTab::stopAlert()
+{
+  ChatAlerts::remove(id());
+  setIcon(channelIcon());
+}
+
+
 /*!
  * Обработка новых уведомлений.
  *
@@ -119,10 +118,10 @@ void ChannelBaseTab::alert(const Alert &alert)
   if (TabWidget::isActive(alert.tab()))
     return;
 
-  this->alert();
-
-  if (m_alerts && alert.options().testFlag(Alert::Global))
+  if (alert.options().testFlag(Alert::Global))
     ChatAlerts::add(id());
+
+  setIcon(channelIcon());
 }
 
 
@@ -172,8 +171,9 @@ void ChannelBaseTab::part(const QByteArray &channel, const QByteArray &user)
 
 QIcon ChannelBaseTab::channelIcon() const
 {
-  if (m_alerts)
-    return AlertsPixmap::icon(ChatIcons::icon(m_channel, ChatIcons::OfflineStatus), m_alerts);
+  int alerts = ChatAlerts::count(id());
+  if (alerts)
+    return AlertsPixmap::icon(ChatIcons::icon(m_channel, ChatIcons::OfflineStatus), alerts);
   else
     return ChatIcons::icon(m_channel);
 }

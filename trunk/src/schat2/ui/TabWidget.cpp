@@ -182,7 +182,7 @@ void TabWidget::stopAlert()
     return;
 
   if (tab->alerts())
-    tab->alert(false);
+    tab->stopAlert();
 }
 
 

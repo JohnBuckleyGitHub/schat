@@ -76,15 +76,16 @@ QPixmap AlertsPixmap::draw(int count)
   pixmap.fill(Qt::transparent);
 
   QPainter painter(&pixmap);
-  painter.setRenderHint(QPainter::Antialiasing);
   painter.setPen(Qt::NoPen);
   painter.setBrush(QBrush(QColor(204, 60, 41)));
 
+  painter.setRenderHint(QPainter::Antialiasing);
   if (wide)
     painter.drawRoundedRect(pixmap.rect(), 2, 2);
   else
     painter.drawRoundedRect(pixmap.rect(), 4.5, 4.5);
 
+  painter.setRenderHint(QPainter::Antialiasing, false);
   int offset = wide ? 1 : 3;
   if (count < 10) {
     if (count == 1)
