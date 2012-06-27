@@ -21,6 +21,7 @@
 #include <QTimer>
 #include <QVBoxLayout>
 
+#include "ChatAlerts.h"
 #include "ChatCore.h"
 #include "ChatNotify.h"
 #include "ChatSettings.h"
@@ -172,15 +173,13 @@ void ChatWindow::notify(const Notify &notify)
     closeChat();
   }
   else if (notify.type() == Notify::ToggleVisibility) {
-    if (isHidden() || isMinimized()) {
-      showChat();
-      return;
-    }
-
-    if (TabWidget::isActiveChatWindow() || qAbs(m_activationChanged.msecsTo(QTime::currentTime())) < QApplication::doubleClickInterval())
+    if (TabWidget::isActiveChatWindow() || qAbs(m_activationChanged.msecsTo(QTime::currentTime())) < QApplication::doubleClickInterval()) {
       hideChat();
-    else
+    }
+    else {
+      m_tabs->channelTab(ChatAlerts::last(), false);
       showChat();
+    }
   }
   else if (notify.type() == Notify::ShowChat) {
     showChat();
