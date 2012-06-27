@@ -128,6 +128,9 @@ ClientChannel TabWidget::channel(const QByteArray &id) const
  */
 ChannelBaseTab *TabWidget::channelTab(const QByteArray &id, bool create, bool show)
 {
+  if (!Channel::isCompatibleId(id))
+    return 0;
+
   ChannelBaseTab *tab = 0;
 
   if (m_channels.contains(id)) {
@@ -209,7 +212,7 @@ bool TabWidget::isActive(const QByteArray &id)
 bool TabWidget::isActiveChatWindow()
 {
   QWidget *widget = m_self->parentWidget();
-  if (widget->isMinimized() || !widget->isVisible())
+  if (widget->isMinimized() || widget->isHidden())
     return false;
 
 # if defined(Q_OS_WIN32)

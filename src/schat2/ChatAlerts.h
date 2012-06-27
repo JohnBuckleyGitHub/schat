@@ -78,6 +78,7 @@ public:
   inline static int count(const QByteArray &id)   { return m_count.value(id); }
   inline static int total()                       { return m_alerts; }
   inline static QList<QByteArray>& channels()     { return m_channels; }
+  static QByteArray last()                        { if (!m_channels.isEmpty()) return m_channels.first(); return QByteArray(); }
   static void add(const QByteArray &id);
   static void remove(const QByteArray &id);
   static void start(const Alert &alert);
