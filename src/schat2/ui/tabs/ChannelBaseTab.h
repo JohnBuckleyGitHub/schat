@@ -41,12 +41,12 @@ public:
 
   inline ChatView *chatView()          { return m_chatView; }
   inline ClientChannel channel() const { return m_channel; }
-  inline int alerts() const            { return m_alerts; }
 
   bool bindMenu(QMenu *menu);
-  virtual void alert(bool start = true);
+  int alerts() const;
   void add(const Message &message);
   void setOnline(bool online = true);
+  void stopAlert();
 
 private slots:
   void alert(const Alert &alert);
@@ -63,7 +63,6 @@ protected:
   bool m_joined;           ///< \b true если пользователь уже вошёл в канал.
   ChatView *m_chatView;    ///< Виджет отображающий текст чата.
   ClientChannel m_channel; ///< Канал.
-  int m_alerts;            ///< Количество непрочитанных уведомлений.
 };
 
 #endif /* CHANNELBASETAB_H_ */
