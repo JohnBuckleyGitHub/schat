@@ -36,7 +36,8 @@ public:
 private:
   static int pos(int number);
   static int width(int number);
-  static void drawNumber(int &offset, QPainter *painter, int number);
+  static void draw(int &offset, QPainter *painter, int number);
+  static void draw(int x, int y, QPainter *painter, int number);
 };
 
 #endif /* ALERTSPIXMAP_H_ */

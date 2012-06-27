@@ -91,16 +91,16 @@ QPixmap AlertsPixmap::draw(int count)
     if (count == 1)
       offset++;
 
-    drawNumber(offset, &painter, count);
+    draw(offset, &painter, count);
   }
   else if (count < 100) {
-    drawNumber(offset, &painter, count / 10);
-    drawNumber(offset, &painter, count % 10);
+    draw(offset, &painter, count / 10);
+    draw(offset, &painter, count % 10);
   }
   else {
-    drawNumber(offset, &painter, count / 100);
-    drawNumber(offset, &painter, count / 10 % 10);
-    drawNumber(offset, &painter, count % 10);
+    draw(offset, &painter, count / 100);
+    draw(offset, &painter, count / 10 % 10);
+    draw(offset, &painter, count % 10);
   }
 
   painter.end();
@@ -145,11 +145,97 @@ int AlertsPixmap::width(int number)
 }
 
 
-void AlertsPixmap::drawNumber(int &offset, QPainter *painter, int number)
+void AlertsPixmap::draw(int &offset, QPainter *painter, int number)
 {
   if (number > 9)
     number = 9;
 
-  painter->drawPixmap(offset, 2, QPixmap(LS(":/images/numbers.png")), pos(number), 0, width(number), 5);
+  painter->setPen(QColor(0, 0, 0, 96));
+  draw(offset + 1, 3, painter, number);
+  painter->setPen(Qt::white);
+  draw(offset, 2, painter, number);
+
   offset += width(number) + 1;
+}
+
+
+/*!
+ * Отрисовка одиночной цифры или её тени.
+ */
+void AlertsPixmap::draw(int x, int y, QPainter *painter, int number)
+{
+  switch (number) {
+    case 0:
+      painter->drawLine(x    , y    , x    , y + 4);
+      painter->drawLine(x + 3, y    , x + 3, y + 4);
+      painter->drawLine(x + 1, y    , x + 2, y);
+      painter->drawLine(x + 1, y + 4, x + 2, y + 4);
+      break;
+
+    case 1:
+      painter->drawLine(x    , y    , x + 1, y);
+      painter->drawLine(x + 1, y + 1, x + 1, y + 4);
+      break;
+
+    case 2:
+      painter->drawLine(x    , y    , x + 3, y);
+      painter->drawLine(x    , y + 2, x + 2, y + 2);
+      painter->drawLine(x + 1, y + 4, x + 3, y + 4);
+      painter->drawLine(x + 3, y + 1, x + 3, y + 2);
+      painter->drawLine(x    , y + 3, x    , y + 4);
+      break;
+
+    case 3:
+      painter->drawLine(x    , y    , x + 2, y);
+      painter->drawLine(x + 1, y + 2, x + 2, y + 2);
+      painter->drawLine(x    , y + 4, x + 2, y + 4);
+      painter->drawLine(x + 3, y    , x + 3, y + 4);
+      break;
+
+    case 4:
+      painter->drawLine(x    , y    , x    , y + 1);
+      painter->drawLine(x    , y + 2, x + 2, y + 2);
+      painter->drawLine(x + 3, y    , x + 3, y + 4);
+      break;
+
+    case 5:
+      painter->drawLine(x    , y    , x + 3, y);
+      painter->drawLine(x + 1, y + 2, x + 2, y + 2);
+      painter->drawLine(x    , y + 4, x + 3, y + 4);
+      painter->drawLine(x    , y + 1, x    , y + 2);
+      painter->drawLine(x + 3, y + 2, x + 3, y + 3);
+      break;
+
+    case 6:
+      painter->drawLine(x    , y    , x + 3, y);
+      painter->drawLine(x + 1, y + 2, x + 2, y + 2);
+      painter->drawLine(x + 1, y + 4, x + 2, y + 4);
+      painter->drawLine(x    , y + 1, x    , y + 4);
+      painter->drawLine(x + 3, y + 2, x + 3, y + 4);
+      break;
+
+    case 7:
+      painter->drawLine(x    , y    , x + 1, y);
+      painter->drawLine(x + 2, y    , x + 2, y + 4);
+      break;
+
+    case 8:
+      painter->drawLine(x    , y    , x    , y + 4);
+      painter->drawLine(x + 3, y    , x + 3, y + 4);
+      painter->drawLine(x + 1, y    , x + 2, y);
+      painter->drawLine(x + 1, y + 2, x + 2, y + 2);
+      painter->drawLine(x + 1, y + 4, x + 2, y + 4);
+      break;
+
+    case 9:
+      painter->drawLine(x    , y    , x + 2, y);
+      painter->drawLine(x    , y + 1, x    , y + 2);
+      painter->drawLine(x + 1, y + 2, x + 2, y + 2);
+      painter->drawLine(x    , y + 4, x + 2, y + 4);
+      painter->drawLine(x + 3, y    , x + 3, y + 4);
+      break;
+
+    default:
+      break;
+  }
 }
