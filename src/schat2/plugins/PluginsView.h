@@ -16,36 +16,20 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PLUGINSPAGE_H_
-#define PLUGINSPAGE_H_
+#ifndef PLUGINSVIEW_H_
+#define PLUGINSVIEW_H_
 
-#include "ui/tabs/SettingsTabHook.h"
+#include <QWebView>
 
-class PluginsView;
-class QLabel;
-
-class PluginsPage : public SettingsPage
+class PluginsView : public QWebView
 {
   Q_OBJECT
 
 public:
-  PluginsPage(QWidget *parent = 0);
-  void retranslateUi();
+  PluginsView(QWidget *parent = 0);
 
-private:
-  PluginsView *m_view;
-  QLabel *m_label;
+private slots:
+  void boot();
 };
 
-
-class PluginsPageCreator : public SettingsPageCreator
-{
-public:
-  PluginsPageCreator()
-  : SettingsPageCreator(2333)
-  {}
-
-  SettingsPage* page(QWidget *parent = 0);
-};
-
-#endif /* PLUGINSPAGE_H_ */
+#endif /* PLUGINSVIEW_H_ */
