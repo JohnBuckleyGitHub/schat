@@ -17,6 +17,7 @@
  */
 
 #include "ChatCore.h"
+#include "hooks/PluginsPage.h"
 #include "hooks/SettingsTabImpl.h"
 #include "ui/tabs/SettingsTabHook.h"
 
@@ -45,6 +46,7 @@ SettingsTabHook::SettingsTabHook(QObject *parent)
 
   add(new ProfilePageCreator());
   add(new NetworkPageCreator());
+  add(new PluginsPageCreator());
   add(new LocalePageCreator());
 }
 

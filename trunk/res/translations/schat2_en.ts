@@ -483,6 +483,14 @@
     </message>
 </context>
 <context>
+    <name>PluginsPage</name>
+    <message>
+        <location filename="../../src/schat2/hooks/PluginsPage.cpp" line="32"/>
+        <source>Plugins</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ProfileLayout</name>
     <message>
         <location filename="../../src/schat2/ui/profile/ProfileLayout.cpp" line="39"/>
@@ -828,7 +836,7 @@
 <context>
     <name>TabWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="261"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="300"/>
         <source>Close Tab</source>
         <translation type="unfinished"></translation>
     </message>
@@ -865,26 +873,26 @@
 <context>
     <name>TrayIcon</name>
     <message>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="47"/>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="85"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="48"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="87"/>
         <source>Show...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="53"/>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="86"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="54"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="88"/>
         <source>Preferences...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="54"/>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="87"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="55"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="89"/>
         <source>About...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="56"/>
-        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="88"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="57"/>
+        <location filename="../../src/schat2/ui/TrayIcon.cpp" line="90"/>
         <source>Quit</source>
         <translation type="unfinished"></translation>
     </message>

@@ -185,4 +185,5 @@ void ChatIcons::init()
   m_icons[Locale]         = LS("locale");
   m_icons[Computer]       = LS("computer");
   m_icons[Reload]         = LS("reload");
+  m_icons[Plugin]         = LS("plugin");
 }
