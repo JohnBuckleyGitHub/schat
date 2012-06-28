@@ -108,87 +108,87 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../src/common/net/packets/Notice.cpp" line="161"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="165"/>
         <source>OK</source>
         <translation>ОК</translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/Notice.cpp" line="170"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="174"/>
         <source>Bad Request</source>
         <translation>Плохой запрос</translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/Notice.cpp" line="173"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="177"/>
         <source>Unauthorized</source>
         <translation>Неавторизован</translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/Notice.cpp" line="176"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="180"/>
         <source>Forbidden</source>
         <translation>Запрещено</translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/Notice.cpp" line="179"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="183"/>
         <source>Not Found</source>
         <translation>Не найдено</translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/Notice.cpp" line="188"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="192"/>
         <source>Nick Already In Use</source>
         <translation>Ник уже используется</translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/Notice.cpp" line="182"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="186"/>
         <source>Object Already Exists</source>
         <translation>Объект уже существует</translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/Notice.cpp" line="164"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="168"/>
         <source>Found</source>
         <translation>Найдено</translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/Notice.cpp" line="185"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="189"/>
         <source>Object Not Exists</source>
         <translation>Объект  не существует</translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/Notice.cpp" line="191"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="195"/>
         <source>Channel Offline</source>
         <translation>Канал не в сети</translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/Notice.cpp" line="194"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="198"/>
         <source>Conflict</source>
         <translation>Конфликт</translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/Notice.cpp" line="197"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="201"/>
         <source>Internal Error</source>
         <translation>Внутренняя ошибка</translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/Notice.cpp" line="200"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="204"/>
         <source>Not Implemented</source>
         <translation>Не реализовано</translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/Notice.cpp" line="203"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="207"/>
         <source>Bad Gateway</source>
         <translation>Плохой шлюз</translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/Notice.cpp" line="206"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="210"/>
         <source>Service Unavailable</source>
         <translation>Сервис недоступен</translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/Notice.cpp" line="209"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="213"/>
         <source>Gateway Timeout</source>
         <translation>Шлюз не отвечает</translation>
     </message>
     <message>
-        <location filename="../../src/common/net/packets/Notice.cpp" line="212"/>
+        <location filename="../../src/common/net/packets/Notice.cpp" line="216"/>
         <source>Unknown</source>
         <translation>Неизвестная ошибка</translation>
     </message>

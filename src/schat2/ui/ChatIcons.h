@@ -79,7 +79,8 @@ public:
     Password           = 0x5073, ///< "Ps"
     Locale             = 0x4C6F, ///< "Lo"
     Computer           = 0x4370, ///< "Cp"
-    Reload             = 0x526C  ///< "Rl"
+    Reload             = 0x526C, ///< "Rl"
+    Plugin             = 0x506C  ///< "Pl"
   };
 
   /// Опции получения иконки канала.
