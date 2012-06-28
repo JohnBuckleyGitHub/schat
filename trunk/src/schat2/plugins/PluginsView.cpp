@@ -16,40 +16,30 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QLabel>
-#include <QVBoxLayout>
+#include <QApplication>
+#include <QFile>
+#include <QTimer>
 
-#include "hooks/PluginsPage.h"
 #include "plugins/PluginsView.h"
 #include "sglobal.h"
-#include "ui/ChatIcons.h"
 
-PluginsPage::PluginsPage(QWidget *parent)
-  : SettingsPage(SCHAT_ICON(Plugin), LS("plugins"), parent)
+PluginsView::PluginsView(QWidget *parent)
+  : QWebView(parent)
 {
-  m_label = new QLabel(this);
-  m_view = new PluginsView(this);
+  setAcceptDrops(false);
+  page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
 
-  QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(m_label);
-  mainLay->addWidget(m_view);
-
-  QMargins margins = mainLay->contentsMargins();
-  margins.setBottom(0);
-  mainLay->setContentsMargins(margins);
-
-  retranslateUi();
+  QTimer::singleShot(0, this, SLOT(boot()));
 }
 
 
-void PluginsPage::retranslateUi()
+void PluginsView::boot()
 {
-  m_name = tr("Plugins");
-  m_label->setText(LS("<b>") + m_name + LS("</b>"));
-}
+  QString file = QApplication::applicationDirPath() + LS("/styles/test/html/Plugins.html");
+  if (QFile::exists(file))
+    file = QUrl::fromLocalFile(file).toString();
+  else
+    file = LS("qrc:/html/Plugins.html");
 
-
-SettingsPage* PluginsPageCreator::page(QWidget *parent)
-{
-  return new PluginsPage(parent);
+  setUrl(QUrl(file));
 }

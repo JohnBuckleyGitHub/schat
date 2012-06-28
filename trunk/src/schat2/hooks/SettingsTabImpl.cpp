@@ -63,7 +63,7 @@ void ProfilePage::retranslateUi()
 {
   m_name = tr("Profile");
 
-  m_profileLabel->setText(LS("<b>") + tr("Profile") + LS("</b>"));
+  m_profileLabel->setText(LS("<b>") + m_name + LS("</b>"));
   m_nickLabel->setText(tr("Nick:"));
   m_genderLabel->setText(tr("Gender:"));
 
@@ -100,7 +100,7 @@ NetworkPage::NetworkPage(QWidget *parent)
 void NetworkPage::retranslateUi()
 {
   m_name = tr("Network");
-  m_networkLabel->setText(LS("<b>") + tr("Network") + LS("</b>"));
+  m_networkLabel->setText(LS("<b>") + m_name + LS("</b>"));
 }
 
 
@@ -136,7 +136,7 @@ LocalePage::LocalePage(QWidget *parent)
 void LocalePage::retranslateUi()
 {
   m_name = tr("Language");
-  m_localeLabel->setText(LS("<b>") + tr("Language") + LS("</b>"));
+  m_localeLabel->setText(LS("<b>") + m_name + LS("</b>"));
 }
 
 

@@ -3,6 +3,7 @@
   <file alias="css/about.css">html/css/about.min.css</file>
   <file alias="css/ChatView.css">html/css/ChatView.min.css</file>
   <file alias="css/input.css">html/css/input.css</file>
+  <file alias="css/PluginsView.css">html/css/PluginsView.min.css</file>
   <file alias="css/server.css">html/css/server.min.css</file>
   <file alias="css/ui.css">html/css/ui.min.css</file>
   <file alias="css/user.css">html/css/user.min.css</file>
@@ -93,10 +94,12 @@
   <file alias="js/bootstrap-tooltip.js">html/js/bootstrap-tooltip.min.js</file>
   <file alias="js/ChatView.js">html/js/ChatView.min.js</file>
   <file alias="js/jquery.js">html/js/jquery-1.7.2.min.js</file>
+  <file alias="js/PluginsView.js">html/js/PluginsView.min.js</file>
   <file alias="js/server.js">html/js/server.min.js</file>
   <file alias="js/user.js">html/js/user.min.js</file>
   <file>html/about.html</file>
   <file>html/Channel.html</file>
+  <file>html/Plugins.html</file>
   <file>html/Server.html</file>
   <file>html/User.html</file>
   <file>images/color.png</file>
