@@ -28,6 +28,7 @@
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "sglobal.h"
+#include "ui/AlertsPixmap.h"
 #include "ui/ChatIcons.h"
 #include "ui/StatusMenu.h"
 #include "ui/TrayIcon.h"
@@ -62,6 +63,7 @@ TrayIcon::TrayIcon(QObject *parent)
   connect(m_menu, SIGNAL(triggered(QAction *)), SLOT(triggered(QAction *)));
   connect(ChatAlerts::i(), SIGNAL(alert(bool)), SLOT(alert(bool)));
   connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(changed(const QString &, const QVariant &)));
+  connect(ChatAlerts::i(), SIGNAL(countChanged(int, int, QByteArray)), SLOT(reload()));
 
   reload();
 
@@ -150,12 +152,15 @@ void TrayIcon::iconActivated(QSystemTrayIcon::ActivationReason reason)
 void TrayIcon::reload()
 {
   int status = ChatClient::channel()->status().value();
-  if (ChatClient::state() != ChatClient::Online)
+  if (ChatClient::state() != ChatClient::Online || ChatAlerts::total())
     status = -1;
 
   m_icon = SCHAT_ICON(SmallLogo);
   if (status != -1)
     m_icon = ChatIcons::icon(m_icon, ChatIcons::overlay(status));
+
+  if (ChatAlerts::total())
+    m_icon = AlertsPixmap::icon(m_icon, ChatAlerts::total());
 
   if (!m_timer->isActive())
     setIcon(m_icon);
@@ -194,11 +199,10 @@ void TrayIcon::startAlert()
     if (m_timer->isActive())
       m_timer->stop();
 
-    setIcon(ChatIcons::icon(SCHAT_ICON(SmallLogo), LS(":/images/message-small.png")));
     return;
   }
 
-  setIcon(QIcon(LS(":/images/message-active.png")));
+  setIcon(AlertsPixmap::icon(QIcon(LS(":/images/message-active.png")), ChatAlerts::total()));
 
   if (!m_timer->isActive())
     m_timer->start(666, this);
