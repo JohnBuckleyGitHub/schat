@@ -67,15 +67,10 @@ TabWidget::TabWidget(QWidget *parent)
 {
   m_self = this;
   setTabBar(m_tabBar);
-
-  #if defined(Q_WS_WIN)
-  setDocumentMode(false);
-  #else
   setDocumentMode(true);
-  #endif
 
   #if !defined(Q_WS_MAC)
-  setStyleSheet("QToolBar { margin:0px; border:0px; }" );
+  setStyleSheet(LS("QToolBar { margin:0px; border:0px; }"));
   #endif
 
   QWebSettings::globalSettings()->setFontSize(QWebSettings::DefaultFontSize, fontInfo().pixelSize());

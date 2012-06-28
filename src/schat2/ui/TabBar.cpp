@@ -58,20 +58,12 @@ TabBar::TabBar(QWidget *parent)
 void TabBar::tabInserted(int index)
 {
   QTabBar::tabInserted(index);
-
-  if (!tabsClosable() && count() > 1)
-    setTabsClosable(true);
-
-  setUsesScrollButtons(count() > 2);
+  setTabsClosable(count() > 1);
 }
 
 
 void TabBar::tabRemoved(int index)
 {
   QTabBar::tabRemoved(index);
-
-  if (count() < 2)
-    setTabsClosable(false);
-
-  setUsesScrollButtons(count() > 2);
+  setTabsClosable(count() > 1);
 }

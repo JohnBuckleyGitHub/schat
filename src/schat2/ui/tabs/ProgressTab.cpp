@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QFrame>
 #include <QHBoxLayout>
 
 #include "ChatCore.h"
@@ -27,13 +28,22 @@
 ProgressTab::ProgressTab(TabWidget *parent)
   : AbstractTab(QByteArray(), LS("progress"), parent)
 {
-  m_progress = new QProgressIndicator(this);
+  QFrame *frame = new QFrame(this);
+# if defined(Q_OS_WIN32)
+  frame->setStyleSheet(LS("QFrame { background-color: #fff; }"));
+# endif
+
+  m_progress = new QProgressIndicator(frame);
   m_progress->setAnimationDelay(100);
   m_progress->setMinimumSize(100, 100);
   m_progress->startAnimation();
 
   QHBoxLayout *mainLay = new QHBoxLayout(this);
-  mainLay->addWidget(m_progress, Qt::AlignCenter);
+  mainLay->addWidget(frame);
+  mainLay->setMargin(0);
+
+  QHBoxLayout *frameLay = new QHBoxLayout(frame);
+  frameLay->addWidget(m_progress, Qt::AlignCenter);
 
   setIcon(SCHAT_ICON(SmallLogo));
   retranslateUi();
