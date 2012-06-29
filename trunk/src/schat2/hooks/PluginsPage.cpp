@@ -33,6 +33,8 @@ PluginsPage::PluginsPage(QWidget *parent)
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_label);
   mainLay->addWidget(m_view);
+  mainLay->setStretch(0, 0);
+  mainLay->setStretch(1, 1);
 
   QMargins margins = mainLay->contentsMargins();
   margins.setBottom(0);
