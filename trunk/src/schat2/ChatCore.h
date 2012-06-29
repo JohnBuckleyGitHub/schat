@@ -42,6 +42,7 @@ public:
   ChatCore(QObject *parent = 0);
   ~ChatCore();
   inline static ChatCore *i()                           { return m_self; }
+  inline static ChatPlugins *plugins()                  { return m_self->m_plugins; }
   inline static ChatSettings *settings()                { return m_self->m_settings; }
   inline static Extensions *extensions()                { return m_self->m_extensions; }
   inline static NetworkManager *networks()              { return m_self->m_networkManager; }

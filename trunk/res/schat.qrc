@@ -43,6 +43,7 @@
   <file alias="images/plug.png">images/fugue/plug.png</file>
   <file alias="images/plug-disconnect.png">images/fugue/plug-disconnect.png</file>
   <file alias="images/plugin.png">images/hypic/plugin_16.png</file>
+  <file alias="images/plugin32.png">images/hypic/plugin_32.png</file>
   <file alias="images/profile.png">images/led-icons/vcard.png</file>
   <file alias="images/quit.png">images/crystal/exit.png</file>
   <file alias="images/reload.png">images/fugue/arrow-circle-315.png</file>

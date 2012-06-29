@@ -19,7 +19,10 @@
 #include <QApplication>
 #include <QFile>
 #include <QTimer>
+#include <QWebFrame>
 
+#include "ChatCore.h"
+#include "ChatPlugins.h"
 #include "plugins/PluginsView.h"
 #include "sglobal.h"
 
@@ -29,7 +32,26 @@ PluginsView::PluginsView(QWidget *parent)
   setAcceptDrops(false);
   page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
 
+  connect(page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), SLOT(populateJavaScriptWindowObject()));
+
   QTimer::singleShot(0, this, SLOT(boot()));
+}
+
+
+QVariantList PluginsView::list() const
+{
+  QVariantList plugins;
+  foreach (PluginItem *item, ChatCore::plugins()->list()) {
+    QVariantMap data;
+    data[LS("id")]      = item->id();
+    data[LS("icon")]    = LS("qrc:/images/plugin32.png");
+    data[LS("title")]   = item->header().value(LS("Name"));
+    data[LS("version")] = item->header().value(LS("Version"));
+    data[LS("desc")]    = item->header().value(LS("Desc"));
+    plugins.append(data);
+  }
+
+  return plugins;
 }
 
 
@@ -42,4 +64,10 @@ void PluginsView::boot()
     file = LS("qrc:/html/Plugins.html");
 
   setUrl(QUrl(file));
+}
+
+
+void PluginsView::populateJavaScriptWindowObject()
+{
+  page()->mainFrame()->addToJavaScriptWindowObject(LS("PluginsView"), this);
 }
