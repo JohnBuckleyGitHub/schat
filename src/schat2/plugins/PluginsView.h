@@ -19,6 +19,7 @@
 #ifndef PLUGINSVIEW_H_
 #define PLUGINSVIEW_H_
 
+#include <QVariant>
 #include <QWebView>
 
 class PluginsView : public QWebView
@@ -27,9 +28,11 @@ class PluginsView : public QWebView
 
 public:
   PluginsView(QWidget *parent = 0);
+  Q_INVOKABLE QVariantList list() const;
 
 private slots:
   void boot();
+  void populateJavaScriptWindowObject();
 };
 
 #endif /* PLUGINSVIEW_H_ */

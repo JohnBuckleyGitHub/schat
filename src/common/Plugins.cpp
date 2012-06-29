@@ -73,6 +73,22 @@ Plugins::Plugins(QObject *parent)
 
 
 /*!
+ * Получение списка плагинов.
+ */
+QList<PluginItem *> Plugins::list() const
+{
+  QList<PluginItem *> out;
+  foreach (const QString &id, m_sorted) {
+    PluginItem *item = m_plugins.value(id);
+    if (item)
+      out.append(item);
+  }
+
+  return out;
+}
+
+
+/*!
  * Загрузка плагинов.
  */
 void Plugins::load()

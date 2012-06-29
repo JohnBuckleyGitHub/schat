@@ -40,7 +40,7 @@ public:
   inline bool isValid() const              { return m_valid; }
   inline const QVariantMap& header() const { return m_header; }
   inline QObject *plugin()                 { return m_plugin; }
-  inline QString id() const                { return m_header.value("Id").toString(); }
+  inline QString id() const                { return m_header.value(QLatin1String("Id")).toString(); }
 
 private:
   bool m_valid;           ///< \b true если плагин загружен.
@@ -59,8 +59,9 @@ class SCHAT_EXPORT Plugins : public QObject
 
 public:
   Plugins(QObject *parent = 0);
-  inline const QString& type() const { return m_type; }
+  inline const QString& type() const       { return m_type; }
   inline void setType(const QString &type) { m_type = type; }
+  QList<PluginItem *> list() const;
   void load();
 
 protected:
