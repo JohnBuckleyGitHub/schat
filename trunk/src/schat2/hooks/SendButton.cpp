@@ -58,6 +58,7 @@ void SendButton::changeEvent(QEvent *event)
 void SendButton::sendMsg()
 {
   m_history->clear();
+  m_empty = 0;
 }
 
 
@@ -94,7 +95,9 @@ void SendButton::showMenu()
 void SendButton::retranslateUi()
 {
   setToolTip(tr("Send"));
-  m_empty->setText(tr("Empty"));
+
+  if (m_empty)
+    m_empty->setText(tr("Empty"));
 }
 
 
