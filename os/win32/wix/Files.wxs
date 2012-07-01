@@ -41,8 +41,8 @@
       </Component>
       <Component Id="schat2.exe" Guid="{63FA5C3D-DE13-4F94-A255-30BBBC872463}">
         <File Id="schat2.exe" KeyPath="yes" Source="..\schat2\schat2.exe">
-          <Shortcut Id="StartMenuShortcut" Name="$(var.ProductName)" Description="$(var.ApplicationDescription)" Directory="StartMenuFolder" WorkingDirectory="INSTALLLOCATION"  Advertise="yes"/>
-          <Shortcut Id="DesktopShortcut" Name="$(var.ProductName)" Description="$(var.ApplicationDescription)" Directory="DesktopFolder" WorkingDirectory="INSTALLLOCATION"  Advertise="yes"/>
+          <Shortcut Id="StartMenuShortcut" Name="$(var.ProductName)" Description="$(var.ApplicationDescription)" Directory="StartMenuFolder" WorkingDirectory="INSTALLLOCATION" Advertise="yes" Icon="icon.ico"/>
+          <Shortcut Id="DesktopShortcut" Name="$(var.ProductName)" Description="$(var.ApplicationDescription)" Directory="DesktopFolder" WorkingDirectory="INSTALLLOCATION" Advertise="yes" Icon="icon.ico"/>
         </File>
       </Component>
       <Component Id="ssleay32.dll" Guid="{A3AD1CBB-8304-4173-8965-B48F2FB59398}">

@@ -39,7 +39,7 @@
     <Property Id="ARPPRODUCTICON" Value="icon.ico" />
     <Icon Id="icon.ico" SourceFile="..\schat2\schat2.exe" />
     <!-- Add information to Add/Remove Programs -->
-    <CustomAction Id="SetARPINSTALLLOCATION" Property="ARPINSTALLLOCATION" Value="[INSTALLDIR]" />
+    <CustomAction Id="SetARPINSTALLLOCATION" Property="ARPINSTALLLOCATION" Value="[INSTALLLOCATION]" />
     <InstallExecuteSequence>
       <Custom Action="SetARPINSTALLLOCATION" After="InstallFinalize" />
     </InstallExecuteSequence>
