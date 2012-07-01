@@ -42,7 +42,7 @@ VS_VERSION_INFO VERSIONINFO
       BLOCK "040904B0"
       BEGIN
         VALUE "CompanyName",      SCHAT_ORGANIZATION
-        VALUE "FileDescription",  "Send File Plugin"
+        VALUE "FileDescription",  "Adds support for file transfer between users"
         VALUE "FileVersion",      "0.1.2"
         VALUE "LegalCopyright",   SCHAT_COPYRIGHT
         VALUE "OriginalFilename", "SendFile.dll"

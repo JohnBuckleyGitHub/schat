@@ -33,6 +33,9 @@ public:
 private slots:
   void boot();
   void populateJavaScriptWindowObject();
+
+private:
+  QString desc(const QVariantMap &data) const;
 };
 
 #endif /* PLUGINSVIEW_H_ */
