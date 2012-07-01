@@ -41,6 +41,7 @@ public:
   inline const QVariantMap& header() const { return m_header; }
   inline QObject *plugin()                 { return m_plugin; }
   inline QString id() const                { return m_header.value(QLatin1String("Id")).toString(); }
+  QString icon() const;
 
 private:
   bool m_valid;           ///< \b true если плагин загружен.

@@ -27,7 +27,7 @@
 #include "sglobal.h"
 
 SendFilePage::SendFilePage(SendFilePluginImpl *plugin, QWidget *parent)
-  : SettingsPage(QIcon(LS(":/images/sendfile/attach.png")), LS("sendfile"), parent)
+  : SettingsPage(QIcon(LS(":/images/SendFile/attach.png")), LS("sendfile"), parent)
   , m_plugin(plugin)
 {
   m_label = new QLabel(this);
