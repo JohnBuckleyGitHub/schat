@@ -1,7 +1,8 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
   <file alias="css/SendFile/SendFile.css">res/css/SendFile.min.css</file>
-  <file alias="images/sendfile/attach.png">res/images/led-icons/attach_2.png</file>
+  <file alias="images/SendFile/attach.png">res/images/led-icons/attach_2.png</file>
+  <file alias="images/SendFile/icon.png">res/images/human-o2/mail-attachment.png</file>
   <file alias="js/SendFile/SendFile.js">res/js/SendFile.min.js</file>
 </qresource>
 </RCC>

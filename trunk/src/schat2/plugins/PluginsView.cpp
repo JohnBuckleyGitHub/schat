@@ -44,7 +44,7 @@ QVariantList PluginsView::list() const
   foreach (PluginItem *item, ChatCore::plugins()->list()) {
     QVariantMap data;
     data[LS("id")]      = item->id();
-    data[LS("icon")]    = LS("qrc:/images/plugin32.png");
+    data[LS("icon")]    = LS("qrc") + item->icon();
     data[LS("title")]   = item->header().value(LS("Name"));
     data[LS("version")] = item->header().value(LS("Version"));
     data[LS("desc")]    = item->header().value(LS("Desc"));

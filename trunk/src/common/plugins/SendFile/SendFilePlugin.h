@@ -33,7 +33,7 @@ public:
     QVariantMap out = CoreApi::header();
     out["Id"]       = "SendFile";
     out["Name"]     = "Send File";
-    out["Version"]  = "0.1.1";
+    out["Version"]  = "0.1.2";
     out["Site"]     = "http://wiki.schat.me/Plugin/SendFile";
     out["Desc"]     = "Send File";
     out["Required"] = "1.99.33";

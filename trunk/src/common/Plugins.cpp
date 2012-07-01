@@ -65,6 +65,16 @@ PluginItem::~PluginItem()
 }
 
 
+QString PluginItem::icon() const
+{
+  QString file = LS(":/images/") + id() + LS("/icon.png");
+  if (QFile::exists(file))
+    return file;
+
+  return LS(":/images/plugin32.png");
+}
+
+
 Plugins::Plugins(QObject *parent)
   : QObject(parent)
 {
