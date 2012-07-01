@@ -25,6 +25,7 @@
 #include "ChatPlugins.h"
 #include "plugins/PluginsView.h"
 #include "sglobal.h"
+#include "Translation.h"
 
 PluginsView::PluginsView(QWidget *parent)
   : QWebView(parent)
@@ -47,7 +48,7 @@ QVariantList PluginsView::list() const
     data[LS("icon")]    = LS("qrc") + item->icon();
     data[LS("title")]   = item->header().value(LS("Name"));
     data[LS("version")] = item->header().value(LS("Version"));
-    data[LS("desc")]    = item->header().value(LS("Desc"));
+    data[LS("desc")]    = desc(item->header());
     plugins.append(data);
   }
 
@@ -70,4 +71,14 @@ void PluginsView::boot()
 void PluginsView::populateJavaScriptWindowObject()
 {
   page()->mainFrame()->addToJavaScriptWindowObject(LS("PluginsView"), this);
+}
+
+
+QString PluginsView::desc(const QVariantMap &data) const
+{
+  QString desc = data.value(LS("Desc/") + ChatCore::translation()->name()).toString();
+  if (!desc.isEmpty())
+    return desc;
+
+  return data.value(LS("Desc")).toString();
 }

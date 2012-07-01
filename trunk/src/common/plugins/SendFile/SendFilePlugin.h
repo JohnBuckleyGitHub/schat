@@ -35,8 +35,9 @@ public:
     out["Name"]     = "Send File";
     out["Version"]  = "0.1.2";
     out["Site"]     = "http://wiki.schat.me/Plugin/SendFile";
-    out["Desc"]     = "Send File";
-    out["Required"] = "1.99.33";
+    out["Desc"]     = "Adds support for file transfer between users";
+    out["Desc/ru"]  = "Добавляет поддержку передачи файлов между пользователями";
+    out["Required"] = "1.99.34";
 
     return out;
   }
