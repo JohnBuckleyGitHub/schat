@@ -28,6 +28,7 @@
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "debugstream.h"
+#include "sglobal.h"
 #include "ui/ChatWindow.h"
 #include "ui/SendWidget.h"
 #include "ui/StatusBar.h"
@@ -172,6 +173,11 @@ void ChatWindow::notify(const Notify &notify)
   if (notify.type() == Notify::Quit) {
     closeChat();
   }
+  else if (notify.type() == Notify::Restart) {
+    ChatClient::io()->leave();
+    hideChat();
+    emit restartRequest();
+  }
   else if (notify.type() == Notify::ToggleVisibility) {
     if (TabWidget::isActiveChatWindow() || qAbs(m_activationChanged.msecsTo(QTime::currentTime())) < QApplication::doubleClickInterval()) {
       hideChat();
@@ -200,13 +206,13 @@ void ChatWindow::pageChanged(AbstractTab *tab)
 
 void ChatWindow::settingsChanged(const QString &key, const QVariant &value)
 {
-  if (key == QLatin1String("Maximized")) {
+  if (key == LS("Maximized")) {
     if (value.toBool())
       showMaximized();
     else
       showNormal();
   }
-  else if (key == QLatin1String("Width") || key == QLatin1String("Height")) {
+  else if (key == LS("Width") || key == LS("Height")) {
     resize(SCHAT_OPTION("Width").toInt(), SCHAT_OPTION("Height").toInt());
   }
 }
@@ -218,7 +224,7 @@ void ChatWindow::settingsChanged(const QString &key, const QVariant &value)
 void ChatWindow::hideChat()
 {
   SCHAT_DEBUG_STREAM(this << "hideChat()")
-  m_settings->setValue(QLatin1String("Maximized"), isMaximized(), false);
+  m_settings->setValue(LS("Maximized"), isMaximized(), false);
   hide();
 }
 

@@ -126,6 +126,10 @@ bool CommandsImpl::command(const QByteArray &dest, const ClientCmd &cmd)
   else if (command == LS("open"))
     ChatUrls::open(cmd.body());
 
+  /// - /restart Перезапуск чата.
+  else if (command == LS("restart"))
+    ChatNotify::start(Notify::Restart);
+
   /// - /set Установка опции чата, имя опции чувствительно к регистру символов.
   else if (command == LS("set")) {
     ClientCmd body(cmd.body());

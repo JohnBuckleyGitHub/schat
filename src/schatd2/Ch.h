@@ -32,6 +32,7 @@ class SCHAT_EXPORT Ch : public QObject
 
 public:
   Ch(QObject *parent = 0);
+  ~Ch();
   inline static bool add(ChatChannel channel)                                              { return m_self->addImpl(channel); }
   inline static int rename(ChatChannel channel, const QString &name)                       { return m_self->renameImpl(channel, name); }
   inline static void add(Ch *hook)                                                         { if (!m_self->m_hooks.contains(hook)) m_self->m_hooks.append(hook); }

@@ -32,6 +32,13 @@ FeedStorage::FeedStorage(QObject *parent)
 }
 
 
+FeedStorage::~FeedStorage()
+{
+  if (m_self == this)
+    m_self = 0;
+}
+
+
 Feed* FeedStorage::create(const QString &name)
 {
   if (!m_feeds.contains(name)) {

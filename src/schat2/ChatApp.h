@@ -31,11 +31,15 @@ class ChatApp : public QApplication
 public:
   ChatApp(int &argc, char **argv);
   ~ChatApp();
-  void show();
+  void start();
+  void stop();
 
-# if defined(Q_WS_WIN)
+# if defined(Q_OS_WIN)
   static bool selfUpdate();
 # endif
+
+private slots:
+  void restart();
 
 private:
   ChatCore *m_core;     ///< Глобальный объект чата.

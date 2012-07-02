@@ -52,7 +52,8 @@ public:
     ClearChat        = 0x4343, ///< "CC" Очистка текущего разговора.
     ClearCache       = 0x4363, ///< "Cc" Очистка кешей.
     Language         = 0x4C61, ///< "La" Изменение языка.
-    ChannelTabClosed = 0x7443  ///< "tC" Уведомление о закрытии вкладки канала.
+    ChannelTabClosed = 0x7443, ///< "tC" Уведомление о закрытии вкладки канала.
+    Restart          = 0x5273  ///< "Rs" Перезапуск чата.
   };
 
   Notify(int type, const QVariant &data = QVariant())

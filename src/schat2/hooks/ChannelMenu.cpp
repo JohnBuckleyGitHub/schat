@@ -38,6 +38,13 @@ ChannelMenu::ChannelMenu(QObject *parent)
 }
 
 
+ChannelMenu::~ChannelMenu()
+{
+  if (m_self == this)
+    m_self = 0;
+}
+
+
 void ChannelMenu::bind(QMenu *menu, const QByteArray &id)
 {
   bind(menu, ChatClient::channels()->get(id));

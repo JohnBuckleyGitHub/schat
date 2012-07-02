@@ -31,6 +31,7 @@ class SCHAT_CORE_EXPORT ChatViewHooks : public QObject
 
 public:
   ChatViewHooks(QObject *parent = 0);
+  ~ChatViewHooks();
   inline const QList<ChatView *>& views() const   { return m_views; }
   inline static ChatViewHooks *i()                { return m_self; }
   inline static void add(ChatView *view)          { m_self->addImpl(view); }
