@@ -36,6 +36,7 @@ public:
 private slots:
   void boot();
   void populateJavaScriptWindowObject();
+  void restartSlot();
 
 private:
   QString desc(const QVariantMap &data) const;

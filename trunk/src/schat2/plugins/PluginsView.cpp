@@ -35,6 +35,7 @@ PluginsView::PluginsView(QWidget *parent)
 {
   setAcceptDrops(false);
   page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+  setFocusPolicy(Qt::NoFocus);
 
   connect(page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), SLOT(populateJavaScriptWindowObject()));
 
@@ -95,7 +96,7 @@ void PluginsView::enable(const QString &id, bool enable)
 
 void PluginsView::restart()
 {
-  ChatNotify::start(Notify::Restart);
+  QTimer::singleShot(0, this, SLOT(restartSlot()));
 }
 
 
@@ -115,6 +116,12 @@ void PluginsView::populateJavaScriptWindowObject()
 {
   page()->mainFrame()->addToJavaScriptWindowObject(LS("SimpleChat"), WebBridge::i());
   page()->mainFrame()->addToJavaScriptWindowObject(LS("PluginsView"), this);
+}
+
+
+void PluginsView::restartSlot()
+{
+  ChatNotify::start(Notify::Restart);
 }
 
 
