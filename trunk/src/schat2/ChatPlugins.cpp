@@ -54,6 +54,7 @@ void ChatPlugins::init()
       continue;
     }
 
+    item->setLoaded(true);
     m_chatPlugins.append(plugin);
   }
 }

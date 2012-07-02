@@ -32,7 +32,8 @@
  * В случае успешной загрузки метод isValid() вернёт true.
  */
 PluginItem::PluginItem(const QString &fileName)
-  : m_valid(false)
+  : m_loaded(false)
+  , m_valid(false)
   , m_plugin(0)
 {
   m_loader.setFileName(fileName);

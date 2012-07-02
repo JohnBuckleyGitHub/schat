@@ -37,14 +37,17 @@ class SCHAT_EXPORT PluginItem
 public:
   PluginItem(const QString &fileName);
   ~PluginItem();
+  inline bool isLoaded() const             { return m_loaded; }
   inline bool isValid() const              { return m_valid; }
   inline const QVariantMap& header() const { return m_header; }
   inline QObject *plugin()                 { return m_plugin; }
   inline QString id() const                { return m_header.value(QLatin1String("Id")).toString(); }
+  inline void setLoaded(bool loaded)       { m_loaded = loaded; }
   QString icon() const;
 
 private:
-  bool m_valid;           ///< \b true если плагин загружен.
+  bool m_loaded;          ///< \b true если загружено целевое API.
+  bool m_valid;           ///< \b true если плагин содержит корректный CoreApi.
   QObject *m_plugin;      ///< Объект плагина.
   QPluginLoader m_loader; ///< Загрузчик плагина.
   QVariantMap m_header;   ///< Заголовок плагина.
@@ -60,8 +63,9 @@ class SCHAT_EXPORT Plugins : public QObject
 
 public:
   Plugins(QObject *parent = 0);
-  inline const QString& type() const       { return m_type; }
-  inline void setType(const QString &type) { m_type = type; }
+  inline const QString& type() const           { return m_type; }
+  inline PluginItem *plugin(const QString &id) { return m_plugins.value(id); }
+  inline void setType(const QString &type)     { m_type = type; }
   QList<PluginItem *> list() const;
   void load();
 
