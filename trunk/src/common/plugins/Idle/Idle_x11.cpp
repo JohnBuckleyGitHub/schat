@@ -20,7 +20,7 @@
 #include "Idle.h"
 
 #if defined(SCHAT_NO_XSS)
-IdlePlatform::IdlePlatform() {}
+IdlePlatform::IdlePlatform() : d(0) {}
 IdlePlatform::~IdlePlatform() {}
 bool IdlePlatform::init() { return false; }
 int IdlePlatform::secondsIdle() { return 0; }
@@ -53,6 +53,7 @@ public:
 };
 
 IdlePlatform::IdlePlatform()
+  : d(0)
 {
   d = new Private;
   d->ss_info = 0;

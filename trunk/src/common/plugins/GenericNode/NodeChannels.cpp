@@ -33,6 +33,7 @@
 
 NodeChannels::NodeChannels(Core *core)
   : NodeNoticeReader(Notice::ChannelType, core)
+  , m_packet(0)
 {
 }
 

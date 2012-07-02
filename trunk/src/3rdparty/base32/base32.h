@@ -32,7 +32,7 @@
  * data into base32. This is a macro to allow users to define buffer size at
  * compilation time.
  */
-#define BASE32_LEN(len)  (((len)/5)*8 + ((len) % 5 ? 8 : 0))
+#define BASE32_LEN(len)  (((len)/5)*8 + (((len) % 5) ? 8 : 0))
 
 /**
  * Returns the length of the output buffer required to decode a base32 string

@@ -87,9 +87,11 @@ void NodeWorkerListener::packets(quint64 id, const QList<QByteArray> &packets)
   SimpleSocket *socket = m_sockets.value(id);
   m_lock.unlock();
 
-  NewPacketsEvent *event = new NewPacketsEvent(QList<quint64>() << id, packets, socket->channelId());
+  if (!socket)
+    return;
 
-  if (socket && !socket->isAuthorized())
+  NewPacketsEvent *event = new NewPacketsEvent(QList<quint64>() << id, packets, socket->channelId());
+  if (!socket->isAuthorized())
     event->address = socket->peerAddress();
 
   QCoreApplication::postEvent(m_core, event);
