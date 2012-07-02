@@ -25,6 +25,7 @@
 #include <IOKit/IOKitLib.h>
 
 IdlePlatform::IdlePlatform()
+  : d(0)
 {
 }
 

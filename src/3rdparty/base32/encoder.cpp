@@ -24,7 +24,7 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 
-	size_t len, llen;
+	size_t len;
 	while (0 != (len = fread(inbuf, 1,  sizeof(inbuf) - 1, stdin))) {
 		if (!decode) {
 			base32_encode((unsigned char*)inbuf, len, (unsigned char*)outbuf);
@@ -36,7 +36,6 @@ int main(int argc, char **argv)
 		}
 		assert(len <= sizeof(outbuf));
 		fwrite(outbuf, 1, len, stdout);
-		llen = len;
 	}
 	if (!decode)
 		printf("\n");

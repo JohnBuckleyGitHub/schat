@@ -33,6 +33,7 @@
 
 NodeFeeds::NodeFeeds(Core *core)
   : NodeNoticeReader(Notice::FeedType, core)
+  , m_packet(0)
 {
 }
 

@@ -20,6 +20,7 @@
 #include "Idle.h"
 
 IdlePlatform::IdlePlatform()
+  : d(0)
 {
 }
 

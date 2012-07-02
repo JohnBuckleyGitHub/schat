@@ -88,13 +88,13 @@ Transaction::Transaction(const QByteArray &dest, const QByteArray &id, const QSt
 Transaction::Transaction(const QByteArray &sender, const QByteArray &id, const QVariantMap &data)
   : m_started(false)
   , m_visible(false)
+  , m_remote(Hosts(data.value(LS("hosts")).toList()))
   , m_id(id)
   , m_user(sender)
   , m_pos(0)
   , m_role(ReceiverRole)
   , m_state(UnknownState)
 {
-  m_remote = Hosts(data.value(LS("hosts")).toList());
   if (!m_remote.isValid())
     return;
 
@@ -106,11 +106,11 @@ Transaction::Transaction(const QByteArray &sender, const QByteArray &id, const Q
 Transaction::Transaction(const QVariantMap &data)
   : m_started(false)
   , m_visible(false)
+  , m_local(Hosts(data.value(LS("local")).toList()))
+  , m_remote(Hosts(data.value(LS("remote")).toList()))
   , m_pos(0)
   , m_state(UnknownState)
 {
-  m_local  = Hosts(data.value(LS("local")).toList());
-  m_remote = Hosts(data.value(LS("remote")).toList());
   m_role   = static_cast<SendFile::Role>(data.value(LS("role")).toInt());
   m_id     = data.value(LS("id")).toByteArray();
   if (SimpleID::typeOf(m_id) != SimpleID::MessageId)

@@ -30,6 +30,7 @@
 
 NodeMessages::NodeMessages(Core *core)
   : NodeNoticeReader(Notice::MessageType, core)
+  , m_packet(0)
 {
 }
 

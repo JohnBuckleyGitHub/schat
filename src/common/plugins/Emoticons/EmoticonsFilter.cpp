@@ -26,6 +26,7 @@
 EmoticonsFilter::EmoticonsFilter(Emoticons *emoticons)
   : AbstractFilter(1000)
   , m_emoticons(emoticons)
+  , m_count(1)
 {
 }
 
@@ -119,6 +120,7 @@ void EmoticonsFilter::parse(QList<HtmlToken> &tokens, const QString &text, int p
 
 EmoticonsInputFilter::EmoticonsInputFilter()
   : AbstractFilter(50)
+  , m_delete(false)
 {
 }
 
