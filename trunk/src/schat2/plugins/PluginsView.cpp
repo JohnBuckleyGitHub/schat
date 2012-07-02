@@ -23,6 +23,7 @@
 
 #include "ChatCore.h"
 #include "ChatPlugins.h"
+#include "ChatSettings.h"
 #include "plugins/PluginsView.h"
 #include "sglobal.h"
 #include "Translation.h"
@@ -50,11 +51,17 @@ QVariantList PluginsView::list() const
     data[LS("title")]   = item->header().value(LS("Name"));
     data[LS("version")] = item->header().value(LS("Version"));
     data[LS("desc")]    = desc(item->header());
-    data[LS("enabled")] = true;
+    data[LS("enabled")] = ChatCore::settings()->value(LS("Plugins/") + item->id()).toBool();
     plugins.append(data);
   }
 
   return plugins;
+}
+
+
+void PluginsView::enable(const QString &id, bool enable)
+{
+  ChatCore::settings()->setValue(LS("Plugins/") + id, enable);
 }
 
 
