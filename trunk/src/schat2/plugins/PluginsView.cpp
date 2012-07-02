@@ -26,6 +26,7 @@
 #include "plugins/PluginsView.h"
 #include "sglobal.h"
 #include "Translation.h"
+#include "WebBridge.h"
 
 PluginsView::PluginsView(QWidget *parent)
   : QWebView(parent)
@@ -49,6 +50,7 @@ QVariantList PluginsView::list() const
     data[LS("title")]   = item->header().value(LS("Name"));
     data[LS("version")] = item->header().value(LS("Version"));
     data[LS("desc")]    = desc(item->header());
+    data[LS("enabled")] = true;
     plugins.append(data);
   }
 
@@ -70,6 +72,7 @@ void PluginsView::boot()
 
 void PluginsView::populateJavaScriptWindowObject()
 {
+  page()->mainFrame()->addToJavaScriptWindowObject(LS("SimpleChat"), WebBridge::i());
   page()->mainFrame()->addToJavaScriptWindowObject(LS("PluginsView"), this);
 }
 

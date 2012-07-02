@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QCoreApplication>
 
 #include "ChatCore.h"
@@ -60,6 +58,8 @@ protected:
     else if (key == LS("os_name"))           return tr("OS");
     else if (key == LS("kB"))                return tr("kB");
     else if (key == LS("MB"))                return tr("MB");
+    else if (key == LS("enabled"))           return tr("Enabled");
+    else if (key == LS("enable"))            return tr("Enable");
     return QString();
   }
 };

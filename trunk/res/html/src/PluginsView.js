@@ -25,10 +25,58 @@ var Plugins = {
                       '<div class="plugin-header"><span class="plugin-title">' + data.title + '</span><span class="plugin-version">' + data.version + '</span></div>' +
                       '<div class="desc-description">' + data.desc + '</div>' +
                     '</div>' +
+                    '<div class="plugin-controls">' +
+                      '<div class="checkbox enable-checkbox">' +
+                        '<label>' +
+                          '<input type="checkbox"> ' +
+                          '<span class="enable-checkbox-text">' +
+                            '<span class="enabled-text" data-tr="enabled">' + Plugins.tr('enabled') + '</span>' +
+                            '<span class="enable-text" data-tr="enable">' + Plugins.tr('enable') + '</span>' +
+                          '</span>' +
+                        '</label>' +
+                      '</div>' +
+                    '</div>' +
                   '</div>' +
                 '</div>';
 
     $('#plugins-list').append(html);
+
+    Plugins.enable(data.id, data.enabled);
+
+    $('#' + data.id + ' input:checkbox').click(function() {
+      Plugins.enable(data.id, $('#' + data.id + ' input:checkbox').prop('checked'));
+    });
+  },
+
+
+  enable: function(id, enable)
+  {
+    if (enable) {
+      $('#' + id + ' input:checkbox').attr('checked', 'checked');
+      $('#' + id).addClass('plugin-enabled');
+      $('#' + id + ' .enabled-text').show();
+      $('#' + id + ' .enable-text').hide();
+    }
+    else {
+      $('#' + id + ' input:checkbox').removeAttr('checked');
+      $('#' + id).removeClass('plugin-enabled');
+      $('#' + id + ' .enabled-text').hide();
+      $('#' + id + ' .enable-text').show();
+    }
+  },
+
+  retranslate: function() {
+    $("[data-tr]").each(function() {
+      Plugins.TR($(this).attr("data-tr"));
+    });
+  },
+
+  tr: function(key) {
+    return SimpleChat.translate(key);
+  },
+
+  TR: function(key) {
+    $("[data-tr='" + key + "']").html(Plugins.tr(key));
   }
 };
 
@@ -43,4 +91,7 @@ if (typeof PluginsView === "undefined") {
   PluginsView = {
     list: function() { return []; }
   };
+}
+else {
+  SimpleChat.retranslated.connect(Plugins.retranslate);
 }

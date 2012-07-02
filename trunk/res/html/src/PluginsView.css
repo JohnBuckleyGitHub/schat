@@ -33,10 +33,16 @@
 
 .plugin-wrapper {
   padding: 5px 0;
+  opacity: .5;
+}
+
+.plugin-enabled {
+  opacity: 1;
 }
 
 .plugin-wrapper:hover {
   background-color: #f7f8f9;
+  opacity: 1;
 }
 
 .plugin {
@@ -59,4 +65,16 @@
 .desc-description {
   padding-top: 5px;
   color: #979CA0;
+}
+
+.enabled-text, .enable-text {
+  display: none;
+}
+
+.plugin-wrapper:not(:hover) .plugin-controls:not(:focus) {
+  opacity: 0;
+}
+
+.plugin-controls {
+  -webkit-transition: opacity 200ms;
 }
