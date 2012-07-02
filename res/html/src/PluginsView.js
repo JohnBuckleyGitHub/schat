@@ -41,10 +41,13 @@ var Plugins = {
 
     $('#plugins-list').append(html);
 
-    Plugins.enable(data.id, data.enabled);
+    var id = data.id;
+    Plugins.enable(id, data.enabled);
 
-    $('#' + data.id + ' input:checkbox').click(function() {
-      Plugins.enable(data.id, $('#' + data.id + ' input:checkbox').prop('checked'));
+    $('#' + id + ' input:checkbox').click(function() {
+      var checked = $('#' + id + ' input:checkbox').prop('checked');
+      Plugins.enable(id, checked);
+      PluginsView.enable(id, checked);
     });
   },
 
@@ -89,7 +92,8 @@ $(document).ready(function() {
 
 if (typeof PluginsView === "undefined") {
   PluginsView = {
-    list: function() { return []; }
+    list: function() { return []; },
+    enable: function(id, enable) {}
   };
 }
 else {

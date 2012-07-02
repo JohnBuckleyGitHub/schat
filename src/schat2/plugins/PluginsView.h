@@ -29,6 +29,7 @@ class PluginsView : public QWebView
 public:
   PluginsView(QWidget *parent = 0);
   Q_INVOKABLE QVariantList list() const;
+  Q_INVOKABLE void enable(const QString &id, bool enable);
 
 private slots:
   void boot();
