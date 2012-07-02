@@ -22,6 +22,7 @@
 #include <QWebFrame>
 
 #include "ChatCore.h"
+#include "ChatNotify.h"
 #include "ChatPlugins.h"
 #include "ChatSettings.h"
 #include "plugins/PluginsView.h"
@@ -38,6 +39,33 @@ PluginsView::PluginsView(QWidget *parent)
   connect(page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), SLOT(populateJavaScriptWindowObject()));
 
   QTimer::singleShot(0, this, SLOT(boot()));
+}
+
+
+/*!
+ * Состояние плагина.
+ *
+ * \return - 0 - Состояние плагина не будет изменено после перезапуска.
+ *         - 1 - Плагин будет включен после перезапуска чата.
+ *         - 2 - Плагин будет отключен после перезапуска чата.
+ */
+int PluginsView::state(const QString &id)
+{
+  PluginItem *item = ChatCore::plugins()->plugin(id);
+  if (!item)
+    return 0;
+
+  bool enabled = ChatCore::settings()->value(LS("Plugins/") + id).toBool();
+  if (item->isLoaded() == enabled)
+    return 0;
+
+  if (enabled && !item->isLoaded())
+    return 1;
+
+  if (!enabled && item->isLoaded())
+    return 2;
+
+  return 0;
 }
 
 
@@ -62,6 +90,12 @@ QVariantList PluginsView::list() const
 void PluginsView::enable(const QString &id, bool enable)
 {
   ChatCore::settings()->setValue(LS("Plugins/") + id, enable);
+}
+
+
+void PluginsView::restart()
+{
+  ChatNotify::start(Notify::Restart);
 }
 
 

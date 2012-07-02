@@ -16,6 +16,18 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+a {
+  text-decoration:none;
+}
+
+a:link, a:visited {
+  color:#2988d2;
+}
+
+a:active, a:hover {
+  color:#1e6396;
+}
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -62,12 +74,19 @@
   padding-right: 10px;
 }
 
-.desc-description {
-  padding-top: 5px;
+.plugin-description {
   color: #979CA0;
 }
 
-.enabled-text, .enable-text {
+.plugin-description, .restart-controls {
+  padding-top: 5px;
+}
+
+.restart-text {
+  padding-right: 10px;
+}
+
+.enabled-text, .enable-text, .restart-controls {
   display: none;
 }
 
@@ -77,4 +96,8 @@
 
 .plugin-controls {
   -webkit-transition: opacity 200ms;
+}
+
+[data-tr=will_be_enabled] {
+  color: #468847;
 }

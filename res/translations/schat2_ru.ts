@@ -990,6 +990,21 @@
         <source>Enable</source>
         <translation>Включить</translation>
     </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="63"/>
+        <source>Restart now</source>
+        <translation>Перезапустить сейчас</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="64"/>
+        <source>✔ Plugin will be enabled after you restart Simple Chat.</source>
+        <translation>✔ Плагин будет включен после перезапуска Simple Chat.</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="65"/>
+        <source>Plugin will be disabled after you restart Simple Chat.</source>
+        <translation>Плагин будет отключен после перезапуска Simple Chat.</translation>
+    </message>
 </context>
 <context>
     <name>WelcomeTab</name>

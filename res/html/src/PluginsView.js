@@ -23,7 +23,11 @@ var Plugins = {
                   '<div class="plugin" style="background-image:url(' + data.icon + ');">' +
                     '<div class="plugin-details">' +
                       '<div class="plugin-header"><span class="plugin-title">' + data.title + '</span><span class="plugin-version">' + data.version + '</span></div>' +
-                      '<div class="desc-description">' + data.desc + '</div>' +
+                      '<div class="plugin-description">' + data.desc + '</div>' +
+                      '<div class="restart-controls">' +
+                        '<span class="restart-text"></span> ' +
+                        '<a class="restart-link" data-tr="restart_now" href="#">' + Plugins.tr('restart_now') + '</a>' +
+                      '</div>' +
                     '</div>' +
                     '<div class="plugin-controls">' +
                       '<div class="checkbox enable-checkbox">' +
@@ -46,8 +50,12 @@ var Plugins = {
 
     $('#' + id + ' input:checkbox').click(function() {
       var checked = $('#' + id + ' input:checkbox').prop('checked');
-      Plugins.enable(id, checked);
       PluginsView.enable(id, checked);
+      Plugins.enable(id, checked);
+    });
+
+    $('#' + id + ' .restart-link').click(function() {
+      PluginsView.restart();
     });
   },
 
@@ -66,7 +74,31 @@ var Plugins = {
       $('#' + id + ' .enabled-text').hide();
       $('#' + id + ' .enable-text').show();
     }
+
+    var state = PluginsView.state(id);
+    if (state == 0) {
+      Plugins.setRestartText(id, '', false);
+    }
+    else {
+      Plugins.setRestartText(id, state == 1 ? 'will_be_enabled' : 'will_be_disabled', true);
+    }
   },
+
+
+  setRestartText: function(id, tr, show) {
+    if (show) {
+      $('#' + id + ' .plugin-description').hide();
+      $('#' + id + ' .restart-controls').show();
+
+      $('#' + id + ' .restart-text').attr('data-tr', tr);
+      $('#' + id + ' .restart-text').html(Plugins.tr(tr));
+    }
+    else {
+      $('#' + id + ' .plugin-description').show();
+      $('#' + id + ' .restart-controls').hide();
+    }
+  },
+
 
   retranslate: function() {
     $("[data-tr]").each(function() {
@@ -93,7 +125,9 @@ $(document).ready(function() {
 if (typeof PluginsView === "undefined") {
   PluginsView = {
     list: function() { return []; },
-    enable: function(id, enable) {}
+    enable: function(id, enable) {},
+    state: function(id) { return 0; },
+    restart: function() {}
   };
 }
 else {
