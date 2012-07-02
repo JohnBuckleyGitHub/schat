@@ -64,6 +64,9 @@ Profile::Profile(QObject *parent)
 
 Profile::~Profile()
 {
+  if (m_self == this)
+    m_self = 0;
+
   delete m_tr;
 }
 

@@ -1355,14 +1355,16 @@ int GeoIP_id_by_ipnum (GeoIP* gi, unsigned long ipnum) {
 }
 
 char *GeoIP_database_info (GeoIP* gi) {
-  if (gi == NULL)
-    return NULL;
-
   int i;
 	unsigned char buf[3];
 	char *retval;
 	int hasStructureInfo = 0;
-        int fno = fileno(gi->GeoIPDatabase);
+  int fno = 0;
+
+  if (gi == NULL)
+    return NULL;
+
+  fno = fileno(gi->GeoIPDatabase);
 
 	_check_mtime(gi);
 	lseek(fno, -3l, SEEK_END);

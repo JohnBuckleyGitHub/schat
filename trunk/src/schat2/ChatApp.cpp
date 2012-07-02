@@ -33,6 +33,7 @@
 
 ChatApp::ChatApp(int &argc, char **argv)
   : QApplication(argc, argv)
+  , m_core(0)
   , m_window(0)
 {
   setApplicationName(SCHAT_NAME);
@@ -53,34 +54,47 @@ ChatApp::ChatApp(int &argc, char **argv)
   QPalette palette = this->palette();
   palette.setColor(QPalette::Inactive, QPalette::Highlight, palette.color(QPalette::Highlight));
   setPalette(palette);
-
-  m_core = new ChatCore(this);
-
-  if (!ChatCore::settings()->value("Labs/DisableUI").toBool())
-    m_window = new ChatWindow();
 }
 
 
 ChatApp::~ChatApp()
 {
-  delete m_window;
+  if (m_window)
+    delete m_window;
 }
 
 
-void ChatApp::show()
+void ChatApp::start()
+{
+  m_core = new ChatCore(this);
+  if (!ChatCore::settings()->value("Labs/DisableUI").toBool()) {
+    m_window = new ChatWindow();
+    connect(m_window, SIGNAL(restartRequest()), SLOT(restart()));
+    m_window->showChat();
+  }
+}
+
+
+void ChatApp::stop()
 {
   if (m_window)
-    m_window->showChat();
+    delete m_window;
+
+  if (m_core)
+    delete m_core;
+
+  m_core = 0;
+  m_window = 0;
 }
 
 
-#if defined(Q_WS_WIN)
+#if defined(Q_OS_WIN)
 bool ChatApp::selfUpdate()
 {
   if (!SCHAT_REVISION)
     return false;
 
-  if (QFileInfo(QApplication::applicationFilePath()).baseName() != LS("schat2"))
+  if (QFileInfo(applicationFilePath()).baseName() != LS("schat2"))
     return false;
 
   QString appPath = QApplication::applicationDirPath();
@@ -107,3 +121,18 @@ bool ChatApp::selfUpdate()
   return true;
 }
 #endif
+
+
+void ChatApp::restart()
+{
+  stop();
+
+# if defined(Q_OS_WIN)
+  if (selfUpdate()) {
+    quit();
+    return;
+  }
+# endif
+
+  start();
+}

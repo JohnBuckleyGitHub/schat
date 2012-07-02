@@ -30,6 +30,13 @@ ChatViewHooks::ChatViewHooks(QObject *parent)
 }
 
 
+ChatViewHooks::~ChatViewHooks()
+{
+  if (m_self == this)
+    m_self = 0;
+}
+
+
 void ChatViewHooks::addImpl(ChatView *view)
 {
   if (m_self != this)

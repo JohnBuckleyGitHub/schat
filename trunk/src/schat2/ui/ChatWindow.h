@@ -38,6 +38,9 @@ public:
   ChatWindow(QWidget *parent = 0);
   void showChat();
 
+signals:
+  void restartRequest();
+
 protected:
   void changeEvent(QEvent *event);
   void closeEvent(QCloseEvent *event);

@@ -20,12 +20,13 @@
 
 int main(int argc, char *argv[])
 {
+  int exitCode = 0;
   ChatApp app(argc, argv);
 # if defined(Q_WS_WIN)
   if (ChatApp::selfUpdate())
     return 0;
 # endif
 
-  app.show();
+  app.start();
   return app.exec();
 }
