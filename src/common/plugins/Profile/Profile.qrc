@@ -2,6 +2,7 @@
 <qresource prefix="/">
   <file alias="css/flags.css">res/css/flags.min.css</file>
   <file alias="images/flags.png">res/images/flags.png</file>
+  <file alias="images/Profile/icon.png">res/images/oxygen/contact.png</file>
   <file alias="js/Profile/Profile.js">res/js/Profile.min.js</file>
 </qresource>
 </RCC>
