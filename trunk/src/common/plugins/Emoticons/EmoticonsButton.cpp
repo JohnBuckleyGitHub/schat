@@ -90,7 +90,7 @@ QWidget* EmoticonsAction::createWidget(QWidget *parent) const
 
 QIcon EmoticonsAction::icon() const
 {
-  return QIcon(LS(":/images/emoticons/edit.png"));
+  return QIcon(LS(":/images/Emoticons/edit.png"));
 }
 
 
