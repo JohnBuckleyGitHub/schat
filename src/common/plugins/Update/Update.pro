@@ -26,4 +26,6 @@ HEADERS  = \
 SOURCES  = \
    UpdatePlugin.cpp \
 
+RESOURCES += Update.qrc
+
 include(../plugins.pri)
