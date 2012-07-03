@@ -31,7 +31,7 @@ EmoticonsButton::EmoticonsButton(Emoticons *emoticons, QWidget *parent)
   m_menu = new QMenu(this);
 
   setAutoRaise(true);
-  setIcon(QIcon(LS(":/images/emoticons/edit.png")));
+  setIcon(QIcon(LS(":/images/Emoticons/edit.png")));
   setPopupMode(QToolButton::InstantPopup);
   setMenu(m_menu);
 
