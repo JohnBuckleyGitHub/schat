@@ -33,10 +33,11 @@ public:
     QVariantMap out = CoreApi::header();
     out["Id"]       = "Idle";
     out["Name"]     = "Idle";
-    out["Version"]  = "0.2.1";
+    out["Version"]  = "0.2.2";
     out["Site"]     = "http://wiki.schat.me/Plugin/Idle";
-    out["Desc"]     = "Idle Detect Plugin";
-    out["Required"] = "1.99.26";
+    out["Desc"]     = "Detect idle time to automatically set Away status";
+    out["Desc/ru"]  = "Обнаружение времени бездействия для автоматической установки статуса Отсутствую";
+    out["Required"] = "1.99.34";
 
     return out;
   }
