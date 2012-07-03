@@ -25,7 +25,7 @@
 #include "../../version.h"
 
 VS_VERSION_INFO VERSIONINFO
-  FILEVERSION 0,1,0,0
+  FILEVERSION 0,1,1,0
   PRODUCTVERSION SCHAT_VERSION_RC
   FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
@@ -42,8 +42,8 @@ VS_VERSION_INFO VERSIONINFO
       BLOCK "040904B0"
       BEGIN
         VALUE "CompanyName",      SCHAT_ORGANIZATION
-        VALUE "FileDescription",  "YouTube Plugin"
-        VALUE "FileVersion",      "0.1.0"
+        VALUE "FileDescription",  "Adds support for embedding YouTube videos in messages"
+        VALUE "FileVersion",      "0.1.1"
         VALUE "LegalCopyright",   SCHAT_COPYRIGHT
         VALUE "OriginalFilename", "YouTube.dll"
         VALUE "ProductName",      SCHAT_NAME
