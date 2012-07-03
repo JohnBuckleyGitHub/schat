@@ -32,4 +32,6 @@ SOURCES  = \
    HistoryMessages.cpp \
    HistoryPlugin.cpp \
 
+RESOURCES += History.qrc
+
 include(../plugins.pri)

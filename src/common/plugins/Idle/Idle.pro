@@ -28,6 +28,8 @@ SOURCES  = \
    Idle.cpp \
    IdlePlugin.cpp \
 
+RESOURCES += Idle.qrc
+
 include(Idle.pri)
 
 unix {
