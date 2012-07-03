@@ -34,4 +34,6 @@ SOURCES  = \
    feeds/CacheFeeds.cpp \
    feeds/CacheFeedStorage.cpp \
 
+RESOURCES += Cache.qrc
+
 include(../plugins.pri)

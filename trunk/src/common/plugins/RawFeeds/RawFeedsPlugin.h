@@ -33,10 +33,11 @@ public:
     QVariantMap out = CoreApi::header();
     out["Id"]       = "RawFeeds";
     out["Name"]     = "Raw Feeds";
-    out["Version"]  = "0.1.8";
+    out["Version"]  = "0.1.9";
     out["Site"]     = "http://wiki.schat.me/Plugin/RawFeeds";
-    out["Desc"]     = "Raw Feeds";
-    out["Required"] = "1.99.32";
+    out["Desc"]     = "Debug plugin to access the raw data feeds";
+    out["Desc/ru"]  = "Отладочный плагин для доступа к данным фидов";
+    out["Required"] = "1.99.34";
 
     return out;
   }
