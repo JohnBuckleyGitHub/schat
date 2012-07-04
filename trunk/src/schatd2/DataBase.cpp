@@ -317,8 +317,9 @@ void DataBase::update(ChatChannel channel)
   query.bindValue(LS(":id"),         channel->key());
   query.exec();
 
-  if (channel->account() && channel->account()->id() > 0) {
-    channel->account()->setDate(DateTime::utc());
+  Account *account = channel->account();
+  if (account && account->id() > 0) {
+    account->setDate(DateTime::utc());
 
     query.prepare(LS("UPDATE accounts SET date = :date, cookie = :cookie, name = :name, password = :password, groups = :groups WHERE id = :id;"));
     query.bindValue(LS(":date"),       channel->account()->date());

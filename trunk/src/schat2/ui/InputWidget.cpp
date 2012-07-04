@@ -316,10 +316,12 @@ void InputWidget::cursorPositionChanged()
   }
 
   QTextCharFormat charFormat = cursor.charFormat();
-  m_format.at(Bold)->setChecked(charFormat.font().bold());
-  m_format.at(Italic)->setChecked(charFormat.font().italic());
-  m_format.at(Underline)->setChecked(charFormat.font().underline());
-  m_format.at(Strike)->setChecked(charFormat.font().strikeOut());
+  QFont font = charFormat.font();
+
+  m_format.at(Bold)->setChecked(font.bold());
+  m_format.at(Italic)->setChecked(font.italic());
+  m_format.at(Underline)->setChecked(font.underline());
+  m_format.at(Strike)->setChecked(font.strikeOut());
   m_color->setAltColor(charFormat.foreground().color());
 }
 

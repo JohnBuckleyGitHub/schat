@@ -33,7 +33,7 @@ public:
   FeedHeader();
   bool isValid() const;
   inline Acl& acl()                        { return m_acl; }
-  inline Channel *channel()                { return m_channel; }
+  inline Channel *channel() const          { return m_channel; }
   inline const Acl& acl() const            { return m_acl; }
   inline const QString& name() const       { return m_name; }
   inline const QVariantMap& data() const   { return m_data; }

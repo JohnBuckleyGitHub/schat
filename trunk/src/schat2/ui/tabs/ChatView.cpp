@@ -292,14 +292,15 @@ QVariantMap ChatView::addHint(const Message &message)
   QVariantMap out;
   out[LS("Hint")] = LS("end");
 
-  if (message.data().value(LS("Status")) == LS("undelivered"))
+  const QVariantMap &data = message.data();
+  if (data.value(LS("Status")) == LS("undelivered"))
     return out;
 
-  qint64 date = message.data().value(LS("Date")).toLongLong();
+  qint64 date = data.value(LS("Date")).toLongLong();
   if (date == 0)
     return out;
 
-  QByteArray id = message.data().value(LS("Id")).toByteArray();
+  QByteArray id = data.value(LS("Id")).toByteArray();
   if (id.isEmpty())
     return out;
 

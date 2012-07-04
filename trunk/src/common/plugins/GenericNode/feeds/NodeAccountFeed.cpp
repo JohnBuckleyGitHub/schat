@@ -156,7 +156,8 @@ FeedQueryReply NodeAccountFeed::password(const QVariantMap &json)
   if (!channel)
     return FeedQueryReply(Notice::InternalError);
 
-  if (channel->account()->name().isEmpty())
+  Account *account = channel->account();
+  if (account->name().isEmpty())
     return FeedQueryReply(Notice::Unauthorized);
 
   // Получение и проверка пароля.
@@ -164,12 +165,12 @@ FeedQueryReply NodeAccountFeed::password(const QVariantMap &json)
   if (password.isEmpty())
     return FeedQueryReply(Notice::BadRequest);
 
-  if (channel->account()->password() != password)
+  if (account->password() != password)
     return FeedQueryReply(Notice::Forbidden);
 
   QByteArray newPassword = getPassword(json, LS("new"));
   if (!newPassword.isEmpty()) {
-    channel->account()->setPassword(newPassword);
+    account->setPassword(newPassword);
     DataBase::update(channel);
   }
   else {
@@ -215,12 +216,13 @@ FeedQueryReply NodeAccountFeed::reg(const QVariantMap &json)
   if (!channel)
     return FeedQueryReply(Notice::InternalError);
 
-  channel->account()->setName(name);
-  channel->account()->setPassword(password);
-  channel->account()->groups().remove(LS("anonymous"));
-  channel->account()->groups().add(LS("registered"));
+  Account *account = channel->account();
+  account->setName(name);
+  account->setPassword(password);
+  account->groups().remove(LS("anonymous"));
+  account->groups().add(LS("registered"));
   m_data[LS("account")] = name;
-  m_data[LS("groups")]  = channel->account()->groups().all();
+  m_data[LS("groups")]  = account->groups().all();
   setRecovery(LS("q"), json);
   setRecovery(LS("a"), json);
 
@@ -277,12 +279,13 @@ FeedQueryReply NodeAccountFeed::reset(const QVariantMap &json)
   }
 
   // Проверка наличия секретного вопроса.
-  if (!feed->data().contains(LS("q"))) {
+  const QVariantMap &data = feed->data();
+  if (!data.contains(LS("q"))) {
     Ch::gc(channel);
     return FeedQueryReply(Notice::Unauthorized);
   }
 
-  if (feed->data().value(LS("q")) != json.value(LS("q")) || feed->data().value(LS("a")) != json.value(LS("a"))) {
+  if (data.value(LS("q")) != json.value(LS("q")) || data.value(LS("a")) != json.value(LS("a"))) {
     Ch::gc(channel);
     return FeedQueryReply(Notice::Unauthorized);
   }

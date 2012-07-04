@@ -123,15 +123,19 @@ bool Task::isReadyToRemove() const
  */
 void Task::discovery()
 {
-  if (m_finished || m_socket || !m_transaction->remote().isValid())
+  if (m_finished || m_socket)
     return;
 
-  QString host = m_transaction->remote().address(Internal);
-  quint16 port = m_transaction->remote().port(Internal);
+  const Hosts &remote = m_transaction->remote();
+  if (!remote.isValid())
+    return;
+
+  QString host = remote.address(Internal);
+  quint16 port = remote.port(Internal);
   discovery(host, port);
 
-  if (m_transaction->remote().address() != host || m_transaction->remote().port() != port)
-    discovery(m_transaction->remote().address(), m_transaction->remote().port());
+  if (remote.address() != host || remote.port() != port)
+    discovery(remote.address(), remote.port());
 }
 
 

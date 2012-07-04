@@ -339,10 +339,12 @@ QStringList Feeds::unsynced(ClientChannel channel, const QVariantMap &feeds, con
     }
 
     qint64 date = 0;
-    if (i.value().type() == QVariant::LongLong)
-      date = i.value().toLongLong();
-    else if (i.value().type() == QVariant::Map)
-      date = i.value().toMap().value(LS("date")).toLongLong();
+    const QVariant &value = i.value();
+
+    if (value.type() == QVariant::LongLong)
+      date = value.toLongLong();
+    else if (value.type() == QVariant::Map)
+      date = value.toMap().value(LS("date")).toLongLong();
 
     if (date == 0)
       continue;

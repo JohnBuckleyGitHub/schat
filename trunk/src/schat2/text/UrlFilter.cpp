@@ -35,7 +35,8 @@ bool UrlFilter::filter(QList<HtmlToken> &tokens, const QVariantHash &/*options*/
   QString name;
 
   for (int i = 0; i < tokens.size(); ++i) {
-    if (tokens.at(i).type == HtmlToken::StartTag && tokens.at(i).tag == LS("a")) {
+    const HtmlToken &token = tokens.at(i);
+    if (token.type == HtmlToken::StartTag && token.tag == LS("a")) {
       HtmlATag tag(tokens.at(i));
 
       if (tag.url.startsWith(LS("chat://channel/"))) {
@@ -51,7 +52,7 @@ bool UrlFilter::filter(QList<HtmlToken> &tokens, const QVariantHash &/*options*/
         tokens[i].text = tag.toText();
       }
     }
-    else if (tokens.at(i).type == HtmlToken::Text && !name.isEmpty()) {
+    else if (token.type == HtmlToken::Text && !name.isEmpty()) {
       tokens[i].text = Qt::escape(name);
       name.clear();
     }

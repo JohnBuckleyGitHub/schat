@@ -134,18 +134,18 @@ void StatusMenu::addStatus(int status)
 void StatusMenu::applyStatus(int status)
 {
   ChatClient::channel()->status() = status;
-  ChatCore::settings()->setValue(LS("Profile/Status"), ChatClient::channel()->status().value());
+  ChatCore::settings()->setValue(LS("Profile/Status"), status);
 
   if (ChatClient::state() == ChatClient::Online) {
     ChatClient::channels()->update();
 
-    if (ChatClient::channel()->status().value() == Status::Offline)
+    if (status == Status::Offline)
       ChatClient::io()->leave();
 
     return;
   }
 
-  if (ChatClient::state() == ChatClient::Offline && ChatClient::channel()->status().value() != Status::Offline)
+  if (ChatClient::state() == ChatClient::Offline && status != Status::Offline)
     ChatClient::open();
 }
 
@@ -160,14 +160,15 @@ void StatusMenu::reload()
   channel->gender() = ChatClient::channel()->gender().raw();
   channel->status() = ChatClient::channel()->status().value();
 
-  if (m_statuses.contains(channel->status().value()))
-    m_statuses.value(channel->status().value())->setChecked(true);
+  quint8 status = channel->status().value();
+  if (m_statuses.contains(status))
+    m_statuses.value(status)->setChecked(true);
 
   if (ChatClient::state() != ChatClient::Online)
     channel->status() = Status::Offline;
 
   setIcon(ChatIcons::icon(channel));
-  setTitle(statusTitle(channel->status().value()));
+  setTitle(statusTitle(status));
 
   QHashIterator<int, QAction *> i(m_statuses);
   while (i.hasNext()) {

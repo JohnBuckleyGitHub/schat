@@ -59,7 +59,8 @@ QList<HtmlToken> HtmlFilter::tokenize(const QString &text) const
     optimize(tokens);
 
   for (int i = tokens.size() - 1; i >= 0; --i) {
-    if ((tokens.at(i).type == HtmlToken::EndTag || tokens.at(i).type == HtmlToken::StartTag) && tokens.at(i).tag == LS("span")) {
+    const HtmlToken &token = tokens.at(i);
+    if ((token.type == HtmlToken::EndTag || token.type == HtmlToken::StartTag) && token.tag == LS("span")) {
       tokens.removeAt(i);
     }
   }
@@ -193,15 +194,16 @@ void HtmlFilter::makeTextToken(QList<HtmlToken> &tokens, const QString &text) co
     return;
   }
 
-  if (tokens.last().type == HtmlToken::Text) {
-    if (text == LS(" ") && tokens.last().text == text)
+  HtmlToken &last = tokens.last();
+  if (last.type == HtmlToken::Text) {
+    if (text == LS(" ") && last.text == text)
       return;
 
-    tokens.last().text.append(text);
+    last.text.append(text);
     return;
   }
 
-  if (tokens.last().type == HtmlToken::StartTag && text == LS(" ") && tokens.last().tag == LS("br"))
+  if (last.type == HtmlToken::StartTag && text == LS(" ") && last.tag == LS("br"))
     return;
 
   tokens.append(token);
@@ -451,7 +453,8 @@ void HtmlFilter::trimmed(QList<HtmlToken> &tokens) const
 void HtmlFilter::truncate(QList<HtmlToken> &tokens, int pos) const
 {
   if (tokens.at(pos).type == HtmlToken::Text) {
-    tokens[pos].text = tokens.at(pos).text.left(tokens.at(pos).text.size() - (m_size - m_sizeLimit));
+    HtmlToken &token = tokens[pos];
+    token.text = token.text.left(token.text.size() - (m_size - m_sizeLimit));
     if (tokens.at(pos).text.isEmpty())
        return truncate(tokens, --pos);
 

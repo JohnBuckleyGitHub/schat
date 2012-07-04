@@ -159,22 +159,19 @@ void GenderField::retranslateUi()
 
 void GenderField::setIcons()
 {
-  int gender = m_channel->gender().raw();
+  Gender gender = m_channel->gender();
 
-  m_channel->gender().set(Gender::Male);
+  gender.set(Gender::Male);
   m_combo->setItemIcon(0, ChatIcons::icon(m_channel, ChatIcons::NoOptions));
 
-  m_channel->gender().set(Gender::Female);
+  gender.set(Gender::Female);
   m_combo->setItemIcon(1, ChatIcons::icon(m_channel, ChatIcons::NoOptions));
 
-  m_channel->gender().setRaw(gender);
-
+  gender.setRaw(m_channel->gender().raw());
   for (int i = 0; i < m_colors.size(); ++i) {
-    m_channel->gender().setColor(i);
+    gender.setColor(i);
     m_colors.at(i)->setIcon(ChatIcons::icon(m_channel, ChatIcons::Statuses));
   }
-
-  m_channel->gender().setRaw(gender);
 }
 
 
@@ -183,9 +180,10 @@ void GenderField::setState()
   setIcons();
   m_config->setEnabled(true);
 
-  if (m_channel->gender().value() == Gender::Female)
+  const Gender &gender = m_channel->gender();
+  if (gender.value() == Gender::Female)
     m_combo->setCurrentIndex(1);
-  else if (m_channel->gender().value() == Gender::Male)
+  else if (gender.value() == Gender::Male)
     m_combo->setCurrentIndex(0);
   else {
     m_combo->setCurrentIndex(-1);
@@ -193,11 +191,11 @@ void GenderField::setState()
     return;
   }
 
-  if (m_channel->gender().color() > Gender::Yellow)
+  if (gender.color() > Gender::Yellow)
     return;
 
   for (int i = 0; i < m_colors.size(); ++i)
     m_colors.at(i)->setChecked(false);
 
-  m_colors.at(m_channel->gender().color())->setChecked(true);
+  m_colors.at(gender.color())->setChecked(true);
 }

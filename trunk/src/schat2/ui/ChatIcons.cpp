@@ -56,14 +56,15 @@ QIcon ChatIcons::icon(ClientChannel channel, int options)
     file += LS(".png");
   }
 
-  if (options & OfflineStatus && channel->status().value() == Status::Offline && !(options & Statuses))
+  const Status& status = channel->status();
+  if (options & OfflineStatus && status.value() == Status::Offline && !(options & Statuses))
     options |= Statuses;
 
   if (options & Statuses) {
-    if (options & OfflineStatus && (channel->status().value() == Status::Offline || !channel->isSynced()))
+    if (options & OfflineStatus && (status.value() == Status::Offline || !channel->isSynced()))
       return QIcon(QIcon(file).pixmap(16, 16, QIcon::Disabled));
 
-    return ChatIcons::icon(file, overlay(channel->status().value()));
+    return ChatIcons::icon(file, overlay(status.value()));
   }
 
   return QIcon(file);
