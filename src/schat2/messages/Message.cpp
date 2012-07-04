@@ -36,7 +36,7 @@ Message::Message(const QByteArray &id, const QByteArray &tab, const QString &typ
   if (!type.isEmpty())
     m_data[LS("Type")] = type;
 
-  if (!type.isEmpty())
+  if (!func.isEmpty())
     m_data[LS("Func")] = func;
 }
 

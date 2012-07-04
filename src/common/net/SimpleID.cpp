@@ -163,7 +163,9 @@ QByteArray SimpleID::uniqueId()
   QList<QNetworkInterface> all = QNetworkInterface::allInterfaces();
   foreach (QNetworkInterface iface, all) {
     QString hw = iface.hardwareAddress();
-    if (!hw.isEmpty() && !iface.flags().testFlag(QNetworkInterface::IsLoopBack) && iface.flags().testFlag(QNetworkInterface::IsUp) && iface.flags().testFlag(QNetworkInterface::IsRunning)) {
+    QNetworkInterface::InterfaceFlags flags = iface.flags();
+
+    if (!hw.isEmpty() && !flags.testFlag(QNetworkInterface::IsLoopBack) && flags.testFlag(QNetworkInterface::IsUp) && flags.testFlag(QNetworkInterface::IsRunning)) {
       return make(hw.toLatin1(), UniqueUserId);
     }
   }

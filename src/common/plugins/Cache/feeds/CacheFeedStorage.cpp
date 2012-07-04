@@ -39,14 +39,15 @@ CacheFeedStorage::CacheFeedStorage(QObject *parent)
  */
 int CacheFeedStorage::saveImpl(FeedPtr feed)
 {
-  QVariantMap feeds = feed->head().channel()->data().value(LS("feeds")).toMap();
+  FeedHeader &head = feed->head();
+  QVariantMap feeds = head.channel()->data().value(LS("feeds")).toMap();
   qint64 id = save(feed, feed->save());
   if (id == -1)
     return Notice::InternalError;
 
-  feeds[feed->head().name()] = id;
-  feed->head().channel()->data()[LS("feeds")] = feeds;
-  CacheDB::setData(feed->head().channel());
+  feeds[head.name()] = id;
+  head.channel()->data()[LS("feeds")] = feeds;
+  CacheDB::setData(head.channel());
 
   return Notice::OK;
 }
@@ -72,16 +73,17 @@ void CacheFeedStorage::loadImpl(Channel *channel)
  */
 qint64 CacheFeedStorage::save(FeedPtr feed, const QVariantMap &data)
 {
-  if (feed->head().key() > 0)
+  FeedHeader &head = feed->head();
+  if (head.key() > 0)
     return update(feed, data);
 
   QSqlQuery query(QSqlDatabase::database(CacheDB::id()));
   query.prepare(LS("INSERT INTO feeds (channel, rev, date, name, json) VALUES (:channel, :rev, :date, :name, :json);"));
 
-  query.bindValue(LS(":channel"), CacheDB::key(feed->head().channel()));
-  query.bindValue(LS(":rev"),     feed->head().rev());
-  query.bindValue(LS(":date"),    feed->head().date());
-  query.bindValue(LS(":name"),    feed->head().name());
+  query.bindValue(LS(":channel"), CacheDB::key(head.channel()));
+  query.bindValue(LS(":rev"),     head.rev());
+  query.bindValue(LS(":date"),    head.date());
+  query.bindValue(LS(":name"),    head.name());
   query.bindValue(LS(":json"),    JSON::generate(data));
   query.exec();
 
@@ -89,22 +91,23 @@ qint64 CacheFeedStorage::save(FeedPtr feed, const QVariantMap &data)
     return -1;
 
   qint64 key = query.lastInsertId().toLongLong();
-  feed->head().setKey(key);
+  head.setKey(key);
   return key;
 }
 
 
 qint64 CacheFeedStorage::update(FeedPtr feed, const QVariantMap &data)
 {
+  const FeedHeader &head = feed->head();
   QSqlQuery query(QSqlDatabase::database(CacheDB::id()));
   query.prepare(LS("UPDATE feeds SET rev = :rev, date = :date, json = :json WHERE id = :id;"));
-  query.bindValue(LS(":rev"),  feed->head().rev());
-  query.bindValue(LS(":date"), feed->head().date());
+  query.bindValue(LS(":rev"),  head.rev());
+  query.bindValue(LS(":date"), head.date());
   query.bindValue(LS(":json"), JSON::generate(data));
-  query.bindValue(LS(":id"),   feed->head().key());
+  query.bindValue(LS(":id"),   head.key());
   query.exec();
 
-  return feed->head().key();
+  return head.key();
 }
 
 

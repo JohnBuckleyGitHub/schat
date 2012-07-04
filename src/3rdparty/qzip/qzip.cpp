@@ -160,18 +160,20 @@ static inline void copyUShort(uchar *dest, const uchar *src)
 static void writeMSDosDate(uchar *dest, const QDateTime& dt)
 {
     if (dt.isValid()) {
+        QTime t = dt.time();
         quint16 time =
-            (dt.time().hour() << 11)    // 5 bit hour
-            | (dt.time().minute() << 5)   // 6 bit minute
-            | (dt.time().second() >> 1);  // 5 bit double seconds
+            (t.hour() << 11)      // 5 bit hour
+            | (t.minute() << 5)   // 6 bit minute
+            | (t.second() >> 1);  // 5 bit double seconds
 
         dest[0] = time & 0xff;
         dest[1] = time >> 8;
 
+        QDate d = dt.date();
         quint16 date =
-            ((dt.date().year() - 1980) << 9) // 7 bit year 1980-based
-            | (dt.date().month() << 5)           // 4 bit month
-            | (dt.date().day());                 // 5 bit day
+            ((d.year() - 1980) << 9)     // 7 bit year 1980-based
+            | (d.month() << 5)           // 4 bit month
+            | (d.day());                 // 5 bit day
 
         dest[2] = char(date);
         dest[3] = char(date >> 8);

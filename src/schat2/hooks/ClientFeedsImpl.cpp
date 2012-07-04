@@ -90,18 +90,20 @@ void ClientFeedsImpl::feed()
   qint64 rev = 0;
   FeedPtr feed = m_channel->feed(name, false);
   if (feed) {
-    key = feed->head().key();
-    rev = feed->head().rev();
+    const FeedHeader &head = feed->head();
+    key = head.key();
+    rev = head.rev();
   }
 
   feed = FeedPtr(FeedStorage::load(name, m_packet->json().value(name).toMap()));
   if (!feed)
     return;
 
-  if (feed->head().rev() != rev)
+  FeedHeader &head = feed->head();
+  if (head.rev() != rev)
     key = 0;
 
-  feed->head().setKey(key);
+  head.setKey(key);
   m_channel->feeds().add(feed);
   ChatNotify::start(FeedNotify(Notify::FeedData, m_channel->id(), name));
 }
@@ -171,18 +173,20 @@ void ClientFeedsImpl::reply()
 
 void ClientFeedsImpl::set(const FeedNotify &notify)
 {
-  QStringList keys = notify.json().keys();
+  const QVariantMap &json = notify.json();
+  QStringList keys = json.keys();
+
   keys.removeAll(LS("action"));
   keys.removeAll(LS("date"));
   keys.removeAll(LS("size"));
   if (keys.isEmpty())
     return;
 
-  qint64 date = notify.json().value(LS("date")).toLongLong();
+  qint64 date = json.value(LS("date")).toLongLong();
   if (date == 0)
     return;
 
-  int size = notify.json().value(LS("size")).toInt();
+  int size = json.value(LS("size")).toInt();
   if (size == 0)
     return;
 

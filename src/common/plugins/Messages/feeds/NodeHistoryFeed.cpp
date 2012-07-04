@@ -177,17 +177,18 @@ QList<MessageId> NodeHistoryFeed::last(const QVariantMap &json)
   if (count <= 0)
     return QList<MessageId>();
 
-  if (head().channel()->type() == SimpleID::ChannelId)
+  Channel *channel = head().channel();
+  if (channel->type() == SimpleID::ChannelId)
     return NodeMessagesDB::last(head().channel()->id(), count);
 
-  if (head().channel()->type() != SimpleID::UserId)
+  if (channel->type() != SimpleID::UserId)
     return QList<MessageId>();
 
   QByteArray id = SimpleID::decode(json.value(LS("id")).toByteArray());
   if (SimpleID::typeOf(id) != SimpleID::UserId)
-    return NodeMessagesDB::last(head().channel()->id(), count);
+    return NodeMessagesDB::last(channel->id(), count);
   else
-    return NodeMessagesDB::last(head().channel()->id(), id, count);
+    return NodeMessagesDB::last(channel->id(), id, count);
 }
 
 

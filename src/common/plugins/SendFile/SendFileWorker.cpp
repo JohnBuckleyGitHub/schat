@@ -215,10 +215,11 @@ void Worker::updateTask(const QByteArray &id, const QVariantMap &data)
   if (!task)
     return;
 
-  if (task->transaction()->role() == SenderRole && !task->transaction()->remote().isValid()) {
+  Transaction *transaction = task->transaction();
+  if (transaction->role() == SenderRole && !transaction->remote().isValid()) {
     Hosts hosts(data.value(LS("remote")).toList());
     if (hosts.isValid()) {
-      task->transaction()->setRemote(hosts);
+      transaction->setRemote(hosts);
       task->discovery();
     }
   }

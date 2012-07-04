@@ -159,8 +159,9 @@ QList<MessageRecord> NodeMessagesDB::get(const QList<MessageId> &ids)
 # endif
 
   for (int i = 0; i < ids.size(); ++i) {
-    query.bindValue(LS(":messageId"), ids.at(i).id());
-    query.bindValue(LS(":date"), ids.at(i).date());
+    const MessageId &id = ids.at(i);
+    query.bindValue(LS(":messageId"), id.id());
+    query.bindValue(LS(":date"), id.date());
     query.exec();
 
     if (!query.first())
@@ -168,11 +169,11 @@ QList<MessageRecord> NodeMessagesDB::get(const QList<MessageId> &ids)
 
     MessageRecord record;
     record.id        = query.value(0).toLongLong();
-    record.messageId = ids.at(i).id();
+    record.messageId = id.id();
     record.senderId  = query.value(1).toByteArray();
     record.destId    = query.value(2).toByteArray();
     record.status    = query.value(3).toLongLong();
-    record.date      = ids.at(i).date();
+    record.date      = id.date();
     record.command   = query.value(4).toString();
     record.text      = query.value(5).toString();
     record.data      = query.value(6).toByteArray();

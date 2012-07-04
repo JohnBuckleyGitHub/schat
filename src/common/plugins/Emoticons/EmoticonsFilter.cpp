@@ -131,8 +131,8 @@ bool EmoticonsInputFilter::filter(QList<HtmlToken> &tokens, const QVariantHash &
   m_delete = false;
 
   for (int i = 0; i < tokens.size(); ++i) {
-    HtmlToken token = tokens.at(i);
-    if (tokens.at(i).type == HtmlToken::StartTag && tokens.at(i).tag == LS("a")) {
+    const HtmlToken &token = tokens.at(i);
+    if (token.type == HtmlToken::StartTag && token.tag == LS("a")) {
       HtmlATag tag(tokens.at(i));
 
       if (tag.url.startsWith(LS("emoticon:"))) {
@@ -140,7 +140,7 @@ bool EmoticonsInputFilter::filter(QList<HtmlToken> &tokens, const QVariantHash &
         continue;
       }
     }
-    else if (m_delete && tokens.at(i).type == HtmlToken::EndTag && tokens.at(i).tag == LS("a")) {
+    else if (m_delete && token.type == HtmlToken::EndTag && token.tag == LS("a")) {
       m_delete = false;
       continue;
     }
