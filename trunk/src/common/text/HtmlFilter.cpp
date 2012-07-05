@@ -452,34 +452,35 @@ void HtmlFilter::trimmed(QList<HtmlToken> &tokens) const
  */
 void HtmlFilter::truncate(QList<HtmlToken> &tokens, int pos) const
 {
-  if (tokens.at(pos).type == HtmlToken::Text) {
-    HtmlToken &token = tokens[pos];
+  HtmlToken &token = tokens[pos];
+
+  if (token.type == HtmlToken::Text) {
     token.text = token.text.left(token.text.size() - (m_size - m_sizeLimit));
-    if (tokens.at(pos).text.isEmpty())
+    if (token.text.isEmpty())
        return truncate(tokens, --pos);
 
     ++pos;
 
     for (int i = pos; i < tokens.size(); ++i) {
-      if (tokens.at(i).type != HtmlToken::EndTag) {
+      if (token.type != HtmlToken::EndTag) {
         pos = i;
         break;
       }
     }
   }
-  else if (tokens.at(pos).type == HtmlToken::StartTag) {
+  else if (token.type == HtmlToken::StartTag) {
     for (int i = pos; i >= 0; --i) {
-      if (tokens.at(i).type != HtmlToken::StartTag) {
+      if (token.type != HtmlToken::StartTag) {
         pos = ++i;
         break;
       }
     }
   }
-  else if (tokens.at(pos).type == HtmlToken::EndTag) {
+  else if (token.type == HtmlToken::EndTag) {
     ++pos;
 
     for (int i = pos; i < tokens.size(); ++i) {
-      if (tokens.at(i).type != HtmlToken::EndTag) {
+      if (token.type != HtmlToken::EndTag) {
         pos = i;
         break;
       }
