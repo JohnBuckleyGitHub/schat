@@ -455,36 +455,37 @@ const QByteArray& SimpleSocket::channelId() const
 
 QByteArray SimpleSocket::readBuffer() const
 {
-  Q_D(const SimpleSocket);
-  return d->readBuffer;
+  return d_func()->readBuffer;
 }
 
 
 QDataStream *SimpleSocket::sendStream()
 {
-  Q_D(SimpleSocket);
-  return d->sendStream;
+  return d_func()->sendStream;
 }
 
 
 qint64 SimpleSocket::date() const
 {
-  Q_D(const SimpleSocket);
-  return d->date;
+  return d_func()->date;
+}
+
+
+quint64 SimpleSocket::id() const
+{
+  return d_func()->id;
 }
 
 
 quint64 SimpleSocket::rx() const
 {
-  Q_D(const SimpleSocket);
-  return d->rx;
+  return d_func()->rx;
 }
 
 
 quint64 SimpleSocket::tx() const
 {
-  Q_D(const SimpleSocket);
-  return d->tx;
+  return d_func()->tx;
 }
 
 
@@ -526,15 +527,13 @@ void SimpleSocket::setAuthorized(const QByteArray &userId)
 
 void SimpleSocket::setId(quint64 id)
 {
-  Q_D(SimpleSocket);
-  d->id = id;
+  d_func()->id = id;
 }
 
 
 void SimpleSocket::setDate(qint64 date)
 {
-  Q_D(SimpleSocket);
-  d->date = date;
+  d_func()->date = date;
 }
 
 
@@ -596,8 +595,7 @@ void SimpleSocket::connected()
 void SimpleSocket::disconnected()
 {
   SCHAT_DEBUG_STREAM(this << "disconnected()" << state())
-  Q_D(SimpleSocket);
-  d->releaseSocket();
+  d_func()->releaseSocket();
 }
 
 

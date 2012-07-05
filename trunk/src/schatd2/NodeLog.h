@@ -22,6 +22,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QMutex>
+#include <QStringList>
 #include <QTextStream>
 
 #include "schat.h"
@@ -90,20 +91,13 @@ private:
   if (NodeLog::level() < NodeLog::InfoLevel) {} \
   else NodeLog::Helper(NodeLog::InfoLevel).stream()
 
-#if defined(SCHAT_DEBUG)
 # define SCHAT_LOG_DEBUG(x)  \
   if (NodeLog::level() < NodeLog::DebugLevel) {} \
   else NodeLog::Helper(NodeLog::DebugLevel).stream() x
-#else
-# define SCHAT_LOG_DEBUG(x)
-#endif
 
-#if defined(SCHAT_DEBUG)
 # define SCHAT_LOG_TRACE(x)  \
   if (NodeLog::level() < NodeLog::TraceLevel) {} \
   else NodeLog::Helper(NodeLog::TraceLevel).stream() x
-#else
-# define SCHAT_LOG_TRACE(x)
-#endif
+
 
 #endif /* NODELOG_H_ */
