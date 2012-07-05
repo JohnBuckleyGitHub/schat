@@ -16,14 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QCoreApplication>
 #include <QReadLocker>
 
-#include "net/NodeWorker.h"
 #include "events.h"
+#include "net/NodeWorker.h"
 #include "net/SimpleSocket.h"
+#include "NodeLog.h"
 
 NodeWorker::NodeWorker(QObject *core)
   : QThread()
@@ -127,11 +126,12 @@ void NodeWorkerListener::add(NewConnectionEvent *event)
   socket->setId(event->socket());
 
   if (socket->setSocketDescriptor(event->socketDescriptor)) {
+    SCHAT_LOG_DEBUG(<< "New Connection" << socket->peerAddress().toString() << socket->peerPort() << "id:" << socket->id());
     connect(socket, SIGNAL(newPackets(quint64, const QList<QByteArray> &)), SLOT(packets(quint64, const QList<QByteArray> &)), Qt::DirectConnection);
     connect(socket, SIGNAL(released(quint64)), SLOT(released(quint64)), Qt::DirectConnection);
 
     m_lock.lockForWrite();
-    m_sockets[event->socket()] = socket;
+    m_sockets[socket->id()] = socket;
     m_lock.unlock();
   }
   else

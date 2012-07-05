@@ -55,16 +55,17 @@ public:
   bool send(const QList<QByteArray> &packets);
   bool setSocketDescriptor(int socketDescriptor);
   const QByteArray& channelId() const;
-  inline bool isReady() const { if (state() == QTcpSocket::ConnectedState) return true; return false; }
+  inline bool isReady() const { if (state() == ConnectedState) return true; return false; }
   QByteArray readBuffer() const;
   QDataStream *sendStream();
   qint64 date() const;
+  quint64 id() const;
   quint64 rx() const;
   quint64 tx() const;
   void leave();
   void setAuthorized(const QByteArray &userId);
-  void setId(quint64 id);
   void setDate(qint64 date);
+  void setId(quint64 id);
 
 signals:
   void allDelivered(quint64 id);

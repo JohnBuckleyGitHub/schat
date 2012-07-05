@@ -430,6 +430,8 @@ void AbstractClient::leave()
     d->reconnectTimer->stop();
 
   d->date = 0;
+  d->sendLock = false;
+  d->sendQueue.clear();
   d->setClientState(ClientOffline);
   SimpleSocket::leave();
   setAuthorized(QByteArray());
