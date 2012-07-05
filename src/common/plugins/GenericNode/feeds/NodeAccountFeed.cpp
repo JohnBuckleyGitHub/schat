@@ -217,12 +217,14 @@ FeedQueryReply NodeAccountFeed::reg(const QVariantMap &json)
     return FeedQueryReply(Notice::InternalError);
 
   Account *account = channel->account();
+  Groups &groups = account->groups();
+
   account->setName(name);
   account->setPassword(password);
-  account->groups().remove(LS("anonymous"));
-  account->groups().add(LS("registered"));
+  groups.remove(LS("anonymous"));
+  groups.add(LS("registered"));
   m_data[LS("account")] = name;
-  m_data[LS("groups")]  = account->groups().all();
+  m_data[LS("groups")]  = groups.all();
   setRecovery(LS("q"), json);
   setRecovery(LS("a"), json);
 

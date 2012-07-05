@@ -322,12 +322,12 @@ void DataBase::update(ChatChannel channel)
     account->setDate(DateTime::utc());
 
     query.prepare(LS("UPDATE accounts SET date = :date, cookie = :cookie, name = :name, password = :password, groups = :groups WHERE id = :id;"));
-    query.bindValue(LS(":date"),       channel->account()->date());
-    query.bindValue(LS(":cookie"),     channel->account()->cookie());
-    query.bindValue(LS(":name"),       channel->account()->name());
-    query.bindValue(LS(":password"),   channel->account()->password());
-    query.bindValue(LS(":groups"),     channel->account()->groups().toString());
-    query.bindValue(LS(":id"),         channel->account()->id());
+    query.bindValue(LS(":date"),       account->date());
+    query.bindValue(LS(":cookie"),     account->cookie());
+    query.bindValue(LS(":name"),       account->name());
+    query.bindValue(LS(":password"),   account->password());
+    query.bindValue(LS(":groups"),     account->groups().toString());
+    query.bindValue(LS(":id"),         account->id());
     query.exec();
   }
 }

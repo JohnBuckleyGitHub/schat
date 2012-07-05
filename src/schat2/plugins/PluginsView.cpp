@@ -127,7 +127,14 @@ void PluginsView::restartSlot()
 
 QString PluginsView::desc(const QVariantMap &data) const
 {
-  QString desc = data.value(LS("Desc/") + ChatCore::translation()->name()).toString();
+  const QString &lang = ChatCore::translation()->name();
+  QString desc = data.value(LS("Desc/") + lang).toString();
+  if (!desc.isEmpty())
+    return desc;
+
+  if (lang.size() > 2)
+    desc = data.value(LS("Desc/") + lang.left(2)).toString();
+
   if (!desc.isEmpty())
     return desc;
 
