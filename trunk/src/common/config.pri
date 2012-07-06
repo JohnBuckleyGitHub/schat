@@ -15,7 +15,7 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SCHAT_DEBUG      = 0
+SCHAT_DEBUG      = 1
 SCHAT_SSL        = 1
 SCHAT_QDNS       = 1
 SCHAT_EXTENSIONS = 1
