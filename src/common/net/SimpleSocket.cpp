@@ -16,7 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define SCHAT_DISABLE_DEBUG
+//#define SCHAT_DISABLE_DEBUG
 
 #include <QBasicTimer>
 #include <QSslConfiguration>
@@ -214,6 +214,11 @@ void SimpleSocketPrivate::releaseSocket()
   sendBuffer.clear();
   readBuffer.clear();
   txBuffer.clear();
+  if (nextBlockSize)
+    qDebug() << "*** BUG **** nextBlockSize is not 0, size:" << nextBlockSize;
+
+  nextBlockSize = 0;
+
   deliveryConfirm.clear();
 
   emit(q->released(id));
@@ -271,6 +276,7 @@ void SimpleSocketPrivate::setTimerState(TimerState state)
 void SimpleSocketPrivate::sslHandshake(int option)
 {
   Q_Q(SimpleSocket);
+  SCHAT_DEBUG_STREAM("SimpleSocketPrivate::sslHandshake")
 
   if (option == Protocol::SecureConnectionRequest && serverSide) {
     quint16 answer = Protocol::SecureConnectionUnavailable;
