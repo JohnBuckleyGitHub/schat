@@ -26,7 +26,7 @@
 #include "HandlerCreator.h"
 #include "HandlerRoute.h"
 #include "Tufao/headers.h"
-#include "Tufao/httpServerrequest.h"
+#include "Tufao/httpserverrequest.h"
 #include "Tufao/url.h"
 
 AuthHandler::AuthHandler(QObject *parent)
