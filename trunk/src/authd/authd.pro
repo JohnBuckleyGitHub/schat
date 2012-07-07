@@ -15,13 +15,32 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-CONFIG   += ordered
-TEMPLATE = subdirs
-SUBDIRS  = \
-    schatd2/schatd.pro \
-    tufao \
-    schatd2 \
-    authd \
-    common/plugins/GenericNode \
-    common/plugins/Messages \
-    common/plugins/GeoIP \
+SCHAT_RESOURCES   = 0
+SCHAT_RC_FILE     = 1
+SCHAT_SINGLEAPP   = 0
+TARGET            = schat-authd
+DEFINES          += SCHAT_DAEMON
+SCHAT_DAEMON_LIB  = 0
+SCHAT_TUFAO_LIB   = 1
+
+QT = core network
+TEMPLATE = app
+
+HEADERS = \
+    AuthCore.h \
+    AuthHandler.h \
+    HandlerCreator.h \
+    HandlerRoute.h \
+    oauth2/GoogleAuth.h \
+
+SOURCES = \
+    authd.cpp \
+    AuthCore.cpp \
+    AuthHandler.cpp \
+    HandlerCreator.cpp \
+    HandlerRoute.cpp \
+    oauth2/GoogleAuth.cpp \
+
+include(../common/config.pri)
+include(../common/common.pri)
+

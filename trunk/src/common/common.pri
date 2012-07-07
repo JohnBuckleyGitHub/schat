@@ -84,3 +84,10 @@ contains( SCHAT_DAEMON_LIB, 1 ) {
   }
 }
 
+contains( SCHAT_TUFAO_LIB, 1 ) {
+  CONFIG(debug, debug|release) {
+    LIBS += -L../../out/debug -lschat-tufao
+  } else {
+    LIBS += -L../../out -lschat-tufao
+  }
+}
