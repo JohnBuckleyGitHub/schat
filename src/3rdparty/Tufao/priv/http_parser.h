@@ -27,6 +27,8 @@ extern "C" {
 #define HTTP_PARSER_VERSION_MAJOR 1
 #define HTTP_PARSER_VERSION_MINOR 0
 
+#include <stdint.h>
+
 #include "http_parser_qt_helper.h"
 
 /* Compile with -DHTTP_PARSER_STRICT=0 to make less checks, but run
