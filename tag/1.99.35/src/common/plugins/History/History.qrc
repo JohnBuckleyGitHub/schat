@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+  <file alias="images/History/icon.png">res/images/oxygen/book.png</file>
+</qresource>
+</RCC>
