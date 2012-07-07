@@ -30,6 +30,9 @@ GoogleAuth::GoogleAuth(const QUrl &url, Tufao::HttpServerRequest *request, Tufao
   : QObject(parent)
   , m_state(GetAccessToken)
 {
+  Q_UNUSED(request)
+  Q_UNUSED(response)
+
   m_manager = new QNetworkAccessManager(this);
 //  QNetworkRequest request(m_url);
 
