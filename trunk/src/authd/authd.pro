@@ -45,14 +45,18 @@ HEADERS = \
     HandlerCreator.h \
     HandlerRoute.h \
     oauth2/GoogleAuth.h \
+    oauth2/GoogleAuthData.h \
+    oauth2/OAuthData.h \
 
 SOURCES = \
-    authd.cpp \
     AuthCore.cpp \
+    authd.cpp \
     AuthHandler.cpp \
     HandlerCreator.cpp \
     HandlerRoute.cpp \
     oauth2/GoogleAuth.cpp \
+    oauth2/GoogleAuthData.cpp \
+    oauth2/OAuthData.cpp \
 
 include(../common/config.pri)
 include(../common/common.pri)

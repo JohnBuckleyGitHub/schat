@@ -115,6 +115,7 @@ Section
   WriteRegStr HKCU "${SCHAT_REGKEY}" "" $INSTDIR
   WriteUninstaller "$INSTDIR\uninstall.exe"
   WriteINIStr "$INSTDIR\schatd2.init" "General" "Portable" true
+  WriteINIStr "$INSTDIR\schat-authd.init" "General" "Portable" true
 SectionEnd
 
 Section "Uninstall"
