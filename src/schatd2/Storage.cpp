@@ -92,6 +92,17 @@ QString Storage::serverName()
 }
 
 
+QString Storage::sharePath()
+{
+# if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
+  if (!Path::isPortable())
+    return LS("usr/share/schatd2/www");
+# endif
+
+  return Path::data(Path::SystemScope);
+}
+
+
 QString Storage::varPath()
 {
 # if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)

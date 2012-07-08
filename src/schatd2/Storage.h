@@ -42,6 +42,7 @@ public:
   inline static Storage *i()               { return m_self; }
   static QString etcPath();
   static QString serverName();
+  static QString sharePath();
   static QString varPath();
 
   int load();
