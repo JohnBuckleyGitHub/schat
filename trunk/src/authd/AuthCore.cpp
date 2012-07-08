@@ -18,9 +18,9 @@
 
 #include <QDebug>
 
+#include <QDir>
 #include <QTimer>
 #include <QUrl>
-#include <QCoreApplication>
 
 #include "AuthCore.h"
 #include "AuthHandler.h"
@@ -44,10 +44,10 @@ AuthCore::AuthCore(QObject *parent)
 
   m_settings = new Settings(Storage::etcPath() + LC('/') + Path::app() + LS(".conf"), this);
   m_settings->setDefault(LS("Listen"), QStringList("http://0.0.0.0:7668"));
-  m_settings->setDefault(LS("Root"),   Path::data(Path::SystemScope) + LS("/www/"));
+  m_settings->setDefault(LS("Root"),   Storage::sharePath() + LS("/www/"));
 
   m_handler = new AuthHandler(this);
-  m_handler->setRoot(m_settings->value(LS("Root")).toString());
+  m_handler->setRoot(QDir::cleanPath(m_settings->value(LS("Root")).toString()));
 
   HandlerRoute::routes.append(new GoogleAuthCreator());
   QTimer::singleShot(0, this, SLOT(start()));
