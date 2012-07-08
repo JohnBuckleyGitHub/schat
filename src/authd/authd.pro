@@ -44,6 +44,8 @@ HEADERS = \
     AuthHandler.h \
     HandlerCreator.h \
     HandlerRoute.h \
+    handlers.h \
+    handlers/AuthProviders.h \
     oauth2/GoogleAuth.h \
     oauth2/GoogleAuthData.h \
     oauth2/OAuthData.h \
@@ -54,6 +56,7 @@ SOURCES = \
     AuthHandler.cpp \
     HandlerCreator.cpp \
     HandlerRoute.cpp \
+    handlers/AuthProviders.cpp \
     oauth2/GoogleAuth.cpp \
     oauth2/GoogleAuthData.cpp \
     oauth2/OAuthData.cpp \

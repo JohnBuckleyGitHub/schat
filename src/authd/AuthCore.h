@@ -27,6 +27,7 @@ namespace Tufao {
 }
 
 class AuthHandler;
+class HandlerCreator;
 class OAuthData;
 class QUrl;
 class Settings;
@@ -48,6 +49,7 @@ private slots:
 
 private:
   void add(const QUrl &url);
+  void add(HandlerCreator *handler);
   void add(OAuthData *data);
 
   AuthHandler *m_handler;               ///< Основной обработчик запросов.

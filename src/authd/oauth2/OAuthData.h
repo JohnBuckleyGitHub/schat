@@ -20,19 +20,21 @@
 #define OAUTHDATA_H_
 
 #include <QString>
+#include <QVariant>
 
 class OAuthData
 {
 public:
   OAuthData(const QString &provider = QString());
   virtual ~OAuthData() {}
-  inline const QByteArray id() const       { return m_id; }
-  inline const QByteArray redirect() const { return m_redirect; }
-  inline const QByteArray secret() const   { return m_secret; }
-  inline const QString provider() const    { return m_provider; }
+  inline const QByteArray id() const        { return m_id; }
+  inline const QByteArray redirect() const  { return m_redirect; }
+  inline const QByteArray secret() const    { return m_secret; }
+  inline const QString provider() const     { return m_provider; }
   virtual bool isValid() const;
-  virtual inline bool read()               { return isValid(); }
-  virtual inline QByteArray toUrl() const  { return QByteArray(); }
+  virtual inline bool read()                { return isValid(); }
+  virtual inline QByteArray toUrl() const   { return QByteArray(); }
+  virtual QVariantMap toJSON() const;
 
 protected:
   QByteArray m_id;       ///< Client ID.
