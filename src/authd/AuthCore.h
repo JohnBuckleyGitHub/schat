@@ -20,12 +20,14 @@
 #define AUTHCORE_H_
 
 #include <QObject>
+#include <QHash>
 
 namespace Tufao {
   class HttpServer;
 }
 
 class AuthHandler;
+class OAuthData;
 class QUrl;
 class Settings;
 
@@ -35,16 +37,21 @@ class AuthCore : public QObject
 
 public:
   AuthCore(QObject *parent = 0);
-  inline static AuthCore *i()        { return m_self; }
-  inline static Settings *settings() { return m_self->m_settings; }
+  ~AuthCore();
+  inline const QHash<QString, OAuthData *>& oauth() const { return m_oauth; }
+  inline static AuthCore *i()                             { return m_self; }
+  inline static OAuthData *provider(const QString &name)  { return m_self->m_oauth.value(name); }
+  inline static Settings *settings()                      { return m_self->m_settings; }
 
 private slots:
   void start();
 
 private:
   void add(const QUrl &url);
+  void add(OAuthData *data);
 
   AuthHandler *m_handler;               ///< Основной обработчик запросов.
+  QHash<QString, OAuthData *> m_oauth;  ///< Список доступных OAuth провайдеров.
   QList<Tufao::HttpServer *> m_servers; ///< HTTP или HTTPS сервера ожидающие подключений.
   Settings *m_settings;                 ///< Настройки сервера.
   static AuthCore *m_self;              ///< Указатель на себя.

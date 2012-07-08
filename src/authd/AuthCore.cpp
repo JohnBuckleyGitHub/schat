@@ -26,6 +26,8 @@
 #include "AuthHandler.h"
 #include "HandlerRoute.h"
 #include "oauth2/GoogleAuth.h"
+#include "oauth2/GoogleAuthData.h"
+#include "oauth2/OAuthData.h"
 #include "Path.h"
 #include "Settings.h"
 #include "sglobal.h"
@@ -51,8 +53,16 @@ AuthCore::AuthCore(QObject *parent)
 }
 
 
+AuthCore::~AuthCore()
+{
+  qDeleteAll(m_oauth);
+}
+
+
 void AuthCore::start()
 {
+  add(new GoogleAuthData());
+
   QStringList listen = m_settings->value(LS("Listen")).toStringList();
   foreach (const QString &url, listen) {
     add(QUrl(url));
@@ -60,6 +70,9 @@ void AuthCore::start()
 }
 
 
+/*!
+ * Добавление адреса, на котором сервер будет принимать подключения.
+ */
 void AuthCore::add(const QUrl &url)
 {
   qDebug() << url.scheme() << url.host() << url.port();
@@ -70,4 +83,13 @@ void AuthCore::add(const QUrl &url)
     m_servers.append(server);
   else
     server->deleteLater();
+}
+
+
+void AuthCore::add(OAuthData *data)
+{
+  if (!m_oauth.contains(data->provider()) && data->read())
+    m_oauth[data->provider()] = data;
+  else
+    delete data;
 }
