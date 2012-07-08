@@ -77,7 +77,7 @@ QString Storage::etcPath()
 {
 # if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
   if (!Path::isPortable())
-    return LS("/etc/") + Path::app();
+    return LS("/etc/schatd2");
 # endif
 
   return Path::data();
@@ -96,7 +96,7 @@ QString Storage::varPath()
 {
 # if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
   if (!Path::isPortable())
-    return LS("/var/lib/") + Path::app();
+    return LS("/var/lib/schatd2");
 # endif
 
   return Path::cache();
