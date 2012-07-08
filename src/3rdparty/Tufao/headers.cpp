@@ -16,12 +16,12 @@
     License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QLocale>
-
 #include "headers.h"
 #include "priv/rfc1123.h"
 #include "priv/rfc1036.h"
 #include "priv/asctime.h"
+
+#include <QtCore/QLocale>
 
 namespace Tufao {
 
@@ -31,7 +31,7 @@ QByteArray Headers::fromDateTime(const QDateTime &dateTime)
                 "ddd," // day
                 " d MMM yyyy" // date
                 " hh:mm:ss" // hour
-                ).toLatin1() + " GMT";
+                ).toUtf8() + " GMT"; // zone
 }
 
 QDateTime Headers::toDateTime(const QByteArray &headerValue,
