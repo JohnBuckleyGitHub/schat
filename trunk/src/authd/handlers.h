@@ -16,27 +16,5 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oauth2/OAuthData.h"
-#include "sglobal.h"
-
-OAuthData::OAuthData(const QString &provider)
-  : m_provider(provider)
-{
-}
-
-
-bool OAuthData::isValid() const
-{
-  if (m_provider.isEmpty() || m_id.isEmpty() || m_redirect.isEmpty() || m_secret.isEmpty())
-    return false;
-
-  return true;
-}
-
-
-QVariantMap OAuthData::toJSON() const
-{
-  QVariantMap data;
-  data[LS("url")] = toUrl();
-  return data;
-}
+#include "handlers/AuthProviders.h"
+#include "oauth2/GoogleAuth.h"

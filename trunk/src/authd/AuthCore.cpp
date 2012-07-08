@@ -25,7 +25,7 @@
 #include "AuthCore.h"
 #include "AuthHandler.h"
 #include "HandlerRoute.h"
-#include "oauth2/GoogleAuth.h"
+#include "handlers.h"
 #include "oauth2/GoogleAuthData.h"
 #include "oauth2/OAuthData.h"
 #include "Path.h"
@@ -49,7 +49,9 @@ AuthCore::AuthCore(QObject *parent)
   m_handler = new AuthHandler(this);
   m_handler->setRoot(QDir::cleanPath(m_settings->value(LS("Root")).toString()));
 
-  HandlerRoute::routes.append(new GoogleAuthCreator());
+  add(new AuthProviders());
+  add(new GoogleAuthCreator());
+
   QTimer::singleShot(0, this, SLOT(start()));
 }
 
@@ -84,6 +86,12 @@ void AuthCore::add(const QUrl &url)
     m_servers.append(server);
   else
     server->deleteLater();
+}
+
+
+void AuthCore::add(HandlerCreator *handler)
+{
+  HandlerRoute::routes.append(handler);
 }
 
 

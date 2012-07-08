@@ -16,27 +16,24 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oauth2/OAuthData.h"
-#include "sglobal.h"
+#ifndef AUTHPROVIDERS_H_
+#define AUTHPROVIDERS_H_
 
-OAuthData::OAuthData(const QString &provider)
-  : m_provider(provider)
+#include "HandlerCreator.h"
+
+/*!
+ * Ответ на запрос "/providers".
+ *
+ * Возвращаются JSON данные со списком доступных OAuth провайдеров.
+ */
+class AuthProviders : public HandlerCreator
 {
-}
+public:
+  AuthProviders() : HandlerCreator() {}
+  bool serve(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent);
 
+private:
+  QByteArray m_cache; ///< Кэшированный список провайдеров.
+};
 
-bool OAuthData::isValid() const
-{
-  if (m_provider.isEmpty() || m_id.isEmpty() || m_redirect.isEmpty() || m_secret.isEmpty())
-    return false;
-
-  return true;
-}
-
-
-QVariantMap OAuthData::toJSON() const
-{
-  QVariantMap data;
-  data[LS("url")] = toUrl();
-  return data;
-}
+#endif /* AUTHPROVIDERS_H_ */
