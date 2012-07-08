@@ -26,7 +26,7 @@
 
 VS_VERSION_INFO VERSIONINFO
   FILEVERSION SCHAT_VERSION_RC
-  PRODUCTVERSION 0,3,3,0
+  PRODUCTVERSION 0,3,4,0
   FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
   FILEFLAGS VS_FF_DEBUG
@@ -47,7 +47,7 @@ VS_VERSION_INFO VERSIONINFO
         VALUE "LegalCopyright",   "Copyright (c) 2012 Vinicius dos Santos Oliveira"
         VALUE "OriginalFilename", "schat-tufao.dll"
         VALUE "ProductName",      SCHAT_NAME
-        VALUE "ProductVersion",   "0.3.3"
+        VALUE "ProductVersion",   "0.3.4"
       END
     END
     BLOCK "VarFileInfo"

@@ -298,11 +298,15 @@ int HttpServerRequest::Priv::on_headers_complete(http_parser *parser)
             M("PURGE")
         };
 #undef M
-#      if QT_VERSION < 0x040700
-       request->priv->method = QByteArray::fromRawData(methods[parser->method].str, methods[parser->method].size);
-#      else
-       request->priv->method.setRawData(methods[parser->method].str, methods[parser->method].size);
-#      endif
+
+#if QT_VERSION < QT_VERSION_CHECK(4, 7, 0)
+        request->priv->method
+                = QByteArray::fromRawData(methods[parser->method].str,
+                                          methods[parser->method].size);
+#else
+        request->priv->method.setRawData(methods[parser->method].str,
+                                         methods[parser->method].size);
+#endif
     }
 
     {

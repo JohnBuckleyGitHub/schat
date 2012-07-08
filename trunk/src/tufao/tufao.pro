@@ -45,7 +45,7 @@ SOURCES += \
     httpserverresponse.cpp \
     httpsserver.cpp \
     priv/asctime.cpp \
-    priv/http_parser.cpp \
+    priv/http_parser.c \
     priv/reasonphrase.cpp \
     priv/rfc1036.cpp \
     priv/rfc1123.cpp \
@@ -64,7 +64,6 @@ HEADERS += \
     ibytearray.h \
     priv/asctime.h \
     priv/http_parser.h \
-    priv/http_parser_qt_helper.h \
     priv/httpserver.h \
     priv/httpserverrequest.h \
     priv/httpserverrequestrouter.h \
