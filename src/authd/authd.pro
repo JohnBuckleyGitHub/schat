@@ -30,13 +30,41 @@ DEPENDPATH  += ../schatd2
 INCLUDEPATH += ../schatd2
 
 unix:!macx { 
+  css.files += ../../res/www/css/bootstrap.css
+  css.files += ../../res/www/css/result.css
+  css.path = /var/share/schatd2/www/css
+
+  img.files += ../../res/www/img/spinner.gif
+  img.files += ../../res/www/img/logo.png
+  img.path = /var/share/schatd2/www/img
+
+  js.files += ../../res/www/js/html5.js
+  js.path = /var/share/schatd2/www/js
+
+  other.files += ../../res/www/favicon.ico
+  other.path = /var/share/schatd2/www
+
   target.path += $$SCHAT_PREFIX/usr/sbin
-  INSTALLS += target
+  INSTALLS += target css img js other
 }
 
 win32 {
+  css.files += ../../res/www/css/bootstrap.css
+  css.files += ../../res/www/css/result.css
+  css.path  = ../../os/win32/schatd2/www/css
+
+  img.files += ../../res/www/img/spinner.gif
+  img.files += ../../res/www/img/logo.png
+  img.path = ../../os/win32/schatd2/www/img
+
+  js.files += ../../res/www/js/html5.js
+  js.path = ../../os/win32/schatd2/www/js
+
+  other.files += ../../res/www/favicon.ico
+  other.path = ../../os/win32/schatd2/www
+
   target.path += ../../os/win32/schatd2/
-  INSTALLS += target
+  INSTALLS += target css img js other
 }
 
 HEADERS = \
