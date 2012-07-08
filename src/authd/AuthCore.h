@@ -27,6 +27,7 @@ namespace Tufao {
 
 class AuthHandler;
 class QUrl;
+class Settings;
 
 class AuthCore : public QObject
 {
@@ -34,7 +35,8 @@ class AuthCore : public QObject
 
 public:
   AuthCore(QObject *parent = 0);
-  inline static AuthCore *i() { return m_self; }
+  inline static AuthCore *i()        { return m_self; }
+  inline static Settings *settings() { return m_self->m_settings; }
 
 private slots:
   void start();
@@ -42,9 +44,10 @@ private slots:
 private:
   void add(const QUrl &url);
 
-  QList<Tufao::HttpServer *> m_servers; ///< HTTP или HTTPS сервера ожидающие подключений.
-  static AuthCore *m_self;              ///< Указатель на себя.
   AuthHandler *m_handler;               ///< Основной обработчик запросов.
+  QList<Tufao::HttpServer *> m_servers; ///< HTTP или HTTPS сервера ожидающие подключений.
+  Settings *m_settings;                 ///< Настройки сервера.
+  static AuthCore *m_self;              ///< Указатель на себя.
 };
 
 #endif /* AUTHCORE_H_ */
