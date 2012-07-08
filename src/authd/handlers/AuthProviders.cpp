@@ -24,12 +24,8 @@
 #include "Tufao/headers.h"
 #include "Tufao/httpserverrequest.h"
 
-bool AuthProviders::serve(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
+bool AuthProviders::serve(const QUrl &, const QString &path, Tufao::HttpServerRequest *, Tufao::HttpServerResponse *response, QObject *)
 {
-  Q_UNUSED(url)
-  Q_UNUSED(request)
-  Q_UNUSED(parent);
-
   if (path == LS("/providers")) {
     response->writeHead(Tufao::HttpServerResponse::OK);
     response->headers().replace("Content-Type", "application/json");
