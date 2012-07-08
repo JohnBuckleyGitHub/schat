@@ -24,18 +24,13 @@ win32:RC_FILE = tufao.rc
 DEPENDPATH += ../3rdparty/Tufao
 INCLUDEPATH += ../3rdparty/Tufao
 
-unix {
-  macx {
-    target.path += ../../out/SimpleChat2.app/Contents/Frameworks/
-  } else {
-    target.path += $$SCHAT_PREFIX/usr/lib
-  }
-
+unix:!macx{
+  target.path += $$SCHAT_PREFIX/usr/lib
   INSTALLS += target
 }
 
 win32 {
-  target.path += ../../os/win32/schat2/
+  target.path += ../../os/win32/schatd2/
   INSTALLS += target
 }
 

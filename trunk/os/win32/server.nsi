@@ -70,6 +70,8 @@ Section
   SetOutPath "$INSTDIR"
   File "${SCHAT_SOURCE}\schatd2.exe"
   File "${SCHAT_SOURCE}\schatd.dll"
+  File "${SCHAT_SOURCE}\schat-authd.exe"
+  File "${SCHAT_SOURCE}\schat-tufao.dll"
   File "license.txt"
 
   File "${SCHAT_SOURCE}\server.crt"
@@ -132,7 +134,9 @@ Section "Uninstall"
   Delete "$INSTDIR\server.key"
 
   Delete "$INSTDIR\schatd2.exe"
+  Delete "$INSTDIR\schat-authd.exe"
   Delete "$INSTDIR\schatd.dll"
+  Delete "$INSTDIR\schat-tufao.dll"
   Delete "$INSTDIR\license.txt"
 
   Delete "$INSTDIR\plugins\qt\sqldrivers\qsqlite4.dll"

@@ -20,11 +20,24 @@ SCHAT_RC_FILE     = 1
 SCHAT_SINGLEAPP   = 0
 TARGET            = schat-authd
 DEFINES          += SCHAT_DAEMON
-SCHAT_DAEMON_LIB  = 0
+SCHAT_DAEMON_LIB  = 1
 SCHAT_TUFAO_LIB   = 1
 
 QT = core network
 TEMPLATE = app
+
+DEPENDPATH  += ../schatd2
+INCLUDEPATH += ../schatd2
+
+unix:!macx { 
+  target.path += $$SCHAT_PREFIX/usr/sbin
+  INSTALLS += target
+}
+
+win32 {
+  target.path += ../../os/win32/schatd2/
+  INSTALLS += target
+}
 
 HEADERS = \
     AuthCore.h \

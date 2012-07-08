@@ -24,9 +24,13 @@
 
 #include "AuthCore.h"
 #include "AuthHandler.h"
-#include "Tufao/httpserver.h"
-#include "oauth2/GoogleAuth.h"
 #include "HandlerRoute.h"
+#include "oauth2/GoogleAuth.h"
+#include "Path.h"
+#include "Settings.h"
+#include "sglobal.h"
+#include "Storage.h"
+#include "Tufao/httpserver.h"
 
 AuthCore *AuthCore::m_self = 0;
 
@@ -34,6 +38,11 @@ AuthCore::AuthCore(QObject *parent)
   : QObject(parent)
 {
   m_self = this;
+  Path::init();
+
+  m_settings = new Settings(Storage::etcPath() + LC('/') + Path::app() + LS(".conf"), this);
+  m_settings->setDefault(LS("Listen"), QStringList("http://0.0.0.0:7668"));
+
   m_handler = new AuthHandler(this);
   m_handler->setRoot(QCoreApplication::applicationDirPath());
 
@@ -44,7 +53,10 @@ AuthCore::AuthCore(QObject *parent)
 
 void AuthCore::start()
 {
-  add(QUrl("http://0.0.0.0:7668"));
+  QStringList listen = m_settings->value(LS("Listen")).toStringList();
+  foreach (const QString &url, listen) {
+    add(QUrl(url));
+  }
 }
 
 
