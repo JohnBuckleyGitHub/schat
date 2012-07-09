@@ -23,42 +23,90 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 
+#include "AuthCore.h"
+#include "AuthHandler.h"
+#include "JSON.h"
 #include "oauth2/GoogleAuth.h"
+#include "oauth2/OAuthData.h"
 #include "sglobal.h"
+#include "Tufao/httpserverresponse.h"
 
 GoogleAuth::GoogleAuth(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
   : OAuthHandler(url, path, request, response, parent)
+  , m_reply(0)
 {
+  m_provider = AuthCore::provider(LS("google"));
+  if (!m_provider) {
+    AuthHandler::setError(response, Tufao::HttpServerResponse::INTERNAL_SERVER_ERROR);
+    return;
+  }
+
   if (url.hasQueryItem(LS("error")) || !url.hasQueryItem(LS("code"))) {
     serveError();
     return;
   }
 
   setState(url.queryItemValue(LS("state")).toLatin1());
-  qDebug() << "" << m_state;
   serveOk();
 
-//  m_manager = new QNetworkAccessManager(this);
-//
-//  qDebug() << "GoogleAuth()" << url.queryItemValue(LS("code"));
-//
-//  QNetworkRequest r(QUrl(LS("https://accounts.google.com/o/oauth2/token")));
-//  r.setHeader(QNetworkRequest::ContentTypeHeader, LS("application/x-www-form-urlencoded"));
-//  QByteArray body = "code=" + url.queryItemValue(LS("code")).toUtf8();
-//  body += "&client_id=649867065580.apps.googleusercontent.com";
-//  body += "&client_secret=_v35lXd85eThn3TmNF0cFgRc";
-//  body += "&redirect_uri=http://localhost:7668/oauth2/google";
-//  body += "&grant_type=authorization_code";
-//
-//  QNetworkReply *reply = m_manager->post(r, body);
-//  connect(reply, SIGNAL(readyRead()), SLOT(tokenReady()));
+  m_manager = new QNetworkAccessManager(this);
+
+  QNetworkRequest r(QUrl(LS("https://accounts.google.com/o/oauth2/token")));
+  r.setHeader(QNetworkRequest::ContentTypeHeader, LS("application/x-www-form-urlencoded"));
+  QByteArray body = "code=" + url.queryItemValue(LS("code")).toUtf8();
+  body += "&client_id="     + m_provider->id();
+  body += "&client_secret=" + m_provider->secret();
+  body += "&redirect_uri="  + m_provider->redirect();
+  body += "&grant_type=authorization_code";
+
+  QNetworkReply *reply = m_manager->post(r, body);
+  connect(reply, SIGNAL(readyRead()), SLOT(tokenReady()));
 }
 
 
+void GoogleAuth::dataReady()
+{
+  m_reply = qobject_cast<QNetworkReply*>(sender());
+  if (!m_reply)
+    return;
+
+  qDebug() << m_reply->readAll();
+  m_reply->deleteLater();
+}
+
+
+/*!
+ * Слот вызывается, когда завершено получение токена авторизации.
+ */
 void GoogleAuth::tokenReady()
 {
-  QNetworkReply *reply = qobject_cast<QNetworkReply*>(sender());
-  qDebug() << "GoogleAuth::tokenReady()" << reply->error() << reply->readAll();
+  m_reply = qobject_cast<QNetworkReply*>(sender());
+  if (!m_reply)
+    return;
+
+  if (m_reply->error())
+    return setError();
+
+  QVariantMap data = JSON::parse(m_reply->readAll()).toMap();
+  QByteArray token = data.value(LS("access_token")).toByteArray();
+  if (token.isEmpty())
+    return setError();
+
+  m_reply->deleteLater();
+
+  QNetworkRequest request(QUrl(LS("https://www.googleapis.com/oauth2/v1/userinfo")));
+  request.setRawHeader("Authorization", "Bearer " + token);
+  QNetworkReply *reply = m_manager->get(request);
+  connect(reply, SIGNAL(readyRead()), SLOT(dataReady()));
+}
+
+
+void GoogleAuth::setError()
+{
+  if (m_reply) {
+    m_reply->deleteLater();
+    m_reply = 0;
+  }
 }
 
 

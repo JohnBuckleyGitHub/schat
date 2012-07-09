@@ -21,7 +21,9 @@
 
 #include "oauth2/OAuthHandler.h"
 
+class OAuthData;
 class QNetworkAccessManager;
+class QNetworkReply;
 
 class GoogleAuth : public OAuthHandler
 {
@@ -31,10 +33,15 @@ public:
   GoogleAuth(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent = 0);
 
 private slots:
+  void dataReady();
   void tokenReady();
 
 private:
+  void setError();
+
+  OAuthData *m_provider;            ///< Информация о провайдере.
   QNetworkAccessManager *m_manager; ///< Менеджер доступа к сети.
+  QNetworkReply *m_reply;           ///< Текущий завершённый HTTP запрос.
 };
 
 
