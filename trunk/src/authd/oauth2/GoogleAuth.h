@@ -34,12 +34,7 @@ private slots:
   void tokenReady();
 
 private:
-  enum State {
-    GetAccessToken
-  };
-
   QNetworkAccessManager *m_manager; ///< Менеджер доступа к сети.
-  State m_state;                    ///< Состояние.
 };
 
 

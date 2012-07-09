@@ -23,7 +23,7 @@
 
 namespace Tufao {
 
-QByteArray reasonPhrase(int statusCode);
+TUFAO_EXPORT QByteArray reasonPhrase(int statusCode);
 
 } // namespace Tufao
 

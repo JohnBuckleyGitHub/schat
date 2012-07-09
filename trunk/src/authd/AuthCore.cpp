@@ -44,7 +44,7 @@ AuthCore::AuthCore(QObject *parent)
 
   m_settings = new Settings(Storage::etcPath() + LC('/') + Path::app() + LS(".conf"), this);
   m_settings->setDefault(LS("Listen"), QStringList("http://0.0.0.0:7668"));
-  m_settings->setDefault(LS("Root"),   Storage::sharePath() + LS("/www/"));
+  m_settings->setDefault(LS("Root"),   Storage::sharePath() + LS("/www"));
 
   m_handler = new AuthHandler(this);
   m_handler->setRoot(QDir::cleanPath(m_settings->value(LS("Root")).toString()));
