@@ -26,12 +26,14 @@
 #include "oauth2/GoogleAuth.h"
 #include "sglobal.h"
 
-GoogleAuth::GoogleAuth(const QUrl &url, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
-  : QObject(parent)
+GoogleAuth::GoogleAuth(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
+  : OAuthHandler(url, path, request, response, parent)
   , m_state(GetAccessToken)
 {
-  Q_UNUSED(request)
-  Q_UNUSED(response)
+  if (url.hasQueryItem(LS("error"))) {
+    serveError();
+    return;
+  }
 
   m_manager = new QNetworkAccessManager(this);
 //  QNetworkRequest request(m_url);
@@ -61,7 +63,7 @@ void GoogleAuth::tokenReady()
 bool GoogleAuthCreator::serve(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
 {
   if (path == LS("/oauth2/google")) {
-    new GoogleAuth(url, request, response, parent);
+    new GoogleAuth(url, path, request, response, parent);
     return true;
   }
 

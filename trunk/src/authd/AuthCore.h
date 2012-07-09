@@ -43,6 +43,7 @@ public:
   inline static AuthCore *i()                             { return m_self; }
   inline static OAuthData *provider(const QString &name)  { return m_self->m_oauth.value(name); }
   inline static Settings *settings()                      { return m_self->m_settings; }
+  static QString root();
 
 private slots:
   void start();
