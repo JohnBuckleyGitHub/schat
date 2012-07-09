@@ -33,6 +33,7 @@ public:
 
 protected:
   void serveError();
+  void serveOk();
 
   const QString &m_path;                 ///< Относительный путь.
   const QUrl &m_url;                     ///< Полный URL адрес запроса.
