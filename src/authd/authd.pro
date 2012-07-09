@@ -15,7 +15,7 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SCHAT_RESOURCES   = 0
+SCHAT_RESOURCES   = 1
 SCHAT_RC_FILE     = 1
 SCHAT_SINGLEAPP   = 0
 TARGET            = schat-authd
@@ -77,6 +77,7 @@ HEADERS = \
     oauth2/GoogleAuth.h \
     oauth2/GoogleAuthData.h \
     oauth2/OAuthData.h \
+    oauth2/OAuthHandler.h \
 
 SOURCES = \
     AuthCore.cpp \
@@ -88,6 +89,7 @@ SOURCES = \
     oauth2/GoogleAuth.cpp \
     oauth2/GoogleAuthData.cpp \
     oauth2/OAuthData.cpp \
+    oauth2/OAuthHandler.cpp \
 
 include(../common/config.pri)
 include(../common/common.pri)

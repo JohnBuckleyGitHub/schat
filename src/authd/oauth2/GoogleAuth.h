@@ -19,16 +19,16 @@
 #ifndef GOOGLEAUTH_H_
 #define GOOGLEAUTH_H_
 
-#include "HandlerCreator.h"
+#include "oauth2/OAuthHandler.h"
 
 class QNetworkAccessManager;
 
-class GoogleAuth : public QObject
+class GoogleAuth : public OAuthHandler
 {
   Q_OBJECT
 
 public:
-  GoogleAuth(const QUrl &url, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent = 0);
+  GoogleAuth(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent = 0);
 
 private slots:
   void tokenReady();

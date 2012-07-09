@@ -62,6 +62,15 @@ AuthCore::~AuthCore()
 }
 
 
+/*!
+ * Возвращает корневую директорию для файлов доступных по HTTP.
+ */
+QString AuthCore::root()
+{
+  return m_self->m_handler->root();
+}
+
+
 void AuthCore::start()
 {
   add(new GoogleAuthData());
