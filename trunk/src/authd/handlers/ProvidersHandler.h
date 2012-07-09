@@ -26,10 +26,10 @@
  *
  * Возвращаются JSON данные со списком доступных OAuth провайдеров.
  */
-class AuthProviders : public HandlerCreator
+class ProvidersHandler : public HandlerCreator
 {
 public:
-  AuthProviders() : HandlerCreator() {}
+  ProvidersHandler() : HandlerCreator() {}
   bool serve(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent);
 
 private:

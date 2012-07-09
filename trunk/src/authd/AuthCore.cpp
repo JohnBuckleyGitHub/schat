@@ -49,7 +49,9 @@ AuthCore::AuthCore(QObject *parent)
   m_handler = new AuthHandler(this);
   m_handler->setRoot(QDir::cleanPath(m_settings->value(LS("Root")).toString()));
 
-  add(new AuthProviders());
+  add(new ProvidersHandler());
+  add(new StateHandlerCreator());
+
   add(new GoogleAuthCreator());
 
   QTimer::singleShot(0, this, SLOT(start()));

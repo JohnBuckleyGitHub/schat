@@ -17,8 +17,22 @@
  */
 
 #include "HandlerCreator.h"
+#include "Tufao/httpserverrequest.h"
 
 bool HandlerCreator::serve(const QUrl &, const QString &, Tufao::HttpServerRequest *, Tufao::HttpServerResponse *, QObject *)
 {
   return false;
+}
+
+
+/*!
+ * Обвёртка для автоматического удаления обработчика запроса.
+ *
+ * \param request HTTP запрос.
+ * \param handler Обработчик запроса.
+ */
+bool HandlerCreator::addHandler(Tufao::HttpServerRequest *request, QObject *handler)
+{
+  QObject::connect(request, SIGNAL(close()), handler, SLOT(deleteLater()));
+  return true;
 }

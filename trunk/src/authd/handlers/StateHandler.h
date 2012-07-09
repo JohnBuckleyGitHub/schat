@@ -16,6 +16,29 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "handlers/ProvidersHandler.h"
-#include "handlers/StateHandler.h"
-#include "oauth2/GoogleAuth.h"
+#ifndef STATEHANDLER_H_
+#define STATEHANDLER_H_
+
+#include "HandlerCreator.h"
+
+class StateHandler : public QObject
+{
+  Q_OBJECT
+
+public:
+  StateHandler(const QByteArray &state, Tufao::HttpServerResponse *response, QObject *parent = 0);
+
+private:
+  QByteArray m_state;                    ///< Идентификатор состояния.
+  Tufao::HttpServerResponse *m_response; ///< Ответ на запрос.
+};
+
+
+class StateHandlerCreator : public HandlerCreator
+{
+public:
+  StateHandlerCreator() : HandlerCreator() {}
+  bool serve(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent);
+};
+
+#endif /* STATEHANDLER_H_ */

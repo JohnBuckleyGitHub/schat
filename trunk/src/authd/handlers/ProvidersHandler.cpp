@@ -17,14 +17,14 @@
  */
 
 #include "AuthCore.h"
-#include "handlers/AuthProviders.h"
+#include "handlers/ProvidersHandler.h"
 #include "JSON.h"
 #include "oauth2/OAuthData.h"
 #include "sglobal.h"
 #include "Tufao/headers.h"
 #include "Tufao/httpserverrequest.h"
 
-bool AuthProviders::serve(const QUrl &, const QString &path, Tufao::HttpServerRequest *, Tufao::HttpServerResponse *response, QObject *)
+bool ProvidersHandler::serve(const QUrl &, const QString &path, Tufao::HttpServerRequest *, Tufao::HttpServerResponse *response, QObject *)
 {
   if (path == LS("/providers")) {
     response->writeHead(Tufao::HttpServerResponse::OK);
