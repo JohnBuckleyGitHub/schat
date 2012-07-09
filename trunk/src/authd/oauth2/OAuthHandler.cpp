@@ -73,3 +73,13 @@ void OAuthHandler::serveError()
 
   m_response->end(data);
 }
+
+
+
+void OAuthHandler::serveOk()
+{
+  m_response->writeHead(Tufao::HttpServerResponse::OK);
+  m_response->headers().replace("Content-Type", "text/html");
+  QByteArray data = page(LS("result.html"));
+  m_response->end(data);
+}

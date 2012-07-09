@@ -30,26 +30,27 @@ GoogleAuth::GoogleAuth(const QUrl &url, const QString &path, Tufao::HttpServerRe
   : OAuthHandler(url, path, request, response, parent)
   , m_state(GetAccessToken)
 {
-  if (url.hasQueryItem(LS("error"))) {
+  if (url.hasQueryItem(LS("error")) || !url.hasQueryItem(LS("code"))) {
     serveError();
     return;
   }
 
-  m_manager = new QNetworkAccessManager(this);
-//  QNetworkRequest request(m_url);
+  serveOk();
 
-  qDebug() << "GoogleAuth()" << url.queryItemValue(LS("code"));
-
-  QNetworkRequest r(QUrl(LS("https://accounts.google.com/o/oauth2/token")));
-  r.setHeader(QNetworkRequest::ContentTypeHeader, LS("application/x-www-form-urlencoded"));
-  QByteArray body = "code=" + url.queryItemValue(LS("code")).toUtf8();
-  body += "&client_id=649867065580.apps.googleusercontent.com";
-  body += "&client_secret=_v35lXd85eThn3TmNF0cFgRc";
-  body += "&redirect_uri=http://localhost:7668/oauth2/google";
-  body += "&grant_type=authorization_code";
-
-  QNetworkReply *reply = m_manager->post(r, body);
-  connect(reply, SIGNAL(readyRead()), SLOT(tokenReady()));
+//  m_manager = new QNetworkAccessManager(this);
+//
+//  qDebug() << "GoogleAuth()" << url.queryItemValue(LS("code"));
+//
+//  QNetworkRequest r(QUrl(LS("https://accounts.google.com/o/oauth2/token")));
+//  r.setHeader(QNetworkRequest::ContentTypeHeader, LS("application/x-www-form-urlencoded"));
+//  QByteArray body = "code=" + url.queryItemValue(LS("code")).toUtf8();
+//  body += "&client_id=649867065580.apps.googleusercontent.com";
+//  body += "&client_secret=_v35lXd85eThn3TmNF0cFgRc";
+//  body += "&redirect_uri=http://localhost:7668/oauth2/google";
+//  body += "&grant_type=authorization_code";
+//
+//  QNetworkReply *reply = m_manager->post(r, body);
+//  connect(reply, SIGNAL(readyRead()), SLOT(tokenReady()));
 }
 
 
