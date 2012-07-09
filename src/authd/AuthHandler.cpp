@@ -27,6 +27,7 @@
 #include "HandlerRoute.h"
 #include "Tufao/headers.h"
 #include "Tufao/httpserverrequest.h"
+#include "Tufao/priv/reasonphrase.h"
 #include "Tufao/url.h"
 
 AuthHandler::AuthHandler(QObject *parent)
@@ -43,6 +44,20 @@ AuthHandler::~AuthHandler()
 
 
 /*!
+ * Установка HTTP ошибки.
+ * Используется минимальный HTML шаблон с текстом ошибки.
+ */
+void AuthHandler::setError(Tufao::HttpServerResponse *response, int statusCode)
+{
+  response->writeHead(statusCode);
+  response->headers().replace("Content-Type", "text/html");
+
+  QByteArray text = QByteArray::number(statusCode) + ' ' +  Tufao::reasonPhrase(statusCode);
+  response->end("<html><head><title>" + text + "</title></head><body bgcolor=\"white\"><center><h1>" + text + "</h1><hr></body></html>");
+}
+
+
+/*!
  * Обработка запросов.
  */
 void AuthHandler::handleRequest(Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response)
@@ -53,9 +68,7 @@ void AuthHandler::handleRequest(Tufao::HttpServerRequest *request, Tufao::HttpSe
 
   // Плохой запрос, файл не находится внутри корневой директории сервера.
   if (!fileName.startsWith(m_root)) {
-    response->writeHead(Tufao::HttpServerResponse::BAD_REQUEST);
-    response->headers().replace("Content-Type", "text/html");
-    response->end(error("400 Bad Request"));
+    setError(response, Tufao::HttpServerResponse::BAD_REQUEST);
     return;
   }
 
@@ -67,17 +80,13 @@ void AuthHandler::handleRequest(Tufao::HttpServerRequest *request, Tufao::HttpSe
 
   // Если файл не найден возвращаем "404 Not Found".
   if (!exists) {
-    response->writeHead(Tufao::HttpServerResponse::NOT_FOUND);
-    response->headers().replace("Content-Type", "text/html");
-    response->end(error("404 Not Found"));
+    setError(response, Tufao::HttpServerResponse::NOT_FOUND);
     return;
   }
 
   // Если файл является папкой или не доступен для чтения возвращаем "403 Forbidden".
   if (fileInfo.isDir() || !fileInfo.isReadable()) {
-    response->writeHead(Tufao::HttpServerResponse::FORBIDDEN);
-    response->headers().replace("Content-Type", "text/html");
-    response->end(error("403 Forbidden"));
+    setError(response, Tufao::HttpServerResponse::FORBIDDEN);
     return;
   }
 
@@ -96,12 +105,6 @@ bool AuthHandler::serve(const QUrl &url, const QString &path, Tufao::HttpServerR
   }
 
   return false;
-}
-
-
-QByteArray AuthHandler::error(const QByteArray &error) const
-{
-  return "<html><head><title>" + error + "</title></head><body bgcolor=\"white\"><center><h1>" + error + "</h1><hr></body></html>";
 }
 
 

@@ -34,9 +34,11 @@ public:
 protected:
   void serveError();
   void serveOk();
+  void setState(const QByteArray &state);
 
   const QString &m_path;                 ///< Относительный путь.
   const QUrl &m_url;                     ///< Полный URL адрес запроса.
+  QByteArray m_state;                    ///< Base32 кодированный идентификатор состояния.
   Tufao::HttpServerRequest *m_request;   ///< HTTP запрос.
   Tufao::HttpServerResponse *m_response; ///< HTTP ответ.
 };

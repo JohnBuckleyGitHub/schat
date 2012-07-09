@@ -19,6 +19,7 @@
 #include <QFile>
 
 #include "AuthCore.h"
+#include "net/SimpleID.h"
 #include "oauth2/OAuthHandler.h"
 #include "sglobal.h"
 #include "Tufao/headers.h"
@@ -82,4 +83,16 @@ void OAuthHandler::serveOk()
   m_response->headers().replace("Content-Type", "text/html");
   QByteArray data = page(LS("result.html"));
   m_response->end(data);
+}
+
+
+/*!
+ * Установка или генерация идентификатора состояния.
+ */
+void OAuthHandler::setState(const QByteArray &state)
+{
+  if (SimpleID::typeOf(SimpleID::decode(state)) == SimpleID::MessageId)
+    m_state = state;
+  else
+    m_state = SimpleID::encode(SimpleID::randomId(SimpleID::MessageId));
 }

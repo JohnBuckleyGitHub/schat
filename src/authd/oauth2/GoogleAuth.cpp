@@ -28,13 +28,14 @@
 
 GoogleAuth::GoogleAuth(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
   : OAuthHandler(url, path, request, response, parent)
-  , m_state(GetAccessToken)
 {
   if (url.hasQueryItem(LS("error")) || !url.hasQueryItem(LS("code"))) {
     serveError();
     return;
   }
 
+  setState(url.queryItemValue(LS("state")).toLatin1());
+  qDebug() << "" << m_state;
   serveOk();
 
 //  m_manager = new QNetworkAccessManager(this);

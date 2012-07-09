@@ -39,13 +39,13 @@ public:
 
   inline QString root() const              { return m_root; }
   inline void setRoot(const QString &root) { m_root = root; }
+  static void setError(Tufao::HttpServerResponse *response, int statusCode);
 
 public slots:
   void handleRequest(Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response);
 
 private:
   bool serve(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response);
-  QByteArray error(const QByteArray &error) const;
   void serveFile(const QString &fileName, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response);
 
   HandlerRoute *m_route; ///< Список обработчиков.
