@@ -25,12 +25,12 @@
 class OAuthData
 {
 public:
-  OAuthData(const QString &provider = QString());
+  OAuthData(const QByteArray &provider = QByteArray());
   virtual ~OAuthData() {}
   inline const QByteArray id() const        { return m_id; }
+  inline const QByteArray provider() const  { return m_provider; }
   inline const QByteArray redirect() const  { return m_redirect; }
   inline const QByteArray secret() const    { return m_secret; }
-  inline const QString provider() const     { return m_provider; }
   virtual bool isValid() const;
   virtual inline bool read()                { return isValid(); }
   virtual inline QByteArray toUrl() const   { return QByteArray(); }
@@ -40,7 +40,7 @@ protected:
   QByteArray m_id;       ///< Client ID.
   QByteArray m_redirect; ///< Redirect URI.
   QByteArray m_secret;   ///< Client secret.
-  QString m_provider;    ///< Кодовое имя OAuth2 провайдера.
+  QByteArray m_provider; ///< Кодовое имя OAuth2 провайдера.
 };
 
 #endif /* OAUTHDATA_H_ */

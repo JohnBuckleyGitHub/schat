@@ -18,7 +18,9 @@
 
 #include <QDebug>
 
+#include "AuthCore.h"
 #include "handlers/StateHandler.h"
+#include "JSON.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
 #include "Tufao/Headers.h"
@@ -29,21 +31,55 @@ StateHandler::StateHandler(const QByteArray &state, Tufao::HttpServerResponse *r
   , m_state(state)
   , m_response(response)
 {
+  connect(AuthCore::state(), SIGNAL(added(QByteArray, AuthStatePtr)), SLOT(added(QByteArray, AuthStatePtr)));
+}
+
+
+void StateHandler::serveOk(Tufao::HttpServerResponse *response, AuthStatePtr data)
+{
+  response->writeHead(Tufao::HttpServerResponse::OK);
+
+  QVariantMap json;
+  json[LS("id")]       = data->id;
+  json[LS("provider")] = data->provider;
+  json[LS("raw")]      = data->raw;
+  response->end(JSON::generate(json, true));
+}
+
+
+void StateHandler::added(const QByteArray &state, AuthStatePtr data)
+{
+  qDebug() << "StateHandler::added" << state;
+  if (m_state != state)
+    return;
+
+  serveOk(m_response, data);
 }
 
 
 bool StateHandlerCreator::serve(const QUrl &, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
 {
+  response->headers().replace("Content-Type", "application/json");
+
   if (path.startsWith(LS("/state/"))) {
     QByteArray state = path.mid(7, 34).toLatin1();
     if (SimpleID::typeOf(SimpleID::decode(state)) != SimpleID::MessageId) {
       response->writeHead(Tufao::HttpServerResponse::BAD_REQUEST);
-      response->headers().replace("Content-Type", "application/json");
       response->end("{\"error\":\"invalid_state\"}");
       return true;
     }
 
-    return addHandler(request, new StateHandler(state, response, parent));
+    AuthStatePtr data = AuthCore::state()->get(state);
+    if (!data)
+      return addHandler(request, new StateHandler(state, response, parent));
+
+    if (!data->error.isEmpty()) {
+      response->writeHead(Tufao::HttpServerResponse::FORBIDDEN);
+      response->end("{\"error\":\"" + data->error + "\"}");
+      return true;
+    }
+
+    StateHandler::serveOk(response, data);
   }
 
   return false;

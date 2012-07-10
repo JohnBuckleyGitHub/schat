@@ -26,7 +26,7 @@
 #include "sglobal.h"
 
 GoogleAuthData::GoogleAuthData()
-  : OAuthData(LS("google"))
+  : OAuthData("google")
 {
 }
 

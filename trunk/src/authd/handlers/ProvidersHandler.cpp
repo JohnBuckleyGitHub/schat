@@ -32,7 +32,7 @@ bool ProvidersHandler::serve(const QUrl &, const QString &path, Tufao::HttpServe
 
     if (m_cache.isEmpty()) {
       QVariantMap data;
-      const QHash<QString, OAuthData *> &providers = AuthCore::i()->oauth();
+      const QHash<QString, OAuthData *> &providers = AuthCore::i()->providers();
 
       QHashIterator<QString, OAuthData *> i(providers);
       while (i.hasNext()) {

@@ -16,27 +16,37 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oauth2/OAuthData.h"
-#include "sglobal.h"
+#include "AuthState.h"
 
-OAuthData::OAuthData(const QByteArray &provider)
-  : m_provider(provider)
+
+AuthStateData::AuthStateData(const QByteArray &state, const QByteArray &error)
+  : error(error)
+  , state(state)
 {
 }
 
 
-bool OAuthData::isValid() const
+AuthStateData::AuthStateData(const QByteArray &state, const QByteArray &provider, const QByteArray &id, const QByteArray &token, const QVariantMap &raw)
+  : id(id)
+  , provider(provider)
+  , state(state)
+  , token(token)
+  , raw(raw)
 {
-  if (m_provider.isEmpty() || m_id.isEmpty() || m_redirect.isEmpty() || m_secret.isEmpty())
-    return false;
-
-  return true;
 }
 
 
-QVariantMap OAuthData::toJSON() const
+AuthState::AuthState(QObject *parent)
+  : QObject(parent)
 {
-  QVariantMap data;
-  data[LS("url")] = toUrl();
-  return data;
+}
+
+
+void AuthState::add(AuthStateData *data)
+{
+  AuthStatePtr ptr = AuthStatePtr(data);
+  const QByteArray &state = ptr->state;
+
+  m_states[state] = ptr;
+  emit added(state, ptr);
 }
