@@ -22,7 +22,7 @@
 #include "oauth2/OAuthData.h"
 #include "sglobal.h"
 #include "Tufao/headers.h"
-#include "Tufao/httpserverrequest.h"
+#include "Tufao/httpserverresponse.h"
 
 bool ProvidersHandler::serve(const QUrl &, const QString &path, Tufao::HttpServerRequest *, Tufao::HttpServerResponse *response, QObject *)
 {

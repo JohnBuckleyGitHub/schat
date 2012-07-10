@@ -22,9 +22,7 @@
 #include "HandlerCreator.h"
 
 /*!
- * Ответ на запрос "/providers".
- *
- * Возвращаются JSON данные со списком доступных OAuth провайдеров.
+ * Запрос "/providers": получение JSON данных со списком доступных OAuth провайдеров.
  */
 class ProvidersHandler : public HandlerCreator
 {

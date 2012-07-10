@@ -26,8 +26,8 @@
 #include "Tufao/Headers.h"
 #include "Tufao/httpserverresponse.h"
 
-StateHandler::StateHandler(const QByteArray &state, Tufao::HttpServerResponse *response, QObject *parent)
-  : QObject(parent)
+StateHandler::StateHandler(const QByteArray &state, Tufao::HttpServerResponse *response)
+  : QObject(response)
   , m_state(state)
   , m_response(response)
 {
@@ -43,13 +43,12 @@ void StateHandler::serveOk(Tufao::HttpServerResponse *response, AuthStatePtr dat
   json[LS("id")]       = data->id;
   json[LS("provider")] = data->provider;
   json[LS("raw")]      = data->raw;
-  response->end(JSON::generate(json, true));
+  response->end(JSON::generate(json));
 }
 
 
 void StateHandler::added(const QByteArray &state, AuthStatePtr data)
 {
-  qDebug() << "StateHandler::added" << state;
   if (m_state != state)
     return;
 
@@ -57,7 +56,7 @@ void StateHandler::added(const QByteArray &state, AuthStatePtr data)
 }
 
 
-bool StateHandlerCreator::serve(const QUrl &, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
+bool StateHandlerCreator::serve(const QUrl &, const QString &path, Tufao::HttpServerRequest *, Tufao::HttpServerResponse *response, QObject *)
 {
   response->headers().replace("Content-Type", "application/json");
 
@@ -70,8 +69,10 @@ bool StateHandlerCreator::serve(const QUrl &, const QString &path, Tufao::HttpSe
     }
 
     AuthStatePtr data = AuthCore::state()->get(state);
-    if (!data)
-      return addHandler(request, new StateHandler(state, response, parent));
+    if (!data) {
+      new StateHandler(state, response);
+      return true;
+    }
 
     if (!data->error.isEmpty()) {
       response->writeHead(Tufao::HttpServerResponse::FORBIDDEN);
@@ -80,6 +81,7 @@ bool StateHandlerCreator::serve(const QUrl &, const QString &path, Tufao::HttpSe
     }
 
     StateHandler::serveOk(response, data);
+    return true;
   }
 
   return false;

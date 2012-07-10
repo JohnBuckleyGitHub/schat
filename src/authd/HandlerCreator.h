@@ -34,9 +34,6 @@ public:
   HandlerCreator() {}
   virtual ~HandlerCreator() {}
   virtual bool serve(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent);
-
-protected:
-  bool addHandler(Tufao::HttpServerRequest *request, QObject *handler);
 };
 
 #endif /* HANDLERCREATOR_H_ */
