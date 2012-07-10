@@ -23,7 +23,7 @@
 #include "JSON.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
-#include "Tufao/Headers.h"
+#include "Tufao/headers.h"
 #include "Tufao/httpserverresponse.h"
 
 StateHandler::StateHandler(const QByteArray &state, Tufao::HttpServerResponse *response)
