@@ -24,6 +24,7 @@
 
 #include "AuthCore.h"
 #include "AuthHandler.h"
+#include "AuthState.h"
 #include "HandlerRoute.h"
 #include "handlers.h"
 #include "oauth2/GoogleAuthData.h"
@@ -33,7 +34,6 @@
 #include "sglobal.h"
 #include "Storage.h"
 #include "Tufao/httpserver.h"
-
 AuthCore *AuthCore::m_self = 0;
 
 AuthCore::AuthCore(QObject *parent)
@@ -49,6 +49,8 @@ AuthCore::AuthCore(QObject *parent)
   m_handler = new AuthHandler(this);
   m_handler->setRoot(QDir::cleanPath(m_settings->value(LS("Root")).toString()));
 
+  m_state = new AuthState(this);
+
   add(new ProvidersHandler());
   add(new StateHandlerCreator());
 
@@ -60,7 +62,7 @@ AuthCore::AuthCore(QObject *parent)
 
 AuthCore::~AuthCore()
 {
-  qDeleteAll(m_oauth);
+  qDeleteAll(m_providers);
 }
 
 
@@ -108,8 +110,8 @@ void AuthCore::add(HandlerCreator *handler)
 
 void AuthCore::add(OAuthData *data)
 {
-  if (!m_oauth.contains(data->provider()) && data->read())
-    m_oauth[data->provider()] = data;
+  if (!m_providers.contains(data->provider()) && data->read())
+    m_providers[data->provider()] = data;
   else
     delete data;
 }

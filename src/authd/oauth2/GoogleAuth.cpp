@@ -26,10 +26,13 @@
 #include "AuthCore.h"
 #include "AuthHandler.h"
 #include "JSON.h"
+#include "net/SimpleID.h"
 #include "oauth2/GoogleAuth.h"
 #include "oauth2/OAuthData.h"
 #include "sglobal.h"
 #include "Tufao/httpserverresponse.h"
+#include "AuthCore.h"
+#include "AuthState.h"
 
 GoogleAuth::GoogleAuth(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
   : OAuthHandler(url, path, request, response, parent)
@@ -47,6 +50,7 @@ GoogleAuth::GoogleAuth(const QUrl &url, const QString &path, Tufao::HttpServerRe
   }
 
   setState(url.queryItemValue(LS("state")).toLatin1());
+  qDebug() << m_state;
   serveOk();
 
   m_manager = new QNetworkAccessManager(this);
@@ -64,14 +68,29 @@ GoogleAuth::GoogleAuth(const QUrl &url, const QString &path, Tufao::HttpServerRe
 }
 
 
+/*!
+ * Слот вызывается, когда завершено получение информации о пользователе.
+ */
 void GoogleAuth::dataReady()
 {
   m_reply = qobject_cast<QNetworkReply*>(sender());
   if (!m_reply)
     return;
 
-  qDebug() << m_reply->readAll();
+  if (m_reply->error())
+    return setError();
+
+  QVariantMap data = JSON::parse(m_reply->readAll()).toMap();
   m_reply->deleteLater();
+
+  QByteArray email = data.value(LS("email")).toByteArray();
+  if (email.isEmpty())
+    return setError();
+
+  QByteArray id = SimpleID::encode(SimpleID::make("google:" + email, SimpleID::UserId));
+  AuthCore::state()->add(new AuthStateData(m_state, "google", id, QByteArray(), data));
+
+  qDebug() << email;
 }
 
 

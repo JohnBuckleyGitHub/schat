@@ -19,6 +19,7 @@
 #ifndef STATEHANDLER_H_
 #define STATEHANDLER_H_
 
+#include "AuthState.h"
 #include "HandlerCreator.h"
 
 class StateHandler : public QObject
@@ -27,6 +28,10 @@ class StateHandler : public QObject
 
 public:
   StateHandler(const QByteArray &state, Tufao::HttpServerResponse *response, QObject *parent = 0);
+  static void serveOk(Tufao::HttpServerResponse *response, AuthStatePtr data);
+
+private slots:
+  void added(const QByteArray &state, AuthStatePtr data);
 
 private:
   QByteArray m_state;                    ///< Идентификатор состояния.

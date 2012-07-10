@@ -70,6 +70,7 @@ win32 {
 HEADERS = \
     AuthCore.h \
     AuthHandler.h \
+    AuthState.h \
     HandlerCreator.h \
     HandlerRoute.h \
     handlers.h \
@@ -84,6 +85,7 @@ SOURCES = \
     AuthCore.cpp \
     authd.cpp \
     AuthHandler.cpp \
+    AuthState.cpp \
     HandlerCreator.cpp \
     HandlerRoute.cpp \
     handlers/ProvidersHandler.cpp \
