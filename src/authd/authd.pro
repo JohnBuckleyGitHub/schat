@@ -39,13 +39,17 @@ unix:!macx {
   img.path = /usr/share/schatd2/www/img
 
   js.files += ../../res/www/js/html5.js
+  js.files += ../../res/www/js/result.js
   js.path = /usr/share/schatd2/www/js
+
+  jquery.files += ../../res/html/js/jquery-1.7.2.min.js
+  jquery.path = /usr/share/schatd2/www/js
 
   other.files += ../../res/www/favicon.ico
   other.path = /usr/share/schatd2/www
 
   target.path += $$SCHAT_PREFIX/usr/sbin
-  INSTALLS += target css img js other
+  INSTALLS += target css img js other jquery
 }
 
 win32 {
@@ -58,13 +62,17 @@ win32 {
   img.path = ../../os/win32/schatd2/www/img
 
   js.files += ../../res/www/js/html5.js
+  js.files += ../../res/www/js/result.js
   js.path = ../../os/win32/schatd2/www/js
+
+  jquery.files += ../../res/html/js/jquery-1.7.2.min.js
+  jquery.path = ../../os/win32/schatd2/www/js
 
   other.files += ../../res/www/favicon.ico
   other.path = ../../os/win32/schatd2/www
 
   target.path += ../../os/win32/schatd2/
-  INSTALLS += target css img js other
+  INSTALLS += target css img js other jquery
 }
 
 HEADERS = \

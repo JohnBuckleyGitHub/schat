@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="${LANGUAGE}">
   <head>
     <meta charset="utf-8">
     <title>Simple Chat</title>
@@ -18,7 +18,7 @@
     <link rel="shortcut icon" href="/favicon.ico">
   </head>
 
-  <body>
+  <body id="${STATE_ID}">
 
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
@@ -37,7 +37,10 @@
 
     <div class="container">
       <div id="spinner"><img src="/img/spinner.gif"></div>
+      <div id="alert" class="alert"></div>
     </div>
 
+    <script src="/js/jquery-1.7.2.min.js"></script>
+    <script src="/js/result.js"></script>
   </body>
 </html>
