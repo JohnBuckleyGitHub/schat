@@ -1,3 +1,7 @@
 #spinner {
-    text-align: center;
+  text-align: center;
+}
+
+#alert {
+  display: none;
 }
