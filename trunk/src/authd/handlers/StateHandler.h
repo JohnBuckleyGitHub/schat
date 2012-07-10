@@ -27,7 +27,7 @@ class StateHandler : public QObject
   Q_OBJECT
 
 public:
-  StateHandler(const QByteArray &state, Tufao::HttpServerResponse *response, QObject *parent = 0);
+  StateHandler(const QByteArray &state, Tufao::HttpServerResponse *response);
   static void serveOk(Tufao::HttpServerResponse *response, AuthStatePtr data);
 
 private slots:
@@ -39,6 +39,9 @@ private:
 };
 
 
+/*!
+ * Запрос "/state/идентификатор состояния".
+ */
 class StateHandlerCreator : public HandlerCreator
 {
 public:
