@@ -25,6 +25,8 @@
 #include "AuthHandler.h"
 #include "HandlerCreator.h"
 #include "HandlerRoute.h"
+#include "oauth2/OAuthHandler.h"
+#include "sglobal.h"
 #include "Tufao/headers.h"
 #include "Tufao/httpserverrequest.h"
 #include "Tufao/priv/reasonphrase.h"
@@ -65,6 +67,14 @@ void AuthHandler::handleRequest(Tufao::HttpServerRequest *request, Tufao::HttpSe
   QUrl url = QString(Tufao::Url::url(request));
   QString path(QUrl::fromPercentEncoding(url.path().toUtf8()));
   QString fileName(QDir::cleanPath(m_root + path));
+
+  if (path == LS("/")) {
+    response->writeHead(Tufao::HttpServerResponse::OK);
+    response->headers().replace("Content-Type", "text/html");
+    QByteArray data = OAuthHandler::page(LS("index.html"));
+    response->end(data);
+    return;
+  }
 
   // Плохой запрос, файл не находится внутри корневой директории сервера.
   if (!fileName.startsWith(m_root)) {
