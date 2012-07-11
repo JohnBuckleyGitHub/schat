@@ -50,7 +50,7 @@ int DataBase::start()
 
   db.setDatabaseName(Storage::varPath() + LC('/') + Path::app() + LS(".sqlite"));
   if (!db.open()) {
-    SCHAT_LOG_FATAL() << "Could not open DataBase file" << db.databaseName() << ":" << db.lastError();
+    SCHAT_LOG_FATAL("Could not open DataBase file" << db.databaseName() << ":" << db.lastError())
     QCoreApplication::exit(-1);
     return -1;
   }
@@ -211,7 +211,7 @@ qint64 DataBase::add(ChatChannel channel)
   query.exec();
 
   if (query.numRowsAffected() <= 0) {
-    SCHAT_LOG_ERROR() << "Could not add channel:" << query.lastError();
+    SCHAT_LOG_ERROR("Could not add channel:" << query.lastError())
     return -1;
   }
 
@@ -442,7 +442,7 @@ qint64 DataBase::add(Account *account)
   query.exec();
 
   if (query.numRowsAffected() <= 0) {
-    SCHAT_LOG_ERROR() << "Could not add account:" << query.lastError();
+    SCHAT_LOG_ERROR("Could not add account:" << query.lastError())
     return -1;
   }
 

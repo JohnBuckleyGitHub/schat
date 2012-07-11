@@ -68,7 +68,7 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
   Core::add(channel);
   Ch::newUserChannel(channel, data, m_core->packetsEvent()->address.toString(), created);
 
-  SCHAT_LOG_DEBUG(<< "ANONYMOUS AUTH" << (channel->name() + "@" + m_core->packetsEvent()->address.toString() + "/" + SimpleID::encode(channel->id())) << data.userAgent << data.host);
+  SCHAT_LOG_DEBUG("ANONYMOUS AUTH" << (channel->name() + "@" + m_core->packetsEvent()->address.toString() + "/" + SimpleID::encode(channel->id())) << data.userAgent << data.host)
   return AuthResult(id, data.id);
 }
 

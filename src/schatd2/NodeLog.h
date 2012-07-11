@@ -43,10 +43,10 @@ public:
   NodeLog();
   bool open(const QString &file, Level level);
   inline static Level level() { return m_level; }
-  inline static NodeLog *i() { return m_self; }
+  inline static NodeLog *i()  { return m_self; }
   void add(Level level, const QString &message);
 
-  class Helper
+  class SCHAT_EXPORT Helper
   {
   public:
     explicit Helper(Level level)
@@ -78,26 +78,24 @@ private:
 };
 
 
-#define SCHAT_LOG_FATAL()  \
+#define SCHAT_LOG_FATAL(x)  \
   if (NodeLog::level() < NodeLog::FatalLevel) {} \
-  else NodeLog::Helper(NodeLog::FatalLevel).stream()
-#define SCHAT_LOG_ERROR()  \
+  else NodeLog::Helper(NodeLog::FatalLevel).stream() << x ;
+#define SCHAT_LOG_ERROR(x)  \
   if (NodeLog::level() < NodeLog::ErrorLevel) {} \
-  else NodeLog::Helper(NodeLog::ErrorLevel).stream()
-#define SCHAT_LOG_WARN()  \
+  else NodeLog::Helper(NodeLog::ErrorLevel).stream() << x ;
+#define SCHAT_LOG_WARN(x)  \
   if (NodeLog::level() < NodeLog::WarnLevel) {} \
-  else NodeLog::Helper(NodeLog::WarnLevel).stream()
-#define SCHAT_LOG_INFO()  \
+  else NodeLog::Helper(NodeLog::WarnLevel).stream() << x ;
+#define SCHAT_LOG_INFO(x)  \
   if (NodeLog::level() < NodeLog::InfoLevel) {} \
-  else NodeLog::Helper(NodeLog::InfoLevel).stream()
-
+  else NodeLog::Helper(NodeLog::InfoLevel).stream() << x ;
 # define SCHAT_LOG_DEBUG(x)  \
   if (NodeLog::level() < NodeLog::DebugLevel) {} \
-  else NodeLog::Helper(NodeLog::DebugLevel).stream() x
-
+  else NodeLog::Helper(NodeLog::DebugLevel).stream() << x ;
 # define SCHAT_LOG_TRACE(x)  \
   if (NodeLog::level() < NodeLog::TraceLevel) {} \
-  else NodeLog::Helper(NodeLog::TraceLevel).stream() x
+  else NodeLog::Helper(NodeLog::TraceLevel).stream() << x ;
 
 
 #endif /* NODELOG_H_ */
