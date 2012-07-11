@@ -37,9 +37,11 @@ private slots:
   void tokenReady();
 
 private:
-  void setError();
+  void getToken();
+  void setError(const QByteArray &error = "unknown_error");
 
   OAuthData *m_provider;            ///< Информация о провайдере.
+  QByteArray m_code;                ///< Авторизационный код.
   QNetworkAccessManager *m_manager; ///< Менеджер доступа к сети.
   QNetworkReply *m_reply;           ///< Текущий завершённый HTTP запрос.
 };

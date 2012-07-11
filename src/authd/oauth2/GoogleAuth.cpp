@@ -50,21 +50,11 @@ GoogleAuth::GoogleAuth(const QUrl &url, const QString &path, Tufao::HttpServerRe
   }
 
   setState(url.queryItemValue(LS("state")).toLatin1());
-  qDebug() << m_state;
   serveOk();
 
   m_manager = new QNetworkAccessManager(this);
-
-  QNetworkRequest r(QUrl(LS("https://accounts.google.com/o/oauth2/token")));
-  r.setHeader(QNetworkRequest::ContentTypeHeader, LS("application/x-www-form-urlencoded"));
-  QByteArray body = "code=" + url.queryItemValue(LS("code")).toUtf8();
-  body += "&client_id="     + m_provider->id();
-  body += "&client_secret=" + m_provider->secret();
-  body += "&redirect_uri="  + m_provider->redirect();
-  body += "&grant_type=authorization_code";
-
-  QNetworkReply *reply = m_manager->post(r, body);
-  connect(reply, SIGNAL(readyRead()), SLOT(tokenReady()));
+  m_code = url.queryItemValue(LS("code")).toUtf8();
+  getToken();
 }
 
 
@@ -78,7 +68,7 @@ void GoogleAuth::dataReady()
     return;
 
   if (m_reply->error())
-    return setError();
+    return setError("network_error: " + m_reply->errorString().toUtf8());
 
   QVariantMap data = JSON::parse(m_reply->readAll()).toMap();
   m_reply->deleteLater();
@@ -104,14 +94,24 @@ void GoogleAuth::tokenReady()
     return;
 
   if (m_reply->error())
-    return setError();
+    return setError("network_error: " + m_reply->errorString().toUtf8());
 
-  QVariantMap data = JSON::parse(m_reply->readAll()).toMap();
+  QByteArray raw = m_reply->readAll();
+  int statusCode = m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+  m_reply->deleteLater();
+
+  qDebug() << statusCode << raw;
+
+  if (statusCode >= 500) {
+    getToken();
+    return;
+  }
+
+  QVariantMap data = JSON::parse(raw).toMap();
   QByteArray token = data.value(LS("access_token")).toByteArray();
   if (token.isEmpty())
-    return setError();
+    return setError("token_error: " + data.value(LS("error")).toByteArray());
 
-  m_reply->deleteLater();
 
   QNetworkRequest request(QUrl(LS("https://www.googleapis.com/oauth2/v1/userinfo")));
   request.setRawHeader("Authorization", "Bearer " + token);
@@ -120,12 +120,37 @@ void GoogleAuth::tokenReady()
 }
 
 
-void GoogleAuth::setError()
+/*!
+ * Запрос обмена авторизационного кода на токен.
+ */
+void GoogleAuth::getToken()
+{
+  QNetworkRequest request(QUrl(LS("https://accounts.google.com/o/oauth2/token")));
+  request.setHeader(QNetworkRequest::ContentTypeHeader, LS("application/x-www-form-urlencoded"));
+
+  QByteArray body = "code=" + m_code;
+  body += "&client_id="     + m_provider->id();
+  body += "&client_secret=" + m_provider->secret();
+  body += "&redirect_uri="  + m_provider->redirect();
+  body += "&grant_type=authorization_code";
+
+  QNetworkReply *reply = m_manager->post(request, body);
+  connect(reply, SIGNAL(readyRead()), SLOT(tokenReady()));
+}
+
+
+/*!
+ * Установка состояния ошибки.
+ */
+void GoogleAuth::setError(const QByteArray &error)
 {
   if (m_reply) {
     m_reply->deleteLater();
     m_reply = 0;
   }
+
+  qDebug() << "GoogleAuth::setError()" << error;
+  AuthCore::state()->add(new AuthStateData(m_state, error));
 }
 
 
