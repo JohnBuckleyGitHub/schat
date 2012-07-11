@@ -29,6 +29,7 @@ namespace Tufao {
 class AuthHandler;
 class AuthState;
 class HandlerCreator;
+class NodeLog;
 class OAuthData;
 class QUrl;
 class Settings;
@@ -54,9 +55,11 @@ private:
   void add(const QUrl &url);
   void add(HandlerCreator *handler);
   void add(OAuthData *data);
+  void openLog();
 
   AuthHandler *m_handler;                  ///< Основной обработчик запросов.
   AuthState *m_state;                      ///< Состояния авторизаций.
+  NodeLog *m_log;                          ///< Журнал.
   QHash<QString, OAuthData *> m_providers; ///< Список доступных OAuth провайдеров.
   QList<Tufao::HttpServer *> m_servers;    ///< HTTP или HTTPS сервера ожидающие подключений.
   Settings *m_settings;                    ///< Настройки сервера.

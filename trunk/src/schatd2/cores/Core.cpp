@@ -328,7 +328,7 @@ void Core::accept(const AuthResult &result)
  */
 void Core::reject(const AuthResult &result)
 {
-  SCHAT_LOG_DEBUG(<< "REJECT AUTH" << result.status << Notice::status(result.status) << SimpleID::encode(result.authId));
+  SCHAT_LOG_DEBUG("REJECT AUTH" << result.status << Notice::status(result.status) << SimpleID::encode(result.authId))
 
   NodeAuthReply reply(result);
 

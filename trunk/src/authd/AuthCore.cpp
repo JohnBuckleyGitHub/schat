@@ -16,9 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QDir>
+#include <QCoreApplication>
 #include <QTimer>
 #include <QUrl>
 
@@ -27,6 +26,7 @@
 #include "AuthState.h"
 #include "HandlerRoute.h"
 #include "handlers.h"
+#include "NodeLog.h"
 #include "oauth2/GoogleAuthData.h"
 #include "oauth2/OAuthData.h"
 #include "Path.h"
@@ -34,6 +34,7 @@
 #include "sglobal.h"
 #include "Storage.h"
 #include "Tufao/httpserver.h"
+
 AuthCore *AuthCore::m_self = 0;
 
 AuthCore::AuthCore(QObject *parent)
@@ -42,10 +43,15 @@ AuthCore::AuthCore(QObject *parent)
   m_self = this;
   Path::init();
 
+  m_log = new NodeLog();
+
   m_settings = new Settings(Storage::etcPath() + LC('/') + Path::app() + LS(".conf"), this);
-  m_settings->setDefault(LS("Listen"), QStringList("http://0.0.0.0:7668"));
-  m_settings->setDefault(LS("Root"),   Storage::sharePath() + LS("/www"));
-  m_settings->setDefault(LS("Order"),  QStringList() << LS("google") << LS("facebook"));
+  m_settings->setDefault(LS("Listen"),   QStringList("http://0.0.0.0:7668"));
+  m_settings->setDefault(LS("Root"),     Storage::sharePath() + LS("/www"));
+  m_settings->setDefault(LS("Order"),    QStringList() << LS("google") << LS("facebook"));
+  m_settings->setDefault(LS("LogLevel"), 2);
+
+  openLog();
 
   m_handler = new AuthHandler(this);
   m_handler->setRoot(QDir::cleanPath(m_settings->value(LS("Root")).toString()));
@@ -54,7 +60,6 @@ AuthCore::AuthCore(QObject *parent)
 
   add(new ProvidersHandler());
   add(new StateHandlerCreator());
-
   add(new GoogleAuthCreator());
 
   QTimer::singleShot(0, this, SLOT(start()));
@@ -63,6 +68,7 @@ AuthCore::AuthCore(QObject *parent)
 
 AuthCore::~AuthCore()
 {
+  delete m_log;
   qDeleteAll(m_providers);
 }
 
@@ -84,6 +90,14 @@ void AuthCore::start()
   foreach (const QString &url, listen) {
     add(QUrl(url));
   }
+
+  if (m_servers.isEmpty()) {
+    SCHAT_LOG_FATAL("Failed to open ports for incoming connections")
+    QCoreApplication::exit(1);
+    return;
+  }
+
+  SCHAT_LOG_INFO("Server successfully started")
 }
 
 
@@ -92,14 +106,17 @@ void AuthCore::start()
  */
 void AuthCore::add(const QUrl &url)
 {
-  qDebug() << url.scheme() << url.host() << url.port();
+  SCHAT_LOG_INFO("Add url:" << url.toString())
+
   Tufao::HttpServer *server = new Tufao::HttpServer(this);
   connect(server, SIGNAL(requestReady(Tufao::HttpServerRequest*,Tufao::HttpServerResponse*)), m_handler, SLOT(handleRequest(Tufao::HttpServerRequest*,Tufao::HttpServerResponse*)));
 
-  if (server->listen(QHostAddress(url.host()), url.port()))
-    m_servers.append(server);
-  else
+  if (!server->listen(QHostAddress(url.host()), url.port())) {
+    SCHAT_LOG_ERROR("Failed to open port for incoming connections")
     server->deleteLater();
+  }
+  else
+    m_servers.append(server);
 }
 
 
@@ -111,8 +128,24 @@ void AuthCore::add(HandlerCreator *handler)
 
 void AuthCore::add(OAuthData *data)
 {
-  if (!m_providers.contains(data->provider) && data->read())
-    m_providers[data->provider] = data;
+  const QByteArray &name = data->provider;
+
+  if (!m_providers.contains(name) && data->read()) {
+    m_providers[name] = data;
+    SCHAT_LOG_INFO("Added authorization provider:" << name)
+  }
   else
     delete data;
+}
+
+
+void AuthCore::openLog()
+{
+  QString path = Path::cache();
+# if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
+  if (!Path::isPortable())
+    path = LS("/var/log/schatd2");
+# endif
+
+  m_log->open(path + LC('/') + Path::app() + LS(".log"), static_cast<NodeLog::Level>(m_settings->value(LS("LogLevel")).toInt()));
 }
