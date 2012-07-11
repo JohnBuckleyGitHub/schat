@@ -31,14 +31,18 @@ INCLUDEPATH += ../schatd2
 
 unix:!macx { 
   css.files += ../../res/www/css/bootstrap.css
+  css.files += ../../res/www/css/main.css
   css.files += ../../res/www/css/result.css
   css.path = /usr/share/schatd2/www/css
 
   img.files += ../../res/www/img/spinner.gif
+  img.files += ../../res/www/img/spinner-big.gif
   img.files += ../../res/www/img/logo.png
+  img.files += ../../res/www/img/providers.png
   img.path = /usr/share/schatd2/www/img
 
   js.files += ../../res/www/js/html5.js
+  js.files += ../../res/www/js/main.js
   js.files += ../../res/www/js/result.js
   js.path = /usr/share/schatd2/www/js
 
@@ -54,14 +58,18 @@ unix:!macx {
 
 win32 {
   css.files += ../../res/www/css/bootstrap.css
+  css.files += ../../res/www/css/main.css
   css.files += ../../res/www/css/result.css
   css.path  = ../../os/win32/schatd2/www/css
 
   img.files += ../../res/www/img/spinner.gif
+  img.files += ../../res/www/img/spinner-big.gif
   img.files += ../../res/www/img/logo.png
+  img.files += ../../res/www/img/providers.png
   img.path = ../../os/win32/schatd2/www/img
 
   js.files += ../../res/www/js/html5.js
+  js.files += ../../res/www/js/main.js
   js.files += ../../res/www/js/result.js
   js.path = ../../os/win32/schatd2/www/js
 

@@ -20,35 +20,21 @@
 
 #include <QUrl>
 
-#include "AuthCore.h"
 #include "oauth2/GoogleAuthData.h"
-#include "Settings.h"
 #include "sglobal.h"
 
 GoogleAuthData::GoogleAuthData()
   : OAuthData("google")
 {
-}
-
-
-bool GoogleAuthData::read()
-{
-  Settings *settings = AuthCore::settings();
-  m_id       = settings->value(LS("Google/Id")).toByteArray();
-  m_secret   = settings->value(LS("Google/Secret")).toByteArray();
-  m_redirect = settings->value(LS("Google/Redirect")).toByteArray();
-
-  qDebug() << toUrl();
-  qDebug() << m_id << m_secret << m_redirect;
-
-  return isValid();
+  name = "Google";
+  htmlName = "<b style='color:#0039b6'>G</b><b style='color:#c41200'>o</b><b style='color:#f7a70b'>o</b><b style='color:#0039b6'>g</b><b style='color:#30a72f'>l</b><b style='color:#c41200'>e</b>";
 }
 
 
 QByteArray GoogleAuthData::toUrl() const
 {
   QByteArray url = "https://accounts.google.com/o/oauth2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile";
-  url += "&redirect_uri=" + QUrl::toPercentEncoding(m_redirect);
-  url += "&response_type=code&client_id=" + m_id + "&approval_prompt=force";
+  url += "&redirect_uri=" + QUrl::toPercentEncoding(redirect);
+  url += "&response_type=code&client_id=" + id + "&approval_prompt=force";
   return url;
 }

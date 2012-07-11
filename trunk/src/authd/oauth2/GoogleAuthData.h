@@ -25,7 +25,6 @@ class GoogleAuthData : public OAuthData
 {
 public:
   GoogleAuthData();
-  bool read();
   QByteArray toUrl() const;
 };
 

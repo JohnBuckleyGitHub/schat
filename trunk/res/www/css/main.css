@@ -1,0 +1,21 @@
+[class^="icon-"], [class^="provider-"] {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  vertical-align: text-top;
+  background-repeat: no-repeat;
+}
+
+[class^="provider-"] {
+  background-image: url("../img/providers.png");
+  background-position: 0 0;
+}
+
+.icon-spinner {
+  background-image: url("../img/spinner.gif");
+}
+
+.provider a {
+  color: inherit;
+  font-weight: bold;
+}

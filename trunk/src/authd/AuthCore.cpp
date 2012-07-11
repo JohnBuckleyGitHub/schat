@@ -45,6 +45,7 @@ AuthCore::AuthCore(QObject *parent)
   m_settings = new Settings(Storage::etcPath() + LC('/') + Path::app() + LS(".conf"), this);
   m_settings->setDefault(LS("Listen"), QStringList("http://0.0.0.0:7668"));
   m_settings->setDefault(LS("Root"),   Storage::sharePath() + LS("/www"));
+  m_settings->setDefault(LS("Order"),  QStringList() << LS("google") << LS("facebook"));
 
   m_handler = new AuthHandler(this);
   m_handler->setRoot(QDir::cleanPath(m_settings->value(LS("Root")).toString()));
@@ -110,8 +111,8 @@ void AuthCore::add(HandlerCreator *handler)
 
 void AuthCore::add(OAuthData *data)
 {
-  if (!m_providers.contains(data->provider()) && data->read())
-    m_providers[data->provider()] = data;
+  if (!m_providers.contains(data->provider) && data->read())
+    m_providers[data->provider] = data;
   else
     delete data;
 }

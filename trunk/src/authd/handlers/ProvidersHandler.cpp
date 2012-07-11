@@ -16,10 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QStringList>
+
 #include "AuthCore.h"
 #include "handlers/ProvidersHandler.h"
 #include "JSON.h"
 #include "oauth2/OAuthData.h"
+#include "Settings.h"
 #include "sglobal.h"
 #include "Tufao/headers.h"
 #include "Tufao/httpserverresponse.h"
@@ -31,15 +34,26 @@ bool ProvidersHandler::serve(const QUrl &, const QString &path, Tufao::HttpServe
     response->headers().replace("Content-Type", "application/json");
 
     if (m_cache.isEmpty()) {
-      QVariantMap data;
+      QVariantMap list;
       const QHash<QString, OAuthData *> &providers = AuthCore::i()->providers();
 
       QHashIterator<QString, OAuthData *> i(providers);
       while (i.hasNext()) {
         i.next();
-        data[i.key()] = i.value()->toJSON();
+        list[i.key()] = i.value()->toJSON();
       }
 
+      QStringList order = AuthCore::settings()->value(LS("Order")).toStringList();
+      QMutableStringListIterator j(order);
+      while (j.hasNext()) {
+        QString &name = j.next();
+        if (!providers.contains(name))
+          j.remove();
+      }
+
+      QVariantMap data;
+      data[LS("providers")] = list;
+      data[LS("order")]     = order;
       m_cache = JSON::generate(data);
     }
 
