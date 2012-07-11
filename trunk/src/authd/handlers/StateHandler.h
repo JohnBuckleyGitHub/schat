@@ -28,7 +28,7 @@ class StateHandler : public QObject
 
 public:
   StateHandler(const QByteArray &state, Tufao::HttpServerResponse *response);
-  static void serveOk(Tufao::HttpServerResponse *response, AuthStatePtr data);
+  static void serve(Tufao::HttpServerResponse *response, AuthStatePtr data);
 
 private slots:
   void added(const QByteArray &state, AuthStatePtr data);

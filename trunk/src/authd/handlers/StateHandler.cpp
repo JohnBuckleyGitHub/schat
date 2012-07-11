@@ -35,8 +35,14 @@ StateHandler::StateHandler(const QByteArray &state, Tufao::HttpServerResponse *r
 }
 
 
-void StateHandler::serveOk(Tufao::HttpServerResponse *response, AuthStatePtr data)
+void StateHandler::serve(Tufao::HttpServerResponse *response, AuthStatePtr data)
 {
+  if (!data->error.isEmpty()) {
+    response->writeHead(Tufao::HttpServerResponse::FORBIDDEN);
+    response->end("{\"error\":\"" + data->error + "\"}");
+    return;
+  }
+
   response->writeHead(Tufao::HttpServerResponse::OK);
 
   QVariantMap json;
@@ -52,7 +58,7 @@ void StateHandler::added(const QByteArray &state, AuthStatePtr data)
   if (m_state != state)
     return;
 
-  serveOk(m_response, data);
+  serve(m_response, data);
 }
 
 
@@ -74,13 +80,7 @@ bool StateHandlerCreator::serve(const QUrl &, const QString &path, Tufao::HttpSe
       return true;
     }
 
-    if (!data->error.isEmpty()) {
-      response->writeHead(Tufao::HttpServerResponse::FORBIDDEN);
-      response->end("{\"error\":\"" + data->error + "\"}");
-      return true;
-    }
-
-    StateHandler::serveOk(response, data);
+    StateHandler::serve(response, data);
     return true;
   }
 
