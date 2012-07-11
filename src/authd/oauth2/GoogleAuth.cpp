@@ -129,9 +129,9 @@ void GoogleAuth::getToken()
   request.setHeader(QNetworkRequest::ContentTypeHeader, LS("application/x-www-form-urlencoded"));
 
   QByteArray body = "code=" + m_code;
-  body += "&client_id="     + m_provider->id();
-  body += "&client_secret=" + m_provider->secret();
-  body += "&redirect_uri="  + m_provider->redirect();
+  body += "&client_id="     + m_provider->id;
+  body += "&client_secret=" + m_provider->secret;
+  body += "&redirect_uri="  + m_provider->redirect;
   body += "&grant_type=authorization_code";
 
   QNetworkReply *reply = m_manager->post(request, body);

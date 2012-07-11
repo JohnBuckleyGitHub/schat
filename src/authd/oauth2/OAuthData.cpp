@@ -16,27 +16,51 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
+#include "AuthCore.h"
 #include "oauth2/OAuthData.h"
+#include "Settings.h"
 #include "sglobal.h"
 
 OAuthData::OAuthData(const QByteArray &provider)
-  : m_provider(provider)
+  : htmlName(provider)
+  , name(provider)
+  , provider(provider)
+  , type("oauth2")
 {
 }
 
 
 bool OAuthData::isValid() const
 {
-  if (m_provider.isEmpty() || m_id.isEmpty() || m_redirect.isEmpty() || m_secret.isEmpty())
+  if (provider.isEmpty() || id.isEmpty() || redirect.isEmpty() || secret.isEmpty() || name.isEmpty() || htmlName.isEmpty())
     return false;
 
   return true;
 }
 
 
+bool OAuthData::read()
+{
+  Settings *settings = AuthCore::settings();
+  id       = settings->value(provider + LS("/Id")).toByteArray();
+  secret   = settings->value(provider + LS("/Secret")).toByteArray();
+  redirect = settings->value(provider + LS("/Redirect")).toByteArray();
+
+  qDebug() << toUrl();
+  qDebug() << id << secret << redirect;
+
+  return isValid();
+}
+
+
 QVariantMap OAuthData::toJSON() const
 {
   QVariantMap data;
-  data[LS("url")] = toUrl();
+  data[LS("name")]     = name;
+  data[LS("htmlName")] = htmlName;
+  data[LS("url")]      = toUrl();
+  data[LS("type")]     = type;
   return data;
 }
