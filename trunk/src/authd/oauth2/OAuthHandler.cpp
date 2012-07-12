@@ -73,6 +73,7 @@ void OAuthHandler::serveError()
     data.replace("${ERROR_TEXT}", "<b>Authorization has been canceled by you</b>");
 
   m_response->end(data);
+  deleteLater();
 }
 
 

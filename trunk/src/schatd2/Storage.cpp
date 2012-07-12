@@ -168,7 +168,7 @@ void Storage::setDefaultSslConf()
     file.close();
   }
   else {
-    SCHAT_LOG_WARN() << "Could not open Certificate file" << file.fileName() << ":" << file.errorString();
+    SCHAT_LOG_WARN("Could not open Certificate file" << file.fileName() << ":" << file.errorString())
   }
 
   file.setFileName(keyFile);
@@ -177,7 +177,7 @@ void Storage::setDefaultSslConf()
     file.close();
   }
   else {
-    SCHAT_LOG_WARN() << "Could not open Private Key file" << file.fileName() << ":" << file.errorString();
+    SCHAT_LOG_WARN("Could not open Private Key file" << file.fileName() << ":" << file.errorString())
   }
 
   QSslConfiguration::setDefaultConfiguration(conf);
