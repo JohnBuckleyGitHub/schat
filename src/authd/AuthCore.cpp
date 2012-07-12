@@ -29,6 +29,7 @@
 #include "NodeLog.h"
 #include "oauth2/GoogleAuthData.h"
 #include "oauth2/OAuthData.h"
+#include "oauth2/YandexAuthData.h"
 #include "Path.h"
 #include "Settings.h"
 #include "sglobal.h"
@@ -48,7 +49,7 @@ AuthCore::AuthCore(QObject *parent)
   m_settings = new Settings(Storage::etcPath() + LC('/') + Path::app() + LS(".conf"), this);
   m_settings->setDefault(LS("Listen"),   QStringList("http://0.0.0.0:7668"));
   m_settings->setDefault(LS("Root"),     Storage::sharePath() + LS("/www"));
-  m_settings->setDefault(LS("Order"),    QStringList() << LS("google") << LS("facebook"));
+  m_settings->setDefault(LS("Order"),    QStringList() << LS("google") << LS("facebook") << LS("yandex"));
   m_settings->setDefault(LS("LogLevel"), 2);
 
   openLog();
@@ -85,6 +86,7 @@ QString AuthCore::root()
 void AuthCore::start()
 {
   add(new GoogleAuthData());
+  add(new YandexAuthData());
 
   QStringList listen = m_settings->value(LS("Listen")).toStringList();
   foreach (const QString &url, listen) {

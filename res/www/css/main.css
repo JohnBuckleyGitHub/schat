@@ -11,6 +11,10 @@
   background-position: 0 0;
 }
 
+.provider-yandex {
+  background-position: -16px 0;
+}
+
 .icon-spinner {
   background-image: url("../img/spinner.gif");
 }

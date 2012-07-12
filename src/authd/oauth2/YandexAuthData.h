@@ -16,17 +16,16 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GOOGLEAUTHDATA_H_
-#define GOOGLEAUTHDATA_H_
+#ifndef YANDEXAUTHDATA_H_
+#define YANDEXAUTHDATA_H_
 
 #include "oauth2/OAuthData.h"
 
-class GoogleAuthData : public OAuthData
+class YandexAuthData : public OAuthData
 {
 public:
-  GoogleAuthData();
-  bool isValid() const;
+  YandexAuthData();
   QByteArray toUrl() const;
 };
 
-#endif /* GOOGLEAUTHDATA_H_ */
+#endif /* YANDEXAUTHDATA_H_ */
