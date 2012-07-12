@@ -16,17 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GOOGLEAUTHDATA_H_
-#define GOOGLEAUTHDATA_H_
+#include "oauth2/YandexAuthData.h"
 
-#include "oauth2/OAuthData.h"
-
-class GoogleAuthData : public OAuthData
+YandexAuthData::YandexAuthData()
+  : OAuthData("yandex")
 {
-public:
-  GoogleAuthData();
-  bool isValid() const;
-  QByteArray toUrl() const;
-};
+  name = "Яндекс";
+  htmlName = "<b style='color:#ff000a'>Я</b>ндекс";
+}
 
-#endif /* GOOGLEAUTHDATA_H_ */
+
+QByteArray YandexAuthData::toUrl() const
+{
+  return "https://oauth.yandex.ru/authorize?response_type=code&client_id=" + id;
+}
