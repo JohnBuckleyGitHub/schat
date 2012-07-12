@@ -96,6 +96,7 @@ HEADERS = \
     oauth2/GoogleAuthData.h \
     oauth2/OAuthData.h \
     oauth2/OAuthHandler.h \
+    oauth2/YandexAuth.h \
     oauth2/YandexAuthData.h \
 
 SOURCES = \
@@ -111,6 +112,7 @@ SOURCES = \
     oauth2/GoogleAuthData.cpp \
     oauth2/OAuthData.cpp \
     oauth2/OAuthHandler.cpp \
+    oauth2/YandexAuth.cpp \
     oauth2/YandexAuthData.cpp \
 
 include(../common/config.pri)

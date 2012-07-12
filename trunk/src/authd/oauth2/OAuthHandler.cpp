@@ -17,22 +17,35 @@
  */
 
 #include <QFile>
+#include <QNetworkReply>
 
 #include "AuthCore.h"
+#include "AuthHandler.h"
+#include "AuthState.h"
 #include "net/SimpleID.h"
+#include "NodeLog.h"
+#include "oauth2/OAuthData.h"
 #include "oauth2/OAuthHandler.h"
 #include "sglobal.h"
 #include "Tufao/headers.h"
 #include "Tufao/httpserverrequest.h"
 #include "Tufao/httpserverresponse.h"
 
-OAuthHandler::OAuthHandler(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
+OAuthHandler::OAuthHandler(const QString &provider, const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
   : QObject(parent)
   , m_path(path)
   , m_url(url)
+  , m_manager(0)
+  , m_reply(0)
   , m_request(request)
   , m_response(response)
 {
+  m_provider = AuthCore::provider(provider);
+  if (!m_provider) {
+    AuthHandler::setError(response, Tufao::HttpServerResponse::INTERNAL_SERVER_ERROR);
+    deleteLater();
+    return;
+  }
 }
 
 
@@ -73,6 +86,22 @@ void OAuthHandler::serveError()
     data.replace("${ERROR_TEXT}", "<b>Authorization has been canceled by you</b>");
 
   m_response->end(data);
+  deleteLater();
+}
+
+
+/*!
+ * Установка состояния ошибки.
+ */
+void OAuthHandler::setError(const QByteArray &error)
+{
+  if (m_reply) {
+    m_reply->deleteLater();
+    m_reply = 0;
+  }
+
+  SCHAT_LOG_ERROR_STR("[" + m_provider->provider + "/" + m_state + "] error: " + error)
+  AuthCore::state()->add(new AuthStateData(m_state, error));
   deleteLater();
 }
 

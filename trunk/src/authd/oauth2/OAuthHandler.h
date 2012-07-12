@@ -23,22 +23,31 @@
 
 #include "HandlerCreator.h"
 
+class OAuthData;
+class QNetworkAccessManager;
+class QNetworkReply;
+
 class OAuthHandler : public QObject
 {
   Q_OBJECT
 
 public:
-  OAuthHandler(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent = 0);
+  OAuthHandler(const QString &provider, const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent = 0);
   static QByteArray page(const QString &name);
 
 protected:
   void serveError();
+  virtual void setError(const QByteArray &error = "unknown_error");
   void serveOk();
   void setState(const QByteArray &state);
 
   const QString &m_path;                 ///< Относительный путь.
   const QUrl &m_url;                     ///< Полный URL адрес запроса.
+  OAuthData *m_provider;                 ///< Информация о провайдере.
+  QByteArray m_code;                     ///< Авторизационный код.
   QByteArray m_state;                    ///< Base32 кодированный идентификатор состояния.
+  QNetworkAccessManager *m_manager;      ///< Менеджер доступа к сети.
+  QNetworkReply *m_reply;                ///< Текущий завершённый HTTP запрос.
   Tufao::HttpServerRequest *m_request;   ///< HTTP запрос.
   Tufao::HttpServerResponse *m_response; ///< HTTP ответ.
 };
