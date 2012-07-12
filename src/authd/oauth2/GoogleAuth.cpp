@@ -102,7 +102,7 @@ void GoogleAuth::tokenReady()
   m_reply->deleteLater();
 
   if (statusCode >= 500) {
-    SCHAT_LOG_WARN("Bad status code:" << statusCode)
+    SCHAT_LOG_WARN(("[google/" + m_state + "] Bad status code:").constData() << statusCode)
     getToken();
     return;
   }

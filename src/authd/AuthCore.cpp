@@ -106,17 +106,17 @@ void AuthCore::start()
  */
 void AuthCore::add(const QUrl &url)
 {
-  SCHAT_LOG_INFO("Add url:" << url.toString())
-
   Tufao::HttpServer *server = new Tufao::HttpServer(this);
   connect(server, SIGNAL(requestReady(Tufao::HttpServerRequest*,Tufao::HttpServerResponse*)), m_handler, SLOT(handleRequest(Tufao::HttpServerRequest*,Tufao::HttpServerResponse*)));
 
-  if (!server->listen(QHostAddress(url.host()), url.port())) {
+  if (server->listen(QHostAddress(url.host()), url.port())) {
+    SCHAT_LOG_INFO("Added url:" << url.toString())
+    m_servers.append(server);
+  }
+  else {
     SCHAT_LOG_ERROR("Failed to open port for incoming connections")
     server->deleteLater();
   }
-  else
-    m_servers.append(server);
 }
 
 
