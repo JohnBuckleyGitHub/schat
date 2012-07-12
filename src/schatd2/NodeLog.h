@@ -97,5 +97,23 @@ private:
   if (NodeLog::level() < NodeLog::TraceLevel) {} \
   else NodeLog::Helper(NodeLog::TraceLevel).stream() << x ;
 
+#define SCHAT_LOG_FATAL_STR(x)  \
+  if (NodeLog::level() < NodeLog::FatalLevel) {} \
+  else NodeLog::Helper(NodeLog::FatalLevel).stream() << (x).constData(); ;
+#define SCHAT_LOG_ERROR_STR(x)  \
+  if (NodeLog::level() < NodeLog::ErrorLevel) {} \
+  else NodeLog::Helper(NodeLog::ErrorLevel).stream() << (x).constData(); ;
+#define SCHAT_LOG_WARN_STR(x)  \
+  if (NodeLog::level() < NodeLog::WarnLevel) {} \
+  else NodeLog::Helper(NodeLog::WarnLevel).stream() << (x).constData(); ;
+#define SCHAT_LOG_INFO_STR(x)  \
+  if (NodeLog::level() < NodeLog::InfoLevel) {} \
+  else NodeLog::Helper(NodeLog::InfoLevel).stream() << (x).constData();
+# define SCHAT_LOG_DEBUG_STR(x)  \
+  if (NodeLog::level() < NodeLog::DebugLevel) {} \
+  else NodeLog::Helper(NodeLog::DebugLevel).stream() << (x).constData(); ;
+# define SCHAT_LOG_TRACE_STR(x)  \
+  if (NodeLog::level() < NodeLog::TraceLevel) {} \
+  else NodeLog::Helper(NodeLog::TraceLevel).stream() << (x).constData(); ;
 
 #endif /* NODELOG_H_ */
