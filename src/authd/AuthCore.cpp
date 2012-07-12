@@ -62,6 +62,7 @@ AuthCore::AuthCore(QObject *parent)
   add(new ProvidersHandler());
   add(new StateHandlerCreator());
   add(new GoogleAuthCreator());
+  add(new YandexAuthCreator());
 
   QTimer::singleShot(0, this, SLOT(start()));
 }

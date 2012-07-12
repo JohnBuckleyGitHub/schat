@@ -16,7 +16,31 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "handlers/ProvidersHandler.h"
-#include "handlers/StateHandler.h"
-#include "oauth2/GoogleAuth.h"
-#include "oauth2/YandexAuth.h"
+#ifndef YANDEXAUTH_H_
+#define YANDEXAUTH_H_
+
+#include "oauth2/OAuthHandler.h"
+
+class YandexAuth : public OAuthHandler
+{
+  Q_OBJECT
+
+public:
+  YandexAuth(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent = 0);
+
+private slots:
+  void tokenReady();
+
+private:
+  void getToken();
+};
+
+
+class YandexAuthCreator : public HandlerCreator
+{
+public:
+  YandexAuthCreator() : HandlerCreator() {}
+  bool serve(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent);
+};
+
+#endif /* YANDEXAUTH_H_ */

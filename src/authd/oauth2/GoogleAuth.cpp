@@ -34,14 +34,10 @@
 #include "Tufao/httpserverresponse.h"
 
 GoogleAuth::GoogleAuth(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
-  : OAuthHandler(url, path, request, response, parent)
-  , m_reply(0)
+  : OAuthHandler(LS("google"), url, path, request, response, parent)
 {
-  m_provider = AuthCore::provider(LS("google"));
-  if (!m_provider) {
-    AuthHandler::setError(response, Tufao::HttpServerResponse::INTERNAL_SERVER_ERROR);
+  if (!m_provider)
     return;
-  }
 
   if (url.hasQueryItem(LS("error")) || !url.hasQueryItem(LS("code"))) {
     serveError();
@@ -72,6 +68,7 @@ void GoogleAuth::dataReady()
 
   QVariantMap data = JSON::parse(m_reply->readAll()).toMap();
   m_reply->deleteLater();
+  m_reply = 0;
 
   QByteArray email = data.value(LS("email")).toByteArray();
   if (email.isEmpty())
@@ -100,6 +97,7 @@ void GoogleAuth::tokenReady()
   QByteArray raw = m_reply->readAll();
   int statusCode = m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
   m_reply->deleteLater();
+  m_reply = 0;
 
   if (statusCode >= 500) {
     SCHAT_LOG_WARN(("[google/" + m_state + "] Bad status code:").constData() << statusCode)
@@ -137,22 +135,6 @@ void GoogleAuth::getToken()
 
   QNetworkReply *reply = m_manager->post(request, body);
   connect(reply, SIGNAL(readyRead()), SLOT(tokenReady()));
-}
-
-
-/*!
- * Установка состояния ошибки.
- */
-void GoogleAuth::setError(const QByteArray &error)
-{
-  if (m_reply) {
-    m_reply->deleteLater();
-    m_reply = 0;
-  }
-
-  SCHAT_LOG_ERROR(("[google/" + m_state + "]").constData() << "error:" << error)
-  AuthCore::state()->add(new AuthStateData(m_state, error));
-  deleteLater();
 }
 
 

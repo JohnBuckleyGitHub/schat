@@ -21,10 +21,6 @@
 
 #include "oauth2/OAuthHandler.h"
 
-class OAuthData;
-class QNetworkAccessManager;
-class QNetworkReply;
-
 class GoogleAuth : public OAuthHandler
 {
   Q_OBJECT
@@ -38,12 +34,6 @@ private slots:
 
 private:
   void getToken();
-  void setError(const QByteArray &error = "unknown_error");
-
-  OAuthData *m_provider;            ///< Информация о провайдере.
-  QByteArray m_code;                ///< Авторизационный код.
-  QNetworkAccessManager *m_manager; ///< Менеджер доступа к сети.
-  QNetworkReply *m_reply;           ///< Текущий завершённый HTTP запрос.
 };
 
 
