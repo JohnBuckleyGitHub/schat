@@ -19,10 +19,13 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 
-#include "oauth2/YandexAuth.h"
+#include "AuthCore.h"
+#include "AuthState.h"
 #include "JSON.h"
+#include "net/SimpleID.h"
 #include "NodeLog.h"
 #include "oauth2/OAuthData.h"
+#include "oauth2/YandexAuth.h"
 #include "sglobal.h"
 
 YandexAuth::YandexAuth(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
@@ -46,6 +49,35 @@ YandexAuth::YandexAuth(const QUrl &url, const QString &path, Tufao::HttpServerRe
 }
 
 
+void YandexAuth::dataReady()
+{
+  qDebug() << "YandexAuth::dataReady()";
+  m_reply = qobject_cast<QNetworkReply*>(sender());
+  if (!m_reply)
+    return;
+
+  qDebug() << m_reply->error();
+  if (m_reply->error())
+    return setError("network_error: " + m_reply->errorString().toUtf8());
+
+  QByteArray raw = m_reply->readAll();
+  m_reply->deleteLater();
+  m_reply = 0;
+
+  QVariantMap data = JSON::parse(raw).toMap();
+  QByteArray email = data.value(LS("default_email")).toByteArray();
+  if (email.isEmpty())
+    return setError("invalid_email");
+
+  qDebug() << raw;
+
+  QByteArray id = SimpleID::encode(SimpleID::make("yandex:" + email, SimpleID::UserId));
+  AuthCore::state()->add(new AuthStateData(m_state, "yandex", id, QByteArray(), data));
+
+  SCHAT_LOG_INFO_STR("[yandex/" + m_state + "] Data is successfully received, id:" + id + ", email:" + email)
+}
+
+
 void YandexAuth::tokenReady()
 {
   m_reply = qobject_cast<QNetworkReply*>(sender());
@@ -65,6 +97,11 @@ void YandexAuth::tokenReady()
     return setError("token_error: " + data.value(LS("error")).toByteArray());
 
   SCHAT_LOG_INFO_STR("[yandex/" + m_state + "] Token is successfully received")
+
+  QNetworkRequest request(QUrl(LS("https://login.yandex.ru/info?format=json")));
+  request.setRawHeader("Authorization", "OAuth " + token);
+  QNetworkReply *reply = m_manager->get(request);
+  connect(reply, SIGNAL(readyRead()), SLOT(dataReady()));
 }
 
 

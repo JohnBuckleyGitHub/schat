@@ -29,6 +29,7 @@ public:
   YandexAuth(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent = 0);
 
 private slots:
+  void dataReady();
   void tokenReady();
 
 private:
