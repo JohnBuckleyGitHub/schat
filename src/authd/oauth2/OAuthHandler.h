@@ -36,8 +36,9 @@ public:
   static QByteArray page(const QString &name);
 
 protected:
-  void serveError();
   virtual void setError(const QByteArray &error = "unknown_error");
+  void log(const QByteArray &text);
+  void serveError();
   void serveOk();
   void setState(const QByteArray &state);
 
