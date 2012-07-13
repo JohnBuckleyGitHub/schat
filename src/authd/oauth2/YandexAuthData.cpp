@@ -26,7 +26,7 @@ YandexAuthData::YandexAuthData()
 }
 
 
-QByteArray YandexAuthData::toUrl() const
+QByteArray YandexAuthData::toUrl(const QByteArray &state) const
 {
-  return "https://oauth.yandex.ru/authorize?response_type=code&client_id=" + id;
+  return "https://oauth.yandex.ru/authorize?response_type=code&client_id=" + id + "&state=" + state;
 }

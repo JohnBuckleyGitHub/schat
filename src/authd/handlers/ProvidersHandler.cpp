@@ -17,6 +17,7 @@
  */
 
 #include <QStringList>
+#include <QUrl>
 
 #include "AuthCore.h"
 #include "handlers/ProvidersHandler.h"
@@ -27,7 +28,7 @@
 #include "Tufao/headers.h"
 #include "Tufao/httpserverresponse.h"
 
-bool ProvidersHandler::serve(const QUrl &, const QString &path, Tufao::HttpServerRequest *, Tufao::HttpServerResponse *response, QObject *)
+bool ProvidersHandler::serve(const QUrl &url, const QString &path, Tufao::HttpServerRequest *, Tufao::HttpServerResponse *response, QObject *)
 {
   if (path == LS("/providers")) {
     response->writeHead(Tufao::HttpServerResponse::OK);
@@ -40,7 +41,7 @@ bool ProvidersHandler::serve(const QUrl &, const QString &path, Tufao::HttpServe
       QHashIterator<QString, OAuthData *> i(providers);
       while (i.hasNext()) {
         i.next();
-        list[i.key()] = i.value()->toJSON();
+        list[i.key()] = i.value()->toJSON(url.queryItemValue(LS("state")).toLatin1());
       }
 
       QStringList order = AuthCore::settings()->value(LS("Order")).toStringList();

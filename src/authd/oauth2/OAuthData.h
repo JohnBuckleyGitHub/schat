@@ -29,8 +29,7 @@ public:
   virtual ~OAuthData() {}
   virtual bool isValid() const;
   virtual bool read();
-  virtual inline QByteArray toUrl() const   { return QByteArray(); }
-  virtual QVariantMap toJSON() const;
+  virtual QVariantMap toJSON(const QByteArray &state) const;
 
   QByteArray id;       ///< Client ID.
   QByteArray htmlName; ///< HTML имя провайдера.
@@ -39,6 +38,9 @@ public:
   QByteArray redirect; ///< Redirect URI.
   QByteArray secret;   ///< Client secret.
   QByteArray type;     ///< Тип провайдера.
+
+protected:
+  virtual inline QByteArray toUrl(const QByteArray &state) const { Q_UNUSED(state) return QByteArray(); }
 };
 
 #endif /* OAUTHDATA_H_ */

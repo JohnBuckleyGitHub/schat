@@ -25,7 +25,9 @@ class YandexAuthData : public OAuthData
 {
 public:
   YandexAuthData();
-  QByteArray toUrl() const;
+
+protected:
+  QByteArray toUrl(const QByteArray &state) const;
 };
 
 #endif /* YANDEXAUTHDATA_H_ */

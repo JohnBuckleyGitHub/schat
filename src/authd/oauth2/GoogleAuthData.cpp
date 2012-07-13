@@ -40,10 +40,11 @@ bool GoogleAuthData::isValid() const
 }
 
 
-QByteArray GoogleAuthData::toUrl() const
+QByteArray GoogleAuthData::toUrl(const QByteArray &state) const
 {
   QByteArray url = "https://accounts.google.com/o/oauth2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile";
   url += "&redirect_uri=" + QUrl::toPercentEncoding(redirect);
   url += "&response_type=code&client_id=" + id + "&approval_prompt=force";
+  url += "&state=" + state;
   return url;
 }

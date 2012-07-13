@@ -26,7 +26,9 @@ class FacebookAuthData : public OAuthData
 public:
   FacebookAuthData();
   bool isValid() const;
-  QByteArray toUrl() const;
+
+protected:
+  QByteArray toUrl(const QByteArray &state) const;
 };
 
 #endif /* FACEBOOKAUTHDATA_H_ */

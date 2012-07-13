@@ -35,7 +35,7 @@ bool FacebookAuthData::isValid() const
 }
 
 
-QByteArray FacebookAuthData::toUrl() const
+QByteArray FacebookAuthData::toUrl(const QByteArray &state) const
 {
-  return "https://www.facebook.com/dialog/oauth?client_id=" + id + "&redirect_uri=" + redirect + "&scope=email";
+  return "https://www.facebook.com/dialog/oauth?client_id=" + id + "&redirect_uri=" + redirect + "&scope=email&state=" + state;
 }
