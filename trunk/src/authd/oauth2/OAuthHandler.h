@@ -37,7 +37,7 @@ public:
 
 protected:
   virtual void setError(const QByteArray &error = "unknown_error");
-  void log(const QByteArray &text);
+  void log(int level, const QByteArray &text);
   void serveError();
   void serveOk();
   void setState(const QByteArray &state);

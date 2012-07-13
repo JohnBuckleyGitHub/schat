@@ -80,15 +80,18 @@ void OAuthHandler::setError(const QByteArray &error)
     m_reply = 0;
   }
 
-  log("error: " + error);
+  log(NodeLog::ErrorLevel, "error: " + error);
   AuthCore::state()->add(new AuthStateData(m_state, error));
   deleteLater();
 }
 
 
-void OAuthHandler::log(const QByteArray &text)
+void OAuthHandler::log(int level, const QByteArray &text)
 {
-  SCHAT_LOG_ERROR_STR("[" + m_provider->provider + "/" + m_state + "] " + text)
+  if (NodeLog::level() < level)
+    return;
+
+  NodeLog::Helper(static_cast<NodeLog::Level>(level)).stream() << ("[" + m_provider->provider + "/" + m_state + "] " + text).constData();
 }
 
 

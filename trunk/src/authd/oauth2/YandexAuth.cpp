@@ -44,7 +44,7 @@ YandexAuth::YandexAuth(const QUrl &url, const QString &path, Tufao::HttpServerRe
 
   m_manager = new QNetworkAccessManager(this);
   m_code = url.queryItemValue(LS("code")).toUtf8();
-  log("Start receiving token, code:" + m_code);
+  log(NodeLog::InfoLevel, "Start receiving token, code:" + m_code);
   getToken();
 }
 
@@ -70,7 +70,7 @@ void YandexAuth::dataReady()
   QByteArray id = SimpleID::encode(SimpleID::make("yandex:" + email, SimpleID::UserId));
   AuthCore::state()->add(new AuthStateData(m_state, "yandex", id, QByteArray(), data));
 
-  log("Data is successfully received, id:" + id + ", email:" + email);
+  log(NodeLog::InfoLevel, "Data is successfully received, id:" + id + ", email:" + email);
 }
 
 
@@ -92,7 +92,7 @@ void YandexAuth::tokenReady()
   if (token.isEmpty())
     return setError("token_error: " + data.value(LS("error")).toByteArray());
 
-  log("Token is successfully received");
+  log(NodeLog::InfoLevel, "Token is successfully received");
 
   QNetworkRequest request(QUrl(LS("https://login.yandex.ru/info?format=json")));
   request.setRawHeader("Authorization", "OAuth " + token);
