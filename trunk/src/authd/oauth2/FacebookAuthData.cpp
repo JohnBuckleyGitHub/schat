@@ -16,22 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
+#include "oauth2/FacebookAuthData.h"
 
-#include <QUrl>
-
-#include "oauth2/GoogleAuthData.h"
-#include "sglobal.h"
-
-GoogleAuthData::GoogleAuthData()
-  : OAuthData("google")
+FacebookAuthData::FacebookAuthData()
+  : OAuthData("facebook")
 {
-  name = "Google";
-  htmlName = "<span style='color:#0039b6'>G</span><span style='color:#c41200'>o</span><span style='color:#f7a70b'>o</span><span style='color:#0039b6'>g</span><span style='color:#30a72f'>l</span><span style='color:#c41200'>e</span>";
+  name = "Facebook";
+  htmlName = "Facebook";
 }
 
 
-bool GoogleAuthData::isValid() const
+bool FacebookAuthData::isValid() const
 {
   if (redirect.isEmpty())
     return false;
@@ -40,10 +35,7 @@ bool GoogleAuthData::isValid() const
 }
 
 
-QByteArray GoogleAuthData::toUrl() const
+QByteArray FacebookAuthData::toUrl() const
 {
-  QByteArray url = "https://accounts.google.com/o/oauth2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile";
-  url += "&redirect_uri=" + QUrl::toPercentEncoding(redirect);
-  url += "&response_type=code&client_id=" + id + "&approval_prompt=force";
-  return url;
+  return "https://www.facebook.com/dialog/oauth?client_id=" + id + "&redirect_uri=" + redirect;
 }

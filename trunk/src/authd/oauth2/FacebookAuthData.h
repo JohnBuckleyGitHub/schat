@@ -16,17 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oauth2/YandexAuthData.h"
+#ifndef FACEBOOKAUTHDATA_H_
+#define FACEBOOKAUTHDATA_H_
 
-YandexAuthData::YandexAuthData()
-  : OAuthData("yandex")
+#include "oauth2/OAuthData.h"
+
+class FacebookAuthData : public OAuthData
 {
-  name = "Яндекс";
-  htmlName = "<span style='color:#ff000a'>Я</span>ндекс";
-}
+public:
+  FacebookAuthData();
+  bool isValid() const;
+  QByteArray toUrl() const;
+};
 
-
-QByteArray YandexAuthData::toUrl() const
-{
-  return "https://oauth.yandex.ru/authorize?response_type=code&client_id=" + id;
-}
+#endif /* FACEBOOKAUTHDATA_H_ */

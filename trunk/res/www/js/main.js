@@ -1,6 +1,5 @@
 var Page = {
   addProvider: function(name, data) {
-    console.log(data);
     $('#providers').append('<div class="provider">' +
                              '<a href="' + data.url + ' "><i class="provider-' + name + '"></i> ' + data.htmlName + '</a>' +
                            '</div>');
