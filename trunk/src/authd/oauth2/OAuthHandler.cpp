@@ -71,6 +71,28 @@ QByteArray OAuthHandler::page(const QString &name)
 
 
 /*!
+ * Установка состояния ошибки.
+ */
+void OAuthHandler::setError(const QByteArray &error)
+{
+  if (m_reply) {
+    m_reply->deleteLater();
+    m_reply = 0;
+  }
+
+  log("error: " + error);
+  AuthCore::state()->add(new AuthStateData(m_state, error));
+  deleteLater();
+}
+
+
+void OAuthHandler::log(const QByteArray &text)
+{
+  SCHAT_LOG_ERROR_STR("[" + m_provider->provider + "/" + m_state + "] " + text)
+}
+
+
+/*!
  * Отображение страницы с ошибкой, если пользователь отменил авторизацию.
  */
 void OAuthHandler::serveError()
@@ -88,23 +110,6 @@ void OAuthHandler::serveError()
   m_response->end(data);
   deleteLater();
 }
-
-
-/*!
- * Установка состояния ошибки.
- */
-void OAuthHandler::setError(const QByteArray &error)
-{
-  if (m_reply) {
-    m_reply->deleteLater();
-    m_reply = 0;
-  }
-
-  SCHAT_LOG_ERROR_STR("[" + m_provider->provider + "/" + m_state + "] error: " + error)
-  AuthCore::state()->add(new AuthStateData(m_state, error));
-  deleteLater();
-}
-
 
 
 void OAuthHandler::serveOk()

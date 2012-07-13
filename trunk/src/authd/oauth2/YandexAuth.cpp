@@ -44,19 +44,17 @@ YandexAuth::YandexAuth(const QUrl &url, const QString &path, Tufao::HttpServerRe
 
   m_manager = new QNetworkAccessManager(this);
   m_code = url.queryItemValue(LS("code")).toUtf8();
-  SCHAT_LOG_INFO_STR("[yandex/" + m_state + "] Start receiving token, code:" + m_code)
+  log("Start receiving token, code:" + m_code);
   getToken();
 }
 
 
 void YandexAuth::dataReady()
 {
-  qDebug() << "YandexAuth::dataReady()";
   m_reply = qobject_cast<QNetworkReply*>(sender());
   if (!m_reply)
     return;
 
-  qDebug() << m_reply->error();
   if (m_reply->error())
     return setError("network_error: " + m_reply->errorString().toUtf8());
 
@@ -69,12 +67,10 @@ void YandexAuth::dataReady()
   if (email.isEmpty())
     return setError("invalid_email");
 
-  qDebug() << raw;
-
   QByteArray id = SimpleID::encode(SimpleID::make("yandex:" + email, SimpleID::UserId));
   AuthCore::state()->add(new AuthStateData(m_state, "yandex", id, QByteArray(), data));
 
-  SCHAT_LOG_INFO_STR("[yandex/" + m_state + "] Data is successfully received, id:" + id + ", email:" + email)
+  log("Data is successfully received, id:" + id + ", email:" + email);
 }
 
 
@@ -96,7 +92,7 @@ void YandexAuth::tokenReady()
   if (token.isEmpty())
     return setError("token_error: " + data.value(LS("error")).toByteArray());
 
-  SCHAT_LOG_INFO_STR("[yandex/" + m_state + "] Token is successfully received")
+  log("Token is successfully received");
 
   QNetworkRequest request(QUrl(LS("https://login.yandex.ru/info?format=json")));
   request.setRawHeader("Authorization", "OAuth " + token);
