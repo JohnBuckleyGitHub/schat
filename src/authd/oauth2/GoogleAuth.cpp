@@ -27,6 +27,7 @@
 #include "AuthState.h"
 #include "JSON.h"
 #include "net/SimpleID.h"
+#include "NodeLog.h"
 #include "oauth2/GoogleAuth.h"
 #include "oauth2/OAuthData.h"
 #include "sglobal.h"
@@ -48,7 +49,7 @@ GoogleAuth::GoogleAuth(const QUrl &url, const QString &path, Tufao::HttpServerRe
 
   m_manager = new QNetworkAccessManager(this);
   m_code = url.queryItemValue(LS("code")).toUtf8();
-  log("Start receiving token, code:" + m_code);
+  log(NodeLog::InfoLevel, "Start receiving token, code:" + m_code);
   getToken();
 }
 
@@ -76,7 +77,7 @@ void GoogleAuth::dataReady()
   QByteArray id = SimpleID::encode(SimpleID::make("google:" + email, SimpleID::UserId));
   AuthCore::state()->add(new AuthStateData(m_state, "google", id, QByteArray(), data));
 
-  log("Data is successfully received, id:" + id + ", email:" + email);
+  log(NodeLog::InfoLevel, "Data is successfully received, id:" + id + ", email:" + email);
   deleteLater();
 }
 
@@ -99,7 +100,7 @@ void GoogleAuth::tokenReady()
   m_reply = 0;
 
   if (statusCode >= 500) {
-    log("Bad status code: " + QByteArray::number(statusCode));
+    log(NodeLog::WarnLevel, "Bad status code: " + QByteArray::number(statusCode));
     getToken();
     return;
   }
@@ -109,7 +110,7 @@ void GoogleAuth::tokenReady()
   if (token.isEmpty())
     return setError("token_error: " + data.value(LS("error")).toByteArray());
 
-  log("Token is successfully received");
+  log(NodeLog::InfoLevel, "Token is successfully received");
 
   QNetworkRequest request(QUrl(LS("https://www.googleapis.com/oauth2/v1/userinfo")));
   request.setRawHeader("Authorization", "Bearer " + token);

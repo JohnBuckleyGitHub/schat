@@ -62,6 +62,7 @@ AuthCore::AuthCore(QObject *parent)
 
   add(new ProvidersHandler());
   add(new StateHandlerCreator());
+  add(new FacebookAuthCreator());
   add(new GoogleAuthCreator());
   add(new YandexAuthCreator());
 

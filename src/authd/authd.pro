@@ -92,6 +92,7 @@ HEADERS = \
     handlers.h \
     handlers/ProvidersHandler.h \
     handlers/StateHandler.h \
+    oauth2/FacebookAuth.h \
     oauth2/FacebookAuthData.h \
     oauth2/GoogleAuth.h \
     oauth2/GoogleAuthData.h \
@@ -109,6 +110,7 @@ SOURCES = \
     HandlerRoute.cpp \
     handlers/ProvidersHandler.cpp \
     handlers/StateHandler.cpp \
+    oauth2/FacebookAuth.cpp \
     oauth2/FacebookAuthData.cpp \
     oauth2/GoogleAuth.cpp \
     oauth2/GoogleAuthData.cpp \
