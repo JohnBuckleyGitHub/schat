@@ -19,6 +19,7 @@
 #include <QDebug>
 
 #include "AuthCore.h"
+#include "net/SimpleID.h"
 #include "oauth2/OAuthData.h"
 #include "Settings.h"
 #include "sglobal.h"
@@ -48,19 +49,24 @@ bool OAuthData::read()
   secret   = settings->value(provider + LS("/Secret")).toByteArray();
   redirect = settings->value(provider + LS("/Redirect")).toByteArray();
 
-  qDebug() << toUrl();
-  qDebug() << id << secret << redirect;
-
   return isValid();
 }
 
 
-QVariantMap OAuthData::toJSON() const
+QVariantMap OAuthData::toJSON(const QByteArray &state) const
 {
+  QByteArray s;
+  s.reserve(34);
+
+  if (SimpleID::typeOf(SimpleID::decode(state)) == SimpleID::MessageId)
+    s = state;
+  else
+    s = SimpleID::encode(SimpleID::randomId(SimpleID::MessageId));
+
   QVariantMap data;
   data[LS("name")]     = name;
   data[LS("htmlName")] = htmlName;
-  data[LS("url")]      = toUrl();
+  data[LS("url")]      = toUrl(s);
   data[LS("type")]     = type;
   return data;
 }

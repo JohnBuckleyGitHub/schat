@@ -26,7 +26,9 @@ class GoogleAuthData : public OAuthData
 public:
   GoogleAuthData();
   bool isValid() const;
-  QByteArray toUrl() const;
+
+protected:
+  QByteArray toUrl(const QByteArray &state) const;
 };
 
 #endif /* GOOGLEAUTHDATA_H_ */
