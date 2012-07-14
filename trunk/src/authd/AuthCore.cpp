@@ -69,6 +69,7 @@ AuthCore::AuthCore(QObject *parent)
   add(new FacebookAuthCreator());
   add(new GoogleAuthCreator());
   add(new YandexAuthCreator());
+  add(new MailRuAuthCreator());
 
   QTimer::singleShot(0, this, SLOT(start()));
 }
