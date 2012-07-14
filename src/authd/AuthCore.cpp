@@ -29,7 +29,10 @@
 #include "NodeLog.h"
 #include "oauth2/FacebookAuthData.h"
 #include "oauth2/GoogleAuthData.h"
+#include "oauth2/MailRuAuthData.h"
 #include "oauth2/OAuthData.h"
+#include "oauth2/OdnoklassnikiAuthData.h"
+#include "oauth2/VkontakteAuthData.h"
 #include "oauth2/YandexAuthData.h"
 #include "Path.h"
 #include "Settings.h"
@@ -50,7 +53,7 @@ AuthCore::AuthCore(QObject *parent)
   m_settings = new Settings(Storage::etcPath() + LC('/') + Path::app() + LS(".conf"), this);
   m_settings->setDefault(LS("Listen"),   QStringList("http://0.0.0.0:7668"));
   m_settings->setDefault(LS("Root"),     Storage::sharePath() + LS("/www"));
-  m_settings->setDefault(LS("Order"),    QStringList() << LS("facebook") << LS("google") << LS("yandex"));
+  m_settings->setDefault(LS("Order"),    QStringList() << LS("facebook") << LS("vkontakte") << LS("google") << LS("yandex") << LS("odnoklassniki") << LS("mail_ru"));
   m_settings->setDefault(LS("LogLevel"), 2);
 
   openLog();
@@ -91,6 +94,9 @@ void AuthCore::start()
   add(new FacebookAuthData());
   add(new GoogleAuthData());
   add(new YandexAuthData());
+  add(new VkontakteAuthData());
+  add(new MailRuAuthData());
+  add(new OdnoklassnikiAuthData());
 
   QStringList listen = m_settings->value(LS("Listen")).toStringList();
   foreach (const QString &url, listen) {

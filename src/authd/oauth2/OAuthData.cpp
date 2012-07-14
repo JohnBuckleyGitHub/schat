@@ -35,7 +35,7 @@ OAuthData::OAuthData(const QByteArray &provider)
 
 bool OAuthData::isValid() const
 {
-  if (provider.isEmpty() || id.isEmpty() || secret.isEmpty() || name.isEmpty() || htmlName.isEmpty())
+  if (provider.isEmpty() || id.isEmpty() || secret.isEmpty() || redirect.isEmpty() || name.isEmpty() || htmlName.isEmpty())
     return false;
 
   return true;

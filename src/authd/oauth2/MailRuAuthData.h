@@ -16,17 +16,18 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oauth2/FacebookAuthData.h"
+#ifndef MAILRUAUTHDATA_H_
+#define MAILRUAUTHDATA_H_
 
-FacebookAuthData::FacebookAuthData()
-  : OAuthData("facebook")
+#include "oauth2/OAuthData.h"
+
+class MailRuAuthData : public OAuthData
 {
-  name = "Facebook";
-  htmlName = "Facebook";
-}
+public:
+  MailRuAuthData();
 
+protected:
+  QByteArray toUrl(const QByteArray &state) const;
+};
 
-QByteArray FacebookAuthData::toUrl(const QByteArray &state) const
-{
-  return "https://www.facebook.com/dialog/oauth?client_id=" + id + "&redirect_uri=" + redirect + "&scope=email&state=" + state;
-}
+#endif /* MAILRUAUTHDATA_H_ */
