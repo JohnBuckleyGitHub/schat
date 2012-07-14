@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QUrl>
+
 #include "oauth2/FacebookAuthData.h"
 
 FacebookAuthData::FacebookAuthData()
@@ -28,5 +30,5 @@ FacebookAuthData::FacebookAuthData()
 
 QByteArray FacebookAuthData::toUrl(const QByteArray &state) const
 {
-  return "https://www.facebook.com/dialog/oauth?client_id=" + id + "&redirect_uri=" + redirect + "&scope=email&state=" + state;
+  return "https://www.facebook.com/dialog/oauth?client_id=" + id + "&redirect_uri=" + QUrl::toPercentEncoding(redirect) + "&scope=email&state=" + state;
 }

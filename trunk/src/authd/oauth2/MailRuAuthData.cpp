@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QUrl>
+
 #include "oauth2/MailRuAuthData.h"
 
 MailRuAuthData::MailRuAuthData()
@@ -26,11 +28,7 @@ MailRuAuthData::MailRuAuthData()
 }
 
 
-/*!
- * \todo Отсутствует реализация создания адреса для провайдера mail_ru.
- */
 QByteArray MailRuAuthData::toUrl(const QByteArray &state) const
 {
-  Q_UNUSED(state)
-  return QByteArray();
+  return "https://connect.mail.ru/oauth/authorize?client_id=" + id + "&response_type=code&redirect_uri=" + QUrl::toPercentEncoding(redirect) + "&state=" + state;
 }
