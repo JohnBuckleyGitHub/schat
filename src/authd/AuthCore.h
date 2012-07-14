@@ -45,6 +45,7 @@ public:
   inline static AuthCore *i()                                 { return m_self; }
   inline static AuthState *state()                            { return m_self->m_state; }
   inline static OAuthData *provider(const QString &name)      { return m_self->m_providers.value(name); }
+  inline static QByteArray baseUrl()                          { return m_self->m_baseUrl; }
   inline static Settings *settings()                          { return m_self->m_settings; }
   static QString root();
 
@@ -60,6 +61,7 @@ private:
   AuthHandler *m_handler;                  ///< Основной обработчик запросов.
   AuthState *m_state;                      ///< Состояния авторизаций.
   NodeLog *m_log;                          ///< Журнал.
+  QByteArray m_baseUrl;                    ///< Базовый URL адрес.
   QHash<QString, OAuthData *> m_providers; ///< Список доступных OAuth провайдеров.
   QList<Tufao::HttpServer *> m_servers;    ///< HTTP или HTTPS сервера ожидающие подключений.
   Settings *m_settings;                    ///< Настройки сервера.

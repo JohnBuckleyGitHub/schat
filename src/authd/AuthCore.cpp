@@ -55,6 +55,7 @@ AuthCore::AuthCore(QObject *parent)
   m_settings->setDefault(LS("Root"),     Storage::sharePath() + LS("/www"));
   m_settings->setDefault(LS("Order"),    QStringList() << LS("facebook") << LS("vkontakte") << LS("google") << LS("yandex") << LS("odnoklassniki") << LS("mail_ru"));
   m_settings->setDefault(LS("LogLevel"), 2);
+  m_settings->setDefault(LS("BaseUrl"),  QString());
 
   openLog();
 
@@ -91,12 +92,25 @@ QString AuthCore::root()
 
 void AuthCore::start()
 {
+  m_baseUrl = m_settings->value(LS("BaseUrl")).toByteArray();
+  if (m_baseUrl.isEmpty()) {
+    SCHAT_LOG_FATAL("Configuration option \"BaseUrl\" is not set")
+    QCoreApplication::exit(1);
+    return;
+  }
+
   add(new FacebookAuthData());
   add(new GoogleAuthData());
   add(new YandexAuthData());
   add(new VkontakteAuthData());
   add(new MailRuAuthData());
   add(new OdnoklassnikiAuthData());
+
+  if (m_providers.isEmpty()) {
+    SCHAT_LOG_FATAL("Providers list is empty")
+    QCoreApplication::exit(2);
+    return;
+  }
 
   QStringList listen = m_settings->value(LS("Listen")).toStringList();
   foreach (const QString &url, listen) {
@@ -105,7 +119,7 @@ void AuthCore::start()
 
   if (m_servers.isEmpty()) {
     SCHAT_LOG_FATAL("Failed to open ports for incoming connections")
-    QCoreApplication::exit(1);
+    QCoreApplication::exit(3);
     return;
   }
 
