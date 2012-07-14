@@ -16,17 +16,21 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oauth2/FacebookAuthData.h"
+#include "oauth2/OdnoklassnikiAuthData.h"
 
-FacebookAuthData::FacebookAuthData()
-  : OAuthData("facebook")
+OdnoklassnikiAuthData::OdnoklassnikiAuthData()
+  : OAuthData("odnoklassniki")
 {
-  name = "Facebook";
-  htmlName = "Facebook";
+  name = "Одноклассники";
+  htmlName = name;
 }
 
 
-QByteArray FacebookAuthData::toUrl(const QByteArray &state) const
+/*!
+ * \todo Отсутствует реализация создания адреса для провайдера odnoklassniki.
+ */
+QByteArray OdnoklassnikiAuthData::toUrl(const QByteArray &state) const
 {
-  return "https://www.facebook.com/dialog/oauth?client_id=" + id + "&redirect_uri=" + redirect + "&scope=email&state=" + state;
+  Q_UNUSED(state)
+  return QByteArray();
 }

@@ -16,17 +16,21 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oauth2/FacebookAuthData.h"
+#include "oauth2/VkontakteAuthData.h"
 
-FacebookAuthData::FacebookAuthData()
-  : OAuthData("facebook")
+VkontakteAuthData::VkontakteAuthData()
+  : OAuthData("vkontakte")
 {
-  name = "Facebook";
-  htmlName = "Facebook";
+  name = "В Контакте";
+  htmlName = name;
 }
 
 
-QByteArray FacebookAuthData::toUrl(const QByteArray &state) const
+/*!
+ * \todo Отсутствует реализация создания адреса для провайдера vkontakte.
+ */
+QByteArray VkontakteAuthData::toUrl(const QByteArray &state) const
 {
-  return "https://www.facebook.com/dialog/oauth?client_id=" + id + "&redirect_uri=" + redirect + "&scope=email&state=" + state;
+  Q_UNUSED(state)
+  return QByteArray();
 }

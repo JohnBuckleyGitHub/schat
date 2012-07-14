@@ -16,17 +16,21 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "oauth2/FacebookAuthData.h"
+#include "oauth2/MailRuAuthData.h"
 
-FacebookAuthData::FacebookAuthData()
-  : OAuthData("facebook")
+MailRuAuthData::MailRuAuthData()
+  : OAuthData("mail_ru")
 {
-  name = "Facebook";
-  htmlName = "Facebook";
+  name = "Mail.Ru";
+  htmlName = "<span style='color:#f7a600'>@</span>mail<span style='color:#f7a600'>.ru</span>";
 }
 
 
-QByteArray FacebookAuthData::toUrl(const QByteArray &state) const
+/*!
+ * \todo Отсутствует реализация создания адреса для провайдера mail_ru.
+ */
+QByteArray MailRuAuthData::toUrl(const QByteArray &state) const
 {
-  return "https://www.facebook.com/dialog/oauth?client_id=" + id + "&redirect_uri=" + redirect + "&scope=email&state=" + state;
+  Q_UNUSED(state)
+  return QByteArray();
 }
