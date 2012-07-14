@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include "AuthCore.h"
 #include "net/SimpleID.h"
 #include "oauth2/OAuthData.h"
@@ -30,12 +28,13 @@ OAuthData::OAuthData(const QByteArray &provider)
   , provider(provider)
   , type("oauth2")
 {
+  redirect = AuthCore::baseUrl() + "/oauth2/" + provider;
 }
 
 
 bool OAuthData::isValid() const
 {
-  if (provider.isEmpty() || id.isEmpty() || secret.isEmpty() || redirect.isEmpty() || name.isEmpty() || htmlName.isEmpty())
+  if (provider.isEmpty() || id.isEmpty() || secret.isEmpty() || name.isEmpty() || htmlName.isEmpty())
     return false;
 
   return true;
@@ -47,7 +46,6 @@ bool OAuthData::read()
   Settings *settings = AuthCore::settings();
   id       = settings->value(provider + LS("/Id")).toByteArray();
   secret   = settings->value(provider + LS("/Secret")).toByteArray();
-  redirect = settings->value(provider + LS("/Redirect")).toByteArray();
 
   return isValid();
 }
