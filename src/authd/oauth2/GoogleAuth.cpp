@@ -80,7 +80,17 @@ void GoogleAuth::dataReady()
  */
 void GoogleAuth::tokenReady()
 {
-  OAUTH_PREPARE_REPLY
+  m_reply = qobject_cast<QNetworkReply*>(sender());
+  if (!m_reply)
+    return;
+
+  if (m_reply->error() != 0 && m_reply->error() != QNetworkReply::UnknownContentError)
+    return setError("network_error: " + m_reply->errorString().toUtf8());
+
+  QByteArray raw = m_reply->readAll();
+  int status = m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+  m_reply->deleteLater();
+  m_reply = 0;
 
   if (status >= 500) {
     log(NodeLog::WarnLevel, "Bad status code: " + QByteArray::number(status));
