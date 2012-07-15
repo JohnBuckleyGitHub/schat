@@ -22,6 +22,7 @@ HEADERS  = \
    feeds/NodeAccountFeed.h \
    feeds/NodeFeedStorage.h \
    feeds/NodeHostsFeed.h \
+   feeds/NodeUserFeed.h \
    GenericCh.h \
    GenericNodePlugin.h \
    GenericNodePlugin_p.h \
@@ -32,6 +33,7 @@ SOURCES  = \
    feeds/NodeAccountFeed.cpp \
    feeds/NodeFeedStorage.cpp \
    feeds/NodeHostsFeed.cpp \
+   feeds/NodeUserFeed.cpp \
    GenericCh.cpp \
    GenericNodePlugin.cpp \
    NodeChannels.cpp \
