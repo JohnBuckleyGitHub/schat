@@ -97,7 +97,7 @@ void YandexAuth::tokenReady()
   QNetworkRequest request(QUrl(LS("https://login.yandex.ru/info?format=json")));
   request.setRawHeader("Authorization", "OAuth " + token);
   QNetworkReply *reply = m_manager->get(request);
-  connect(reply, SIGNAL(readyRead()), SLOT(dataReady()));
+  connect(reply, SIGNAL(finished()), SLOT(dataReady()));
 }
 
 
@@ -112,7 +112,7 @@ void YandexAuth::getToken()
   body += "&client_secret=" + m_provider->secret;
 
   QNetworkReply *reply = m_manager->post(request, body);
-  connect(reply, SIGNAL(readyRead()), SLOT(tokenReady()));
+  connect(reply, SIGNAL(finished()), SLOT(tokenReady()));
 }
 
 

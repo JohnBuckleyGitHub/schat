@@ -103,6 +103,7 @@ HEADERS = \
     oauth2/OAuthData.h \
     oauth2/OAuthHandler.h \
     oauth2/OdnoklassnikiAuthData.h \
+    oauth2/VkontakteAuth.h \
     oauth2/VkontakteAuthData.h \
     oauth2/YandexAuth.h \
     oauth2/YandexAuthData.h \
@@ -125,6 +126,7 @@ SOURCES = \
     oauth2/OAuthData.cpp \
     oauth2/OAuthHandler.cpp \
     oauth2/OdnoklassnikiAuthData.cpp \
+    oauth2/VkontakteAuth.cpp \
     oauth2/VkontakteAuthData.cpp \
     oauth2/YandexAuth.cpp \
     oauth2/YandexAuthData.cpp \

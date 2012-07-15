@@ -53,4 +53,18 @@ protected:
   Tufao::HttpServerResponse *m_response; ///< HTTP ответ.
 };
 
+#define OAUTH_PREPARE_REPLY \
+    m_reply = qobject_cast<QNetworkReply*>(sender());                                      \
+    if (!m_reply)                                                                          \
+      return;                                                                              \
+                                                                                           \
+    if (m_reply->error())                                                                  \
+      return setError("network_error: " + m_reply->errorString().toUtf8());                \
+                                                                                           \
+    QByteArray raw = m_reply->readAll();                                                   \
+    int status     = m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt(); \
+                                                                                           \
+    m_reply->deleteLater();                                                                \
+    m_reply = 0;                                                                           \
+
 #endif /* OAUTHHANDLER_H_ */

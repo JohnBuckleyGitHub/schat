@@ -115,7 +115,7 @@ void GoogleAuth::tokenReady()
   QNetworkRequest request(QUrl(LS("https://www.googleapis.com/oauth2/v1/userinfo")));
   request.setRawHeader("Authorization", "Bearer " + token);
   QNetworkReply *reply = m_manager->get(request);
-  connect(reply, SIGNAL(readyRead()), SLOT(dataReady()));
+  connect(reply, SIGNAL(finished()), SLOT(dataReady()));
 }
 
 
@@ -134,7 +134,7 @@ void GoogleAuth::getToken()
   body += "&grant_type=authorization_code";
 
   QNetworkReply *reply = m_manager->post(request, body);
-  connect(reply, SIGNAL(readyRead()), SLOT(tokenReady()));
+  connect(reply, SIGNAL(finished()), SLOT(tokenReady()));
 }
 
 
