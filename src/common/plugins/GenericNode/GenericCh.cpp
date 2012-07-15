@@ -52,5 +52,5 @@ void GenericCh::userChannelImpl(ChatChannel channel, const AuthRequest &data, co
   channel->feed(LS("account"));
 
   addNewUserFeedIsNotExist(channel, LS("acl"));
-  channel->hosts().add(data, host);
+  channel->hosts().add(HostInfo(new Host(data, host)));
 }

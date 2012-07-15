@@ -21,8 +21,9 @@
 
 #include <QMap>
 
-#include "schat.h"
 #include "feeds/Feed.h"
+#include "Host.h"
+#include "schat.h"
 
 class AuthRequest;
 class ServerChannel;
@@ -39,13 +40,13 @@ public:
   FeedPtr feed() const;
   FeedPtr user() const;
   QByteArray currentId() const;
-  QByteArray id(const QByteArray &publicId) const;
+  QByteArray id(const QByteArray &publicId = QByteArray()) const;
   QList<quint64> sockets() const;
   QList<quint64> sockets(const QByteArray &publicId) const;
   QVariantMap data(const QByteArray &publicId = QByteArray()) const;
   QVariantMap userData(const QByteArray &publicId = QByteArray()) const;
 
-  void add(const AuthRequest &data, const QString &host);
+  void add(HostInfo hostInfo);
   void add(const QByteArray &uniqueId);
   void remove(quint64 socket);
   void setData(const QVariantMap &data, const QByteArray &publicId = QByteArray(), bool save = true);
@@ -74,6 +75,7 @@ private:
     QMap<QByteArray, QList<quint64> > m_ids; ///< Обратная таблица.
   };
 
+  QHash<QByteArray, HostInfo> m_hosts;       ///< Таблица хостов, в качестве ключа публичный идентификатор хоста.
   ServerChannel *m_channel;                  ///< Канал.
   Sockets m_sockets;                         ///< Сокеты.
 };

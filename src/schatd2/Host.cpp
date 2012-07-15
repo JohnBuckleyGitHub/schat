@@ -20,14 +20,14 @@
 #include "net/packets/auth.h"
 #include "sglobal.h"
 
-Host::Host(const AuthRequest &data, const QByteArray &address)
+Host::Host(const AuthRequest &data, const QString &address)
   : online(true)
   , channel(0)
-  , name(data.hostName.toUtf8())
+  , name(data.hostName)
   , address(address)
   , version(data.version)
   , os(data.os)
-  , osName(data.json.value(LS("os")).toByteArray())
+  , osName(data.json.value(LS("os")).toString())
   , tz(data.tz)
 {
 

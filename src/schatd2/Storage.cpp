@@ -50,6 +50,7 @@ Storage::Storage(QObject *parent)
   Path::init();
   Normalize::init();
 
+  new DataBase(this);
   new Ch(this);
 
   // Инициализация настроек по умолчанию.

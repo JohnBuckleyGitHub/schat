@@ -22,6 +22,8 @@
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QStringList>
+#include <QThreadPool>
+#include <QTimer>
 #include <QVariant>
 
 #include "Ch.h"
@@ -34,12 +36,50 @@
 #include "Path.h"
 #include "sglobal.h"
 #include "Storage.h"
+#include "tools/Ver.h"
 
 bool DataBase::noMaster = false;
+DataBase *DataBase::m_self = 0;
+
+class AddHostTask : public QRunnable
+{
+private:
+  Host m_host;
+
+public:
+  AddHostTask(Host *host)
+    : m_host(*host)
+  {
+  }
+
+  void run()
+  {
+    QSqlQuery query;
+    query.prepare(LS("INSERT OR REPLACE INTO hosts (channel,  hostId,  name,  address,  version,  os,  osName,  tz,  date,  geo,  data)"
+                                          " VALUES (:channel, :hostId, :name, :address, :version, :os, :osName, :tz, :date, :geo, :data)"));
+
+    query.bindValue(LS(":channel"), m_host.channel);
+    query.bindValue(LS(":hostId"),  SimpleID::encode(m_host.hostId));
+    query.bindValue(LS(":name"),    m_host.name);
+    query.bindValue(LS(":address"), m_host.address);
+    query.bindValue(LS(":version"), Ver(m_host.version).toString());
+    query.bindValue(LS(":os"),      m_host.os);
+    query.bindValue(LS(":osName"),  m_host.osName);
+    query.bindValue(LS(":tz"),      m_host.tz);
+    query.bindValue(LS(":date"),    m_host.date);
+    query.bindValue(LS(":geo"),     JSON::generate(m_host.geo));
+    query.bindValue(LS(":data"),    JSON::generate(m_host.data));
+    query.exec();
+  }
+};
+
 
 DataBase::DataBase(QObject *parent)
   : QObject(parent)
 {
+  m_self = this;
+  m_pool = new QThreadPool(this);
+  m_pool->setMaxThreadCount(1);
 }
 
 
@@ -101,6 +141,23 @@ int DataBase::start()
 
     noMaster = true;
   }
+
+  query.exec(LS(
+    "CREATE TABLE IF NOT EXISTS hosts ( "
+    "  id         INTEGER PRIMARY KEY,"
+    "  channel    INTEGER,"
+    "  hostId     BLOB NOT NULL UNIQUE,"
+    "  name       TEXT,"
+    "  address    TEXT,"
+    "  version    TEXT,"
+    "  os         INTEGER,"
+    "  osName     TEXT,"
+    "  tz         INTEGER,"
+    "  date       INTEGER,"
+    "  geo        BLOB,"
+    "  data       BLOB"
+    ");"
+  ));
 
   version();
   return 0;
@@ -455,6 +512,34 @@ qint64 DataBase::add(Account *account)
   query.exec();
 
   return key;
+}
+
+
+/*!
+ * Получения списка хостов связанных с каналом.
+ */
+QHash<QByteArray, HostInfo> DataBase::hosts(qint64 channel)
+{
+  return QHash<QByteArray, HostInfo>();
+}
+
+
+/*!
+ * Добавление или обновление информации о хосте.
+ */
+void DataBase::add(HostInfo host)
+{
+  AddHostTask *task = new AddHostTask(host.data());
+  m_self->m_tasks.append(task);
+  if (m_self->m_tasks.size() == 1)
+    QTimer::singleShot(0, m_self, SLOT(startTasks()));
+}
+
+
+void DataBase::startTasks()
+{
+  while (!m_tasks.isEmpty())
+    m_pool->start(m_tasks.takeFirst());
 }
 
 
