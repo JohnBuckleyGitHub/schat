@@ -159,7 +159,8 @@ void GenderField::retranslateUi()
 
 void GenderField::setIcons()
 {
-  Gender gender = m_channel->gender();
+  Gender &gender = m_channel->gender();
+  int raw = gender.raw();
 
   gender.set(Gender::Male);
   m_combo->setItemIcon(0, ChatIcons::icon(m_channel, ChatIcons::NoOptions));
@@ -167,11 +168,14 @@ void GenderField::setIcons()
   gender.set(Gender::Female);
   m_combo->setItemIcon(1, ChatIcons::icon(m_channel, ChatIcons::NoOptions));
 
-  gender.setRaw(m_channel->gender().raw());
+  gender.setRaw(raw);
+
   for (int i = 0; i < m_colors.size(); ++i) {
     gender.setColor(i);
     m_colors.at(i)->setIcon(ChatIcons::icon(m_channel, ChatIcons::Statuses));
   }
+
+  gender.setRaw(raw);
 }
 
 
