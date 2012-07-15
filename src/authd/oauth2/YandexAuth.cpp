@@ -51,16 +51,8 @@ YandexAuth::YandexAuth(const QUrl &url, const QString &path, Tufao::HttpServerRe
 
 void YandexAuth::dataReady()
 {
-  m_reply = qobject_cast<QNetworkReply*>(sender());
-  if (!m_reply)
-    return;
-
-  if (m_reply->error())
-    return setError("network_error: " + m_reply->errorString().toUtf8());
-
-  QByteArray raw = m_reply->readAll();
-  m_reply->deleteLater();
-  m_reply = 0;
+  OAUTH_PREPARE_REPLY;
+  OAUTH_BAD_STATUS
 
   QVariantMap data = JSON::parse(raw).toMap();
   QByteArray email = data.value(LS("default_email")).toByteArray();
@@ -76,16 +68,8 @@ void YandexAuth::dataReady()
 
 void YandexAuth::tokenReady()
 {
-  m_reply = qobject_cast<QNetworkReply*>(sender());
-  if (!m_reply)
-    return;
-
-  if (m_reply->error())
-    return setError("network_error: " + m_reply->errorString().toUtf8());
-
-  QByteArray raw = m_reply->readAll();
-  m_reply->deleteLater();
-  m_reply = 0;
+  OAUTH_PREPARE_REPLY
+  status = 200;
 
   QVariantMap data = JSON::parse(raw).toMap();
   QByteArray token = data.value(LS("access_token")).toByteArray();

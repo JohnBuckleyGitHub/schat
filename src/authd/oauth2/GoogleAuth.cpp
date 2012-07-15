@@ -59,17 +59,10 @@ GoogleAuth::GoogleAuth(const QUrl &url, const QString &path, Tufao::HttpServerRe
  */
 void GoogleAuth::dataReady()
 {
-  m_reply = qobject_cast<QNetworkReply*>(sender());
-  if (!m_reply)
-    return;
+  OAUTH_PREPARE_REPLY
+  OAUTH_BAD_STATUS
 
-  if (m_reply->error())
-    return setError("network_error: " + m_reply->errorString().toUtf8());
-
-  QVariantMap data = JSON::parse(m_reply->readAll()).toMap();
-  m_reply->deleteLater();
-  m_reply = 0;
-
+  QVariantMap data = JSON::parse(raw).toMap();
   QByteArray email = data.value(LS("email")).toByteArray();
   if (email.isEmpty())
     return setError("invalid_email");
@@ -87,20 +80,10 @@ void GoogleAuth::dataReady()
  */
 void GoogleAuth::tokenReady()
 {
-  m_reply = qobject_cast<QNetworkReply*>(sender());
-  if (!m_reply)
-    return;
+  OAUTH_PREPARE_REPLY
 
-  if (m_reply->error())
-    return setError("network_error: " + m_reply->errorString().toUtf8());
-
-  QByteArray raw = m_reply->readAll();
-  int statusCode = m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-  m_reply->deleteLater();
-  m_reply = 0;
-
-  if (statusCode >= 500) {
-    log(NodeLog::WarnLevel, "Bad status code: " + QByteArray::number(statusCode));
+  if (status >= 500) {
+    log(NodeLog::WarnLevel, "Bad status code: " + QByteArray::number(status));
     getToken();
     return;
   }
