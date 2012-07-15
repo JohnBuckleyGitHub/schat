@@ -100,7 +100,7 @@ void FacebookAuth::tokenReady()
 
   QNetworkRequest request(QUrl(LS("https://graph.facebook.com/me?access_token=") + token));
   QNetworkReply *reply = m_manager->get(request);
-  connect(reply, SIGNAL(readyRead()), SLOT(dataReady()));
+  connect(reply, SIGNAL(finished()), SLOT(dataReady()));
 }
 
 
@@ -113,7 +113,7 @@ void FacebookAuth::getToken()
       LS("&code="           + m_code)));
 
   QNetworkReply *reply = m_manager->get(request);
-  connect(reply, SIGNAL(readyRead()), SLOT(tokenReady()));
+  connect(reply, SIGNAL(finished()), SLOT(tokenReady()));
 }
 
 

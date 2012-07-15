@@ -53,18 +53,7 @@ MailRuAuth::MailRuAuth(const QUrl &url, const QString &path, Tufao::HttpServerRe
 
 void MailRuAuth::dataReady()
 {
-  m_reply = qobject_cast<QNetworkReply*>(sender());
-  if (!m_reply)
-    return;
-
-  if (m_reply->error())
-    return setError("network_error: " + m_reply->errorString().toUtf8());
-
-  QByteArray raw = m_reply->readAll();
-  int status     = m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-
-  m_reply->deleteLater();
-  m_reply = 0;
+  OAUTH_PREPARE_REPLY
 
   if (status != 200) {
     QByteArray error = JSON::parse(raw).toMap().value(LS("error")).toMap().value(LS("error_msg")).toByteArray();
@@ -90,18 +79,7 @@ void MailRuAuth::dataReady()
 
 void MailRuAuth::tokenReady()
 {
-  m_reply = qobject_cast<QNetworkReply*>(sender());
-  if (!m_reply)
-    return;
-
-  if (m_reply->error())
-    return setError("network_error: " + m_reply->errorString().toUtf8());
-
-  QByteArray raw = m_reply->readAll();
-  int status     = m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-
-  m_reply->deleteLater();
-  m_reply = 0;
+  OAUTH_PREPARE_REPLY
 
   QVariantMap data = JSON::parse(raw).toMap();
   if (status != 200)
@@ -113,7 +91,7 @@ void MailRuAuth::tokenReady()
   QByteArray sign = QCryptographicHash::hash("app_id=" + m_provider->id + "method=users.getInfosecure=1session_key=" + token + m_provider->secret, QCryptographicHash::Md5).toHex();
   QNetworkRequest request(QUrl(LS("https://www.appsmail.ru/platform/api?method=users.getInfo&secure=1&app_id=" + m_provider->id + "&session_key=" + token + "&sig=" + sign)));
   QNetworkReply *reply = m_manager->get(request);
-  connect(reply, SIGNAL(readyRead()), SLOT(dataReady()));
+  connect(reply, SIGNAL(finished()), SLOT(dataReady()));
 }
 
 
@@ -129,7 +107,7 @@ void MailRuAuth::getToken()
   body += "&redirect_uri="       + m_provider->redirect;
 
   QNetworkReply *reply = m_manager->post(request, body);
-  connect(reply, SIGNAL(readyRead()), SLOT(tokenReady()));
+  connect(reply, SIGNAL(finished()), SLOT(tokenReady()));
 }
 
 

@@ -16,7 +16,10 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QUrl>
+
 #include "oauth2/VkontakteAuthData.h"
+#include "sglobal.h"
 
 VkontakteAuthData::VkontakteAuthData()
   : OAuthData("vkontakte")
@@ -26,11 +29,7 @@ VkontakteAuthData::VkontakteAuthData()
 }
 
 
-/*!
- * \todo Отсутствует реализация создания адреса для провайдера vkontakte.
- */
 QByteArray VkontakteAuthData::toUrl(const QByteArray &state) const
 {
-  Q_UNUSED(state)
-  return QByteArray();
+  return "https://oauth.vk.com/authorize?client_id=" + id + "&redirect_uri=" + QUrl::toPercentEncoding(redirect + LC('/') + state) + "&response_type=code";
 }

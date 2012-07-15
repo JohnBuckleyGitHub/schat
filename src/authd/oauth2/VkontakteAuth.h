@@ -16,10 +16,32 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "handlers/ProvidersHandler.h"
-#include "handlers/StateHandler.h"
-#include "oauth2/FacebookAuth.h"
-#include "oauth2/GoogleAuth.h"
-#include "oauth2/MailRuAuth.h"
-#include "oauth2/VkontakteAuth.h"
-#include "oauth2/YandexAuth.h"
+#ifndef VKONTAKTEAUTH_H_
+#define VKONTAKTEAUTH_H_
+
+#include "oauth2/OAuthHandler.h"
+
+class VkontakteAuth : public OAuthHandler
+{
+  Q_OBJECT
+
+public:
+  VkontakteAuth(const QByteArray &state, const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent = 0);
+
+private slots:
+  void dataReady();
+  void tokenReady();
+
+private:
+  void getToken();
+};
+
+
+class VkontakteAuthCreator : public HandlerCreator
+{
+public:
+  VkontakteAuthCreator() : HandlerCreator() {}
+  bool serve(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent);
+};
+
+#endif /* VKONTAKTEAUTH_H_ */
