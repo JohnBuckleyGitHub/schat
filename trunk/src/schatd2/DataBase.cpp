@@ -520,7 +520,31 @@ qint64 DataBase::add(Account *account)
  */
 QHash<QByteArray, HostInfo> DataBase::hosts(qint64 channel)
 {
-  return QHash<QByteArray, HostInfo>();
+  QHash<QByteArray, HostInfo> out;
+
+  QSqlQuery query;
+  query.prepare(LS("SELECT hostId, name, address, version, os, osName, tz, date, geo, data FROM hosts WHERE channel = :channel;"));
+  query.bindValue(LS(":channel"), channel);
+  query.exec();
+
+  while (query.next()) {
+    HostInfo host(new Host());
+    host->channel = channel;
+    host->hostId  = SimpleID::decode(query.value(0).toByteArray());
+    host->name    = query.value(1).toString();
+    host->address = query.value(2).toString();
+    host->version = Ver(query.value(3).toString()).toUInt();
+    host->os      = query.value(4).toInt();
+    host->osName  = query.value(5).toString();
+    host->tz      = query.value(6).toInt();
+    host->date    = query.value(7).toLongLong();
+    host->geo     = JSON::parse(query.value(8).toByteArray()).toMap();
+    host->data    = JSON::parse(query.value(9).toByteArray()).toMap();
+
+    out[host->hostId] = host;
+  }
+
+  return out;
 }
 
 

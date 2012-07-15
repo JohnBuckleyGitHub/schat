@@ -30,6 +30,7 @@ public:
   Feed* load(const QString &name, const QVariantMap &data);
 
   FeedQueryReply query(const QVariantMap &json, Channel *channel = 0);
+  QVariantMap feed(Channel *channel = 0);
 
 private:
   FeedQueryReply activity(Channel *channel);

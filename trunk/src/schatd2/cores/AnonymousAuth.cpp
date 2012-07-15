@@ -127,7 +127,7 @@ bool AnonymousAuth::isPasswordRequired(ServerChannel *channel, const QByteArray 
     return false;
 
   FeedPtr feed = channel->hosts().feed();
-  if (feed->data().contains(SimpleID::encode(Hosts::toPublicId(uniqueId))))
+  if (feed->data().contains(SimpleID::encode(Hosts::toHostId(uniqueId, channel->id()))))
     return false;
 
   return true;

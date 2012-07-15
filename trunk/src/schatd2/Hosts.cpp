@@ -39,6 +39,15 @@ Hosts::Hosts()
 }
 
 
+const QHash<QByteArray, HostInfo>& Hosts::all()
+{
+  if (m_hosts.isEmpty())
+    m_hosts = DataBase::hosts(m_channel->key());
+
+  return m_hosts;
+}
+
+
 /*!
  * Получение фида \b hosts.
  *
@@ -86,20 +95,6 @@ QList<quint64> Hosts::sockets(const QByteArray &publicId) const
 }
 
 
-/*!
- * Получение JSON данных хоста.
- *
- * \param publicId Публичный идентификатор хоста, если не задан будет использоваться текущий идентификатор.
- *
- * \sa setData().
- * \sa currentId().
- */
-QVariantMap Hosts::data(const QByteArray &publicId) const
-{
-  return feed()->data().value(SimpleID::encode(id(publicId))).toMap();
-}
-
-
 QVariantMap Hosts::userData(const QByteArray &publicId) const
 {
   QVariantMap connections = user()->data().value(LS("connections")).toMap();
@@ -112,12 +107,8 @@ QVariantMap Hosts::userData(const QByteArray &publicId) const
  */
 void Hosts::add(HostInfo hostInfo)
 {
-  qDebug() << "-----------------------------Hosts::add()" << hostInfo << m_channel << m_channel->key();
-  qDebug() << SimpleID::encode(id(QByteArray()));
-
   QByteArray id = this->id();
-  if (m_hosts.isEmpty())
-    m_hosts = DataBase::hosts(m_channel->key());
+  all();
 
   HostInfo host = m_hosts.value(id);
   if (host) {
@@ -138,24 +129,7 @@ void Hosts::add(HostInfo hostInfo)
   host->date    = DateTime::utc();
 
   DataBase::add(host);
-  qDebug() << host;
-
-
-//  DataBase::add(new Host(data, host.toLatin1()));
-  FeedPtr feed = this->feed();
-
-  QVariantMap json = this->data();
-  if (json.isEmpty())
-    FeedStorage::clone(feed);
-
-  json[LS("host")]     = hostInfo->address;
-  json[LS("os")]       = hostInfo->os;
-  json[LS("version")]  = Ver(hostInfo->version).toString();
-  json[LS("tz")]       = hostInfo->tz;
-  json[LS("name")]     = hostInfo->name;
-  json[LS("date")]     = DateTime::utc();
-  json[LS("online")]   = true;
-  json[LS("osName")]   = hostInfo->osName;
+  FeedStorage::save(feed());
 
   QVariantMap connection;
   connection[LS("host")]     = hostInfo->address;
@@ -164,14 +138,13 @@ void Hosts::add(HostInfo hostInfo)
   connection[LS("version")]  = Ver(hostInfo->version).toString();
   Feed::merge(LS("geo"), connection, GeoHook::geo(hostInfo->address));
 
-  setData(json);
   setUserData(connection);
 }
 
 
 void Hosts::add(const QByteArray &uniqueId)
 {
-  return m_sockets.add(toPublicId(uniqueId));
+  return m_sockets.add(toHostId(uniqueId, m_channel->id()));
 }
 
 
@@ -183,35 +156,18 @@ void Hosts::remove(quint64 socket)
   if (m_sockets.count(socket) == 1) {
     QByteArray id = m_sockets.publicId(socket);
     if (!id.isEmpty()) {
-      QVariantMap json = data(id);
-      if (!json.isEmpty()) {
-        json[LS("date")]   = DateTime::utc();
-        json[LS("online")] = false;
-        setData(json, id);
-      }
+//      QVariantMap json = data(id);
+//      if (!json.isEmpty()) {
+//        json[LS("date")]   = DateTime::utc();
+//        json[LS("online")] = false;
+//        FeedStorage::save(feed());
+//      }
 
       setUserData(QVariantMap(), id);
     }
   }
 
   m_sockets.remove(socket);
-}
-
-
-/*!
- * Установка JSON данных хоста.
- *
- * \param data     Новые данные.
- * \param publicId Публичный идентификатор хоста, если не задан будет использоваться текущий идентификатор.
- * \param save     \b true если надо сохранить тело фида.
- */
-void Hosts::setData(const QVariantMap &data, const QByteArray &publicId, bool save)
-{
-  FeedPtr feed = this->feed();
-  feed->data()[SimpleID::encode(id(publicId))] = data;
-
-  if (save)
-    FeedStorage::save(feed);
 }
 
 
@@ -256,11 +212,12 @@ void Hosts::setUserData(const QVariantMap &data, const QByteArray &publicId)
  * Получение публичного идентификатора хоста на основе приватного идентификатора сервера
  * и уникального идентификатора пользователя.
  *
- * \param uniqueId Уникальный идентификатор пользователя.
+ * \param uniqueId  Уникальный идентификатор пользователя.
+ * \param channelId Идентификатор пользователя.
  */
-QByteArray Hosts::toPublicId(const QByteArray &uniqueId)
+QByteArray Hosts::toHostId(const QByteArray &uniqueId, const QByteArray &channelId)
 {
-  return SimpleID::make("host:" + Storage::privateId() + uniqueId, SimpleID::HostId);
+  return SimpleID::make("host:" + Storage::privateId() + uniqueId + channelId, SimpleID::HostId);
 }
 
 
