@@ -139,6 +139,10 @@ int Storage::start()
   setMaxOpenFiles(m_settings->value(LS("MaxOpenFiles")).toInt());
 
   m_privateId = m_settings->value(LS("PrivateId")).toString().toUtf8();
+  if (m_privateId == SimpleID::encode(SimpleID::uniqueId())) {
+    SCHAT_LOG_WARN("Сonfiguration option \"PrivateId\" uses a default value, please set your own private ID")
+  }
+
   m_id = SimpleID::make(m_privateId, SimpleID::ServerId);
 
   DataBase::start();
