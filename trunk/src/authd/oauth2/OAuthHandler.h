@@ -67,4 +67,6 @@ protected:
     m_reply->deleteLater();                                                                \
     m_reply = 0;                                                                           \
 
+#define OAUTH_BAD_STATUS if (status != 200) return setError("bad_status: " + QByteArray::number(status));
+
 #endif /* OAUTHHANDLER_H_ */

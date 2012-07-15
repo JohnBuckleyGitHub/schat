@@ -55,9 +55,7 @@ VkontakteAuth::VkontakteAuth(const QByteArray &state, const QUrl &url, const QSt
 void VkontakteAuth::dataReady()
 {
   OAUTH_PREPARE_REPLY
-
-  if (status != 200)
-    return setError("bad_status: " + QByteArray::number(status));
+  OAUTH_BAD_STATUS
 
   QVariantMap data = JSON::parse(raw).toMap();
   if (data.contains(LS("error")))
