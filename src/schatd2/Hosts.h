@@ -37,22 +37,21 @@ public:
   Hosts();
   inline void setChannel(ServerChannel *channel) { m_channel = channel; }
 
+  const QHash<QByteArray, HostInfo>& all();
   FeedPtr feed() const;
   FeedPtr user() const;
   QByteArray currentId() const;
   QByteArray id(const QByteArray &publicId = QByteArray()) const;
   QList<quint64> sockets() const;
   QList<quint64> sockets(const QByteArray &publicId) const;
-  QVariantMap data(const QByteArray &publicId = QByteArray()) const;
   QVariantMap userData(const QByteArray &publicId = QByteArray()) const;
 
   void add(HostInfo hostInfo);
   void add(const QByteArray &uniqueId);
   void remove(quint64 socket);
-  void setData(const QVariantMap &data, const QByteArray &publicId = QByteArray(), bool save = true);
   void setUserData(const QVariantMap &data, const QByteArray &publicId = QByteArray());
 
-  static QByteArray toPublicId(const QByteArray &uniqueId);
+  static QByteArray toHostId(const QByteArray &uniqueId, const QByteArray &channelId);
 
 private:
   FeedPtr feed(const QString &name, int mask) const;

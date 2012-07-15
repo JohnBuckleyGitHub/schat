@@ -27,22 +27,11 @@
 #include "net/SimpleID.h"
 #include "ServerChannel.h"
 #include "sglobal.h"
+#include "tools/Ver.h"
 
 NodeHostsFeed::NodeHostsFeed(const QString &name, const QVariantMap &data)
   : Feed(name, data)
 {
-  QStringList keys = data.keys();
-  keys.removeAll(LS("head"));
-
-  for (int i = 0; i < keys.size(); ++i) {
-    if (keys.at(i).size() != 34)
-      continue;
-
-    QVariantMap data = m_data.value(keys.at(i)).toMap();
-    data[LS("online")] = false;
-    m_data[keys.at(i)] = data;
-  }
-
   m_header.acl().setMask(0400);
 }
 
@@ -84,6 +73,40 @@ FeedQueryReply NodeHostsFeed::query(const QVariantMap &json, Channel *channel)
     return unlink(json, channel);
 
   return FeedQueryReply(Notice::ServiceUnavailable);
+}
+
+
+/*!
+ * Получение тела фида.
+ */
+QVariantMap NodeHostsFeed::feed(Channel *channel)
+{
+  QVariantMap header = head().get(channel);
+  if (header.isEmpty())
+    return QVariantMap();
+
+  QVariantMap out;
+  out[LS("head")] = header;
+
+  ServerChannel *ch = static_cast<ServerChannel *>(head().channel());
+  const QHash<QByteArray, HostInfo> &hosts = ch->hosts().all();
+  foreach (const HostInfo &info, hosts) {
+    QVariantMap data;
+    data[LS("online")]  = info->online;
+    data[LS("name")]    = info->name;
+    data[LS("host")]    = info->address;
+    data[LS("version")] = Ver(info->version).toString();
+    data[LS("os")]      = info->os;
+    data[LS("osName")]  = info->osName;
+    data[LS("tz")]      = info->tz;
+    data[LS("date")]    = info->date;
+
+    merge(LS("geo"),  data, info->geo);
+    merge(LS("data"), data, info->data);
+    out[SimpleID::encode(info->hostId)] = data;
+  }
+
+  return out;
 }
 
 
