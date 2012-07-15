@@ -156,7 +156,7 @@ FeedQueryReply NodeHostsFeed::unlink(const QVariantMap &json, Channel *channel)
     if (!channel)
       return FeedQueryReply(Notice::BadRequest);
 
-    id = SimpleID::encode(user->hosts().currentId());
+    id = SimpleID::encode(user->hosts().id());
   }
 
   if (!m_data.contains(id))

@@ -65,15 +65,9 @@ FeedPtr Hosts::user() const
 }
 
 
-QByteArray Hosts::currentId() const
-{
-  return m_sockets.publicId();
-}
-
-
 QByteArray Hosts::id(const QByteArray &publicId) const
 {
-  if (SimpleID::typeOf(publicId) != SimpleID::HostId)
+  if (publicId.isEmpty() || SimpleID::typeOf(publicId) != SimpleID::HostId)
     return m_sockets.publicId();
 
   return publicId;
@@ -92,13 +86,6 @@ QList<quint64> Hosts::sockets(const QByteArray &publicId) const
     return m_sockets.ids().value(publicId);
 
   return QList<quint64>();
-}
-
-
-QVariantMap Hosts::userData(const QByteArray &publicId) const
-{
-  QVariantMap connections = user()->data().value(LS("connections")).toMap();
-  return connections.value(SimpleID::encode(id(publicId))).toMap();
 }
 
 
@@ -130,15 +117,7 @@ void Hosts::add(HostInfo hostInfo)
 
   DataBase::add(host);
   FeedStorage::save(feed());
-
-  QVariantMap connection;
-  connection[LS("host")]     = hostInfo->address;
-  connection[LS("os")]       = hostInfo->os;
-  connection[LS("osName")]   = hostInfo->osName;
-  connection[LS("version")]  = Ver(hostInfo->version).toString();
-  Feed::merge(LS("geo"), connection, GeoHook::geo(hostInfo->address));
-
-  setUserData(connection);
+  updateUser();
 }
 
 
@@ -155,56 +134,18 @@ void Hosts::remove(quint64 socket)
 {
   if (m_sockets.count(socket) == 1) {
     QByteArray id = m_sockets.publicId(socket);
-    if (!id.isEmpty()) {
-//      QVariantMap json = data(id);
-//      if (!json.isEmpty()) {
-//        json[LS("date")]   = DateTime::utc();
-//        json[LS("online")] = false;
-//        FeedStorage::save(feed());
-//      }
+    HostInfo host = m_hosts.value(id);
+    if (host) {
+      host->online = false;
+      host->date   = DateTime::utc();
+      DataBase::add(host);
+      FeedStorage::save(feed());
 
-      setUserData(QVariantMap(), id);
+      updateUser(id);
     }
   }
 
   m_sockets.remove(socket);
-}
-
-
-/*!
- * Обновление фида \b user при отключении или подключении пользователя.
- *
- * \param data     JSON данные о подключении или пустые данные при отключении пользователя.
- * \param publicId Публичный идентификатор подключения.
- */
-void Hosts::setUserData(const QVariantMap &data, const QByteArray &publicId)
-{
-  FeedPtr feed = user();
-  QVariantMap connections = feed->data().value(LS("connections")).toMap();
-  QString id = SimpleID::encode(this->id(publicId));
-
-  if (data.isEmpty())
-    connections.remove(id);
-  else
-    connections[id] = data;
-
-  feed->data()[LS("connections")] = connections;
-  FeedStorage::save(feed);
-
-  QList<quint64> sockets = ::Sockets::all(Ch::channel(m_channel->id()), true);
-  if (publicId.isEmpty())
-    sockets.removeAll(Core::socket());
-
-  if (sockets.isEmpty())
-    return;
-
-  QVariantMap headers = Feed::merge(LS("f"), feed->head().f());
-  if (headers.isEmpty())
-    return;
-
-  FeedNotice packet(m_channel->id(), m_channel->id(), LS("headers"));
-  packet.setData(headers);
-  Core::i()->send(sockets, packet.data(Core::stream()));
 }
 
 
@@ -235,6 +176,31 @@ FeedPtr Hosts::feed(const QString &name, int mask) const
   query[LS("mask")]   = mask;
   feed->query(query, m_channel);
   return feed;
+}
+
+
+/*!
+ * Обновление фида \b user при отключении или подключении пользователя.
+ */
+void Hosts::updateUser(const QByteArray &publicId)
+{
+  FeedPtr feed = user();
+  FeedStorage::save(feed);
+
+  QList<quint64> sockets = ::Sockets::all(Ch::channel(m_channel->id()), true);
+  if (publicId.isEmpty())
+    sockets.removeAll(Core::socket());
+
+  if (sockets.isEmpty())
+    return;
+
+  QVariantMap headers = Feed::merge(LS("f"), feed->head().f());
+  if (headers.isEmpty())
+    return;
+
+  FeedNotice packet(m_channel->id(), m_channel->id(), LS("headers"));
+  packet.setData(headers);
+  Core::i()->send(sockets, packet.data(Core::stream()));
 }
 
 

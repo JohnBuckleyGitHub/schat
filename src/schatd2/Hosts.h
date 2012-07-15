@@ -40,21 +40,19 @@ public:
   const QHash<QByteArray, HostInfo>& all();
   FeedPtr feed() const;
   FeedPtr user() const;
-  QByteArray currentId() const;
   QByteArray id(const QByteArray &publicId = QByteArray()) const;
   QList<quint64> sockets() const;
   QList<quint64> sockets(const QByteArray &publicId) const;
-  QVariantMap userData(const QByteArray &publicId = QByteArray()) const;
 
   void add(HostInfo hostInfo);
   void add(const QByteArray &uniqueId);
   void remove(quint64 socket);
-  void setUserData(const QVariantMap &data, const QByteArray &publicId = QByteArray());
 
   static QByteArray toHostId(const QByteArray &uniqueId, const QByteArray &channelId);
 
 private:
   FeedPtr feed(const QString &name, int mask) const;
+  void updateUser(const QByteArray &publicId = QByteArray());
 
   class Sockets
   {
