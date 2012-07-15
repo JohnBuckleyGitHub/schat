@@ -41,19 +41,20 @@ public:
   , date(0)
   {}
 
-  Host(const AuthRequest &data, const QByteArray &address);
+  Host(const AuthRequest &data, const QString &address);
 
   bool online;        ///< \b true если подключение активно.
   qint64 channel;     ///< Номер канала в базе данных.
   QByteArray hostId;  ///< Публичный идентификатор хоста.
-  QByteArray name;    ///< Имя хоста.
-  QByteArray address; ///< IP адрес пользователя.
+  QString name;       ///< Имя хоста.
+  QString address;    ///< IP адрес пользователя.
   quint32 version;    ///< Версия клиента.
   quint8 os;          ///< Базовый тип операционной системы.
-  QByteArray osName;  ///< Имя операционной системы.
+  QString osName;     ///< Имя операционной системы.
   qint32 tz;          ///< Смещение времени относительно UTC.
   qint64 date;        ///< Дата последнего подключения или отключения.
   QVariantMap geo;    ///< GEO информация о пользователе.
+  QVariantMap data;   ///< Дополнительные данные.
 };
 
 typedef QSharedPointer<Host> HostInfo;

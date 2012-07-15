@@ -16,8 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include "Ch.h"
 #include "cores/Core.h"
+#include "DataBase.h"
 #include "DateTime.h"
 #include "feeds/FeedStorage.h"
 #include "Hosts.h"
@@ -104,29 +107,62 @@ QVariantMap Hosts::userData(const QByteArray &publicId) const
 }
 
 
-void Hosts::add(const AuthRequest &data, const QString &host)
+/*!
+ * Добавление нового или обновление существующего подключения в списоке хостов.
+ */
+void Hosts::add(HostInfo hostInfo)
 {
+  qDebug() << "-----------------------------Hosts::add()" << hostInfo << m_channel << m_channel->key();
+  qDebug() << SimpleID::encode(id(QByteArray()));
+
+  QByteArray id = this->id();
+  if (m_hosts.isEmpty())
+    m_hosts = DataBase::hosts(m_channel->key());
+
+  HostInfo host = m_hosts.value(id);
+  if (host) {
+    host->name    = hostInfo->name;
+    host->address = hostInfo->address;
+    host->version = hostInfo->version;
+    host->os      = hostInfo->os;
+    host->osName  = hostInfo->osName;
+    host->tz      = hostInfo->tz;
+  }
+  else
+    host = hostInfo;
+
+  host->online  = true;
+  host->channel = m_channel->key();
+  host->hostId  = id;
+  host->geo     = GeoHook::geo(host->address);
+  host->date    = DateTime::utc();
+
+  DataBase::add(host);
+  qDebug() << host;
+
+
+//  DataBase::add(new Host(data, host.toLatin1()));
   FeedPtr feed = this->feed();
 
   QVariantMap json = this->data();
   if (json.isEmpty())
     FeedStorage::clone(feed);
 
-  json[LS("host")]     = host;
-  json[LS("os")]       = data.os;
-  json[LS("version")]  = Ver(data.version).toString();
-  json[LS("tz")]       = data.tz;
-  json[LS("name")]     = data.hostName;
+  json[LS("host")]     = hostInfo->address;
+  json[LS("os")]       = hostInfo->os;
+  json[LS("version")]  = Ver(hostInfo->version).toString();
+  json[LS("tz")]       = hostInfo->tz;
+  json[LS("name")]     = hostInfo->name;
   json[LS("date")]     = DateTime::utc();
   json[LS("online")]   = true;
-  json[LS("osName")]   = data.json.value(LS("os"));
+  json[LS("osName")]   = hostInfo->osName;
 
   QVariantMap connection;
-  connection[LS("host")]     = host;
-  connection[LS("os")]       = data.os;
-  connection[LS("osName")]   = data.json.value(LS("os"));
-  connection[LS("version")]  = Ver(data.version).toString();
-  Feed::merge(LS("geo"), connection, GeoHook::geo(host));
+  connection[LS("host")]     = hostInfo->address;
+  connection[LS("os")]       = hostInfo->os;
+  connection[LS("osName")]   = hostInfo->osName;
+  connection[LS("version")]  = Ver(hostInfo->version).toString();
+  Feed::merge(LS("geo"), connection, GeoHook::geo(hostInfo->address));
 
   setData(json);
   setUserData(connection);

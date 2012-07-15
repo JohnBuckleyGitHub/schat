@@ -25,6 +25,9 @@
 #include "net/SimpleID.h"
 #include "ServerChannel.h"
 
+class QThreadPool;
+class QRunnable;
+
 /*!
  * База данных сервера.
  */
@@ -56,10 +59,20 @@ public:
   static qint64 accountKey(qint64 channel);
   static qint64 add(Account *account);
 
+  static QHash<QByteArray, HostInfo> hosts(qint64 channel);
+  static void add(HostInfo host);
+
   static bool noMaster; /// \b true если отсутвует Master пользователь, значение устанавливается в \b true если таблицы channels не существовало и она была создана.
+
+private slots:
+  void startTasks();
 
 private:
   static void version();
+
+  QList<QRunnable*> m_tasks; ///< Задачи для выполнения в отдельном потоке.
+  QThreadPool *m_pool;       ///< Пул для запуска потоков.
+  static DataBase *m_self;   ///< Указатель на себя.
 };
 
 #endif /* DATABASE_H_ */
