@@ -138,6 +138,4 @@ void AnonymousAuth::update(ServerChannel *channel, const AuthRequest &data)
 {
   if (channel->status().value() == Status::Offline)
     channel->status().set(data.status);
-
-  channel->hosts().add(data.uniqueId);
 }

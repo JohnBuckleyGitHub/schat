@@ -314,6 +314,8 @@ void Ch::userChannelImpl(ChatChannel channel, const AuthRequest &data, const QSt
   if (m_self != this)
     return;
 
+  channel->hosts().add(HostInfo(new Host(data, host)));
+
   foreach (Ch *hook, m_hooks) {
     hook->userChannelImpl(channel, data, host, created);
   }

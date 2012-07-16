@@ -25,7 +25,6 @@
 #include "cores/AnonymousAuth.h"
 #include "cores/CookieAuth.h"
 #include "cores/Core.h"
-#include "cores/PasswordAuth.h"
 #include "DateTime.h"
 #include "debugstream.h"
 #include "events.h"
@@ -272,7 +271,6 @@ bool Core::auth()
   if (m_auth.isEmpty()) {
     addAuth(new AnonymousAuth(this));
     addAuth(new CookieAuth(this));
-    addAuth(new PasswordAuth(this));
   }
 
   for (int i = 0; i < m_auth.size(); ++i) {
