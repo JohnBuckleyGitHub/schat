@@ -64,6 +64,7 @@ var Hosts = {
     $(id + " .host-os").attr("data-original-title", htmlspecialchars(json.osName));
     $(id + " .host-info").attr("data-original-title", Utils.table({'version': json.version, 'last_ip': json.host}));
     $(id + " .host-status").attr("class", (json.online === true ? "icon-status" : "icon-status-offline") + " host-status");
+    $(id + " .last-activity").html(DateTime.template(json.date, true));
 
     var unlink = $(id + " .btn-unlink");
     unlink.attr("data-id", key);
@@ -89,18 +90,8 @@ var Hosts = {
     $(".host-row:hidden").remove();
     $('a[rel=tooltip]').tooltip();
 
-    if (!Hosts.progress) {
-      Hosts.progress = true;
-      SimpleChat.request("query", "hosts", {"action":"activity"});
-    }
-
+    $("#main-spinner").hide();
     Utils.retranslate();
-  },
-
-
-  readActivity: function(key, json)
-  {
-    $("#" + key + " .last-activity").html(DateTime.template(json.date, true));
   },
 
 
@@ -114,20 +105,6 @@ var Hosts = {
     Utils.TR("my_computers");
 
     Hosts.read(SimpleChat.feed("hosts", false));
-  },
-
-
-  reply: function(json)
-  {
-    if (json.action !== "activity")
-      return;
-
-    Hosts.progress = false;
-    for (var key in json) if (json.hasOwnProperty(key) && key.length == 34) {
-      Hosts.readActivity(key, json[key]);
-    }
-
-    $("#main-spinner").hide();
   },
 
 

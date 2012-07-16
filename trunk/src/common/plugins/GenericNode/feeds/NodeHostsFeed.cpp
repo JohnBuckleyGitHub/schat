@@ -67,9 +67,7 @@ FeedQueryReply NodeHostsFeed::query(const QVariantMap &json, Channel *channel)
   if (action.startsWith(LS("x-")))
     return Feed::query(json, channel);
 
-  if (action == LS("activity"))
-    return activity(channel);
-  else if (action == LS("unlink"))
+  if (action == LS("unlink"))
     return unlink(json, channel);
 
   return FeedQueryReply(Notice::ServiceUnavailable);
@@ -107,38 +105,6 @@ QVariantMap NodeHostsFeed::feed(Channel *channel)
   }
 
   return out;
-}
-
-
-/*!
- * Обработка запроса \b activity.
- */
-FeedQueryReply NodeHostsFeed::activity(Channel *channel)
-{
-  if (!channel || head().channel()->id() != channel->id())
-    return FeedQueryReply(Notice::Forbidden);
-
-  qint64 current = DateTime::utc();
-  FeedQueryReply reply = FeedQueryReply(Notice::OK);
-
-  QMapIterator<QString, QVariant> i(m_data);
-  while (i.hasNext()) {
-    i.next();
-    if (i.key().size() != 34)
-      continue;
-
-    qint64 date = i.value().toMap().value(LS("date")).toLongLong();
-    if (date == 0)
-      continue;
-
-    QVariantMap data;
-    data[LS("date")] = date;
-    data[LS("diff")] = current - date;
-    reply.json[i.key()] = data;
-  }
-
-  reply.json[LS("action")] = LS("activity");
-  return reply;
 }
 
 
