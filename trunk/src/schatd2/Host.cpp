@@ -29,6 +29,7 @@ Host::Host(const AuthRequest &data, const QString &address)
   , os(data.os)
   , osName(data.json.value(LS("os")).toString())
   , tz(data.tz)
+  , uniqueId(data.uniqueId)
 {
 
 }
