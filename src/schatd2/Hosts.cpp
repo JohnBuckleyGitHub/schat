@@ -68,22 +68,18 @@ FeedPtr Hosts::user() const
 QByteArray Hosts::id(const QByteArray &publicId) const
 {
   if (publicId.isEmpty() || SimpleID::typeOf(publicId) != SimpleID::HostId)
-    return m_sockets.publicId();
+    return this->publicId();
 
   return publicId;
 }
 
 
-QList<quint64> Hosts::sockets() const
-{
-  return m_sockets.socketsList();
-}
-
-
 QList<quint64> Hosts::sockets(const QByteArray &publicId) const
 {
-  if (SimpleID::typeOf(publicId) == SimpleID::HostId)
-    return m_sockets.ids().value(publicId);
+  if (SimpleID::typeOf(publicId) == SimpleID::HostId) {
+    HostInfo host = m_hosts.value(publicId);
+    return host->sockets;
+  }
 
   return QList<quint64>();
 }
@@ -106,8 +102,10 @@ void Hosts::add(HostInfo hostInfo)
     host->osName  = hostInfo->osName;
     host->tz      = hostInfo->tz;
   }
-  else
+  else {
     host = hostInfo;
+    m_hosts[id] = host;
+  }
 
   host->online  = true;
   host->channel = m_channel->key();
@@ -115,15 +113,12 @@ void Hosts::add(HostInfo hostInfo)
   host->geo     = GeoHook::geo(host->address);
   host->date    = DateTime::utc();
 
+  host->sockets.append(Core::socket());
+  m_sockets[Core::socket()] = host;
+
   DataBase::add(host);
   FeedStorage::save(feed());
   updateUser();
-}
-
-
-void Hosts::add(const QByteArray &uniqueId)
-{
-  return m_sockets.add(toHostId(uniqueId, m_channel->id()));
 }
 
 
@@ -132,19 +127,22 @@ void Hosts::add(const QByteArray &uniqueId)
  */
 void Hosts::remove(quint64 socket)
 {
-  if (m_sockets.count(socket) == 1) {
-    QByteArray id = m_sockets.publicId(socket);
-    HostInfo host = m_hosts.value(id);
-    if (host) {
-      host->online = false;
-      host->date   = DateTime::utc();
-      DataBase::add(host);
-      FeedStorage::save(feed());
+  if (socket == 0)
+    socket = Core::socket();
 
-      updateUser(id);
-    }
+  HostInfo host = m_sockets.value(socket);
+  if (!host)
+    return;
+
+  if (host->sockets.size() == 1) {
+    host->online = false;
+    host->date   = DateTime::utc();
+    DataBase::add(host);
+    FeedStorage::save(feed());
+    updateUser(host->hostId);
   }
 
+  host->sockets.removeAll(socket);
   m_sockets.remove(socket);
 }
 
@@ -179,6 +177,18 @@ FeedPtr Hosts::feed(const QString &name, int mask) const
 }
 
 
+QByteArray Hosts::publicId(quint64 socket) const
+{
+  if (socket == 0)
+    socket = Core::socket();
+
+  if (!m_sockets.contains(socket))
+    return QByteArray();
+
+  return m_sockets.value(socket)->hostId;
+}
+
+
 /*!
  * Обновление фида \b user при отключении или подключении пользователя.
  */
@@ -201,60 +211,4 @@ void Hosts::updateUser(const QByteArray &publicId)
   FeedNotice packet(m_channel->id(), m_channel->id(), LS("headers"));
   packet.setData(headers);
   Core::i()->send(sockets, packet.data(Core::stream()));
-}
-
-
-int Hosts::Sockets::count(quint64 socket)
-{
-  if (socket == 0)
-    socket = Core::socket();
-
-  if (!m_sockets.contains(socket))
-    return 0;
-
-  return m_ids.value(m_sockets.value(socket)).size();
-}
-
-
-/*!
- * Возвращает публичный идентификатора хоста по номеру сокета.
- */
-QByteArray Hosts::Sockets::publicId(quint64 socket) const
-{
-  if (socket == 0)
-    socket = Core::socket();
-
-  if (!m_sockets.contains(socket))
-    return QByteArray();
-
-  return m_sockets.value(socket);
-}
-
-
-/*!
- * Добавление сокета.
- *
- * \param publicId Публичный идентификатор хоста.
- */
-void Hosts::Sockets::add(const QByteArray &publicId)
-{
-  m_sockets.insert(Core::socket(), publicId);
-  m_ids[publicId].append(Core::socket());
-}
-
-
-/*!
- * Удаление сокета.
- */
-void Hosts::Sockets::remove(quint64 socket)
-{
-  if (!m_sockets.contains(socket))
-    return;
-
-  QByteArray id = m_sockets.value(socket);
-  m_ids[id].removeAll(socket);
-  if (m_ids.value(id).isEmpty())
-    m_ids.remove(id);
-
-  m_sockets.remove(socket);
 }

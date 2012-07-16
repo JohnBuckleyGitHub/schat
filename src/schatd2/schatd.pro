@@ -31,7 +31,6 @@ HEADERS = \
     cores/CookieAuth.h \
     cores/Core.h \
     cores/NodeAuth.h \
-    cores/PasswordAuth.h \
     DataBase.h \
     events.h \
     feeds/NodeAclFeed.h \
@@ -57,7 +56,6 @@ SOURCES = \
     cores/AnonymousAuth.cpp \
     cores/CookieAuth.cpp \
     cores/Core.cpp \
-    cores/PasswordAuth.cpp \
     DataBase.cpp \
     events.cpp \
     feeds/NodeAclFeed.cpp \

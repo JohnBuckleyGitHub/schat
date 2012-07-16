@@ -35,46 +35,28 @@ class SCHAT_EXPORT Hosts
 {
 public:
   Hosts();
+  inline QList<quint64> sockets() const          { return m_sockets.keys(); }
   inline void setChannel(ServerChannel *channel) { m_channel = channel; }
 
   const QHash<QByteArray, HostInfo>& all();
   FeedPtr feed() const;
   FeedPtr user() const;
   QByteArray id(const QByteArray &publicId = QByteArray()) const;
-  QList<quint64> sockets() const;
   QList<quint64> sockets(const QByteArray &publicId) const;
 
   void add(HostInfo hostInfo);
-  void add(const QByteArray &uniqueId);
   void remove(quint64 socket);
 
   static QByteArray toHostId(const QByteArray &uniqueId, const QByteArray &channelId);
 
 private:
   FeedPtr feed(const QString &name, int mask) const;
+  QByteArray publicId(quint64 socket = 0) const;
   void updateUser(const QByteArray &publicId = QByteArray());
 
-  class Sockets
-  {
-  public:
-    Sockets() {}
-    inline const QMap<QByteArray, QList<quint64> >& ids() const { return m_ids; }
-    inline const QMap<quint64, QByteArray>& sockets() const     { return m_sockets; }
-    inline QList<quint64> socketsList() const                   { return m_sockets.keys(); }
-    int count(quint64 socket = 0);
-    QByteArray publicId(quint64 socket = 0) const;
-
-    void add(const QByteArray &publicId);
-    void remove(quint64 socket);
-
-  private:
-    QMap<quint64, QByteArray> m_sockets;     ///< Таблица сокетов и уникальных идентификаторов пользователя.
-    QMap<QByteArray, QList<quint64> > m_ids; ///< Обратная таблица.
-  };
-
-  QHash<QByteArray, HostInfo> m_hosts;       ///< Таблица хостов, в качестве ключа публичный идентификатор хоста.
-  ServerChannel *m_channel;                  ///< Канал.
-  Sockets m_sockets;                         ///< Сокеты.
+  QHash<QByteArray, HostInfo> m_hosts; ///< Таблица хостов, в качестве ключа публичный идентификатор хоста.
+  QHash<quint64, HostInfo> m_sockets;  ///< Таблица сокетов и ассоциированных с ними хостов.
+  ServerChannel *m_channel;            ///< Канал.
 };
 
 #endif /* HOSTS_H_ */
