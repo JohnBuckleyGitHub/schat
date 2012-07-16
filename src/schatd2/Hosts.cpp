@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include "Ch.h"
 #include "cores/Core.h"
 #include "DataBase.h"
@@ -90,7 +88,7 @@ QList<quint64> Hosts::sockets(const QByteArray &publicId) const
  */
 void Hosts::add(HostInfo hostInfo)
 {
-  QByteArray id = this->id();
+  QByteArray id = toHostId(hostInfo->uniqueId, m_channel->id());
   all();
 
   HostInfo host = m_hosts.value(id);

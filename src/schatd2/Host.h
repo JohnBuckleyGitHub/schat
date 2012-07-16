@@ -56,6 +56,7 @@ public:
   QVariantMap geo;        ///< GEO информация о пользователе.
   QVariantMap data;       ///< Дополнительные данные.
   QList<quint64> sockets; ///< Список сокетов.
+  QByteArray uniqueId;    ///< Уникальный идентификатор пользователя.
 };
 
 typedef QSharedPointer<Host> HostInfo;
