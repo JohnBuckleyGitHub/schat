@@ -33,7 +33,6 @@ public:
   QVariantMap feed(Channel *channel = 0);
 
 private:
-  FeedQueryReply activity(Channel *channel);
   FeedQueryReply unlink(const QVariantMap &json, Channel *channel);
 
   void kick(const QByteArray &id, const QVariantMap &data);
