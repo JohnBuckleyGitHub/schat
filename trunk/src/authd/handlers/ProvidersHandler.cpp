@@ -34,31 +34,32 @@ bool ProvidersHandler::serve(const QUrl &url, const QString &path, Tufao::HttpSe
     response->writeHead(Tufao::HttpServerResponse::OK);
     response->headers().replace("Content-Type", "application/json");
 
-    if (m_cache.isEmpty()) {
-      QVariantMap list;
-      const QHash<QString, OAuthData *> &providers = AuthCore::i()->providers();
+    QByteArray body;
+    QVariantMap list;
+    const QHash<QString, OAuthData *> &providers = AuthCore::i()->providers();
 
-      QHashIterator<QString, OAuthData *> i(providers);
-      while (i.hasNext()) {
-        i.next();
-        list[i.key()] = i.value()->toJSON(url.queryItemValue(LS("state")).toLatin1());
-      }
+    QHashIterator<QString, OAuthData *> i(providers);
+    while (i.hasNext()) {
+      i.next();
+      list[i.key()] = i.value()->toJSON(url.queryItemValue(LS("state")).toLatin1());
+    }
 
-      QStringList order = AuthCore::settings()->value(LS("Order")).toStringList();
-      QMutableStringListIterator j(order);
+    if (m_order.isEmpty()) {
+      m_order = AuthCore::settings()->value(LS("Order")).toStringList();
+      QMutableStringListIterator j(m_order);
       while (j.hasNext()) {
         QString &name = j.next();
         if (!providers.contains(name))
           j.remove();
       }
-
-      QVariantMap data;
-      data[LS("providers")] = list;
-      data[LS("order")]     = order;
-      m_cache = JSON::generate(data);
     }
 
-    response->end(m_cache);
+    QVariantMap data;
+    data[LS("providers")] = list;
+    data[LS("order")]     = m_order;
+    body = JSON::generate(data);
+
+    response->end(body);
     return true;
   }
 
