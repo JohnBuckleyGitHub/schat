@@ -16,20 +16,32 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QUrl>
+#ifndef ODNOKLASSNIKIAUTH_H_
+#define ODNOKLASSNIKIAUTH_H_
 
-#include "oauth2/OdnoklassnikiAuthData.h"
-#include "sglobal.h"
+#include "oauth2/OAuthHandler.h"
 
-OdnoklassnikiAuthData::OdnoklassnikiAuthData()
-  : OAuthData("odnoklassniki")
+class OdnoklassnikiAuth : public OAuthHandler
 {
-  name = "Одноклассники";
-  htmlName = name;
-}
+  Q_OBJECT
+
+public:
+  OdnoklassnikiAuth(const QByteArray &state, const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent = 0);
+
+private slots:
+  void dataReady();
+  void tokenReady();
+
+private:
+  void getToken();
+};
 
 
-QByteArray OdnoklassnikiAuthData::toUrl(const QByteArray &state) const
+class OdnoklassnikiAuthCreator : public HandlerCreator
 {
-  return "http://www.odnoklassniki.ru/oauth/authorize?client_id=" + id + "&response_type=code&redirect_uri=" + QUrl::toPercentEncoding(redirect + LC('/') + state);
-}
+public:
+  OdnoklassnikiAuthCreator() : HandlerCreator() {}
+  bool serve(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent);
+};
+
+#endif /* ODNOKLASSNIKIAUTH_H_ */

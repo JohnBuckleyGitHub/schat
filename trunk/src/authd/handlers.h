@@ -21,5 +21,6 @@
 #include "oauth2/FacebookAuth.h"
 #include "oauth2/GoogleAuth.h"
 #include "oauth2/MailRuAuth.h"
+#include "oauth2/OdnoklassnikiAuth.h"
 #include "oauth2/VkontakteAuth.h"
 #include "oauth2/YandexAuth.h"

@@ -44,8 +44,9 @@ bool OAuthData::isValid() const
 bool OAuthData::read()
 {
   Settings *settings = AuthCore::settings();
-  id       = settings->value(provider + LS("/Id")).toByteArray();
-  secret   = settings->value(provider + LS("/Secret")).toByteArray();
+  id        = settings->value(provider + LS("/Id")).toByteArray();
+  secret    = settings->value(provider + LS("/Secret")).toByteArray();
+  publicKey = settings->value(provider + LS("/PublicKey")).toByteArray();
 
   return isValid();
 }

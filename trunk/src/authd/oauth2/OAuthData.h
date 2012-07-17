@@ -31,13 +31,14 @@ public:
   virtual bool read();
   virtual QVariantMap toJSON(const QByteArray &state) const;
 
-  QByteArray id;       ///< Client ID.
-  QByteArray htmlName; ///< HTML имя провайдера.
-  QByteArray name;     ///< Имя провайдера.
-  QByteArray provider; ///< Кодовое имя OAuth2 провайдера.
-  QByteArray redirect; ///< Redirect URI.
-  QByteArray secret;   ///< Client secret.
-  QByteArray type;     ///< Тип провайдера.
+  QByteArray id;        ///< Client ID.
+  QByteArray htmlName;  ///< HTML имя провайдера.
+  QByteArray name;      ///< Имя провайдера.
+  QByteArray provider;  ///< Кодовое имя OAuth2 провайдера.
+  QByteArray redirect;  ///< Redirect URI.
+  QByteArray secret;    ///< Client secret.
+  QByteArray type;      ///< Тип провайдера.
+  QByteArray publicKey; ///< Публичный ключ приложения.
 
 protected:
   virtual inline QByteArray toUrl(const QByteArray &state) const { Q_UNUSED(state) return QByteArray(); }
