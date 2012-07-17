@@ -102,6 +102,7 @@ HEADERS = \
     oauth2/MailRuAuthData.h \
     oauth2/OAuthData.h \
     oauth2/OAuthHandler.h \
+    oauth2/OdnoklassnikiAuth.h \
     oauth2/OdnoklassnikiAuthData.h \
     oauth2/VkontakteAuth.h \
     oauth2/VkontakteAuthData.h \
@@ -125,6 +126,7 @@ SOURCES = \
     oauth2/MailRuAuthData.cpp \
     oauth2/OAuthData.cpp \
     oauth2/OAuthHandler.cpp \
+    oauth2/OdnoklassnikiAuth.cpp \
     oauth2/OdnoklassnikiAuthData.cpp \
     oauth2/VkontakteAuth.cpp \
     oauth2/VkontakteAuthData.cpp \

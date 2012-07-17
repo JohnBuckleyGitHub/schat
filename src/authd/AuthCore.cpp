@@ -71,6 +71,7 @@ AuthCore::AuthCore(QObject *parent)
   add(new YandexAuthCreator());
   add(new MailRuAuthCreator());
   add(new VkontakteAuthCreator());
+  add(new OdnoklassnikiAuthCreator());
 
   QTimer::singleShot(0, this, SLOT(start()));
 }
