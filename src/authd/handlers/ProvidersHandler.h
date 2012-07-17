@@ -31,7 +31,7 @@ public:
   bool serve(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent);
 
 private:
-  QByteArray m_cache; ///< Кэшированный список провайдеров.
+  QStringList m_order; ///< Порядок следования провайдеров.
 };
 
 #endif /* AUTHPROVIDERS_H_ */
