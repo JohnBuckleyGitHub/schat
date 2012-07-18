@@ -17,7 +17,7 @@
  */
 
 #include "AuthState.h"
-
+#include "net/SimpleID.h"
 
 AuthStateData::AuthStateData(const QByteArray &state, const QByteArray &error)
   : error(error)
@@ -26,13 +26,15 @@ AuthStateData::AuthStateData(const QByteArray &state, const QByteArray &error)
 }
 
 
-AuthStateData::AuthStateData(const QByteArray &state, const QByteArray &provider, const QByteArray &id, const QByteArray &token, const QVariantMap &raw)
-  : id(id)
+AuthStateData::AuthStateData(const QByteArray &state, const QByteArray &provider, const QByteArray &id, const QVariantMap &raw, const QByteArray &cookie)
+  : cookie(cookie)
+  , id(id)
   , provider(provider)
   , state(state)
-  , token(token)
   , raw(raw)
 {
+  if (cookie.isEmpty())
+    this->cookie = SimpleID::encode(SimpleID::randomId(SimpleID::CookieId));
 }
 
 

@@ -56,7 +56,7 @@ OdnoklassnikiAuth::OdnoklassnikiAuth(const QByteArray &state, const QUrl &url, c
 void OdnoklassnikiAuth::dataReady()
 {
   OAUTH_PREPARE_REPLY
-  qDebug() << status << raw;
+  OAUTH_BAD_STATUS
 
   QVariantMap data = JSON::parse(raw).toMap();
   if (data.contains(LS("error_code")))
@@ -64,7 +64,7 @@ void OdnoklassnikiAuth::dataReady()
 
   QByteArray uid = data.value(LS("uid")).toByteArray();
   QByteArray id = SimpleID::encode(SimpleID::make("odnoklassniki:" + uid, SimpleID::UserId));
-  AuthCore::state()->add(new AuthStateData(m_state, "odnoklassniki", id, QByteArray(), data));
+  AuthCore::state()->add(new AuthStateData(m_state, "odnoklassniki", id, data));
 
   log(NodeLog::InfoLevel, "Data is successfully received, id:" + id + ", uid:" + uid);
   deleteLater();
@@ -74,8 +74,7 @@ void OdnoklassnikiAuth::dataReady()
 void OdnoklassnikiAuth::tokenReady()
 {
   OAUTH_PREPARE_REPLY
-
-  qDebug() << status << raw;
+  OAUTH_BAD_STATUS
 
   QVariantMap data = JSON::parse(raw).toMap();
   if (data.contains(LS("error")))

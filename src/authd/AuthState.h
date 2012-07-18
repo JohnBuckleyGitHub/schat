@@ -28,13 +28,13 @@ class AuthStateData
 {
 public:
   AuthStateData(const QByteArray &state, const QByteArray &error);
-  AuthStateData(const QByteArray &state, const QByteArray &provider, const QByteArray &id, const QByteArray &token, const QVariantMap &raw);
+  AuthStateData(const QByteArray &state, const QByteArray &provider, const QByteArray &id, const QVariantMap &raw, const QByteArray &cookie = QByteArray());
 
+  QByteArray cookie;   ///< Авторизационный токен пользователя.
   QByteArray error;    ///< Текстовый код ошибки.
   QByteArray id;       ///< Глобальный идентификатор пользователя.
   QByteArray provider; ///< Кодовое имя OAuth2 провайдера.
   QByteArray state;    ///< Идентификатор состояния.
-  QByteArray token;    ///< Авторизационный токен пользователя.
   QVariantMap raw;     ///< Сырые не обработанные данные пользователя.
 };
 

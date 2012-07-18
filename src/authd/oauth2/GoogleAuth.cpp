@@ -68,7 +68,7 @@ void GoogleAuth::dataReady()
     return setError("invalid_email");
 
   QByteArray id = SimpleID::encode(SimpleID::make("google:" + email, SimpleID::UserId));
-  AuthCore::state()->add(new AuthStateData(m_state, "google", id, QByteArray(), data));
+  AuthCore::state()->add(new AuthStateData(m_state, "google", id, data));
 
   log(NodeLog::InfoLevel, "Data is successfully received, id:" + id + ", email:" + email);
   deleteLater();
