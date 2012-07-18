@@ -69,7 +69,7 @@ void VkontakteAuth::dataReady()
   QByteArray uid = response.value(LS("uid")).toByteArray();
 
   QByteArray id = SimpleID::encode(SimpleID::make("vkontakte:" + uid, SimpleID::UserId));
-  AuthCore::state()->add(new AuthStateData(m_state, "vkontakte", id, QByteArray(), response));
+  AuthCore::state()->add(new AuthStateData(m_state, "vkontakte", id, response));
 
   log(NodeLog::InfoLevel, "Data is successfully received, id:" + id + ", uid:" + uid);
   deleteLater();

@@ -16,7 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
+#include <QUrl>
 
 #include "AuthCore.h"
 #include "handlers/StateHandler.h"
@@ -24,10 +24,12 @@
 #include "net/SimpleID.h"
 #include "sglobal.h"
 #include "Tufao/headers.h"
+#include "Tufao/httpserverrequest.h"
 #include "Tufao/httpserverresponse.h"
 
-StateHandler::StateHandler(const QByteArray &state, Tufao::HttpServerResponse *response)
+StateHandler::StateHandler(const QByteArray &state, const QByteArray &secret, Tufao::HttpServerResponse *response)
   : QObject(response)
+  , m_secret(secret)
   , m_state(state)
   , m_response(response)
 {
@@ -35,7 +37,7 @@ StateHandler::StateHandler(const QByteArray &state, Tufao::HttpServerResponse *r
 }
 
 
-void StateHandler::serve(Tufao::HttpServerResponse *response, AuthStatePtr data)
+void StateHandler::serve(const QByteArray &secret, Tufao::HttpServerResponse *response, AuthStatePtr data)
 {
   if (!data->error.isEmpty()) {
     response->writeHead(Tufao::HttpServerResponse::FORBIDDEN);
@@ -49,6 +51,11 @@ void StateHandler::serve(Tufao::HttpServerResponse *response, AuthStatePtr data)
   json[LS("id")]       = data->id;
   json[LS("provider")] = data->provider;
   json[LS("raw")]      = data->raw;
+
+  if (!secret.isEmpty() && SimpleID::encode(SimpleID::make(QUrl(AuthCore::baseUrl()).host().toUtf8() + secret, SimpleID::MessageId)) == data->state) {
+    json[LS("cookie")] = data->cookie;
+  }
+
   response->end(JSON::generate(json));
 }
 
@@ -58,11 +65,11 @@ void StateHandler::added(const QByteArray &state, AuthStatePtr data)
   if (m_state != state)
     return;
 
-  serve(m_response, data);
+  serve(m_secret, m_response, data);
 }
 
 
-bool StateHandlerCreator::serve(const QUrl &, const QString &path, Tufao::HttpServerRequest *, Tufao::HttpServerResponse *response, QObject *)
+bool StateHandlerCreator::serve(const QUrl &, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *)
 {
   response->headers().replace("Content-Type", "application/json");
 
@@ -74,13 +81,14 @@ bool StateHandlerCreator::serve(const QUrl &, const QString &path, Tufao::HttpSe
       return true;
     }
 
+    QByteArray secret = request->headers().value("X-SChat-Secret");
     AuthStatePtr data = AuthCore::state()->get(state);
     if (!data) {
-      new StateHandler(state, response);
+      new StateHandler(state, secret, response);
       return true;
     }
 
-    StateHandler::serve(response, data);
+    StateHandler::serve(secret, response, data);
     return true;
   }
 

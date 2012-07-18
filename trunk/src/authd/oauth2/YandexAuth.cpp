@@ -60,7 +60,7 @@ void YandexAuth::dataReady()
     return setError("invalid_email");
 
   QByteArray id = SimpleID::encode(SimpleID::make("yandex:" + email, SimpleID::UserId));
-  AuthCore::state()->add(new AuthStateData(m_state, "yandex", id, QByteArray(), data));
+  AuthCore::state()->add(new AuthStateData(m_state, "yandex", id, data));
 
   log(NodeLog::InfoLevel, "Data is successfully received, id:" + id + ", email:" + email);
 }

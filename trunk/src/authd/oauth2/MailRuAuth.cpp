@@ -70,7 +70,7 @@ void MailRuAuth::dataReady()
     return setError("invalid_email");
 
   QByteArray id = SimpleID::encode(SimpleID::make("mail_ru:" + email, SimpleID::UserId));
-  AuthCore::state()->add(new AuthStateData(m_state, "mail_ru", id, QByteArray(), data));
+  AuthCore::state()->add(new AuthStateData(m_state, "mail_ru", id, data));
 
   log(NodeLog::InfoLevel, "Data is successfully received, id:" + id + ", email:" + email);
   deleteLater();
