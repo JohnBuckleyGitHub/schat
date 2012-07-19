@@ -51,6 +51,7 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
     channel = ChatChannel(new ServerChannel(id, data.nick));
     created = true;
 
+    channel->setAccount();
     channel->setName(data.nick);
     channel->gender().setRaw(data.gender);
   }

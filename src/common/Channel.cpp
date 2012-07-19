@@ -138,7 +138,8 @@ void Channel::setAccount(Account *account)
   if (!m_account)
     m_account = new Account();
 
-  *m_account = *account;
+  if (account)
+    *m_account = *account;
 }
 
 

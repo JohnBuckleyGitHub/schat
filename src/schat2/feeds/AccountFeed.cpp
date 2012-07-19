@@ -51,9 +51,5 @@ Feed* AccountFeed::load(const QString &name, const QVariantMap &data)
 void AccountFeed::setChannel(Channel *channel)
 {
   Feed::setChannel(channel);
-
-  if (!channel->account())
-    channel->setAccount(new Account());
-
   channel->account()->groups.set(m_data.value(LS("groups")).toStringList());
 }
