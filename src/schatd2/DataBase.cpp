@@ -41,40 +41,85 @@
 bool DataBase::noMaster = false;
 DataBase *DataBase::m_self = 0;
 
-/*!
- * Отложенная запись или обновление информации о хосте пользователя.
- */
-class AddHostTask : public QRunnable
-{
-private:
-  Host m_host; ///< Информация о хосте пользователя.
-
-public:
-  AddHostTask(Host *host)
+AddHostTask::AddHostTask(Host *host)
     : m_host(*host)
-  {
-  }
+{
+}
 
-  void run()
-  {
-    QSqlQuery query;
-    query.prepare(LS("INSERT OR REPLACE INTO hosts (channel,  hostId,  name,  address,  version,  os,  osName,  tz,  date,  geo,  data)"
-                                          " VALUES (:channel, :hostId, :name, :address, :version, :os, :osName, :tz, :date, :geo, :data)"));
 
-    query.bindValue(LS(":channel"), m_host.channel);
-    query.bindValue(LS(":hostId"),  SimpleID::encode(m_host.hostId));
-    query.bindValue(LS(":name"),    m_host.name);
-    query.bindValue(LS(":address"), m_host.address);
-    query.bindValue(LS(":version"), Ver(m_host.version).toString());
-    query.bindValue(LS(":os"),      m_host.os);
-    query.bindValue(LS(":osName"),  m_host.osName);
-    query.bindValue(LS(":tz"),      m_host.tz);
-    query.bindValue(LS(":date"),    m_host.date);
-    query.bindValue(LS(":geo"),     JSON::generate(m_host.geo));
-    query.bindValue(LS(":data"),    JSON::generate(m_host.data));
-    query.exec();
-  }
-};
+/*!
+ * Запуск задачи.
+ */
+void AddHostTask::run()
+{
+  qint64 key = this->key(m_host.hostId);
+  if (key == -1)
+    add();
+  else
+    update(key);
+}
+
+
+/*!
+ * Получение ключа в таблице \b hosts на основе идентификатора хоста, возвращает -1 если хост не найден.
+ */
+qint64 AddHostTask::key(const QByteArray &hostId)
+{
+  QSqlQuery query;
+  query.prepare(LS("SELECT id FROM hosts WHERE hostId = :hostId LIMIT 1;"));
+  query.bindValue(LS(":hostId"), SimpleID::encode(hostId));
+  query.exec();
+
+  if (!query.first())
+    return -1;
+
+  return query.value(0).toLongLong();
+}
+
+
+/*!
+ * Добавление новой записи.
+ */
+void AddHostTask::add()
+{
+  QSqlQuery query;
+  query.prepare(LS("INSERT INTO hosts (channel,  hostId,  name,  address,  version,  os,  osName,  tz,  date,  geo,  data)"
+                             " VALUES (:channel, :hostId, :name, :address, :version, :os, :osName, :tz, :date, :geo, :data)"));
+
+  query.bindValue(LS(":channel"), m_host.channel);
+  query.bindValue(LS(":hostId"),  SimpleID::encode(m_host.hostId));
+  query.bindValue(LS(":name"),    m_host.name);
+  query.bindValue(LS(":address"), m_host.address);
+  query.bindValue(LS(":version"), Ver(m_host.version).toString());
+  query.bindValue(LS(":os"),      m_host.os);
+  query.bindValue(LS(":osName"),  m_host.osName);
+  query.bindValue(LS(":tz"),      m_host.tz);
+  query.bindValue(LS(":date"),    m_host.date);
+  query.bindValue(LS(":geo"),     JSON::generate(m_host.geo));
+  query.bindValue(LS(":data"),    JSON::generate(m_host.data));
+  query.exec();
+}
+
+
+/*!
+ * Обновление информации об хосте.
+ */
+void AddHostTask::update(qint64 key)
+{
+  QSqlQuery query;
+  query.prepare(LS("UPDATE hosts SET name = :name, address = :address, version = :version, os = :os, osName = :osName, tz = :tz, date = :date, geo = :geo, data = :data WHERE id = :id;"));
+  query.bindValue(LS(":name"),    m_host.name);
+  query.bindValue(LS(":address"), m_host.address);
+  query.bindValue(LS(":version"), Ver(m_host.version).toString());
+  query.bindValue(LS(":os"),      m_host.os);
+  query.bindValue(LS(":osName"),  m_host.osName);
+  query.bindValue(LS(":tz"),      m_host.tz);
+  query.bindValue(LS(":date"),    m_host.date);
+  query.bindValue(LS(":geo"),     JSON::generate(m_host.geo));
+  query.bindValue(LS(":data"),    JSON::generate(m_host.data));
+  query.bindValue(LS(":id"),      key);
+  query.exec();
+}
 
 
 /*!

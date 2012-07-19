@@ -20,13 +20,13 @@
 #define DATABASE_H_
 
 #include <QObject>
+#include <QRunnable>
 
 #include "Account.h"
 #include "net/SimpleID.h"
 #include "ServerChannel.h"
 
 class QThreadPool;
-class QRunnable;
 
 /*!
  * База данных сервера.
@@ -73,6 +73,24 @@ private:
   QList<QRunnable*> m_tasks; ///< Задачи для выполнения в отдельном потоке.
   QThreadPool *m_pool;       ///< Пул для запуска потоков.
   static DataBase *m_self;   ///< Указатель на себя.
+};
+
+
+/*!
+ * Отложенная запись или обновление информации о хосте пользователя.
+ */
+class AddHostTask : public QRunnable
+{
+public:
+  AddHostTask(Host *host);
+  void run();
+
+private:
+  qint64 key(const QByteArray &hostId);
+  void add();
+  void update(qint64 key);
+
+  Host m_host; ///< Информация о хосте пользователя.
 };
 
 #endif /* DATABASE_H_ */
