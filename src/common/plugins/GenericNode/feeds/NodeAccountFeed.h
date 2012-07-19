@@ -34,10 +34,10 @@ public:
   void setChannel(Channel *channel);
 
 private:
-  FeedQueryReply login(const QVariantMap &json);
-  FeedQueryReply password(const QVariantMap &json);
-  FeedQueryReply reg(const QVariantMap &json);
-  FeedQueryReply reset(const QVariantMap &json);
+//  FeedQueryReply login(const QVariantMap &json);
+//  FeedQueryReply password(const QVariantMap &json);
+//  FeedQueryReply reg(const QVariantMap &json);
+//  FeedQueryReply reset(const QVariantMap &json);
 
   QByteArray getPassword(const QVariantMap &json, const QString &key = QLatin1String("pass")) const;
   QString getName(const QVariantMap &json) const;

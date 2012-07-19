@@ -375,16 +375,14 @@ void DataBase::update(ChatChannel channel)
   query.exec();
 
   Account *account = channel->account();
-  if (account && account->id() > 0) {
-    account->setDate(DateTime::utc());
+  if (account && account->id > 0) {
+    account->date = DateTime::utc();
 
-    query.prepare(LS("UPDATE accounts SET date = :date, cookie = :cookie, name = :name, password = :password, groups = :groups WHERE id = :id;"));
-    query.bindValue(LS(":date"),       account->date());
-    query.bindValue(LS(":cookie"),     account->cookie());
-    query.bindValue(LS(":name"),       account->name());
-    query.bindValue(LS(":password"),   account->password());
-    query.bindValue(LS(":groups"),     account->groups().toString());
-    query.bindValue(LS(":id"),         account->id());
+    query.prepare(LS("UPDATE accounts SET date = :date, cookie = :cookie, groups = :groups WHERE id = :id;"));
+    query.bindValue(LS(":date"),       account->date);
+    query.bindValue(LS(":cookie"),     account->cookie);
+    query.bindValue(LS(":groups"),     account->groups.toString());
+    query.bindValue(LS(":id"),         account->id);
     query.exec();
   }
 }
@@ -394,11 +392,13 @@ void DataBase::update(ChatChannel channel)
  * Получение аккаунта пользователя.
  *
  * \param key Ключ в таблице \b accounts.
+ *
+ * \bug Работа этой функции нарушена.
  */
 Account DataBase::account(qint64 key)
 {
   QSqlQuery query;
-  query.prepare(LS("SELECT channel, date, cookie, name, password, groups FROM accounts WHERE id = :id LIMIT 1;"));
+  query.prepare(LS("SELECT channel, date, cookie, groups FROM accounts WHERE id = :id LIMIT 1;"));
   query.bindValue(LS(":id"), key);
   query.exec();
 
@@ -406,13 +406,11 @@ Account DataBase::account(qint64 key)
     return Account();
 
   Account account;
-  account.setId(key);
-  account.setChannel(query.value(0).toLongLong());
-  account.setDate(query.value(1).toLongLong());
-  account.setCookie(query.value(2).toByteArray());
-  account.setName(query.value(3).toString());
-  account.setPassword(query.value(4).toByteArray());
-  account.groups().set(query.value(5).toString());
+  account.id = key;
+  account.channel = query.value(0).toLongLong();
+  account.date = query.value(1).toLongLong();
+  account.cookie = query.value(2).toByteArray();
+  account.groups.set(query.value(5).toString());
 
   return account;
 }
@@ -480,22 +478,20 @@ qint64 DataBase::accountKey(qint64 channel)
 
 qint64 DataBase::add(Account *account)
 {
-  if (!account->channel())
+  if (!account->channel)
     return -1;
 
-  if (account->cookie().isEmpty())
-    account->setCookie(Ch::cookie());
+  if (account->cookie.isEmpty())
+    account->cookie = Ch::cookie();
 
   QSqlQuery query;
-  query.prepare(LS("INSERT INTO accounts (channel, date, cookie, name, password, groups) "
-                     "VALUES (:channel, :date, :cookie, :name, :password, :groups);"));
+  query.prepare(LS("INSERT INTO accounts (channel, date, cookie, groups) "
+                     "VALUES (:channel, :date, :cookie, :groups);"));
 
-  query.bindValue(LS(":channel"),    account->channel());
-  query.bindValue(LS(":date"),       account->date());
-  query.bindValue(LS(":cookie"),     account->cookie());
-  query.bindValue(LS(":name"),       account->name());
-  query.bindValue(LS(":password"),   account->password());
-  query.bindValue(LS(":groups"),     account->groups().toString());
+  query.bindValue(LS(":channel"),    account->channel);
+  query.bindValue(LS(":date"),       account->date);
+  query.bindValue(LS(":cookie"),     account->cookie);
+  query.bindValue(LS(":groups"),     account->groups.toString());
   query.exec();
 
   if (query.numRowsAffected() <= 0) {
@@ -504,11 +500,11 @@ qint64 DataBase::add(Account *account)
   }
 
   qint64 key = query.lastInsertId().toLongLong();
-  account->setId(key);
+  account->id = key;
 
   query.prepare(LS("UPDATE channels SET account = :account WHERE id = :id;"));
   query.bindValue(LS(":account"), key);
-  query.bindValue(LS(":id"),      account->channel());
+  query.bindValue(LS(":id"),      account->channel);
   query.exec();
 
   return key;

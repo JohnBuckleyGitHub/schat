@@ -117,8 +117,7 @@ bool AbstractClientPrivate::authReply(const AuthReply &reply)
     collisions = 0;
     q->setAuthorized(reply.userId);
     channel->setId(reply.userId);
-    channel->account()->setName(reply.account);
-    channel->account()->setCookie(reply.cookie);
+    channel->account()->cookie = reply.cookie;
 
     cookie = reply.cookie;
     authId.clear();

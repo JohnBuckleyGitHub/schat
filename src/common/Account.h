@@ -19,7 +19,6 @@
 #ifndef ACCOUNT_H_
 #define ACCOUNT_H_
 
-#include "schat.h"
 #include "acl/Groups.h"
 
 #include <QString>
@@ -27,42 +26,20 @@
 /*!
  * Информация об аккаунте пользователя.
  */
-class SCHAT_EXPORT Account
+class Account
 {
 public:
   Account()
-  : m_channel(0)
-  , m_date(0)
-  , m_id(0)
+  : channel(0)
+  , date(0)
+  , id(0)
   {}
 
-  bool isValid() const;
-
-  inline const QByteArray& cookie() const   { return m_cookie; }
-  inline const QByteArray& password() const { return m_password; }
-  inline const QString& name() const        { return m_name; }
-  inline qint64 channel() const             { return m_channel; }
-  inline qint64 date() const                { return m_date; }
-  inline qint64 id() const                  { return m_id; }
-
-  inline void setChannel(qint64 channel)                { m_channel = channel; }
-  inline void setCookie(const QByteArray &cookie)       { m_cookie = cookie; }
-  inline void setDate(qint64 date)                      { m_date = date; }
-  inline void setId(qint64 id)                          { m_id = id; }
-  inline void setName(const QString &name)              { m_name = name; }
-  inline void setPassword(const QByteArray &password)   { m_password = password; }
-
-  inline const Groups& groups() const { return m_groups; }
-  inline Groups& groups()             { return m_groups; }
-
-private:
-  Groups m_groups;       ///< Группы пользователя.
-  QByteArray m_cookie;   ///< Сookie пользователя.
-  QByteArray m_password; ///< Пароль пользователя.
-  qint64 m_channel;      ///< Идентификатор канала в таблице channels.
-  qint64 m_date;         ///< Дата обновления.
-  qint64 m_id;           ///< Идентификатор в таблице accounts.
-  QString m_name;        ///< Зарегистрированное имя пользователя.
+  Groups groups;     ///< Группы пользователя.
+  QByteArray cookie; ///< Сookie пользователя.
+  qint64 channel;    ///< Идентификатор канала в таблице channels.
+  qint64 date;       ///< Дата обновления.
+  qint64 id;         ///< Идентификатор в таблице accounts.
 };
 
 #endif /* ACCOUNT_H_ */

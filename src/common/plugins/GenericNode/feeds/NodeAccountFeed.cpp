@@ -68,14 +68,14 @@ FeedQueryReply NodeAccountFeed::query(const QVariantMap &json, Channel *channel)
   if (action.isEmpty())
     return FeedQueryReply(Notice::BadRequest);
 
-  if (action == LS("login"))
-    return login(json);
-  else if (action == LS("password"))
-    return password(json);
-  else if (action == LS("reg"))
-    return reg(json);
-  else if (action == LS("reset"))
-    return reset(json);
+//  if (action == LS("login"))
+//    return login(json);
+//  else if (action == LS("password"))
+//    return password(json);
+//  else if (action == LS("reg"))
+//    return reg(json);
+//  else if (action == LS("reset"))
+//    return reset(json);
 
   return FeedQueryReply(Notice::NotImplemented);
 }
@@ -100,8 +100,8 @@ void NodeAccountFeed::setChannel(Channel *channel)
 {
   Feed::setChannel(channel);
 
-  m_data[LS("account")] = channel->account()->name();
-  m_data[LS("groups")]  = channel->account()->groups().all();
+//  m_data[LS("account")] = channel->account()->name();
+  m_data[LS("groups")]  = channel->account()->groups.all();
 }
 
 
@@ -110,38 +110,38 @@ void NodeAccountFeed::setChannel(Channel *channel)
  *
  * http://wiki.schat.me/Feed/Account#login
  */
-FeedQueryReply NodeAccountFeed::login(const QVariantMap &json)
-{
-  if (!head().channel()->account()->name().isEmpty())
-    return FeedQueryReply(Notice::BadRequest);
-
-  // Получение и проверка пароля.
-  QByteArray password = getPassword(json);
-  if (password.isEmpty())
-    return FeedQueryReply(Notice::BadRequest);
-
-  // Получение и проверка имени.
-  QString name = getName(json);
-  if (name.isEmpty())
-    return FeedQueryReply(Notice::BadRequest);
-
-  // Проверка имени на существование.
-  qint64 key = DataBase::accountKey(name);
-  if (key == -1)
-    return FeedQueryReply(Notice::NotFound);
-
-  Account account = DataBase::account(key);
-  if (!account.isValid())
-    return FeedQueryReply(Notice::InternalError);
-
-  if (account.password() != password)
-    return FeedQueryReply(Notice::Forbidden);
-
-  // Формирования ответа.
-  FeedQueryReply reply     = FeedQueryReply(Notice::OK);
-  reply.json[LS("action")] = LS("login");
-  return reply;
-}
+//FeedQueryReply NodeAccountFeed::login(const QVariantMap &json)
+//{
+//  if (!head().channel()->account()->name().isEmpty())
+//    return FeedQueryReply(Notice::BadRequest);
+//
+//  // Получение и проверка пароля.
+//  QByteArray password = getPassword(json);
+//  if (password.isEmpty())
+//    return FeedQueryReply(Notice::BadRequest);
+//
+//  // Получение и проверка имени.
+//  QString name = getName(json);
+//  if (name.isEmpty())
+//    return FeedQueryReply(Notice::BadRequest);
+//
+//  // Проверка имени на существование.
+//  qint64 key = DataBase::accountKey(name);
+//  if (key == -1)
+//    return FeedQueryReply(Notice::NotFound);
+//
+//  Account account = DataBase::account(key);
+//  if (!account.isValid())
+//    return FeedQueryReply(Notice::InternalError);
+//
+//  if (account.password() != password)
+//    return FeedQueryReply(Notice::Forbidden);
+//
+//  // Формирования ответа.
+//  FeedQueryReply reply     = FeedQueryReply(Notice::OK);
+//  reply.json[LS("action")] = LS("login");
+//  return reply;
+//}
 
 
 /*!
@@ -149,40 +149,40 @@ FeedQueryReply NodeAccountFeed::login(const QVariantMap &json)
  *
  * http://wiki.schat.me/Feed/Account#password
  */
-FeedQueryReply NodeAccountFeed::password(const QVariantMap &json)
-{
-  ChatChannel channel = Ch::channel(head().channel()->id());
-  if (!channel)
-    return FeedQueryReply(Notice::InternalError);
-
-  Account *account = channel->account();
-  if (account->name().isEmpty())
-    return FeedQueryReply(Notice::Unauthorized);
-
-  // Получение и проверка пароля.
-  QByteArray password = getPassword(json);
-  if (password.isEmpty())
-    return FeedQueryReply(Notice::BadRequest);
-
-  if (account->password() != password)
-    return FeedQueryReply(Notice::Forbidden);
-
-  QByteArray newPassword = getPassword(json, LS("new"));
-  if (!newPassword.isEmpty()) {
-    account->setPassword(newPassword);
-    DataBase::update(channel);
-  }
-  else {
-    setRecovery(LS("q"), json);
-    setRecovery(LS("a"), json);
-    FeedStorage::save(channel->feed(LS("account")));
-  }
-
-  // Формирования ответа.
-  FeedQueryReply reply     = FeedQueryReply(Notice::OK);
-  reply.json[LS("action")] = LS("password");
-  return reply;
-}
+//FeedQueryReply NodeAccountFeed::password(const QVariantMap &json)
+//{
+//  ChatChannel channel = Ch::channel(head().channel()->id());
+//  if (!channel)
+//    return FeedQueryReply(Notice::InternalError);
+//
+//  Account *account = channel->account();
+//  if (account->name().isEmpty())
+//    return FeedQueryReply(Notice::Unauthorized);
+//
+//  // Получение и проверка пароля.
+//  QByteArray password = getPassword(json);
+//  if (password.isEmpty())
+//    return FeedQueryReply(Notice::BadRequest);
+//
+//  if (account->password() != password)
+//    return FeedQueryReply(Notice::Forbidden);
+//
+//  QByteArray newPassword = getPassword(json, LS("new"));
+//  if (!newPassword.isEmpty()) {
+//    account->setPassword(newPassword);
+//    DataBase::update(channel);
+//  }
+//  else {
+//    setRecovery(LS("q"), json);
+//    setRecovery(LS("a"), json);
+//    FeedStorage::save(channel->feed(LS("account")));
+//  }
+//
+//  // Формирования ответа.
+//  FeedQueryReply reply     = FeedQueryReply(Notice::OK);
+//  reply.json[LS("action")] = LS("password");
+//  return reply;
+//}
 
 
 /*!
@@ -190,52 +190,52 @@ FeedQueryReply NodeAccountFeed::password(const QVariantMap &json)
  *
  * http://wiki.schat.me/Feed/Account#reg
  */
-FeedQueryReply NodeAccountFeed::reg(const QVariantMap &json)
-{
-  if (!head().channel()->account()->name().isEmpty())
-    return FeedQueryReply(Notice::BadRequest);
-
-  // Получение и проверка пароля.
-  QByteArray password = getPassword(json);
-  if (password.isEmpty())
-    return FeedQueryReply(Notice::BadRequest);
-
-  // Получение и проверка имени.
-  QString name = getName(json);
-  if (name.isEmpty())
-    return FeedQueryReply(Notice::BadRequest);
-
-  // Проверка имени на занятость.
-  qint64 key = DataBase::accountKey(name);
-  if (key != -1)
-    return FeedQueryReply(Notice::ObjectAlreadyExists);
-
-  // Обновление данных.
-  ChatChannel channel = Ch::channel(head().channel()->id());
-  if (!channel)
-    return FeedQueryReply(Notice::InternalError);
-
-  Account *account = channel->account();
-  Groups &groups = account->groups();
-
-  account->setName(name);
-  account->setPassword(password);
-  groups.remove(LS("anonymous"));
-  groups.add(LS("registered"));
-  m_data[LS("account")] = name;
-  m_data[LS("groups")]  = groups.all();
-  setRecovery(LS("q"), json);
-  setRecovery(LS("a"), json);
-
-  DataBase::update(channel);
-
-  // Формирования ответа.
-  FeedQueryReply reply     = FeedQueryReply(Notice::OK);
-  reply.json[LS("action")] = LS("reg");
-  reply.json[LS("name")]   = name;
-  reply.modified           = true;
-  return reply;
-}
+//FeedQueryReply NodeAccountFeed::reg(const QVariantMap &json)
+//{
+//  if (!head().channel()->account()->name().isEmpty())
+//    return FeedQueryReply(Notice::BadRequest);
+//
+//  // Получение и проверка пароля.
+//  QByteArray password = getPassword(json);
+//  if (password.isEmpty())
+//    return FeedQueryReply(Notice::BadRequest);
+//
+//  // Получение и проверка имени.
+//  QString name = getName(json);
+//  if (name.isEmpty())
+//    return FeedQueryReply(Notice::BadRequest);
+//
+//  // Проверка имени на занятость.
+//  qint64 key = DataBase::accountKey(name);
+//  if (key != -1)
+//    return FeedQueryReply(Notice::ObjectAlreadyExists);
+//
+//  // Обновление данных.
+//  ChatChannel channel = Ch::channel(head().channel()->id());
+//  if (!channel)
+//    return FeedQueryReply(Notice::InternalError);
+//
+//  Account *account = channel->account();
+//  Groups &groups = account->groups();
+//
+//  account->setName(name);
+//  account->setPassword(password);
+//  groups.remove(LS("anonymous"));
+//  groups.add(LS("registered"));
+//  m_data[LS("account")] = name;
+//  m_data[LS("groups")]  = groups.all();
+//  setRecovery(LS("q"), json);
+//  setRecovery(LS("a"), json);
+//
+//  DataBase::update(channel);
+//
+//  // Формирования ответа.
+//  FeedQueryReply reply     = FeedQueryReply(Notice::OK);
+//  reply.json[LS("action")] = LS("reg");
+//  reply.json[LS("name")]   = name;
+//  reply.modified           = true;
+//  return reply;
+//}
 
 
 /*!
@@ -243,63 +243,63 @@ FeedQueryReply NodeAccountFeed::reg(const QVariantMap &json)
  *
  * http://wiki.schat.me/Feed/Account#reset
  */
-FeedQueryReply NodeAccountFeed::reset(const QVariantMap &json)
-{
-  if (!head().channel()->account()->name().isEmpty())
-    return FeedQueryReply(Notice::BadRequest);
-
-  // Получение и проверка пароля.
-  QByteArray password = getPassword(json);
-  if (password.isEmpty())
-    return FeedQueryReply(Notice::BadRequest);
-
-  // Получение и проверка имени.
-  QString name = getName(json);
-  if (name.isEmpty())
-    return FeedQueryReply(Notice::BadRequest);
-
-  // Проверка имени на существование.
-  qint64 key = DataBase::accountKey(name);
-  if (key == -1)
-    return FeedQueryReply(Notice::NotFound);
-
-  // Получение канала пользователя связанного с логином.
-  Account account = DataBase::account(key);
-  if (!account.isValid())
-    return FeedQueryReply(Notice::InternalError);
-
-  ChatChannel channel = Ch::channel(account.cookie(), SimpleID::UserId);
-  if (!channel)
-    return FeedQueryReply(Notice::InternalError);
-
-  // Получение фида.
-  FeedPtr feed = channel->feed(LS("account"), false);
-  if (!feed) {
-    Ch::gc(channel);
-    return FeedQueryReply(Notice::InternalError);
-  }
-
-  // Проверка наличия секретного вопроса.
-  const QVariantMap &data = feed->data();
-  if (!data.contains(LS("q"))) {
-    Ch::gc(channel);
-    return FeedQueryReply(Notice::Unauthorized);
-  }
-
-  if (data.value(LS("q")) != json.value(LS("q")) || data.value(LS("a")) != json.value(LS("a"))) {
-    Ch::gc(channel);
-    return FeedQueryReply(Notice::Unauthorized);
-  }
-
-  channel->account()->setPassword(password);
-  DataBase::update(channel);
-  Ch::gc(channel);
-
-  // Формирования ответа.
-  FeedQueryReply reply     = FeedQueryReply(Notice::OK);
-  reply.json[LS("action")] = LS("reset");
-  return reply;
-}
+//FeedQueryReply NodeAccountFeed::reset(const QVariantMap &json)
+//{
+//  if (!head().channel()->account()->name().isEmpty())
+//    return FeedQueryReply(Notice::BadRequest);
+//
+//  // Получение и проверка пароля.
+//  QByteArray password = getPassword(json);
+//  if (password.isEmpty())
+//    return FeedQueryReply(Notice::BadRequest);
+//
+//  // Получение и проверка имени.
+//  QString name = getName(json);
+//  if (name.isEmpty())
+//    return FeedQueryReply(Notice::BadRequest);
+//
+//  // Проверка имени на существование.
+//  qint64 key = DataBase::accountKey(name);
+//  if (key == -1)
+//    return FeedQueryReply(Notice::NotFound);
+//
+//  // Получение канала пользователя связанного с логином.
+//  Account account = DataBase::account(key);
+//  if (!account.isValid())
+//    return FeedQueryReply(Notice::InternalError);
+//
+//  ChatChannel channel = Ch::channel(account.cookie(), SimpleID::UserId);
+//  if (!channel)
+//    return FeedQueryReply(Notice::InternalError);
+//
+//  // Получение фида.
+//  FeedPtr feed = channel->feed(LS("account"), false);
+//  if (!feed) {
+//    Ch::gc(channel);
+//    return FeedQueryReply(Notice::InternalError);
+//  }
+//
+//  // Проверка наличия секретного вопроса.
+//  const QVariantMap &data = feed->data();
+//  if (!data.contains(LS("q"))) {
+//    Ch::gc(channel);
+//    return FeedQueryReply(Notice::Unauthorized);
+//  }
+//
+//  if (data.value(LS("q")) != json.value(LS("q")) || data.value(LS("a")) != json.value(LS("a"))) {
+//    Ch::gc(channel);
+//    return FeedQueryReply(Notice::Unauthorized);
+//  }
+//
+//  channel->account()->setPassword(password);
+//  DataBase::update(channel);
+//  Ch::gc(channel);
+//
+//  // Формирования ответа.
+//  FeedQueryReply reply     = FeedQueryReply(Notice::OK);
+//  reply.json[LS("action")] = LS("reset");
+//  return reply;
+//}
 
 
 /*!

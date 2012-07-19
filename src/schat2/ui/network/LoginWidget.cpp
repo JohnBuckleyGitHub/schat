@@ -156,8 +156,8 @@ bool LoginWidget::isReady() const
   if (ChatClient::serverId() != ChatCore::networks()->selected())
     return false;
 
-  if (!ChatClient::channel()->account()->name().isEmpty())
-    return false;
+//  if (!ChatClient::channel()->account()->name().isEmpty())
+//    return false;
 
   return true;
 }

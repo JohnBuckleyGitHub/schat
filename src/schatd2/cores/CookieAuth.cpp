@@ -59,7 +59,6 @@ AuthResult CookieAuth::auth(const AuthRequest &data, ChatChannel channel)
 
   if (isPasswordRequired(channel.data(), data.uniqueId)) {
     result = AuthResult(Notice::Unauthorized, data.id);
-    result.json[LS("account")] = channel->account()->name();
     return result;
   }
 

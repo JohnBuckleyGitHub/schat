@@ -55,6 +55,5 @@ void AccountFeed::setChannel(Channel *channel)
   if (!channel->account())
     channel->setAccount(new Account());
 
-  channel->account()->setName(m_data.value(LS("account")).toString());
-  channel->account()->groups().set(m_data.value(LS("groups")).toStringList());
+  channel->account()->groups.set(m_data.value(LS("groups")).toStringList());
 }
