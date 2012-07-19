@@ -90,12 +90,12 @@ void AccountButton::menuTriggered(QAction *action)
 
 void AccountButton::showMenu()
 {
-  bool account = !ChatClient::channel()->account()->name().isEmpty();
-  m_signIn->setVisible(!account);
-  m_signOut->setVisible(account);
-  m_signUp->setVisible(!account);
-  m_reset->setVisible(!account);
-  m_password->setVisible(account);
+//  bool account = !ChatClient::channel()->account()->name().isEmpty();
+//  m_signIn->setVisible(!account);
+//  m_signOut->setVisible(account);
+//  m_signUp->setVisible(!account);
+//  m_reset->setVisible(!account);
+//  m_password->setVisible(account);
 }
 
 

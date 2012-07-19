@@ -113,12 +113,12 @@ void ServerChannel::createAccount()
     delete m_account;
 
   m_account = new Account();
-  m_account->setDate(DateTime::utc());
-  m_account->groups() += LS("anonymous");
-  m_account->setChannel(key());
+  m_account->date = DateTime::utc();
+  m_account->groups += LS("anonymous");
+  m_account->channel = key();
 
   if (DataBase::noMaster) {
-    m_account->groups() += LS("master");
+    m_account->groups += LS("master");
     DataBase::noMaster = false;
   }
 

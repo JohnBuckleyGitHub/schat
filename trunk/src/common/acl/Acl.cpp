@@ -50,7 +50,7 @@ int Acl::match(Channel *channel) const
   if (channel->type() == SimpleID::ServerId)
     return Read | Write | Edit;
 
-  if (channel->account()->groups().all().contains(LS("master")))
+  if (channel->account()->groups.all().contains(LS("master")))
     return Read | Write | Edit;
 
   if (m_others.contains(channel->id()))
@@ -60,7 +60,7 @@ int Acl::match(Channel *channel) const
     return (m_mask >> 6);
 
   foreach (QString group, m_groups.all()) {
-    if (channel->account()->groups().all().contains(group))
+    if (channel->account()->groups.all().contains(group))
       return ((m_mask & ~0700) >> 3);
   }
 

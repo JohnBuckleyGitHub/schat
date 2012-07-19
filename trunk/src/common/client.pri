@@ -60,7 +60,6 @@ HEADERS += \
     Translation.h \
 
 SOURCES += \
-    Account.cpp \
     acl/Acl.cpp \
     base32/base32.cpp \
     Channel.cpp \

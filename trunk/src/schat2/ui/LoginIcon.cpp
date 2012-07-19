@@ -57,11 +57,11 @@ void LoginIcon::reload()
     return;
   }
 
-  QString account = ChatClient::channel()->account()->name();
-  if (!account.isEmpty()) {
-    setVisible(true);
-    setToolTip(account);
-  }
-  else
-    setVisible(false);
+//  QString account = ChatClient::channel()->account()->name();
+//  if (!account.isEmpty()) {
+//    setVisible(true);
+//    setToolTip(account);
+//  }
+//  else
+//    setVisible(false);
 }

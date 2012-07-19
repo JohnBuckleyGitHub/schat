@@ -57,7 +57,6 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
 
   if (isPasswordRequired(channel.data(), data.uniqueId)) {
     result = AuthResult(Notice::Unauthorized, data.id);
-    result.json[LS("account")] = channel->account()->name();
     return result;
   }
 
@@ -123,14 +122,11 @@ bool AnonymousAuth::isPasswordRequired(ServerChannel *channel, const QByteArray 
   if (!channel->account())
     return false;
 
-  if (channel->account()->name().isEmpty())
-    return false;
-
   FeedPtr feed = channel->hosts().feed();
   if (feed->data().contains(SimpleID::encode(Hosts::toHostId(uniqueId, channel->id()))))
     return false;
 
-  return true;
+  return false;
 }
 
 

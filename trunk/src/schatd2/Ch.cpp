@@ -422,7 +422,7 @@ void Ch::Cache::add(ChatChannel channel)
   m_channels[channel->normalized()] = channel;
 
   if (channel->account())
-    m_channels[channel->account()->cookie()] = channel;
+    m_channels[channel->account()->cookie] = channel;
 }
 
 
@@ -441,7 +441,7 @@ void Ch::Cache::remove(const QByteArray &id)
   m_channels.remove(channel->normalized());
 
   if (channel->account())
-    m_channels.remove(channel->account()->cookie());
+    m_channels.remove(channel->account()->cookie);
 
   return;
 }
