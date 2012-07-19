@@ -145,19 +145,19 @@ bool NodeChannels::join()
 {
   ChatChannel channel;
 
-  /// Если идентификатор канала корректный функция пытается получить его по этому идентификатору.
+  /// Если идентификатор канала корректный, функция пытается получить его по этому идентификатору.
   int type = SimpleID::typeOf(m_packet->channelId());
   if (type != SimpleID::InvalidId)
     channel = Ch::channel(m_packet->channelId(), type);
 
   /// Если канал не удалось получить по идентификатору, будет произведена попытка создать обычный канал по имени.
-  if (!channel)
+  if (!channel && (type == SimpleID::InvalidId || type == SimpleID::ChannelId))
     channel = Ch::channel(m_packet->text(), m_user);
 
   if (!channel)
     return false;
 
-  qDebug() << "                               " << channel->name();
+  qDebug() << "                               " << channel->name() << SimpleID::encode(channel->id());
   bool notify = !channel->channels().all().contains(m_user->id());
   channel->channels() += m_user->id();
   m_user->channels()  += channel->id();
