@@ -102,6 +102,7 @@ macx: SOURCES       += Path_mac.cpp
 
 !contains( SCHAT_LITTLE_CLIENT, 1 ) {
   HEADERS += \
+    client/AuthClient.h \
     client/ChatClient.h \
     client/ClientChannels.h \
     client/ClientCmd.h \
@@ -112,6 +113,7 @@ macx: SOURCES       += Path_mac.cpp
     client/SimpleClient_p.h \
     
   SOURCES += \
+    client/AuthClient.cpp \
     client/ChatClient.cpp \
     client/ClientChannels.cpp \
     client/ClientCmd.cpp \
