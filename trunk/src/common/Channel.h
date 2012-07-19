@@ -115,7 +115,7 @@ public:
   inline void setData(const QVariantMap &data) { m_data = data; }
   inline void setKey(qint64 key)          { m_key = key; }
   inline void setSynced(bool synced)      { m_synced = synced; }
-  void setAccount(Account *account);
+  void setAccount(Account *account = 0);
 
   inline Channels& channels()             { return m_channels; }
   inline const Channels& channels() const { return m_channels; }

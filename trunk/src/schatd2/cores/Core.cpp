@@ -270,7 +270,7 @@ bool Core::auth()
 
   if (m_auth.isEmpty()) {
     addAuth(new AnonymousAuth(this));
-//    addAuth(new CookieAuth(this));
+    addAuth(new CookieAuth(this));
   }
 
   for (int i = 0; i < m_auth.size(); ++i) {
@@ -305,7 +305,7 @@ void Core::accept(const AuthResult &result)
   if (!channel)
     return;
 
-  if (!channel->account())
+  if (!channel->account()->id)
     channel->createAccount();
 
   QList<QByteArray> packets;

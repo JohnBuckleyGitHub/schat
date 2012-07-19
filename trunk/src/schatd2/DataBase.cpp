@@ -41,10 +41,13 @@
 bool DataBase::noMaster = false;
 DataBase *DataBase::m_self = 0;
 
+/*!
+ * Отложенная запись или обновление информации о хосте пользователя.
+ */
 class AddHostTask : public QRunnable
 {
 private:
-  Host m_host;
+  Host m_host; ///< Информация о хосте пользователя.
 
 public:
   AddHostTask(Host *host)
@@ -74,6 +77,9 @@ public:
 };
 
 
+/*!
+ * База данных сервера.
+ */
 DataBase::DataBase(QObject *parent)
   : QObject(parent)
 {
