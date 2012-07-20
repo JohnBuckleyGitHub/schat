@@ -269,7 +269,9 @@ bool Core::auth()
   }
 
   if (m_auth.isEmpty()) {
-    addAuth(new AnonymousAuth(this));
+    if (Storage::anonymous())
+      addAuth(new AnonymousAuth(this));
+
     addAuth(new CookieAuth(this));
   }
 
