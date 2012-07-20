@@ -174,7 +174,6 @@ bool NetworkManager::open(const QByteArray &id)
   if (!m_items.contains(id))
     return false;
 
-  ChatClient::io()->setCookieAuth(ChatCore::settings()->value(LS("Labs/CookieAuth")).toBool());
   Network item = m_items.value(id);
 //  ChatClient::io()->setAccount(item->account(), item->password());
 

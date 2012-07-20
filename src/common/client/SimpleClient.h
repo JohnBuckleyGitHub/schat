@@ -32,10 +32,7 @@ class SCHAT_EXPORT SimpleClient : public AbstractClient
 public:
   explicit SimpleClient(QObject *parent = 0);
   ~SimpleClient();
-  const QString &account() const;
   void leave();
-  void setAccount(const QString &account, const QString &password);
-  void setCookieAuth(bool allow);
 
 signals:
   void notice(int type);

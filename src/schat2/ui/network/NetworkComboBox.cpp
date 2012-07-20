@@ -92,9 +92,6 @@ void NetworkComboBox::open(OfflineLogin *login)
     setEditable(false);
   }
 
-  if (login)
-    ChatClient::io()->setAccount(login->isAnonymous() ? QString() : login->name(), login->password());
-
   ChatClient::open(item->id());
 }
 
