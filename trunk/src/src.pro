@@ -19,11 +19,6 @@ CONFIG   += ordered
 TEMPLATE = subdirs
 SUBDIRS  = \
     schatd2/schatd.pro \
-    tufao \
     schatd2 \
-    authd \
-    client \
-    schat2/schat2-core.pro \
-    schat2 \
 
 include(common/plugins.pri)
