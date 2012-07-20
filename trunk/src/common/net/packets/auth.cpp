@@ -119,15 +119,6 @@ AuthRequest::AuthRequest(PacketReader *reader)
   nick = reader->text();
   userAgent = reader->text();
 
-  if (authType == SlaveNode)
-    privateId = reader->text();
-
-  if (authType == Password) {
-    account = reader->text();
-    password = reader->id();
-    cookie = reader->id();
-  }
-
   if (authType == Cookie)
     cookie = reader->id();
 
@@ -193,15 +184,6 @@ QByteArray AuthRequest::data(QDataStream *stream) const
   writer.put(host);
   writer.put(nick);
   writer.put(userAgent);
-
-  if (authType == SlaveNode)
-    writer.put(privateId);
-
-  if (authType == Password) {
-    writer.put(account);
-    writer.putId(password);
-    writer.putId(cookie);
-  }
 
   if (authType == Cookie)
     writer.putId(cookie);

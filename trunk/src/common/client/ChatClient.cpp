@@ -48,12 +48,62 @@ ChatClient::ChatClient(QObject *parent)
 }
 
 
+ClientChannel ChatClient::channel()
+{
+  return io()->channel();
+}
+
+
+ClientChannel ChatClient::server()
+{
+  return io()->server();
+}
+
+
+int ChatClient::state()
+{
+  return io()->clientState();
+}
+
+
+/*!
+ * Получение идентификатора пользователя.
+ *
+ * \sa Hooks::Client::id()
+ */
+QByteArray ChatClient::id()
+{
+  QByteArray id = io()->channelId();
+  if (!id.isEmpty())
+    return id;
+
+  id = io()->channel()->id();
+  if (!id.isEmpty())
+    return id;
+
+  return m_self->m_hooks->id();
+}
+
+
+QByteArray ChatClient::serverId()
+{
+  QByteArray id = io()->server()->id();
+  if (!id.isEmpty())
+    return id;
+
+  return m_self->m_hooks->serverId();
+}
+
+
 QDataStream *ChatClient::stream()
 {
   return io()->sendStream();
 }
 
 
+/*!
+ * Получение отметки времени.
+ */
 qint64 ChatClient::date()
 {
   qint64 out = io()->date();
@@ -65,40 +115,24 @@ qint64 ChatClient::date()
 
 
 /*!
- * Подключение к серверу по имени и паролю.
- * Если клиент подключен к серверу, происходит запрос \b login к фиду \b account.
- * Ответ на него не обрабатывается в этом классе.
- *
- * \param account  Зарегистрированный аккаунт пользователя.
- * \param password Пароль пользователя.
- *
- * \return \b false если произошла ошибка.
+ * Получение имени сервера.
  */
-bool ChatClient::login(const QString &account, const QString &password)
+QString ChatClient::serverName()
 {
-  m_account = account;
-  m_password = password;
+  return io()->serverName();
+}
 
-  if (account.isEmpty())
-    return false;
 
-  if (password.isEmpty())
-    return false;
+bool ChatClient::open(const QByteArray &id)
+{
+  bool matched = false;
+  return m_self->m_hooks->openId(id, matched);
+}
 
-  if (state() == Online) {
-    QVariantMap data;
-    data[LS("name")] = account;
-    data[LS("pass")] = SimpleID::encode(SimpleID::password(password));
 
-    return feeds()->query(LS("account"), LS("login"), data);
-  }
-
-  if (state() == Offline) {
-    io()->setAccount(account, password);
-    return open();
-  }
-
-  return false;
+bool ChatClient::open(const QUrl &url)
+{
+  return io()->openUrl(url);
 }
 
 
@@ -123,85 +157,11 @@ void ChatClient::clientStateChanged(int state, int previousState)
 
 void ChatClient::restore()
 {
-  qDebug() << "~~ RESTORE ~~";
   m_hooks->restore();
 }
 
 
 void ChatClient::setup()
 {
-  qDebug() << "~~ SETUP ~~";
   m_hooks->setup();
-}
-
-
-bool ChatClient::openId(const QByteArray &id)
-{
-  bool matched = false;
-  return m_hooks->openId(id, matched);
-}
-
-
-bool ChatClient::openUrl(const QUrl &url)
-{
-  return m_client->openUrl(url);
-}
-
-
-ClientChannel ChatClient::getChannel()
-{
-  return m_client->channel();
-}
-
-
-ClientChannel ChatClient::getServer()
-{
-  return m_client->server();
-}
-
-
-int ChatClient::getState()
-{
-  return m_client->clientState();
-}
-
-
-/*!
- * Получение идентификатора пользователя.
- *
- * \sa Hooks::Client::id()
- */
-QByteArray ChatClient::getId()
-{
-  QByteArray id = m_client->channelId();
-  if (!id.isEmpty())
-    return id;
-
-  id = m_client->channel()->id();
-  if (!id.isEmpty())
-    return id;
-
-  return m_hooks->id();
-}
-
-
-/*!
- * Получение идентификатора сервера.
- * Если у клиента не установлен идентификатор, используются хуки для его получения.
- *
- * \sa Hooks::Client::serverId()
- */
-QByteArray ChatClient::getServerId()
-{
-  QByteArray id = m_client->server()->id();
-  if (!id.isEmpty())
-    return id;
-
-  return m_hooks->serverId();
-}
-
-
-QString ChatClient::getServerName()
-{
-  return m_client->serverName();
 }

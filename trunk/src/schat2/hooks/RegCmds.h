@@ -21,6 +21,9 @@
 
 #include "client/ClientHooks.h"
 
+/*!
+ * \deprecated Этот класс больше не нужен.
+ */
 class SCHAT_CORE_EXPORT RegCmds : public Hooks::Messages
 {
   Q_OBJECT

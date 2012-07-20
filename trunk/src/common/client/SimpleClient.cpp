@@ -78,9 +78,6 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
 
 bool SimpleClientPrivate::isFatalError(int status) const
 {
-  if (authType == AuthRequest::Password)
-    return true;
-
   if (status == Notice::Unauthorized)
     return true;
 
@@ -148,8 +145,7 @@ void SimpleClient::setAccount(const QString &account, const QString &password)
 
 void SimpleClient::setCookieAuth(bool allow)
 {
-  Q_D(SimpleClient);
-  d->cookieAuth = allow;
+  d_func()->cookieAuth = allow;
 }
 
 
@@ -162,16 +158,14 @@ void SimpleClient::requestAuth()
 
   d->authType = AuthRequest::Anonymous;
 
-  if (!d->account.isEmpty() && SimpleID::typeOf(d->password) == SimpleID::PasswordId)
-    d->authType = AuthRequest::Password;
-  else if (d->cookieAuth && !d->cookie.isEmpty())
+  if (d->cookieAuth && !d->cookie.isEmpty())
     d->authType = AuthRequest::Cookie;
 
   AuthRequest data(d->authType, d->url.toString(), d->channel.data());
   data.uniqueId = d->uniqueId;
-  data.cookie = d->cookie;
-  data.id = d->authId;
-  data.account = d->account;
+  data.cookie   = d->cookie;
+  data.id       = d->authId;
+  data.account  = d->account;
   data.password = d->password;
   send(data.data(d->sendStream));
 }
