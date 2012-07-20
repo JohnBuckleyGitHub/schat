@@ -31,7 +31,6 @@ QHash<QByteArray, quint64> AnonymousAuth::m_collisions;
 
 AnonymousAuth::AnonymousAuth(Core *core)
   : NodeAuth(core)
-  , m_checked(false)
 {
 }
 
@@ -107,19 +106,18 @@ AuthResult AnonymousAuth::isCollision(const QByteArray &id, const QString &name,
 
 
 /*!
- * Проверка на необходимость принудительной авторизации по имени и паролю,
+ * Проверка на необходимость принудительной авторизации,
  * в случае подключения зарегистрированного пользователя с нового компьютера.
  *
  * \param channel  Указатель на канал пользователя.
  * \param uniqueId Уникальный идентификатор пользователя.
  *
  * \return \b true если необходима проверка пароля.
+ *
+ * \bug Эта функция не работает.
  */
 bool AnonymousAuth::isPasswordRequired(ServerChannel *channel, const QByteArray &uniqueId)
 {
-  if (m_checked)
-    return false;
-
   if (!channel->account())
     return false;
 

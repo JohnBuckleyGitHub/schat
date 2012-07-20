@@ -52,12 +52,12 @@ private:
   void setDefaultSslConf();
   void setMaxOpenFiles(int max);
 
-  NodeLog *m_log;                                ///< Журнал.
-  QByteArray m_id;                               ///< Публичный идентификатор сервера.
-  QByteArray m_privateId;                        ///< Приватный идентификатор сервера.
-  ServerData *m_serverData;                      ///< Информация о сервере.
-  Settings *m_settings;                          ///< Настройки сервера.
-  static Storage *m_self;                        ///< Указатель на себя.
+  NodeLog *m_log;           ///< Журнал.
+  QByteArray m_id;          ///< Публичный идентификатор сервера.
+  QByteArray m_privateId;   ///< Приватный идентификатор сервера.
+  ServerData *m_serverData; ///< Информация о сервере.
+  Settings *m_settings;     ///< Настройки сервера.
+  static Storage *m_self;   ///< Указатель на себя.
 };
 
 #endif /* STORAGE_H_ */
