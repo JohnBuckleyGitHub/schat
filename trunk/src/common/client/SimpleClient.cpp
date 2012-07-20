@@ -27,7 +27,6 @@
 #include "sglobal.h"
 
 SimpleClientPrivate::SimpleClientPrivate()
-  : cookieAuth(false)
 {
 }
 
@@ -48,8 +47,6 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
   json[LS("hostId")] = reply.hostId;
 
   if (reply.status == Notice::OK) {
-    account.clear();
-    password.clear();
     json.remove(LS("error"));
     return true;
   }
@@ -65,7 +62,6 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
     return false;
 
   if (authType == AuthRequest::Cookie && (reply.status == Notice::NotImplemented || reply.status == Notice::Forbidden)) {
-    cookieAuth = false;
     return false;
   }
 
@@ -116,36 +112,11 @@ SimpleClient::~SimpleClient()
 }
 
 
-const QString& SimpleClient::account() const
-{
-  Q_D(const SimpleClient);
-  return d->account;
-}
-
-
 void SimpleClient::leave()
 {
   send(ChannelNotice::request(channelId(), channelId(), LS("quit")));
 
   AbstractClient::leave();
-}
-
-
-void SimpleClient::setAccount(const QString &account, const QString &password)
-{
-  Q_D(SimpleClient);
-  d->account = account;
-
-  if (!password.isEmpty())
-    d->password = SimpleID::password(password);
-  else
-    d->password.clear();
-}
-
-
-void SimpleClient::setCookieAuth(bool allow)
-{
-  d_func()->cookieAuth = allow;
 }
 
 
@@ -158,15 +129,10 @@ void SimpleClient::requestAuth()
 
   d->authType = AuthRequest::Anonymous;
 
-  if (d->cookieAuth && !d->cookie.isEmpty())
-    d->authType = AuthRequest::Cookie;
-
   AuthRequest data(d->authType, d->url.toString(), d->channel.data());
   data.uniqueId = d->uniqueId;
   data.cookie   = d->cookie;
   data.id       = d->authId;
-  data.account  = d->account;
-  data.password = d->password;
   send(data.data(d->sendStream));
 }
 
