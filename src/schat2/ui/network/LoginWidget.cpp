@@ -100,7 +100,7 @@ void LoginWidget::login()
     return;
 
   m_login->setProgress();
-  ChatClient::i()->login(m_nameEdit->text(), m_passwordEdit->text());
+//  ChatClient::i()->login(m_nameEdit->text(), m_passwordEdit->text());
 }
 
 

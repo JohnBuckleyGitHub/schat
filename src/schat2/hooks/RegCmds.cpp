@@ -39,7 +39,7 @@ bool RegCmds::command(const QByteArray &dest, const ClientCmd &cmd)
   QString command = cmd.command().toLower();
   if (command == LS("login")) {
     ClientCmd body(cmd.body());
-    ChatClient::i()->login(body.command(), body.body());
+//    ChatClient::i()->login(body.command(), body.body());
     return true;
   }
   else if (command == LS("reg")) {

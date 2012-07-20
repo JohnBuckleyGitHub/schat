@@ -28,6 +28,8 @@ class NetworkButton;
 
 /*!
  * Виджет авторизации.
+ *
+ * \deprecated Этот класс больше не нужен.
  */
 class LoginWidget : public NetworkExtra
 {

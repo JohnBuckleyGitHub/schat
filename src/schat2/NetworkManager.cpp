@@ -370,10 +370,13 @@ void NetworkManager::load()
 }
 
 
+/*!
+ * \deprecated Эта функция больше не нужна.
+ */
 void NetworkManager::login()
 {
   ChatClient::io()->leave();
-  ChatClient::i()->login();
+//  ChatClient::i()->login();
 }
 
 

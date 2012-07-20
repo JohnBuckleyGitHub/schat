@@ -30,6 +30,8 @@ class NetworkButton;
 
 /*!
  * Виджет регистрации или восстановления забытого пароля.
+ *
+ * \deprecated Этот класс больше не нужен.
  */
 class SignUpWidget : public NetworkExtra
 {

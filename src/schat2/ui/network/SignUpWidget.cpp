@@ -172,8 +172,8 @@ void SignUpWidget::signUp()
   data[LS("a")]    = SimpleID::encode(SimpleID::make(m_answerEdit->text().toUtf8(), SimpleID::MessageId));
 
   if (m_action == LS("reset")) {
-    ChatClient::setAccount(m_nameEdit->text());
-    ChatClient::setPassword(m_passwordEdit->text());
+//    ChatClient::setAccount(m_nameEdit->text());
+//    ChatClient::setPassword(m_passwordEdit->text());
   }
 
   ChatClient::feeds()->query(LS("account"), m_action, data);
