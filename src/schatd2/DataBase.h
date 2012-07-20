@@ -55,10 +55,10 @@ public:
   // accounts.
   static Account account(qint64 key);
   static qint64 accountKey(const QByteArray &cookie);
-  static qint64 accountKey(const QString &name);
   static qint64 accountKey(qint64 channel);
   static qint64 add(Account *account);
 
+  // hosts.
   static QHash<QByteArray, HostInfo> hosts(qint64 channel);
   static void add(HostInfo host);
 
@@ -68,6 +68,7 @@ private slots:
   void startTasks();
 
 private:
+  static qint64 V2();
   static void version();
 
   QList<QRunnable*> m_tasks; ///< Задачи для выполнения в отдельном потоке.

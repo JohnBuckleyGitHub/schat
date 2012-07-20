@@ -40,6 +40,7 @@ public:
   qint64 channel;    ///< Идентификатор канала в таблице channels.
   qint64 date;       ///< Дата обновления.
   qint64 id;         ///< Идентификатор в таблице accounts.
+  QString provider;  ///< Авторизационной провайдер пользователя.
 };
 
 #endif /* ACCOUNT_H_ */

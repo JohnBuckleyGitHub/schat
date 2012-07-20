@@ -150,18 +150,17 @@ int DataBase::start()
   query.exec(LS("PRAGMA synchronous = OFF"));
   QStringList tables = db.tables();
 
-  if (!tables.contains(LS("accounts"))) {
-    query.exec(LS(
-    "CREATE TABLE accounts ( "
+  query.exec(LS(
+    "CREATE TABLE IF NOT EXISTS accounts ( "
     "  id         INTEGER PRIMARY KEY,"
-    "  channel    INTEGER DEFAULT ( 0 ),"
+    "  channel    INTEGER UNIQUE,"
     "  date       INTEGER DEFAULT ( 0 ),"
     "  cookie     BLOB    NOT NULL UNIQUE,"
-    "  name       TEXT,"
-    "  password   BLOB,"
-    "  groups     TEXT"
-    ");"));
-  }
+    "  provider   TEXT,"
+    "  groups     TEXT,"
+    "  data       BLOB"
+    ");"
+  ));
 
   if (!tables.contains(LS("groups"))) {
     query.exec(LS(
@@ -187,7 +186,8 @@ int DataBase::start()
     "  status     INTEGER DEFAULT ( 0 ),"
     "  account    INTEGER DEFAULT ( 0 ),"
     "  name       TEXT    NOT NULL,"
-    "  data       BLOB"
+    "  data       BLOB,"
+    "  date       INTEGER DEFAULT ( 0 )"
     ");"));
 
     noMaster = true;
@@ -443,8 +443,6 @@ void DataBase::update(ChatChannel channel)
  * Получение аккаунта пользователя.
  *
  * \param key Ключ в таблице \b accounts.
- *
- * \bug Работа этой функции нарушена.
  */
 Account DataBase::account(qint64 key)
 {
@@ -461,7 +459,7 @@ Account DataBase::account(qint64 key)
   account.channel = query.value(0).toLongLong();
   account.date = query.value(1).toLongLong();
   account.cookie = query.value(2).toByteArray();
-  account.groups.set(query.value(5).toString());
+  account.groups.set(query.value(3).toString());
 
   return account;
 }
@@ -478,26 +476,6 @@ qint64 DataBase::accountKey(const QByteArray &cookie)
   QSqlQuery query;
   query.prepare(LS("SELECT id FROM accounts WHERE cookie = :cookie LIMIT 1;"));
   query.bindValue(LS(":cookie"), cookie);
-  query.exec();
-
-  if (!query.first())
-    return -1;
-
-  return query.value(0).toLongLong();
-}
-
-
-/*!
- * Получение ключа в таблице \b accounts на основе зарегистрированного имени пользователя.
- */
-qint64 DataBase::accountKey(const QString &name)
-{
-  if (name.isEmpty())
-    return -1;
-
-  QSqlQuery query;
-  query.prepare(LS("SELECT id FROM accounts WHERE name = :name LIMIT 1;"));
-  query.bindValue(LS(":name"), name);
   query.exec();
 
   if (!query.first())
@@ -615,18 +593,56 @@ void DataBase::startTasks()
 
 
 /*!
+ * Обновление схемы базы данных до версии 2.
+ *
+ * - В таблице \b accounts удаляются столбцы \b name и \b password и добавляются столбцы \b provider и \b data.
+ * - В таблицу \b channels добавляется столбец date.
+ */
+qint64 DataBase::V2()
+{
+  QSqlQuery query;
+  query.exec(LS("BEGIN TRANSACTION;"));
+  query.exec(LS("ALTER TABLE accounts RENAME TO accounts_tmp;"));
+  query.exec(LS(
+    "CREATE TABLE IF NOT EXISTS accounts ( "
+    "  id         INTEGER PRIMARY KEY,"
+    "  channel    INTEGER UNIQUE,"
+    "  date       INTEGER DEFAULT ( 0 ),"
+    "  cookie     BLOB    NOT NULL UNIQUE,"
+    "  provider   TEXT,"
+    "  groups     TEXT,"
+    "  data       BLOB"
+    ");"
+  ));
+
+  query.exec(LS("INSERT INTO accounts (channel, date, cookie, groups) SELECT channel, date, cookie, groups FROM accounts_tmp;"));
+  query.exec(LS("DROP TABLE accounts_tmp;"));
+  query.exec(LS("ALTER TABLE channels ADD date INTEGER DEFAULT ( 0 )"));
+  query.exec(LS("PRAGMA user_version = 2"));
+  query.exec(LS("COMMIT;"));
+
+  return 2;
+}
+
+
+/*!
  * Добавление в базу информации о версии, в будущем эта информация может быть использована для автоматического обновления схемы базы данных.
  */
 void DataBase::version()
 {
   QSqlQuery query;
-  query.exec(LS("PRAGMA user_version"));
+
+  query.exec(LS("PRAGMA user_version;"));
   if (!query.first())
     return;
 
   qint64 version = query.value(0).toLongLong();
   if (!version) {
-    query.exec(LS("PRAGMA user_version = 1"));
-    version = 1;
+    query.exec(LS("PRAGMA user_version = 2;"));
+    version = 2;
   }
+
+  query.finish();
+
+  if (version == 1) version = V2();
 }
