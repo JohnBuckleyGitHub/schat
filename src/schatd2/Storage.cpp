@@ -63,7 +63,7 @@ Storage::Storage(QObject *parent)
   m_settings->setDefault(LS("PrivateKey"),   LS("server.key"));
   m_settings->setDefault(LS("Workers"),      0);
 
-  m_log = new NodeLog;
+  m_log = new NodeLog();
   new FeedStorage(this);
 }
 
