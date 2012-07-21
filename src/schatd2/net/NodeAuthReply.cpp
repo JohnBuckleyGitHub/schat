@@ -24,15 +24,22 @@
 NodeAuthReply::NodeAuthReply(const AuthResult &result, ChatChannel channel)
   : AuthReply()
 {
-  serverId = Storage::serverId();
-  status   = result.status;
-  id       = result.authId;
-  json     = result.json;
+  flags      = 0;
+  serverId   = Storage::serverId();
+  status     = result.status;
+  id         = result.authId;
+  json       = result.json;
+  serverName = Storage::serverName();
+
+  if (Storage::anonymous())
+    flags = 1;
 
   if (channel) {
-    serverName = Storage::serverName();
-    userId     = channel->id();
-    cookie     = channel->account()->cookie;
-    hostId     = channel->hosts().id();
+    userId   = channel->id();
+    cookie   = channel->account()->cookie;
+    hostId   = channel->hosts().id();
+    provider = channel->account()->provider;
   }
+  else
+    provider = Storage::authServer();
 }

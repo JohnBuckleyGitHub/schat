@@ -101,6 +101,19 @@ QString AbstractClientPrivate::mangleNick()
 
 
 /*!
+ * Определение имени сервера.
+ * Если в ответе сервера отсутствует имя сервера, используется имя на основе адреса сервера.
+ */
+QString AbstractClientPrivate::serverName(const AuthReply &reply)
+{
+  if (reply.serverName.isEmpty() || reply.serverName == QLatin1String("*"))
+    return url.host();
+
+  return reply.serverName;
+}
+
+
+/*!
  * Чтение пакета Protocol::AuthReplyPacket.
  */
 bool AbstractClientPrivate::authReply(const AuthReply &reply)
@@ -126,10 +139,7 @@ bool AbstractClientPrivate::authReply(const AuthReply &reply)
       channel->status().set(Status::Online);
 
     server->setId(reply.serverId);
-    if (reply.serverName.isEmpty() || reply.serverName == QLatin1String("*"))
-      server->setName(url.host());
-    else
-      server->setName(reply.serverName);
+    server->setName(serverName(reply));
 
     setClientState(AbstractClient::ClientOnline);
 

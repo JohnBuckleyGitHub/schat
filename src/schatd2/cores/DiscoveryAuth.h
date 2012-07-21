@@ -16,39 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SIMPLECLIENT_H_
-#define SIMPLECLIENT_H_
+#ifndef DISCOVERYAUTH_H_
+#define DISCOVERYAUTH_H_
 
-#include "client/AbstractClient.h"
+#include "cores/AnonymousAuth.h"
 
-class AbstractNotice;
-class SimpleClientPrivate;
-
-
-class SCHAT_EXPORT SimpleClient : public AbstractClient
+class DiscoveryAuth : public AnonymousAuth
 {
-  Q_OBJECT
-
 public:
-  explicit SimpleClient(QObject *parent = 0);
-  ~SimpleClient();
-  void leave();
-  void setAuthType(int authType);
-
-signals:
-  void notice(int type);
-
-protected:
-  SimpleClient(SimpleClientPrivate &dd, QObject *parent);
-
-protected slots:
-  void requestAuth();
-
-protected:
-  void newPacketsImpl();
-
-private:
-  Q_DECLARE_PRIVATE(SimpleClient);
+  DiscoveryAuth(Core *core);
+  AuthResult auth(const AuthRequest &data);
+  int type() const;
 };
 
-#endif /* SIMPLECLIENT_H_ */
+#endif /* DISCOVERYAUTH_H_ */
