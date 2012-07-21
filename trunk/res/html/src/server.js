@@ -133,9 +133,65 @@ try {
  * Авторизационный диалог.
  */
 var AuthDialog = {
-  /// Показ диалога.
+  /*
+   * Показ диалога.
+   */
   show: function()
   {
+    Modal.auth(null);
+
     $('#modal').modal();
+  },
+
+  /*
+   * Формирование кнопок с провайдерами.
+   */
+  providers: function()
+  {
+    var providers = Auth.providers();
+    if (!providers.hasOwnProperty('order'))
+      return;
+
+    for (var i = 0; i < providers.order.length; i++) {
+      var provider = providers.order[i];
+      if (providers.providers.hasOwnProperty(provider))
+        AuthDialog.addProvider(provider, providers.providers[provider]);
+    }
+
+    $('#modal-header h3 .icon-spinner').remove();
+    Utils.labels($('#providers .btn'));
+  },
+
+  /*
+   * Добавление одиночного провайдера.
+   */
+  addProvider: function(name, data) {
+    $('#providers').append('<a class="btn" href="' + data.url + ' "><i class="provider-' + name + '"></i> ' + data.htmlName + '</a>');
   }
 };
+
+
+Modal.auth = function(event)
+{
+  $('#modal-header h3 *').remove();
+  $('#modal-body *').remove();
+
+  $('#modal-header h3').append('<span></span>');
+  $('#modal-header h3').append(' <i class="icon-spinner"></i>');
+  $('#modal-header h3 span').text(Utils.tr('sign_in_with'));
+  $('#modal-header h3 span').attr('data-tr', 'sign_in_with');
+
+  $('#modal-body').append('<div id="providers"></div>');
+
+  AuthDialog.providers();
+};
+
+
+if (typeof Auth === "undefined") {
+  Auth = {
+    providers: function() { return {}; }
+  }
+}
+else {
+  Auth.providersReady.connect(AuthDialog.providers);
+}

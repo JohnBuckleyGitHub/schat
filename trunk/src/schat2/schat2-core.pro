@@ -30,6 +30,7 @@ HEADERS = \
     alerts/MessageAlert.h \
     arora/lineedit.h \
     arora/lineedit_p.h \
+    AuthBridge.h \
     ChatAlerts.h \
     ChatCore.h \
     ChatHooks.h \
@@ -119,6 +120,7 @@ SOURCES = \
     actions/MenuBuilder.cpp \
     alerts/MessageAlert.cpp \
     arora/lineedit.cpp \
+    AuthBridge.cpp \
     ChatAlerts.cpp \
     ChatCore.cpp \
     ChatHooks.cpp \

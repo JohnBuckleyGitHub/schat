@@ -463,20 +463,21 @@ $(document).ready(function() {
     return;
   }
 
-  $('body').on('click.modal', '.modal-toggle', function ( e ) {
+  $('body').on('click.modal', '.modal-toggle', function (event) {
     var handler = $(this).attr('data-handler');
     if (handler !== undefined) {
       try {
-        Modal[handler](e);
+        Modal[handler](event);
       }
       catch (e) {}
     }
 
     $('#modal').modal();
-    e.preventDefault();
+    event.preventDefault();
   });
 
   $('#modal').on('hidden', function () {
+    $('#modal-header h3 *').remove();
     $('#modal-body *').remove();
   });
 

@@ -20,7 +20,10 @@
 #include <QFile>
 #include <QVBoxLayout>
 #include <QTextDocument>
+#include <QWebPage>
+#include <QWebFrame>
 
+#include "AuthBridge.h"
 #include "ChatAlerts.h"
 #include "ChatCore.h"
 #include "ChatNotify.h"
@@ -39,6 +42,7 @@ ServerTab::ServerTab(TabWidget *parent)
   : AbstractTab(QByteArray(), LS("server"), parent)
 {
   m_options |= CanSendMessage;
+  m_deleteOnClose = false;
 
   QString file = QApplication::applicationDirPath() + "/styles/test/html/Server.html";
   if (QFile::exists(file))
@@ -47,8 +51,7 @@ ServerTab::ServerTab(TabWidget *parent)
     file = "qrc:/html/Server.html";
 
   m_chatView = new ChatView(QByteArray(), file, this);
-
-  m_deleteOnClose = false;
+  m_auth = new AuthBridge(this);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_chatView);
@@ -61,6 +64,7 @@ ServerTab::ServerTab(TabWidget *parent)
   connect(ChatAlerts::i(), SIGNAL(alert(const Alert &)), SLOT(alert(const Alert &)));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
   connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
+  connect(chatView()->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), SLOT(populateJavaScriptWindowObject()));
 
   retranslateUi();
 }
@@ -90,6 +94,32 @@ void ServerTab::alert(const Alert &alert)
     m_chatView->add(ServiceMessage::connected());
   else if (alert.type() == LS("offline"))
     m_chatView->add(ServiceMessage::connectionLost());
+}
+
+
+/*!
+ * Обработка изменения состояния клиента.
+ */
+void ServerTab::clientStateChanged(int state)
+{
+  if (state == ChatClient::WaitAuth) {
+    m_auth->start(ChatClient::io()->json().value(LS("authServer")).toString());
+
+    ServiceMessage message(tr("Server %1 requires authorization").arg(LS("<b>") + Qt::escape(ChatClient::serverName()) + LS("</b>")));
+    message.data()[LS("Type")]  = LS("info");
+    message.data()[LS("Extra")] = LS("orange-text");
+    chatView()->add(message);
+    chatView()->evaluateJavaScript(LS("AuthDialog.show()"));
+
+    if (m_tabs->indexOf(this) == -1) {
+      m_tabs->addTab(this, QString());
+      setOnline();
+    }
+
+    m_tabs->setCurrentIndex(m_tabs->indexOf(this));
+  }
+
+  retranslateUi();
 }
 
 
@@ -130,28 +160,9 @@ void ServerTab::online()
 }
 
 
-/*!
- * Обработка изменения состояния клиента.
- */
-void ServerTab::clientStateChanged(int state)
+void ServerTab::populateJavaScriptWindowObject()
 {
-  if (state == ChatClient::WaitAuth) {
-    ServiceMessage message(tr("Server %1 requires authorization").arg(LS("<b>") + Qt::escape(ChatClient::serverName()) + LS("</b>")));
-
-    message.data()[LS("Type")]  = LS("info");
-    message.data()[LS("Extra")] = LS("orange-text");
-    chatView()->add(message);
-    chatView()->evaluateJavaScript(LS("AuthDialog.show()"));
-
-    if (m_tabs->indexOf(this) == -1) {
-      m_tabs->addTab(this, QString());
-      setOnline();
-    }
-
-    m_tabs->setCurrentIndex(m_tabs->indexOf(this));
-  }
-
-  retranslateUi();
+  chatView()->page()->mainFrame()->addToJavaScriptWindowObject(LS("Auth"), m_auth);
 }
 
 

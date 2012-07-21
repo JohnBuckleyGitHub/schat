@@ -16,20 +16,30 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QUrl>
+#include "AuthBridge.h"
+#include "client/AuthClient.h"
 
-#include "oauth2/VkontakteAuthData.h"
-#include "sglobal.h"
-
-VkontakteAuthData::VkontakteAuthData()
-  : OAuthData("vkontakte")
+AuthBridge::AuthBridge(QObject *parent)
+  : QObject(parent)
+  , m_client(0)
 {
-  name = "ВКонтакте";
-  htmlName = name;
 }
 
 
-QByteArray VkontakteAuthData::toUrl(const QByteArray &state) const
+void AuthBridge::start(const QString &url)
 {
-  return "https://oauth.vk.com/authorize?client_id=" + id + "&redirect_uri=" + QUrl::toPercentEncoding(redirect + LC('/') + state) + "&response_type=code";
+  if (!m_client) {
+    m_client = new AuthClient(this);
+    connect(m_client, SIGNAL(providersReady(QVariantMap)), SLOT(providersReady(QVariantMap)));
+  }
+
+  m_providers.clear();
+  m_client->start(url);
+}
+
+
+void AuthBridge::providersReady(const QVariantMap &data)
+{
+  m_providers = data;
+  emit providersReady();
 }

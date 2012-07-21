@@ -44,6 +44,7 @@
   <file alias="images/plugin.png">images/hypic/plugin_16.png</file>
   <file alias="images/plugin32.png">images/hypic/plugin_32.png</file>
   <file alias="images/profile.png">images/led-icons/vcard.png</file>
+  <file alias="images/providers.png">www/img/providers.png</file>
   <file alias="images/quit.png">images/crystal/exit.png</file>
   <file alias="images/reload.png">images/fugue/arrow-circle-315.png</file>
   <file alias="images/remove.png">images/diagona/101.png</file>
