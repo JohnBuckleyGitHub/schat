@@ -38,9 +38,9 @@ public:
   AbstractClientPrivate();
   virtual ~AbstractClientPrivate();
 
-  // Установка и завершение соединения.
   bool isSetup(const AuthReply &reply);
   QString mangleNick();
+  QString serverName(const AuthReply &reply);
   virtual bool authReply(const AuthReply &reply);
   virtual void setClientState(AbstractClient::ClientState state);
   void startReconnectTimer();

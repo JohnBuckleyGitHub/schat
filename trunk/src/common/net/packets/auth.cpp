@@ -34,26 +34,33 @@
 AuthReply::AuthReply(PacketReader *reader)
 {
   serverId = reader->sender();
-  userId = reader->dest();
+  userId   = reader->dest();
 
   fields = reader->get<quint8>();
   status = reader->get<quint16>();
-  id = reader->id();
+  id     = reader->id();
 
   if (status == Notice::OK) {
     cookie = reader->id();
     reader->get<quint32>();
-    reader->get<quint8>();
+    flags      = reader->get<quint8>();
     serverName = reader->text();
-    account = reader->text();
+    provider   = reader->text();
   }
 
   if (fields & JSonField)
     json = reader->json().toMap();
 
   if (fields & HostField) {
-    host = reader->text();
+    host   = reader->text();
     hostId = reader->id();
+  }
+
+  if (status != Notice::OK) {
+    reader->get<quint32>();
+    flags      = reader->get<quint8>();
+    serverName = reader->text();
+    provider   = reader->text();
   }
 }
 
@@ -74,9 +81,9 @@ QByteArray AuthReply::data(QDataStream *stream) const
   if (status == Notice::OK) {
     writer.putId(cookie);
     writer.put<quint32>(0);
-    writer.put<quint8>(0);
+    writer.put<quint8>(flags);
     writer.put(serverName);
-    writer.put(account);
+    writer.put(provider);
   }
 
   if (fields & JSonField)
@@ -85,6 +92,13 @@ QByteArray AuthReply::data(QDataStream *stream) const
   if (fields & HostField) {
     writer.put(host);
     writer.putId(hostId);
+  }
+
+  if (status != Notice::OK) {
+    writer.put<quint32>(0);
+    writer.put<quint8>(flags);
+    writer.put(serverName);
+    writer.put(provider);
   }
 
   return writer.data();

@@ -56,6 +56,7 @@ public:
   AuthReply()
   : fields(0)
   , status(Notice::InternalError)
+  , flags(0)
   {}
 
   AuthReply(PacketReader *reader);
@@ -67,8 +68,9 @@ public:
   quint16 status;        ///< Статус \sa Notice::StatusCodes, обязательное поле.
   QByteArray cookie;     ///< Cookie.
   QByteArray id;         ///< Уникальный идентификатор авторизации.
+  quint8 flags;          ///< Дополнительные флаги.
   QString serverName;    ///< Имя сервера.
-  QString account;       ///< Имя аккаунта пользователя.
+  QString provider;      ///< Авторизационный провайдер пользователя.
   QVariantMap json;      ///< JSON данные.
   QString host;          ///< IP адрес клиента.
   QByteArray hostId;     ///< Идентификатор хоста клиента.
@@ -100,7 +102,9 @@ public:
   /// Тип авторизации.
   enum AuthType {
     Anonymous = 97,   ///< 'a' Анонимная авторизация по уникальному идентификатору.
-    Cookie = 99,      ///< 'c' Сохранённая анонимная авторизация по ранее присвоеному долговременному Cookie.
+    Cookie    = 99,   ///< 'c' Сохранённая анонимная авторизация по ранее присвоеному долговременному Cookie.
+    Discovery = 68,   ///< 'D' Определение доступных методов авторизации, если сервер не поддерживает внешнюю авторизацию, эквивалентно Anonymous.
+    External  = 69    ///< 'E' Авторизация с помощью внешнего сервера.
   };
 
   /// Поля данных.

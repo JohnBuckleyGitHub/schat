@@ -27,6 +27,7 @@
 #include "sglobal.h"
 
 SimpleClientPrivate::SimpleClientPrivate()
+  : authType(AuthRequest::Discovery)
 {
 }
 
@@ -51,6 +52,11 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
     return true;
   }
 
+  qDebug() << "~~~~~~~~~~~~~~~~~~~~~~ REPLY JSON:" << reply.json;
+  qDebug() << "~~~~~~~~~~~~~~~~~~~~~~ serverID"    << SimpleID::encode(reply.serverId);
+  qDebug() << "~~~~~~~~~~~~~~~~~~~~~~ serverName"  << serverName(reply);
+  qDebug() << "~~~~~~~~~~~~~~~~~~~~~~ provider"    << reply.provider;
+
   QVariantMap error;
   error[LS("type")]   = LS("auth");
   error[LS("auth")]   = authType;
@@ -61,9 +67,15 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
   if (reply.status == Notice::NickAlreadyUse)
     return false;
 
-  if (authType == AuthRequest::Cookie && (reply.status == Notice::NotImplemented || reply.status == Notice::Forbidden)) {
-    return false;
+  // Выбранный способ авторизации не реализован.
+  if (reply.status == Notice::NotImplemented) {
+    if (authType == AuthRequest::Discovery || authType == AuthRequest::External)
+      authType = AuthRequest::Anonymous;
   }
+
+//  if (authType == AuthRequest::Cookie && (reply.status == Notice::NotImplemented || reply.status == Notice::Forbidden)) {
+//    return false;
+//  }
 
   if (isFatalError(reply.status))
     setClientState(SimpleClient::ClientError);
@@ -120,14 +132,18 @@ void SimpleClient::leave()
 }
 
 
+void SimpleClient::setAuthType(int authType)
+{
+  d_func()->authType = authType;
+}
+
+
 /*!
  * Формирование пакета запроса авторизации.
  */
 void SimpleClient::requestAuth()
 {
   Q_D(SimpleClient);
-
-  d->authType = AuthRequest::Anonymous;
 
   AuthRequest data(d->authType, d->url.toString(), d->channel.data());
   data.uniqueId = d->uniqueId;
