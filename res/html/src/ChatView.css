@@ -314,7 +314,7 @@ a:active, a:hover {
   margin-bottom: 0;
 }
 
-[class^="icon-"] {
+[class^="icon-"], [class^="provider-"] {
   display: inline-block;
   width: 16px;
   height: 16px;
@@ -408,6 +408,31 @@ a:active, a:hover {
 
 .os-unknown {
   background:none;
+}
+
+[class^="provider-"] {
+  background-image: url("qrc:/images/providers.png");
+  background-position: 0 0;
+}
+
+.provider-yandex {
+  background-position: -16px 0;
+}
+
+.provider-facebook {
+  background-position: -32px 0;
+}
+
+.provider-vkontakte {
+  background-position: -48px 0;
+}
+
+.provider-mail_ru {
+  background-position: -64px 0;
+}
+
+.provider-odnoklassniki {
+  background-position: -80px 0;
 }
 
 #easyTooltip {

@@ -16,40 +16,37 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SERVERTAB_H_
-#define SERVERTAB_H_
+#ifndef AUTHBRIDGE_H_
+#define AUTHBRIDGE_H_
 
-#include "ui/tabs/AbstractTab.h"
+#include <QObject>
+#include <QVariant>
 
-class Alert;
-class AuthBridge;
-class ChatView;
-class Notify;
+#include "schat.h"
 
-class ServerTab : public AbstractTab
+class AuthClient;
+
+/*!
+ * Мост между C++ и JavaScript кодом для поддержки авторизации.
+ */
+class SCHAT_CORE_EXPORT AuthBridge : public QObject
 {
   Q_OBJECT
 
 public:
-  ServerTab(TabWidget *parent);
-  bool bindMenu(QMenu *menu);
-  inline ChatView *chatView() { return m_chatView; }
+  AuthBridge(QObject *parent = 0);
+  Q_INVOKABLE QVariantMap providers() const { return m_providers; }
+  void start(const QString &url);
 
-protected:
-  void changeEvent(QEvent *event);
+signals:
+  void providersReady();
 
 private slots:
-  void alert(const Alert &alert);
-  void clientStateChanged(int state);
-  void notify(const Notify &notify);
-  void online();
-  void populateJavaScriptWindowObject();
+  void providersReady(const QVariantMap &data);
 
 private:
-  void retranslateUi();
-
-  AuthBridge *m_auth;   ///< Мост между C++ и JavaScript кодом для поддержки авторизации.
-  ChatView *m_chatView; ///< Виджет отображающий текст чата.
+  AuthClient *m_client;    ///< HTTP клиент для авторизации.
+  QVariantMap m_providers; ///< Провайдеры авторизации.
 };
 
-#endif /* SERVERTAB_H_ */
+#endif /* AUTHBRIDGE_H_ */

@@ -623,12 +623,12 @@
 <context>
     <name>ServerTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="136"/>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="106"/>
         <source>Server %1 requires authorization</source>
         <translation>Сервер %1 требует авторизацию</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="151"/>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="172"/>
         <source>Network</source>
         <translation>Сеть</translation>
     </message>
@@ -1009,6 +1009,11 @@
         <location filename="../../src/schat2/WebBridge.cpp" line="65"/>
         <source>Plugin will be disabled after you restart Simple Chat.</source>
         <translation>Плагин будет отключен после перезапуска Simple Chat.</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="66"/>
+        <source>Sign in using your account with</source>
+        <translation type="unfinished">Войти в чат через свой аккаунт в</translation>
     </message>
 </context>
 <context>
