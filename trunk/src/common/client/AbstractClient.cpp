@@ -125,6 +125,8 @@ bool AbstractClientPrivate::authReply(const AuthReply &reply)
 
   Q_Q(AbstractClient);
 
+  server->setName(serverName(reply));
+
   if (reply.status == Notice::OK) {
     bool setup = isSetup(reply);
     collisions = 0;
@@ -139,8 +141,6 @@ bool AbstractClientPrivate::authReply(const AuthReply &reply)
       channel->status().set(Status::Online);
 
     server->setId(reply.serverId);
-    server->setName(serverName(reply));
-
     setClientState(AbstractClient::ClientOnline);
 
     if (setup)
@@ -510,7 +510,7 @@ void AbstractClient::released()
   if (d->reconnectTimer->isActive())
     d->reconnectTimer->stop();
 
-  if (d->clientState == ClientOffline || d->clientState == ClientError)
+  if (d->clientState == ClientOffline || d->clientState == ClientError || d->clientState == ClientWaitAuth)
     return;
 
   if (d->clientState == ClientOnline) {

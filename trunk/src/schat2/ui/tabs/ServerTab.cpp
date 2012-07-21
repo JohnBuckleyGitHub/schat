@@ -19,6 +19,7 @@
 #include <QApplication>
 #include <QFile>
 #include <QVBoxLayout>
+#include <QTextDocument>
 
 #include "ChatAlerts.h"
 #include "ChatCore.h"
@@ -59,7 +60,7 @@ ServerTab::ServerTab(TabWidget *parent)
   connect(ChatClient::i(), SIGNAL(online()), SLOT(online()));
   connect(ChatAlerts::i(), SIGNAL(alert(const Alert &)), SLOT(alert(const Alert &)));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
-  connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged()));
+  connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
 
   retranslateUi();
 }
@@ -129,8 +130,27 @@ void ServerTab::online()
 }
 
 
-void ServerTab::clientStateChanged()
+/*!
+ * Обработка изменения состояния клиента.
+ */
+void ServerTab::clientStateChanged(int state)
 {
+  if (state == ChatClient::WaitAuth) {
+    ServiceMessage message(tr("Server %1 requires authorization").arg(LS("<b>") + Qt::escape(ChatClient::serverName()) + LS("</b>")));
+
+    message.data()[LS("Type")]  = LS("info");
+    message.data()[LS("Extra")] = LS("orange-text");
+    chatView()->add(message);
+    chatView()->evaluateJavaScript(LS("AuthDialog.show()"));
+
+    if (m_tabs->indexOf(this) == -1) {
+      m_tabs->addTab(this, QString());
+      setOnline();
+    }
+
+    m_tabs->setCurrentIndex(m_tabs->indexOf(this));
+  }
+
   retranslateUi();
 }
 

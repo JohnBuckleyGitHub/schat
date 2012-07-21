@@ -127,3 +127,15 @@ try {
   ChatView.feed.connect(Hosts.feed);
   ChatView.reload.connect(Hosts.reload);
 } catch (e) {}
+
+
+/*
+ * Авторизационный диалог.
+ */
+var AuthDialog = {
+  /// Показ диалога.
+  show: function()
+  {
+    $('#modal').modal();
+  }
+};

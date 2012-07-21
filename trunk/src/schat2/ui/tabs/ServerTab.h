@@ -41,7 +41,7 @@ private slots:
   void alert(const Alert &alert);
   void notify(const Notify &notify);
   void online();
-  void clientStateChanged();
+  void clientStateChanged(int state);
 
 private:
   void retranslateUi();

@@ -114,39 +114,39 @@
         <translation>Отображать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="340"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="358"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="341"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="359"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="341"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="359"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="342"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="360"/>
         <source>Reload</source>
         <translation>Обновить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="346"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="347"/>
         <source>Seconds</source>
         <translation>Секунды</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="349"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="350"/>
         <source>Service messages</source>
         <translation>Сервисные сообщения</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="356"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="357"/>
         <source>Copy</source>
         <translation>Копировать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="357"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="358"/>
         <source>Copy Link</source>
         <translation>Копировать ссылку</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="360"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="361"/>
         <source>Select All</source>
         <translation>Выделить всё</translation>
     </message>
@@ -227,56 +227,56 @@
 <context>
     <name>InputWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="444"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="525"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="446"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="527"/>
         <source>Cut</source>
         <translation>Вырезать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="445"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="526"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="447"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="528"/>
         <source>Copy</source>
         <translation>Копировать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="446"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="527"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="448"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="529"/>
         <source>Paste</source>
         <translation>Вставить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="447"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="528"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="449"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="530"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="448"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="529"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="450"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="531"/>
         <source>Select All</source>
         <translation>Выделить всё</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="458"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="530"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="460"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="532"/>
         <source>Bold</source>
         <translation>Полужирный</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="464"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="531"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="466"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="533"/>
         <source>Italic</source>
         <translation>Курсив</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="470"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="532"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="472"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="534"/>
         <source>Underline</source>
         <translation>Подчёркнутый</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="476"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="533"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="478"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="535"/>
         <source>Strikeout</source>
         <translation>Зачёркнутый</translation>
     </message>
@@ -350,7 +350,7 @@
     <name>NetworkComboBox</name>
     <message>
         <location filename="../../src/schat2/ui/network/NetworkComboBox.cpp" line="62"/>
-        <location filename="../../src/schat2/ui/network/NetworkComboBox.cpp" line="187"/>
+        <location filename="../../src/schat2/ui/network/NetworkComboBox.cpp" line="184"/>
         <source>Add</source>
         <translation>Добавить</translation>
     </message>
@@ -623,7 +623,12 @@
 <context>
     <name>ServerTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="142"/>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="136"/>
+        <source>Server %1 requires authorization</source>
+        <translation>Сервер %1 требует авторизацию</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="151"/>
         <source>Network</source>
         <translation>Сеть</translation>
     </message>
@@ -778,17 +783,17 @@
         <translation>Подключено</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="204"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="207"/>
         <source>Authorization Error</source>
         <translation>Ошибка авторизации</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="208"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="211"/>
         <source>Server not found‎</source>
         <translation>Сервер не найден</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="212"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="215"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
