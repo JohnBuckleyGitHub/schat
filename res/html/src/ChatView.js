@@ -464,9 +464,10 @@ $(document).ready(function() {
   }
 
   $('body').on('click.modal', '.modal-toggle', function ( e ) {
-    if ($(this).data().hasOwnProperty('handler')) {
+    var handler = $(this).attr('data-handler');
+    if (handler !== undefined) {
       try {
-        Modal[$(this).data().handler](e);
+        Modal[handler](e);
       }
       catch (e) {}
     }

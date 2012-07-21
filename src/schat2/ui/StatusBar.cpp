@@ -110,7 +110,7 @@ void StatusBar::mouseReleaseEvent(QMouseEvent *event)
 
 void StatusBar::clientStateChanged(int state)
 {
-  if (state == SimpleClient::ClientConnecting) {
+  if (state == SimpleClient::ClientConnecting || state == SimpleClient::ClientWaitAuth) {
     m_icon->setVisible(false);
     m_spinner->setVisible(true);
     m_spinner->startAnimation();
@@ -192,6 +192,9 @@ void StatusBar::retranslateUi()
   }
   else if (state == ChatClient::Error) {
     setError();
+  }
+  else if (state == ChatClient::WaitAuth) {
+    m_label->setText(ChatClient::serverName());
   }
 }
 

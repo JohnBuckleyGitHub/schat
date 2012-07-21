@@ -54,7 +54,7 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
 
   qDebug() << "~~~~~~~~~~~~~~~~~~~~~~ REPLY JSON:" << reply.json;
   qDebug() << "~~~~~~~~~~~~~~~~~~~~~~ serverID"    << SimpleID::encode(reply.serverId);
-  qDebug() << "~~~~~~~~~~~~~~~~~~~~~~ serverName"  << serverName(reply);
+  qDebug() << "~~~~~~~~~~~~~~~~~~~~~~ serverName"  << server->name();
   qDebug() << "~~~~~~~~~~~~~~~~~~~~~~ provider"    << reply.provider;
 
   QVariantMap error;
@@ -71,6 +71,15 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
   if (reply.status == Notice::NotImplemented) {
     if (authType == AuthRequest::Discovery || authType == AuthRequest::External)
       authType = AuthRequest::Anonymous;
+
+    return false;
+  }
+
+  if (reply.status == Notice::Found) {
+    json[LS("authServer")] = reply.provider;
+    json[LS("anonymous")]  = (bool) reply.flags & 1;
+    setClientState(SimpleClient::ClientWaitAuth);
+    return false;
   }
 
 //  if (authType == AuthRequest::Cookie && (reply.status == Notice::NotImplemented || reply.status == Notice::Forbidden)) {

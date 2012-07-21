@@ -133,12 +133,12 @@ var Connections = {
 
   process: function(key, json) {
     var id = "#" + key;
-    $("#connections").append('<div class="connection-row bottom-line" id="' + key + '"><i class="icon-os"></i> <a href="#" class="connection-host modal-toggle"></a></div>');
+    $("#connections").append('<div class="connection-row bottom-line" id="' + key + '"><i class="icon-os"></i> <a href="#" class="connection-host modal-toggle" data-handler="connection"></a></div>');
 
     $(id + " .icon-os").attr("class", "icon-os os-" + Pages.os(json.os));
     $(id + " .icon-os").attr("data-original-title", htmlspecialchars(json.osName));
     $(id + " > .connection-host").text(json.host);
-    $(id + " > .connection-host").data({id:key, handler:'connection'});
+    $(id + " > .connection-host").data('id', key);
   },
 
   // Чтение фида.
@@ -192,7 +192,7 @@ var UserHooks = {
 Modal.connection = function(e) {
   $('#modal-header h3').text(e.target.innerText);
 
-  var id = $(e.target).data().id;
+  var id = $(e.target).data('id');
 
   var feed = SimpleChat.feed(Settings.id, "user");
   if (!feed.hasOwnProperty("head") && !feed.hasOwnProperty("connections"))
