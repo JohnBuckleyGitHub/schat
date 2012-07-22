@@ -46,6 +46,7 @@ signals:
 
 private slots:
   void providersReady(const QVariantMap &data);
+  void ready(const QString &provider, const QByteArray &id, const QByteArray &cookie, const QVariantMap &data);
 
 private:
   AuthClient *m_client;    ///< HTTP клиент для авторизации.
