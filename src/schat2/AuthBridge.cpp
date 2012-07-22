@@ -65,7 +65,7 @@ void AuthBridge::start(const QString &url)
   if (!m_client) {
     m_client = new AuthClient(this);
     connect(m_client, SIGNAL(providersReady(QVariantMap)), SLOT(providersReady(QVariantMap)));
-    connect(m_client, SIGNAL(ready(QString,QByteArray,QByteArray,QVariantMap)), SLOT(ready(QString,QByteArray,QByteArray,QVariantMap)));
+    connect(m_client, SIGNAL(ready(QString,QByteArray,QByteArray,QVariantMap)), SLOT(ready(QString,QByteArray,QByteArray)));
   }
 
   m_providers.clear();
@@ -80,13 +80,17 @@ void AuthBridge::providersReady(const QVariantMap &data)
 }
 
 
-void AuthBridge::ready(const QString &provider, const QByteArray &id, const QByteArray &cookie, const QVariantMap &data)
+void AuthBridge::ready(const QString &provider, const QByteArray &id, const QByteArray &cookie)
 {
-  qDebug() << provider << SimpleID::encode(id) << SimpleID::encode(cookie);
+  Q_UNUSED(provider)
+  Q_UNUSED(id)
+
+  qDebug() << m_client->state() << provider << SimpleID::encode(id) << SimpleID::encode(cookie);
 
   if (SimpleID::typeOf(cookie) != SimpleID::CookieId)
     return;
 
   ChatClient::io()->setAuthType(AuthRequest::External);
+  ChatClient::io()->setAuthId(SimpleID::decode(m_client->state()));
   ChatClient::io()->openUrl(ChatClient::io()->url(), cookie);
 }

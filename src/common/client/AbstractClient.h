@@ -73,6 +73,7 @@ public:
   inline bool openUrl(const QString &url, const QByteArray &cookie = QByteArray(), OpenOptions options = SaveUrl) { return openUrl(QUrl(url), cookie, options); }
   PacketReader *reader();
   void lock();
+  void setAuthId(const QByteArray &id);
   void setNick(const QString &nick);
   void setUniqueId(const QByteArray &id);
   void unlock();

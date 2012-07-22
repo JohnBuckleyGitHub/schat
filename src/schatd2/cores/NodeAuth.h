@@ -34,8 +34,8 @@ public:
     Nothing, ///< Действие не требуется.
   };
 
-  AuthResult()
-  : action(Nothing)
+  AuthResult(Action action = Nothing)
+  : action(action)
   , packet(true)
   , option(0)
   , status(200)

@@ -16,47 +16,41 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef AUTHCLIENT_H_
-#define AUTHCLIENT_H_
+#ifndef EXTERNALAUTH_H_
+#define EXTERNALAUTH_H_
 
-#include <QObject>
-#include <QVariant>
-
-#include "schat.h"
+#include "cores/AnonymousAuth.h"
+#include "net/packets/auth.h"
 
 class QNetworkAccessManager;
 class QNetworkReply;
-class QSslError;
 
-class SCHAT_EXPORT AuthClient : public QObject
+class ExternalAuth : public AnonymousAuth
+{
+public:
+  ExternalAuth(Core *core);
+  AuthResult auth(const AuthRequest &data);
+  int type() const;
+};
+
+
+class ExternalAuthTask : public QObject
 {
   Q_OBJECT
 
 public:
-  AuthClient(QObject *parent = 0);
-  inline const QByteArray& state() const { return m_state; }
-  void start(const QString &url);
-
-signals:
-  void error(int errorCode);
-  void providersReady(const QVariantMap &data);
-  void ready(const QString &provider, const QByteArray &id, const QByteArray &cookie, const QVariantMap &data);
+  ExternalAuthTask(const AuthRequest &data, const QString &host, QObject *parent = 0);
 
 private slots:
-  void getState();
-  void providersReady();
+  void ready();
   void sslErrors();
-  void stateReady();
+  void start();
 
 private:
-  void setError(int errorCode);
-  void invalidState();
-
-  QByteArray m_secret;              ///< Base32 кодированный секретный идентификатор.
-  QByteArray m_state;               ///< Base32 кодированный идентификатор состояния.
+  AuthRequest m_data;               ///< Копия авторизационного запроса.
   QNetworkAccessManager *m_manager; ///< Менеджер доступа к сети.
   QNetworkReply *m_reply;           ///< Текущий HTTP запрос.
-  QString m_url;                    ///< Адрес сервера.
+  QString m_host;                   ///< IP адрес пользователя.
 };
 
-#endif /* AUTHCLIENT_H_ */
+#endif /* EXTERNALAUTH_H_ */

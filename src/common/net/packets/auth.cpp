@@ -133,7 +133,7 @@ AuthRequest::AuthRequest(PacketReader *reader)
   nick = reader->text();
   userAgent = reader->text();
 
-  if (authType == Cookie)
+  if (authType == Cookie || authType == External)
     cookie = reader->id();
 
   if (fields & JSonField) {
@@ -199,7 +199,7 @@ QByteArray AuthRequest::data(QDataStream *stream) const
   writer.put(nick);
   writer.put(userAgent);
 
-  if (authType == Cookie)
+  if (authType == Cookie || authType == External)
     writer.putId(cookie);
 
   if (fields & JSonField)
