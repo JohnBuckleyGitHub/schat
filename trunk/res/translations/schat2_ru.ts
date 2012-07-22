@@ -623,12 +623,12 @@
 <context>
     <name>ServerTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="106"/>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="108"/>
         <source>Server %1 requires authorization</source>
         <translation>Сервер %1 требует авторизацию</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="172"/>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="174"/>
         <source>Network</source>
         <translation>Сеть</translation>
     </message>
@@ -1013,7 +1013,12 @@
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="66"/>
         <source>Sign in using your account with</source>
-        <translation type="unfinished">Войти в чат через свой аккаунт в</translation>
+        <translation>Войти в чат через свой аккаунт в</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="67"/>
+        <source>Or connect anonymously</source>
+        <translation>Или подключится анонимно</translation>
     </message>
 </context>
 <context>

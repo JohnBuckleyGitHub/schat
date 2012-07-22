@@ -35,7 +35,10 @@ class SCHAT_CORE_EXPORT AuthBridge : public QObject
 
 public:
   AuthBridge(QObject *parent = 0);
+  Q_INVOKABLE bool anonymous() const;
   Q_INVOKABLE QVariantMap providers() const { return m_providers; }
+  Q_INVOKABLE void cancel();
+  Q_INVOKABLE void open();
   void start(const QString &url);
 
 signals:

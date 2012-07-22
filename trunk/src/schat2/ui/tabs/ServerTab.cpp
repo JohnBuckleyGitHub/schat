@@ -109,7 +109,7 @@ void ServerTab::clientStateChanged(int state)
     message.data()[LS("Type")]  = LS("info");
     message.data()[LS("Extra")] = LS("orange-text");
     chatView()->add(message);
-    chatView()->evaluateJavaScript(LS("AuthDialog.show()"));
+    chatView()->evaluateJavaScript(LS("AuthDialog.show();"));
 
     if (m_tabs->indexOf(this) == -1) {
       m_tabs->addTab(this, QString());
@@ -117,7 +117,10 @@ void ServerTab::clientStateChanged(int state)
     }
 
     m_tabs->setCurrentIndex(m_tabs->indexOf(this));
+    ChatNotify::start(Notify::ShowChat);
   }
+  else
+    chatView()->evaluateJavaScript(LS("AuthDialog.hide();"));
 
   retranslateUi();
 }

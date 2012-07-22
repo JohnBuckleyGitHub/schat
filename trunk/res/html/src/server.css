@@ -69,3 +69,11 @@
   text-align: left;
   margin: 0 3px 3px 0;
 }
+
+#modal-body {
+  padding-bottom: 0;
+}
+
+#anonymous-auth {
+  margin-top: 10px;
+}

@@ -26,6 +26,7 @@
 #include "ChatSettings.h"
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
+#include "net/packets/auth.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
 #include "Path.h"
@@ -175,8 +176,7 @@ bool NetworkManager::open(const QByteArray &id)
     return false;
 
   Network item = m_items.value(id);
-//  ChatClient::io()->setAccount(item->account(), item->password());
-
+  ChatClient::io()->setAuthType(AuthRequest::Cookie);
   return ChatClient::io()->openUrl(item->url(), item->cookie());
 }
 

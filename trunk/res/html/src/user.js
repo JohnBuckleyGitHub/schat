@@ -95,7 +95,7 @@ var Profile = {
 
 
   retranslate: function() {
-    Utils.labels($('#profile-table .field-row-label'));
+    Utils.adjustWidth($('#profile-table .field-row-label'));
   },
 
 
@@ -189,7 +189,8 @@ var UserHooks = {
 };
 
 
-Modal.connection = function(e) {
+Modal.create.connection = function(e)
+{
   $('#modal-header h3').text(e.target.innerText);
 
   var id = $(e.target).data('id');
@@ -206,6 +207,11 @@ Modal.connection = function(e) {
   for (var i = 0; i < UserHooks.connection.length; i++) {
     UserHooks.connection[i](json);
   }
+};
+
+Modal.shown.connection = function()
+{
+  Utils.adjustWidth($('#modal-body .field-row-label'));
 };
 
 
