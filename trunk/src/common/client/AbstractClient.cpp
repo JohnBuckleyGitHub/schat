@@ -400,6 +400,12 @@ void AbstractClient::lock()
 }
 
 
+void AbstractClient::setAuthId(const QByteArray &id)
+{
+  d_func()->authId = id;
+}
+
+
 void AbstractClient::setNick(const QString &nick)
 {
   Q_D(AbstractClient);
