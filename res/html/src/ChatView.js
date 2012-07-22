@@ -64,11 +64,6 @@ var Utils = {
     $("[data-tr='" + key + "']").html(Utils.tr(key));
   },
 
-  log: function(text) {
-    var date = new Date();
-    console.log(DateTime.time(date) + DateTime.seconds(date) + "." + date.getMilliseconds() + " " + text);
-  },
-
   row: function(label, value) {
     if (typeof value !== "string" || value === "")
       return '';
@@ -80,7 +75,15 @@ var Utils = {
   },
 
 
-  labels: function(obj) {
+  /*
+   * Установка ширины элементов, равной максимальной ширине одного из элементов.
+   *
+   * \param obj jQuery объект.
+   */
+  adjustWidth: function(obj) {
+    if (!obj.length || obj.width() < 1)
+      return;
+
     var max = 0;
     var current = 0;
 
@@ -438,7 +441,14 @@ var Loader = {
 };
 
 
+/*
+ * Управление модальным диалогом.
+ */
 var Modal = {
+  current: '',
+  create: {},
+  hidden: {},
+  shown: {}
 };
 
 
@@ -463,26 +473,32 @@ $(document).ready(function() {
     return;
   }
 
+  /*
+   * Создание модального диалога.
+   */
   $('body').on('click.modal', '.modal-toggle', function (event) {
     var handler = $(this).attr('data-handler');
-    if (handler !== undefined) {
-      try {
-        Modal[handler](event);
-      }
-      catch (e) {}
+    if (handler !== undefined && Modal.create.hasOwnProperty(handler)) {
+      Modal.create[handler](event);
+      Modal.current = handler;
     }
 
     $('#modal').modal();
     event.preventDefault();
   });
 
+
   $('#modal').on('hidden', function () {
+    if (Modal.hidden.hasOwnProperty(Modal.current))
+      Modal.hidden[Modal.current]();
+
     $('#modal-header h3 *').remove();
     $('#modal-body *').remove();
   });
 
   $('#modal').on('shown', function () {
-    Utils.labels($('#modal-body .field-row-label'));
+    if (Modal.shown.hasOwnProperty(Modal.current))
+      Modal.shown[Modal.current]();
   });
 
   Loader.load(jsfiles);

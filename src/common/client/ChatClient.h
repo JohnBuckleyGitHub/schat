@@ -85,8 +85,6 @@ private:
   ClientMessages *m_messages; ///< Обработчик сообщений.
   Hooks::Client *m_hooks;     ///< Хуки.
   QByteArray m_id;            ///< Предыдущий идентификатор сервера.
-//  QString m_account;          ///< Зарегистрированный аккаунт пользователя.
-//  QString m_password;         ///< Пароль пользователя.
   SimpleClient *m_client;     ///< Клиент чата.
   static ChatClient *m_self;  ///< Указатель на себя.
 };

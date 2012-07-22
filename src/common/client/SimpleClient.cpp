@@ -48,6 +48,7 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
   json[LS("hostId")] = reply.hostId;
 
   if (reply.status == Notice::OK) {
+    authType = AuthRequest::Cookie;
     json.remove(LS("error"));
     return true;
   }
@@ -153,6 +154,9 @@ void SimpleClient::setAuthType(int authType)
 void SimpleClient::requestAuth()
 {
   Q_D(SimpleClient);
+
+  if (d->authType == AuthRequest::Cookie && SimpleID::typeOf(d->cookie) != SimpleID::CookieId)
+    d->authType = AuthRequest::Discovery;
 
   AuthRequest data(d->authType, d->url.toString(), d->channel.data());
   data.uniqueId = d->uniqueId;

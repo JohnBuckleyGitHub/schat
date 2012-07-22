@@ -64,6 +64,7 @@ protected:
     else if (key == LS("will_be_enabled"))   return tr("✔ Plugin will be enabled after you restart Simple Chat.");
     else if (key == LS("will_be_disabled"))  return tr("Plugin will be disabled after you restart Simple Chat.");
     else if (key == LS("sign_in_with"))      return tr("Sign in using your account with");
+    else if (key == LS("or_anon_connect"))   return tr("Or connect anonymously");
     return QString();
   }
 };

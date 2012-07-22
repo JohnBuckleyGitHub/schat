@@ -138,7 +138,8 @@ var AuthDialog = {
    */
   show: function()
   {
-    Modal.auth(null);
+    Modal.current = 'auth';
+    Modal.create.auth(null);
 
     $('#modal').modal();
   },
@@ -159,7 +160,7 @@ var AuthDialog = {
     }
 
     $('#modal-header h3 .icon-spinner').remove();
-    Utils.labels($('#providers .btn'));
+    Utils.adjustWidth($('#providers .btn'));
   },
 
   /*
@@ -167,11 +168,19 @@ var AuthDialog = {
    */
   addProvider: function(name, data) {
     $('#providers').append('<a class="btn" href="' + data.url + ' "><i class="provider-' + name + '"></i> ' + data.htmlName + '</a>');
+  },
+
+  /*
+   * Скрытие диалога.
+   */
+  hide: function()
+  {
+    $('#modal').modal('hide');
   }
 };
 
 
-Modal.auth = function(event)
+Modal.create.auth = function(event)
 {
   $('#modal-header h3 *').remove();
   $('#modal-body *').remove();
@@ -182,14 +191,38 @@ Modal.auth = function(event)
   $('#modal-header h3 span').attr('data-tr', 'sign_in_with');
 
   $('#modal-body').append('<div id="providers"></div>');
+  
+  if (Auth.anonymous()) {
+    $('#modal-body').append('<div id="anonymous-auth"><a data-tr="or_anon_connect" href="#">' + Utils.tr('or_anon_connect') + '</a></div>');
+
+    $("#anonymous-auth a").on("click", function(event) {
+      event.preventDefault();
+      Auth.open();
+    });
+  }
 
   AuthDialog.providers();
 };
 
 
+Modal.shown.auth = function()
+{
+  Utils.adjustWidth($('#providers .btn'));
+};
+
+
+Modal.hidden.auth = function()
+{
+  Auth.cancel();
+};
+
+
 if (typeof Auth === "undefined") {
   Auth = {
-    providers: function() { return {}; }
+    providers: function() { return {}; },
+    cancel: function() {},
+    anonymous: function() { return true; },
+    open: function() {}
   }
 }
 else {

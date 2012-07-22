@@ -64,10 +64,6 @@ $(document).ready(function() {
       paths.addClass('toggle-expand');
     }
   }
-
-  $('body').on('shown', function () {
-    console.log('s');
-  });
 });
 
 if (typeof About === "undefined") {

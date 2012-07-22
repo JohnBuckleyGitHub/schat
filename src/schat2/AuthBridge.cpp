@@ -18,11 +18,45 @@
 
 #include "AuthBridge.h"
 #include "client/AuthClient.h"
+#include "client/ChatClient.h"
+#include "client/SimpleClient.h"
+#include "net/packets/auth.h"
+#include "sglobal.h"
 
 AuthBridge::AuthBridge(QObject *parent)
   : QObject(parent)
   , m_client(0)
 {
+}
+
+
+bool AuthBridge::anonymous() const
+{
+  return ChatClient::io()->json().value(LS("anonymous")).toBool();
+}
+
+
+/*!
+ * Обработка закрытия авторизационного диалога.
+ */
+void AuthBridge::cancel()
+{
+  qDebug() << "AuthBridge::cancel()";
+
+  if (ChatClient::state() == ChatClient::WaitAuth) {
+    m_providers.clear();
+    ChatClient::io()->leave();
+  }
+}
+
+
+/*!
+ * Открытие нового анонимного подключения.
+ */
+void AuthBridge::open()
+{
+  ChatClient::io()->setAuthType(AuthRequest::Anonymous);
+  ChatClient::open(ChatClient::io()->url());
 }
 
 
