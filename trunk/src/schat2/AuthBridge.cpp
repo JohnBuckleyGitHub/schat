@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include "AuthBridge.h"
 #include "client/AuthClient.h"
 #include "client/ChatClient.h"
@@ -41,8 +43,6 @@ bool AuthBridge::anonymous() const
  */
 void AuthBridge::cancel()
 {
-  qDebug() << "AuthBridge::cancel()";
-
   if (ChatClient::state() == ChatClient::WaitAuth) {
     m_providers.clear();
     ChatClient::io()->leave();
@@ -65,6 +65,7 @@ void AuthBridge::start(const QString &url)
   if (!m_client) {
     m_client = new AuthClient(this);
     connect(m_client, SIGNAL(providersReady(QVariantMap)), SLOT(providersReady(QVariantMap)));
+    connect(m_client, SIGNAL(ready(QString,QByteArray,QByteArray,QVariantMap)), SLOT(ready(QString,QByteArray,QByteArray,QVariantMap)));
   }
 
   m_providers.clear();
@@ -76,4 +77,16 @@ void AuthBridge::providersReady(const QVariantMap &data)
 {
   m_providers = data;
   emit providersReady();
+}
+
+
+void AuthBridge::ready(const QString &provider, const QByteArray &id, const QByteArray &cookie, const QVariantMap &data)
+{
+  qDebug() << provider << SimpleID::encode(id) << SimpleID::encode(cookie);
+
+  if (SimpleID::typeOf(cookie) != SimpleID::CookieId)
+    return;
+
+  ChatClient::io()->setAuthType(AuthRequest::External);
+  ChatClient::io()->openUrl(ChatClient::io()->url(), cookie);
 }
