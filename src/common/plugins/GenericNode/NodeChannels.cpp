@@ -83,8 +83,8 @@ bool NodeChannels::read(PacketReader *reader)
 
 void NodeChannels::acceptImpl(ChatChannel user, const AuthResult & /*result*/, QList<QByteArray> &packets)
 {
-  packets.append(ChannelNotice::channel(Ch::server(), user)->data(m_core->sendStream()));
-  packets.append(ChannelNotice::channel(user, user)->data(m_core->sendStream()));
+  packets.append(ChannelNotice::channel(Ch::server(), user)->data(Core::stream()));
+  packets.append(ChannelNotice::channel(user, user)->data(Core::stream()));
 }
 
 
@@ -127,7 +127,7 @@ bool NodeChannels::info()
   foreach (QByteArray id, m_packet->channels()) {
     ChatChannel channel = Ch::channel(id, SimpleID::typeOf(id));
     if (channel)
-      packets += ChannelNotice::channel(channel, m_user, LS("info"))->data(m_core->sendStream());
+      packets += ChannelNotice::channel(channel, m_user, LS("info"))->data(Core::stream());
   }
 
   if (packets.isEmpty())

@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include "Ch.h"
 #include "cores/Core.h"
 #include "DateTime.h"
@@ -77,5 +75,5 @@ void NodeMessages::reject(int status)
 {
   MessageNotice packet(m_packet->sender(), m_packet->dest(), m_packet->text(), Core::date(), m_packet->id());
   packet.setStatus(status);
-  m_core->send(m_sender->sockets(), packet.data(m_core->sendStream()));
+  m_core->send(m_sender->sockets(), packet.data(Core::stream()));
 }

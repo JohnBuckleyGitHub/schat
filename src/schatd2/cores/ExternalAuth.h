@@ -47,10 +47,13 @@ private slots:
   void start();
 
 private:
+  void setError(int errorCode);
+
   AuthRequest m_data;               ///< Копия авторизационного запроса.
   QNetworkAccessManager *m_manager; ///< Менеджер доступа к сети.
   QNetworkReply *m_reply;           ///< Текущий HTTP запрос.
   QString m_host;                   ///< IP адрес пользователя.
+  quint64 m_socket;                 ///< Сокет пользователя.
 };
 
 #endif /* EXTERNALAUTH_H_ */

@@ -126,7 +126,8 @@ void NodeWorkerListener::add(NewConnectionEvent *event)
   socket->setId(event->socket());
 
   if (socket->setSocketDescriptor(event->socketDescriptor)) {
-    SCHAT_LOG_DEBUG("New Connection" << socket->peerAddress().toString() << socket->peerPort() << "id:" << socket->id())
+    SCHAT_LOG_INFO_STR("new connection. ip:" + socket->peerAddress().toString().toUtf8() + ", socket:" + QByteArray::number(socket->id()))
+
     connect(socket, SIGNAL(newPackets(quint64, const QList<QByteArray> &)), SLOT(packets(quint64, const QList<QByteArray> &)), Qt::DirectConnection);
     connect(socket, SIGNAL(released(quint64)), SLOT(released(quint64)), Qt::DirectConnection);
 
