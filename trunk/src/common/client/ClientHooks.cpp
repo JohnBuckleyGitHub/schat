@@ -47,7 +47,7 @@ QString Messages::remove(const QString &cmd, const QString &msg)
   }
 
   if (index == -1)
-    return false;
+    return msg;
 
   QString out = msg;
   out.remove(index, c.size());

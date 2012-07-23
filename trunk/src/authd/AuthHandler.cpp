@@ -121,17 +121,19 @@ bool AuthHandler::serve(const QUrl &url, const QString &path, Tufao::HttpServerR
 void AuthHandler::serveFile(const QString &fileName, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response)
 {
   const QByteArray method(request->method());
+  Tufao::Headers &headers = response->headers();
+
   if (method != "GET" && method != "HEAD") {
     response->writeHead(Tufao::HttpServerResponse::METHOD_NOT_ALLOWED);
-    response->headers().insert("Allow", "GET, HEAD");
+    headers.insert("Allow", "GET, HEAD");
     response->end();
     return;
   }
 
   QFileInfo fileInfo(fileName);
   response->writeHead(Tufao::HttpServerResponse::OK);
-  response->headers().insert("Date", Tufao::Headers::fromDateTime(QDateTime::currentDateTime()));
-  response->headers().insert("Last-Modified", Tufao::Headers::fromDateTime(fileInfo.lastModified()));
+  headers.insert("Date", Tufao::Headers::fromDateTime(QDateTime::currentDateTime()));
+  headers.insert("Last-Modified", Tufao::Headers::fromDateTime(fileInfo.lastModified()));
 
   if (request->method() == "HEAD") {
     response->writeHead(Tufao::HttpServerResponse::OK);
