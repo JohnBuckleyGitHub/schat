@@ -18,6 +18,7 @@
 
 #include <QFile>
 #include <QNetworkReply>
+#include <QTimer>
 
 #include "AuthCore.h"
 #include "AuthHandler.h"
@@ -31,7 +32,7 @@
 #include "Tufao/httpserverrequest.h"
 #include "Tufao/httpserverresponse.h"
 
-OAuthHandler::OAuthHandler(const QString &provider, const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
+OAuthHandler::OAuthHandler(const QString &provider, const QByteArray &state, const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
   : QObject(parent)
   , m_path(path)
   , m_url(url)
@@ -46,6 +47,20 @@ OAuthHandler::OAuthHandler(const QString &provider, const QUrl &url, const QStri
     deleteLater();
     return;
   }
+
+  setState(state);
+  if (url.hasQueryItem(LS("error")) || !url.hasQueryItem(LS("code"))) {
+    serveError();
+    return;
+  }
+
+  serveOk();
+
+  m_manager = new QNetworkAccessManager(this);
+  m_code = url.queryItemValue(LS("code")).toUtf8();
+  log(NodeLog::InfoLevel, "Start receiving token, code:" + m_code);
+
+  QTimer::singleShot(0, this, SLOT(getToken()));
 }
 
 
@@ -111,6 +126,8 @@ void OAuthHandler::serveError()
     data.replace("${ERROR_TEXT}", "<b>Authorization has been canceled by you</b>");
 
   m_response->end(data);
+  setError("access_denied");
+
   deleteLater();
 }
 

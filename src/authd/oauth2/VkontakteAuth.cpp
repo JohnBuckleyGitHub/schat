@@ -32,23 +32,8 @@
 #include "Tufao/httpserverresponse.h"
 
 VkontakteAuth::VkontakteAuth(const QByteArray &state, const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
-  : OAuthHandler(LS("vkontakte"), url, path, request, response, parent)
+  : OAuthHandler(LS("vkontakte"), state, url, path, request, response, parent)
 {
-  if (!m_provider)
-    return;
-
-  if (url.hasQueryItem(LS("error")) || !url.hasQueryItem(LS("code"))) {
-    serveError();
-    return;
-  }
-
-  setState(state);
-  serveOk();
-
-  m_manager = new QNetworkAccessManager(this);
-  m_code = url.queryItemValue(LS("code")).toUtf8();
-  log(NodeLog::InfoLevel, "Start receiving token, code:" + m_code);
-  getToken();
 }
 
 

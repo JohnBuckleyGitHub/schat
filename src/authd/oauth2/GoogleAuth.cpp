@@ -34,23 +34,8 @@
 #include "Tufao/httpserverresponse.h"
 
 GoogleAuth::GoogleAuth(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
-  : OAuthHandler(LS("google"), url, path, request, response, parent)
+  : OAuthHandler(LS("google"), url.queryItemValue(LS("state")).toLatin1(), url, path, request, response, parent)
 {
-  if (!m_provider)
-    return;
-
-  if (url.hasQueryItem(LS("error")) || !url.hasQueryItem(LS("code"))) {
-    serveError();
-    return;
-  }
-
-  setState(url.queryItemValue(LS("state")).toLatin1());
-  serveOk();
-
-  m_manager = new QNetworkAccessManager(this);
-  m_code = url.queryItemValue(LS("code")).toUtf8();
-  log(NodeLog::InfoLevel, "Start receiving token, code:" + m_code);
-  getToken();
 }
 
 
