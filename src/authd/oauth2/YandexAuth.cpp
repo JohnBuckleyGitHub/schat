@@ -69,7 +69,7 @@ void YandexAuth::dataReady()
 void YandexAuth::tokenReady()
 {
   OAUTH_PREPARE_REPLY
-  status = 200;
+  Q_UNUSED(status)
 
   QVariantMap data = JSON::parse(raw).toMap();
   QByteArray token = data.value(LS("access_token")).toByteArray();
