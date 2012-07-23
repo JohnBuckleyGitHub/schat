@@ -27,15 +27,16 @@ class StateHandler : public QObject
   Q_OBJECT
 
 public:
-  StateHandler(const QByteArray &state, const QByteArray &secret, Tufao::HttpServerResponse *response);
-  static void serve(const QByteArray &secret, Tufao::HttpServerResponse *response, AuthStatePtr data);
+  StateHandler(const QByteArray &cookie, const QByteArray &state, const QByteArray &secret, Tufao::HttpServerResponse *response);
+  static void serve(const QByteArray &cookie, const QByteArray &secret, Tufao::HttpServerResponse *response, AuthStatePtr data);
 
 private slots:
   void added(const QByteArray &state, AuthStatePtr data);
 
 private:
-  QByteArray m_secret;                   ///< Секретный идентификатор.
-  QByteArray m_state;                    ///< Идентификатор состояния.
+  QByteArray m_cookie;                   ///< Base32 кодированный идентификатор cookie.
+  QByteArray m_secret;                   ///< Base32 кодированный секретный идентификатор.
+  QByteArray m_state;                    ///< Base32 кодированный идентификатор состояния.
   Tufao::HttpServerResponse *m_response; ///< Ответ на запрос.
 };
 

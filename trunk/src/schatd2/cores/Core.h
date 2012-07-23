@@ -58,11 +58,14 @@ public:
   static bool send(Packet packet);
 
   inline NewPacketsEvent *packetsEvent()       { return m_packetsEvent; }
-  inline QDataStream *sendStream()             { return m_sendStream; } ///< \deprecated Эта функция должна быть заменена на Core::stream()
   inline void addAuth(NodeAuth *auth)          { m_auth.prepend(auth); }
   static bool add(ChatChannel channel);
   virtual int start() { return 0; }
   virtual void quit() {}
+
+  // Авторизация.
+  void accept(const AuthResult &result);
+  void reject(const AuthResult &result, quint64 socket = 0);
 
 public slots:
   inline void workerReady(QObject *listener) { m_listeners.append(listener); }
@@ -77,8 +80,6 @@ protected:
 
   // Авторизация.
   virtual bool auth();
-  virtual void accept(const AuthResult &result);
-  virtual void reject(const AuthResult &result);
 
   // users.
   void release(SocketReleaseEvent *event);

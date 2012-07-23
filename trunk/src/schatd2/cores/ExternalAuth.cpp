@@ -37,10 +37,6 @@ ExternalAuth::ExternalAuth(Core *core)
 
 AuthResult ExternalAuth::auth(const AuthRequest &data)
 {
-  qDebug() << "=======================================================================";
-  qDebug() << SimpleID::encode(data.id);
-  qDebug() << SimpleID::encode(data.cookie);
-
   if (SimpleID::typeOf(data.cookie) != SimpleID::CookieId)
     return AuthResult(Notice::BadRequest, data.id);
 
@@ -59,6 +55,7 @@ ExternalAuthTask::ExternalAuthTask(const AuthRequest &data, const QString &host,
   : QObject(parent)
   , m_data(data)
   , m_host(host)
+  , m_socket(Core::socket())
 {
   m_manager = new QNetworkAccessManager(this);
   QTimer::singleShot(0, this, SLOT(start()));
@@ -67,7 +64,18 @@ ExternalAuthTask::ExternalAuthTask(const AuthRequest &data, const QString &host,
 
 void ExternalAuthTask::ready()
 {
-  qDebug() << m_reply->readAll();
+  if (m_reply->error())
+    return setError(Notice::BadGateway);
+
+  QByteArray raw = m_reply->readAll();
+  QVariantMap data = JSON::parse(raw).toMap();
+
+  if (data.isEmpty())
+    return setError(Notice::BadGateway);
+
+  m_reply->deleteLater();
+
+  qDebug() << raw;
 }
 
 
@@ -81,9 +89,19 @@ void ExternalAuthTask::start()
 {
   QNetworkRequest request(QUrl(Storage::authServer() + LS("/state/") + SimpleID::encode(m_data.id)));
   request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::AlwaysNetwork);
-//  request.setRawHeader("X-SChat-Secret", m_secret);
+  request.setRawHeader("X-SChat-Cookie", SimpleID::encode(m_data.cookie));
 
   m_reply = m_manager->get(request);
   connect(m_reply, SIGNAL(finished()), SLOT(ready()));
   connect(m_reply, SIGNAL(sslErrors(QList<QSslError>)), SLOT(sslErrors()));
+}
+
+
+/*!
+ * Отклонение авторизации пользователя.
+ */
+void ExternalAuthTask::setError(int errorCode)
+{
+  m_reply->deleteLater();
+  Core::i()->reject(AuthResult(errorCode, m_data.id), m_socket);
 }

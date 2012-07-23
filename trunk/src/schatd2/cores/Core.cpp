@@ -182,6 +182,56 @@ bool Core::add(ChatChannel channel)
 }
 
 
+/*!
+ * Успешная авторизация пользователя.
+ */
+void Core::accept(const AuthResult &result)
+{
+  ChatChannel channel = Ch::channel(result.id);
+  if (!channel)
+    return;
+
+  if (!channel->account()->id)
+    channel->createAccount();
+
+  QList<QByteArray> packets;
+  if (result.packet) {
+    NodeAuthReply reply(result, channel);
+    reply.host = packetsEvent()->address.toString();
+    packets.append(reply.data(m_sendStream));
+  }
+
+  NodeNoticeReader::accept(channel, result, packets);
+
+  send(channel->sockets(), packets, result.option, channel->id());
+}
+
+
+/*!
+ * Отклонение авторизации.
+ *
+ * \param result Информация с результатом авторизации.
+ * \param socket Номер сокета, если 0, то он будет определён автоматически.
+ */
+void Core::reject(const AuthResult &result, quint64 socket)
+{
+  if (!socket)
+    socket = m_socket;
+
+  if (result.status != Notice::Found) {
+    SCHAT_LOG_WARN_STR("auth rejected. status:\"" + QByteArray::number(result.status) + ' ' + Notice::status(result.status).toUtf8() + "\", socket:" + QByteArray::number(socket))
+  }
+
+  NodeAuthReply reply(result);
+
+  for (int i = 0; i < m_listeners.size(); ++i) {
+    NewPacketsEvent *event = new NewPacketsEvent(QList<quint64>() << socket, reply.data(m_sendStream));
+    event->option = result.option;
+    QCoreApplication::postEvent(m_listeners.at(i), event);
+  }
+}
+
+
 void Core::customEvent(QEvent *event)
 {
   switch (event->type()) {
@@ -301,48 +351,6 @@ bool Core::auth()
   AuthResult result(Notice::NotImplemented, data.id, NewPacketsEvent::KillSocketOption);
   reject(result);
   return false;
-}
-
-
-/*!
- * Успешная авторизация пользователя.
- */
-void Core::accept(const AuthResult &result)
-{
-  ChatChannel channel = Ch::channel(result.id);
-  if (!channel)
-    return;
-
-  if (!channel->account()->id)
-    channel->createAccount();
-
-  QList<QByteArray> packets;
-  if (result.packet) {
-    NodeAuthReply reply(result, channel);
-    reply.host = packetsEvent()->address.toString();
-    packets.append(reply.data(m_sendStream));
-  }
-
-  NodeNoticeReader::accept(channel, result, packets);
-
-  send(channel->sockets(), packets, result.option, channel->id());
-}
-
-
-/*!
- * Отклонение авторизации.
- */
-void Core::reject(const AuthResult &result)
-{
-  SCHAT_LOG_DEBUG("REJECT AUTH" << result.status << Notice::status(result.status) << SimpleID::encode(result.authId))
-
-  NodeAuthReply reply(result);
-
-  for (int i = 0; i < m_listeners.size(); ++i) {
-    NewPacketsEvent *event = new NewPacketsEvent(QList<quint64>() << m_packetsEvent->socket(), reply.data(m_sendStream));
-    event->option = result.option;
-    QCoreApplication::postEvent(m_listeners.at(i), event);
-  }
 }
 
 

@@ -27,8 +27,9 @@
 #include "Tufao/httpserverrequest.h"
 #include "Tufao/httpserverresponse.h"
 
-StateHandler::StateHandler(const QByteArray &state, const QByteArray &secret, Tufao::HttpServerResponse *response)
+StateHandler::StateHandler(const QByteArray &cookie, const QByteArray &state, const QByteArray &secret, Tufao::HttpServerResponse *response)
   : QObject(response)
+  , m_cookie(cookie)
   , m_secret(secret)
   , m_state(state)
   , m_response(response)
@@ -37,11 +38,20 @@ StateHandler::StateHandler(const QByteArray &state, const QByteArray &secret, Tu
 }
 
 
-void StateHandler::serve(const QByteArray &secret, Tufao::HttpServerResponse *response, AuthStatePtr data)
+/*!
+ * Обработка запроса.
+ */
+void StateHandler::serve(const QByteArray &cookie, const QByteArray &secret, Tufao::HttpServerResponse *response, AuthStatePtr data)
 {
   if (!data->error.isEmpty()) {
     response->writeHead(Tufao::HttpServerResponse::FORBIDDEN);
     response->end("{\"error\":\"" + data->error + "\"}");
+    return;
+  }
+
+  if (!cookie.isEmpty() && data->cookie != cookie) {
+    response->writeHead(Tufao::HttpServerResponse::FORBIDDEN);
+    response->end("{\"error\":\"invalid_cookie\"}");
     return;
   }
 
@@ -65,7 +75,7 @@ void StateHandler::added(const QByteArray &state, AuthStatePtr data)
   if (m_state != state)
     return;
 
-  serve(m_secret, m_response, data);
+  serve(m_cookie, m_secret, m_response, data);
 }
 
 
@@ -81,14 +91,16 @@ bool StateHandlerCreator::serve(const QUrl &, const QString &path, Tufao::HttpSe
       return true;
     }
 
+    QByteArray cookie = request->headers().value("X-SChat-Cookie");
     QByteArray secret = request->headers().value("X-SChat-Secret");
     AuthStatePtr data = AuthCore::state()->get(state);
+
     if (!data) {
-      new StateHandler(state, secret, response);
+      new StateHandler(cookie, state, secret, response);
       return true;
     }
 
-    StateHandler::serve(secret, response, data);
+    StateHandler::serve(cookie, secret, response, data);
     return true;
   }
 
