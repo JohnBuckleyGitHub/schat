@@ -65,11 +65,21 @@ void AuthBridge::start(const QString &url)
   if (!m_client) {
     m_client = new AuthClient(this);
     connect(m_client, SIGNAL(providersReady(QVariantMap)), SLOT(providersReady(QVariantMap)));
+    connect(m_client, SIGNAL(forbidden()), SLOT(forbidden()));
     connect(m_client, SIGNAL(ready(QString,QByteArray,QByteArray,QVariantMap)), SLOT(ready(QString,QByteArray,QByteArray)));
   }
 
   m_providers.clear();
   m_client->start(url);
+}
+
+
+/*!
+ * \todo Реализовать полноценную поддержку обработки ошибки авторизации с уведомлением пользователя.
+ */
+void AuthBridge::forbidden()
+{
+  ChatClient::io()->leave();
 }
 
 

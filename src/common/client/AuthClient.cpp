@@ -94,9 +94,16 @@ void AuthClient::sslErrors()
 
 void AuthClient::stateReady()
 {
-  if (m_reply->error()) {
+  int error = m_reply->error();
+  if (error) {
     m_reply->deleteLater();
-    return invalidState();
+
+    if (error == QNetworkReply::ContentOperationNotPermittedError)
+      emit forbidden();
+    else
+      invalidState();
+
+    return;
   }
 
   QByteArray raw = m_reply->readAll();
