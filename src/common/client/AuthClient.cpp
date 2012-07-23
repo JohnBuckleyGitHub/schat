@@ -96,7 +96,7 @@ void AuthClient::stateReady()
 {
   if (m_reply->error()) {
     m_reply->deleteLater();
-    invalidState();
+    return invalidState();
   }
 
   QByteArray raw = m_reply->readAll();
