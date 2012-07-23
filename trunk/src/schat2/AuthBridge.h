@@ -45,6 +45,7 @@ signals:
   void providersReady();
 
 private slots:
+  void forbidden();
   void providersReady(const QVariantMap &data);
   void ready(const QString &provider, const QByteArray &id, const QByteArray &cookie);
 
