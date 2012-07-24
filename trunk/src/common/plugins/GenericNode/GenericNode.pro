@@ -19,7 +19,6 @@ SCHAT_DAEMON_LIB = 1
 QT = core network sql
 
 HEADERS  = \
-   feeds/NodeAccountFeed.h \
    feeds/NodeFeedStorage.h \
    feeds/NodeHostsFeed.h \
    feeds/NodeUserFeed.h \
@@ -30,7 +29,6 @@ HEADERS  = \
    NodeFeeds.h \
 
 SOURCES  = \
-   feeds/NodeAccountFeed.cpp \
    feeds/NodeFeedStorage.cpp \
    feeds/NodeHostsFeed.cpp \
    feeds/NodeUserFeed.cpp \
