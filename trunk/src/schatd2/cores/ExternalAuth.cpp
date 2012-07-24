@@ -22,12 +22,17 @@
 #include <QNetworkReply>
 #include <QTimer>
 
+#include "Account.h"
+#include "Ch.h"
 #include "cores/Core.h"
 #include "cores/ExternalAuth.h"
 #include "events.h"
 #include "net/SimpleID.h"
-#include "Storage.h"
+#include "NodeLog.h"
 #include "sglobal.h"
+#include "Storage.h"
+
+QHash<QByteArray, QVariantMap> ExternalAuthTask::m_cache;
 
 ExternalAuth::ExternalAuth(Core *core)
   : AnonymousAuth(core)
@@ -57,14 +62,43 @@ ExternalAuthTask::ExternalAuthTask(const AuthRequest &data, const QString &host,
   , m_host(host)
   , m_socket(Core::socket())
 {
-  m_manager = new QNetworkAccessManager(this);
+  m_timer = new QBasicTimer();
+  m_timer->start(20000, this);
+
   QTimer::singleShot(0, this, SLOT(start()));
 }
 
 
+ExternalAuthTask::~ExternalAuthTask()
+{
+  if (m_timer->isActive())
+    m_timer->stop();
+
+  delete m_timer;
+}
+
+
+void ExternalAuthTask::timerEvent(QTimerEvent *event)
+{
+  if (event->timerId() == m_timer->timerId()) {
+    m_timer->stop();
+    deleteLater();
+  }
+
+  QObject::timerEvent(event);
+}
+
+
+/*!
+ * Получение данных об авторизации от внешнего сервера.
+ */
 void ExternalAuthTask::ready()
 {
-  if (m_reply->error())
+  int error = m_reply->error();
+  if (error == QNetworkReply::ContentOperationNotPermittedError)
+    return setError(Notice::Forbidden);
+
+  if (error)
     return setError(Notice::BadGateway);
 
   QByteArray raw = m_reply->readAll();
@@ -76,6 +110,8 @@ void ExternalAuthTask::ready()
   m_reply->deleteLater();
 
   qDebug() << raw;
+
+  done(data);
 }
 
 
@@ -87,6 +123,11 @@ void ExternalAuthTask::sslErrors()
 
 void ExternalAuthTask::start()
 {
+  QVariantMap data = m_cache.value(m_data.id + m_data.cookie);
+  if (!data.isEmpty())
+    return done(data);
+
+  m_manager = new QNetworkAccessManager(this);
   QNetworkRequest request(QUrl(Storage::authServer() + LS("/state/") + SimpleID::encode(m_data.id)));
   request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::AlwaysNetwork);
   request.setRawHeader("X-SChat-Cookie", SimpleID::encode(m_data.cookie));
@@ -98,10 +139,72 @@ void ExternalAuthTask::start()
 
 
 /*!
+ * Авторизация пользователя, если пользователь не существует, будет создан новый.
+ */
+AuthResult ExternalAuthTask::auth(const QVariantMap &data)
+{
+  QByteArray id = SimpleID::decode(data.value(LS("id")).toByteArray());
+  if (SimpleID::typeOf(id) != SimpleID::UserId)
+    return AuthResult(Notice::Forbidden, m_data.id);
+
+  AuthResult result = AnonymousAuth::isCollision(id, m_data.nick, m_data.id);
+  if (result.action == AuthResult::Reject) {
+    if (result.status == Notice::NickAlreadyUse)
+      m_cache[m_data.id + m_data.cookie] = data;
+
+    return result;
+  }
+
+  ChatChannel channel = Ch::channel(id, SimpleID::UserId);
+  bool created = false;
+
+  if (!channel) {
+    channel = ChatChannel(new ServerChannel(id, m_data.nick));
+    created = true;
+
+    channel->setAccount();
+    channel->account()->provider = data.value(LS("provider")).toString();
+    channel->setName(m_data.nick);
+    channel->gender().setRaw(m_data.gender);
+  }
+
+  if (channel->status().value() == Status::Offline)
+    channel->status().set(m_data.status);
+
+  if (!channel->isValid())
+    return AuthResult(Notice::BadRequest, m_data.id);
+
+  Core::add(channel);
+  Ch::newUserChannel(channel, m_data, m_host, created, m_socket);
+
+  SCHAT_LOG_INFO_STR("EXTERNAL AUTH: " + channel->name().toUtf8() + '@' + m_host.toUtf8() + '/' + SimpleID::encode(channel->id()) + ", " + m_data.host.toUtf8());
+  m_cache.remove(m_data.id + m_data.cookie);
+  return AuthResult(id, m_data.id);
+}
+
+
+void ExternalAuthTask::done(const QVariantMap &data)
+{
+  AuthResult result = auth(data);
+  if (result.action == AuthResult::Reject) {
+    Core::i()->reject(result, m_socket);
+  }
+  else if (result.action == AuthResult::Accept) {
+    Core::i()->accept(result, m_host);
+  }
+
+  m_timer->stop();
+  deleteLater();
+}
+
+
+/*!
  * Отклонение авторизации пользователя.
  */
 void ExternalAuthTask::setError(int errorCode)
 {
   m_reply->deleteLater();
   Core::i()->reject(AuthResult(errorCode, m_data.id), m_socket);
+  m_timer->stop();
+  deleteLater();
 }

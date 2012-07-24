@@ -37,7 +37,7 @@ void MessagesCh::newChannelImpl(ChatChannel channel, ChatChannel user)
 }
 
 
-void MessagesCh::userChannelImpl(ChatChannel channel, const AuthRequest & /*data*/, const QString & /*host*/, bool /*created*/)
+void MessagesCh::userChannelImpl(ChatChannel channel, const AuthRequest & /*data*/, const QString & /*host*/, bool /*created*/, quint64 /*socket*/)
 {
   addNewUserFeedIsNotExist(channel, LS("history"));
 }

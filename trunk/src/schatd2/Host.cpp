@@ -20,7 +20,7 @@
 #include "net/packets/auth.h"
 #include "sglobal.h"
 
-Host::Host(const AuthRequest &data, const QString &address)
+Host::Host(const AuthRequest &data, const QString &address, quint64 socket)
   : online(true)
   , channel(0)
   , name(data.hostName)
@@ -30,6 +30,7 @@ Host::Host(const AuthRequest &data, const QString &address)
   , osName(data.json.value(LS("os")).toString())
   , tz(data.tz)
   , uniqueId(data.uniqueId)
+  , socket(socket)
 {
 
 }

@@ -185,7 +185,7 @@ bool Core::add(ChatChannel channel)
 /*!
  * Успешная авторизация пользователя.
  */
-void Core::accept(const AuthResult &result)
+void Core::accept(const AuthResult &result, const QString &host)
 {
   ChatChannel channel = Ch::channel(result.id);
   if (!channel)
@@ -197,7 +197,7 @@ void Core::accept(const AuthResult &result)
   QList<QByteArray> packets;
   if (result.packet) {
     NodeAuthReply reply(result, channel);
-    reply.host = packetsEvent()->address.toString();
+    reply.host = host.isEmpty() ? packetsEvent()->address.toString() : host;
     packets.append(reply.data(m_sendStream));
   }
 

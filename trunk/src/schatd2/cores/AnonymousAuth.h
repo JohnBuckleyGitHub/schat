@@ -30,9 +30,9 @@ public:
   AnonymousAuth(Core *core);
   AuthResult auth(const AuthRequest &data);
   int type() const;
+  static AuthResult isCollision(const QByteArray &id, const QString &name, const QByteArray &authId);
 
 protected:
-  AuthResult isCollision(const QByteArray &id, const QString &name, const QByteArray &authId);
   bool isPasswordRequired(ServerChannel *channel, const QByteArray &uniqueId);
   void update(ServerChannel *channel, const AuthRequest &data);
 

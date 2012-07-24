@@ -64,7 +64,7 @@ public:
   virtual void quit() {}
 
   // Авторизация.
-  void accept(const AuthResult &result);
+  void accept(const AuthResult &result, const QString &host = QString());
   void reject(const AuthResult &result, quint64 socket = 0);
 
 public slots:

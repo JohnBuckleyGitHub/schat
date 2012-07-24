@@ -22,6 +22,7 @@
 #include "cores/AnonymousAuth.h"
 #include "net/packets/auth.h"
 
+class QBasicTimer;
 class QNetworkAccessManager;
 class QNetworkReply;
 
@@ -40,6 +41,10 @@ class ExternalAuthTask : public QObject
 
 public:
   ExternalAuthTask(const AuthRequest &data, const QString &host, QObject *parent = 0);
+  ~ExternalAuthTask();
+
+protected:
+  void timerEvent(QTimerEvent *event);
 
 private slots:
   void ready();
@@ -47,13 +52,17 @@ private slots:
   void start();
 
 private:
+  AuthResult auth(const QVariantMap &data);
+  void done(const QVariantMap &data);
   void setError(int errorCode);
 
-  AuthRequest m_data;               ///< Копия авторизационного запроса.
-  QNetworkAccessManager *m_manager; ///< Менеджер доступа к сети.
-  QNetworkReply *m_reply;           ///< Текущий HTTP запрос.
-  QString m_host;                   ///< IP адрес пользователя.
-  quint64 m_socket;                 ///< Сокет пользователя.
+  AuthRequest m_data;                            ///< Копия авторизационного запроса.
+  QBasicTimer *m_timer;                          ///< Таймер для автоматического удаления объекта.
+  QNetworkAccessManager *m_manager;              ///< Менеджер доступа к сети.
+  QNetworkReply *m_reply;                        ///< Текущий HTTP запрос.
+  QString m_host;                                ///< IP адрес пользователя.
+  quint64 m_socket;                              ///< Сокет пользователя.
+  static QHash<QByteArray, QVariantMap> m_cache; ///< Кэшированные ответы от сервера авторизации, для того чтобы не запрашивать информацию с сервера при разрешении коллизий ников.
 };
 
 #endif /* EXTERNALAUTH_H_ */

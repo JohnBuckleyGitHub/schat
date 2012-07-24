@@ -39,9 +39,10 @@ public:
   , os(0)
   , tz(0)
   , date(0)
+  , socket(0)
   {}
 
-  Host(const AuthRequest &data, const QString &address);
+  Host(const AuthRequest &data, const QString &address, quint64 socket);
 
   bool online;            ///< \b true если подключение активно.
   qint64 channel;         ///< Номер канала в базе данных.
@@ -57,6 +58,7 @@ public:
   QVariantMap data;       ///< Дополнительные данные.
   QList<quint64> sockets; ///< Список сокетов.
   QByteArray uniqueId;    ///< Уникальный идентификатор пользователя.
+  quint64 socket;         ///< Сокет пользователя.
 };
 
 typedef QSharedPointer<Host> HostInfo;
