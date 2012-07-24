@@ -51,6 +51,7 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
     created = true;
 
     channel->setAccount();
+    channel->account()->groups += LS("anonymous");
     channel->setName(data.nick);
     channel->gender().setRaw(data.gender);
   }

@@ -164,6 +164,7 @@ AuthResult ExternalAuthTask::auth(const QVariantMap &data)
 
     channel->setAccount();
     channel->account()->provider = data.value(LS("provider")).toString();
+    channel->account()->groups += LS("registered");
     channel->setName(m_data.nick);
     channel->gender().setRaw(m_data.gender);
   }
