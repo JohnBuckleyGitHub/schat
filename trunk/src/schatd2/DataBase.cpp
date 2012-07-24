@@ -432,9 +432,11 @@ void DataBase::update(ChatChannel channel)
   if (account && account->id > 0) {
     account->date = DateTime::utc();
 
-    query.prepare(LS("UPDATE accounts SET date = :date, cookie = :cookie, groups = :groups WHERE id = :id;"));
+    query.prepare(LS("UPDATE accounts SET date = :date, cookie = :cookie, provider = :provider, flags = :flags, groups = :groups WHERE id = :id;"));
     query.bindValue(LS(":date"),       account->date);
     query.bindValue(LS(":cookie"),     account->cookie);
+    query.bindValue(LS(":provider"),   account->provider);
+    query.bindValue(LS(":flags"),      account->flags);
     query.bindValue(LS(":groups"),     account->groups.toString());
     query.bindValue(LS(":id"),         account->id);
     query.exec();
@@ -450,7 +452,7 @@ void DataBase::update(ChatChannel channel)
 Account DataBase::account(qint64 key)
 {
   QSqlQuery query;
-  query.prepare(LS("SELECT channel, date, cookie, groups FROM accounts WHERE id = :id LIMIT 1;"));
+  query.prepare(LS("SELECT channel, date, cookie, provider, flags, groups FROM accounts WHERE id = :id LIMIT 1;"));
   query.bindValue(LS(":id"), key);
   query.exec();
 
@@ -458,11 +460,13 @@ Account DataBase::account(qint64 key)
     return Account();
 
   Account account;
-  account.id = key;
-  account.channel = query.value(0).toLongLong();
-  account.date = query.value(1).toLongLong();
-  account.cookie = query.value(2).toByteArray();
-  account.groups.set(query.value(3).toString());
+  account.id       = key;
+  account.channel  = query.value(0).toLongLong();
+  account.date     = query.value(1).toLongLong();
+  account.cookie   = query.value(2).toByteArray();
+  account.provider = query.value(3).toString();
+  account.flags    = query.value(4).toLongLong();
+  account.groups.set(query.value(5).toString());
 
   return account;
 }
@@ -517,12 +521,14 @@ qint64 DataBase::add(Account *account)
     account->cookie = Ch::cookie();
 
   QSqlQuery query;
-  query.prepare(LS("INSERT INTO accounts (channel, date, cookie, groups) "
-                     "VALUES (:channel, :date, :cookie, :groups);"));
+  query.prepare(LS("INSERT INTO accounts (channel, date, cookie, provider, flags, groups) "
+                     "VALUES (:channel, :date, :cookie, :provider, :flags, :groups);"));
 
   query.bindValue(LS(":channel"),    account->channel);
   query.bindValue(LS(":date"),       account->date);
   query.bindValue(LS(":cookie"),     account->cookie);
+  query.bindValue(LS(":provider"),   account->provider);
+  query.bindValue(LS(":flags"),      account->flags);
   query.bindValue(LS(":groups"),     account->groups.toString());
   query.exec();
 
