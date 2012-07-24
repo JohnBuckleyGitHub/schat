@@ -46,13 +46,14 @@ public:
 
   void add(HostInfo hostInfo);
   void remove(quint64 socket);
+  void unlink(const QByteArray &hostId);
 
   static QByteArray toHostId(const QByteArray &uniqueId, const QByteArray &channelId);
 
 private:
   FeedPtr feed(const QString &name, int mask) const;
   QByteArray publicId(quint64 socket = 0) const;
-  void updateUser(const QByteArray &publicId = QByteArray());
+  void updateUser(const QByteArray &publicId, quint64 socket = 0);
 
   QHash<QByteArray, HostInfo> m_hosts; ///< Таблица хостов, в качестве ключа публичный идентификатор хоста.
   QHash<quint64, HostInfo> m_sockets;  ///< Таблица сокетов и ассоциированных с ними хостов.

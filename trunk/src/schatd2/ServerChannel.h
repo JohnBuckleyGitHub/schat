@@ -36,8 +36,8 @@ public:
 
   inline const Hosts& hosts() const            { return m_hosts; }
   inline const QByteArray& normalized() const  { return m_normalized; }
-  inline const QList<quint64> sockets() const  { return m_hosts.sockets(); }
   inline Hosts& hosts()                        { return m_hosts; }
+  inline QList<quint64> sockets() const        { return m_hosts.sockets(); }
 
   bool setName(const QString &name);
   void createAccount();

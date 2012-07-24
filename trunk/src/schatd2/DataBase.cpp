@@ -594,6 +594,15 @@ void DataBase::add(HostInfo host)
 }
 
 
+void DataBase::removeHost(const QByteArray &hostId)
+{
+  QSqlQuery query;
+  query.prepare(LS("DELETE FROM hosts WHERE hostId = :hostId;"));
+  query.bindValue(LS(":hostId"), SimpleID::encode(hostId));
+  query.exec();
+}
+
+
 void DataBase::startTasks()
 {
   while (!m_tasks.isEmpty())

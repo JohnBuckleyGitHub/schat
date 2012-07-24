@@ -51,11 +51,9 @@ public:
   inline quint8 value() const    { return m_status; }
   inline void set(quint8 status) { m_status = status; }
 
-  Status& operator=(int other)
-  {
-    m_status = other;
-    return *this;
-  }
+  inline bool operator!=(int other) const { return m_status != other; }
+  inline bool operator==(int other) const { return m_status == other; }
+  inline Status& operator=(int other)     { m_status = other; return *this; }
 
 private:
   quint8 m_status;

@@ -86,8 +86,8 @@ QVariantMap NodeHostsFeed::feed(Channel *channel)
   QVariantMap out;
   out[LS("head")] = header;
 
-  ServerChannel *ch = static_cast<ServerChannel *>(head().channel());
-  const QHash<QByteArray, HostInfo> &hosts = ch->hosts().all();
+  ServerChannel *user = static_cast<ServerChannel *>(head().channel());
+  const QHash<QByteArray, HostInfo> &hosts = user->hosts().all();
   foreach (const HostInfo &info, hosts) {
     QVariantMap data;
     data[LS("online")]  = info->online;
@@ -116,42 +116,18 @@ FeedQueryReply NodeHostsFeed::unlink(const QVariantMap &json, Channel *channel)
   if (!channel || head().channel()->id() != channel->id())
     return FeedQueryReply(Notice::Forbidden);
 
-  QString id = json.value(LS("id")).toString();
-  if (id.size() != 34) {
-    ChatChannel user = Ch::channel(head().channel()->id());
-    if (!channel)
-      return FeedQueryReply(Notice::BadRequest);
+  QByteArray id = SimpleID::decode(json.value(LS("id")).toString());
+  if (SimpleID::typeOf(id) != SimpleID::HostId)
+    return FeedQueryReply(Notice::BadRequest);
 
-    id = SimpleID::encode(user->hosts().id());
-  }
-
-  if (!m_data.contains(id))
+  ServerChannel *user = static_cast<ServerChannel *>(head().channel());
+  if (!user->hosts().all().contains(id))
     return FeedQueryReply(Notice::NotFound);
 
-  QVariantMap data = m_data.value(id).toMap();
-  m_data.remove(id);
-
-  kick(SimpleID::decode(id), data);
+  user->hosts().unlink(id);
 
   FeedQueryReply reply = FeedQueryReply(Notice::OK);
   reply.json[LS("action")] = LS("unlink");
   reply.modified = true;
   return reply;
-}
-
-
-void NodeHostsFeed::kick(const QByteArray &id, const QVariantMap &data)
-{
-  if (data.value(LS("online")) == false)
-    return;
-
-  ChatChannel channel = Ch::channel(head().channel()->id());
-  if (!channel)
-    return;
-
-  QList<quint64> sockets = channel->hosts().sockets(id);
-  if (sockets.isEmpty())
-    return;
-
-  Core::i()->send(sockets, ChannelNotice::request(channel->id(), channel->id(), LS("quit"))->data(Core::stream()), NewPacketsEvent::KillSocketOption);
 }
