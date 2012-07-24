@@ -179,6 +179,9 @@ ClientChannel CacheDB::channel(qint64 id, bool feeds)
   channel->gender().setRaw(query.value(1).toLongLong());
   channel->setData(JSON::parse(query.value(3).toByteArray()).toMap());
 
+  if (channel->type() == SimpleID::UserId)
+    channel->setAccount();
+
   if (feeds)
     FeedStorage::load(channel.data());
 
