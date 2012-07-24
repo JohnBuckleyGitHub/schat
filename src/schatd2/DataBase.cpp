@@ -281,6 +281,8 @@ ChatChannel DataBase::channel(qint64 id)
     Account account = DataBase::account(accountId);
     channel->setAccount(&account);
   }
+  else if (channel->type() == SimpleID::UserId)
+    channel->setAccount();
 
   channel->setData(JSON::parse(query.value(5).toByteArray()).toMap());
   FeedStorage::load(channel.data());

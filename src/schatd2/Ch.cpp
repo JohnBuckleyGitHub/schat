@@ -20,8 +20,10 @@
 
 #include "Account.h"
 #include "Ch.h"
+#include "cores/Core.h"
 #include "DataBase.h"
 #include "feeds/FeedStorage.h"
+#include "net/packets/auth.h"
 #include "net/packets/Notice.h"
 #include "Normalize.h"
 #include "Settings.h"
@@ -164,6 +166,31 @@ QByteArray Ch::userId(const QByteArray &uniqueId)
 
 
 /*!
+ * Создание нового или успешная авторизация существующего пользователя.
+ *
+ * \param channel Канал-пользователь.
+ * \param data    Авторизационные данные.
+ * \param host    Адрес пользователя.
+ * \param created \b true если пользователь был создан.
+ * \param socket  Сокет пользователя.
+ */
+void Ch::newUserChannel(ChatChannel channel, const AuthRequest &data, const QString &host, bool created, quint64 socket)
+{
+  if (!socket)
+    socket = Core::socket();
+
+  channel->hosts().add(HostInfo(new Host(data, host, socket)));
+
+  foreach (Ch *hook, m_self->m_hooks) {
+    hook->userChannelImpl(channel, data, host, created, socket);
+  }
+
+  m_self->m_cache.add(channel);
+  channel->setSynced(true);
+}
+
+
+/*!
  * Переименование канала.
  */
 int Ch::renameImpl(ChatChannel channel, const QString &name)
@@ -301,27 +328,13 @@ void Ch::newChannelImpl(ChatChannel channel, ChatChannel user)
 }
 
 
-/*!
- * Создание нового или успешная авторизация существующего пользователя.
- *
- * \param channel Канал-пользователь.
- * \param data    Авторизационные данные.
- * \param host    Адрес пользователя.
- * \param created \b true если пользователь был создан.
- */
-void Ch::userChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host, bool created)
+void Ch::userChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host, bool created, quint64 socket)
 {
-  if (m_self != this)
-    return;
-
-  channel->hosts().add(HostInfo(new Host(data, host)));
-
-  foreach (Ch *hook, m_hooks) {
-    hook->userChannelImpl(channel, data, host, created);
-  }
-
-  m_cache.add(channel);
-  channel->setSynced(true);
+  Q_UNUSED(channel)
+  Q_UNUSED(data)
+  Q_UNUSED(host)
+  Q_UNUSED(created)
+  Q_UNUSED(socket)
 }
 
 

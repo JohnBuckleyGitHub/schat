@@ -44,7 +44,7 @@ void GenericCh::serverImpl(ChatChannel channel, bool /*created*/)
 }
 
 
-void GenericCh::userChannelImpl(ChatChannel channel, const AuthRequest & /*data*/, const QString & /*host*/, bool /*created*/)
+void GenericCh::userChannelImpl(ChatChannel channel, const AuthRequest & /*data*/, const QString & /*host*/, bool /*created*/, quint64 /*socket*/)
 {
   if (!channel->account())
     channel->createAccount();

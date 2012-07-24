@@ -111,8 +111,8 @@ void Hosts::add(HostInfo hostInfo)
   host->geo     = GeoHook::geo(host->address);
   host->date    = DateTime::utc();
 
-  host->sockets.append(Core::socket());
-  m_sockets[Core::socket()] = host;
+  host->sockets.append(hostInfo->socket);
+  m_sockets[hostInfo->socket] = host;
 
   DataBase::add(host);
   FeedStorage::save(feed());

@@ -37,7 +37,6 @@ public:
   inline static int rename(ChatChannel channel, const QString &name)                       { return m_self->renameImpl(channel, name); }
   inline static void add(Ch *hook)                                                         { if (!m_self->m_hooks.contains(hook)) m_self->m_hooks.append(hook); }
   inline static void load()                                                                { m_self->loadImpl(); }
-  inline static void newUserChannel(ChatChannel channel, const AuthRequest &data, const QString &host, bool created = false) { m_self->userChannelImpl(channel, data, host, created); }
   inline static void remove(Ch *hook)                                                      { m_self->m_hooks.removeAll(hook); }
   inline static void remove(ChatChannel channel)                                           { m_self->removeImpl(channel); }
   static bool gc(ChatChannel channel);
@@ -48,6 +47,7 @@ public:
   static QByteArray cookie();
   static QByteArray makeId(const QByteArray &normalized);
   static QByteArray userId(const QByteArray &uniqueId);
+  static void newUserChannel(ChatChannel channel, const AuthRequest &data, const QString &host, bool created = false, quint64 socket = 0);
 
 protected:
   /// Внутренний кэш хранилища.
@@ -76,7 +76,7 @@ protected:
   virtual void newChannelImpl(ChatChannel channel, ChatChannel user = ChatChannel());
   virtual void removeImpl(ChatChannel channel);
   virtual void serverImpl(ChatChannel channel, bool created);
-  virtual void userChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host, bool created);
+  virtual void userChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host, bool created, quint64 socket);
 
   // Служебные функции.
   void addNewFeedIsNotExist(ChatChannel channel, const QString &name, ChatChannel user = ChatChannel());
