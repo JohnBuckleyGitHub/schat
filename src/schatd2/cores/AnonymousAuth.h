@@ -33,7 +33,6 @@ public:
   static AuthResult isCollision(const QByteArray &id, const QString &name, const QByteArray &authId);
 
 protected:
-  bool isPasswordRequired(ServerChannel *channel, const QByteArray &uniqueId);
   void update(ServerChannel *channel, const AuthRequest &data);
 
   static QHash<QByteArray, quint64> m_collisions; ///< Счётчик количества попыток автоматического разрешения коллизий ника.

@@ -53,11 +53,6 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
     return true;
   }
 
-  qDebug() << "~~~~~~~~~~~~~~~~~~~~~~ REPLY JSON:" << reply.json;
-  qDebug() << "~~~~~~~~~~~~~~~~~~~~~~ serverID"    << SimpleID::encode(reply.serverId);
-  qDebug() << "~~~~~~~~~~~~~~~~~~~~~~ serverName"  << server->name();
-  qDebug() << "~~~~~~~~~~~~~~~~~~~~~~ provider"    << reply.provider;
-
   QVariantMap error;
   error[LS("type")]   = LS("auth");
   error[LS("auth")]   = authType;
@@ -76,28 +71,12 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
     return false;
   }
 
-  if (reply.status == Notice::Found) {
+  if (reply.status == Notice::Found || reply.status == Notice::Forbidden) {
     json[LS("authServer")] = reply.provider;
     json[LS("anonymous")]  = (bool) reply.flags & 1;
     setClientState(SimpleClient::ClientWaitAuth);
     return false;
   }
-
-//  if (authType == AuthRequest::Cookie && (reply.status == Notice::NotImplemented || reply.status == Notice::Forbidden)) {
-//    return false;
-//  }
-
-  if (isFatalError(reply.status))
-    setClientState(SimpleClient::ClientError);
-
-  return false;
-}
-
-
-bool SimpleClientPrivate::isFatalError(int status) const
-{
-  if (status == Notice::Unauthorized)
-    return true;
 
   return false;
 }

@@ -31,6 +31,7 @@ public:
 
 protected:
   AuthResult auth(const AuthRequest &data, ChatChannel channel);
+  bool isPasswordRequired(ServerChannel *channel, const QByteArray &uniqueId) const;
 };
 
 #endif /* COOKIEAUTH_H_ */

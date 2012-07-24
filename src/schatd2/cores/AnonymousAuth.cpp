@@ -56,11 +56,6 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
     channel->gender().setRaw(data.gender);
   }
 
-  if (isPasswordRequired(channel.data(), data.uniqueId)) {
-    result = AuthResult(Notice::Unauthorized, data.id);
-    return result;
-  }
-
   update(channel.data(), data);
   if (!channel->isValid())
     return AuthResult(Notice::BadRequest, data.id);
@@ -103,30 +98,6 @@ AuthResult AnonymousAuth::isCollision(const QByteArray &id, const QString &name,
 
   m_collisions.remove(id);
   return AuthResult();
-}
-
-
-/*!
- * Проверка на необходимость принудительной авторизации,
- * в случае подключения зарегистрированного пользователя с нового компьютера.
- *
- * \param channel  Указатель на канал пользователя.
- * \param uniqueId Уникальный идентификатор пользователя.
- *
- * \return \b true если необходима проверка пароля.
- *
- * \bug Эта функция не работает.
- */
-bool AnonymousAuth::isPasswordRequired(ServerChannel *channel, const QByteArray &uniqueId)
-{
-  if (!channel->account())
-    return false;
-
-  FeedPtr feed = channel->hosts().feed();
-  if (feed->data().contains(SimpleID::encode(Hosts::toHostId(uniqueId, channel->id()))))
-    return false;
-
-  return false;
 }
 
 

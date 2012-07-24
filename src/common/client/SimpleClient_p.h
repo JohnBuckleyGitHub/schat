@@ -35,7 +35,6 @@ public:
   virtual ~SimpleClientPrivate();
 
   bool authReply(const AuthReply &reply);
-  bool isFatalError(int status) const;
   bool notice();
 
   int authType;    ///< Тип авторизации.
