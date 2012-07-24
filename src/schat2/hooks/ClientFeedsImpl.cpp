@@ -21,7 +21,6 @@
 #include "client/ClientChannels.h"
 #include "client/ClientFeeds.h"
 #include "debugstream.h"
-#include "feeds/AccountFeed.h"
 #include "feeds/FeedStorage.h"
 #include "hooks/ClientFeedsImpl.h"
 #include "net/packets/FeedNotice.h"
@@ -31,7 +30,6 @@
 ClientFeedsImpl::ClientFeedsImpl(QObject *parent)
   : Feeds(parent)
 {
-  FeedStorage::add(new AccountFeed());
   ChatClient::feeds()->hooks()->add(this);
 }
 

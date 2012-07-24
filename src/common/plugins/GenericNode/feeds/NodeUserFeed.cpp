@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Account.h"
 #include "DateTime.h"
 #include "feeds/NodeUserFeed.h"
 #include "net/SimpleID.h"
@@ -76,6 +77,12 @@ QVariantMap NodeUserFeed::feed(Channel *channel)
     }
   }
 
+  Account *account = ch->account();
+  if (!account->provider.isEmpty())
+    out[LS("provider")] = account->provider;
+
   out[LS("connections")] = connections;
+  out[LS("groups")]      = account->groups.toString();
+
   return out;
 }

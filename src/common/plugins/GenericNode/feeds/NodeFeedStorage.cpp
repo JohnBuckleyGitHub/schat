@@ -22,7 +22,6 @@
 
 #include "DataBase.h"
 #include "DateTime.h"
-#include "feeds/NodeAccountFeed.h"
 #include "feeds/NodeAclFeed.h"
 #include "feeds/NodeFeedStorage.h"
 #include "feeds/NodeHostsFeed.h"
@@ -36,7 +35,6 @@
 NodeFeedStorage::NodeFeedStorage(QObject *parent)
   : FeedStorage(parent)
 {
-  add(new NodeAccountFeed());
   add(new NodeAclFeed());
   add(new NodeTopicFeed());
   add(new NodeHostsFeed());
