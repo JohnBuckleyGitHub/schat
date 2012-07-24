@@ -20,9 +20,11 @@
 #include "cores/Core.h"
 #include "DataBase.h"
 #include "DateTime.h"
+#include "events.h"
 #include "feeds/FeedStorage.h"
 #include "Hosts.h"
 #include "net/packets/auth.h"
+#include "net/packets/ChannelNotice.h"
 #include "net/packets/FeedNotice.h"
 #include "plugins/GeoHook.h"
 #include "ServerChannel.h"
@@ -116,7 +118,7 @@ void Hosts::add(HostInfo hostInfo)
 
   DataBase::add(host);
   FeedStorage::save(feed());
-  updateUser();
+  updateUser(QByteArray(), hostInfo->socket);
 }
 
 
@@ -142,6 +144,28 @@ void Hosts::remove(quint64 socket)
 
   host->sockets.removeAll(socket);
   m_sockets.remove(socket);
+}
+
+
+void Hosts::unlink(const QByteArray &hostId)
+{
+  HostInfo host = m_hosts.value(hostId);
+  if (!host)
+    return;
+
+  m_hosts.remove(hostId);
+  DataBase::removeHost(hostId);
+
+  QList<quint64> sockets = host->sockets;
+  if (!sockets.isEmpty()) {
+    foreach (quint64 socket, sockets) {
+      m_sockets.remove(socket);
+    }
+
+    Core::i()->send(sockets, ChannelNotice::request(m_channel->id(), m_channel->id(), LS("quit"))->data(Core::stream()), NewPacketsEvent::KillSocketOption);
+  }
+
+  updateUser(hostId);
 }
 
 
@@ -190,14 +214,14 @@ QByteArray Hosts::publicId(quint64 socket) const
 /*!
  * Обновление фида \b user при отключении или подключении пользователя.
  */
-void Hosts::updateUser(const QByteArray &publicId)
+void Hosts::updateUser(const QByteArray &publicId, quint64 socket)
 {
   FeedPtr feed = user();
   FeedStorage::save(feed);
 
-  QList<quint64> sockets = ::Sockets::all(Ch::channel(m_channel->id()), true);
+  QList<quint64> sockets = Sockets::all(Ch::channel(m_channel->id()), true);
   if (publicId.isEmpty())
-    sockets.removeAll(Core::socket());
+    sockets.removeAll(socket);
 
   if (sockets.isEmpty())
     return;
