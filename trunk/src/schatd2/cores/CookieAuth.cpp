@@ -57,10 +57,8 @@ AuthResult CookieAuth::auth(const AuthRequest &data, ChatChannel channel)
   if (result.action == AuthResult::Reject)
     return result;
 
-  if (isPasswordRequired(channel.data(), data.uniqueId)) {
-    result = AuthResult(Notice::Unauthorized, data.id);
-    return result;
-  }
+  if (isPasswordRequired(channel.data(), data.uniqueId))
+    return AuthResult(Notice::Forbidden, data.id);
 
   update(channel.data(), data);
   if (!channel->isValid())
@@ -71,4 +69,25 @@ AuthResult CookieAuth::auth(const AuthRequest &data, ChatChannel channel)
 
   SCHAT_LOG_INFO_STR("COOKIE AUTH: " + channel->name().toUtf8() + '@' + m_core->packetsEvent()->address.toString().toUtf8() + '/' + SimpleID::encode(channel->id()) + ", " + data.host.toUtf8());
   return AuthResult(channel->id(), data.id);
+}
+
+
+/*!
+ * Проверка на необходимость принудительной авторизации,
+ * в случае подключения зарегистрированного пользователя с нового компьютера.
+ *
+ * \param channel  Указатель на канал пользователя.
+ * \param uniqueId Уникальный идентификатор пользователя.
+ *
+ * \return \b true если необходима авторизация.
+ */
+bool CookieAuth::isPasswordRequired(ServerChannel *channel, const QByteArray &uniqueId) const
+{
+  if (!channel->account() || channel->account()->provider.isEmpty())
+    return false;
+
+  if (channel->hosts().all().contains(Hosts::toHostId(uniqueId, channel->id())))
+    return false;
+
+  return true;
 }
