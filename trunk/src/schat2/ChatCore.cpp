@@ -67,7 +67,7 @@ ChatCore::ChatCore(QObject *parent)
 {
   m_self = this;
 
-  qsrand(QDateTime::currentDateTime().toTime_t());
+  qsrand(QTime(0,0,0).msecsTo(QTime::currentTime()) ^ reinterpret_cast<quintptr>(this));
 
   new ChatUrls(this);
   m_settings = new ChatSettings(Path::config(), this);

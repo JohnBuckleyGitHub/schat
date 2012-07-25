@@ -82,11 +82,11 @@ int AnonymousAuth::type() const
  * \param name   Имя канала.
  * \param authId Идентификатор авторизации.
  */
-AuthResult AnonymousAuth::isCollision(const QByteArray &id, const QString &name, const QByteArray &authId)
+AuthResult AnonymousAuth::isCollision(const QByteArray &id, const QString &name, const QByteArray &authId, bool override)
 {
   quint64 collisions = m_collisions.value(id);
 
-  if (Ch::isCollision(id, name)) {
+  if (Ch::isCollision(id, name, override)) {
     ++collisions;
     m_collisions[id] = collisions;
 

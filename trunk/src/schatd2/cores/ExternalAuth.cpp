@@ -147,7 +147,7 @@ AuthResult ExternalAuthTask::auth(const QVariantMap &data)
   if (SimpleID::typeOf(id) != SimpleID::UserId)
     return AuthResult(Notice::Forbidden, m_data.id);
 
-  AuthResult result = AnonymousAuth::isCollision(id, m_data.nick, m_data.id);
+  AuthResult result = AnonymousAuth::isCollision(id, m_data.nick, m_data.id, Storage::nickOverride());
   if (result.action == AuthResult::Reject) {
     if (result.status == Notice::NickAlreadyUse)
       m_cache[m_data.id + m_data.cookie] = data;

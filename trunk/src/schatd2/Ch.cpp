@@ -74,20 +74,25 @@ bool Ch::gc(ChatChannel channel)
 /*!
  * Проверка ника на коллизию.
  *
- * \param id   Идентификатор пользователя.
- * \param name Новый ник.
+ * \param id       Идентификатор пользователя.
+ * \param name     Новый ник.
+ * \param override \b true если разрешена перезапись ника.
  *
  * \return \b true если обнаружена коллизия.
  */
-bool Ch::isCollision(const QByteArray &id, const QString &name)
+bool Ch::isCollision(const QByteArray &id, const QString &name, bool override)
 {
   int type = SimpleID::typeOf(id);
+  QByteArray normalized = Normalize::toId(type, name);
 
-  ChatChannel channel = Ch::channel(Normalize::toId(type, name), type, false);
+  ChatChannel channel = Ch::channel(normalized, type, false);
   if (channel && channel->id() != id)
     return channel->id() != id;
 
-  return DataBase::isCollision(id, Normalize::toId(type, name), type);
+  if (override)
+    return DataBase::isCollision(id, normalized);
+
+  return DataBase::isCollision(id, normalized, type);
 }
 
 

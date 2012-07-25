@@ -46,8 +46,11 @@ Storage *Storage::m_self = 0;
 Storage::Storage(QObject *parent)
   : QObject(parent)
   , m_anonymous(true)
+  , m_nickOverride(true)
 {
   m_self = this;
+  qsrand(QTime(0,0,0).msecsTo(QTime::currentTime()) ^ reinterpret_cast<quintptr>(this));
+
   Path::init();
   Normalize::init();
 
@@ -56,12 +59,13 @@ Storage::Storage(QObject *parent)
 
   // Инициализация настроек по умолчанию.
   m_settings = new Settings(etcPath() + LC('/') + Path::app() + LS(".conf"), this);
-  m_settings->setDefault(LS("AnonymousAuth"), true);
+  m_settings->setDefault(LS("AnonymousAuth"), m_anonymous);
   m_settings->setDefault(LS("AuthServer"),    LS("https://auth.schat.me"));
   m_settings->setDefault(LS("Certificate"),   LS("server.crt"));
   m_settings->setDefault(LS("Listen"),        QStringList("0.0.0.0:7667"));
   m_settings->setDefault(LS("LogLevel"),      2);
   m_settings->setDefault(LS("MaxOpenFiles"),  0);
+  m_settings->setDefault(LS("NickOverride"),  m_nickOverride);
   m_settings->setDefault(LS("PrivateId"),     QString(SimpleID::encode(SimpleID::uniqueId())));
   m_settings->setDefault(LS("PrivateKey"),    LS("server.key"));
   m_settings->setDefault(LS("Workers"),       0);
@@ -147,9 +151,10 @@ int Storage::start()
     SCHAT_LOG_WARN("Сonfiguration option \"PrivateId\" uses a default value, please set your own private ID")
   }
 
-  m_id         = SimpleID::make(m_privateId, SimpleID::ServerId);
-  m_anonymous  = m_settings->value(LS("AnonymousAuth")).toBool();
-  m_authServer = m_settings->value(LS("AuthServer")).toString();
+  m_id           = SimpleID::make(m_privateId, SimpleID::ServerId);
+  m_anonymous    = m_settings->value(LS("AnonymousAuth")).toBool();
+  m_nickOverride = m_settings->value(LS("NickOverride")).toBool();
+  m_authServer   = m_settings->value(LS("AuthServer")).toString();
 
   DataBase::start();
   return 0;
