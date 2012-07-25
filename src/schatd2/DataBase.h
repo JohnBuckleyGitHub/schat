@@ -43,11 +43,12 @@ public:
   static qint64 addGroup(const QString &name, const QString &permissions = QString());
 
   // channels.
-  static bool isCollision(const QByteArray &id, const QByteArray &normalized, int type);
   static ChatChannel channel(const QByteArray &id, int type = SimpleID::ChannelId);
   static ChatChannel channel(qint64 id);
   static qint64 add(ChatChannel channel);
   static qint64 channelKey(const QByteArray &id, int type = SimpleID::ChannelId);
+  static qint64 isCollision(const QByteArray &id, const QByteArray &normalized);
+  static qint64 isCollision(const QByteArray &id, const QByteArray &normalized, int type);
   static QString nick(qint64 id);
   static void saveData(Channel *channel);
   static void update(ChatChannel channel);

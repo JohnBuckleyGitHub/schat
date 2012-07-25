@@ -33,6 +33,7 @@
 #include "JSON.h"
 #include "net/SimpleID.h"
 #include "NodeLog.h"
+#include "Normalize.h"
 #include "Path.h"
 #include "sglobal.h"
 #include "Storage.h"
@@ -231,21 +232,6 @@ qint64 DataBase::addGroup(const QString &name, const QString &permissions)
 }
 
 
-bool DataBase::isCollision(const QByteArray &id, const QByteArray &normalized, int type)
-{
-  QSqlQuery query;
-  query.prepare(LS("SELECT channel FROM channels WHERE normalized = :normalized AND type = :type LIMIT 1;"));
-  query.bindValue(LS(":normalized"), normalized);
-  query.bindValue(LS(":type"), type);
-  query.exec();
-
-  if (!query.first())
-    return false;
-
-  return query.value(0).toByteArray() != id;
-}
-
-
 /*!
  * Получение канала на основе идентификатора канала или нормализированного имени и типа канала.
  */
@@ -379,6 +365,78 @@ qint64 DataBase::channelKey(const QByteArray &id, int type)
 
   if (!query.first())
     return -1;
+
+  return query.value(0).toLongLong();
+}
+
+
+qint64 DataBase::isCollision(const QByteArray &id, const QByteArray &normalized)
+{
+  qint64 key = isCollision(id, normalized, SimpleID::UserId);
+  if (!key)
+    return 0;
+
+  // Перезапись ника возможна только при регистрации.
+  if (channelKey(id, SimpleID::UserId) != -1)
+    return key;
+
+  QSqlQuery query;
+  query.prepare(LS("SELECT provider FROM accounts WHERE channel = :channel LIMIT 1;"));
+  query.bindValue(LS(":channel"), key);
+  query.exec();
+
+  if (!query.first())
+    return key;
+
+  // Если имя провайдера не пустое, перезапись невозможна.
+  if (!query.value(0).toString().isEmpty())
+    return key;
+
+  query.prepare(LS("SELECT name FROM channels WHERE id = :id LIMIT 1;"));
+  query.bindValue(LS(":id"), key);
+  query.exec();
+
+  if (!query.first())
+    return key;
+
+  QString nick = query.value(0).toString().left(Channel::MaxNameLength - 3) + QString::number(qrand() % 899 + 100);
+  QByteArray n = Normalize::toId(SimpleID::UserId, nick);
+  // Пользователь с новый ником уже существует.
+  if (channelKey(n, SimpleID::UserId) != -1)
+    return key;
+
+  query.prepare(LS("UPDATE channels SET normalized = :normalized, name = :name WHERE id = :id;"));
+  query.bindValue(LS(":normalized"), n);
+  query.bindValue(LS(":name"),       nick);
+  query.bindValue(LS(":id"),         key);
+  query.exec();
+
+  if (!query.numRowsAffected())
+    return key;
+
+  return 0;
+}
+
+
+/*!
+ * Прямое обращение к базе данных для проверки на коллизию имени канала.
+ *
+ * \param id         Идентификатор канала.
+ * \param normalized Идентификатор нормализированного имени канала.
+ * \param type       Тип канала.
+ *
+ * \return 0 если коллизия не обнаружена или ключ существующего канала в таблице \b channels.
+ */
+qint64 DataBase::isCollision(const QByteArray &id, const QByteArray &normalized, int type)
+{
+  QSqlQuery query;
+  query.prepare(LS("SELECT id, channel FROM channels WHERE normalized = :normalized AND type = :type LIMIT 1;"));
+  query.bindValue(LS(":normalized"), normalized);
+  query.bindValue(LS(":type"), type);
+  query.exec();
+
+  if (!query.first() || query.value(1).toByteArray() == id)
+    return 0;
 
   return query.value(0).toLongLong();
 }

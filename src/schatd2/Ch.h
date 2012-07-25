@@ -40,7 +40,7 @@ public:
   inline static void remove(Ch *hook)                                                      { m_self->m_hooks.removeAll(hook); }
   inline static void remove(ChatChannel channel)                                           { m_self->removeImpl(channel); }
   static bool gc(ChatChannel channel);
-  static bool isCollision(const QByteArray &id, const QString &name);
+  static bool isCollision(const QByteArray &id, const QString &name, bool override = false);
   static ChatChannel channel(const QByteArray &id, int type = SimpleID::ChannelId, bool db = true);
   static ChatChannel channel(const QString &name, ChatChannel user = ChatChannel());
   static ChatChannel server();
