@@ -16,28 +16,23 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "MessagesCh.h"
-#include "sglobal.h"
+#ifndef NODEPROFILEFEED_H_
+#define NODEPROFILEFEED_H_
 
-MessagesCh::MessagesCh(QObject *parent)
-  : Ch(parent)
+#include "feeds/Feed.h"
+
+class NodeProfileFeed : public Feed
 {
-}
+public:
+  NodeProfileFeed(const QString &name, const QVariantMap &data);
+  NodeProfileFeed(const QString &name = QLatin1String("profile"), qint64 date = 0);
+  Feed* create(const QString &name);
+  Feed* load(const QString &name, const QVariantMap &data);
 
+  QVariantMap feed(Channel *channel = 0);
 
-void MessagesCh::channelImpl(ChatChannel channel, ChatChannel /*user*/)
-{
-  addNewFeedIfNotExist(channel, LS("history"));
-}
+protected:
+  FeedQueryReply set(const QVariantMap &json, Channel *channel);
+};
 
-
-void MessagesCh::newChannelImpl(ChatChannel channel, ChatChannel user)
-{
-  addNewFeedIfNotExist(channel, LS("history"), user);
-}
-
-
-void MessagesCh::userChannelImpl(ChatChannel channel, const AuthRequest & /*data*/, const QString & /*host*/, bool /*created*/, quint64 /*socket*/)
-{
-  addNewUserFeedIfNotExist(channel, LS("history"));
-}
+#endif /* NODEPROFILEFEED_H_ */

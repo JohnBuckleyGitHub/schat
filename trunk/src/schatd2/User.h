@@ -38,7 +38,10 @@ public:
 class SCHAT_EXPORT User
 {
 public:
-  User(ServerChannel *channel = 0);
+  User();
+  bool set(const QString &key, const QVariant &value);
+  QVariantMap toMap() const;
+  void toMap(QVariantMap &out) const;
 
   qint64 date;       ///< Дата модификации.
   QString name;      ///< Имя пользователя.
@@ -51,7 +54,7 @@ public:
   QVariantMap extra; ///< Дополнительные поля.
 
 private:
-  ServerChannel *m_channel; ///< Канал.
+  bool setString(QString &key, const QVariant &value);
 };
 
 #endif /* USER_H_ */

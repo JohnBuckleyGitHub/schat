@@ -389,7 +389,7 @@ void Ch::serverImpl(ChatChannel channel, bool created)
  * \param name    Имя фида.
  * \param user    Пользователь.
  */
-void Ch::addNewFeedIsNotExist(ChatChannel channel, const QString &name, ChatChannel user)
+void Ch::addNewFeedIfNotExist(ChatChannel channel, const QString &name, ChatChannel user)
 {
   if (channel->type() != SimpleID::ChannelId)
     return;
@@ -412,7 +412,7 @@ void Ch::addNewFeedIsNotExist(ChatChannel channel, const QString &name, ChatChan
  * \param channel Канал-пользователь.
  * \param name    Имя фида.
  */
-void Ch::addNewUserFeedIsNotExist(ChatChannel channel, const QString &name)
+void Ch::addNewUserFeedIfNotExist(ChatChannel channel, const QString &name)
 {
   FeedPtr feed = channel->feed(name, false);
   if (feed)

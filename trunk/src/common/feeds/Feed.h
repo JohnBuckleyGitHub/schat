@@ -77,12 +77,13 @@ public:
   static void merge(QVariantMap &out, const QVariantMap &in);
 
 protected:
+  virtual FeedQueryReply set(const QVariantMap &json, Channel *channel);
+
   FeedHeader m_header;  ///< Заголовок фида.
   QVariantMap m_data;   ///< JSON данные фида.
 
 private:
   FeedQueryReply mask(const QVariantMap &json, Channel *channel);
-  FeedQueryReply set(const QVariantMap &json, Channel *channel);
 };
 
 typedef QSharedPointer<Feed> FeedPtr;

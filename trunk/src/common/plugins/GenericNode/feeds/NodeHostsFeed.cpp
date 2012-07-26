@@ -60,6 +60,9 @@ Feed* NodeHostsFeed::load(const QString &name, const QVariantMap &data)
  */
 FeedQueryReply NodeHostsFeed::query(const QVariantMap &json, Channel *channel)
 {
+  if (head().channel()->type() != SimpleID::UserId)
+    return FeedQueryReply(Notice::InternalError);
+
   QString action = json.value(LS("action")).toString();
   if (action.isEmpty())
     return FeedQueryReply(Notice::BadRequest);
@@ -79,6 +82,9 @@ FeedQueryReply NodeHostsFeed::query(const QVariantMap &json, Channel *channel)
  */
 QVariantMap NodeHostsFeed::feed(Channel *channel)
 {
+  if (head().channel()->type() != SimpleID::UserId)
+    return QVariantMap();
+
   QVariantMap header = head().get(channel);
   if (header.isEmpty())
     return QVariantMap();

@@ -16,7 +16,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "DateTime.h"
 #include "User.h"
+#include "sglobal.h"
 
 Birthday::Birthday(quint8 day, quint8 month, quint16 year)
   : day(day)
@@ -26,8 +28,61 @@ Birthday::Birthday(quint8 day, quint8 month, quint16 year)
 }
 
 
-User::User(ServerChannel *channel)
+User::User()
   : date(0)
-  , m_channel(channel)
 {
+}
+
+
+/*!
+ * Установка поля профиля.
+ */
+bool User::set(const QString &key, const QVariant &value)
+{
+  bool modified = false;
+
+  if (key == LS("name"))
+    return setString(name, value);
+  else {
+    modified = extra.value(key) != value;
+    if (modified)
+      extra[key] = value;
+  }
+
+  if (modified)
+    date = DateTime::utc();
+
+  return modified;
+}
+
+
+QVariantMap User::toMap() const
+{
+  QVariantMap out;
+  toMap(out);
+  return out;
+}
+
+
+void User::toMap(QVariantMap &out) const
+{
+  QMapIterator<QString, QVariant> i(extra);
+  while (i.hasNext()) {
+    i.next();
+    out[i.key()] = i.value();
+  }
+
+  if (!name.isEmpty())
+    out[LS("name")] = name;
+}
+
+
+bool User::setString(QString &key, const QVariant &value)
+{
+  if (key == value)
+    return false;
+
+  date = DateTime::utc();
+  key = value.toString();
+  return true;
 }
