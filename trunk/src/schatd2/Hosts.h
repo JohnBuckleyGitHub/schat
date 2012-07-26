@@ -34,7 +34,7 @@ class ServerChannel;
 class SCHAT_EXPORT Hosts
 {
 public:
-  Hosts();
+  Hosts(ServerChannel *channel);
   inline QList<quint64> sockets() const          { return m_sockets.keys(); }
   inline void setChannel(ServerChannel *channel) { m_channel = channel; }
 

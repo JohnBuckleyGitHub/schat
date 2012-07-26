@@ -23,9 +23,11 @@
 #include "Hosts.h"
 
 class ServerChannel;
-
 typedef QSharedPointer<ServerChannel> ChatChannel;
 
+/*!
+ * Серверный канал.
+ */
 class SCHAT_EXPORT ServerChannel: public Channel
 {
 public:
@@ -34,10 +36,9 @@ public:
   ~ServerChannel();
   static QString serverName(const QString &name);
 
-  inline const Hosts& hosts() const            { return m_hosts; }
+  inline Hosts* hosts() const                  { return m_hosts; }
   inline const QByteArray& normalized() const  { return m_normalized; }
-  inline Hosts& hosts()                        { return m_hosts; }
-  inline QList<quint64> sockets() const        { return m_hosts.sockets(); }
+  inline QList<quint64> sockets() const        { return m_hosts->sockets(); }
 
   bool setName(const QString &name);
   void createAccount();
@@ -49,7 +50,7 @@ public:
 private:
   void normalize();
 
-  Hosts m_hosts;            ///< Информация о хостах.
+  Hosts *m_hosts;           ///< Информация о хостах.
   QByteArray m_normalized;  ///< Нормализованное имя канала.
 };
 

@@ -20,6 +20,7 @@
 #include <QSslConfiguration>
 #include <QSslKey>
 #include <QStringList>
+#include <QTime>
 #include <QUuid>
 
 #if defined(Q_OS_UNIX)

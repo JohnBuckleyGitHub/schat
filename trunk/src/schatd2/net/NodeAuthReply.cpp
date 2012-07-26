@@ -37,7 +37,7 @@ NodeAuthReply::NodeAuthReply(const AuthResult &result, ChatChannel channel)
   if (channel) {
     userId   = channel->id();
     cookie   = channel->account()->cookie;
-    hostId   = channel->hosts().id();
+    hostId   = channel->hosts()->id();
     provider = channel->account()->provider;
   }
   else

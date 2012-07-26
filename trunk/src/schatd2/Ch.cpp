@@ -184,7 +184,7 @@ void Ch::newUserChannel(ChatChannel channel, const AuthRequest &data, const QStr
   if (!socket)
     socket = Core::socket();
 
-  channel->hosts().add(HostInfo(new Host(data, host, socket)));
+  channel->hosts()->add(HostInfo(new Host(data, host, socket)));
 
   foreach (Ch *hook, m_self->m_hooks) {
     hook->userChannelImpl(channel, data, host, created, socket);

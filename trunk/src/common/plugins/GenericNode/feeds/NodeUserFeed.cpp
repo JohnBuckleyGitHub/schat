@@ -62,7 +62,7 @@ QVariantMap NodeUserFeed::feed(Channel *channel)
   QVariantMap connections;
 
   ServerChannel *ch = static_cast<ServerChannel *>(head().channel());
-  const QHash<QByteArray, HostInfo> &hosts = ch->hosts().all();
+  const QHash<QByteArray, HostInfo> &hosts = ch->hosts()->all();
   foreach (const HostInfo &info, hosts) {
     if (info->online) {
       QVariantMap data;

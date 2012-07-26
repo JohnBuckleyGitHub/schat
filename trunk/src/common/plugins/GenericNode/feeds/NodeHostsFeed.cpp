@@ -87,7 +87,7 @@ QVariantMap NodeHostsFeed::feed(Channel *channel)
   out[LS("head")] = header;
 
   ServerChannel *user = static_cast<ServerChannel *>(head().channel());
-  const QHash<QByteArray, HostInfo> &hosts = user->hosts().all();
+  const QHash<QByteArray, HostInfo> &hosts = user->hosts()->all();
   foreach (const HostInfo &info, hosts) {
     QVariantMap data;
     data[LS("online")]  = info->online;
@@ -121,10 +121,10 @@ FeedQueryReply NodeHostsFeed::unlink(const QVariantMap &json, Channel *channel)
     return FeedQueryReply(Notice::BadRequest);
 
   ServerChannel *user = static_cast<ServerChannel *>(head().channel());
-  if (!user->hosts().all().contains(id))
+  if (!user->hosts()->all().contains(id))
     return FeedQueryReply(Notice::NotFound);
 
-  user->hosts().unlink(id);
+  user->hosts()->unlink(id);
 
   FeedQueryReply reply = FeedQueryReply(Notice::OK);
   reply.json[LS("action")] = LS("unlink");
