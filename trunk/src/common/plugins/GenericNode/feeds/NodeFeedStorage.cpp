@@ -84,11 +84,11 @@ int NodeFeedStorage::revertImpl(FeedPtr feed, const QVariantMap &data)
  *
  * \param feed Фид.
  */
-int NodeFeedStorage::saveImpl(FeedPtr feed)
+int NodeFeedStorage::saveImpl(FeedPtr feed, qint64 date)
 {
   FeedHeader &head = feed->head();
   head.data().remove(LS("size"));
-  head.data()[LS("date")] = DateTime::utc();
+  head.data()[LS("date")] = date;
   head.setRev(rev(feed));
 
   QByteArray json = JSON::generate(feed->save());
@@ -113,7 +113,7 @@ void NodeFeedStorage::cloneImpl(FeedPtr feed)
   FeedHeader& head = feed->head();
   head.setRev(feed->head().rev() + 1);
   head.setKey(0);
-  saveImpl(feed);
+  saveImpl(feed, DateTime::utc());
 }
 
 
