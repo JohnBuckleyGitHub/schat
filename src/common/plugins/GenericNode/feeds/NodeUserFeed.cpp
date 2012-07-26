@@ -52,6 +52,9 @@ Feed* NodeUserFeed::load(const QString &name, const QVariantMap &data)
 
 QVariantMap NodeUserFeed::feed(Channel *channel)
 {
+  if (head().channel()->type() != SimpleID::UserId)
+    return QVariantMap();
+
   QVariantMap header = head().get(channel);
   if (header.isEmpty())
     return QVariantMap();

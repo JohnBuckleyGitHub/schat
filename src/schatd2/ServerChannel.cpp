@@ -36,7 +36,7 @@ ServerChannel::ServerChannel(ClientChannel channel)
 
   if (SimpleID::typeOf(id()) == SimpleID::UserId) {
     m_hosts = new Hosts(this);
-    m_user  = new User(this);
+    m_user  = new User();
   }
 }
 
@@ -50,7 +50,7 @@ ServerChannel::ServerChannel(const QByteArray &id, const QString &name)
 
   if (SimpleID::typeOf(id) == SimpleID::UserId) {
     m_hosts = new Hosts(this);
-    m_user  = new User(this);
+    m_user  = new User();
   }
 }
 

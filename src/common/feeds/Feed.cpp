@@ -199,29 +199,6 @@ void Feed::merge(QVariantMap &out, const QVariantMap &in)
 }
 
 
-/*!
- * Установка маски прав доступа к фиду.
- * Эта операция требует прав на редактирование.
- * Новая маска содержится в поле \b mask запроса \p json.
- *
- * \param json    Тело запроса.
- * \param channel Канал для проверки прав доступа.
- */
-FeedQueryReply Feed::mask(const QVariantMap &json, Channel *channel)
-{
-  if (!canEdit(channel))
-    return FeedQueryReply(Notice::Forbidden);
-
-  if (!json.contains(LS("mask")))
-    return FeedQueryReply(Notice::BadRequest);
-
-  head().acl().setMask(json.value(LS("mask")).toInt());
-  FeedQueryReply reply(Notice::OK);
-  reply.modified = true;
-  return reply;
-}
-
-
 FeedQueryReply Feed::set(const QVariantMap &json, Channel *channel)
 {
   if (!canWrite(channel))
@@ -249,5 +226,28 @@ FeedQueryReply Feed::set(const QVariantMap &json, Channel *channel)
   if (modified)
     reply.modified = true;
 
+  return reply;
+}
+
+
+/*!
+ * Установка маски прав доступа к фиду.
+ * Эта операция требует прав на редактирование.
+ * Новая маска содержится в поле \b mask запроса \p json.
+ *
+ * \param json    Тело запроса.
+ * \param channel Канал для проверки прав доступа.
+ */
+FeedQueryReply Feed::mask(const QVariantMap &json, Channel *channel)
+{
+  if (!canEdit(channel))
+    return FeedQueryReply(Notice::Forbidden);
+
+  if (!json.contains(LS("mask")))
+    return FeedQueryReply(Notice::BadRequest);
+
+  head().acl().setMask(json.value(LS("mask")).toInt());
+  FeedQueryReply reply(Notice::OK);
+  reply.modified = true;
   return reply;
 }

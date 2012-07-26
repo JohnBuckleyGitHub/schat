@@ -79,8 +79,8 @@ protected:
   virtual void userChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host, bool created, quint64 socket);
 
   // Служебные функции.
-  void addNewFeedIsNotExist(ChatChannel channel, const QString &name, ChatChannel user = ChatChannel());
-  void addNewUserFeedIsNotExist(ChatChannel channel, const QString &name);
+  void addNewFeedIfNotExist(ChatChannel channel, const QString &name, ChatChannel user = ChatChannel());
+  void addNewUserFeedIfNotExist(ChatChannel channel, const QString &name);
 
   Cache m_cache;      ///< Кеш хранилища.
 

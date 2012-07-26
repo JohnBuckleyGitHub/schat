@@ -34,7 +34,7 @@ void GenericCh::channelImpl(ChatChannel channel, ChatChannel /*user*/)
 
 void GenericCh::newChannelImpl(ChatChannel channel, ChatChannel user)
 {
-  addNewFeedIsNotExist(channel, LS("acl"), user);
+  addNewFeedIfNotExist(channel, LS("acl"), user);
 }
 
 
@@ -51,5 +51,6 @@ void GenericCh::userChannelImpl(ChatChannel channel, const AuthRequest & /*data*
 
   channel->feed(LS("account"));
 
-  addNewUserFeedIsNotExist(channel, LS("acl"));
+  addNewUserFeedIfNotExist(channel, LS("acl"));
+  addNewUserFeedIfNotExist(channel, LS("profile"));
 }
