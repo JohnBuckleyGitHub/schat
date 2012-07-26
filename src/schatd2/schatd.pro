@@ -52,6 +52,7 @@ HEADERS = \
     ServerChannel.h \
     Sockets.h \
     Storage.h \
+    User.h \
 
 SOURCES = \
     Ch.cpp \
@@ -79,6 +80,7 @@ SOURCES = \
     ServerChannel.cpp \
     Sockets.cpp \
     Storage.cpp \
+    User.cpp \
 
 include(../common/client.pri)
 

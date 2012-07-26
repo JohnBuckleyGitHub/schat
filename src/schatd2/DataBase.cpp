@@ -212,6 +212,24 @@ int DataBase::start()
     ");"
   ));
 
+  query.exec(LS(
+    "CREATE TABLE IF NOT EXISTS profiles ( "
+    "  id         INTEGER PRIMARY KEY,"
+    "  channel    INTEGER UNIQUE,"
+    "  date       INTEGER DEFAULT ( 0 ),"
+    "  name       TEXT,"
+    "  email      TEXT,"
+    "  city       TEXT,"
+    "  country    TEXT,"
+    "  link       TEXT,"
+    "  site       TEXT,"
+    "  year       INTEGER DEFAULT ( 0 ),"
+    "  month      INTEGER DEFAULT ( 0 ),"
+    "  day        INTEGER DEFAULT ( 0 ),"
+    "  extra      BLOB"
+    ");"
+  ));
+
   version();
   return 0;
 }
