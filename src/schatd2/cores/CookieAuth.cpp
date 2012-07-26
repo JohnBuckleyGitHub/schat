@@ -86,7 +86,7 @@ bool CookieAuth::isPasswordRequired(ServerChannel *channel, const QByteArray &un
   if (!channel->account() || channel->account()->provider.isEmpty())
     return false;
 
-  if (channel->hosts().all().contains(Hosts::toHostId(uniqueId, channel->id())))
+  if (channel->hosts()->all().contains(Hosts::toHostId(uniqueId, channel->id())))
     return false;
 
   return true;

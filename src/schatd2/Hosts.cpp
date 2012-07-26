@@ -33,9 +33,9 @@
 #include "Storage.h"
 #include "tools/Ver.h"
 
-Hosts::Hosts()
+Hosts::Hosts(ServerChannel *channel)
   : m_date(0)
-  , m_channel(0)
+  , m_channel(channel)
 {
 }
 
