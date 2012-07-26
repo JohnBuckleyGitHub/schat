@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "DateTime.h"
 #include "feeds/FeedStorage.h"
 #include "net/packets/Notice.h"
 
@@ -64,6 +65,30 @@ Feed* FeedStorage::load(const QString &name, const QVariantMap &data)
 }
 
 
+/*!
+ * Сохранение фида.
+ *
+ * \param feed Фид.
+ * \param date Дата модификации фида, если 0 будет использована текущая дата.
+ *
+ * \rerurn Notice::OK если фид сохранён успешно.
+ */
+int FeedStorage::save(FeedPtr feed, qint64 date)
+{
+  int status = Notice::OK;
+  if (date == 0)
+    date = DateTime::utc();
+
+  foreach (FeedStorage *hook, m_self->m_hooks) {
+    status = hook->saveImpl(feed, date);
+    if (status != Notice::OK)
+      return status;
+  }
+
+  return status;
+}
+
+
 int FeedStorage::revertImpl(FeedPtr feed, const QVariantMap &data)
 {
   if (m_self != this)
@@ -79,17 +104,8 @@ int FeedStorage::revertImpl(FeedPtr feed, const QVariantMap &data)
 }
 
 
-int FeedStorage::saveImpl(FeedPtr feed)
+int FeedStorage::saveImpl(FeedPtr /*feed*/, qint64 /*date*/)
 {
-  if (m_self != this)
-    return Notice::OK;
-
-  foreach (FeedStorage *hook, m_hooks) {
-    int status = hook->saveImpl(feed);
-    if (status != Notice::OK)
-      return status;
-  }
-
   return Notice::OK;
 }
 

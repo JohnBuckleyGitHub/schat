@@ -27,7 +27,7 @@ class CacheFeedStorage : public FeedStorage
 
 public:
   CacheFeedStorage(QObject *parent = 0);
-  int saveImpl(FeedPtr feed);
+  int saveImpl(FeedPtr feed, qint64 date);
   void loadImpl(Channel *channel);
 
 private:

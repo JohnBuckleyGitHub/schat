@@ -37,7 +37,7 @@ CacheFeedStorage::CacheFeedStorage(QObject *parent)
  *
  * \param feed Фид.
  */
-int CacheFeedStorage::saveImpl(FeedPtr feed)
+int CacheFeedStorage::saveImpl(FeedPtr feed, qint64 /*date*/)
 {
   FeedHeader &head = feed->head();
   QVariantMap feeds = head.channel()->data().value(LS("feeds")).toMap();

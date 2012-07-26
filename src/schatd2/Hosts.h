@@ -57,6 +57,7 @@ private:
 
   QHash<QByteArray, HostInfo> m_hosts; ///< Таблица хостов, в качестве ключа публичный идентификатор хоста.
   QHash<quint64, HostInfo> m_sockets;  ///< Таблица сокетов и ассоциированных с ними хостов.
+  qint64 m_date;                       ///< Последняя дата модификации.
   ServerChannel *m_channel;            ///< Канал.
 };
 

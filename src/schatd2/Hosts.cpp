@@ -34,7 +34,8 @@
 #include "tools/Ver.h"
 
 Hosts::Hosts()
-  : m_channel(0)
+  : m_date(0)
+  , m_channel(0)
 {
 }
 
@@ -111,13 +112,15 @@ void Hosts::add(HostInfo hostInfo)
   host->channel = m_channel->key();
   host->hostId  = id;
   host->geo     = GeoHook::geo(host->address);
-  host->date    = DateTime::utc();
+
+  m_date = DateTime::utc();
+  host->date = m_date;
 
   host->sockets.append(hostInfo->socket);
   m_sockets[hostInfo->socket] = host;
 
   DataBase::add(host);
-  FeedStorage::save(feed());
+  FeedStorage::save(feed(), m_date);
   updateUser(QByteArray(), hostInfo->socket);
 }
 
@@ -136,9 +139,11 @@ void Hosts::remove(quint64 socket)
 
   if (host->sockets.size() == 1) {
     host->online = false;
-    host->date   = DateTime::utc();
+    m_date = DateTime::utc();
+    host->date = m_date;
+
     DataBase::add(host);
-    FeedStorage::save(feed());
+    FeedStorage::save(feed(), m_date);
     updateUser(host->hostId);
   }
 
@@ -217,7 +222,7 @@ QByteArray Hosts::publicId(quint64 socket) const
 void Hosts::updateUser(const QByteArray &publicId, quint64 socket)
 {
   FeedPtr feed = user();
-  FeedStorage::save(feed);
+  FeedStorage::save(feed, m_date);
 
   QList<quint64> sockets = Sockets::all(Ch::channel(m_channel->id()), true);
   if (publicId.isEmpty())

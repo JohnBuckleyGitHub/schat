@@ -30,7 +30,7 @@ public:
 
 protected:
   int revertImpl(FeedPtr feed, const QVariantMap &data);
-  int saveImpl(FeedPtr feed);
+  int saveImpl(FeedPtr feed, qint64 date);
   void cloneImpl(FeedPtr feed);
   void loadImpl(Channel *channel);
   void removeImpl(FeedPtr feed);
