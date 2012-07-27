@@ -45,6 +45,18 @@ bool User::set(const QString &key, const QVariant &value)
 
   if (key == LS("name"))
     return setString(name, value);
+  else if (key == LS("email"))
+    return setString(email, value);
+  else if (key == LS("city"))
+    return setString(city, value);
+  else if (key == LS("country"))
+    return setString(country, value);
+  else if (key == LS("link"))
+    return setString(link, value);
+  else if (key == LS("site"))
+    return setString(site, value);
+  else if (key == LS("birthday"))
+    return setString(birthday, value);
   else {
     modified = extra.value(key) != value;
     if (modified)
@@ -78,6 +90,24 @@ void User::toMap(QVariantMap &out) const
 
   if (!name.isEmpty())
     out[LS("name")] = name;
+
+  if (!email.isEmpty())
+    out[LS("email")] = email;
+
+  if (!city.isEmpty())
+    out[LS("city")] = city;
+
+  if (!country.isEmpty())
+    out[LS("country")] = country;
+
+  if (!link.isEmpty())
+    out[LS("link")] = link;
+
+  if (!site.isEmpty())
+    out[LS("site")] = site;
+
+  if (!birthday.isEmpty())
+    out[LS("birthday")] = birthday;
 }
 
 
