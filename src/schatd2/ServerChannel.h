@@ -40,7 +40,7 @@ public:
 
   inline const QByteArray& normalized() const  { return m_normalized; }
   inline Hosts* hosts() const                  { return m_hosts; }
-  inline QList<quint64> sockets() const        { return m_hosts->sockets(); }
+  inline QList<quint64> sockets() const        { if (m_hosts) return m_hosts->sockets(); return QList<quint64>(); }
   inline User* user() const                    { return m_user; }
 
   bool setName(const QString &name);
