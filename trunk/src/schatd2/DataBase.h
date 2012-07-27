@@ -93,10 +93,6 @@ public:
   void run();
 
 private:
-  qint64 key();
-  void add();
-  void update(qint64 key);
-
   Host m_host; ///< Информация о хосте пользователя.
 };
 
@@ -111,8 +107,6 @@ public:
   void run();
 
 private:
-  qint64 key();
-
   User m_user;
 };
 
