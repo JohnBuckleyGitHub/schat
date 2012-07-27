@@ -22,6 +22,7 @@
 #include <QSslError>
 #include <QTimer>
 #include <QUrl>
+#include <QTimerEvent>
 
 #include "client/AuthClient.h"
 #include "JSON.h"
@@ -30,24 +31,50 @@
 
 AuthClient::AuthClient(QObject *parent)
   : QObject(parent)
+  , m_retry(0)
   , m_reply(0)
 {
+  m_timer = new QBasicTimer();
   m_manager = new QNetworkAccessManager(this);
+}
+
+
+AuthClient::~AuthClient()
+{
+  delete m_timer;
 }
 
 
 void AuthClient::start(const QString &url)
 {
+  if (m_timer->isActive())
+    m_timer->stop();
+
+  deleteReply();
+
+  m_retry = 1;
   m_url    = url;
   m_secret = SimpleID::encode(SimpleID::randomId(SimpleID::PasswordId));
   m_state  = SimpleID::encode(SimpleID::make(QUrl(url).host().toUtf8() + m_secret, SimpleID::MessageId));
 
   QNetworkRequest request(QUrl(url + LS("/providers?state=") + m_state));
-  request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::AlwaysNetwork);
 
   m_reply = m_manager->get(request);
   connect(m_reply, SIGNAL(finished()), SLOT(providersReady()));
   connect(m_reply, SIGNAL(sslErrors(QList<QSslError>)), SLOT(sslErrors()));
+}
+
+
+void AuthClient::timerEvent(QTimerEvent *event)
+{
+  if (event->timerId() == m_timer->timerId()) {
+    m_timer->stop();
+    if (m_reply)
+      m_reply->abort();
+//    getState();
+  }
+
+  QObject::timerEvent(event);
 }
 
 
@@ -58,13 +85,15 @@ void AuthClient::start(const QString &url)
  */
 void AuthClient::getState()
 {
-  QNetworkRequest request(QUrl(m_url + LS("/state/") + m_state));
-  request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::AlwaysNetwork);
+  QNetworkRequest request(QUrl(m_url + LS("/state/") + m_state + LS("?retry=") + QString::number(m_retry)));
   request.setRawHeader("X-SChat-Secret", m_secret);
 
+  m_retry++;
   m_reply = m_manager->get(request);
   connect(m_reply, SIGNAL(finished()), SLOT(stateReady()));
   connect(m_reply, SIGNAL(sslErrors(QList<QSslError>)), SLOT(sslErrors()));
+
+  m_timer->start(30000, this);
 }
 
 
@@ -79,7 +108,7 @@ void AuthClient::providersReady()
   if (data.isEmpty())
     return setError(QNetworkReply::UnknownContentError);
 
-  m_reply->deleteLater();
+  deleteReply();
   emit providersReady(data);
 
   getState();
@@ -96,7 +125,7 @@ void AuthClient::stateReady()
 {
   int error = m_reply->error();
   if (error) {
-    m_reply->deleteLater();
+    deleteReply();
 
     if (error == QNetworkReply::ContentOperationNotPermittedError)
       emit forbidden();
@@ -107,7 +136,7 @@ void AuthClient::stateReady()
   }
 
   QByteArray raw = m_reply->readAll();
-  m_reply->deleteLater();
+  deleteReply();
 
   QVariantMap data  = JSON::parse(raw).toMap();
   if (data.isEmpty())
@@ -126,8 +155,18 @@ void AuthClient::stateReady()
 
 void AuthClient::setError(int errorCode)
 {
-  m_reply->deleteLater();
+  deleteReply();
   emit error(errorCode);
+}
+
+
+void AuthClient::deleteReply()
+{
+  if (!m_reply)
+    return;
+
+  m_reply->deleteLater();
+  m_reply = 0;
 }
 
 
