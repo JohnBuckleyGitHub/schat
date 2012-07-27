@@ -191,7 +191,7 @@ void Core::accept(const AuthResult &result, const QString &host)
   if (!channel)
     return;
 
-  if (!channel->account()->id)
+  if (!channel->account()->saved)
     channel->createAccount();
 
   QList<QByteArray> packets;

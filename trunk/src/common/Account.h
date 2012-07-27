@@ -29,19 +29,21 @@
 class Account
 {
 public:
-  Account()
-  : channel(0)
+  inline Account()
+  : saved(true)
+  , channel(0)
   , date(0)
   , flags(0)
-  , id(0)
   {}
 
+  inline void setDate(qint64 date) { saved = false; this->date = date; }
+
+  bool saved;        ///< \b true если данные сохранены.
   Groups groups;     ///< Группы пользователя.
   QByteArray cookie; ///< Сookie пользователя.
   qint64 channel;    ///< Идентификатор канала в таблице channels.
   qint64 date;       ///< Дата обновления.
   qint64 flags;      ///< Дополнительные флаги.
-  qint64 id;         ///< Идентификатор в таблице accounts.
   QString provider;  ///< Авторизационной провайдер пользователя.
 };
 

@@ -405,81 +405,18 @@ void DataBase::saveData(Channel *channel)
 }
 
 
-/*!
- * Получение аккаунта пользователя.
- *
- * \param key Ключ в таблице \b accounts.
- */
-Account DataBase::account(qint64 key)
+void DataBase::add(Account *account)
 {
-  QSqlQuery query;
-  query.prepare(LS("SELECT channel, date, cookie, provider, flags, groups FROM accounts WHERE id = :id LIMIT 1;"));
-  query.bindValue(LS(":id"), key);
-  query.exec();
+  if (!account || !account->channel)
+    return;
 
-  if (!query.first())
-    return Account();
-
-  Account account;
-  account.id       = key;
-  account.channel  = query.value(0).toLongLong();
-  account.date     = query.value(1).toLongLong();
-  account.cookie   = query.value(2).toByteArray();
-  account.provider = query.value(3).toString();
-  account.flags    = query.value(4).toLongLong();
-  account.groups.set(query.value(5).toString());
-
-  return account;
-}
-
-
-/*!
- * Получение ключа в таблице \b accounts на основе Сookie пользователя.
- */
-qint64 DataBase::accountKey(const QByteArray &cookie)
-{
-  if (SimpleID::typeOf(cookie) != SimpleID::CookieId)
-    return -1;
-
-  QSqlQuery query;
-  query.prepare(LS("SELECT id FROM accounts WHERE cookie = :cookie LIMIT 1;"));
-  query.bindValue(LS(":cookie"), cookie);
-  query.exec();
-
-  if (!query.first())
-    return -1;
-
-  return query.value(0).toLongLong();
-}
-
-
-/*!
- * Получение ключа в таблице \b accounts на основе номера канала.
- */
-qint64 DataBase::accountKey(qint64 channel)
-{
-  if (channel < 1)
-    return -1;
-
-  QSqlQuery query;
-  query.prepare(LS("SELECT id FROM accounts WHERE channel = :channel LIMIT 1;"));
-  query.bindValue(LS(":channel"), channel);
-  query.exec();
-
-  if (!query.first())
-    return -1;
-
-  return query.value(0).toLongLong();
-}
-
-
-qint64 DataBase::add(Account *account)
-{
-  if (!account->channel)
-    return -1;
-
-  if (account->cookie.isEmpty())
+  if (account->cookie.isEmpty()) {
+    account->setDate(DateTime::utc());
     account->cookie = Ch::cookie();
+  }
+
+  if (account->saved)
+    return;
 
   QSqlQuery query;
   query.prepare(LS("INSERT INTO accounts (channel, date, cookie, provider, flags, groups) "
@@ -492,21 +429,6 @@ qint64 DataBase::add(Account *account)
   query.bindValue(LS(":flags"),      account->flags);
   query.bindValue(LS(":groups"),     account->groups.toString());
   query.exec();
-
-  if (query.numRowsAffected() <= 0) {
-    SCHAT_LOG_ERROR("Could not add account:" << query.lastError())
-    return -1;
-  }
-
-  qint64 key = query.lastInsertId().toLongLong();
-  account->id = key;
-
-  query.prepare(LS("UPDATE channels SET account = :account WHERE id = :id;"));
-  query.bindValue(LS(":account"), key);
-  query.bindValue(LS(":id"),      account->channel);
-  query.exec();
-
-  return key;
 }
 
 
@@ -615,38 +537,80 @@ void DataBase::startTasks()
 
 
 /*!
+ * Получение аккаунта пользователя.
+ *
+ * \param key Ключ канала.
+ */
+Account DataBase::account(qint64 key)
+{
+  QSqlQuery query;
+  query.prepare(LS("SELECT channel, date, cookie, provider, flags, groups FROM accounts WHERE channel = :channel LIMIT 1;"));
+  query.bindValue(LS(":channel"), key);
+  query.exec();
+
+  if (!query.first())
+    return Account();
+
+  Account account;
+  account.channel  = query.value(0).toLongLong();
+  account.date     = query.value(1).toLongLong();
+  account.cookie   = query.value(2).toByteArray();
+  account.provider = query.value(3).toString();
+  account.flags    = query.value(4).toLongLong();
+  account.groups.set(query.value(5).toString());
+
+  return account;
+}
+
+
+/*!
  * Получение канала на основе первичного ключа в таблице \b channels.
  */
 ChatChannel DataBase::channel(qint64 id)
 {
   QSqlQuery query;
-  query.prepare(LS("SELECT channel, gender, status, account, name, data FROM channels WHERE id = :id LIMIT 1;"));
+  query.prepare(LS("SELECT channel, gender, status, name, data FROM channels WHERE id = :id LIMIT 1;"));
   query.bindValue(LS(":id"), id);
   query.exec();
 
   if (!query.first())
     return ChatChannel();
 
-  ChatChannel channel(new ServerChannel(query.value(0).toByteArray(), query.value(4).toString()));
+  ChatChannel channel(new ServerChannel(query.value(0).toByteArray(), query.value(3).toString()));
   channel->setKey(id);
   channel->gender().setRaw(query.value(1).toLongLong());
 
-  qint64 accountId = query.value(3).toLongLong();
-  if (accountId > 0) {
-    Account account = DataBase::account(accountId);
-    channel->setAccount(&account);
-  }
-  else if (channel->type() == SimpleID::UserId)
-    channel->setAccount();
-
   if (channel->type() == SimpleID::UserId) {
     channel->user()->set(user(id));
+
+    Account account = DataBase::account(id);
+    channel->setAccount(&account);
   }
 
-  channel->setData(JSON::parse(query.value(5).toByteArray()).toMap());
+  channel->setData(JSON::parse(query.value(4).toByteArray()).toMap());
   FeedStorage::load(channel.data());
 
   return channel;
+}
+
+
+/*!
+ * Получение ключа в таблице \b accounts на основе Сookie пользователя.
+ */
+qint64 DataBase::accountKey(const QByteArray &cookie)
+{
+  if (SimpleID::typeOf(cookie) != SimpleID::CookieId)
+    return -1;
+
+  QSqlQuery query;
+  query.prepare(LS("SELECT id FROM accounts WHERE cookie = :cookie LIMIT 1;"));
+  query.bindValue(LS(":cookie"), cookie);
+  query.exec();
+
+  if (!query.first())
+    return -1;
+
+  return query.value(0).toLongLong();
 }
 
 
@@ -757,16 +721,14 @@ void DataBase::update(ChatChannel channel)
   query.exec();
 
   Account *account = channel->account();
-  if (account && account->id > 0) {
-    account->date = DateTime::utc();
-
-    query.prepare(LS("UPDATE accounts SET date = :date, cookie = :cookie, provider = :provider, flags = :flags, groups = :groups WHERE id = :id;"));
+  if (account && !account->saved) {
+    query.prepare(LS("UPDATE accounts SET date = :date, cookie = :cookie, provider = :provider, flags = :flags, groups = :groups WHERE channel = :channel;"));
     query.bindValue(LS(":date"),       account->date);
     query.bindValue(LS(":cookie"),     account->cookie);
     query.bindValue(LS(":provider"),   account->provider);
     query.bindValue(LS(":flags"),      account->flags);
     query.bindValue(LS(":groups"),     account->groups.toString());
-    query.bindValue(LS(":id"),         account->id);
+    query.bindValue(LS(":channel"),    channel->key());
     query.exec();
   }
 }
