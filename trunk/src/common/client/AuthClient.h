@@ -24,6 +24,7 @@
 
 #include "schat.h"
 
+class QBasicTimer;
 class QNetworkAccessManager;
 class QNetworkReply;
 class QSslError;
@@ -34,6 +35,7 @@ class SCHAT_EXPORT AuthClient : public QObject
 
 public:
   AuthClient(QObject *parent = 0);
+  ~AuthClient();
   inline const QByteArray& state() const { return m_state; }
   void start(const QString &url);
 
@@ -43,6 +45,9 @@ signals:
   void providersReady(const QVariantMap &data);
   void ready(const QString &provider, const QByteArray &id, const QByteArray &cookie, const QVariantMap &data);
 
+protected:
+  void timerEvent(QTimerEvent *event);
+
 private slots:
   void getState();
   void providersReady();
@@ -50,9 +55,12 @@ private slots:
   void stateReady();
 
 private:
-  void setError(int errorCode);
+  void deleteReply();
   void invalidState();
+  void setError(int errorCode);
 
+  int m_retry;                      ///< Счётчик запросов состояния.
+  QBasicTimer *m_timer;             ///< Таймер для прерывания запроса.
   QByteArray m_secret;              ///< Base32 кодированный секретный идентификатор.
   QByteArray m_state;               ///< Base32 кодированный идентификатор состояния.
   QNetworkAccessManager *m_manager; ///< Менеджер доступа к сети.
