@@ -45,14 +45,10 @@ public:
 
   // channels.
   static ChatChannel channel(const QByteArray &id, int type = SimpleID::ChannelId);
-  static ChatChannel channel(qint64 id);
   static qint64 add(ChatChannel channel);
-  static qint64 channelKey(const QByteArray &id, int type = SimpleID::ChannelId);
   static qint64 isCollision(const QByteArray &id, const QByteArray &normalized);
   static qint64 isCollision(const QByteArray &id, const QByteArray &normalized, int type);
-  static QString nick(qint64 id);
   static void saveData(Channel *channel);
-  static void update(ChatChannel channel);
 
   // accounts.
   static Account account(qint64 key);
@@ -75,7 +71,10 @@ private slots:
   void startTasks();
 
 private:
+  static ChatChannel channel(qint64 id);
+  static qint64 channelKey(const QByteArray &id, int type = SimpleID::ChannelId);
   static qint64 V2();
+  static void update(ChatChannel channel);
   static void version();
 
   QList<QRunnable*> m_tasks; ///< Задачи для выполнения в отдельном потоке.

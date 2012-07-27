@@ -208,7 +208,7 @@ int Ch::renameImpl(ChatChannel channel, const QString &name)
     return Notice::BadRequest;
 
   m_cache.rename(channel, normalized);
-  DataBase::update(channel);
+  DataBase::add(channel);
   return Notice::OK;
 }
 
@@ -354,7 +354,7 @@ void Ch::removeImpl(ChatChannel channel)
   if (m_self != this)
     return;
 
-  DataBase::update(channel);
+  DataBase::add(channel);
   m_cache.remove(channel->id());
 
   foreach (Ch *hook, m_hooks) {
