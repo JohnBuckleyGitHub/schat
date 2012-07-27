@@ -43,7 +43,7 @@ bool DataBase::noMaster = false;
 DataBase *DataBase::m_self = 0;
 
 AddHostTask::AddHostTask(Host *host)
-    : m_host(*host)
+  : m_host(*host)
 {
 }
 
@@ -53,22 +53,18 @@ AddHostTask::AddHostTask(Host *host)
  */
 void AddHostTask::run()
 {
-  qint64 key = this->key(m_host.hostId);
-  if (key == -1)
-    add();
-  else
-    update(key);
+  update(key());
 }
 
 
 /*!
  * Получение ключа в таблице \b hosts на основе идентификатора хоста, возвращает -1 если хост не найден.
  */
-qint64 AddHostTask::key(const QByteArray &hostId)
+qint64 AddHostTask::key()
 {
   QSqlQuery query;
   query.prepare(LS("SELECT id FROM hosts WHERE hostId = :hostId LIMIT 1;"));
-  query.bindValue(LS(":hostId"), SimpleID::encode(hostId));
+  query.bindValue(LS(":hostId"), SimpleID::encode(m_host.hostId));
   query.exec();
 
   if (!query.first())
@@ -107,6 +103,9 @@ void AddHostTask::add()
  */
 void AddHostTask::update(qint64 key)
 {
+  if (key == -1)
+    return add();
+
   QSqlQuery query;
   query.prepare(LS("UPDATE hosts SET name = :name, address = :address, version = :version, os = :os, osName = :osName, tz = :tz, date = :date, geo = :geo, data = :data WHERE id = :id;"));
   query.bindValue(LS(":name"),    m_host.name);
@@ -119,6 +118,53 @@ void AddHostTask::update(qint64 key)
   query.bindValue(LS(":geo"),     JSON::generate(m_host.geo));
   query.bindValue(LS(":data"),    JSON::generate(m_host.data));
   query.bindValue(LS(":id"),      key);
+  query.exec();
+}
+
+
+AddProfileTask::AddProfileTask(User *user)
+  : m_user(*user)
+{
+}
+
+
+/*!
+ * Запуск задачи.
+ */
+void AddProfileTask::run()
+{
+  QSqlQuery query;
+  query.prepare(LS("SELECT id FROM profiles WHERE channel = :channel LIMIT 1;"));
+  query.bindValue(LS(":channel"), m_user.channel);
+  query.exec();
+
+  qint64 key = -1;
+  if (query.first())
+    key = query.value(0).toLongLong();
+
+  if (key == -1) {
+    query.prepare(LS("INSERT INTO profiles (channel,  date,  name,  email,  city,  country,  link,  site,  birthday,  extra)"
+                                  " VALUES (:channel, :date, :name, :email, :city, :country, :link, :site, :birthday, :extra)"));
+
+    query.bindValue(LS(":channel"),  m_user.channel);
+  }
+  else {
+    query.prepare(LS("UPDATE profiles SET date = :date, name = :name, email = :email, city = :city, country = :country,"
+        "link = :link, site = :site, birthday = :birthday, extra = :extra WHERE id = :id;"));
+
+    query.bindValue(LS(":id"), key);
+  }
+
+  query.bindValue(LS(":date"),     m_user.date);
+  query.bindValue(LS(":name"),     m_user.name);
+  query.bindValue(LS(":email"),    m_user.email);
+  query.bindValue(LS(":city"),     m_user.city);
+  query.bindValue(LS(":country"),  m_user.country);
+  query.bindValue(LS(":link"),     m_user.link);
+  query.bindValue(LS(":site"),     m_user.site);
+  query.bindValue(LS(":birthday"), m_user.birthday);
+  query.bindValue(LS(":extra"),    JSON::generate(m_user.extra));
+
   query.exec();
 }
 
@@ -223,9 +269,7 @@ int DataBase::start()
     "  country    TEXT,"
     "  link       TEXT,"
     "  site       TEXT,"
-    "  year       INTEGER DEFAULT ( 0 ),"
-    "  month      INTEGER DEFAULT ( 0 ),"
-    "  day        INTEGER DEFAULT ( 0 ),"
+    "  birthday   TEXT,"
     "  extra      BLOB"
     ");"
   ));
@@ -676,6 +720,20 @@ void DataBase::removeHost(const QByteArray &hostId)
   query.prepare(LS("DELETE FROM hosts WHERE hostId = :hostId;"));
   query.bindValue(LS(":hostId"), SimpleID::encode(hostId));
   query.exec();
+}
+
+
+void DataBase::add(User *user)
+{
+  if (!user->channel || user->saved)
+    return;
+
+  user->saved = true;
+
+  AddProfileTask *task = new AddProfileTask(user);
+  m_self->m_tasks.append(task);
+  if (m_self->m_tasks.size() == 1)
+    QTimer::singleShot(0, m_self, SLOT(startTasks()));
 }
 
 

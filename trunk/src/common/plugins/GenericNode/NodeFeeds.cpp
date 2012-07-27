@@ -202,7 +202,7 @@ int NodeFeeds::query()
   FeedPtr feed = m_channel->feed(m_packet->text(), false);
   FeedQueryReply reply = feed->query(m_packet->json(), m_user.data());
   if (reply.modified) {
-    FeedStorage::save(feed);
+    FeedStorage::save(feed, reply.date);
     reply.json[LS("date")] = feed->head().date();
     reply.json[LS("size")] = feed->head().data().value(LS("size"));
   }

@@ -45,6 +45,7 @@ public:
 
   bool setName(const QString &name);
   void createAccount();
+  void setKey(qint64 key);
 
   bool canEdit(ChatChannel channel);
   bool canRead(ChatChannel channel);

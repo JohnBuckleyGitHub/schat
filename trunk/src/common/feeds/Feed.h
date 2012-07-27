@@ -32,6 +32,7 @@ public:
   , modified(false)
   , single(false)
   , status(status)
+  , date(0)
   , json(json)
   {}
 
@@ -39,6 +40,7 @@ public:
   bool modified;             ///< \b true если тело фида изменилось.
   bool single;               ///< \b true если ответ должен получить только пользователь создавший запрос.
   int status;                ///< Статус операции.
+  qint64 date;               ///< Дата модификации, если 0 будет определена автоматически.
   QList<QByteArray> packets; ///< Дополнительные пакеты с ответом на запрос.
   QVariantMap json;          ///< JSON ответ на запрос.
 };

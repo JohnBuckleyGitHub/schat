@@ -139,6 +139,19 @@ void ServerChannel::createAccount()
 }
 
 
+void ServerChannel::setKey(qint64 key)
+{
+  Channel::setKey(key);
+
+  if (m_user) {
+    m_user->channel = key;
+
+    if (!m_user->saved)
+      DataBase::add(m_user);
+  }
+}
+
+
 bool ServerChannel::canEdit(ChatChannel channel)
 {
   return feed("acl")->head().acl().can(channel.data(), Acl::Edit);
