@@ -32,7 +32,26 @@ User::User()
   : saved(true)
   , date(0)
   , channel(0)
+  , m_noDate(false)
 {
+}
+
+
+User::User(const QVariantMap &data)
+  : saved(true)
+  , date(0)
+  , channel(0)
+  , m_noDate(true)
+{
+  QMapIterator<QString, QVariant> i(data);
+  while (i.hasNext()) {
+    i.next();
+    set(i.key(), i.value());
+  }
+
+  m_noDate = false;
+  if (!saved)
+    date = DateTime::utc();
 }
 
 
@@ -65,7 +84,9 @@ bool User::set(const QString &key, const QVariant &value)
 
   if (modified) {
     saved = false;
-    date = DateTime::utc();
+
+    if (!m_noDate)
+      date = DateTime::utc();
   }
 
   return modified;
@@ -130,8 +151,10 @@ bool User::setString(QString &key, const QVariant &value)
   if (key == value)
     return false;
 
-  date  = DateTime::utc();
-  saved = false;
-  key   = value.toString();
+  if (!m_noDate)
+    date = DateTime::utc();
+
+  saved  = false;
+  key    = value.toString();
   return true;
 }

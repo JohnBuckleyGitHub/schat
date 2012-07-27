@@ -39,6 +39,7 @@ class SCHAT_EXPORT User
 {
 public:
   User();
+  User(const QVariantMap &data);
   bool set(const QString &key, const QVariant &value);
   QVariantMap toMap() const;
   void set(const User &other);
@@ -58,6 +59,8 @@ public:
 
 private:
   bool setString(QString &key, const QVariant &value);
+
+  bool m_noDate; ///< \b true запрещает установку даты при модификации полей, используется при пакетном чтении.
 };
 
 #endif /* USER_H_ */
