@@ -129,6 +129,7 @@ void ServerChannel::createAccount()
 {
   m_account->date    = DateTime::utc();
   m_account->channel = key();
+  m_account->setDate(DateTime::utc());
 
   if (DataBase::noMaster) {
     m_account->groups += LS("master");

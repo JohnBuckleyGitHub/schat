@@ -51,10 +51,7 @@ public:
   static void saveData(Channel *channel);
 
   // accounts.
-  static Account account(qint64 key);
-  static qint64 accountKey(const QByteArray &cookie);
-  static qint64 accountKey(qint64 channel);
-  static qint64 add(Account *account);
+  static void add(Account *account);
 
   // hosts.
   static QHash<QByteArray, HostInfo> hosts(qint64 channel);
@@ -71,7 +68,9 @@ private slots:
   void startTasks();
 
 private:
+  static Account account(qint64 key);
   static ChatChannel channel(qint64 id);
+  static qint64 accountKey(const QByteArray &cookie);
   static qint64 channelKey(const QByteArray &id, int type = SimpleID::ChannelId);
   static qint64 V2();
   static void update(ChatChannel channel);

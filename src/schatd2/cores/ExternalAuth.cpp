@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QTimer>
@@ -26,6 +24,7 @@
 #include "Ch.h"
 #include "cores/Core.h"
 #include "cores/ExternalAuth.h"
+#include "DateTime.h"
 #include "events.h"
 #include "net/SimpleID.h"
 #include "NodeLog.h"
@@ -165,6 +164,7 @@ AuthResult ExternalAuthTask::auth(const QVariantMap &data)
     channel->setAccount();
     channel->account()->provider = data.value(LS("provider")).toString();
     channel->account()->groups += LS("registered");
+    channel->account()->setDate(DateTime::utc());
     channel->setName(m_data.nick);
     channel->gender().setRaw(m_data.gender);
   }

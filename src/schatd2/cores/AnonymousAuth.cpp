@@ -20,6 +20,7 @@
 #include "Ch.h"
 #include "cores/AnonymousAuth.h"
 #include "cores/Core.h"
+#include "DateTime.h"
 #include "events.h"
 #include "net/packets/auth.h"
 #include "NodeLog.h"
@@ -52,6 +53,7 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
 
     channel->setAccount();
     channel->account()->groups += LS("anonymous");
+    channel->account()->setDate(DateTime::utc());
     channel->setName(data.nick);
     channel->gender().setRaw(data.gender);
   }
