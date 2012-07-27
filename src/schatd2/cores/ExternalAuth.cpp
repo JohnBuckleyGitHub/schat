@@ -30,6 +30,7 @@
 #include "NodeLog.h"
 #include "sglobal.h"
 #include "Storage.h"
+#include "User.h"
 
 QHash<QByteArray, QVariantMap> ExternalAuthTask::m_cache;
 
@@ -165,8 +166,10 @@ AuthResult ExternalAuthTask::auth(const QVariantMap &data)
     channel->account()->provider = data.value(LS("provider")).toString();
     channel->account()->groups += LS("registered");
     channel->account()->setDate(DateTime::utc());
+
     channel->setName(m_data.nick);
     channel->gender().setRaw(m_data.gender);
+    channel->user()->set(User(data.value(LS("user")).toMap()));
   }
 
   if (channel->status().value() == Status::Offline)
