@@ -80,6 +80,20 @@ QVariantMap User::toMap() const
 }
 
 
+void User::set(const User &other)
+{
+  date     = other.date;
+  name     = other.name;
+  email    = other.email;
+  city     = other.city;
+  country  = other.country;
+  link     = other.link;
+  site     = other.site;
+  birthday = other.birthday;
+  extra    = other.extra;
+}
+
+
 void User::toMap(QVariantMap &out) const
 {
   QMapIterator<QString, QVariant> i(extra);

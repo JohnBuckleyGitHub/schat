@@ -41,6 +41,7 @@ public:
   User();
   bool set(const QString &key, const QVariant &value);
   QVariantMap toMap() const;
+  void set(const User &other);
   void toMap(QVariantMap &out) const;
 
   bool saved;        ///< \b true если данные фида сохранены.
