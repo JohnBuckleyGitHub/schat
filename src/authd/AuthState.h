@@ -24,11 +24,13 @@
 #include <QSharedPointer>
 #include <QVariant>
 
+#include "User.h"
+
 class AuthStateData
 {
 public:
   AuthStateData(const QByteArray &state, const QByteArray &error);
-  AuthStateData(const QByteArray &state, const QByteArray &provider, const QByteArray &id, const QVariantMap &raw, const QByteArray &cookie = QByteArray());
+  AuthStateData(const QByteArray &state, const QByteArray &provider, const QByteArray &id, const QVariantMap &raw, const User &user = User());
 
   QByteArray cookie;   ///< Авторизационный токен пользователя.
   QByteArray error;    ///< Текстовый код ошибки.
@@ -36,6 +38,7 @@ public:
   QByteArray provider; ///< Кодовое имя OAuth2 провайдера.
   QByteArray state;    ///< Идентификатор состояния.
   QVariantMap raw;     ///< Сырые не обработанные данные пользователя.
+  User user;           ///< Профиль пользователя.
 };
 
 typedef QSharedPointer<AuthStateData> AuthStatePtr;
