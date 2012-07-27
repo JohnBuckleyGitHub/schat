@@ -71,7 +71,6 @@ void AuthClient::timerEvent(QTimerEvent *event)
     m_timer->stop();
     if (m_reply)
       m_reply->abort();
-//    getState();
   }
 
   QObject::timerEvent(event);

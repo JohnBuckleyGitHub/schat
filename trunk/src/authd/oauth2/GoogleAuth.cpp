@@ -48,14 +48,20 @@ void GoogleAuth::dataReady()
   OAUTH_BAD_STATUS
 
   QVariantMap data = JSON::parse(raw).toMap();
-  QByteArray email = data.value(LS("email")).toByteArray();
-  if (email.isEmpty())
-    return setError("invalid_email");
+  QByteArray uid = data.value(LS("id")).toByteArray();
+  if (uid.isEmpty())
+    return setError("invalid_id");
 
-  QByteArray id = SimpleID::encode(SimpleID::make("google:" + email, SimpleID::UserId));
-  AuthCore::state()->add(new AuthStateData(m_state, "google", id, data));
+  User user;
+  user.name     = data.value(LS("name")).toString();
+  user.email    = data.value(LS("email")).toString();
+  user.link     = data.value(LS("link")).toString();
+  user.birthday = data.value(LS("birthday")).toString();
 
-  log(NodeLog::InfoLevel, "Data is successfully received, id:" + id + ", email:" + email);
+  QByteArray id = SimpleID::encode(SimpleID::make("google:" + uid, SimpleID::UserId));
+  AuthCore::state()->add(new AuthStateData(m_state, "google", id, data, user));
+
+  log(NodeLog::InfoLevel, "Data is successfully received, id:" + id + ", uid:" + uid);
   deleteLater();
 }
 

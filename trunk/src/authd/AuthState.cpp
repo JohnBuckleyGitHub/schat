@@ -26,15 +26,14 @@ AuthStateData::AuthStateData(const QByteArray &state, const QByteArray &error)
 }
 
 
-AuthStateData::AuthStateData(const QByteArray &state, const QByteArray &provider, const QByteArray &id, const QVariantMap &raw, const QByteArray &cookie)
-  : cookie(cookie)
-  , id(id)
+AuthStateData::AuthStateData(const QByteArray &state, const QByteArray &provider, const QByteArray &id, const QVariantMap &raw, const User &user)
+  : id(id)
   , provider(provider)
   , state(state)
   , raw(raw)
+  , user(user)
 {
-  if (cookie.isEmpty())
-    this->cookie = SimpleID::encode(SimpleID::randomId(SimpleID::CookieId));
+  cookie = SimpleID::encode(SimpleID::randomId(SimpleID::CookieId));
 }
 
 
