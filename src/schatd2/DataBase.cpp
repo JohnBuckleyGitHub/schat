@@ -275,42 +275,6 @@ ChatChannel DataBase::channel(const QByteArray &id, int type)
 
 
 /*!
- * Получение канала на основе первичного ключа в таблице \b channels.
- */
-ChatChannel DataBase::channel(qint64 id)
-{
-  QSqlQuery query;
-  query.prepare(LS("SELECT channel, gender, status, account, name, data FROM channels WHERE id = :id LIMIT 1;"));
-  query.bindValue(LS(":id"), id);
-  query.exec();
-
-  if (!query.first())
-    return ChatChannel();
-
-  ChatChannel channel(new ServerChannel(query.value(0).toByteArray(), query.value(4).toString()));
-  channel->setKey(id);
-  channel->gender().setRaw(query.value(1).toLongLong());
-
-  qint64 accountId = query.value(3).toLongLong();
-  if (accountId > 0) {
-    Account account = DataBase::account(accountId);
-    channel->setAccount(&account);
-  }
-  else if (channel->type() == SimpleID::UserId)
-    channel->setAccount();
-
-  if (channel->type() == SimpleID::UserId) {
-    channel->user()->set(user(id));
-  }
-
-  channel->setData(JSON::parse(query.value(5).toByteArray()).toMap());
-  FeedStorage::load(channel.data());
-
-  return channel;
-}
-
-
-/*!
  * Добавление канала.
  * Если канал уже добавлен, он будет обновлён.
  *
@@ -321,9 +285,14 @@ ChatChannel DataBase::channel(qint64 id)
  */
 qint64 DataBase::add(ChatChannel channel)
 {
-  qint64 key = channelKey(channel->id(), channel->type());
-  if (key != -1) {
-    channel->setKey(key);
+  qint64 key = channel->key();
+  if (key <= 0)
+    key = channelKey(channel->id(), channel->type());
+
+  if (key > 0) {
+    if (channel->key() != key)
+      channel->setKey(key);
+
     update(channel);
     return key;
   }
@@ -348,58 +317,6 @@ qint64 DataBase::add(ChatChannel channel)
   key = query.lastInsertId().toLongLong();
   channel->setKey(key);
   return key;
-}
-
-
-/*!
- * Возвращает ключ в таблице \b channels на основе идентификатора канала или нормализированного имени.
- *
- * \param id   Идентификатор по которому будет производится поиск.
- * \param type Тип канала.
- *
- * \return Ключ в таблице или -1 в случае ошибки.
- *
- * \sa Normalize.
- * \sa SimpleID.
- */
-qint64 DataBase::channelKey(const QByteArray &id, int type)
-{
-  if (SimpleID::typeOf(id) == SimpleID::CookieId) {
-    qint64 key = accountKey(id);
-    if (key == -1)
-      return key;
-
-    QSqlQuery query;
-    query.prepare(LS("SELECT channel FROM accounts WHERE id = :id LIMIT 1;"));
-    query.bindValue(LS(":id"), key);
-    query.exec();
-
-    if (!query.first())
-      return -1;
-
-    return query.value(0).toLongLong();
-  }
-
-  if (Channel::isCompatibleId(id) == 0 && SimpleID::typeOf(id) != SimpleID::NormalizedId)
-    return -1;
-
-  QSqlQuery query;
-
-  if (SimpleID::typeOf(id) == SimpleID::NormalizedId) {
-    query.prepare(LS("SELECT id FROM channels WHERE normalized = :id AND type = :type LIMIT 1;"));
-  }
-  else {
-    query.prepare(LS("SELECT id FROM channels WHERE channel = :id AND type = :type LIMIT 1;"));
-  }
-
-  query.bindValue(LS(":id"),   id);
-  query.bindValue(LS(":type"), type);
-  query.exec();
-
-  if (!query.first())
-    return -1;
-
-  return query.value(0).toLongLong();
 }
 
 
@@ -475,20 +392,9 @@ qint64 DataBase::isCollision(const QByteArray &id, const QByteArray &normalized,
 }
 
 
-QString DataBase::nick(qint64 id)
-{
-  QSqlQuery query;
-  query.prepare(LS("SELECT name FROM channels WHERE id = :id LIMIT 1;"));
-  query.bindValue(LS(":id"), id);
-  query.exec();
-
-  if (!query.first())
-    return QString();
-
-  return query.value(0).toString();
-}
-
-
+/*!
+ * Сохранение данных канала.
+ */
 void DataBase::saveData(Channel *channel)
 {
   QSqlQuery query;
@@ -496,42 +402,6 @@ void DataBase::saveData(Channel *channel)
   query.bindValue(LS(":data"),       JSON::generate(channel->data()));
   query.bindValue(LS(":id"),         channel->key());
   query.exec();
-}
-
-
-/*!
- * Обновление информации об канале.
- * Если канал также содержит пользовательский аккаунт, то он также будет обновлён.
- */
-void DataBase::update(ChatChannel channel)
-{
-  if (!channel)
-    return;
-
-  QSqlQuery query;
-  query.prepare(LS("UPDATE channels SET channel = :channel, normalized = :normalized, type = :type, gender = :gender, name = :name, data = :data WHERE id = :id;"));
-  query.bindValue(LS(":channel"),    channel->id());
-  query.bindValue(LS(":normalized"), channel->normalized());
-  query.bindValue(LS(":type"),       channel->type());
-  query.bindValue(LS(":gender"),     channel->gender().raw());
-  query.bindValue(LS(":name"),       channel->name());
-  query.bindValue(LS(":data"),       JSON::generate(channel->data()));
-  query.bindValue(LS(":id"),         channel->key());
-  query.exec();
-
-  Account *account = channel->account();
-  if (account && account->id > 0) {
-    account->date = DateTime::utc();
-
-    query.prepare(LS("UPDATE accounts SET date = :date, cookie = :cookie, provider = :provider, flags = :flags, groups = :groups WHERE id = :id;"));
-    query.bindValue(LS(":date"),       account->date);
-    query.bindValue(LS(":cookie"),     account->cookie);
-    query.bindValue(LS(":provider"),   account->provider);
-    query.bindValue(LS(":flags"),      account->flags);
-    query.bindValue(LS(":groups"),     account->groups.toString());
-    query.bindValue(LS(":id"),         account->id);
-    query.exec();
-  }
 }
 
 
@@ -745,6 +615,94 @@ void DataBase::startTasks()
 
 
 /*!
+ * Получение канала на основе первичного ключа в таблице \b channels.
+ */
+ChatChannel DataBase::channel(qint64 id)
+{
+  QSqlQuery query;
+  query.prepare(LS("SELECT channel, gender, status, account, name, data FROM channels WHERE id = :id LIMIT 1;"));
+  query.bindValue(LS(":id"), id);
+  query.exec();
+
+  if (!query.first())
+    return ChatChannel();
+
+  ChatChannel channel(new ServerChannel(query.value(0).toByteArray(), query.value(4).toString()));
+  channel->setKey(id);
+  channel->gender().setRaw(query.value(1).toLongLong());
+
+  qint64 accountId = query.value(3).toLongLong();
+  if (accountId > 0) {
+    Account account = DataBase::account(accountId);
+    channel->setAccount(&account);
+  }
+  else if (channel->type() == SimpleID::UserId)
+    channel->setAccount();
+
+  if (channel->type() == SimpleID::UserId) {
+    channel->user()->set(user(id));
+  }
+
+  channel->setData(JSON::parse(query.value(5).toByteArray()).toMap());
+  FeedStorage::load(channel.data());
+
+  return channel;
+}
+
+
+/*!
+ * Возвращает ключ в таблице \b channels на основе идентификатора канала или нормализированного имени.
+ *
+ * \param id   Идентификатор по которому будет производится поиск.
+ * \param type Тип канала.
+ *
+ * \return Ключ в таблице или -1 в случае ошибки.
+ *
+ * \sa Normalize.
+ * \sa SimpleID.
+ */
+qint64 DataBase::channelKey(const QByteArray &id, int type)
+{
+  if (SimpleID::typeOf(id) == SimpleID::CookieId) {
+    qint64 key = accountKey(id);
+    if (key == -1)
+      return key;
+
+    QSqlQuery query;
+    query.prepare(LS("SELECT channel FROM accounts WHERE id = :id LIMIT 1;"));
+    query.bindValue(LS(":id"), key);
+    query.exec();
+
+    if (!query.first())
+      return -1;
+
+    return query.value(0).toLongLong();
+  }
+
+  if (Channel::isCompatibleId(id) == 0 && SimpleID::typeOf(id) != SimpleID::NormalizedId)
+    return -1;
+
+  QSqlQuery query;
+
+  if (SimpleID::typeOf(id) == SimpleID::NormalizedId) {
+    query.prepare(LS("SELECT id FROM channels WHERE normalized = :id AND type = :type LIMIT 1;"));
+  }
+  else {
+    query.prepare(LS("SELECT id FROM channels WHERE channel = :id AND type = :type LIMIT 1;"));
+  }
+
+  query.bindValue(LS(":id"),   id);
+  query.bindValue(LS(":type"), type);
+  query.exec();
+
+  if (!query.first())
+    return -1;
+
+  return query.value(0).toLongLong();
+}
+
+
+/*!
  * Обновление схемы базы данных до версии 2.
  *
  * - В таблице \b accounts удаляются столбцы \b name и \b password и добавляются столбцы \b provider и \b data.
@@ -775,6 +733,42 @@ qint64 DataBase::V2()
   query.exec(LS("COMMIT;"));
 
   return 2;
+}
+
+
+/*!
+ * Обновление информации об канале.
+ * Если канал также содержит пользовательский аккаунт, то он также будет обновлён.
+ */
+void DataBase::update(ChatChannel channel)
+{
+  if (!channel)
+    return;
+
+  QSqlQuery query;
+  query.prepare(LS("UPDATE channels SET channel = :channel, normalized = :normalized, type = :type, gender = :gender, name = :name, data = :data WHERE id = :id;"));
+  query.bindValue(LS(":channel"),    channel->id());
+  query.bindValue(LS(":normalized"), channel->normalized());
+  query.bindValue(LS(":type"),       channel->type());
+  query.bindValue(LS(":gender"),     channel->gender().raw());
+  query.bindValue(LS(":name"),       channel->name());
+  query.bindValue(LS(":data"),       JSON::generate(channel->data()));
+  query.bindValue(LS(":id"),         channel->key());
+  query.exec();
+
+  Account *account = channel->account();
+  if (account && account->id > 0) {
+    account->date = DateTime::utc();
+
+    query.prepare(LS("UPDATE accounts SET date = :date, cookie = :cookie, provider = :provider, flags = :flags, groups = :groups WHERE id = :id;"));
+    query.bindValue(LS(":date"),       account->date);
+    query.bindValue(LS(":cookie"),     account->cookie);
+    query.bindValue(LS(":provider"),   account->provider);
+    query.bindValue(LS(":flags"),      account->flags);
+    query.bindValue(LS(":groups"),     account->groups.toString());
+    query.bindValue(LS(":id"),         account->id);
+    query.exec();
+  }
 }
 
 
