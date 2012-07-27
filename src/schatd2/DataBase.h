@@ -67,6 +67,7 @@ public:
 
   // profiles.
   static void add(User *user);
+  static User user(qint64 channel);
 
   static bool noMaster; /// \b true если отсутвует Master пользователь, значение устанавливается в \b true если таблицы channels не существовало и она была создана.
 

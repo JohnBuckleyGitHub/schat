@@ -299,6 +299,10 @@ ChatChannel DataBase::channel(qint64 id)
   else if (channel->type() == SimpleID::UserId)
     channel->setAccount();
 
+  if (channel->type() == SimpleID::UserId) {
+    channel->user()->set(user(id));
+  }
+
   channel->setData(JSON::parse(query.value(5).toByteArray()).toMap());
   FeedStorage::load(channel.data());
 
@@ -701,6 +705,35 @@ void DataBase::add(User *user)
   m_self->m_tasks.append(task);
   if (m_self->m_tasks.size() == 1)
     QTimer::singleShot(0, m_self, SLOT(startTasks()));
+}
+
+
+/*!
+ * Получение профиля пользователя.
+ */
+User DataBase::user(qint64 channel)
+{
+  QSqlQuery query;
+  query.prepare(LS("SELECT date, name, email, city, country, link, site, birthday, extra FROM profiles WHERE channel = :channel;"));
+  query.bindValue(LS(":channel"), channel);
+  query.exec();
+
+  User out;
+  if (!query.first())
+    return out;
+
+  out.channel  = channel;
+  out.date     = query.value(0).toLongLong();
+  out.name     = query.value(1).toString();
+  out.email    = query.value(2).toString();
+  out.city     = query.value(3).toString();
+  out.country  = query.value(4).toString();
+  out.link     = query.value(5).toString();
+  out.site     = query.value(6).toString();
+  out.birthday = query.value(7).toString();
+  out.extra    = JSON::parse(query.value(8).toByteArray()).toMap();
+
+  return out;
 }
 
 
