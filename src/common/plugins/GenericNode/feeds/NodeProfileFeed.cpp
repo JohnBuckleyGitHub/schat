@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "DataBase.h"
 #include "DateTime.h"
 #include "feeds/NodeProfileFeed.h"
 #include "net/packets/Notice.h"
@@ -84,7 +85,6 @@ FeedQueryReply NodeProfileFeed::set(const QVariantMap &json, Channel *channel)
     return FeedQueryReply(Notice::BadRequest);
 
   User *user = static_cast<ServerChannel *>(head().channel())->user();
-  int modified = 0;
 
   FeedQueryReply reply(Notice::OK);
   reply.incremental = true;
@@ -92,14 +92,15 @@ FeedQueryReply NodeProfileFeed::set(const QVariantMap &json, Channel *channel)
 
   foreach (QString key, keys) {
     QVariant value = json.value(key);
-    if (user->set(key, value)) {
-      modified++;
+    if (user->set(key, value))
       reply.json[key] = value;
-    }
   }
 
-  if (modified)
+  if (!user->saved) {
+    reply.date = user->date;
     reply.modified = true;
+    DataBase::add(user);
+  }
 
   return reply;
 }

@@ -43,15 +43,17 @@ public:
   QVariantMap toMap() const;
   void toMap(QVariantMap &out) const;
 
+  bool saved;        ///< \b true если данные фида сохранены.
   qint64 date;       ///< Дата модификации.
   QString name;      ///< Имя пользователя.
   QString email;     ///< email адрес.
   QString city;      ///< Город.
   QString country;   ///< Страна.
-  Birthday birthday; ///< День рождения.
   QString link;      ///< Ссылка на профиль в социальной сети.
   QString site;      ///< Web-сайт пользователя.
+  QString birthday;  ///< День рождения.
   QVariantMap extra; ///< Дополнительные поля.
+  qint64 channel;    ///< Номер канала в базе данных.
 
 private:
   bool setString(QString &key, const QVariant &value);

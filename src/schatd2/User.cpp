@@ -29,7 +29,9 @@ Birthday::Birthday(quint8 day, quint8 month, quint16 year)
 
 
 User::User()
-  : date(0)
+  : saved(true)
+  , date(0)
+  , channel(0)
 {
 }
 
@@ -49,8 +51,10 @@ bool User::set(const QString &key, const QVariant &value)
       extra[key] = value;
   }
 
-  if (modified)
+  if (modified) {
+    saved = false;
     date = DateTime::utc();
+  }
 
   return modified;
 }
@@ -82,7 +86,8 @@ bool User::setString(QString &key, const QVariant &value)
   if (key == value)
     return false;
 
-  date = DateTime::utc();
-  key = value.toString();
+  date  = DateTime::utc();
+  saved = false;
+  key   = value.toString();
   return true;
 }

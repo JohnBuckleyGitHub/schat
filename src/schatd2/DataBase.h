@@ -25,6 +25,7 @@
 #include "Account.h"
 #include "net/SimpleID.h"
 #include "ServerChannel.h"
+#include "User.h"
 
 class QThreadPool;
 
@@ -64,6 +65,9 @@ public:
   static void add(HostInfo host);
   static void removeHost(const QByteArray &hostId);
 
+  // profiles.
+  static void add(User *user);
+
   static bool noMaster; /// \b true если отсутвует Master пользователь, значение устанавливается в \b true если таблицы channels не существовало и она была создана.
 
 private slots:
@@ -89,11 +93,27 @@ public:
   void run();
 
 private:
-  qint64 key(const QByteArray &hostId);
+  qint64 key();
   void add();
   void update(qint64 key);
 
   Host m_host; ///< Информация о хосте пользователя.
+};
+
+
+/*!
+ * Отложенная запись или обновление информации о профиле пользователя.
+ */
+class AddProfileTask : public QRunnable
+{
+public:
+  AddProfileTask(User *user);
+  void run();
+
+private:
+  qint64 key();
+
+  User m_user;
 };
 
 #endif /* DATABASE_H_ */
