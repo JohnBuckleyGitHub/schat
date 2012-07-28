@@ -48,8 +48,16 @@ void OdnoklassnikiAuth::dataReady()
     return setError("data_error: " + data.value(LS("error_msg")).toByteArray());
 
   QByteArray uid = data.value(LS("uid")).toByteArray();
+  if (uid.isEmpty())
+    return setError("invalid_uid");
+
+  User user;
+  user.name     = data.value(LS("name")).toString();
+  user.link     = LS("http://www.odnoklassniki.ru/profile/") + uid;
+  user.birthday = data.value(LS("birthday")).toString();
+
   QByteArray id = SimpleID::encode(SimpleID::make("odnoklassniki:" + uid, SimpleID::UserId));
-  AuthCore::state()->add(new AuthStateData(m_state, "odnoklassniki", id, data));
+  AuthCore::state()->add(new AuthStateData(m_state, "odnoklassniki", id, data, user));
 
   log(NodeLog::InfoLevel, "Data is successfully received, id:" + id + ", uid:" + uid);
   deleteLater();

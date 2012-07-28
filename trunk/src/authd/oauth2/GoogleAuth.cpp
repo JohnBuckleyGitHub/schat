@@ -50,7 +50,7 @@ void GoogleAuth::dataReady()
   QVariantMap data = JSON::parse(raw).toMap();
   QByteArray uid = data.value(LS("id")).toByteArray();
   if (uid.isEmpty())
-    return setError("invalid_id");
+    return setError("invalid_uid");
 
   User user;
   user.name     = data.value(LS("name")).toString();
