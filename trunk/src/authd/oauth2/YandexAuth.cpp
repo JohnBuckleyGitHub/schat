@@ -47,7 +47,7 @@ void YandexAuth::dataReady()
   User user;
   user.name     = data.value(LS("real_name")).toString();
   user.email    = data.value(LS("default_email")).toString();
-  user.link     = LS("http://") + user.email.left(user.email.indexOf(LC('@'))) + LS(".ya.ru");
+  user.link     = LS("http://") + user.email.left(user.email.indexOf(LC('@'))).replace(LC('.'), LC('-')) + LS(".ya.ru");
   user.birthday = data.value(LS("birthday")).toString();
 
   QByteArray id = SimpleID::encode(SimpleID::make("yandex:" + uid, SimpleID::UserId));

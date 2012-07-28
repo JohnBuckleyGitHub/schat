@@ -33,7 +33,7 @@ public:
   NetworkComboBox(NetworkWidget *parent = 0);
   bool canLogin() const;
   void load();
-  void open(OfflineLogin *login);
+  void open();
 
 public slots:
   void add(const QString &url = QLatin1String("schat://"));

@@ -43,7 +43,6 @@
 #include "hooks/ClientImpl.h"
 #include "hooks/CommandsImpl.h"
 #include "hooks/MessagesImpl.h"
-#include "hooks/RegCmds.h"
 #include "hooks/ServerMenuImpl.h"
 #include "hooks/UserMenuImpl.h"
 #include "net/SimpleID.h"
@@ -87,7 +86,6 @@ ChatCore::ChatCore(QObject *parent)
   new Hooks::ChannelsImpl(this);
   new Hooks::ClientImpl(this);
   new ClientFeedsImpl(this);
-  new RegCmds(this);
 
   new Hooks::ChannelMenu(this);
   new ChannelMenuImpl(this);

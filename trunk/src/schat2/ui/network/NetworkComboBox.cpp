@@ -30,7 +30,6 @@
 #include "ui/ChatIcons.h"
 #include "ui/network/NetworkComboBox.h"
 #include "ui/network/NetworkWidget.h"
-#include "ui/network/OfflineLogin.h"
 
 NetworkComboBox::NetworkComboBox(NetworkWidget *parent)
   : QComboBox(parent)
@@ -78,7 +77,7 @@ void NetworkComboBox::load()
 }
 
 
-void NetworkComboBox::open(OfflineLogin *login)
+void NetworkComboBox::open()
 {
   Network item = ChatCore::networks()->item(ChatCore::networks()->selected());
   if (item->id() == m_tmpId) {

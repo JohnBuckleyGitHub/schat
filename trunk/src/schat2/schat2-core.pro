@@ -47,7 +47,6 @@ HEADERS = \
     hooks/CommandsImpl.h \
     hooks/MessagesImpl.h \
     hooks/PluginsPage.h \
-    hooks/RegCmds.h \
     hooks/SendButton.h \
     hooks/ServerMenuImpl.h \
     hooks/SettingsTabImpl.h \
@@ -76,15 +75,10 @@ HEADERS = \
     ui/LoginIcon.h \
     ui/MainToolBar.h \
     ui/network/AccountButton.h \
-    ui/network/LoginWidget.h \
     ui/network/NetworkButton.h \
     ui/network/NetworkComboBox.h \
     ui/network/NetworkExtra.h \
     ui/network/NetworkWidget.h \
-    ui/network/OfflineLogin.h \
-    ui/network/Password.h \
-    ui/network/SecurityQuestion.h \
-    ui/network/SignUpWidget.h \
     ui/profile/ProfileField.h \
     ui/profile/ProfileFieldFactory.h \
     ui/profile/ProfileLayout.h \
@@ -136,7 +130,6 @@ SOURCES = \
     hooks/CommandsImpl.cpp \
     hooks/MessagesImpl.cpp \
     hooks/PluginsPage.cpp \
-    hooks/RegCmds.cpp \
     hooks/SendButton.cpp \
     hooks/ServerMenuImpl.cpp \
     hooks/SettingsTabImpl.cpp \
@@ -164,15 +157,10 @@ SOURCES = \
     ui/LoginIcon.cpp \
     ui/MainToolBar.cpp \
     ui/network/AccountButton.cpp \
-    ui/network/LoginWidget.cpp \
     ui/network/NetworkButton.cpp \
     ui/network/NetworkComboBox.cpp \
     ui/network/NetworkExtra.cpp \
     ui/network/NetworkWidget.cpp \
-    ui/network/OfflineLogin.cpp \
-    ui/network/Password.cpp \
-    ui/network/SecurityQuestion.cpp \
-    ui/network/SignUpWidget.cpp \
     ui/profile/ProfileField.cpp \
     ui/profile/ProfileFieldFactory.cpp \
     ui/profile/ProfileLayout.cpp \
