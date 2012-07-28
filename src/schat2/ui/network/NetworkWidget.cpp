@@ -37,8 +37,8 @@
 #include "ui/ChatIcons.h"
 #include "ui/network/AccountButton.h"
 #include "ui/network/NetworkComboBox.h"
+#include "ui/network/NetworkExtra.h"
 #include "ui/network/NetworkWidget.h"
-#include "ui/network/OfflineLogin.h"
 
 NetworkWidget::NetworkWidget(QWidget *parent, int layout)
   : QWidget(parent)
@@ -46,7 +46,6 @@ NetworkWidget::NetworkWidget(QWidget *parent, int layout)
   , m_layout(layout)
   , m_extra(0)
   , m_manager(ChatCore::networks())
-  , m_login(0)
 {
   m_combo = new NetworkComboBox(this);
   m_combo->installEventFilter(this);
@@ -116,14 +115,8 @@ void NetworkWidget::showLogin()
   if (!(m_layout & ExtraLayout))
     return;
 
-  if (m_login)
-    return;
-
   if (!m_combo->canLogin())
     return;
-
-  m_login = new OfflineLogin(this);
-  add(m_login);
 }
 
 
@@ -154,13 +147,9 @@ void NetworkWidget::doneExtra()
   if (!m_extra)
     return;
 
-  if (m_login && m_extra == m_login && m_combo->canLogin())
-    return;
-
   m_mainLayout->removeWidget(m_extra);
   delete m_extra;
   m_extra = 0;
-  m_login = 0;
   m_title->setVisible(false);
 }
 
@@ -183,7 +172,7 @@ void NetworkWidget::open()
     return;
   }
 
-  m_combo->open(m_login);
+  m_combo->open();
 }
 
 
