@@ -53,8 +53,33 @@ void VkontakteAuth::dataReady()
   QVariantMap response = list.first().toMap();
   QByteArray uid = response.value(LS("uid")).toByteArray();
 
+  User user;
+  user.name = response.value(LS("first_name")).toString() + LC(' ') + response.value(LS("last_name")).toString();
+  if (user.name == LS(" "))
+    user.name = QString();
+
+  QString screen_name = response.value(LS("screen_name")).toString();
+  if (screen_name.isEmpty())
+    user.link = LS("http://vk.com/id") + uid;
+  else
+    user.link = LS("http://vk.com/") + screen_name;
+
+  QStringList birthday = response.value(LS("bdate")).toString().split(LC('.'));
+  if (birthday.size() == 3) {
+    user.birthday = birthday.at(2) + LC('-');
+    if (birthday.at(1).size() == 1)
+      user.birthday += LC('0');
+
+    user.birthday += birthday.at(1) + LC('-');
+
+    if (birthday.at(0).size() == 1)
+      user.birthday += LC('0');
+
+    user.birthday += birthday.at(0);
+  }
+
   QByteArray id = SimpleID::encode(SimpleID::make("vkontakte:" + uid, SimpleID::UserId));
-  AuthCore::state()->add(new AuthStateData(m_state, "vkontakte", id, response));
+  AuthCore::state()->add(new AuthStateData(m_state, "vkontakte", id, response, user));
 
   log(NodeLog::InfoLevel, "Data is successfully received, id:" + id + ", uid:" + uid);
   deleteLater();
