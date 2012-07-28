@@ -48,10 +48,18 @@ var Profile = {
   },
 
 
-  // Чтение фида.
+  /*
+   * Чтение фида.
+   */
   read: function(json) {
     if (!json.hasOwnProperty("head"))
       return;
+
+    if (json.hasOwnProperty('provider')) {
+      $('#user-account').html('<a href="' + json.link + '"><i class="provider-' + json.provider + '"></i></a>')
+    }
+    else
+      Profile.setAnonymous();
 
     $("#profile-table *").remove();
 
@@ -103,6 +111,16 @@ var Profile = {
     name: function(key, value) {
       Profile.addRow(key, Utils.left(htmlspecialchars(Utils.simplified(value)), 128));
     }
+  },
+
+  /*!
+   * Показ о том, что пользователь анонимный.
+   *
+   * \param anonymous true если пользователь анонимный.
+   */
+  setAnonymous: function()
+  {
+    $('#user-account').html('<span data-tr="anonymous_user">' + Utils.tr('anonymous_user') + '</span>');
   }
 };
 
@@ -141,12 +159,17 @@ var Connections = {
     $(id + " > .connection-host").data('id', key);
   },
 
-  // Чтение фида.
+  /*
+   * Чтение фида.
+   */
   read: function(json) {
     if (!json.hasOwnProperty("head") && !json.hasOwnProperty("connections"))
       return;
 
     $(".connection-row").remove();
+
+    if (!json.hasOwnProperty('provider'))
+      Profile.setAnonymous();
 
     var connections = json.connections;
     var count = 0;
@@ -218,11 +241,14 @@ Modal.shown.connection = function()
 Pages.onInfo.push(Profile.reload);
 Pages.onInfo.push(Connections.reload);
 
-try {
+if (typeof ChatView === "undefined") {
+
+}
+else {
   ChatView.feed.connect(Profile.feed);
   ChatView.reload.connect(Profile.reload);
   SimpleChat.retranslated.connect(Profile.retranslate);
 
   ChatView.feed.connect(Connections.feed);
   ChatView.reload.connect(Connections.reload);
-} catch (e) {}
+}

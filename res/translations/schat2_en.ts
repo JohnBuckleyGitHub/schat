@@ -637,7 +637,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="174"/>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="176"/>
         <source>Network</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1027,6 +1027,11 @@
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="67"/>
         <source>Or connect anonymously</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="68"/>
+        <source>anonymous user</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

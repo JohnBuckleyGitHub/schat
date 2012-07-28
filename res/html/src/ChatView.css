@@ -219,10 +219,15 @@ a:active, a:hover {
   margin-right: 10px;
 }
 
-#info-content h1 {
-  margin: 0;
-  padding: 0;
-  font-size: 150%;
+#page-header {
+  margin-top: 5px;
+}
+
+#channel-name {
+  font-size: 16px;
+  line-height: 18px;
+  display: inline-block;
+  vertical-align: bottom;
 }
 
 .close {
