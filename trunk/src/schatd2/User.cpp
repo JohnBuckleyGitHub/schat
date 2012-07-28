@@ -112,6 +112,7 @@ void User::set(const User &other)
   site     = other.site;
   birthday = other.birthday;
   extra    = other.extra;
+  saved    = other.saved;
 }
 
 
