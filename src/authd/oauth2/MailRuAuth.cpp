@@ -50,14 +50,23 @@ void MailRuAuth::dataReady()
     return setError("invalid_data");
 
   QVariantMap data = list.first().toMap();
-  QByteArray email = data.value(LS("email")).toByteArray();
-  if (email.isEmpty())
-    return setError("invalid_email");
+  QByteArray uid = data.value(LS("uid")).toByteArray();
+  if (uid.isEmpty())
+    return setError("invalid_uid");
 
-  QByteArray id = SimpleID::encode(SimpleID::make("mail_ru:" + email, SimpleID::UserId));
-  AuthCore::state()->add(new AuthStateData(m_state, "mail_ru", id, data));
+  User user;
+  user.name     = data.value(LS("nick")).toString();
+  user.email    = data.value(LS("email")).toString();
+  user.link     = data.value(LS("link")).toString();
 
-  log(NodeLog::InfoLevel, "Data is successfully received, id:" + id + ", email:" + email);
+  QStringList birthday = data.value(LS("birthday")).toString().split(LC('.'));
+  if (birthday.size() == 3)
+    user.birthday = birthday.at(2) + LC('-') + birthday.at(1) + LC('-') + birthday.at(0);
+
+  QByteArray id = SimpleID::encode(SimpleID::make("mail_ru:" + uid, SimpleID::UserId));
+  AuthCore::state()->add(new AuthStateData(m_state, "mail_ru", id, data, user));
+
+  log(NodeLog::InfoLevel, "Data is successfully received, id:" + id + ", uid:" + uid);
   deleteLater();
 }
 
