@@ -40,14 +40,20 @@ void YandexAuth::dataReady()
   OAUTH_BAD_STATUS
 
   QVariantMap data = JSON::parse(raw).toMap();
-  QByteArray email = data.value(LS("default_email")).toByteArray();
-  if (email.isEmpty())
-    return setError("invalid_email");
+  QByteArray uid = data.value(LS("id")).toByteArray();
+  if (uid.isEmpty())
+    return setError("invalid_uid");
 
-  QByteArray id = SimpleID::encode(SimpleID::make("yandex:" + email, SimpleID::UserId));
-  AuthCore::state()->add(new AuthStateData(m_state, "yandex", id, data));
+  User user;
+  user.name     = data.value(LS("real_name")).toString();
+  user.email    = data.value(LS("default_email")).toString();
+  user.link     = LS("http://") + user.email.left(user.email.indexOf(LC('@'))) + LS(".ya.ru");
+  user.birthday = data.value(LS("birthday")).toString();
 
-  log(NodeLog::InfoLevel, "Data is successfully received, id:" + id + ", email:" + email);
+  QByteArray id = SimpleID::encode(SimpleID::make("yandex:" + uid, SimpleID::UserId));
+  AuthCore::state()->add(new AuthStateData(m_state, "yandex", id, data, user));
+
+  log(NodeLog::InfoLevel, "Data is successfully received, id:" + id + ", uid:" + uid);
 }
 
 

@@ -48,10 +48,12 @@ void VkontakteAuth::dataReady()
 
   QVariantList list = data.value(LS("response")).toList();
   if (list.isEmpty())
-    return setError("invalid_email");
+    return setError("invalid_data");
 
   QVariantMap response = list.first().toMap();
   QByteArray uid = response.value(LS("uid")).toByteArray();
+  if (uid.isEmpty())
+    return setError("invalid_uid");
 
   User user;
   user.name = response.value(LS("first_name")).toString() + LC(' ') + response.value(LS("last_name")).toString();
