@@ -41,14 +41,23 @@ void FacebookAuth::dataReady()
   OAUTH_BAD_STATUS
 
   QVariantMap data = JSON::parse(raw).toMap();
-  QByteArray email = data.value(LS("email")).toByteArray();
-  if (email.isEmpty())
-    return setError("invalid_email");
+  QByteArray uid = data.value(LS("id")).toByteArray();
+  if (uid.isEmpty())
+    return setError("invalid_id");
 
-  QByteArray id = SimpleID::encode(SimpleID::make("facebook:" + email, SimpleID::UserId));
-  AuthCore::state()->add(new AuthStateData(m_state, "facebook", id, data));
+  User user;
+  user.name     = data.value(LS("name")).toString();
+  user.email    = data.value(LS("email")).toString();
+  user.link     = data.value(LS("link")).toString();
 
-  log(NodeLog::InfoLevel, "Data is successfully received, id:" + id + ", email:" + email);
+  QStringList birthday = data.value(LS("birthday")).toString().split(LC('/'));
+  if (birthday.size() == 3)
+    user.birthday = birthday.at(2) + LC('-') + birthday.at(0) + LC('-') + birthday.at(1);
+
+  QByteArray id = SimpleID::encode(SimpleID::make("facebook:" + uid, SimpleID::UserId));
+  AuthCore::state()->add(new AuthStateData(m_state, "facebook", id, data, user));
+
+  log(NodeLog::InfoLevel, "Data is successfully received, id:" + id + ", uid:" + uid);
   deleteLater();
 }
 

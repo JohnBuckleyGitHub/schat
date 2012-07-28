@@ -30,5 +30,5 @@ FacebookAuthData::FacebookAuthData()
 
 QByteArray FacebookAuthData::toUrl(const QByteArray &state) const
 {
-  return "https://www.facebook.com/dialog/oauth?client_id=" + id + "&redirect_uri=" + QUrl::toPercentEncoding(redirect) + "&scope=email&state=" + state;
+  return "https://www.facebook.com/dialog/oauth?client_id=" + id + "&redirect_uri=" + QUrl::toPercentEncoding(redirect) + "&scope=email,user_birthday&state=" + state;
 }
