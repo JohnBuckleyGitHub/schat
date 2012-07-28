@@ -628,7 +628,7 @@
         <translation>Сервер %1 требует авторизацию</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="174"/>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="176"/>
         <source>Network</source>
         <translation>Сеть</translation>
     </message>
@@ -1019,6 +1019,11 @@
         <location filename="../../src/schat2/WebBridge.cpp" line="67"/>
         <source>Or connect anonymously</source>
         <translation>Или подключится анонимно</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="68"/>
+        <source>anonymous user</source>
+        <translation>анонимный пользователь</translation>
     </message>
 </context>
 <context>

@@ -64,6 +64,10 @@ QVariantMap NodeProfileFeed::feed(Channel *channel)
   QVariantMap out = user->toMap();
   out[LS("head")] = header;
 
+  Account *account = head().channel()->account();
+  if (!account->provider.isEmpty())
+    out[LS("provider")] = account->provider;
+
   return out;
 }
 
