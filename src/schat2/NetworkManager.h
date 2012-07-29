@@ -37,19 +37,17 @@ class Notify;
 class SCHAT_CORE_EXPORT NetworkItem
 {
 public:
-  NetworkItem();
   NetworkItem(const QByteArray &id);
   bool isValid() const;
   inline const QByteArray& cookie() const { return m_cookie; }
   inline const QByteArray& id() const     { return m_id; }
   inline const QByteArray& userId() const { return m_userId; }
   inline const QString& name() const      { return m_name; }
-  inline const QString& password() const  { return m_password; }
+  inline const QString& provider() const  { return m_provider; }
   inline const QString& url() const       { return m_url; }
 
   inline void setCookie(const QByteArray &cookie)  { m_cookie = cookie; }
   inline void setName(const QString &name)         { m_name = name; }
-  inline void setPassword(const QString &password) { m_password = password; }
   inline void setUrl(const QString &url)           { m_url = url; }
 
   static NetworkItem* item(const QByteArray &id);
@@ -67,7 +65,7 @@ private:
   QByteArray m_id;       ///< Идентификатор сервера.
   QByteArray m_userId;   ///< Идентификатор пользователя.
   QString m_name;        ///< Имя сервера.
-  QString m_password;    ///< Пароль.
+  QString m_provider;    ///< Имя авторизационного провайдера.
   QString m_url;         ///< Адрес сервера.
 };
 
