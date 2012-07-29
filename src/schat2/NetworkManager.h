@@ -104,7 +104,6 @@ private slots:
 
 private:
   void load();
-  void login();
   void write();
 
   /// Хранилище списка сетей.

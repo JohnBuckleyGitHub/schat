@@ -200,7 +200,7 @@ bool NetworkManager::open(const QByteArray &id)
  */
 int NetworkManager::isSelectedActive() const
 {
-  if (ChatClient::state() == ChatClient::Online && m_selected == ChatClient::serverId())
+  if (ChatClient::state() == ChatClient::Online && m_selected == encode(ChatClient::serverId(), ChatClient::channel()->account()->provider))
     return 1;
 
   if (ChatClient::state() == ChatClient::Connecting && ChatClient::io()->url().toString() == item(m_selected)->url())
@@ -373,16 +373,6 @@ void NetworkManager::load()
   }
 
   setSelected(m_networks.first());
-}
-
-
-/*!
- * \deprecated Эта функция больше не нужна.
- */
-void NetworkManager::login()
-{
-  ChatClient::io()->leave();
-//  ChatClient::i()->login();
 }
 
 

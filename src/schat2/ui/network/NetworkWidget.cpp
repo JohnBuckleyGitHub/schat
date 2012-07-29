@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QEvent>
 #include <QGridLayout>
 #include <QKeyEvent>
@@ -29,20 +27,21 @@
 
 #include "Account.h"
 #include "ChatCore.h"
+#include "ChatNotify.h"
 #include "client/ChatClient.h"
+#include "client/ClientFeeds.h"
 #include "client/SimpleClient.h"
+#include "net/packets/auth.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
-#include "ui/network/AccountButton.h"
 #include "ui/network/NetworkComboBox.h"
 #include "ui/network/NetworkExtra.h"
 #include "ui/network/NetworkWidget.h"
 
 NetworkWidget::NetworkWidget(QWidget *parent, int layout)
   : QWidget(parent)
-  , m_account(0)
   , m_layout(layout)
   , m_extra(0)
   , m_manager(ChatCore::networks())
@@ -52,15 +51,9 @@ NetworkWidget::NetworkWidget(QWidget *parent, int layout)
 
   createActionsButton();
 
-  if (layout & AccountButtonLayout)
-    m_account = new AccountButton(this);
-
   m_toolBar = new QToolBar(this);
   m_toolBar->setIconSize(QSize(16, 16));
   m_toolBar->addWidget(m_actions);
-
-  if (m_account)
-    m_toolBar->addWidget(m_account);
 
   m_connect = m_toolBar->addAction(QString(), this, SLOT(open()));
   m_toolBar->setStyleSheet(LS("QToolBar { margin:0px; border:0px; }"));
@@ -202,19 +195,26 @@ void NetworkWidget::indexChanged(int index)
 }
 
 
-void NetworkWidget::reload()
+void NetworkWidget::menuTriggered(QAction *action)
 {
-  connectAction();
-
-  if (!m_account)
-    return;
-
-  m_account->setEnabled(ChatClient::state() == ChatClient::Online);
-  if (m_account->isEnabled() && m_manager->selected() != ChatClient::serverId())
-    m_account->setEnabled(false);
+  if (action == m_computers) {
+    ChatNotify::start(Notify::OpenInfo, ChatClient::serverId());
+  }
+  else if (action == m_signOut) {
+    signOut();
+  }
 }
 
 
+void NetworkWidget::reload()
+{
+  connectAction();
+}
+
+
+/*!
+ * Показ меню.
+ */
 void NetworkWidget::showMenu()
 {
   int index = m_combo->currentIndex();
@@ -222,6 +222,10 @@ void NetworkWidget::showMenu()
     m_edit->setVisible(false);
   else
     m_edit->setVisible(true);
+
+  bool computers = ChatClient::state() == ChatClient::Online && !m_combo->isEditable();
+  m_computers->setVisible(computers);
+  m_signOut->setVisible(computers);
 }
 
 
@@ -234,6 +238,9 @@ void NetworkWidget::createActionsButton()
   m_menu->addSeparator();
   m_add = m_menu->addAction(SCHAT_ICON(Add), tr("Add"), m_combo, SLOT(add()));
   m_remove = m_menu->addAction(SCHAT_ICON(Remove), tr("Remove"), m_combo, SLOT(remove()));
+  m_menu->addSeparator();
+  m_signOut = m_menu->addAction(SCHAT_ICON(SignOut), tr("Sign out"));
+  m_computers = m_menu->addAction(SCHAT_ICON(Computer), tr("My Computers"));
 
   m_actions = new QToolButton(this);
   m_actions->setIcon(SCHAT_ICON(Gear));
@@ -242,6 +249,7 @@ void NetworkWidget::createActionsButton()
   m_actions->setToolTip(tr("Actions"));
 
   connect(m_menu, SIGNAL(aboutToShow()), SLOT(showMenu()));
+  connect(m_menu, SIGNAL(triggered(QAction *)), SLOT(menuTriggered(QAction *)));
 }
 
 
@@ -252,6 +260,8 @@ void NetworkWidget::retranslateUi()
   m_edit->setText(tr("Edit"));
   m_add->setText(tr("Add"));
   m_remove->setText(tr("Remove"));
+  m_signOut->setText(tr("Sign out"));
+  m_computers->setText(tr("My Computers"));
   m_actions->setToolTip(tr("Actions"));
 
   if (m_extra)
@@ -267,4 +277,17 @@ void NetworkWidget::setTitle(const QString &title)
   }
   else
     m_title->setVisible(false);
+}
+
+
+void NetworkWidget::signOut()
+{
+  if (ChatClient::state() != ChatClient::Online)
+    return;
+
+  QVariantMap json;
+  json[LS("id")] = SimpleID::encode(ChatClient::io()->json().value(LS("hostId")).toByteArray());
+
+  ChatClient::feeds()->query(LS("hosts"), LS("unlink"), json);
+  ChatClient::io()->setAuthType(AuthRequest::Discovery);
 }
