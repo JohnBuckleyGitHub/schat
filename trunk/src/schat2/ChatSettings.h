@@ -34,7 +34,7 @@ public:
   ChatSettings(const QString &fileName, QObject *parent = 0);
   void init();
   void setLocalDefault(const QString &key, const QVariant &value);
-  void setValue(const QString &key, const QVariant &value, bool notify = true);
+  void setValue(const QString &key, const QVariant &value, bool notify = true, bool local = false);
 
 private slots:
   void notify(const Notify &notify);

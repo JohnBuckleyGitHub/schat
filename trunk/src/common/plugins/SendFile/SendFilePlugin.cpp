@@ -347,7 +347,7 @@ void SendFilePluginImpl::openDB()
 
   QByteArray id = ChatClient::serverId();
   if (!id.isEmpty())
-    m_db->open(id, ChatCore::networks()->root(id));
+    m_db->open(id, ChatCore::networks()->root(SimpleID::encode(id)));
 }
 
 

@@ -32,6 +32,7 @@
 #include "feeds/CacheFeedStorage.h"
 #include "JSON.h"
 #include "net/dns/ChatDNS.h"
+#include "net/SimpleID.h"
 #include "NetworkManager.h"
 #include "Path.h"
 #include "sglobal.h"
@@ -78,7 +79,7 @@ void Cache::open()
   if (id.isEmpty())
     return;
 
-  if (!CacheDB::open(id, ChatCore::networks()->root(id)))
+  if (!CacheDB::open(id, ChatCore::networks()->root(SimpleID::encode(id))))
     return;
 
   if (ChatClient::serverId().isEmpty())

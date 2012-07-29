@@ -48,7 +48,6 @@ public:
 
   NetworkWidget(QWidget *parent, int layout = 3);
   QAction *connectAction();
-  void showLogin();
 
 public slots:
   void add(NetworkExtra *extra);

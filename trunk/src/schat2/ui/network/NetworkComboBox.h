@@ -31,7 +31,6 @@ class NetworkComboBox : public QComboBox
 
 public:
   NetworkComboBox(NetworkWidget *parent = 0);
-  bool canLogin() const;
   void load();
   void open();
 

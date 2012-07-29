@@ -155,7 +155,7 @@ void History::open()
 {
   QByteArray id = ChatClient::serverId();
   if (!id.isEmpty())
-    HistoryDB::open(id, ChatCore::networks()->root(id));
+    HistoryDB::open(id, ChatCore::networks()->root(SimpleID::encode(id)));
 }
 
 
