@@ -43,6 +43,7 @@
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
 #include "sglobal.h"
+#include "ui/AuthIcon.h"
 #include "ui/MainToolBar.h"
 #include "ui/SoundButton.h"
 #include "ui/TabBar.h"
@@ -78,6 +79,7 @@ TabWidget::TabWidget(QWidget *parent)
   QWebSettings::globalSettings()->setFontFamily(QWebSettings::StandardFont, fontInfo().family());
   QWebSettings::globalSettings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, SCHAT_OPTION("Labs/DeveloperExtras").toBool());
 
+  m_authIcon = new AuthIcon();
   m_serverTab = new ServerTab(this);
   m_serverTab->setVisible(false);
 
@@ -94,6 +96,12 @@ TabWidget::TabWidget(QWidget *parent)
   connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
   connect(m_serverTab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+}
+
+
+TabWidget::~TabWidget()
+{
+  delete m_authIcon;
 }
 
 

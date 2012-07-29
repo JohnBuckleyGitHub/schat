@@ -16,34 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Account.h"
-#include "client/ChatClient.h"
-#include "client/SimpleClient.h"
-#include "sglobal.h"
-#include "ui/LoginIcon.h"
-#include "ui/AuthIcon.h"
+#ifndef AUTHICON_H_
+#define AUTHICON_H_
 
-LoginIcon::LoginIcon(QWidget *parent)
-  : QLabel(parent)
+#include <QIcon>
+
+#include "schat.h"
+
+class SCHAT_CORE_EXPORT AuthIcon
 {
-  setVisible(false);
-  connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(reload()));
+public:
+  AuthIcon();
+  static QPixmap pixmap(const QString &provider);
 
-  reload();
-}
+private:
+  QPixmap m_layout;
+  static AuthIcon *m_self;
+};
 
-
-void LoginIcon::reload()
-{
-  if (ChatClient::state() != ChatClient::Online || ChatClient::channel()->account()->provider.isEmpty()) {
-    setVisible(false);
-    return;
-  }
-
-  QPixmap pixmap = AuthIcon::pixmap(ChatClient::channel()->account()->provider);
-  if (pixmap.isNull())
-    pixmap = QPixmap(LS(":/images/key.png"));
-
-  setPixmap(pixmap);
-  setVisible(true);
-}
+#endif /* AUTHICON_H_ */

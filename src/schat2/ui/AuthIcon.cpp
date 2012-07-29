@@ -16,34 +16,39 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Account.h"
-#include "client/ChatClient.h"
-#include "client/SimpleClient.h"
 #include "sglobal.h"
-#include "ui/LoginIcon.h"
 #include "ui/AuthIcon.h"
 
-LoginIcon::LoginIcon(QWidget *parent)
-  : QLabel(parent)
-{
-  setVisible(false);
-  connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(reload()));
+AuthIcon *AuthIcon::m_self = 0;
 
-  reload();
+AuthIcon::AuthIcon()
+{
+  m_self = this;
+  m_layout = QPixmap(LS(":/images/providers.png"));
 }
 
 
-void LoginIcon::reload()
+QPixmap AuthIcon::pixmap(const QString &provider)
 {
-  if (ChatClient::state() != ChatClient::Online || ChatClient::channel()->account()->provider.isEmpty()) {
-    setVisible(false);
-    return;
-  }
+  if (!m_self)
+    return QPixmap();
 
-  QPixmap pixmap = AuthIcon::pixmap(ChatClient::channel()->account()->provider);
-  if (pixmap.isNull())
-    pixmap = QPixmap(LS(":/images/key.png"));
+  int x = -1;
+  if (provider == LS("google"))
+    x = 0;
+  else if (provider == LS("yandex"))
+    x = 16;
+  else if (provider == LS("facebook"))
+    x = 32;
+  else if (provider == LS("vkontakte"))
+    x = 48;
+  else if (provider == LS("mail_ru"))
+    x = 64;
+  else if (provider == LS("odnoklassniki"))
+    x = 80;
 
-  setPixmap(pixmap);
-  setVisible(true);
+  if (x == -1)
+    return QPixmap();
+
+  return m_self->m_layout.copy(x, 0, 16, 16);
 }

@@ -133,6 +133,7 @@ bool AbstractClientPrivate::authReply(const AuthReply &reply)
     q->setAuthorized(reply.userId);
     channel->setId(reply.userId);
     channel->account()->cookie = reply.cookie;
+    channel->account()->provider = reply.provider;
 
     cookie = reply.cookie;
     authId.clear();
