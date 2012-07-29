@@ -22,7 +22,6 @@
 #include <QWidget>
 #include <QPointer>
 
-class AccountButton;
 class NetworkComboBox;
 class NetworkExtra;
 class NetworkManager;
@@ -60,6 +59,7 @@ protected:
 
 private slots:
   void indexChanged(int index);
+  void menuTriggered(QAction *action);
   void reload();
   void showMenu();
 
@@ -67,16 +67,18 @@ private:
   void createActionsButton();
   void retranslateUi();
   void setTitle(const QString &title);
+  void signOut();
 
-  AccountButton *m_account;      ///< Кнопка аккаунта.
   int m_layout;                  ///< Дополнительные возможности виджета.
   NetworkComboBox *m_combo;      ///< Комбобокс выбора серверов.
   NetworkExtra *m_extra;         ///< Дополнительный виджет.
   NetworkManager *m_manager;     ///< Указатель на менеджер сетевых подключений.
   QAction *m_add;                ///< Действие для добавления сервера.
+  QAction *m_computers;          ///< Действие для просмотра компьютеров.
   QAction *m_connect;            ///< Действие для подключения или отключения от сервера.
   QAction *m_edit;               ///< Действие для редактирования текущего подключения.
   QAction *m_remove;             ///< Действие для удаления сервера.
+  QAction *m_signOut;            ///< Действие для выхода из текущей учётной записи.
   QLabel *m_title;               ///< Заголовок текущего расширенного действия.
   QMenu *m_menu;                 ///< Меню дополнительных действий.
   QToolBar *m_toolBar;           ///< Тулбар для размещения основных действий.
