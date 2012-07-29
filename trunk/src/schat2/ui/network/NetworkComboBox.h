@@ -44,6 +44,7 @@ private slots:
   void notify(const Notify &notify);
 
 private:
+  QIcon icon(const QString &provider);
   void updateIndex();
 
   NetworkWidget *m_network; ///< Виджет редактирования сети.

@@ -32,14 +32,11 @@
 #include "Path.h"
 #include "sglobal.h"
 
-NetworkItem::NetworkItem()
-{
-}
-
-
 NetworkItem::NetworkItem(const QByteArray &id)
   : m_id(id)
 {
+  if (id.size() > 35)
+    m_provider = id.mid(35);
 }
 
 
@@ -339,7 +336,7 @@ void NetworkManager::load()
 {
   m_networks.read();
 
-  m_tmpId = SimpleID::make("", SimpleID::ServerId);
+  m_tmpId = SimpleID::encode(SimpleID::make("", SimpleID::ServerId));
   Network item(new NetworkItem(m_tmpId));
   item->setUrl(LS("schat://"));
   m_items[m_tmpId] = item;

@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QTimer>
 
 #include "ChatCore.h"
@@ -27,6 +25,7 @@
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
 #include "sglobal.h"
+#include "ui/AuthIcon.h"
 #include "ui/ChatIcons.h"
 #include "ui/network/NetworkComboBox.h"
 #include "ui/network/NetworkWidget.h"
@@ -35,7 +34,7 @@ NetworkComboBox::NetworkComboBox(NetworkWidget *parent)
   : QComboBox(parent)
   , m_network(parent)
 {
-  m_tmpId = SimpleID::make("", SimpleID::ServerId);
+  m_tmpId = SimpleID::encode(SimpleID::make("", SimpleID::ServerId));
 
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 }
@@ -49,8 +48,8 @@ void NetworkComboBox::load()
   addItem(SCHAT_ICON(Add), tr("Add"), m_tmpId);
 
   QList<Network> items = ChatCore::networks()->items();
-  for (int i = 0; i < items.size(); ++i) {
-    addItem(SCHAT_ICON(Globe), items.at(i)->name(), items.at(i)->id());
+  foreach (Network item, items) {
+    addItem(icon(item->provider()), item->name(), item->id());
   }
 
   if (count() == 1) {
@@ -110,8 +109,6 @@ void NetworkComboBox::edit()
   Network item = ChatCore::networks()->item(itemData(index).toByteArray());
   if (!item->isValid())
     return;
-
-//  doneExtra();
 
   m_editing = item->id();
   setItemText(index, item->url());
@@ -188,7 +185,7 @@ void NetworkComboBox::notify(const Notify &notify)
     if (index != -1)
       removeItem(index);
 
-    insertItem(1, SCHAT_ICON(Globe), item->name(), item->id());
+    insertItem(1, icon(item->provider()), item->name(), item->id());
     setCurrentIndex(1);
   }
   else if (notify.type() == Notify::ServerRenamed) {
@@ -196,6 +193,16 @@ void NetworkComboBox::notify(const Notify &notify)
     if (index != -1)
       setItemText(index, ChatClient::serverName());
   }
+}
+
+
+QIcon NetworkComboBox::icon(const QString &provider)
+{
+  QIcon icon = AuthIcon::icon(provider);
+  if (icon.isNull())
+    icon = SCHAT_ICON(Globe);
+
+  return icon;
 }
 
 

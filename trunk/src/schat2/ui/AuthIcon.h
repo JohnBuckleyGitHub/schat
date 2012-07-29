@@ -27,6 +27,7 @@ class SCHAT_CORE_EXPORT AuthIcon
 {
 public:
   AuthIcon();
+  static QIcon icon(const QString &provider);
   static QPixmap pixmap(const QString &provider);
 
 private:

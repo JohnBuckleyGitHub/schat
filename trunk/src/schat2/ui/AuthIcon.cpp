@@ -28,6 +28,12 @@ AuthIcon::AuthIcon()
 }
 
 
+QIcon AuthIcon::icon(const QString &provider)
+{
+  return QIcon(pixmap(provider));
+}
+
+
 QPixmap AuthIcon::pixmap(const QString &provider)
 {
   if (!m_self)
