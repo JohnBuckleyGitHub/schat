@@ -35,7 +35,12 @@
 
 GoogleAuth::GoogleAuth(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
   : OAuthHandler(LS("google"), url.queryItemValue(LS("state")).toLatin1(), url, path, request, response, parent)
+  , m_current(0)
 {
+  m_domains.append(LS("accounts.google.com")); // Домен по умолчанию.
+  m_domains.append(LS("209.85.175.84"));       // Азия.
+  m_domains.append(LS("173.194.77.84"));       // Америка.
+  m_domains.append(LS("173.194.70.84"));       // Европа.
 }
 
 
@@ -66,6 +71,16 @@ void GoogleAuth::dataReady()
 }
 
 
+void GoogleAuth::sslErrors()
+{
+  QNetworkReply *reply = qobject_cast<QNetworkReply*>(sender());
+  if (!reply)
+    return;
+
+  reply->ignoreSslErrors();
+}
+
+
 /*!
  * Слот вызывается, когда завершено получение токена авторизации.
  */
@@ -84,7 +99,11 @@ void GoogleAuth::tokenReady()
   m_reply = 0;
 
   if (status >= 500) {
-    log(NodeLog::WarnLevel, "Bad status code: " + QByteArray::number(status));
+    m_current++;
+    if (m_current > 3)
+      m_current = 0;
+
+    log(NodeLog::WarnLevel, "Bad status code: " + QByteArray::number(status) + ", trying next domain:" + m_domains.at(m_current).toLatin1());
     getToken();
     return;
   }
@@ -108,7 +127,8 @@ void GoogleAuth::tokenReady()
  */
 void GoogleAuth::getToken()
 {
-  QNetworkRequest request(QUrl(LS("https://accounts.google.com/o/oauth2/token")));
+  QNetworkRequest request(QUrl(LS("https://") + m_domains.at(m_current) + LS("/o/oauth2/token")));
+  request.setRawHeader("Host", "accounts.google.com");
   request.setHeader(QNetworkRequest::ContentTypeHeader, LS("application/x-www-form-urlencoded"));
 
   QByteArray body = "code=" + m_code;
@@ -119,6 +139,7 @@ void GoogleAuth::getToken()
 
   QNetworkReply *reply = m_manager->post(request, body);
   connect(reply, SIGNAL(finished()), SLOT(tokenReady()));
+  connect(reply, SIGNAL(sslErrors(QList<QSslError>)), SLOT(sslErrors()));
 }
 
 

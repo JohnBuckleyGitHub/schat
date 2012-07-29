@@ -19,6 +19,8 @@
 #ifndef GOOGLEAUTH_H_
 #define GOOGLEAUTH_H_
 
+#include <QStringList>
+
 #include "oauth2/OAuthHandler.h"
 
 class GoogleAuth : public OAuthHandler
@@ -30,10 +32,14 @@ public:
 
 private slots:
   void dataReady();
+  void sslErrors();
   void tokenReady();
 
 private:
   void getToken();
+
+  int m_current;
+  QStringList m_domains;
 };
 
 
