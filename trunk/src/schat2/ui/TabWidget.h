@@ -29,7 +29,7 @@
 class AboutTab;
 class AbstractMessage;
 class AbstractTab;
-class ServerTab;
+class AuthIcon;
 class ChannelBaseTab;
 class ChannelTab;
 class MainToolBar;
@@ -37,6 +37,7 @@ class Message;
 class Notify;
 class PrivateTab;
 class ProgressTab;
+class ServerTab;
 class SettingsTab;
 class TabBar;
 class TabsToolBar;
@@ -52,6 +53,8 @@ class SCHAT_CORE_EXPORT TabWidget : public QTabWidget
 
 public:
   TabWidget(QWidget *parent = 0);
+  ~TabWidget();
+
   AbstractTab *widget(int index) const;
   ClientChannel channel(const QByteArray &id) const;
   inline ServerTab *serverTab() const { return m_serverTab; }
@@ -94,6 +97,7 @@ private:
   void retranslateUi();
   void showWelcome();
 
+  AuthIcon *m_authIcon;                      ///< Иконка провайдеров авторизации.
   MainToolBar *m_mainToolBar;                ///< Правая панель инструментов.
   QHash<QByteArray, ChannelBaseTab*> m_channels; ///< Таблица каналов.
   QPointer<AboutTab> m_aboutTab;             ///< О Simple Chat.

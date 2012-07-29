@@ -65,6 +65,7 @@ HEADERS = \
     text/TokenFilter.h \
     text/UrlFilter.h \
     ui/AlertsPixmap.h \
+    ui/AuthIcon.h \
     ui/ChatIcons.h \
     ui/ColorButton.h \
     ui/fields/GenderField.h \
@@ -147,6 +148,7 @@ SOURCES = \
     text/TokenFilter.cpp \
     text/UrlFilter.cpp \
     ui/AlertsPixmap.cpp \
+    ui/AuthIcon.cpp \
     ui/ChatIcons.cpp \
     ui/ColorButton.cpp \
     ui/fields/GenderField.cpp \

@@ -21,8 +21,6 @@
 
 #include <QLabel>
 
-class Notify;
-
 class LoginIcon : public QLabel
 {
   Q_OBJECT
@@ -31,7 +29,6 @@ public:
   LoginIcon(QWidget *parent = 0);
 
 private slots:
-  void notify(const Notify &notify);
   void reload();
 };
 

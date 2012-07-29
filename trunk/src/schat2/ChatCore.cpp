@@ -113,7 +113,6 @@ ChatCore::ChatCore(QObject *parent)
 
   connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
 
-  qDebug() << config();
   QTimer::singleShot(0, this, SLOT(start()));
 }
 
