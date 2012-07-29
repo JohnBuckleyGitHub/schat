@@ -48,7 +48,7 @@ bool NetworkItem::isValid() const
   if (m_id.isEmpty() || m_userId.isEmpty() || m_cookie.isEmpty() || m_url.isEmpty() || m_name.isEmpty())
     return false;
 
-  if (SimpleID::typeOf(m_id) != SimpleID::ServerId)
+  if (SimpleID::typeOf(NetworkManager::decode(m_id)) != SimpleID::ServerId)
     return false;
 
   if (SimpleID::typeOf(m_cookie) != SimpleID::CookieId)
@@ -61,55 +61,67 @@ bool NetworkItem::isValid() const
 }
 
 
-NetworkItem* NetworkItem::item()
+/*!
+ * Создание итема на основе текущего активного подключения.
+ *
+ * \param id Base32 кодированный идентификатор сервера с именем провайдера.
+ */
+NetworkItem* NetworkItem::item(const QByteArray &id)
 {
   SimpleClient *client = ChatClient::io();
-  NetworkItem *item = new NetworkItem(ChatClient::serverId());
+  NetworkItem *item = new NetworkItem(id);
 
-  item->m_name    = ChatClient::serverName();
-  item->m_url     = client->url().toString();
-  item->m_cookie  = client->cookie();
-  item->m_userId  = client->channelId();
+  item->m_name   = ChatClient::serverName();
+  item->m_url    = client->url().toString();
+  item->m_cookie = client->cookie();
+  item->m_userId = client->channelId();
 
   return item;
 }
 
 
+/*!
+ * Чтение данных сети.
+ */
 void NetworkItem::read()
 {
-  QSettings settings(Path::config(), QSettings::IniFormat);
-  settings.setIniCodec("UTF-8");
+  ChatSettings *settings = ChatCore::settings();
 
-  settings.beginGroup(SimpleID::encode(m_id));
-  setAuth(settings.value(LS("Auth")).toString());
-  m_name = settings.value(LS("Name")).toString();
-  m_url  = settings.value(LS("Url")).toString();
-  settings.endGroup();
+  setAuth(settings->value(m_id + LS("/Auth")).toString());
+  m_name = settings->value(m_id + LS("/Name")).toString();
+  m_url  = settings->value(m_id + LS("/Url")).toString();
 }
 
 
+/*!
+ * Запись данных сети.
+ */
 void NetworkItem::write()
 {
-  QSettings settings(Path::config(), QSettings::IniFormat);
-  settings.setIniCodec("UTF-8");
-  settings.beginGroup(SimpleID::encode(m_id));
-  settings.setValue(LS("Auth"),    auth());
-  settings.setValue(LS("Name"),    m_name);
-  settings.setValue(LS("Url"),     m_url);
-  settings.endGroup();
+  ChatSettings *settings = ChatCore::settings();
+
+  settings->setValue(m_id + LS("/Auth"), auth(), false, true);
+  settings->setValue(m_id + LS("/Name"), m_name, false, true);
+  settings->setValue(m_id + LS("/Url"),  m_url, false, true);
 }
 
 
+/*!
+ * Формирование авторизационной строки.
+ */
 QString NetworkItem::auth()
 {
   if (!isValid())
     return QString();
 
-  QByteArray auth = m_id + m_userId + m_cookie;
+  QByteArray auth = NetworkManager::decode(m_id) + m_userId + m_cookie;
   return SimpleID::toBase32(auth);
 }
 
 
+/*!
+ * Чтение авторизационной строки.
+ */
 void NetworkItem::setAuth(const QString &auth)
 {
   QByteArray data = SimpleID::fromBase32(auth.toLatin1());
@@ -229,13 +241,15 @@ QList<Network> NetworkManager::items() const
 
 /*!
  * Возвращает и при необходимости создаёт путь для хранения файлов сервера.
+ *
+ * \param id Base32 кодированный идентификатор сервера с опциональным именем авторизационного провайдера.
  */
 QString NetworkManager::root(const QByteArray &id) const
 {
   if (id.isEmpty())
     return QString();
 
-  QString out = Path::cache() + LC('/') + SimpleID::encode(id);
+  QString out = Path::cache() + LC('/') + id.left(34);
   if (!QFile::exists(out))
     QDir().mkpath(out);
 
@@ -271,24 +285,25 @@ void NetworkManager::setSelected(const QByteArray &id)
 
 
 /*!
- * Возвращает \b true если требуется принудительная авторизация по имени и паролю.
+ * Получение не кодированного идентификатора из кодированного идентификатора и имени провайдера.
  */
-bool NetworkManager::isPasswordRequired()
+QByteArray NetworkManager::decode(const QByteArray &id)
 {
-  if (ChatClient::state() != ChatClient::Error)
-    return false;
+  return SimpleID::decode(id.left(34));
+}
 
-  QVariantMap error = ChatClient::io()->json().value(LS("error")).toMap();
-  if (error.isEmpty())
-    return false;
 
-  if (error.value("status") != Notice::Unauthorized)
-    return false;
+/*!
+ * Кодирование идентификатора сервера и провайдера в строку, состоящую из Base32 кодированного идентификатора сервера
+ * и имени провайдера, разделённых точкой. Например: "ZU7QZBNRLDAIUKYRGRSJSGAQZ4WN7Q4HKM.facebook"
+ */
+QByteArray NetworkManager::encode(const QByteArray &id, const QString &provider)
+{
+  QByteArray out = SimpleID::encode(id);
+  if (!provider.isEmpty())
+    out += '.' + provider.toLatin1();
 
-  if (ChatCore::networks()->selected() != SimpleID::decode(ChatClient::io()->json().value(LS("id")).toByteArray()))
-    return false;
-
-  return true;
+  return out;
 }
 
 
@@ -310,11 +325,6 @@ void NetworkManager::notify(const Notify &notify)
 
     item->setName(ChatClient::serverName());
     item->write();
-  }
-  else if (notify.type() == Notify::FeedReply) {
-    const FeedNotify &n = static_cast<const FeedNotify &>(notify);
-    if (n.match(ChatClient::id(), LS("account"), LS("login")) || n.match(ChatClient::id(), LS("account"), LS("reset")))
-      login();
   }
 }
 
@@ -384,19 +394,17 @@ void NetworkManager::login()
  */
 void NetworkManager::write()
 {
-  QByteArray id = ChatClient::serverId();
-  m_selected = id;
-
-  Network item(NetworkItem::item());
+  m_selected = encode(ChatClient::serverId(), ChatClient::channel()->account()->provider);
+  Network item(NetworkItem::item(m_selected));
   item->write();
 
-  m_networks.data.removeAll(id);
-  m_networks.data.prepend(id);
+  m_networks.data.removeAll(m_selected);
+  m_networks.data.prepend(m_selected);
   m_networks.write();
 
-  m_items[id] = item;
-  root(id);
-  ChatNotify::start(Notify::NetworkChanged, id);
+  m_items[m_selected] = item;
+  root(m_selected);
+  ChatNotify::start(Notify::NetworkChanged, m_selected);
 }
 
 
@@ -427,9 +435,9 @@ void NetworkManager::Networks::read()
   QStringList networks = ChatCore::settings()->value(LS("Networks")).toStringList();
 
   foreach (QString network, networks) {
-    QByteArray id = SimpleID::decode(network.toLatin1());
+    QByteArray id = decode(network.toLatin1());
     if (SimpleID::typeOf(id) == SimpleID::ServerId)
-      data += id;
+      data += network.toLatin1();
   }
 }
 
@@ -441,7 +449,7 @@ void NetworkManager::Networks::write()
 {
   QStringList out;
   foreach (QByteArray id, data) {
-    out += SimpleID::encode(id);
+    out += id;
   }
 
   ChatCore::settings()->setValue(LS("Networks"), out);

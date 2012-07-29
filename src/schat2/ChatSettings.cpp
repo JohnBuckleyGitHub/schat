@@ -65,13 +65,13 @@ void ChatSettings::setLocalDefault(const QString &key, const QVariant &value)
 }
 
 
-void ChatSettings::setValue(const QString &key, const QVariant &value, bool notify)
+void ChatSettings::setValue(const QString &key, const QVariant &value, bool notify, bool local)
 {
   if (QSettings::value(key, m_default.value(key)) == value)
     return;
 
   Settings::setValue(key, value, notify);
-  if (m_local.contains(key))
+  if (local || m_local.contains(key))
     return;
 
   if (ChatClient::state() == ChatClient::Online)

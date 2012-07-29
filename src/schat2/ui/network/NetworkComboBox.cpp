@@ -42,18 +42,6 @@ NetworkComboBox::NetworkComboBox(NetworkWidget *parent)
 
 
 /*!
- * Возвращает \b true если нобходимо показывать виджет ввода имени и пароля.
- */
-bool NetworkComboBox::canLogin() const
-{
-  if (ChatCore::networks()->selected() == m_tmpId)
-    return true;
-
-  return NetworkManager::isPasswordRequired();
-}
-
-
-/*!
  * Загрузка списка серверов в виджет.
  */
 void NetworkComboBox::load()
@@ -69,7 +57,6 @@ void NetworkComboBox::load()
     ChatCore::networks()->setSelected(m_tmpId);
     setItemText(0, LS("schat://schat.me"));
     setEditable(true);
-    m_network->showLogin();
   }
 
   connect(this, SIGNAL(currentIndexChanged(int)), SLOT(indexChanged(int)));
@@ -172,7 +159,6 @@ void NetworkComboBox::indexChanged(int index)
   }
 
   ChatCore::networks()->setSelected(itemData(index).toByteArray());
-  m_network->showLogin();
 
   if (index == 0) {
     add();

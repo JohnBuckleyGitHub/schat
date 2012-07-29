@@ -52,7 +52,7 @@ public:
   inline void setPassword(const QString &password) { m_password = password; }
   inline void setUrl(const QString &url)           { m_url = url; }
 
-  static NetworkItem* item();
+  static NetworkItem* item(const QByteArray &id);
 
   void read();
   void write();
@@ -97,7 +97,8 @@ public:
   void removeItem(const QByteArray &id);
   void setSelected(const QByteArray &id);
 
-  static bool isPasswordRequired();
+  static QByteArray decode(const QByteArray &id);
+  static QByteArray encode(const QByteArray &id, const QString &provider);
 
 private slots:
   void clientStateChanged(int state);
