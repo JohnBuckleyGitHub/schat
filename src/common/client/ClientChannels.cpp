@@ -56,7 +56,7 @@ ClientChannel ClientChannels::get(const QByteArray &id)
   }
 
   ClientChannel channel = m_channels.value(id);
-  if (!channel) {
+  if (!channel || channel->id() != id) {
     channel = m_hooks->get(id);
 
     if (channel)
