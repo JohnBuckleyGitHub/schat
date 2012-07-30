@@ -25,6 +25,7 @@
 class AbstractTab;
 class ChatSettings;
 class Notify;
+class QDesktopWidget;
 class QVBoxLayout;
 class SendWidget;
 class StatusBar;
@@ -36,6 +37,7 @@ class ChatWindow : public QMainWindow
 
 public:
   ChatWindow(QWidget *parent = 0);
+  ~ChatWindow();
   void showChat();
 
 signals:
@@ -45,7 +47,9 @@ protected:
   void changeEvent(QEvent *event);
   void closeEvent(QCloseEvent *event);
   void keyPressEvent(QKeyEvent *event);
+  void moveEvent(QMoveEvent *event);
   void resizeEvent(QResizeEvent *event);
+  void showEvent(QShowEvent *event);
   #if defined(Q_WS_WIN)
   bool winEvent(MSG *message, long *result);
   #endif
@@ -65,6 +69,7 @@ private:
   #endif
 
   ChatSettings *m_settings;  ///< Настройки.
+  QDesktopWidget *m_desktop; ///< Виджет для определения геометрии экрана.
   QTime m_activationChanged; ///< Время когда была изменена видимость окна.
   QVBoxLayout *m_mainLay;    ///< Основной компоновщик.
   QWidget *m_central;        ///< Центральный виджет.
