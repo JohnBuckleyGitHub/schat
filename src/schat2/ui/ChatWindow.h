@@ -61,8 +61,11 @@ private slots:
   void settingsChanged(const QString &key, const QVariant &value);
 
 private:
+  QString geometryKey() const;
   void hideChat();
+  void restoreGeometry();
   void retranslateUi();
+  void saveGeometry();
 
   #if defined(Q_WS_WIN)
   void setWindowsAero();
