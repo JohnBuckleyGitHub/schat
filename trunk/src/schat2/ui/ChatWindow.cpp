@@ -76,7 +76,7 @@ ChatWindow::ChatWindow(QWidget *parent)
   setWindowsAero();
   #endif
 
-  resize(SCHAT_OPTION("Width").toInt(), SCHAT_OPTION("Height").toInt());
+  restoreGeometry();
 
   connect(m_send, SIGNAL(send(const QString &)), ChatCore::i(), SLOT(send(const QString &)));
   connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
@@ -143,16 +143,15 @@ void ChatWindow::keyPressEvent(QKeyEvent *event)
 
 void ChatWindow::moveEvent(QMoveEvent *event)
 {
+  saveGeometry();
+
   QMainWindow::moveEvent(event);
 }
 
 
 void ChatWindow::resizeEvent(QResizeEvent *event)
 {
-  if (!SCHAT_OPTION("Maximized").toBool()) {
-    m_settings->setValue(LS("Width"), width(), false);
-    m_settings->setValue(LS("Height"), height(), false);
-  }
+  saveGeometry();
 
   QMainWindow::resizeEvent(event);
 }
@@ -238,9 +237,19 @@ void ChatWindow::settingsChanged(const QString &key, const QVariant &value)
     else
       showNormal();
   }
-  else if (key == LS("Width") || key == LS("Height")) {
-    resize(SCHAT_OPTION("Width").toInt(), SCHAT_OPTION("Height").toInt());
+}
+
+
+QString ChatWindow::geometryKey() const
+{
+  int count = m_desktop->screenCount();
+  QString out;
+  for (int i = 0; i < count; ++i) {
+    QRect r = m_desktop->screenGeometry(i);
+    out += QString::number(r.x()) + LC('.') + QString::number(r.y()) + LC('.') + QString::number(r.width()) + LC('x') + QString::number(r.height());
   }
+
+  return out;
 }
 
 
@@ -257,6 +266,32 @@ void ChatWindow::hideChat()
 
 void ChatWindow::retranslateUi()
 {
+}
+
+
+void ChatWindow::restoreGeometry()
+{
+  QVariantList data = m_settings->value(LS("Geometry/") + geometryKey()).toList();
+
+  if (data.size() == 4) {
+    move(data.at(0).toInt(), data.at(1).toInt());
+    resize(data.at(2).toInt(), data.at(3).toInt());
+  } else
+    resize(666, 420);
+}
+
+
+void ChatWindow::saveGeometry()
+{
+  if (SCHAT_OPTION("Maximized").toBool())
+    return;
+
+  QVariantList data;
+  data.append(pos().x());
+  data.append(pos().y());
+  data.append(width());
+  data.append(height());
+  m_settings->setValue(LS("Geometry/") + geometryKey(), data, false, true);
 }
 
 
