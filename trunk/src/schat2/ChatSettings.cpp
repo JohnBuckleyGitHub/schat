@@ -29,7 +29,6 @@ ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
 {
   setLocalDefault(LS("AutoConnect"),           true);
   setLocalDefault(LS("AutoJoin"),              true);
-  setLocalDefault(LS("Height"),                420);
   setLocalDefault(LS("Labs/CookieAuth"),       true);
   setLocalDefault(LS("Labs/DeveloperExtras"),  false);
   setLocalDefault(LS("Labs/DisableUI"),        false);
@@ -38,7 +37,6 @@ ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
   setLocalDefault(LS("Profile/Gender"),        0);
   setLocalDefault(LS("Profile/Nick"),          Channel::defaultName());
   setLocalDefault(LS("Profile/Status"),        1);
-  setLocalDefault(LS("Width"),                 666);
   setLocalDefault(LS("WindowsAero"),           true);
 
   setDefault(LS("Display/Seconds"),            false);
