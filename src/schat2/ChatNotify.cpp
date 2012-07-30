@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QTimer>
+
 #include "ChatNotify.h"
 #include "sglobal.h"
 
@@ -65,6 +67,42 @@ ChatNotify::ChatNotify(QObject *parent)
   : QObject(parent)
 {
   m_self = this;
+}
+
+
+/*!
+ * Немедленная отправка уведомления.
+ */
+void ChatNotify::start(const Notify &notify)
+{
+  emit m_self->notify(notify);
+}
+
+
+void ChatNotify::start(int type, const QVariant &data, bool queued)
+{
+  if (queued)
+    start(new Notify(type, data));
+  else
+    start(Notify(type, data));
+}
+
+
+/*!
+ * Отложенная отправка уведомления.
+ */
+void ChatNotify::start(Notify *notify)
+{
+  m_self->m_queue.enqueue(NotifyPtr(notify));
+  if (m_self->m_queue.size() == 1)
+    QTimer::singleShot(0, m_self, SLOT(start()));
+}
+
+
+void ChatNotify::start()
+{
+  while (!m_queue.isEmpty())
+    emit notify(*m_queue.dequeue());
 }
 
 

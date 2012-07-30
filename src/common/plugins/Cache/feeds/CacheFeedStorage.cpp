@@ -135,5 +135,5 @@ void CacheFeedStorage::load(Channel *channel, const QString &name, qint64 id)
   feed->head().setKey(id);
   channel->feeds().add(feed, false);
 
-  ChatNotify::start(FeedNotify(Notify::FeedData, channel->id(), name));
+  ChatNotify::start(new FeedNotify(Notify::FeedData, channel->id(), name));
 }

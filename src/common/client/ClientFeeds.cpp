@@ -96,7 +96,7 @@ void ClientFeeds::notice(int type)
     return;
 
   m_packet = &packet;
-  qDebug() << "FeedNotice:" << m_packet->command() << m_packet->raw();
+//  qDebug() << "FeedNotice:" << m_packet->command() << m_packet->raw();
 
   m_hooks->readFeed(packet);
 }
