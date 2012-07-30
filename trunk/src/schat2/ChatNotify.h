@@ -20,6 +20,8 @@
 #define CHATNOTIFY_H_
 
 #include <QObject>
+#include <QQueue>
+#include <QSharedPointer>
 #include <QVariant>
 
 #include "schat.h"
@@ -71,6 +73,8 @@ protected:
   QVariant m_data;
 };
 
+typedef QSharedPointer<Notify> NotifyPtr;
+
 
 /*!
  * Уведомления связанные с фидами.
@@ -104,16 +108,22 @@ class SCHAT_CORE_EXPORT ChatNotify : public QObject
 
 public:
   ChatNotify(QObject *parent = 0);
-  inline static ChatNotify *i()                                         { return m_self; }
-  inline static void start(const Notify &notify)                        { m_self->startNotify(notify); }
-  inline static void start(int type, const QVariant &data = QVariant()) { m_self->startNotify(Notify(type, data)); }
+  inline static ChatNotify *i() { return m_self; }
+  static void start(const Notify &notify);
+  static void start(int type, const QVariant &data = QVariant(), bool queued = false);
+  static void start(Notify *notify);
 
 signals:
   void notify(const Notify &notify);
 
+private slots:
+  void start();
+
 private:
   void startNotify(const Notify &notify);
+  void startNotify(Notify *notify);
 
+  QQueue<NotifyPtr> m_queue; ///< Очередь отправки.
   static ChatNotify *m_self; ///< Указатель на себя.
 };
 

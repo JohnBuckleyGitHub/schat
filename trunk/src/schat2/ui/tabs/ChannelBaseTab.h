@@ -39,7 +39,7 @@ public:
   ChannelBaseTab(ClientChannel channel, const QString &type, TabWidget *parent);
   ~ChannelBaseTab();
 
-  inline ChatView *chatView()          { return m_chatView; }
+  inline ChatView *chatView() const    { return m_chatView; }
   inline ClientChannel channel() const { return m_channel; }
 
   bool bindMenu(QMenu *menu);
