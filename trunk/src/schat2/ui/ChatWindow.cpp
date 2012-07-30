@@ -19,6 +19,7 @@
 #include <QApplication>
 #include <QKeyEvent>
 #include <QTimer>
+#include <QDesktopWidget>
 #include <QVBoxLayout>
 
 #include "ChatAlerts.h"
@@ -51,6 +52,7 @@ ChatWindow::ChatWindow(QWidget *parent)
   : QMainWindow(parent)
   , m_settings(ChatCore::settings())
 {
+  m_desktop = new QDesktopWidget();
   new StatusMenu(this);
 
   m_central = new QWidget(this);
@@ -82,6 +84,12 @@ ChatWindow::ChatWindow(QWidget *parent)
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 
   setWindowTitle(QApplication::applicationName());
+}
+
+
+ChatWindow::~ChatWindow()
+{
+  delete m_desktop;
 }
 
 
@@ -133,14 +141,32 @@ void ChatWindow::keyPressEvent(QKeyEvent *event)
 }
 
 
+void ChatWindow::moveEvent(QMoveEvent *event)
+{
+  QMainWindow::moveEvent(event);
+}
+
+
 void ChatWindow::resizeEvent(QResizeEvent *event)
 {
   if (!SCHAT_OPTION("Maximized").toBool()) {
-    m_settings->setValue(QLatin1String("Width"), width(), false);
-    m_settings->setValue(QLatin1String("Height"), height(), false);
+    m_settings->setValue(LS("Width"), width(), false);
+    m_settings->setValue(LS("Height"), height(), false);
   }
 
   QMainWindow::resizeEvent(event);
+}
+
+
+void ChatWindow::showEvent(QShowEvent *event)
+{
+  QRect geometry    = frameGeometry();
+  QRect available   = m_desktop->availableGeometry(this);
+  QRect intersected = available.intersected(geometry);
+  if (intersected != geometry)
+    resize(intersected.width() - (geometry.width() - width()), intersected.height() - (geometry.height() - height()));
+
+  QMainWindow::showEvent(event);
 }
 
 
