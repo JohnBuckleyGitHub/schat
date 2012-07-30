@@ -113,7 +113,7 @@ AbstractTab *TabWidget::widget(int index) const
 
 ClientChannel TabWidget::channel(const QByteArray &id) const
 {
-  if (m_channels.contains(id))
+  if (m_channels.contains(id) && m_channels.value(id)->channel()->id() == id)
     return m_channels.value(id)->channel();
 
   return ClientChannel();
