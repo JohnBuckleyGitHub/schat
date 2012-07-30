@@ -112,7 +112,7 @@ void ChannelTab::channels(const QList<QByteArray> &channels)
 {
   m_userView->setSortable(false);
   foreach (QByteArray id, channels) {
-    if (m_channel->channels().all().contains(id) && !m_userView->contains(id))
+    if (c()->channels().all().contains(id) && !m_userView->contains(id))
       m_userView->add(ChatClient::channels()->get(id));
   }
 
@@ -147,7 +147,7 @@ void ChannelTab::part(const QByteArray &channel, const QByteArray &user)
 
 void ChannelTab::quit(const QByteArray &user)
 {
-  if (!m_channel->channels().all().contains(user))
+  if (!c()->channels().all().contains(user))
     return;
 
   m_userView->remove(user);

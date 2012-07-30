@@ -35,7 +35,7 @@ PrivateTab::PrivateTab(ClientChannel channel, TabWidget *parent)
   mainLay->setMargin(0);
   mainLay->setSpacing(0);
 
-  setText(m_channel->name());
+  setText(channel->name());
 
   ChatClient::channels()->join(id());
 
