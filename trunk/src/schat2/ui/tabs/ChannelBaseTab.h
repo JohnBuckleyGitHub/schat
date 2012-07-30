@@ -56,12 +56,15 @@ private slots:
   void part(const QByteArray &channel, const QByteArray &user);
 
 protected:
-  QIcon channelIcon() const;
+  ClientChannel c();
+  QIcon channelIcon();
   QString page() const;
   virtual void reload();
 
   bool m_joined;           ///< \b true если пользователь уже вошёл в канал.
   ChatView *m_chatView;    ///< Виджет отображающий текст чата.
+
+private:
   ClientChannel m_channel; ///< Канал.
 };
 

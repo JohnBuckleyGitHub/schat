@@ -68,7 +68,7 @@ ChannelBaseTab::~ChannelBaseTab()
 
 bool ChannelBaseTab::bindMenu(QMenu *menu)
 {
-  Hooks::ChannelMenu::bind(menu, m_channel);
+  Hooks::ChannelMenu::bind(menu, c());
   return true;
 }
 
@@ -169,13 +169,28 @@ void ChannelBaseTab::part(const QByteArray &channel, const QByteArray &user)
 }
 
 
-QIcon ChannelBaseTab::channelIcon() const
+/*!
+ * Защищённый доступ к каналу, гарантирует доступ к актуальному указателю.
+ */
+ClientChannel ChannelBaseTab::c()
+{
+  ClientChannel channel = ChatClient::channels()->get(id());
+  if (channel && channel != m_channel)
+    m_channel = channel;
+
+  return m_channel;
+}
+
+
+QIcon ChannelBaseTab::channelIcon()
 {
   int alerts = ChatAlerts::count(id());
+  ClientChannel channel = c();
+
   if (alerts)
-    return AlertsPixmap::icon(ChatIcons::icon(m_channel, ChatIcons::OfflineStatus), alerts);
+    return AlertsPixmap::icon(ChatIcons::icon(channel, ChatIcons::OfflineStatus), alerts);
   else
-    return ChatIcons::icon(m_channel);
+    return ChatIcons::icon(channel);
 }
 
 
@@ -195,6 +210,6 @@ QString ChannelBaseTab::page() const
 
 void ChannelBaseTab::reload()
 {
+  setText(c()->name());
   setIcon(channelIcon());
-  setText(m_channel->name());
 }
