@@ -55,6 +55,8 @@ public:
   void retranslate();
 
 signals:
+  void offline();
+  void online();
   void recolored(const QVariantMap &data);
   void renamed(const QVariantMap &data);
   void retranslated();
@@ -62,6 +64,7 @@ signals:
 
 private slots:
   void channel(const ChannelInfo &info);
+  void quit(const QByteArray &user);
 
 private:
   static WebBridge *m_self; ///< Указатель на себя.
