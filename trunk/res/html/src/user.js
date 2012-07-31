@@ -148,6 +148,15 @@ var Profile = {
   setStatus: function()
   {
     Profile.updateStatus(Settings.id, SimpleChat.status(Settings.id));
+  },
+
+
+  /*
+   * Обработка отключения чата.
+   */
+  offline: function()
+  {
+    Profile.updateStatus(Settings.id, 'Offline');
   }
 };
 
@@ -215,7 +224,7 @@ var Connections = {
       $("#user-offline").hide();
       $(".icon-os").tooltip();
     } else
-      $("#user-offline").show();
+      Connections.offline();
   },
 
 
@@ -223,12 +232,36 @@ var Connections = {
     if (Pages.current != 1)
       return;
 
-    $("#connections-spinner").css("display", "inline-block");
     Utils.TR("connections");
-    Utils.TR("user_offline");
 
-    Connections.read(SimpleChat.feed(Settings.id, "user"));
+    if (SimpleChat.status(Settings.id) != 'Offline')
+      Connections.online();
+    else
+      Connections.offline();
+
     Utils.retranslate();
+  },
+
+
+  /*
+   * Обработка отключения чата.
+   */
+  offline: function()
+  {
+    Utils.TR("user_offline");
+    $("#user-offline").show();
+    $("#connections-spinner").hide();
+    $(".connection-row").remove();
+  },
+
+
+  /*
+   * Обработка подключения чата.
+   */
+  online: function()
+  {
+    $("#connections-spinner").css("display", "inline-block");
+    Connections.read(SimpleChat.feed(Settings.id, "user"));
   }
 };
 
@@ -276,6 +309,9 @@ else {
   ChatView.reload.connect(Profile.reload);
   SimpleChat.retranslated.connect(Profile.retranslate);
   SimpleChat.statusChanged.connect(Profile.updateStatus);
+  SimpleChat.offline.connect(Profile.offline);
+  SimpleChat.offline.connect(Connections.offline);
+  SimpleChat.online.connect(Connections.online);
 
   ChatView.feed.connect(Connections.feed);
   ChatView.reload.connect(Connections.reload);

@@ -29,14 +29,14 @@ h3 {
   margin-top: 7px;
 }
 
-#user-status-text, #user-account {
+#user-status-text, #user-account, #user-offline {
   color: #5b5d6d;
-  display: inline-block;
 }
 
 #user-account {
   margin-left: 6px;
   height: 16px;
+  display: inline-block;
 }
 
 #user-status {
@@ -48,6 +48,7 @@ h3 {
   min-height: 10px;
   background-repeat: no-repeat;
   background-position: left center;
+  display: inline-block;
 }
 
 [data-tr="status_Away"] {
@@ -74,7 +75,7 @@ h3 {
 }
 
 #user-offline {
-  color: #5b5d6d;
+  display: none;
 }
 
 .connection-row span {

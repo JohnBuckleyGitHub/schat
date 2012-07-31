@@ -84,6 +84,9 @@ WebBridge::WebBridge(QObject *parent)
   retranslate();
 
   connect(ChatClient::channels(), SIGNAL(channel(ChannelInfo)), SLOT(channel(ChannelInfo)));
+  connect(ChatClient::channels(), SIGNAL(quit(QByteArray)), SLOT(quit(QByteArray)));
+  connect(ChatClient::i(), SIGNAL(online()), SIGNAL(online()));
+  connect(ChatClient::i(), SIGNAL(offline()), SIGNAL(offline()));
 }
 
 
@@ -135,6 +138,9 @@ QString WebBridge::randomId() const
 
 QString WebBridge::status(const QString &id) const
 {
+  if (ChatClient::state() != ChatClient::Online)
+    return LS("Offline");
+
   ClientChannel channel = ChatClient::channels()->get(SimpleID::decode(id));
   if (!channel)
     return LS("Offline");
@@ -278,4 +284,10 @@ void WebBridge::channel(const ChannelInfo &info)
 
   emit recolored(data);
   emit statusChanged(data.value(LS("Id")).toString(), data.value(LS("Status")).toString());
+}
+
+
+void WebBridge::quit(const QByteArray &user)
+{
+  emit statusChanged(SimpleID::encode(user), LS("Offline"));
 }
