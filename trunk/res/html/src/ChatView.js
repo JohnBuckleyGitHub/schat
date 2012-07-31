@@ -17,7 +17,8 @@
  */
 
 var Settings = {
-  id: ''
+  id: '',
+  status: ''
 };
 
 
@@ -636,7 +637,8 @@ if (typeof ChatView === "undefined") {
     setTabPage: function(id, page) {},
     feed: function(id, name) { return {}; },
     randomId: function() { return ''; },
-    bytesToHuman: function(size) { return '0 bytes'; }
+    bytesToHuman: function(size) { return '0 bytes'; },
+    status: function(id) { return 'Offline'; }
   };
 
   ChatView = {

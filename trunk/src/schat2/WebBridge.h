@@ -40,6 +40,7 @@ public:
   Q_INVOKABLE QString bytesToHuman(qint64 size, bool html = true);
   Q_INVOKABLE QString channel(const QString &id) const;
   Q_INVOKABLE QString randomId() const;
+  Q_INVOKABLE QString status(const QString &id) const;
   Q_INVOKABLE QString translate(const QString &key) const;
   Q_INVOKABLE QStringList fields() const;
   Q_INVOKABLE QVariantMap feed(const QString &id, const QString &name, bool cache = true) const;
@@ -57,6 +58,7 @@ signals:
   void recolored(const QVariantMap &data);
   void renamed(const QVariantMap &data);
   void retranslated();
+  void statusChanged(const QString &id, const QString &status);
 
 private slots:
   void channel(const ChannelInfo &info);

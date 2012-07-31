@@ -55,6 +55,27 @@ public:
   inline bool operator==(int other) const { return m_status == other; }
   inline Status& operator=(int other)     { m_status = other; return *this; }
 
+  QString toString() const
+  {
+    switch (m_status) {
+      case Online:
+        return QLatin1String("Online");
+
+      case Away:
+      case AutoAway:
+        return QLatin1String("Away");
+
+      case DnD:
+        return QLatin1String("DnD");
+
+      case FreeForChat:
+        return QLatin1String("FreeForChat");
+
+      default:
+        return QLatin1String("Offline");
+    }
+  }
+
 private:
   quint8 m_status;
 };

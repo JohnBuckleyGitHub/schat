@@ -66,6 +66,11 @@ protected:
     else if (key == LS("sign_in_with"))      return tr("Sign in using your account with");
     else if (key == LS("or_anon_connect"))   return tr("Or connect anonymously");
     else if (key == LS("anonymous_user"))    return tr("anonymous user");
+    else if (key == LS("status_Online"))     return tr("Online");
+    else if (key == LS("status_Away"))       return tr("Away");
+    else if (key == LS("status_DnD"))        return tr("Do not disturb");
+    else if (key == LS("status_FreeForChat"))return tr("Free for Chat");
+    else if (key == LS("status_Offline"))    return tr("Offline");
     return QString();
   }
 };
@@ -128,6 +133,16 @@ QString WebBridge::randomId() const
 }
 
 
+QString WebBridge::status(const QString &id) const
+{
+  ClientChannel channel = ChatClient::channels()->get(SimpleID::decode(id));
+  if (!channel)
+    return LS("Offline");
+
+  return channel->status().toString();
+}
+
+
 QString WebBridge::translate(const QString &key) const
 {
   return Tr::value(key);
@@ -185,10 +200,11 @@ QVariantMap WebBridge::channel(const QByteArray &id)
     return QVariantMap();
 
   QVariantMap data;
-  data[LS("Id")]    = QString(SimpleID::encode(id));
-  data[LS("Name")]  = channel->name();
-  data[LS("Url")]   = ChatUrls::toUrl(channel, LS("insert")).toString();
-  data[LS("Color")] = Gender::colorToString(channel->gender().color());
+  data[LS("Id")]     = QString(SimpleID::encode(id));
+  data[LS("Name")]   = channel->name();
+  data[LS("Url")]    = ChatUrls::toUrl(channel, LS("insert")).toString();
+  data[LS("Color")]  = channel->gender().toString();
+  data[LS("Status")] = channel->status().toString();
   return data;
 }
 
@@ -261,4 +277,5 @@ void WebBridge::channel(const ChannelInfo &info)
     emit renamed(data);
 
   emit recolored(data);
+  emit statusChanged(data.value(LS("Id")).toString(), data.value(LS("Status")).toString());
 }
