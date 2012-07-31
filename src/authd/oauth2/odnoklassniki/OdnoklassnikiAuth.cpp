@@ -28,7 +28,7 @@
 #include "net/SimpleID.h"
 #include "NodeLog.h"
 #include "oauth2/OAuthData.h"
-#include "oauth2/OdnoklassnikiAuth.h"
+#include "oauth2/odnoklassniki/OdnoklassnikiAuth.h"
 #include "sglobal.h"
 #include "Tufao/httpserverresponse.h"
 

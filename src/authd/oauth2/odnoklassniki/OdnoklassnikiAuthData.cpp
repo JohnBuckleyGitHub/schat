@@ -18,22 +18,18 @@
 
 #include <QUrl>
 
-#include "oauth2/GoogleAuthData.h"
+#include "oauth2/odnoklassniki/OdnoklassnikiAuthData.h"
 #include "sglobal.h"
 
-GoogleAuthData::GoogleAuthData()
-  : OAuthData("google")
+OdnoklassnikiAuthData::OdnoklassnikiAuthData()
+  : OAuthData("odnoklassniki")
 {
-  name = "Google";
-  htmlName = "<span style='color:#0039b6'>G</span><span style='color:#c41200'>o</span><span style='color:#f7a70b'>o</span><span style='color:#0039b6'>g</span><span style='color:#30a72f'>l</span><span style='color:#c41200'>e</span>";
+  name = "Одноклассники";
+  htmlName = name;
 }
 
 
-QByteArray GoogleAuthData::toUrl(const QByteArray &state) const
+QByteArray OdnoklassnikiAuthData::toUrl(const QByteArray &state) const
 {
-  QByteArray url = "https://accounts.google.com/o/oauth2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile";
-  url += "&redirect_uri=" + QUrl::toPercentEncoding(redirect);
-  url += "&response_type=code&client_id=" + id + "&approval_prompt=force";
-  url += "&state=" + state;
-  return url;
+  return "http://www.odnoklassniki.ru/oauth/authorize?client_id=" + id + "&response_type=code&redirect_uri=" + QUrl::toPercentEncoding(redirect + LC('/') + state);
 }

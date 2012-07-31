@@ -26,7 +26,7 @@
 #include "JSON.h"
 #include "net/SimpleID.h"
 #include "NodeLog.h"
-#include "oauth2/MailRuAuth.h"
+#include "oauth2/mail_ru/MailRuAuth.h"
 #include "oauth2/OAuthData.h"
 #include "sglobal.h"
 
