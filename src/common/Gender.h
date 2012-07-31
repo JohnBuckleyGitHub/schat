@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -56,8 +56,9 @@ public:
   : m_gender(gender)
   {}
 
-  inline int raw() const         { return m_gender; }
-  inline void setRaw(int gender) { m_gender = gender; }
+  inline int raw() const          { return m_gender; }
+  inline QString toString() const { return colorToString(color()); }
+  inline void setRaw(int gender)  { m_gender = gender; }
   quint8 color() const;
   quint8 value() const;
   void set(Genders gender);

@@ -91,6 +91,7 @@ var Profile = {
     Utils.TR("profile");
 
     Profile.read(SimpleChat.feed(Settings.id, "profile"));
+    Profile.setStatus();
   },
 
 
@@ -113,14 +114,40 @@ var Profile = {
     }
   },
 
-  /*!
-   * Показ о том, что пользователь анонимный.
-   *
-   * \param anonymous true если пользователь анонимный.
+
+  /*
+   * Показ сообщения о том, что пользователь анонимный.
    */
   setAnonymous: function()
   {
     $('#user-account').html('<span data-tr="anonymous_user">' + Utils.tr('anonymous_user') + '</span>');
+  },
+
+
+  /*
+   * Обновление информации о статусе пользователя.
+   */
+  updateStatus: function(id, status)
+  {
+    if (Settings.id != id)
+      return;
+
+    if (Settings.status == status)
+      return;
+
+    Settings.status = status;
+    $('#user-status-text').attr('data-tr', 'status_' + status);
+    $('#user-status-text').text(Utils.tr('status_' + status));
+    console.log(id + ' ' + status);
+  },
+
+
+  /*
+   * Обновление информации о статусе пользователя.
+   */
+  setStatus: function()
+  {
+    Profile.updateStatus(Settings.id, SimpleChat.status(Settings.id));
   }
 };
 
@@ -248,6 +275,7 @@ else {
   ChatView.feed.connect(Profile.feed);
   ChatView.reload.connect(Profile.reload);
   SimpleChat.retranslated.connect(Profile.retranslate);
+  SimpleChat.statusChanged.connect(Profile.updateStatus);
 
   ChatView.feed.connect(Connections.feed);
   ChatView.reload.connect(Connections.reload);

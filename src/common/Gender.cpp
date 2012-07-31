@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
  */
 
 #include "Gender.h"
+#include "sglobal.h"
 
 quint8 Gender::color() const
 {
@@ -82,31 +83,31 @@ void Gender::setColor(quint8 color)
 int Gender::stringToColor(const QString &color)
 {
   QString c = color.toLower();
-  if (c == "black")
+  if (c == LS("black"))
     return Black;
 
-  if (c == "gray")
+  if (c == LS("gray"))
     return Gray;
 
-  if (c == "green")
+  if (c == LS("green"))
     return Green;
 
-  if (c == "red")
+  if (c == LS("red"))
     return Red;
 
-  if (c == "white")
+  if (c == LS("white"))
     return White;
 
-  if (c == "yellow")
+  if (c == LS("yellow"))
     return Yellow;
 
-  if (c == "medical")
+  if (c == LS("medical"))
     return Medical;
 
-  if (c == "nude")
+  if (c == LS("nude"))
     return Nude;
 
-  if (c == "thief")
+  if (c == LS("thief"))
     return Thief;
 
   return Default;
@@ -117,34 +118,34 @@ QString Gender::colorToString(quint8 color)
 {
   switch (color) {
     case Black:
-      return "black";
+      return LS("black");
 
     case Gray:
-      return "gray";
+      return LS("gray");
 
     case Green:
-      return "green";
+      return LS("green");
 
     case Red:
-      return "red";
+      return LS("red");
 
     case White:
-      return "white";
+      return LS("white");
 
     case Yellow:
-      return "yellow";
+      return LS("yellow");
 
     case Medical:
-      return "medical";
+      return LS("medical");
 
     case Nude:
-      return "nude";
+      return LS("nude");
 
     case Thief:
-      return "thief";
+      return LS("thief");
 
     default:
-      return "default";
+      return LS("default");
       break;
   }
 }
