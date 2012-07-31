@@ -83,6 +83,9 @@ void IdlePluginImpl::start()
 
 void IdlePluginImpl::away(bool away)
 {
+  if (ChatClient::channel()->status() == Status::DnD)
+    return;
+
   int status = Status::AutoAway;
   if (!away)
     status = ChatCore::settings()->value(LS("Profile/Status")).toInt();
