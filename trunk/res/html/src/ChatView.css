@@ -420,24 +420,32 @@ a:active, a:hover {
   background-position: 0 0;
 }
 
-.provider-yandex {
+.provider-google {
   background-position: -16px 0;
 }
 
-.provider-facebook {
+.provider-yandex {
   background-position: -32px 0;
 }
 
-.provider-vkontakte {
+.provider-facebook {
   background-position: -48px 0;
 }
 
-.provider-mail_ru {
+.provider-vkontakte {
   background-position: -64px 0;
 }
 
-.provider-odnoklassniki {
+.provider-mail_ru {
   background-position: -80px 0;
+}
+
+.provider-odnoklassniki {
+  background-position: -96px 0;
+}
+
+.provider-live {
+  background-position: -112px 0;
 }
 
 #easyTooltip {

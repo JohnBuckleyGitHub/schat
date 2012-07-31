@@ -98,6 +98,7 @@ HEADERS = \
     oauth2/facebook/FacebookAuthData.h \
     oauth2/google/GoogleAuth.h \
     oauth2/google/GoogleAuthData.h \
+    oauth2/live/LiveAuthData.h \
     oauth2/mail_ru/MailRuAuth.h \
     oauth2/mail_ru/MailRuAuthData.h \
     oauth2/OAuthData.h \
@@ -122,6 +123,7 @@ SOURCES = \
     oauth2/facebook/FacebookAuthData.cpp \
     oauth2/google/GoogleAuth.cpp \
     oauth2/google/GoogleAuthData.cpp \
+    oauth2/live/LiveAuthData.cpp \
     oauth2/mail_ru/MailRuAuth.cpp \
     oauth2/mail_ru/MailRuAuthData.cpp \
     oauth2/OAuthData.cpp \
