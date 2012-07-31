@@ -94,20 +94,20 @@ HEADERS = \
     handlers.h \
     handlers/ProvidersHandler.h \
     handlers/StateHandler.h \
-    oauth2/FacebookAuth.h \
-    oauth2/FacebookAuthData.h \
-    oauth2/GoogleAuth.h \
-    oauth2/GoogleAuthData.h \
-    oauth2/MailRuAuth.h \
-    oauth2/MailRuAuthData.h \
+    oauth2/facebook/FacebookAuth.h \
+    oauth2/facebook/FacebookAuthData.h \
+    oauth2/google/GoogleAuth.h \
+    oauth2/google/GoogleAuthData.h \
+    oauth2/mail_ru/MailRuAuth.h \
+    oauth2/mail_ru/MailRuAuthData.h \
     oauth2/OAuthData.h \
     oauth2/OAuthHandler.h \
-    oauth2/OdnoklassnikiAuth.h \
-    oauth2/OdnoklassnikiAuthData.h \
-    oauth2/VkontakteAuth.h \
-    oauth2/VkontakteAuthData.h \
-    oauth2/YandexAuth.h \
-    oauth2/YandexAuthData.h \
+    oauth2/odnoklassniki/OdnoklassnikiAuth.h \
+    oauth2/odnoklassniki/OdnoklassnikiAuthData.h \
+    oauth2/vkontakte/VkontakteAuth.h \
+    oauth2/vkontakte/VkontakteAuthData.h \
+    oauth2/yandex/YandexAuth.h \
+    oauth2/yandex/YandexAuthData.h \
 
 SOURCES = \
     AuthCore.cpp \
@@ -118,20 +118,20 @@ SOURCES = \
     HandlerRoute.cpp \
     handlers/ProvidersHandler.cpp \
     handlers/StateHandler.cpp \
-    oauth2/FacebookAuth.cpp \
-    oauth2/FacebookAuthData.cpp \
-    oauth2/GoogleAuth.cpp \
-    oauth2/GoogleAuthData.cpp \
-    oauth2/MailRuAuth.cpp \
-    oauth2/MailRuAuthData.cpp \
+    oauth2/facebook/FacebookAuth.cpp \
+    oauth2/facebook/FacebookAuthData.cpp \
+    oauth2/google/GoogleAuth.cpp \
+    oauth2/google/GoogleAuthData.cpp \
+    oauth2/mail_ru/MailRuAuth.cpp \
+    oauth2/mail_ru/MailRuAuthData.cpp \
     oauth2/OAuthData.cpp \
     oauth2/OAuthHandler.cpp \
-    oauth2/OdnoklassnikiAuth.cpp \
-    oauth2/OdnoklassnikiAuthData.cpp \
-    oauth2/VkontakteAuth.cpp \
-    oauth2/VkontakteAuthData.cpp \
-    oauth2/YandexAuth.cpp \
-    oauth2/YandexAuthData.cpp \
+    oauth2/odnoklassniki/OdnoklassnikiAuth.cpp \
+    oauth2/odnoklassniki/OdnoklassnikiAuthData.cpp \
+    oauth2/vkontakte/VkontakteAuth.cpp \
+    oauth2/vkontakte/VkontakteAuthData.cpp \
+    oauth2/yandex/YandexAuth.cpp \
+    oauth2/yandex/YandexAuthData.cpp \
 
 include(../common/config.pri)
 include(../common/common.pri)

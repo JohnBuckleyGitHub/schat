@@ -18,18 +18,17 @@
 
 #include <QUrl>
 
-#include "oauth2/VkontakteAuthData.h"
-#include "sglobal.h"
+#include "oauth2/mail_ru/MailRuAuthData.h"
 
-VkontakteAuthData::VkontakteAuthData()
-  : OAuthData("vkontakte")
+MailRuAuthData::MailRuAuthData()
+  : OAuthData("mail_ru")
 {
-  name = "ВКонтакте";
-  htmlName = name;
+  name = "Mail.Ru";
+  htmlName = "<span style='color:#f7a600'>@</span>mail<span style='color:#f7a600'>.ru</span>";
 }
 
 
-QByteArray VkontakteAuthData::toUrl(const QByteArray &state) const
+QByteArray MailRuAuthData::toUrl(const QByteArray &state) const
 {
-  return "https://oauth.vk.com/authorize?client_id=" + id + "&redirect_uri=" + QUrl::toPercentEncoding(redirect + LC('/') + state) + "&response_type=code";
+  return "https://connect.mail.ru/oauth/authorize?client_id=" + id + "&response_type=code&redirect_uri=" + QUrl::toPercentEncoding(redirect) + "&state=" + state;
 }

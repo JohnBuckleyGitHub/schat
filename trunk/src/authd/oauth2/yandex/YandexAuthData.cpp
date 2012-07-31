@@ -16,19 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QUrl>
+#include "oauth2/yandex/YandexAuthData.h"
 
-#include "oauth2/FacebookAuthData.h"
-
-FacebookAuthData::FacebookAuthData()
-  : OAuthData("facebook")
+YandexAuthData::YandexAuthData()
+  : OAuthData("yandex")
 {
-  name = "Facebook";
-  htmlName = "Facebook";
+  name = "Яндекс";
+  htmlName = "<span style='color:#ff000a'>Я</span>ндекс";
 }
 
 
-QByteArray FacebookAuthData::toUrl(const QByteArray &state) const
+QByteArray YandexAuthData::toUrl(const QByteArray &state) const
 {
-  return "https://www.facebook.com/dialog/oauth?client_id=" + id + "&redirect_uri=" + QUrl::toPercentEncoding(redirect) + "&scope=email,user_birthday&state=" + state;
+  return "https://oauth.yandex.ru/authorize?response_type=code&client_id=" + id + "&state=" + state;
 }

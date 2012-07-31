@@ -24,7 +24,7 @@
 #include "JSON.h"
 #include "net/SimpleID.h"
 #include "NodeLog.h"
-#include "oauth2/FacebookAuth.h"
+#include "oauth2/facebook/FacebookAuth.h"
 #include "oauth2/OAuthData.h"
 #include "sglobal.h"
 #include "AuthState.h"

@@ -27,7 +27,7 @@
 #include "net/SimpleID.h"
 #include "NodeLog.h"
 #include "oauth2/OAuthData.h"
-#include "oauth2/VkontakteAuth.h"
+#include "oauth2/vkontakte/VkontakteAuth.h"
 #include "sglobal.h"
 #include "Tufao/httpserverresponse.h"
 

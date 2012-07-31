@@ -25,7 +25,7 @@
 #include "net/SimpleID.h"
 #include "NodeLog.h"
 #include "oauth2/OAuthData.h"
-#include "oauth2/YandexAuth.h"
+#include "oauth2/yandex/YandexAuth.h"
 #include "sglobal.h"
 
 YandexAuth::YandexAuth(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
