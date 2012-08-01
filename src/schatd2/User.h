@@ -29,6 +29,8 @@ class SCHAT_EXPORT Birthday
 {
 public:
   Birthday(quint8 day = 0, quint8 month = 0, quint16 year = 0);
+  bool isValid() const;
+  QString toString() const;
 
   quint8 day;
   quint8 month;

@@ -20,6 +20,7 @@
 #include "handlers/StateHandler.h"
 #include "oauth2/facebook/FacebookAuth.h"
 #include "oauth2/google/GoogleAuth.h"
+#include "oauth2/live/LiveAuth.h"
 #include "oauth2/mail_ru/MailRuAuth.h"
 #include "oauth2/odnoklassniki/OdnoklassnikiAuth.h"
 #include "oauth2/vkontakte/VkontakteAuth.h"
