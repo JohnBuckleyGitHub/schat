@@ -39,6 +39,10 @@
   background-position: -112px 0;
 }
 
+.provider-github {
+  background-position: -128px 0;
+}
+
 .icon-spinner {
   background-image: url("../img/spinner.gif");
 }

@@ -96,6 +96,7 @@ HEADERS = \
     handlers/StateHandler.h \
     oauth2/facebook/FacebookAuth.h \
     oauth2/facebook/FacebookAuthData.h \
+    oauth2/github/GithubAuthData.h \
     oauth2/google/GoogleAuth.h \
     oauth2/google/GoogleAuthData.h \
     oauth2/live/LiveAuth.h \
@@ -122,6 +123,7 @@ SOURCES = \
     handlers/StateHandler.cpp \
     oauth2/facebook/FacebookAuth.cpp \
     oauth2/facebook/FacebookAuthData.cpp \
+    oauth2/github/GithubAuthData.cpp \
     oauth2/google/GoogleAuth.cpp \
     oauth2/google/GoogleAuthData.cpp \
     oauth2/live/LiveAuth.cpp \

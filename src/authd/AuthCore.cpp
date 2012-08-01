@@ -28,6 +28,7 @@
 #include "handlers.h"
 #include "NodeLog.h"
 #include "oauth2/facebook/FacebookAuthData.h"
+#include "oauth2/github/GithubAuthData.h"
 #include "oauth2/google/GoogleAuthData.h"
 #include "oauth2/live/LiveAuthData.h"
 #include "oauth2/mail_ru/MailRuAuthData.h"
@@ -54,7 +55,7 @@ AuthCore::AuthCore(QObject *parent)
   m_settings = new Settings(Storage::etcPath() + LC('/') + Path::app() + LS(".conf"), this);
   m_settings->setDefault(LS("Listen"),   QStringList("http://0.0.0.0:7668"));
   m_settings->setDefault(LS("Root"),     Storage::sharePath() + LS("/www"));
-  m_settings->setDefault(LS("Order"),    QStringList() << LS("facebook") << LS("vkontakte") << LS("google") << LS("live") << LS("yandex") << LS("odnoklassniki") << LS("mail_ru"));
+  m_settings->setDefault(LS("Order"),    QStringList() << LS("facebook") << LS("vkontakte") << LS("google") << LS("live") << LS("github") << LS("yandex") << LS("odnoklassniki") << LS("mail_ru"));
   m_settings->setDefault(LS("LogLevel"), 2);
   m_settings->setDefault(LS("BaseUrl"),  QString());
 
@@ -111,6 +112,7 @@ void AuthCore::start()
   add(new MailRuAuthData());
   add(new OdnoklassnikiAuthData());
   add(new LiveAuthData());
+  add(new GithubAuthData());
 
   if (m_providers.isEmpty()) {
     SCHAT_LOG_FATAL("Providers list is empty")
