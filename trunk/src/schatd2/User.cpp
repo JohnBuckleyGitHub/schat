@@ -28,6 +28,27 @@ Birthday::Birthday(quint8 day, quint8 month, quint16 year)
 }
 
 
+/*!
+ * Минимальная проверка месяца и дня на корректность.
+ */
+bool Birthday::isValid() const
+{
+  if (!month || month > 12)
+    return false;
+
+  if (!day || day > 31)
+    return false;
+
+  return true;
+}
+
+
+QString Birthday::toString() const
+{
+  return QString("%1-%2-%3").arg(year, 4, 10, LC('0')).arg(month, 2, 10, LC('0')).arg(day, 2, 10, LC('0'));
+}
+
+
 User::User()
   : saved(true)
   , date(0)

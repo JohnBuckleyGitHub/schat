@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include "AuthBridge.h"
 #include "client/AuthClient.h"
 #include "client/ChatClient.h"
@@ -94,8 +92,6 @@ void AuthBridge::ready(const QString &provider, const QByteArray &id, const QByt
 {
   Q_UNUSED(provider)
   Q_UNUSED(id)
-
-  qDebug() << m_client->state() << provider << SimpleID::encode(id) << SimpleID::encode(cookie);
 
   if (SimpleID::typeOf(cookie) != SimpleID::CookieId)
     return;

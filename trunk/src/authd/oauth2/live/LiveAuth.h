@@ -16,44 +16,32 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "sglobal.h"
-#include "ui/AuthIcon.h"
+#ifndef LIVEAUTH_H_
+#define LIVEAUTH_H_
 
-AuthIcon *AuthIcon::m_self = 0;
+#include "oauth2/OAuthHandler.h"
 
-AuthIcon::AuthIcon()
+class LiveAuth : public OAuthHandler
 {
-  m_self = this;
-  m_layout = QPixmap(LS(":/images/providers.png"));
-}
+  Q_OBJECT
+
+public:
+  LiveAuth(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent = 0);
+
+private slots:
+  void dataReady();
+  void tokenReady();
+
+private:
+  void getToken();
+};
 
 
-QIcon AuthIcon::icon(const QString &provider)
+class LiveAuthCreator : public HandlerCreator
 {
-  return QIcon(pixmap(provider));
-}
+public:
+  LiveAuthCreator() : HandlerCreator() {}
+  bool serve(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent);
+};
 
-
-QPixmap AuthIcon::pixmap(const QString &provider)
-{
-  if (!m_self)
-    return QPixmap();
-
-  int x = 0;
-  if (provider == LS("google"))
-    x = 16;
-  else if (provider == LS("yandex"))
-    x = 32;
-  else if (provider == LS("facebook"))
-    x = 48;
-  else if (provider == LS("vkontakte"))
-    x = 64;
-  else if (provider == LS("mail_ru"))
-    x = 80;
-  else if (provider == LS("odnoklassniki"))
-    x = 96;
-  else if (provider == LS("live"))
-    x = 112;
-
-  return m_self->m_layout.copy(x, 0, 16, 16);
-}
+#endif /* LIVEAUTH_H_ */
