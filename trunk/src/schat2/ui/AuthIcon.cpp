@@ -54,6 +54,8 @@ QPixmap AuthIcon::pixmap(const QString &provider)
     x = 96;
   else if (provider == LS("live"))
     x = 112;
+  else if (provider == LS("github"))
+    x = 128;
 
   if (x == -1)
     return QPixmap();
