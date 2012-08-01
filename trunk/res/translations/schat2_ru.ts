@@ -786,7 +786,7 @@
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="69"/>
         <source>Or connect anonymously</source>
-        <translation>Или подключится анонимно</translation>
+        <translation>Или подключиться анонимно</translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="70"/>

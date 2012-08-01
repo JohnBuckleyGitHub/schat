@@ -39,7 +39,7 @@ QPixmap AuthIcon::pixmap(const QString &provider)
   if (!m_self)
     return QPixmap();
 
-  int x = 0;
+  int x = -1;
   if (provider == LS("google"))
     x = 16;
   else if (provider == LS("yandex"))
@@ -54,6 +54,9 @@ QPixmap AuthIcon::pixmap(const QString &provider)
     x = 96;
   else if (provider == LS("live"))
     x = 112;
+
+  if (x == -1)
+    return QPixmap();
 
   return m_self->m_layout.copy(x, 0, 16, 16);
 }
