@@ -1,3 +1,5 @@
+win32:DEFINES += _CRT_SECURE_NO_WARNINGS
+
 SOURCES += \
     3rdparty/hunspell/affentry.cxx \
     3rdparty/hunspell/affixmgr.cxx \
