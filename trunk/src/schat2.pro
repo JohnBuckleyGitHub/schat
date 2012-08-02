@@ -27,5 +27,6 @@ SUBDIRS  = \
     common/plugins/Emoticons \
     common/plugins/Idle \
     common/plugins/SendFile \
+    common/plugins/SpellChecker \
     common/plugins/RawFeeds \
     common/plugins/YouTube \
