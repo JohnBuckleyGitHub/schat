@@ -1,3 +1,22 @@
+/* $Id$
+ * IMPOMEZIA Simple Chat
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2012 Alexey Ivanov <alexey.ivanes@gmail.com>
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QTableWidget>
@@ -7,11 +26,11 @@
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
-#include "SpellcheckerPage.h"
-#include "SpellcheckerPlugin_p.h"
+#include "SpellCheckerPage.h"
+#include "SpellCheckerPlugin_p.h"
 #include "sglobal.h"
 
-SpellcheckerPage::SpellcheckerPage(SpellcheckerPluginImpl *plugin, QWidget *parent)
+SpellCheckerPage::SpellCheckerPage(SpellCheckerPluginImpl *plugin, QWidget *parent)
   : SettingsPage(QIcon(LS(":/images/SendFile/attach.png")), LS("spellchecker"), parent)
   , m_plugin(plugin)
 {
@@ -82,7 +101,7 @@ SpellcheckerPage::SpellcheckerPage(SpellcheckerPluginImpl *plugin, QWidget *pare
   retranslateUi();
 }
 
-void SpellcheckerPage::modified(QTableWidgetItem *item)
+void SpellCheckerPage::modified(QTableWidgetItem *item)
 {
   Q_UNUSED(item);
   QStringList enabledDicts;
@@ -94,19 +113,19 @@ void SpellcheckerPage::modified(QTableWidgetItem *item)
         }
     }
 
-    Spellchecker *test;
+    SpellChecker *test;
     test->instance()->setEnabledDicts(enabledDicts);
 
   ChatCore::settings()->setValue(LS("Spellchecker/EnabledDicts"), enabledDicts);
 }
 
-void SpellcheckerPage::retranslateUi()
+void SpellCheckerPage::retranslateUi()
 {
   m_name = tr("Spell Checker");
   m_label->setText(LS("<b>") + m_name + LS("</b>"));
 }
 
-SettingsPage* SpellcheckerPageCreator::page(QWidget *parent)
+SettingsPage* SpellCheckerPageCreator::page(QWidget *parent)
 {
-  return new SpellcheckerPage(m_plugin, parent);
+  return new SpellCheckerPage(m_plugin, parent);
 }
