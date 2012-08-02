@@ -21,11 +21,13 @@
 
 #include <QTextEdit>
 
+#include "schat.h"
+
 class ColorButton;
 class QToolBar;
 class QWidgetAction;
 
-class InputWidget : public QTextEdit
+class SCHAT_CORE_EXPORT InputWidget : public QTextEdit
 {
   Q_OBJECT
 

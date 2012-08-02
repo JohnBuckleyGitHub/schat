@@ -15,18 +15,35 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS += \
-    common/plugins/GenericNode \
-    common/plugins/Messages \
-    common/plugins/GeoIP \
-    common/plugins/Cache \
-    common/plugins/History \
-    common/plugins/Profile \
-    common/plugins/Emoticons \
-    common/plugins/Idle \
-    common/plugins/SendFile \
-    common/plugins/SpellChecker \
-    common/plugins/RawFeeds \
-    common/plugins/YouTube \
+SCHAT_CLIENT_LIB = 1
+SCHAT_CORE_LIB = 1
+QT = core gui
 
-win32:SUBDIRS += common/plugins/Update
+unix:!macx {
+
+LIBS += -lhunspell
+
+}
+
+DEPENDPATH += 3rdparty
+INCLUDEPATH += 3rdparty
+
+HEADERS  = \
+   SpellcheckerPlugin.h \
+   SpellcheckerPlugin_p.h \
+   SpellHighlighter.h \
+   SpellBackend.h \
+   HunSpellchecker.h \
+   Spellchecker.h \
+   SpellcheckerPage.h \
+
+SOURCES  = \
+   SpellcheckerPlugin.cpp \
+   SpellHighlighter.cpp \
+   SpellBackend.cpp \
+   HunSpellchecker.cpp \
+   Spellchecker.cpp \
+   SpellcheckerPage.cpp \
+
+include(3rdparty/hunspell/hunspell.pri)
+include(../plugins.pri)
