@@ -20,27 +20,27 @@
 #ifndef SPELLBACKEND_H
 #define SPELLBACKEND_H
 
-#include <QList>
-#include <QString>
 #include <QObject>
+#include <QStringList>
 
 class SpellBackend : public QObject
 {
 public:
-	static SpellBackend* instance();
-	virtual QList<QString> suggestions(const QString &AWord);
-	virtual bool isCorrect(const QString &AWord);
-	virtual bool add(const QString &AWord);
-	virtual bool available() const;
-	virtual bool writable() const;
-	virtual QList<QString> dictionaries();
-	virtual void setLangs(const QList<QString> &dicts);
-	virtual QString actuallLang();
+  static SpellBackend* instance();
+  virtual bool add(const QString &word);
+  virtual bool available() const;
+  virtual bool isCorrect(const QString &word) const;
+  virtual bool writable() const;
+  virtual QStringList dictionaries() const;
+  virtual QStringList suggestions(const QString &word) const;
+  virtual QString actuallLang() const;
+  virtual void setLangs(const QStringList &dicts);
+
 protected:
-	SpellBackend();
-	virtual ~SpellBackend();
+  SpellBackend(QObject *parent = 0);
+
 private:
-	static SpellBackend *FInstance;
+  static SpellBackend *m_self;
 };
 
 #endif // SPELLBACKEND_H
