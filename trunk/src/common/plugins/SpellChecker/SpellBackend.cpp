@@ -18,68 +18,72 @@
  */
 
 #include <QCoreApplication>
-#include "SpellBackend.h"
+
 #include "HunSpellChecker.h"
+#include "SpellBackend.h"
 
-SpellBackend* SpellBackend::FInstance = NULL;
+SpellBackend* SpellBackend::m_self = 0;
 
-SpellBackend* SpellBackend::instance() 
+SpellBackend* SpellBackend::instance()
 {
-	if (!FInstance) 
-	{
-		FInstance = new HunspellChecker();
-	}
-	return FInstance;
+  if (!m_self)
+    m_self = new HunspellChecker(QCoreApplication::instance());
+
+  return m_self;
 }
 
-SpellBackend::SpellBackend() : QObject(QCoreApplication::instance())
-{
-
-}
-
-SpellBackend::~SpellBackend()
+SpellBackend::SpellBackend(QObject *parent) :
+  QObject(parent)
 {
 }
+
+
+bool SpellBackend::add(const QString &word)
+{
+  Q_UNUSED(word);
+  return false;
+}
+
 
 bool SpellBackend::available() const
 {
-	return false;
+  return false;
 }
+
+
+bool SpellBackend::isCorrect(const QString &word) const
+{
+  Q_UNUSED(word);
+  return true;
+}
+
 
 bool SpellBackend::writable() const
 {
-	return false;
+  return false;
 }
 
-bool SpellBackend::isCorrect(const QString &AWord)
+
+QStringList SpellBackend::dictionaries() const
 {
-	Q_UNUSED(AWord);
-	return true;
+  return QStringList();
 }
 
-QList<QString> SpellBackend::suggestions(const QString &AWord)
+
+QStringList SpellBackend::suggestions(const QString &word) const
 {
-	Q_UNUSED(AWord);
-	return QList<QString>();
+  Q_UNUSED(word);
+  return QStringList();
 }
 
-bool SpellBackend::add(const QString &AWord)
+
+QString SpellBackend::actuallLang() const
 {
-	Q_UNUSED(AWord);
-	return false;
+  return QString();
 }
 
-QList< QString > SpellBackend::dictionaries()
-{
-	return QList<QString>();
-}
 
-void SpellBackend::setLangs(const QList<QString> &dicts)
+void SpellBackend::setLangs(const QStringList &dicts)
 {
-	//return dicts;
-}
-
-QString SpellBackend::actuallLang()
-{
-	return QString();
+  Q_UNUSED(dicts)
 }
