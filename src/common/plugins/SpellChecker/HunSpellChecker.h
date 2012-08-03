@@ -21,10 +21,13 @@
 #define HUNSPELLCHECKER_H
 
 #include <QMap>
+#include <QMutex>
+#include <QRunnable>
 
 #include "SpellBackend.h"
 
 class Hunspell;
+class QThreadPool;
 
 class HunspellChecker: public SpellBackend
 {
@@ -39,11 +42,26 @@ public:
   QStringList suggestions(const QString &word) const;
   void setLangs(const QStringList &dicts);
 
-private:
-  void loadHunspell(const QStringList &dicts);
+  void clear();
+  void load(const QStringList &dicts);
 
-  QString dictPath;
+private:
+  mutable QMutex m_mutex;  ///< Мьютекс защищающий доступ к словарям.
   QList<Hunspell*> m_list; ///< Список загруженных объектов Hunspell.
+  QString dictPath;
+  QThreadPool *m_pool;     ///< Пул для запуска потоков.
+};
+
+
+class HunspellLoader : public QRunnable
+{
+public:
+  HunspellLoader(HunspellChecker *hunspell, const QStringList &dicts);
+  void run();
+
+private:
+  HunspellChecker *m_hunspell; ///< Указатель на объект HunspellChecker.
+  QStringList m_dicts;         ///< Полные пути к файлас словарей, без расширений.
 };
 
 #endif
