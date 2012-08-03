@@ -24,7 +24,6 @@ INCLUDEPATH += 3rdparty
 
 HEADERS  = \
    SpellcheckerPlugin.h \
-   SpellcheckerPlugin_p.h \
    SpellHighlighter.h \
    SpellBackend.h \
    HunSpellchecker.h \

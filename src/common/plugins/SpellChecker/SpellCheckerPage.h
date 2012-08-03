@@ -37,7 +37,7 @@ class SpellCheckerPage : public SettingsPage
   Q_OBJECT
 
 public:
-  SpellCheckerPage(SpellCheckerPluginImpl *plugin, QWidget *parent = 0);
+  SpellCheckerPage(QWidget *parent = 0);
   void retranslateUi();
 
 protected slots:
@@ -46,23 +46,17 @@ protected slots:
 private:
   QLabel *m_label;              ///< Надпись вверху страницы.
   QTableWidget *m_table;
-
-  SpellCheckerPluginImpl *m_plugin; ///< Указатель на объект плагина.
 };
 
 
 class SpellCheckerPageCreator : public SettingsPageCreator
 {
 public:
-  SpellCheckerPageCreator(SpellCheckerPluginImpl *plugin)
+  SpellCheckerPageCreator()
   : SettingsPageCreator(5100)
-  , m_plugin(plugin)
   {}
 
   SettingsPage* page(QWidget *parent = 0);
-
-private:
-  SpellCheckerPluginImpl *m_plugin; ///< Указатель на объект плагина.
 
 };
 
