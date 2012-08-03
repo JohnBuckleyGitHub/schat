@@ -17,9 +17,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QTime>
-#include <QDebug>
-
 #include <QDir>
 #include <QLocale>
 #include <QCoreApplication>
@@ -41,8 +38,8 @@ HunspellChecker::HunspellChecker(QObject *parent)
 
 HunspellChecker::~HunspellChecker()
 {
-  qDeleteAll(FHunSpellMap);
-  FHunSpellMap.clear();
+  qDeleteAll(m_list);
+  m_list.clear();
 }
 
 
@@ -68,19 +65,13 @@ bool HunspellChecker::available() const
 bool HunspellChecker::isCorrect(const QString &word) const
 {
   int sum = 0;
-  QTime t;
-  t.start();
-  QMap<QString, QByteArray>::const_iterator it = FDictionaryMap.begin();
-  while (it != FDictionaryMap.end()) {
-    QTextCodec *codec = QTextCodec::codecForName(it.value());
-    QByteArray encodedString;
-    encodedString = codec->fromUnicode(word);
-    sum += FHunSpellMap[it.key()]->spell(encodedString.data());
-    ++it;
+
+  foreach (Hunspell *dic, m_list) {
+    QByteArray encoded = QTextCodec::codecForName(dic->get_dic_encoding())->fromUnicode(word);
+    sum += dic->spell(encoded.constData());
   }
 
-  qDebug() << "HunspellChecker::isCorrect" << t.elapsed() << "ms";
-  return sum > 0 ? true : false;
+  return sum > 0;
 }
 
 
@@ -106,48 +97,39 @@ QStringList HunspellChecker::dictionaries() const
 
 QStringList HunspellChecker::suggestions(const QString &word) const
 {
-  QTime t;
-  t.start();
-  QList<QString> words;
-  QMap<QString, QByteArray>::const_iterator it = FDictionaryMap.begin();
-  while (it != FDictionaryMap.end()) {
-    char **sugglist = NULL;
-    QTextCodec *codec = QTextCodec::codecForName(it.value());
-    QByteArray encodedString;
-    encodedString = codec->fromUnicode(word);
-    int count =
-        FHunSpellMap[it.key()]->suggest(&sugglist, encodedString.data());
+  QStringList words;
+
+  foreach (Hunspell *dic, m_list) {
+    char **sugglist    = 0;
+    QTextCodec *codec  = QTextCodec::codecForName(dic->get_dic_encoding());
+    QByteArray encoded = codec->fromUnicode(word);
+
+    int count = dic->suggest(&sugglist, encoded.constData());
     for (int i = 0; i < count; ++i)
       words << codec->toUnicode(sugglist[i]);
-    FHunSpellMap[it.key()]->free_list(&sugglist, count);
-    ++it;
+
+    dic->free_list(&sugglist, count);
   }
 
-  qDebug() << "HunspellChecker::suggestions" << t.elapsed() << "ms";
   return words;
 }
 
 
 void HunspellChecker::setLangs(const QStringList &dicts)
 {
-  QTime t;
-  t.start();
-  qDeleteAll(FHunSpellMap);
-  FHunSpellMap.clear();
+  qDeleteAll(m_list);
+  m_list.clear();
   loadHunspell(dicts);
-
-  qDebug() << "HunspellChecker::setLangs" << t.elapsed() << "ms";
 }
 
 
 void HunspellChecker::loadHunspell(const QStringList &dicts)
 {
-  QList<QString>::const_iterator i;
-  for (i = dicts.begin(); i != dicts.end(); ++i) {
-    QString dic = QString("%1/%2.dic").arg(dictPath).arg(*i);
-    if (QFileInfo(dic).exists()) {
-      FHunSpellMap.insert(*i, new Hunspell(QString("%1/%2.aff").arg(dictPath).arg(*i).toUtf8().constData(), dic.toUtf8().constData()));
-      FDictionaryMap.insert(*i, FHunSpellMap[*i]->get_dic_encoding());
-    }
+  foreach (const QString &name, dicts) {
+    Hunspell *dic = new Hunspell(QString("%1/%2.aff").arg(dictPath).arg(name).toUtf8().constData(), QString("%1/%2.dic").arg(dictPath).arg(name).toUtf8().constData());
+    if (QTextCodec::codecForName(dic->get_dic_encoding()))
+      m_list.append(dic);
+    else
+      delete dic;
   }
 }

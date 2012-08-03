@@ -42,9 +42,8 @@ public:
 private:
   void loadHunspell(const QStringList &dicts);
 
-  QMap<QString, Hunspell*> FHunSpellMap;
-  QMap<QString, QByteArray> FDictionaryMap;
   QString dictPath;
+  QList<Hunspell*> m_list; ///< Список загруженных объектов Hunspell.
 };
 
 #endif
