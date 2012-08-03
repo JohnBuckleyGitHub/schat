@@ -20,26 +20,25 @@
 #include "SpellHighlighter.h"
 #include "SpellBackend.h"
 
-SpellHighlighter::SpellHighlighter(QTextDocument *ADocument) : QSyntaxHighlighter(ADocument)
+SpellHighlighter::SpellHighlighter(QTextDocument *document)
+  : QSyntaxHighlighter(document)
 {
-    FCharFormat.setUnderlineColor(Qt::red);
-    FCharFormat.setUnderlineStyle(QTextCharFormat::SpellCheckUnderline);
+  m_format.setUnderlineColor(Qt::red);
+  m_format.setUnderlineStyle(QTextCharFormat::SpellCheckUnderline);
 }
 
-void SpellHighlighter::highlightBlock(const QString &AText)
+
+void SpellHighlighter::highlightBlock(const QString &text)
 {
-    // Match words (minimally) excluding digits within a word
-    static const QRegExp expression("\\b[^\\s\\d]+\\b");
+  // Match words (minimally) excluding digits within a word
+  static const QRegExp expression("\\b[^\\s\\d]+\\b");
 
-    int index = 0;
-    while ((index = expression.indexIn(AText, index)) != -1)
-    {
-        int length = expression.matchedLength();
-        if (!SpellBackend::instance()->isCorrect(expression.cap()))
-        {
-            setFormat(index, length, FCharFormat);
-        }
+  int index = 0;
+  while ((index = expression.indexIn(text, index)) != -1) {
+    int length = expression.matchedLength();
+    if (!SpellBackend::instance()->isCorrect(expression.cap()))
+      setFormat(index, length, m_format);
 
-        index += length;
-    }
+    index += length;
+  }
 }

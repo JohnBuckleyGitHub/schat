@@ -143,6 +143,8 @@ void InputWidget::contextMenuEvent(QContextMenuEvent *event)
     m_menu->addAction(m_selectAll);
   }
 
+  emit contextMenu(m_menu, event->pos());
+
   if (m_menu->actions().size())
     m_menu->exec(event->globalPos());
 
