@@ -21,13 +21,18 @@
 #include <QLocale>
 #include <QCoreApplication>
 #include <QTextCodec>
+#include <QThreadPool>
 
 #include "HunSpellChecker.h"
 #include "hunspell/hunspell.hxx"
+#include "sglobal.h"
 
 HunspellChecker::HunspellChecker(QObject *parent)
   : SpellBackend(parent)
 {
+  m_pool = new QThreadPool(this);
+  m_pool->setMaxThreadCount(1);
+
 #ifdef Q_WS_WIN
   dictPath = QString("%1/hunspell/dict").arg(QCoreApplication::applicationDirPath()).toUtf8().constData();
 #else
@@ -38,8 +43,7 @@ HunspellChecker::HunspellChecker(QObject *parent)
 
 HunspellChecker::~HunspellChecker()
 {
-  qDeleteAll(m_list);
-  m_list.clear();
+  clear();
 }
 
 
@@ -66,10 +70,14 @@ bool HunspellChecker::isCorrect(const QString &word) const
 {
   int sum = 0;
 
+  if (!m_mutex.tryLock())
+    return false;
+
   foreach (Hunspell *dic, m_list) {
     QByteArray encoded = QTextCodec::codecForName(dic->get_dic_encoding())->fromUnicode(word);
     sum += dic->spell(encoded.constData());
   }
+  m_mutex.unlock();
 
   return sum > 0;
 }
@@ -99,6 +107,9 @@ QStringList HunspellChecker::suggestions(const QString &word) const
 {
   QStringList words;
 
+  if (!m_mutex.tryLock())
+    return words;
+
   foreach (Hunspell *dic, m_list) {
     char **sugglist    = 0;
     QTextCodec *codec  = QTextCodec::codecForName(dic->get_dic_encoding());
@@ -111,25 +122,66 @@ QStringList HunspellChecker::suggestions(const QString &word) const
     dic->free_list(&sugglist, count);
   }
 
+  m_mutex.unlock();
   return words;
 }
 
 
 void HunspellChecker::setLangs(const QStringList &dicts)
 {
-  qDeleteAll(m_list);
-  m_list.clear();
-  loadHunspell(dicts);
+  QStringList files;
+  foreach (const QString &name, dicts) {
+    files.append(dictPath + LC('/') + name);
+  }
+
+  m_pool->start(new HunspellLoader(this, files));
 }
 
 
-void HunspellChecker::loadHunspell(const QStringList &dicts)
+/*!
+ * Очистка загруженных словарей.
+ */
+void HunspellChecker::clear()
 {
+  m_mutex.lock();
+  qDeleteAll(m_list);
+  m_list.clear();
+  m_mutex.unlock();
+}
+
+
+/*!
+ * Загрузка словарей.
+ */
+void HunspellChecker::load(const QStringList &dicts)
+{
+  if (dicts.isEmpty())
+    return;
+
+  m_mutex.lock();
   foreach (const QString &name, dicts) {
-    Hunspell *dic = new Hunspell(QString("%1/%2.aff").arg(dictPath).arg(name).toUtf8().constData(), QString("%1/%2.dic").arg(dictPath).arg(name).toUtf8().constData());
-    if (QTextCodec::codecForName(dic->get_dic_encoding()))
-      m_list.append(dic);
-    else
-      delete dic;
+    if (QFile::exists(name + LS(".dic"))) {
+      Hunspell *dic = new Hunspell(QString(name + LS(".aff")).toUtf8().constData(), QString(name + LS(".dic")).toUtf8().constData());
+      if (QTextCodec::codecForName(dic->get_dic_encoding()))
+        m_list.append(dic);
+      else
+        delete dic;
+    }
   }
+  m_mutex.unlock();
+}
+
+
+HunspellLoader::HunspellLoader(HunspellChecker *hunspell, const QStringList &dicts)
+  : QRunnable()
+  , m_hunspell(hunspell)
+  , m_dicts(dicts)
+{
+}
+
+
+void HunspellLoader::run()
+{
+  m_hunspell->clear();
+  m_hunspell->load(m_dicts);
 }

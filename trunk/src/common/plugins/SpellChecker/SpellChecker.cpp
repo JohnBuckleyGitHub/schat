@@ -124,6 +124,7 @@ void SpellChecker::start()
   m_textEdit = SendWidget::i()->input();
   connect(m_textEdit, SIGNAL(contextMenu(QMenu*,QPoint)), this, SLOT(contextMenu(QMenu*,QPoint)));
 
+  SpellBackend::instance()->setLangs(ChatCore::settings()->value(LS("SpellChecker/EnabledDicts")).toStringList());
   m_highlighter = new SpellHighlighter(m_textEdit->document());
 }
 
