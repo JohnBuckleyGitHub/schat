@@ -48,6 +48,7 @@ public:
   void setMsg(int index);
 
 signals:
+  void contextMenu(QMenu *menu, const QPoint &pos);
   void focusOut();
   void send(const QString &text);
 

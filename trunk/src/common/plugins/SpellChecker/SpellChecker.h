@@ -20,17 +20,12 @@
 #ifndef SPELLCHECKER_H
 #define SPELLCHECKER_H
 
-#include <QMenu>
-#include <QTextEdit>
-#include <QDebug>
-
-#include "SpellHighlighter.h"
-#include "SpellBackend.h"
-#include "SpellCheckerPlugin.h"
-
 #include "plugins/ChatPlugin.h"
 
-class QTextDocument;
+class InputWidget;
+class QMenu;
+class QPoint;
+class SpellHighlighter;
 
 class SpellChecker : public ChatPlugin
 {
@@ -39,13 +34,9 @@ class SpellChecker : public ChatPlugin
 public:
   SpellChecker(QObject *parent = 0);
   inline static SpellChecker* instance() { return m_self; }
-
-protected:
-  void appendHL(QTextDocument *ADocument);
-
   
 public slots:
-  void showContextMenu(const QPoint &pt);
+  void contextMenu(QMenu *menu, const QPoint &pos);
   void repairWord();
   void setEnabledDicts(QList<QString> &dicts);
   void addWordToDict();
@@ -54,13 +45,12 @@ private slots:
   void start();
 
 private:
-  static SpellChecker *m_self;
+  bool suggestionsMenu(const QString &word, QMenu *parent);
 
-  QTextEdit *m_textEdit;
-  int FCurrentCursorPosition;
-  SpellHighlighter *FSH;
-  QMenu *suggestMenu(const QString &word);
-  
+  InputWidget *m_textEdit;         ///< Виджет ввода текста.
+  int m_position;                  ///< Текущая позиция курсора.
+  SpellHighlighter *m_highlighter; ///< Объект для подчёркивания неправильных слов.
+  static SpellChecker *m_self;     ///< Указатель на себя.
 };
 
 #endif // SPELLCHECKER_H

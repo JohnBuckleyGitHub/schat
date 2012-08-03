@@ -20,16 +20,16 @@
 #ifndef SPELLHIGHLIGHTER_H
 #define SPELLHIGHLIGHTER_H
 
-#include <QString>
 #include <QSyntaxHighlighter>
 
-class SpellHighlighter : public QSyntaxHighlighter
+class SpellHighlighter: public QSyntaxHighlighter
 {
 public:
-    SpellHighlighter(QTextDocument *ADocument);
-    virtual void highlightBlock(const QString &AText);
+  SpellHighlighter(QTextDocument *document);
+  void highlightBlock(const QString &text);
+
 private:
-    QTextCharFormat FCharFormat;
+  QTextCharFormat m_format;
 };
 
 #endif //SPELLHIGHLIGHTER_H

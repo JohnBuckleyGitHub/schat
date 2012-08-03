@@ -20,6 +20,7 @@
 #include <QtPlugin>
 
 #include "SpellChecker.h"
+#include "SpellCheckerPlugin.h"
 
 ChatPlugin *SpellCheckerPlugin::create()
 {

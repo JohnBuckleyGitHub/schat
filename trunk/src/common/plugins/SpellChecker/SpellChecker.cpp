@@ -18,12 +18,14 @@
  */
 
 #include <QTimer>
+#include <QMenu>
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
 #include "sglobal.h"
 #include "SpellChecker.h"
 #include "SpellCheckerPage.h"
+#include "SpellHighlighter.h"
 #include "ui/InputWidget.h"
 #include "ui/SendWidget.h"
 
@@ -32,7 +34,8 @@ SpellChecker* SpellChecker::m_self = 0;
 SpellChecker::SpellChecker(QObject *parent)
   : ChatPlugin(parent)
   , m_textEdit(0)
-  , FCurrentCursorPosition(0)
+  , m_position(0)
+  , m_highlighter(0)
 {
   m_self = this;
 
@@ -47,121 +50,95 @@ SpellChecker::SpellChecker(QObject *parent)
 }
 
 
-QMenu* SpellChecker::suggestMenu(const QString &word)
+void SpellChecker::contextMenu(QMenu *menu, const QPoint &pos)
 {
-    QList<QString> sgstions = SpellBackend::instance()->suggestions(word);
-    QMenu *menu = new QMenu(tr("Suggestions"));
+  menu->addSeparator();
 
-    for (QList<QString>::const_iterator sgstion = sgstions.begin(); sgstion != sgstions.end(); ++sgstion)
-    {
-        QAction *action = menu->addAction(*sgstion, this, SLOT(repairWord()));
-        action->setProperty("word", *sgstion);
-        action->setParent(menu);
-    }
+  QTextCursor cursor = m_textEdit->cursorForPosition(pos);
+  m_position = cursor.position();
+  cursor.select(QTextCursor::WordUnderCursor);
+  QString word = cursor.selectedText();
 
-    return menu;
+  if (word.isEmpty() || SpellBackend::instance()->isCorrect(word))
+    return;
+
+  suggestionsMenu(word, menu);
+
+  QAction *action = menu->addAction(tr("Add to dictionary"), this, SLOT(addWordToDict()));
+  action->setParent(menu);
 }
 
-void SpellChecker::showContextMenu(const QPoint &pt)
-{
-  m_textEdit = qobject_cast<InputWidget *>(sender());
-    Q_ASSERT(m_textEdit);
 
-    QMenu *menu = m_textEdit->createStandardContextMenu();
-
-    menu->addSeparator();
-
-    QMenu *sugMenu = NULL;
-    Q_ASSERT(!sugMenu);
-
-    QTextCursor cursor = m_textEdit->cursorForPosition(pt);
-    FCurrentCursorPosition = cursor.position();
-    cursor.select(QTextCursor::WordUnderCursor);
-    const QString word = cursor.selectedText();
-
-    if (!word.isEmpty() && !SpellBackend::instance()->isCorrect(word)) {
-        sugMenu = suggestMenu(word);
-
-        if (!sugMenu->isEmpty()) {
-            menu->addMenu(sugMenu);
-        }
-
-        QAction *action = menu->addAction(tr("Add to dictionary"), this, SLOT(addWordToDict()));
-        action->setParent(menu);
-    }
-
-    menu->exec(m_textEdit->mapToGlobal(pt));
-
-    if (sugMenu) {
-        delete sugMenu;
-    }
-    delete menu;
-}
-
+/*!
+ * Замена слова.
+ */
 void SpellChecker::repairWord()
 {
-    QAction *action = qobject_cast<QAction *>(sender());
-    Q_ASSERT(action);
-    if (!action)
-    {
-        return;
-    }
+  QAction *action = qobject_cast<QAction *>(sender());
+  if (!action)
+    return;
 
-    QTextCursor cursor = m_textEdit->textCursor();
+  QTextCursor cursor = m_textEdit->textCursor();
 
-    cursor.beginEditBlock();
-    cursor.setPosition(FCurrentCursorPosition, QTextCursor::MoveAnchor);
-    cursor.select(QTextCursor::WordUnderCursor);
-    cursor.removeSelectedText();
-    cursor.insertText(action->property("word").toString());
-    cursor.endEditBlock();
+  cursor.beginEditBlock();
+  cursor.setPosition(m_position, QTextCursor::MoveAnchor);
+  cursor.select(QTextCursor::WordUnderCursor);
+  cursor.removeSelectedText();
+  cursor.insertText(action->text());
+  cursor.endEditBlock();
 
-#if QT_VERSION >= 0x040600 // Qt 4.5
-    FSH->rehighlightBlock(cursor.block());
-#else
-    FSH->rehighlight();
-#endif
+  m_highlighter->rehighlightBlock(cursor.block());
 }
+
 
 void SpellChecker::setEnabledDicts(QList<QString> &dicts)
 {
-    delete FSH;
-    SpellBackend::instance()->setLangs(dicts);
-    InputWidget *textEdit = SendWidget::i()->input();
-    FSH = new SpellHighlighter(textEdit->document());
-    FSH->rehighlight();
+  if (m_highlighter)
+    delete m_highlighter;
+
+  SpellBackend::instance()->setLangs(dicts);
+  m_highlighter = new SpellHighlighter(m_textEdit->document());
+  m_highlighter->rehighlight();
 }
+
 
 void SpellChecker::addWordToDict()
 {
-    QAction *action = qobject_cast<QAction *>(sender());
-    Q_ASSERT(action);
-    if (!action)
-    {
-        return;
-    }
+  QAction *action = qobject_cast<QAction *>(sender());
+  if (!action)
+    return;
 
-    QTextCursor cursor = m_textEdit->textCursor();
-    cursor.setPosition(FCurrentCursorPosition, QTextCursor::MoveAnchor);
-    cursor.select(QTextCursor::WordUnderCursor);
-    const QString word = cursor.selectedText();
+  QTextCursor cursor = m_textEdit->textCursor();
+  cursor.setPosition(m_position, QTextCursor::MoveAnchor);
+  cursor.select(QTextCursor::WordUnderCursor);
+  const QString word = cursor.selectedText();
 
-    SpellBackend::instance()->add(word);
+  SpellBackend::instance()->add(word);
 
-#if QT_VERSION >= 0x040600 // Qt 4.5
-    FSH->rehighlightBlock(cursor.block());
-#else
-    FSH->rehighlight();
-#endif
+  m_highlighter->rehighlightBlock(cursor.block());
 }
 
 
 void SpellChecker::start()
 {
-  InputWidget *textEdit = SendWidget::i()->input();
-  textEdit->setContextMenuPolicy(Qt::CustomContextMenu);
-  connect(textEdit, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showContextMenu(const QPoint &)));
+  m_textEdit = SendWidget::i()->input();
+  connect(m_textEdit, SIGNAL(contextMenu(QMenu*,QPoint)), this, SLOT(contextMenu(QMenu*,QPoint)));
 
-  FSH = new SpellHighlighter(textEdit->document());
+  m_highlighter = new SpellHighlighter(m_textEdit->document());
+}
+
+
+bool SpellChecker::suggestionsMenu(const QString &word, QMenu *parent)
+{
+  QStringList suggestions = SpellBackend::instance()->suggestions(word);
+  if (suggestions.isEmpty())
+    return false;
+
+  QMenu *menu = parent->addMenu(tr("Suggestions"));
+  foreach(const QString &word, suggestions) {
+    menu->addAction(word, this, SLOT(repairWord()));
+  }
+
+  return true;
 }
 
