@@ -27,12 +27,10 @@
 #include "ChatCore.h"
 #include "ChatSettings.h"
 #include "SpellCheckerPage.h"
-#include "SpellCheckerPlugin_p.h"
 #include "sglobal.h"
 
-SpellCheckerPage::SpellCheckerPage(SpellCheckerPluginImpl *plugin, QWidget *parent)
+SpellCheckerPage::SpellCheckerPage(QWidget *parent)
   : SettingsPage(QIcon(LS(":/images/SendFile/attach.png")), LS("spellchecker"), parent)
-  , m_plugin(plugin)
 {
   m_label = new QLabel(this);
 
@@ -127,5 +125,5 @@ void SpellCheckerPage::retranslateUi()
 
 SettingsPage* SpellCheckerPageCreator::page(QWidget *parent)
 {
-  return new SpellCheckerPage(m_plugin, parent);
+  return new SpellCheckerPage(parent);
 }

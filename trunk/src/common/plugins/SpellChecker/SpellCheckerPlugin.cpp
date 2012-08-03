@@ -17,40 +17,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QApplication>
 #include <QtPlugin>
-#include <QTimer>
 
-#include "ChatCore.h"
-#include "ChatSettings.h"
-#include "SpellCheckerPlugin.h"
-#include "SpellCheckerPlugin_p.h"
-#include "SpellCheckerPage.h"
-#include "sglobal.h"
-
-SpellCheckerPluginImpl::SpellCheckerPluginImpl(QObject *parent)
-  : ChatPlugin(parent)
-{
-  QTimer::singleShot(0, this, SLOT(start()));
-}
-
-
-void SpellCheckerPluginImpl::start()
-{
-  QStringList defaultDicts;
-  defaultDicts.append("en_US");
-  defaultDicts.append(QLocale().name().toUtf8().constData());
-
-  ChatCore::settings()->setLocalDefault(LS("SpellChecker/EnabledDicts"), defaultDicts);
-
-  SpellChecker::instance();
-  SettingsTabHook::add(new SpellCheckerPageCreator(this));
-
-}
+#include "SpellChecker.h"
 
 ChatPlugin *SpellCheckerPlugin::create()
 {
-  m_plugin = new SpellCheckerPluginImpl(this);
+  m_plugin = new SpellChecker(this);
   return m_plugin;
 }
 

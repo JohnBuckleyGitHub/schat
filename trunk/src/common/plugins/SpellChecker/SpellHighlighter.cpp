@@ -18,7 +18,6 @@
  */
 
 #include "SpellHighlighter.h"
-#include "SpellCheckerPlugin_p.h"
 #include "SpellBackend.h"
 
 SpellHighlighter::SpellHighlighter(QTextDocument *ADocument) : QSyntaxHighlighter(ADocument)

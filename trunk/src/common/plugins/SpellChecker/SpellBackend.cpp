@@ -19,7 +19,7 @@
 
 #include <QCoreApplication>
 #include "SpellBackend.h"
-#include "HunSpellchecker.h"
+#include "HunSpellChecker.h"
 
 SpellBackend* SpellBackend::FInstance = NULL;
 

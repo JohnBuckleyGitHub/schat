@@ -20,7 +20,6 @@
 #ifndef SPELLCHECKER_H
 #define SPELLCHECKER_H
 
-#include <QObject>
 #include <QMenu>
 #include <QTextEdit>
 #include <QDebug>
@@ -29,21 +28,19 @@
 #include "SpellBackend.h"
 #include "SpellCheckerPlugin.h"
 
-#include "ui/SendWidget.h"
-#include "ui/InputWidget.h"
+#include "plugins/ChatPlugin.h"
 
-class SpellChecker : public QObject
+class QTextDocument;
+
+class SpellChecker : public ChatPlugin
 {
   Q_OBJECT
 
 public:
-  static SpellChecker* instance();
-
-signals:
+  SpellChecker(QObject *parent = 0);
+  inline static SpellChecker* instance() { return m_self; }
 
 protected:
-  SpellChecker();
-
   void appendHL(QTextDocument *ADocument);
 
   
@@ -53,10 +50,13 @@ public slots:
   void setEnabledDicts(QList<QString> &dicts);
   void addWordToDict();
 
-private:
-  static SpellChecker *FInstance;
+private slots:
+  void start();
 
-  QTextEdit* FCurrentTextEdit;
+private:
+  static SpellChecker *m_self;
+
+  QTextEdit *m_textEdit;
   int FCurrentCursorPosition;
   SpellHighlighter *FSH;
   QMenu *suggestMenu(const QString &word);

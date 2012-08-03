@@ -17,31 +17,33 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QTimer>
+
+#include "ChatCore.h"
+#include "ChatSettings.h"
+#include "sglobal.h"
 #include "SpellChecker.h"
-#include <QCoreApplication>
+#include "SpellCheckerPage.h"
+#include "ui/InputWidget.h"
+#include "ui/SendWidget.h"
 
-SpellChecker* SpellChecker::FInstance = NULL;
+SpellChecker* SpellChecker::m_self = 0;
 
-SpellChecker* SpellChecker::instance()
+SpellChecker::SpellChecker(QObject *parent)
+  : ChatPlugin(parent)
+  , m_textEdit(0)
+  , FCurrentCursorPosition(0)
 {
-	if (!FInstance)
-	{
-		FInstance = new SpellChecker();
-	}
-	return FInstance;
-}
+  m_self = this;
 
-SpellChecker::SpellChecker() : QObject(QCoreApplication::instance()), FCurrentTextEdit(NULL), FCurrentCursorPosition(0)
-{
+  QStringList defaultDicts;
+  defaultDicts.append("en_US");
+  defaultDicts.append(QLocale().name().toUtf8().constData());
 
-    qDebug() << "TEST";
+  ChatCore::settings()->setLocalDefault(LS("SpellChecker/EnabledDicts"), defaultDicts);
+  SettingsTabHook::add(new SpellCheckerPageCreator());
 
-    InputWidget *textEdit = SendWidget::i()->input();
-    textEdit->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(textEdit, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showContextMenu(const QPoint &)));
-
-    FSH = new SpellHighlighter(textEdit->document());
-
+  QTimer::singleShot(0, this, SLOT(start()));
 }
 
 
@@ -62,17 +64,17 @@ QMenu* SpellChecker::suggestMenu(const QString &word)
 
 void SpellChecker::showContextMenu(const QPoint &pt)
 {
-    FCurrentTextEdit = qobject_cast<InputWidget *>(sender());
-    Q_ASSERT(FCurrentTextEdit);
+  m_textEdit = qobject_cast<InputWidget *>(sender());
+    Q_ASSERT(m_textEdit);
 
-    QMenu *menu = FCurrentTextEdit->createStandardContextMenu();
+    QMenu *menu = m_textEdit->createStandardContextMenu();
 
     menu->addSeparator();
 
     QMenu *sugMenu = NULL;
     Q_ASSERT(!sugMenu);
 
-    QTextCursor cursor = FCurrentTextEdit->cursorForPosition(pt);
+    QTextCursor cursor = m_textEdit->cursorForPosition(pt);
     FCurrentCursorPosition = cursor.position();
     cursor.select(QTextCursor::WordUnderCursor);
     const QString word = cursor.selectedText();
@@ -88,7 +90,7 @@ void SpellChecker::showContextMenu(const QPoint &pt)
         action->setParent(menu);
     }
 
-    menu->exec(FCurrentTextEdit->mapToGlobal(pt));
+    menu->exec(m_textEdit->mapToGlobal(pt));
 
     if (sugMenu) {
         delete sugMenu;
@@ -105,7 +107,7 @@ void SpellChecker::repairWord()
         return;
     }
 
-    QTextCursor cursor = FCurrentTextEdit->textCursor();
+    QTextCursor cursor = m_textEdit->textCursor();
 
     cursor.beginEditBlock();
     cursor.setPosition(FCurrentCursorPosition, QTextCursor::MoveAnchor);
@@ -139,7 +141,7 @@ void SpellChecker::addWordToDict()
         return;
     }
 
-    QTextCursor cursor = FCurrentTextEdit->textCursor();
+    QTextCursor cursor = m_textEdit->textCursor();
     cursor.setPosition(FCurrentCursorPosition, QTextCursor::MoveAnchor);
     cursor.select(QTextCursor::WordUnderCursor);
     const QString word = cursor.selectedText();
@@ -151,5 +153,15 @@ void SpellChecker::addWordToDict()
 #else
     FSH->rehighlight();
 #endif
+}
+
+
+void SpellChecker::start()
+{
+  InputWidget *textEdit = SendWidget::i()->input();
+  textEdit->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(textEdit, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(showContextMenu(const QPoint &)));
+
+  FSH = new SpellHighlighter(textEdit->document());
 }
 
