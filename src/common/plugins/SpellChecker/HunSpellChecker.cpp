@@ -33,11 +33,13 @@ HunspellChecker::HunspellChecker(QObject *parent)
   m_pool = new QThreadPool(this);
   m_pool->setMaxThreadCount(1);
 
-#ifdef Q_WS_WIN
-  dictPath = QString("%1/hunspell/dict").arg(QCoreApplication::applicationDirPath()).toUtf8().constData();
-#else
+# if defined(Q_WS_WIN)
+  dictPath = QString("%1/spelling").arg(QCoreApplication::applicationDirPath());
+# elif defined(Q_WS_X11)
   dictPath = "/usr/share/hunspell/";
-#endif
+# elif defined(Q_WS_MAC)
+  dictPath = QString("%1/Library/Spelling").arg(QDir::homePath());
+# endif
 }
 
 
@@ -127,6 +129,14 @@ QStringList HunspellChecker::suggestions(const QString &word) const
 }
 
 
+void HunspellChecker::queuedSuggestions(const QString &word) const
+{
+  HunspellSuggestions *task = new HunspellSuggestions(this, word);
+  connect(task, SIGNAL(ready(QString,QStringList)), SIGNAL(suggestionsReady(QString,QStringList)));
+  m_pool->start(task);
+}
+
+
 void HunspellChecker::setLangs(const QStringList &dicts)
 {
   QStringList files;
@@ -184,4 +194,21 @@ void HunspellLoader::run()
 {
   m_hunspell->clear();
   m_hunspell->load(m_dicts);
+}
+
+
+HunspellSuggestions::HunspellSuggestions(const HunspellChecker *hunspell, const QString &word)
+  : QObject()
+  , QRunnable()
+  , m_hunspell(hunspell)
+  , m_word(word)
+{
+}
+
+
+void HunspellSuggestions::run()
+{
+  QStringList words = m_hunspell->suggestions(m_word);
+  if (!words.isEmpty())
+    emit ready(m_word, words);
 }

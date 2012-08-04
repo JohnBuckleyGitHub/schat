@@ -77,6 +77,12 @@ QStringList SpellBackend::suggestions(const QString &word) const
 }
 
 
+void SpellBackend::queuedSuggestions(const QString &word) const
+{
+  Q_UNUSED(word);
+}
+
+
 QString SpellBackend::actuallLang() const
 {
   return QString();

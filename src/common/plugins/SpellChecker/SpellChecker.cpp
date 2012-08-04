@@ -35,9 +35,11 @@ SpellChecker::SpellChecker(QObject *parent)
   : ChatPlugin(parent)
   , m_textEdit(0)
   , m_position(0)
+  , m_menuAction(0)
   , m_highlighter(0)
 {
   m_self = this;
+  m_menu = new QMenu();
 
   QStringList defaultDicts;
   defaultDicts.append("en_US");
@@ -47,6 +49,12 @@ SpellChecker::SpellChecker(QObject *parent)
   SettingsTabHook::add(new SpellCheckerPageCreator());
 
   QTimer::singleShot(0, this, SLOT(start()));
+}
+
+
+SpellChecker::~SpellChecker()
+{
+  delete m_menu;
 }
 
 
@@ -119,27 +127,46 @@ void SpellChecker::addWordToDict()
 }
 
 
+void SpellChecker::resetMenu()
+{
+  m_menuAction = 0;
+}
+
+
 void SpellChecker::start()
 {
   m_textEdit = SendWidget::i()->input();
   connect(m_textEdit, SIGNAL(contextMenu(QMenu*,QPoint)), this, SLOT(contextMenu(QMenu*,QPoint)));
 
   SpellBackend::instance()->setLangs(ChatCore::settings()->value(LS("SpellChecker/EnabledDicts")).toStringList());
+  connect(SpellBackend::instance(), SIGNAL(suggestionsReady(QString,QStringList)), SLOT(suggestions(QString,QStringList)));
+
   m_highlighter = new SpellHighlighter(m_textEdit->document());
 }
 
 
-bool SpellChecker::suggestionsMenu(const QString &word, QMenu *parent)
+void SpellChecker::suggestions(const QString &word, const QStringList &words)
 {
-  QStringList suggestions = SpellBackend::instance()->suggestions(word);
-  if (suggestions.isEmpty())
-    return false;
+  if (!m_menuAction || m_menuAction->data() != word)
+    return;
 
-  QMenu *menu = parent->addMenu(tr("Suggestions"));
-  foreach(const QString &word, suggestions) {
-    menu->addAction(word, this, SLOT(repairWord()));
+  foreach(const QString &word, words) {
+    m_menu->addAction(word, this, SLOT(repairWord()));
   }
 
-  return true;
+  m_menuAction->setEnabled(true);
+}
+
+
+void SpellChecker::suggestionsMenu(const QString &word, QMenu *parent)
+{
+  SpellBackend::instance()->queuedSuggestions(word);
+  m_menu->clear();
+  m_menu->setTitle(tr("Suggestions"));
+  m_menuAction = parent->addMenu(m_menu);
+  m_menuAction->setEnabled(false);
+  m_menuAction->setData(word);
+
+  connect(parent, SIGNAL(aboutToHide()), SLOT(resetMenu()));
 }
 

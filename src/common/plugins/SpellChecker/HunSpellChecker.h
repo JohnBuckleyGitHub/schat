@@ -40,6 +40,7 @@ public:
   bool isCorrect(const QString &word) const;
   QStringList dictionaries() const;
   QStringList suggestions(const QString &word) const;
+  void queuedSuggestions(const QString &word) const;
   void setLangs(const QStringList &dicts);
 
   void clear();
@@ -62,6 +63,23 @@ public:
 private:
   HunspellChecker *m_hunspell; ///< Указатель на объект HunspellChecker.
   QStringList m_dicts;         ///< Полные пути к файлас словарей, без расширений.
+};
+
+
+class HunspellSuggestions : public QObject, public QRunnable
+{
+  Q_OBJECT
+
+public:
+  HunspellSuggestions(const HunspellChecker *hunspell, const QString &word);
+  void run();
+
+signals:
+  void ready(const QString &word, const QStringList &words);
+
+private:
+  const HunspellChecker *m_hunspell; ///< Указатель на объект HunspellChecker.
+  QString m_word;                    ///< Слово для которого необходимо подобрать варианты.
 };
 
 #endif
