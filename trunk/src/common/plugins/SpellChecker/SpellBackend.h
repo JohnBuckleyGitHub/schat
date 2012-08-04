@@ -25,16 +25,22 @@
 
 class SpellBackend : public QObject
 {
+  Q_OBJECT
+
 public:
   static SpellBackend* instance();
   virtual bool add(const QString &word);
   virtual bool available() const;
   virtual bool isCorrect(const QString &word) const;
   virtual bool writable() const;
+  virtual QString actuallLang() const;
   virtual QStringList dictionaries() const;
   virtual QStringList suggestions(const QString &word) const;
-  virtual QString actuallLang() const;
+  virtual void queuedSuggestions(const QString &word) const;
   virtual void setLangs(const QStringList &dicts);
+
+signals:
+  void suggestionsReady(const QString &word, const QStringList &words);
 
 protected:
   SpellBackend(QObject *parent = 0);

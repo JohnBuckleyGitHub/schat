@@ -23,6 +23,7 @@
 #include "plugins/ChatPlugin.h"
 
 class InputWidget;
+class QAction;
 class QMenu;
 class QPoint;
 class SpellHighlighter;
@@ -33,6 +34,7 @@ class SpellChecker : public ChatPlugin
 
 public:
   SpellChecker(QObject *parent = 0);
+  ~SpellChecker();
   inline static SpellChecker* instance() { return m_self; }
   
 public slots:
@@ -42,13 +44,17 @@ public slots:
   void addWordToDict();
 
 private slots:
+  void resetMenu();
   void start();
+  void suggestions(const QString &word, const QStringList &words);
 
 private:
-  bool suggestionsMenu(const QString &word, QMenu *parent);
+  void suggestionsMenu(const QString &word, QMenu *parent);
 
   InputWidget *m_textEdit;         ///< Виджет ввода текста.
   int m_position;                  ///< Текущая позиция курсора.
+  QAction *m_menuAction;           ///< Текущее действие в контекстом меню для меню вариантов слов.
+  QMenu *m_menu;                   ///< Меню вариантов слов.
   SpellHighlighter *m_highlighter; ///< Объект для подчёркивания неправильных слов.
   static SpellChecker *m_self;     ///< Указатель на себя.
 };
