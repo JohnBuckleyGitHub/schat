@@ -43,11 +43,9 @@ SpellChecker::SpellChecker(QObject *parent)
   m_self = this;
   m_menu = new QMenu();
 
-  QStringList defaultDicts;
-  defaultDicts.append("en_US");
-  defaultDicts.append(QLocale().name().toUtf8().constData());
-
-  ChatCore::settings()->setLocalDefault(LS("SpellChecker/EnabledDicts"), defaultDicts);
+  ChatCore::settings()->setLocalDefault(LS("SpellChecker/Dictionaries"), QStringList());
+  ChatCore::settings()->setLocalDefault(LS("SpellChecker/Active"), true);
+  ChatCore::settings()->setLocalDefault(LS("SpellChecker/Advanced"), false);
   SettingsTabHook::add(new SpellCheckerPageCreator());
 
   QTimer::singleShot(0, this, SLOT(start()));
@@ -67,6 +65,44 @@ QString SpellChecker::path()
 # else
   return Path::data(Path::SystemScope) + LS("/spelling");
 # endif
+}
+
+
+/*!
+ * Определение списка необходимых словарей в зависимости от языка интерфейса чата.
+ */
+QStringList SpellChecker::detect()
+{
+  QStringList dictionaries;
+  QString lang = ChatCore::translation()->name();
+  if (!lang.startsWith(LS("en")))
+    dictionaries.append(LS("en_US"));
+
+  QLocale locale(ChatCore::translation()->name());
+  dictionaries.append(locale.name());
+  return dictionaries;
+}
+
+
+/*!
+ * Загрузка словарей в зависимости от настроек.
+ *
+ * - "SpellChecker/Active"   Значение \b false отключает проверку орфографии.
+ * - "SpellChecker/Advanced" Значение \b true включает использование опции "SpellChecker/Dictionaries", если \b false производится попытка автоматического определения языка.
+ */
+void SpellChecker::reload()
+{
+  if (!ChatCore::settings()->value(LS("SpellChecker/Active")).toBool()) {
+    SpellBackend::instance()->setLangs(QStringList());
+    return;
+  }
+
+  if (ChatCore::settings()->value(LS("SpellChecker/Advanced")).toBool()) {
+    QStringList dictionaries = ChatCore::settings()->value(LS("SpellChecker/Dictionaries")).toStringList();
+    SpellBackend::instance()->setLangs(dictionaries);
+  }
+  else
+    SpellBackend::instance()->setLangs(detect());
 }
 
 
@@ -145,12 +181,15 @@ void SpellChecker::resetMenu()
 }
 
 
+/*!
+ * Инициализация.
+ */
 void SpellChecker::start()
 {
   m_textEdit = SendWidget::i()->input();
   connect(m_textEdit, SIGNAL(contextMenu(QMenu*,QPoint)), this, SLOT(contextMenu(QMenu*,QPoint)));
 
-  SpellBackend::instance()->setLangs(ChatCore::settings()->value(LS("SpellChecker/EnabledDicts")).toStringList());
+  reload();
   connect(SpellBackend::instance(), SIGNAL(suggestionsReady(QString,QStringList)), SLOT(suggestions(QString,QStringList)));
 
   m_highlighter = new SpellHighlighter(m_textEdit->document());

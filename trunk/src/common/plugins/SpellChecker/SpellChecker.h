@@ -17,8 +17,10 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SPELLCHECKER_H
-#define SPELLCHECKER_H
+#ifndef SPELLCHECKER_H_
+#define SPELLCHECKER_H_
+
+#include <QStringList>
 
 #include "plugins/ChatPlugin.h"
 
@@ -37,6 +39,8 @@ public:
   ~SpellChecker();
   inline static SpellChecker* instance() { return m_self; }
   static QString path();
+  static QStringList detect();
+  static void reload();
 
 public slots:
   void contextMenu(QMenu *menu, const QPoint &pos);
@@ -60,4 +64,4 @@ private:
   static SpellChecker *m_self;     ///< Указатель на себя.
 };
 
-#endif // SPELLCHECKER_H
+#endif // SPELLCHECKER_H_
