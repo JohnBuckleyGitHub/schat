@@ -36,7 +36,8 @@ public:
   SpellChecker(QObject *parent = 0);
   ~SpellChecker();
   inline static SpellChecker* instance() { return m_self; }
-  
+  static QString path();
+
 public slots:
   void contextMenu(QMenu *menu, const QPoint &pos);
   void repairWord();

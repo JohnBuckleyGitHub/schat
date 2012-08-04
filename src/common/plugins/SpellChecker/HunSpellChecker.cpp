@@ -18,14 +18,13 @@
  */
 
 #include <QDir>
-#include <QLocale>
-#include <QCoreApplication>
 #include <QTextCodec>
 #include <QThreadPool>
 
-#include "HunSpellChecker.h"
 #include "hunspell/hunspell.hxx"
+#include "HunSpellChecker.h"
 #include "sglobal.h"
+#include "SpellChecker.h"
 
 HunspellChecker::HunspellChecker(QObject *parent)
   : SpellBackend(parent)
@@ -33,13 +32,7 @@ HunspellChecker::HunspellChecker(QObject *parent)
   m_pool = new QThreadPool(this);
   m_pool->setMaxThreadCount(1);
 
-# if defined(Q_WS_WIN)
-  dictPath = QString("%1/spelling").arg(QCoreApplication::applicationDirPath());
-# elif defined(Q_WS_X11)
-  dictPath = "/usr/share/hunspell/";
-# elif defined(Q_WS_MAC)
-  dictPath = QString("%1/Library/Spelling").arg(QDir::homePath());
-# endif
+  m_path = SpellChecker::path();
 }
 
 
@@ -88,7 +81,7 @@ bool HunspellChecker::isCorrect(const QString &word) const
 QStringList HunspellChecker::dictionaries() const
 {
   QStringList dict;
-  QDir dir(dictPath);
+  QDir dir(m_path);
   if (dir.exists()) {
     QStringList lstDic = dir.entryList(QStringList("*.dic"), QDir::Files);
     foreach(QString tmp, lstDic) {
@@ -141,7 +134,7 @@ void HunspellChecker::setLangs(const QStringList &dicts)
 {
   QStringList files;
   foreach (const QString &name, dicts) {
-    files.append(dictPath + LC('/') + name);
+    files.append(m_path + LC('/') + name);
   }
 
   m_pool->start(new HunspellLoader(this, files));

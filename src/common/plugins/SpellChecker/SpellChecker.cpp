@@ -22,10 +22,12 @@
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "Path.h"
 #include "sglobal.h"
 #include "SpellChecker.h"
 #include "SpellCheckerPage.h"
 #include "SpellHighlighter.h"
+#include "Translation.h"
 #include "ui/InputWidget.h"
 #include "ui/SendWidget.h"
 
@@ -55,6 +57,16 @@ SpellChecker::SpellChecker(QObject *parent)
 SpellChecker::~SpellChecker()
 {
   delete m_menu;
+}
+
+
+QString SpellChecker::path()
+{
+# if defined(Q_WS_X11)
+  return LS("/usr/share/hunspell/");
+# else
+  return Path::data(Path::SystemScope) + LS("/spelling");
+# endif
 }
 
 
