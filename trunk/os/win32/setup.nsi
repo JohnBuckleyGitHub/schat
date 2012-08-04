@@ -23,6 +23,7 @@
 !define Profile
 !define Emoticons
 !define SendFile
+!define SpellChecker
 !define RawFeeds
 !define YouTube
 !define Update

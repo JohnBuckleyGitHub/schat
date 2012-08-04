@@ -46,7 +46,9 @@ SpellChecker::SpellChecker(QObject *parent)
   ChatCore::settings()->setLocalDefault(LS("SpellChecker/Dictionaries"), QStringList());
   ChatCore::settings()->setLocalDefault(LS("SpellChecker/Active"), true);
   ChatCore::settings()->setLocalDefault(LS("SpellChecker/Advanced"), false);
-  SettingsTabHook::add(new SpellCheckerPageCreator());
+//  SettingsTabHook::add(new SpellCheckerPageCreator());
+
+  ChatCore::translation()->addOther(LS("spellchecker"));
 
   QTimer::singleShot(0, this, SLOT(start()));
 }
@@ -119,9 +121,7 @@ void SpellChecker::contextMenu(QMenu *menu, const QPoint &pos)
     return;
 
   suggestionsMenu(word, menu);
-
-  QAction *action = menu->addAction(tr("Add to dictionary"), this, SLOT(addWordToDict()));
-  action->setParent(menu);
+//  menu->addAction(tr("Add to dictionary"), this, SLOT(addWordToDict()));
 }
 
 
