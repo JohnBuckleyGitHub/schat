@@ -49,7 +49,7 @@ public:
 private:
   mutable QMutex m_mutex;  ///< Мьютекс защищающий доступ к словарям.
   QList<Hunspell*> m_list; ///< Список загруженных объектов Hunspell.
-  QString dictPath;
+  QString m_path;          ///< Путь для поиска файлов словарей.
   QThreadPool *m_pool;     ///< Пул для запуска потоков.
 };
 
