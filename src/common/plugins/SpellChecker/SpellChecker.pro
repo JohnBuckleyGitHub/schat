@@ -23,20 +23,38 @@ DEPENDPATH += 3rdparty
 INCLUDEPATH += 3rdparty
 
 HEADERS  = \
-   SpellcheckerPlugin.h \
+   SpellCheckerPlugin.h \
    SpellHighlighter.h \
    SpellBackend.h \
-   HunSpellchecker.h \
-   Spellchecker.h \
-   SpellcheckerPage.h \
+   HunSpellChecker.h \
+   SpellChecker.h \
+   SpellCheckerPage.h \
 
 SOURCES  = \
-   SpellcheckerPlugin.cpp \
+   SpellCheckerPlugin.cpp \
    SpellHighlighter.cpp \
    SpellBackend.cpp \
-   HunSpellchecker.cpp \
-   Spellchecker.cpp \
-   SpellcheckerPage.cpp \
+   HunSpellChecker.cpp \
+   SpellChecker.cpp \
+   SpellCheckerPage.cpp \
+
+RESOURCES += SpellChecker.qrc
 
 include(3rdparty/hunspell/hunspell.pri)
 include(../plugins.pri)
+
+TRANSLATIONS += res/translations/spellchecker_en.ts
+TRANSLATIONS += res/translations/spellchecker_ru.ts
+CODECFORTR = UTF-8
+
+macx:dictionaries.path += ../../../../out/SimpleChat2.app/Contents/Resources/spelling
+win32:dictionaries.path += ../../../../os/win32/$${PLUGIN_TARGET}/spelling
+
+win32|macx {
+  dictionaries.files += spelling/en_US.aff
+  dictionaries.files += spelling/en_US.dic
+  dictionaries.files += spelling/ru_RU.aff
+  dictionaries.files += spelling/ru_RU.dic
+  
+  INSTALLS += dictionaries
+}

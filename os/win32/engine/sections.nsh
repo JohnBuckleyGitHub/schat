@@ -40,6 +40,7 @@ ${mod} History
 ${mod} Profile
 ${mod} Emoticons
 ${mod} SendFile
+${mod} SpellChecker
 ${mod} Idle
 ${mod} Update
 ${mod} YouTube
