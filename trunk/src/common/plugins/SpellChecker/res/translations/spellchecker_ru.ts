@@ -5,12 +5,7 @@
 <context>
     <name>SpellChecker</name>
     <message>
-        <location filename="../../SpellChecker.cpp" line="123"/>
-        <source>Add to dictionary</source>
-        <translation>Добавить в словарь</translation>
-    </message>
-    <message>
-        <location filename="../../SpellChecker.cpp" line="216"/>
+        <location filename="../../SpellChecker.cpp" line="232"/>
         <source>Suggestions</source>
         <translation>Варианты</translation>
     </message>
@@ -23,9 +18,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../SpellCheckerPage.cpp" line="122"/>
+        <location filename="../../SpellCheckerPage.cpp" line="121"/>
         <source>Spell Checker</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SpellCheckerWidget</name>
+    <message>
+        <location filename="../../SpellCheckerWidget.cpp" line="63"/>
+        <source>Spell checking</source>
+        <translation>Проверка орфографии</translation>
+    </message>
+    <message>
+        <location filename="../../SpellCheckerWidget.cpp" line="64"/>
+        <source>Enable spell checking</source>
+        <translation>Включить проверку орфографии</translation>
+    </message>
+    <message>
+        <location filename="../../SpellCheckerWidget.cpp" line="65"/>
+        <source>Advanced setup</source>
+        <translation>Расширенная настройка</translation>
     </message>
 </context>
 </TS>

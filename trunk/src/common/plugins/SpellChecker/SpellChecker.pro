@@ -24,20 +24,22 @@ DEPENDPATH += 3rdparty
 INCLUDEPATH += 3rdparty
 
 HEADERS  = \
-   SpellCheckerPlugin.h \
-   SpellHighlighter.h \
-   SpellBackend.h \
    HunSpellChecker.h \
+   SpellBackend.h \
    SpellChecker.h \
    SpellCheckerPage.h \
+   SpellCheckerPlugin.h \
+   SpellCheckerWidget.h \
+   SpellHighlighter.h \
 
 SOURCES  = \
-   SpellCheckerPlugin.cpp \
-   SpellHighlighter.cpp \
-   SpellBackend.cpp \
    HunSpellChecker.cpp \
+   SpellBackend.cpp \
    SpellChecker.cpp \
    SpellCheckerPage.cpp \
+   SpellCheckerPlugin.cpp \
+   SpellCheckerWidget.cpp \
+   SpellHighlighter.cpp \
 
 RESOURCES += SpellChecker.qrc
 
