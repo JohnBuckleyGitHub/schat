@@ -1319,7 +1319,7 @@ int AffixMgr::cpdrep_check(const char * word, int wl)
 }
 
 // forbid compoundings when there are special patterns at word bound
-int AffixMgr::cpdpat_check(const char * word, int pos, hentry * r1, hentry * r2, const char affixed)
+int AffixMgr::cpdpat_check(const char * word, int pos, hentry * r1, hentry * r2, const char /*affixed*/)
 {
   int len;
   for (int i = 0; i < numcheckcpd; i++) {

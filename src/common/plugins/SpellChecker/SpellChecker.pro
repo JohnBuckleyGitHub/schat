@@ -18,6 +18,7 @@
 SCHAT_CLIENT_LIB = 1
 SCHAT_CORE_LIB = 1
 QT = core gui
+CONFIG += exceptions
 
 DEPENDPATH += 3rdparty
 INCLUDEPATH += 3rdparty
