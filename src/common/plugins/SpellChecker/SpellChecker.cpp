@@ -19,6 +19,7 @@
 
 #include <QTimer>
 #include <QMenu>
+#include <QVBoxLayout>
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
@@ -26,6 +27,7 @@
 #include "sglobal.h"
 #include "SpellChecker.h"
 #include "SpellCheckerPage.h"
+#include "SpellCheckerWidget.h"
 #include "SpellHighlighter.h"
 #include "Translation.h"
 #include "ui/InputWidget.h"
@@ -175,6 +177,15 @@ void SpellChecker::addWordToDict()
 }
 
 
+void SpellChecker::added(const QString &id, SettingsPage *page)
+{
+  if (id != LS("locale"))
+    return;
+
+  page->mainLayout()->addWidget(new SpellCheckerWidget(page));
+}
+
+
 void SpellChecker::resetMenu()
 {
   m_menuAction = 0;
@@ -190,9 +201,10 @@ void SpellChecker::start()
   connect(m_textEdit, SIGNAL(contextMenu(QMenu*,QPoint)), this, SLOT(contextMenu(QMenu*,QPoint)));
 
   reload();
-  connect(SpellBackend::instance(), SIGNAL(suggestionsReady(QString,QStringList)), SLOT(suggestions(QString,QStringList)));
-
   m_highlighter = new SpellHighlighter(m_textEdit->document());
+
+  connect(SpellBackend::instance(), SIGNAL(suggestionsReady(QString,QStringList)), SLOT(suggestions(QString,QStringList)));
+  connect(SettingsTabHook::i(), SIGNAL(added(QString,SettingsPage*)), SLOT(added(QString,SettingsPage*)));
 }
 
 
