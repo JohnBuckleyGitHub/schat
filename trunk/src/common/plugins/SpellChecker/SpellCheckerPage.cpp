@@ -111,8 +111,7 @@ void SpellCheckerPage::modified(QTableWidgetItem *item)
         }
     }
 
-    SpellChecker *test;
-    test->instance()->setEnabledDicts(enabledDicts);
+    SpellChecker::instance()->setEnabledDicts(enabledDicts);
 
   ChatCore::settings()->setValue(LS("Spellchecker/EnabledDicts"), enabledDicts);
 }
