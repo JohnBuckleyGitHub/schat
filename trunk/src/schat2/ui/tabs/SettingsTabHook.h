@@ -26,6 +26,7 @@
 #include "schat.h"
 
 class ChatSettings;
+class QVBoxLayout;
 
 /*!
  * Базовый класс для страниц настроек.
@@ -37,16 +38,20 @@ class SCHAT_CORE_EXPORT SettingsPage : public QWidget
 public:
   SettingsPage(const QIcon &icon, const QString &id, QWidget *parent = 0);
   SettingsPage(QWidget *parent = 0);
-  inline const QIcon& icon() const   { return m_icon; }
-  inline const QString& id() const   { return m_id; }
-  inline const QString& name() const { return m_name; }
+  inline const QIcon& icon() const       { return m_icon; }
+  inline const QString& id() const       { return m_id; }
+  inline const QString& name() const     { return m_name; }
+  inline QVBoxLayout *mainLayout() const { return m_mainLayout; }
   virtual void retranslateUi() {}
 
 protected:
-  ChatSettings *m_settings; ///< Указатель на объект настроек.
-  QIcon m_icon;             ///< Иконка.
-  QString m_id;             ///< Идентификатор.
-  QString m_name;           ///< Имя страницы настроек.
+  void setupLayout();
+
+  ChatSettings *m_settings;  ///< Указатель на объект настроек.
+  QIcon m_icon;              ///< Иконка.
+  QString m_id;              ///< Идентификатор.
+  QString m_name;            ///< Имя страницы настроек.
+  QVBoxLayout *m_mainLayout; ///< Главный компоновщик страницы.
 };
 
 
@@ -75,7 +80,11 @@ public:
   ~SettingsTabHook();
   inline const QMap<int, SettingsPageCreator *>& pages() const { return m_pages; }
   inline static SettingsTabHook *i()                           { return m_self; }
+  static void add(SettingsPage *page);
   static void add(SettingsPageCreator *creator);
+
+signals:
+  void added(const QString &id, SettingsPage *page);
 
 private:
   void add(int weight, SettingsPageCreator *creator);

@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QVBoxLayout>
+
 #include "ChatCore.h"
 #include "hooks/PluginsPage.h"
 #include "hooks/SettingsTabImpl.h"
@@ -28,6 +30,7 @@ SettingsPage::SettingsPage(const QIcon &icon, const QString &id, QWidget *parent
   , m_settings(ChatCore::settings())
   , m_icon(icon)
   , m_id(id)
+  , m_mainLayout(0)
 {
 }
 
@@ -35,7 +38,16 @@ SettingsPage::SettingsPage(const QIcon &icon, const QString &id, QWidget *parent
 SettingsPage::SettingsPage(QWidget *parent)
   : QWidget(parent)
   , m_settings(ChatCore::settings())
+  , m_mainLayout(0)
 {
+}
+
+
+void SettingsPage::setupLayout()
+{
+  QVBoxLayout *layout = new QVBoxLayout(this);
+  layout->addLayout(m_mainLayout);
+  layout->addStretch();
 }
 
 
@@ -54,6 +66,12 @@ SettingsTabHook::SettingsTabHook(QObject *parent)
 SettingsTabHook::~SettingsTabHook()
 {
   qDeleteAll(m_pages);
+}
+
+
+void SettingsTabHook::add(SettingsPage *page)
+{
+  emit m_self->added(page->id(), page);
 }
 
 
