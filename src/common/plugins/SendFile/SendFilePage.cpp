@@ -58,11 +58,11 @@ SendFilePage::SendFilePage(SendFilePluginImpl *plugin, QWidget *parent)
   warningLay->addWidget(m_warningIcon);
   warningLay->addWidget(m_warningLabel, 1);
 
-  QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(m_label);
-  mainLay->addLayout(portLay);
-  mainLay->addStretch();
-  mainLay->addLayout(warningLay);
+  m_mainLayout = new QVBoxLayout(this);
+  m_mainLayout->addWidget(m_label);
+  m_mainLayout->addLayout(portLay);
+  m_mainLayout->addStretch();
+  m_mainLayout->addLayout(warningLay);
 
   retranslateUi();
 

@@ -30,15 +30,15 @@ PluginsPage::PluginsPage(QWidget *parent)
   m_label = new QLabel(this);
   m_view = new PluginsView(this);
 
-  QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(m_label);
-  mainLay->addWidget(m_view);
-  mainLay->setStretch(0, 0);
-  mainLay->setStretch(1, 1);
+  m_mainLayout = new QVBoxLayout(this);
+  m_mainLayout->addWidget(m_label);
+  m_mainLayout->addWidget(m_view);
+  m_mainLayout->setStretch(0, 0);
+  m_mainLayout->setStretch(1, 1);
 
-  QMargins margins = mainLay->contentsMargins();
+  QMargins margins = m_mainLayout->contentsMargins();
   margins.setBottom(0);
-  mainLay->setContentsMargins(margins);
+  m_mainLayout->setContentsMargins(margins);
 
   retranslateUi();
 }

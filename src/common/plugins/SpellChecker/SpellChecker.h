@@ -28,6 +28,7 @@ class InputWidget;
 class QAction;
 class QMenu;
 class QPoint;
+class SettingsPage;
 class SpellHighlighter;
 
 class SpellChecker : public ChatPlugin
@@ -49,6 +50,7 @@ public slots:
   void addWordToDict();
 
 private slots:
+  void added(const QString &id, SettingsPage *page);
   void resetMenu();
   void start();
   void suggestions(const QString &word, const QStringList &words);

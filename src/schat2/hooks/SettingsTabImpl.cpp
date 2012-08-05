@@ -41,7 +41,7 @@ ProfilePage::ProfilePage(QWidget *parent)
 
   m_layout = new ProfileLayout(this);
 
-  QGridLayout *profileLay = new QGridLayout;
+  QGridLayout *profileLay = new QGridLayout();
   profileLay->addWidget(m_nickLabel, 0, 0);
   profileLay->addWidget(m_nickEdit, 0, 1, 1, 2);
   profileLay->addWidget(m_genderLabel, 1, 0);
@@ -49,12 +49,12 @@ ProfilePage::ProfilePage(QWidget *parent)
   profileLay->addWidget(m_layout->button(), 1, 2);
   profileLay->setContentsMargins(10, 0, 3, 0);
 
-  QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(m_profileLabel);
-  mainLay->addLayout(profileLay);
-  mainLay->addWidget(m_layout);
-  mainLay->addStretch();
+  m_mainLayout = new QVBoxLayout();
+  m_mainLayout->addWidget(m_profileLabel);
+  m_mainLayout->addLayout(profileLay);
+  m_mainLayout->addWidget(m_layout);
 
+  setupLayout();
   retranslateUi();
 }
 
@@ -83,16 +83,15 @@ NetworkPage::NetworkPage(QWidget *parent)
   m_networkLabel = new QLabel(this);
   m_network = new NetworkWidget(this);
 
-  QVBoxLayout *networkLay = new QVBoxLayout;
+  QVBoxLayout *networkLay = new QVBoxLayout();
   networkLay->addWidget(m_network);
   networkLay->setContentsMargins(10, 0, 3, 0);
 
-  QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(m_networkLabel);
-  mainLay->addLayout(networkLay);
-  mainLay->addStretch();
-  mainLay->addStretch();
+  m_mainLayout = new QVBoxLayout();
+  m_mainLayout->addWidget(m_networkLabel);
+  m_mainLayout->addLayout(networkLay);
 
+  setupLayout();
   retranslateUi();
 }
 
@@ -118,17 +117,16 @@ LocalePage::LocalePage(QWidget *parent)
   m_language = new LanguageField(this);
   m_language->setMinimumWidth(m_language->width() + 20);
 
-  QHBoxLayout *languageLay = new QHBoxLayout;
+  QHBoxLayout *languageLay = new QHBoxLayout();
   languageLay->addWidget(m_language);
   languageLay->addStretch();
   languageLay->setContentsMargins(10, 0, 3, 0);
 
-  QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(m_localeLabel);
-  mainLay->addLayout(languageLay);
-  mainLay->addStretch();
-  mainLay->addStretch();
+  m_mainLayout = new QVBoxLayout();
+  m_mainLayout->addWidget(m_localeLabel);
+  m_mainLayout->addLayout(languageLay);
 
+  setupLayout();
   retranslateUi();
 }
 

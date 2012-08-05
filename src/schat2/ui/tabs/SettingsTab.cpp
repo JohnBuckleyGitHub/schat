@@ -16,7 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
 #include <QGridLayout>
 #include <QListWidget>
 #include <QScrollArea>
@@ -77,6 +76,8 @@ void SettingsTab::addPage(SettingsPage *page)
   scroll->setWidgetResizable(true);
   scroll->setFrameShape(QFrame::NoFrame);
   m_pages->addWidget(scroll);
+
+  SettingsTabHook::add(page);
 }
 
 
