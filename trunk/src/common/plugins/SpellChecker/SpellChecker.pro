@@ -27,7 +27,6 @@ HEADERS  = \
    HunSpellChecker.h \
    SpellBackend.h \
    SpellChecker.h \
-   SpellCheckerPage.h \
    SpellCheckerPlugin.h \
    SpellCheckerWidget.h \
    SpellHighlighter.h \
@@ -36,7 +35,6 @@ SOURCES  = \
    HunSpellChecker.cpp \
    SpellBackend.cpp \
    SpellChecker.cpp \
-   SpellCheckerPage.cpp \
    SpellCheckerPlugin.cpp \
    SpellCheckerWidget.cpp \
    SpellHighlighter.cpp \
