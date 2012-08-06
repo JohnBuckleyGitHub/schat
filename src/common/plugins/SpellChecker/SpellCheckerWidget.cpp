@@ -20,11 +20,15 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QCheckBox>
+#include <QListWidget>
+#include <QEvent>
 
-#include "SpellCheckerWidget.h"
-#include "sglobal.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "sglobal.h"
+#include "SpellBackend.h"
+#include "SpellChecker.h"
+#include "SpellCheckerWidget.h"
 
 SpellCheckerWidget::SpellCheckerWidget(QWidget *parent)
   : QWidget(parent)
@@ -36,9 +40,20 @@ SpellCheckerWidget::SpellCheckerWidget(QWidget *parent)
   m_advanced = new QCheckBox(this);
   m_advanced->setChecked(ChatCore::settings()->value(LS("SpellChecker/Advanced")).toBool());
 
+  m_list = new QListWidget(this);
+  m_list->setFrameShape(QFrame::NoFrame);
+  m_list->setAlternatingRowColors(true);
+  m_list->setSpacing(1);
+  m_list->setDragDropMode(QAbstractItemView::InternalMove);
+
+  QGridLayout *listLay = new QGridLayout();
+  listLay->addWidget(m_list);
+  listLay->setContentsMargins(16, 0, 0, 0);
+
   QVBoxLayout *layout = new QVBoxLayout();
   layout->addWidget(m_active);
   layout->addWidget(m_advanced);
+  layout->addLayout(listLay);
   layout->setContentsMargins(10, 0, 3, 0);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
@@ -46,7 +61,69 @@ SpellCheckerWidget::SpellCheckerWidget(QWidget *parent)
   mainLay->addLayout(layout);
   mainLay->setContentsMargins(0, 12, 0, 0);
 
+  build();
   retranslateUi();
+}
+
+
+void SpellCheckerWidget::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  QWidget::changeEvent(event);
+}
+
+
+/*!
+ * Создание списка словарей.
+ */
+void SpellCheckerWidget::build()
+{
+  QStringList result;
+  QStringList available = SpellBackend::instance()->dictionaries();
+  QStringList checked   = ChatCore::settings()->value(LS("SpellChecker/Dictionaries")).toStringList();
+  if (checked.isEmpty())
+    checked = SpellChecker::detect();
+
+  foreach (const QString &name, checked) {
+    if (available.contains(name))
+      result.append(name);
+  }
+
+  foreach (const QString &name, available) {
+    if (!result.contains(name))
+      result.append(name);
+  }
+
+  fill(result, checked);
+}
+
+
+/*!
+ * Заполнение списка доступных языков.
+ *
+ * \param dictionaries Отсортированный список словарей.
+ * \param checked      Список выбранных словарей.
+ */
+void SpellCheckerWidget::fill(const QStringList &dictionaries, const QStringList &checked)
+{
+  foreach (const QString &name, dictionaries) {
+    QString text = name;
+    QLocale locale(name);
+    if (locale.language() != QLocale::C) {
+#     if QT_VERSION >= 0x040800
+      text = QString(LS("%1 (%2)")).arg(locale.nativeLanguageName(), locale.nativeCountryName());
+#     else
+      text = QString(LS("%1 (%2)")).arg(QLocale::languageToString(locale.language()), QLocale::countryToString(locale.country()));
+#     endif
+    }
+
+    QListWidgetItem *item = new QListWidgetItem(text, m_list);
+    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+    item->setCheckState(checked.contains(name) ? Qt::Checked : Qt::Unchecked);
+    item->setData(Qt::UserRole, name);
+  }
 }
 
 
