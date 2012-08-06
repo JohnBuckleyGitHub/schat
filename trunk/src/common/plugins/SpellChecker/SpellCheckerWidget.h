@@ -24,6 +24,7 @@
 
 class QCheckBox;
 class QLabel;
+class QListWidget;
 
 class SpellCheckerWidget : public QWidget
 {
@@ -32,12 +33,18 @@ class SpellCheckerWidget : public QWidget
 public:
   SpellCheckerWidget(QWidget *parent = 0);
 
+protected:
+  void changeEvent(QEvent *event);
+
 private:
+  void build();
+  void fill(const QStringList &dictionaries, const QStringList &checked);
   void retranslateUi();
 
   QCheckBox *m_active;   ///< Настройка "SpellChecker/Active".
   QCheckBox *m_advanced; ///< Настройка "SpellChecker/Advanced".
   QLabel *m_label;       ///< Надпись вверху.
+  QListWidget *m_list;   ///< Список доступных языков.
 };
 
 #endif /* SPELLCHECKERWIDGET_H_ */

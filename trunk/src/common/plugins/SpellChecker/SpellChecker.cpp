@@ -79,11 +79,13 @@ QStringList SpellChecker::detect()
 {
   QStringList dictionaries;
   QString lang = ChatCore::translation()->name();
-  if (!lang.startsWith(LS("en")))
-    dictionaries.append(LS("en_US"));
 
-  QLocale locale(ChatCore::translation()->name());
-  dictionaries.append(locale.name());
+  if (!lang.startsWith(LS("en"))) {
+    QLocale locale(ChatCore::translation()->name());
+    dictionaries.append(locale.name());
+  }
+
+  dictionaries.append(LS("en_US"));
   return dictionaries;
 }
 
