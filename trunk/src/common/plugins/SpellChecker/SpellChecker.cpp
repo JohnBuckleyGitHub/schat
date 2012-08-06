@@ -48,7 +48,6 @@ SpellChecker::SpellChecker(QObject *parent)
   ChatCore::settings()->setLocalDefault(LS("SpellChecker/Dictionaries"), QStringList());
   ChatCore::settings()->setLocalDefault(LS("SpellChecker/Active"), true);
   ChatCore::settings()->setLocalDefault(LS("SpellChecker/Advanced"), false);
-//  SettingsTabHook::add(new SpellCheckerPageCreator());
 
   ChatCore::translation()->addOther(LS("spellchecker"));
 
@@ -100,15 +99,20 @@ void SpellChecker::reload()
 {
   if (!ChatCore::settings()->value(LS("SpellChecker/Active")).toBool()) {
     SpellBackend::instance()->setLangs(QStringList());
+    m_self->m_dictionaries.clear();
     return;
   }
 
-  if (ChatCore::settings()->value(LS("SpellChecker/Advanced")).toBool()) {
-    QStringList dictionaries = ChatCore::settings()->value(LS("SpellChecker/Dictionaries")).toStringList();
+  QStringList dictionaries;
+  if (ChatCore::settings()->value(LS("SpellChecker/Advanced")).toBool())
+    dictionaries = ChatCore::settings()->value(LS("SpellChecker/Dictionaries")).toStringList();
+  else
+    dictionaries = detect();
+
+  if (m_self->m_dictionaries != dictionaries) {
+    m_self->m_dictionaries = dictionaries;
     SpellBackend::instance()->setLangs(dictionaries);
   }
-  else
-    SpellBackend::instance()->setLangs(detect());
 }
 
 
@@ -148,17 +152,6 @@ void SpellChecker::repairWord()
   cursor.endEditBlock();
 
   m_highlighter->rehighlightBlock(cursor.block());
-}
-
-
-void SpellChecker::setEnabledDicts(QList<QString> &dicts)
-{
-  if (m_highlighter)
-    delete m_highlighter;
-
-  SpellBackend::instance()->setLangs(dicts);
-  m_highlighter = new SpellHighlighter(m_textEdit->document());
-  m_highlighter->rehighlight();
 }
 
 
