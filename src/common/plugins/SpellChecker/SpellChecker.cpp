@@ -17,21 +17,23 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QTimer>
+#include <QLocale>
 #include <QMenu>
+#include <QTimer>
 #include <QVBoxLayout>
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
 #include "Path.h"
 #include "sglobal.h"
+#include "SpellBackend.h"
 #include "SpellChecker.h"
-#include "SpellCheckerPage.h"
 #include "SpellCheckerWidget.h"
 #include "SpellHighlighter.h"
 #include "Translation.h"
 #include "ui/InputWidget.h"
 #include "ui/SendWidget.h"
+#include "ui/tabs/SettingsTabHook.h"
 
 SpellChecker* SpellChecker::m_self = 0;
 
