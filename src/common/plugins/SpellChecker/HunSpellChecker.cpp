@@ -68,6 +68,11 @@ bool HunspellChecker::isCorrect(const QString &word) const
   if (!m_mutex.tryLock())
     return false;
 
+  if (m_list.isEmpty()) {
+    m_mutex.unlock();
+    return true;
+  }
+
   foreach (Hunspell *dic, m_list) {
     QByteArray encoded = QTextCodec::codecForName(dic->get_dic_encoding())->fromUnicode(word);
     sum += dic->spell(encoded.constData());

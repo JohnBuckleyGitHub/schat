@@ -45,6 +45,7 @@ SpellCheckerWidget::SpellCheckerWidget(QWidget *parent)
   m_list->setAlternatingRowColors(true);
   m_list->setSpacing(1);
   m_list->setDragDropMode(QAbstractItemView::InternalMove);
+  m_list->installEventFilter(this);
 
   QGridLayout *listLay = new QGridLayout();
   listLay->addWidget(m_list);
@@ -62,7 +63,21 @@ SpellCheckerWidget::SpellCheckerWidget(QWidget *parent)
   mainLay->setContentsMargins(0, 12, 0, 0);
 
   build();
+  updateVisibility();
   retranslateUi();
+
+  connect(m_active, SIGNAL(clicked(bool)),SLOT(activeClicked(bool)));
+  connect(m_advanced, SIGNAL(clicked(bool)),SLOT(advancedClicked(bool)));
+  connect(m_list, SIGNAL(itemChanged(QListWidgetItem*)),SLOT(reloadDictionaries()));
+}
+
+
+bool SpellCheckerWidget::eventFilter(QObject *watched, QEvent *event)
+{
+  if (watched == m_list && event->type() == QEvent::ChildRemoved)
+    reloadDictionaries();
+
+  return QWidget::eventFilter(watched, event);
 }
 
 
@@ -72,6 +87,48 @@ void SpellCheckerWidget::changeEvent(QEvent *event)
     retranslateUi();
 
   QWidget::changeEvent(event);
+}
+
+
+void SpellCheckerWidget::activeClicked(bool checked)
+{
+  ChatCore::settings()->setValue(LS("SpellChecker/Active"), checked);
+  updateVisibility();
+
+  SpellChecker::reload();
+}
+
+
+void SpellCheckerWidget::advancedClicked(bool checked)
+{
+  ChatCore::settings()->setValue(LS("SpellChecker/Advanced"), checked);
+  updateVisibility();
+
+  reloadDictionaries();
+}
+
+
+void SpellCheckerWidget::reloadDictionaries()
+{
+  QStringList dictionaries = checked();
+  if (dictionaries.isEmpty())
+    dictionaries.append(LS("null"));
+
+  ChatCore::settings()->setValue(LS("SpellChecker/Dictionaries"), dictionaries);
+  SpellChecker::reload();
+}
+
+
+QStringList SpellCheckerWidget::checked() const
+{
+  QStringList out;
+  for (int row = 0; row < m_list->count(); ++row) {
+    QListWidgetItem *item = m_list->item(row);
+    if (item && item->checkState() == Qt::Checked)
+      out.append(item->data(Qt::UserRole).toString());
+  }
+
+  return out;
 }
 
 
@@ -132,4 +189,11 @@ void SpellCheckerWidget::retranslateUi()
   m_label->setText(LS("<b>") + tr("Spell checking") + LS("</b>"));
   m_active->setText(tr("Enable spell checking"));
   m_advanced->setText(tr("Advanced setup"));
+}
+
+
+void SpellCheckerWidget::updateVisibility()
+{
+  m_list->setVisible(m_active->isChecked() && m_advanced->isChecked());
+  m_advanced->setVisible(m_active->isChecked());
 }

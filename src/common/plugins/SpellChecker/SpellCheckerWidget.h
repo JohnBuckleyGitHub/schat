@@ -34,12 +34,20 @@ public:
   SpellCheckerWidget(QWidget *parent = 0);
 
 protected:
+  bool eventFilter(QObject *watched, QEvent *event);
   void changeEvent(QEvent *event);
 
+private slots:
+  void activeClicked(bool checked);
+  void advancedClicked(bool checked);
+  void reloadDictionaries();
+
 private:
+  QStringList checked() const;
   void build();
   void fill(const QStringList &dictionaries, const QStringList &checked);
   void retranslateUi();
+  void updateVisibility();
 
   QCheckBox *m_active;   ///< Настройка "SpellChecker/Active".
   QCheckBox *m_advanced; ///< Настройка "SpellChecker/Advanced".
