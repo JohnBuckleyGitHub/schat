@@ -122,7 +122,7 @@ def MakeWinBuilder():
     haltOnFailure = True,
   ))
   f.addStep(Compile(
-    command       = ['nmake'],
+    command       = ['jom', '-j8'],
     haltOnFailure = True,
   ))
   f.addStep(ShellCommand(
