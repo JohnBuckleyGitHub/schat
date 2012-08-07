@@ -73,6 +73,12 @@ QString SpellChecker::path()
 }
 
 
+QString SpellChecker::personalPath()
+{
+  return Path::cache() + LS("/personal");
+}
+
+
 /*!
  * Определение списка необходимых словарей в зависимости от языка интерфейса чата.
  */
@@ -118,6 +124,31 @@ void SpellChecker::reload()
 }
 
 
+void SpellChecker::added(const QString &id, SettingsPage *page)
+{
+  if (id != LS("locale"))
+    return;
+
+  page->mainLayout()->addWidget(new SpellCheckerWidget(page));
+}
+
+
+void SpellChecker::addToPersonalDict()
+{
+  QAction *action = qobject_cast<QAction *>(sender());
+  if (!action)
+    return;
+
+  QTextCursor cursor = m_textEdit->textCursor();
+  cursor.setPosition(m_position, QTextCursor::MoveAnchor);
+  cursor.select(QTextCursor::WordUnderCursor);
+  QString word = cursor.selectedText();
+
+  if (SpellBackend::instance()->add(word))
+    m_highlighter->rehighlightBlock(cursor.block());
+}
+
+
 void SpellChecker::contextMenu(QMenu *menu, const QPoint &pos)
 {
   menu->addSeparator();
@@ -131,7 +162,7 @@ void SpellChecker::contextMenu(QMenu *menu, const QPoint &pos)
     return;
 
   suggestionsMenu(word, menu);
-//  menu->addAction(tr("Add to dictionary"), this, SLOT(addWordToDict()));
+  menu->addAction(tr("Add to dictionary"), this, SLOT(addToPersonalDict()));
 }
 
 
@@ -154,32 +185,6 @@ void SpellChecker::repairWord()
   cursor.endEditBlock();
 
   m_highlighter->rehighlightBlock(cursor.block());
-}
-
-
-void SpellChecker::addWordToDict()
-{
-  QAction *action = qobject_cast<QAction *>(sender());
-  if (!action)
-    return;
-
-  QTextCursor cursor = m_textEdit->textCursor();
-  cursor.setPosition(m_position, QTextCursor::MoveAnchor);
-  cursor.select(QTextCursor::WordUnderCursor);
-  const QString word = cursor.selectedText();
-
-  SpellBackend::instance()->add(word);
-
-  m_highlighter->rehighlightBlock(cursor.block());
-}
-
-
-void SpellChecker::added(const QString &id, SettingsPage *page)
-{
-  if (id != LS("locale"))
-    return;
-
-  page->mainLayout()->addWidget(new SpellCheckerWidget(page));
 }
 
 

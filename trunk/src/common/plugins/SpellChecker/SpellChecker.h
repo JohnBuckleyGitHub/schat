@@ -40,16 +40,15 @@ public:
   ~SpellChecker();
   inline static SpellChecker* instance() { return m_self; }
   static QString path();
+  static QString personalPath();
   static QStringList detect();
   static void reload();
 
-public slots:
-  void contextMenu(QMenu *menu, const QPoint &pos);
-  void repairWord();
-  void addWordToDict();
-
 private slots:
   void added(const QString &id, SettingsPage *page);
+  void addToPersonalDict();
+  void contextMenu(QMenu *menu, const QPoint &pos);
+  void repairWord();
   void resetMenu();
   void start();
   void suggestions(const QString &word, const QStringList &words);
