@@ -20,6 +20,7 @@
 #ifndef HUNSPELLCHECKER_H
 #define HUNSPELLCHECKER_H
 
+#include <QIODevice>
 #include <QMap>
 #include <QMutex>
 #include <QRunnable>
@@ -27,7 +28,9 @@
 #include "SpellBackend.h"
 
 class Hunspell;
+class HunspellPersonalDict;
 class QThreadPool;
+class QFile;
 
 class HunspellChecker: public SpellBackend
 {
@@ -47,10 +50,11 @@ public:
   void load(const QStringList &dicts);
 
 private:
-  mutable QMutex m_mutex;  ///< Мьютекс защищающий доступ к словарям.
-  QList<Hunspell*> m_list; ///< Список загруженных объектов Hunspell.
-  QString m_path;          ///< Путь для поиска файлов словарей.
-  QThreadPool *m_pool;     ///< Пул для запуска потоков.
+  HunspellPersonalDict *m_personal; ///< Пользовательский словарь.
+  mutable QMutex m_mutex;           ///< Мьютекс защищающий доступ к словарям.
+  QList<Hunspell*> m_list;          ///< Список загруженных объектов Hunspell.
+  QString m_path;                   ///< Путь для поиска файлов словарей.
+  QThreadPool *m_pool;              ///< Пул для запуска потоков.
 };
 
 
@@ -80,6 +84,30 @@ signals:
 private:
   const HunspellChecker *m_hunspell; ///< Указатель на объект HunspellChecker.
   QString m_word;                    ///< Слово для которого необходимо подобрать варианты.
+};
+
+
+class HunspellPersonalDict
+{
+public:
+  HunspellPersonalDict(const QString &path);
+  ~HunspellPersonalDict();
+  bool add(const QString &word);
+  inline Hunspell *hunspell() const { return m_hunspell; }
+
+private:
+  bool open(QIODevice::OpenMode flags);
+  bool read();
+  bool write();
+  void close();
+  void load();
+
+  Hunspell *m_hunspell; ///< Словарь, может быть 0 если не загружен, в случае если пользователь не добавлял свои слова.
+  int m_count;          ///< Число файлов в словаре.
+  QByteArray m_data;    ///< Тело DIC файла.
+  QFile *m_aff;         ///< AFF файл.
+  QFile *m_dic;         ///< DIC файл.
+  QString m_try;        ///< TRY опция в AFF файле.
 };
 
 #endif

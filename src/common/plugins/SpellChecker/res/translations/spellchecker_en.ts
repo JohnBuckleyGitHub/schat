@@ -5,38 +5,30 @@
 <context>
     <name>SpellChecker</name>
     <message>
-        <location filename="../../SpellChecker.cpp" line="232"/>
+        <location filename="../../SpellChecker.cpp" line="160"/>
+        <source>Add to dictionary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../SpellChecker.cpp" line="225"/>
         <source>Suggestions</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>SpellCheckerPage</name>
-    <message>
-        <location filename="../../SpellCheckerPage.cpp" line="42"/>
-        <source>LANG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../SpellCheckerPage.cpp" line="121"/>
-        <source>Spell Checker</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>SpellCheckerWidget</name>
     <message>
-        <location filename="../../SpellCheckerWidget.cpp" line="63"/>
+        <location filename="../../SpellCheckerWidget.cpp" line="189"/>
         <source>Spell checking</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../SpellCheckerWidget.cpp" line="64"/>
+        <location filename="../../SpellCheckerWidget.cpp" line="190"/>
         <source>Enable spell checking</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../SpellCheckerWidget.cpp" line="65"/>
+        <location filename="../../SpellCheckerWidget.cpp" line="191"/>
         <source>Advanced setup</source>
         <translation type="unfinished"></translation>
     </message>

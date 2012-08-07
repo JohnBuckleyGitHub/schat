@@ -20,6 +20,7 @@
 #include <QDir>
 #include <QTextCodec>
 #include <QThreadPool>
+#include <QFile>
 
 #include "hunspell/hunspell.hxx"
 #include "HunSpellChecker.h"
@@ -33,25 +34,21 @@ HunspellChecker::HunspellChecker(QObject *parent)
   m_pool->setMaxThreadCount(1);
 
   m_path = SpellChecker::path();
+  m_personal = new HunspellPersonalDict(SpellChecker::personalPath());
 }
 
 
 HunspellChecker::~HunspellChecker()
 {
   clear();
+
+  delete m_personal;
 }
 
 
 bool HunspellChecker::add(const QString &word)
 {
-  Q_UNUSED(word)
-  bool result = false;
-  //if (FHunSpell)
-  {
-    //FHunSpell->add(AWord.toUtf8().constData());
-    result = true;
-  }
-  return result;
+  return m_personal->add(word);
 }
 
 
@@ -63,7 +60,8 @@ bool HunspellChecker::available() const
 
 bool HunspellChecker::isCorrect(const QString &word) const
 {
-  int sum = 0;
+  if (m_personal->hunspell() && m_personal->hunspell()->spell(word.toUtf8().constData()) != 0)
+    return true;
 
   if (!m_mutex.tryLock())
     return false;
@@ -75,11 +73,14 @@ bool HunspellChecker::isCorrect(const QString &word) const
 
   foreach (Hunspell *dic, m_list) {
     QByteArray encoded = QTextCodec::codecForName(dic->get_dic_encoding())->fromUnicode(word);
-    sum += dic->spell(encoded.constData());
+    if (dic->spell(encoded.constData()) != 0) {
+      m_mutex.unlock();
+      return true;
+    }
   }
-  m_mutex.unlock();
 
-  return sum > 0;
+  m_mutex.unlock();
+  return false;
 }
 
 
@@ -88,13 +89,13 @@ QStringList HunspellChecker::dictionaries() const
   QStringList dict;
   QDir dir(m_path);
   if (dir.exists()) {
-    QStringList lstDic = dir.entryList(QStringList("*.dic"), QDir::Files);
+    QStringList lstDic = dir.entryList(QStringList(LS("*.dic")), QDir::Files);
     foreach(QString tmp, lstDic) {
-      if (tmp.startsWith("hyph_"))
+      if (tmp.startsWith(LS("hyph_")))
         continue;
-      if (tmp.startsWith("th_"))
+      if (tmp.startsWith(LS("th_")))
         continue;
-      if (tmp.endsWith(".dic"))
+      if (tmp.endsWith(LS(".dic")))
         tmp = tmp.mid(0, tmp.length() - 4);
       dict << tmp;
     }
@@ -116,8 +117,11 @@ QStringList HunspellChecker::suggestions(const QString &word) const
     QByteArray encoded = codec->fromUnicode(word);
 
     int count = dic->suggest(&sugglist, encoded.constData());
-    for (int i = 0; i < count; ++i)
-      words << codec->toUnicode(sugglist[i]);
+    for (int i = 0; i < count; ++i) {
+      QString w = codec->toUnicode(sugglist[i]);
+      if (!words.contains(w))
+        words.append(w);
+    }
 
     dic->free_list(&sugglist, count);
   }
@@ -209,4 +213,130 @@ void HunspellSuggestions::run()
   QStringList words = m_hunspell->suggestions(m_word);
   if (!words.isEmpty())
     emit ready(m_word, words);
+}
+
+
+HunspellPersonalDict::HunspellPersonalDict(const QString &path)
+  : m_hunspell(0)
+  , m_count(0)
+{
+  m_aff = new QFile(path + LS(".aff"));
+  m_dic = new QFile(path + LS(".dic"));
+
+  read();
+}
+
+
+HunspellPersonalDict::~HunspellPersonalDict()
+{
+  if (m_hunspell)
+    delete m_hunspell;
+
+  delete m_aff;
+  delete m_dic;
+}
+
+
+bool HunspellPersonalDict::add(const QString &word)
+{
+  if (word.isEmpty())
+    return false;
+
+  if (!m_try.contains(word.at(0)))
+    m_try.append(word.at(0));
+
+  m_count++;
+  m_data += word.toUtf8() + '\n';
+
+  if (!write())
+    return false;
+
+  if (!m_hunspell)
+    load();
+
+  m_hunspell->add(word.toUtf8().constData());
+  return true;
+}
+
+
+bool HunspellPersonalDict::open(QIODevice::OpenMode flags)
+{
+  if (!m_aff->open(flags) || !m_dic->open(flags)) {
+    close();
+    return false;
+  }
+
+  return true;
+}
+
+
+/*!
+ * Чтение словаря.
+ *
+ * \return \b false если прочитать не удалось.
+ */
+bool HunspellPersonalDict::read()
+{
+  if (!open(QIODevice::ReadOnly))
+    return false;
+
+  if (m_aff->readLine().simplified() != "SET UTF-8") {
+    close();
+    return false;
+  }
+
+  QByteArray line = m_aff->readLine().simplified();
+  if (line.startsWith("TRY "))
+    m_try = line.mid(4);
+
+  m_count = m_dic->readLine().simplified().toInt();
+  if (!m_count) {
+    close();
+    return false;
+  }
+
+  m_data = m_dic->readAll();
+
+  close();
+  load();
+  return true;
+}
+
+
+/*!
+ * Запись словаря.
+ */
+bool HunspellPersonalDict::write()
+{
+  if (!open(QIODevice::WriteOnly))
+    return false;
+
+  m_aff->write("SET UTF-8\n");
+  if (!m_try.isEmpty())
+    m_aff->write("TRY " + m_try.toUtf8() + '\n');
+
+  m_dic->write(QByteArray::number(m_count) + '\n');
+  m_dic->write(m_data);
+
+  close();
+  return true;
+}
+
+
+/*!
+ * Закрытие открытых файлов.
+ */
+void HunspellPersonalDict::close()
+{
+  if (m_aff->isOpen())
+    m_aff->close();
+
+  if (m_dic->isOpen())
+    m_dic->close();
+}
+
+
+void HunspellPersonalDict::load()
+{
+  m_hunspell = new Hunspell(m_aff->fileName().toUtf8().constData(), m_dic->fileName().toUtf8().constData());
 }
