@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Simple Chat 2
+Comment=IMPOMEZIA Simple Chat Client
+Icon=schat2
+Exec=/usr/bin/schat2
+Terminal=false
+Categories=Qt;Network;Chat;
