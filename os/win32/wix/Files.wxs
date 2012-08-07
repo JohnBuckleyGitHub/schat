@@ -76,6 +76,9 @@
         <Component Id="ChangeLog.SendFile.html" Guid="{D850FDE9-F3AD-4EAB-A395-CE063EC94774}">
           <File Id="ChangeLog.SendFile.html" KeyPath="yes" Source="..\schat2\doc\ChangeLog.SendFile.html" />
         </Component>
+        <Component Id="ChangeLog.SpellChecker.html" Guid="{199C0521-0A94-4B4B-BC62-67007A675BFC}">
+          <File Id="ChangeLog.SpellChecker.html" KeyPath="yes" Source="..\schat2\doc\ChangeLog.SpellChecker.html" />
+        </Component>
         <Component Id="ChangeLog.YouTube.html" Guid="{70B9B07A-08D0-4B18-BA3D-B069CF5C8BB4}">
           <File Id="ChangeLog.YouTube.html" KeyPath="yes" Source="..\schat2\doc\ChangeLog.YouTube.html" />
         </Component>
@@ -108,6 +111,9 @@
         </Component>
         <Component Id="SendFile.dll" Guid="{C0C2E6D0-F8E4-4BA1-A331-DB85B755E3B5}">
           <File Id="SendFile.dll" KeyPath="yes" Source="..\schat2\plugins\SendFile.dll" />
+        </Component>
+        <Component Id="SpellChecker.dll" Guid="{A662A8E6-1F7A-492E-BA72-1CB1B8B251C6}">
+          <File Id="SpellChecker.dll" KeyPath="yes" Source="..\schat2\plugins\SpellChecker.dll" />
         </Component>
         <Component Id="YouTube.dll" Guid="{47FECF2B-D064-496C-983F-111D0D3B63E6}">
           <File Id="YouTube.dll" KeyPath="yes" Source="..\schat2\plugins\YouTube.dll" />
@@ -161,6 +167,20 @@
         </Component>
         <Component Id="sendfile_ru.qm" Guid="{9B650F34-9268-40F9-88C7-51336C7F0984}">
           <File Id="sendfile_ru.qm" KeyPath="yes" Source="..\schat2\translations\sendfile_ru.qm" />
+        </Component>
+      </Directory>
+      <Directory Id="spelling" Name="spelling">
+        <Component Id="en_US.aff" Guid="{90FBD4DE-1E61-48C0-AC5E-44174F057C09}">
+          <File Id="en_US.aff" KeyPath="yes" Source="..\schat2\spelling\en_US.aff" />
+        </Component>
+        <Component Id="ru_RU.aff" Guid="{160422D3-BD38-45CA-B691-7C25C02A26C2}">
+          <File Id="ru_RU.aff" KeyPath="yes" Source="..\schat2\spelling\ru_RU.aff" />
+        </Component>
+        <Component Id="en_US.dic" Guid="{72DAC6F9-24BE-4628-A57F-E80F9A942849}">
+          <File Id="en_US.dic" KeyPath="yes" Source="..\schat2\spelling\en_US.dic" />
+        </Component>
+        <Component Id="ru_RU.dic" Guid="{F73A6B7E-3207-4C2C-AD71-EDBF98188879}">
+          <File Id="ru_RU.dic" KeyPath="yes" Source="..\schat2\spelling\ru_RU.dic" />
         </Component>
       </Directory>
     </DirectoryRef>
@@ -228,6 +248,14 @@
       <ComponentRef Id="ChangeLog.SendFile.html" />
       <ComponentRef Id="sendfile_en.qm" />
       <ComponentRef Id="sendfile_ru.qm" />
+    </ComponentGroup>
+    <ComponentGroup Id="SpellChecker">
+      <ComponentRef Id="SpellChecker.dll" />
+      <ComponentRef Id="ChangeLog.SpellChecker.html" />
+      <ComponentRef Id="en_US.aff" />
+      <ComponentRef Id="ru_RU.aff" />
+      <ComponentRef Id="en_US.dic" />
+      <ComponentRef Id="ru_RU.dic" />
     </ComponentGroup>
     <ComponentGroup Id="YouTube">
       <ComponentRef Id="YouTube.dll" />
