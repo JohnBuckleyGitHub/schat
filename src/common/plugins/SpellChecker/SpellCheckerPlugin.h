@@ -36,7 +36,7 @@ public:
     out["Name"]     = "Spell Checker";
     out["Version"]  = "0.1.0";
     out["Site"]     = "http://wiki.schat.me/Plugin/SpellChecker";
-    out["Desc"]     = "Spell Checker";
+    out["Desc"]     = "Automatic spell checking";
     out["Desc/ru"]  = "Автоматическая проверка орфографии";
     out["Required"] = "1.99.37";
 

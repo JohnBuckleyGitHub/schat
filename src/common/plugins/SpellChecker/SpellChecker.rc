@@ -42,7 +42,7 @@ VS_VERSION_INFO VERSIONINFO
       BLOCK "040904B0"
       BEGIN
         VALUE "CompanyName",      SCHAT_ORGANIZATION
-        VALUE "FileDescription",  "Spell Checker"
+        VALUE "FileDescription",  "Automatic spell checking"
         VALUE "FileVersion",      "0.1.0"
         VALUE "LegalCopyright",   SCHAT_COPYRIGHT
         VALUE "OriginalFilename", "SpellChecker.dll"

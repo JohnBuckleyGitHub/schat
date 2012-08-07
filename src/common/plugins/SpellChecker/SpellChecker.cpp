@@ -31,6 +31,7 @@
 #include "SpellCheckerWidget.h"
 #include "SpellHighlighter.h"
 #include "Translation.h"
+#include "ui/ChatIcons.h"
 #include "ui/InputWidget.h"
 #include "ui/SendWidget.h"
 #include "ui/tabs/SettingsTabHook.h"
@@ -46,6 +47,7 @@ SpellChecker::SpellChecker(QObject *parent)
 {
   m_self = this;
   m_menu = new QMenu();
+  m_menu->setIcon(QIcon(LS(":/images/SpellChecker/icon-small.png")));
 
   ChatCore::settings()->setLocalDefault(LS("SpellChecker/Dictionaries"), QStringList());
   ChatCore::settings()->setLocalDefault(LS("SpellChecker/Active"), true);
@@ -162,7 +164,7 @@ void SpellChecker::contextMenu(QMenu *menu, const QPoint &pos)
     return;
 
   suggestionsMenu(word, menu);
-  menu->addAction(tr("Add to dictionary"), this, SLOT(addToPersonalDict()));
+  menu->addAction(SCHAT_ICON(Add), tr("Add to dictionary"), this, SLOT(addToPersonalDict()));
 }
 
 
