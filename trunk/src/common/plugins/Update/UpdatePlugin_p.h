@@ -61,6 +61,7 @@ signals:
 public slots:
   void check();
   void download();
+  void downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
   void finished();
   void readyRead();
   void startDownload();
@@ -70,12 +71,12 @@ private:
   void readJSON();
   void setDone(Status status);
 
+  const QString m_prefix;          ///< Префикс настроек.
   DownloadState m_state;           ///< Состояние закачки.
   QByteArray m_rawJSON;            ///< Сырые JSON данные.
   QCryptographicHash *m_sha1;      ///< Класс для проверки SHA1 хеша файла.
   QNetworkAccessManager m_manager; ///< Менеджер доступа к сети.
   QNetworkReply *m_current;        ///< Текущий ответ за запрос скачивания файла.
-  QString m_prefix;                ///< Префикс настроек.
   QUrl m_url;                      ///< Текущий адрес.
   Status m_status;                 ///< Статус проверки обновлений.
 

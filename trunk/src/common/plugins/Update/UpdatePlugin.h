@@ -33,11 +33,11 @@ public:
     QVariantMap out = CoreApi::header();
     out["Id"]       = "Update";
     out["Name"]     = "Update";
-    out["Version"]  = "0.1.2";
+    out["Version"]  = "0.2.0";
     out["Site"]     = "http://wiki.schat.me/Plugin/Update";
     out["Desc"]     = "Automatically downloads and installs updates";
     out["Desc/ru"]  = "Автоматически загружает и устанавливает обновления";
-    out["Required"] = "1.99.34";
+    out["Required"] = "1.99.38";
 
     return out;
   }

@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QAction>
 #include <QApplication>
 #include <QEvent>
@@ -34,15 +32,20 @@
 #include "net/packets/Notice.h"
 #include "NetworkManager.h"
 #include "sglobal.h"
+#include "ui/BgOperationWidget.h"
 #include "ui/LoginIcon.h"
 #include "ui/network/NetworkWidget.h"
 #include "ui/Spinner.h"
 #include "ui/StatusBar.h"
 #include "ui/StatusWidget.h"
 
+StatusBar *StatusBar::m_self = 0;
+
 StatusBar::StatusBar(QWidget *parent)
   : QStatusBar(parent)
 {
+  m_self = this;
+
   m_spinner = new Spinner(this);
   m_icon = new QLabel(this);
   m_login = new LoginIcon(this);
@@ -58,6 +61,7 @@ StatusBar::StatusBar(QWidget *parent)
   m_urlAction = new QWidgetAction(this);
   m_urlAction->setDefaultWidget(m_url);
 
+  m_bg = new BgOperationWidget(this);
   m_status = new StatusWidget(this);
 
   addWidget(m_spinner);
@@ -65,6 +69,7 @@ StatusBar::StatusBar(QWidget *parent)
   addWidget(m_login);
   addWidget(m_secure);
   addWidget(m_label, 1);
+  addWidget(m_bg);
   addPermanentWidget(m_status);
 
   connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));

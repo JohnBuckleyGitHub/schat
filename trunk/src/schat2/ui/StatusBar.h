@@ -25,10 +25,12 @@
 
 #include "schat.h"
 
+class BgOperationWidget;
 class LoginIcon;
 class NetworkWidget;
 class Notify;
 class QLabel;
+class QProgressBar;
 class QWidgetAction;
 class Spinner;
 class StatusWidget;
@@ -39,6 +41,7 @@ class SCHAT_CORE_EXPORT StatusBar : public QStatusBar
 
 public:
   StatusBar(QWidget *parent = 0);
+  inline static StatusBar *i() { return m_self; }
 
 protected:
   bool event(QEvent *event);
@@ -56,6 +59,7 @@ private:
   void setError();
   void updateStyleSheet();
 
+  BgOperationWidget *m_bg;        ///< Видежет для отображения фоновых операций.
   LoginIcon *m_login;             ///< Иконка авторизации по имени и паролю.
   NetworkWidget *m_url;           ///< Поле ввода адреса сервера.
   QAction *m_connect;             ///< Главное действие связанное с сетевым подключением.
@@ -64,6 +68,7 @@ private:
   QLabel *m_secure;               ///< Иконка безопасного соединения.
   QWidgetAction *m_urlAction;     ///< Действие для добавления в меню поля ввода адреса сервера.
   Spinner *m_spinner;             ///< Отображает состояние подключения.
+  static StatusBar *m_self;       ///< Указатель на себя.
   StatusWidget *m_status;         ///< Виджет выбора статуса.
 };
 
