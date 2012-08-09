@@ -113,6 +113,9 @@ bool ChatApp::selfUpdate()
   if (revision < 1)
     return false;
 
+  if (SCHAT_REVISION >= revision)
+    return false;
+
   QString file = appPath + LS("/.schat2/schat2-") + version + LS(".") + QString::number(revision) + LS(".exe");
   if (!QFile::exists(file))
     return false;
