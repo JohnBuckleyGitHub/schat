@@ -120,7 +120,7 @@ void UpdatePluginImpl::download()
 {
   m_state = DownloadUpdate;
   m_sha1->reset();
-  m_file.setFileName(QApplication::applicationDirPath() + LS("/.schat2/schat2-") + m_version + LS(".") + QString::number(m_revision) + LS(".exe"));
+  m_file.setFileName(Path::cache() + LS("/schat2-") + m_version + LS(".") + QString::number(m_revision) + LS(".exe"));
   if (!m_file.open(QIODevice::WriteOnly))
     return setDone(DownloadError);
 
@@ -177,8 +177,10 @@ void UpdatePluginImpl::restart()
 
 void UpdatePluginImpl::start()
 {
-  connect(BgOperationWidget::i(), SIGNAL(clicked(QString)), SLOT(clicked(QString)));
+  if (SCHAT_REVISION)
+    QFile::remove(Path::cache() + LS("/schat2-") + QApplication::applicationVersion() + LS(".") + QString::number(SCHAT_REVISION) + LS(".exe"));
 
+  connect(BgOperationWidget::i(), SIGNAL(clicked(QString)), SLOT(clicked(QString)));
   check();
 }
 
