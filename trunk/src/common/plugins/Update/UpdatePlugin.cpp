@@ -35,6 +35,7 @@
 #include "sglobal.h"
 #include "tools/OsInfo.h"
 #include "tools/Ver.h"
+#include "Translation.h"
 #include "ui/BgOperationWidget.h"
 #include "UpdatePlugin.h"
 #include "UpdatePlugin_p.h"
@@ -53,6 +54,8 @@ UpdatePluginImpl::UpdatePluginImpl(QObject *parent)
   ChatCore::settings()->setLocalDefault(m_prefix + LS("/Ready"),        false);
   ChatCore::settings()->setLocalDefault(m_prefix + LS("/Version"),      QString());
   ChatCore::settings()->setLocalDefault(m_prefix + LS("/Revision"),     0);
+
+  ChatCore::translation()->addOther(LS("update"));
 
   m_sha1 = new QCryptographicHash(QCryptographicHash::Sha1);
   QTimer::singleShot(0, this, SLOT(start()));
