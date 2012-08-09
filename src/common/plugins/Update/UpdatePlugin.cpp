@@ -21,6 +21,7 @@
 #include <QFileInfo>
 #include <QNetworkReply>
 #include <QNetworkRequest>
+#include <QProgressBar>
 #include <QTimer>
 #include <QtPlugin>
 #include <qwebkitversion.h>
@@ -32,15 +33,16 @@
 #include "sglobal.h"
 #include "tools/OsInfo.h"
 #include "tools/Ver.h"
+#include "ui/BgOperationWidget.h"
 #include "UpdatePlugin.h"
 #include "UpdatePlugin_p.h"
 #include "version.h"
 
 UpdatePluginImpl::UpdatePluginImpl(QObject *parent)
   : ChatPlugin(parent)
+  , m_prefix(LS("Update"))
   , m_state(Idle)
   , m_current(0)
-  , m_prefix(LS("Update"))
   , m_status(Unknown)
 {
   ChatCore::settings()->setLocalDefault(m_prefix + LS("/Url"),          LS("http://download.schat.me/schat2/update.json"));
@@ -107,7 +109,23 @@ void UpdatePluginImpl::download()
   if (!m_file.open(QIODevice::WriteOnly))
     return setDone(DownloadError);
 
+  BgOperationWidget::lock(m_prefix, tr("Downloading update"));
   startDownload();
+}
+
+
+void UpdatePluginImpl::downloadProgress(qint64 bytesReceived, qint64 bytesTotal)
+{
+  if (m_state != DownloadUpdate || !BgOperationWidget::lock(m_prefix))
+    return;
+
+  QProgressBar *progress = BgOperationWidget::progress();
+  if (!progress->isVisible()) {
+    progress->setRange(0, bytesTotal == -1 ? m_size : bytesTotal);
+    progress->setVisible(true);
+  }
+
+  progress->setValue(bytesReceived);
 }
 
 
@@ -138,18 +156,23 @@ void UpdatePluginImpl::readyRead()
 }
 
 
+/*!
+ * Загрузка файла.
+ */
 void UpdatePluginImpl::startDownload()
 {
   QNetworkRequest request(m_url);
   request.setRawHeader("Referer", m_url.toEncoded());
-  request.setRawHeader("User-Agent", QString("Mozilla/5.0 (%1) Qt/%2 AppleWebKit/%3 Simple Chat/%4")
+  request.setRawHeader("User-Agent", QString(LS("Mozilla/5.0 (%1) Qt/%2 AppleWebKit/%3 Simple Chat/%4"))
       .arg(OsInfo::json().value(LS("os")).toString())
       .arg(qVersion())
       .arg(qWebKitVersion())
       .arg(QCoreApplication::applicationVersion()).toLatin1());
+
   m_current = m_manager.get(request);
   connect(m_current, SIGNAL(finished()), SLOT(finished()));
   connect(m_current, SIGNAL(readyRead()), SLOT(readyRead()));
+  connect(m_current, SIGNAL(downloadProgress(qint64,qint64)), SLOT(downloadProgress(qint64,qint64)));
 }
 
 
