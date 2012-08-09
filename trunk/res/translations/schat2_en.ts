@@ -544,33 +544,33 @@
 <context>
     <name>StatusBar</name>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="179"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="184"/>
         <source>Encrypted connection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="183"/>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="184"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="188"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="189"/>
         <source>No connection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="191"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="196"/>
         <source>Connected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="207"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="212"/>
         <source>Authorization Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="211"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="216"/>
         <source>Server not found‎</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="215"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="220"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>

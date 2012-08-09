@@ -37,7 +37,13 @@ public:
   inline static QProgressBar *progress() { if (m_self) return m_self->m_progress; return 0; }
   static bool lock(const QString &key);
   static bool lock(const QString &key, const QString &text);
-  static void unlock(const QString &key);
+  static bool unlock(const QString &key, bool reset = false);
+
+signals:
+  void clicked(const QString &key);
+
+protected:
+  void mouseReleaseEvent(QMouseEvent *event);
 
 private:
   QProgressBar *m_progress;         ///< Прогресс бар для отображения фоновых операций.
