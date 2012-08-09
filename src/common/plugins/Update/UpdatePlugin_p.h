@@ -58,12 +58,15 @@ public:
 signals:
   void done(int status);
 
-public slots:
+private slots:
   void check();
+  void clicked(const QString &key);
   void download();
-  void downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
+  void downloadProgress(qint64 bytesReceived);
   void finished();
   void readyRead();
+  void restart();
+  void start();
   void startDownload();
 
 private:

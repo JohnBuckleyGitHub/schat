@@ -19,6 +19,7 @@
 #include <QProgressBar>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QMouseEvent>
 
 #include "ui/BgOperationWidget.h"
 
@@ -72,13 +73,27 @@ bool BgOperationWidget::lock(const QString &key, const QString &text)
 }
 
 
-void BgOperationWidget::unlock(const QString &key)
+bool BgOperationWidget::unlock(const QString &key, bool reset)
 {
   if (!m_self || m_self->m_lockKey != key)
-    return;
+    return false;
 
   m_self->m_lockKey.clear();
-  m_self->m_label->setVisible(false);
-  m_self->m_label->setText(QString());
-  m_self->m_progress->setVisible(false);
+
+  if (reset) {
+    m_self->m_label->setVisible(false);
+    m_self->m_label->setText(QString());
+    m_self->m_progress->setVisible(false);
+  }
+
+  return true;
+}
+
+
+void BgOperationWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+  if (event->button() == Qt::LeftButton)
+    emit clicked(m_lockKey);
+
+  QWidget::mouseReleaseEvent(event);
 }

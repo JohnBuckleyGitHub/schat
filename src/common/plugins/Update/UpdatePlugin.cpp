@@ -19,6 +19,7 @@
 #include <QApplication>
 #include <QCryptographicHash>
 #include <QFileInfo>
+#include <QLabel>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QProgressBar>
@@ -27,6 +28,7 @@
 #include <qwebkitversion.h>
 
 #include "ChatCore.h"
+#include "ChatNotify.h"
 #include "ChatSettings.h"
 #include "JSON.h"
 #include "Path.h"
@@ -53,7 +55,7 @@ UpdatePluginImpl::UpdatePluginImpl(QObject *parent)
   ChatCore::settings()->setLocalDefault(m_prefix + LS("/Revision"),     0);
 
   m_sha1 = new QCryptographicHash(QCryptographicHash::Sha1);
-  QTimer::singleShot(0, this, SLOT(check()));
+  QTimer::singleShot(0, this, SLOT(start()));
 }
 
 
@@ -98,6 +100,16 @@ void UpdatePluginImpl::check()
 }
 
 
+void UpdatePluginImpl::clicked(const QString &key)
+{
+  if (m_prefix != key)
+    return;
+
+  if (m_status == UpdateReady)
+    QTimer::singleShot(0, this, SLOT(restart()));
+}
+
+
 /*!
  * Запуск загрузки обновления.
  */
@@ -109,23 +121,21 @@ void UpdatePluginImpl::download()
   if (!m_file.open(QIODevice::WriteOnly))
     return setDone(DownloadError);
 
-  BgOperationWidget::lock(m_prefix, tr("Downloading update"));
+  if (BgOperationWidget::lock(m_prefix, tr("Downloading update"))) {
+    BgOperationWidget::progress()->setRange(0, m_size);
+    BgOperationWidget::progress()->setVisible(true);
+  }
+
   startDownload();
 }
 
 
-void UpdatePluginImpl::downloadProgress(qint64 bytesReceived, qint64 bytesTotal)
+void UpdatePluginImpl::downloadProgress(qint64 bytesReceived)
 {
   if (m_state != DownloadUpdate || !BgOperationWidget::lock(m_prefix))
     return;
 
-  QProgressBar *progress = BgOperationWidget::progress();
-  if (!progress->isVisible()) {
-    progress->setRange(0, bytesTotal == -1 ? m_size : bytesTotal);
-    progress->setVisible(true);
-  }
-
-  progress->setValue(bytesReceived);
+  BgOperationWidget::progress()->setValue(bytesReceived);
 }
 
 
@@ -156,6 +166,20 @@ void UpdatePluginImpl::readyRead()
 }
 
 
+void UpdatePluginImpl::restart()
+{
+  ChatNotify::start(Notify::Restart);
+}
+
+
+void UpdatePluginImpl::start()
+{
+  connect(BgOperationWidget::i(), SIGNAL(clicked(QString)), SLOT(clicked(QString)));
+
+  check();
+}
+
+
 /*!
  * Загрузка файла.
  */
@@ -172,7 +196,7 @@ void UpdatePluginImpl::startDownload()
   m_current = m_manager.get(request);
   connect(m_current, SIGNAL(finished()), SLOT(finished()));
   connect(m_current, SIGNAL(readyRead()), SLOT(readyRead()));
-  connect(m_current, SIGNAL(downloadProgress(qint64,qint64)), SLOT(downloadProgress(qint64,qint64)));
+  connect(m_current, SIGNAL(downloadProgress(qint64,qint64)), SLOT(downloadProgress(qint64)));
 }
 
 
@@ -248,6 +272,21 @@ void UpdatePluginImpl::setDone(Status status)
   ChatCore::settings()->setValue(m_prefix + LS("/Ready"), status == UpdateReady);
 
   emit done(status);
+
+  if (!BgOperationWidget::lock(m_prefix))
+    return;
+
+  BgOperationWidget::progress()->setVisible(false);
+
+  if (status == UpdateReady) {
+    BgOperationWidget::label()->setText(tr("Update Ready"));
+    return;
+  }
+
+  if (status == DownloadError)
+    BgOperationWidget::label()->setText(tr("Update Error"));
+
+  BgOperationWidget::unlock(m_prefix, false);
 }
 
 
