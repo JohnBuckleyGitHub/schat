@@ -21,6 +21,7 @@ SUBDIRS  = \
     schatd2/schatd.pro \
     tufao \
     schatd2 \
+    rest \
     authd \
     common/plugins/GenericNode \
     common/plugins/Messages \

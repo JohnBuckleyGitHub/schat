@@ -16,24 +16,19 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#ifndef RESTAPICORE_H_
+#define RESTAPICORE_H_
 
-#include "RestApiPlugin.h"
-#include "RestApiPlugin_p.h"
-#include "sglobal.h"
-#include "Storage.h"
+#include <QObject>
 
-RestApiImpl::RestApiImpl(QObject *parent)
-  : NodePlugin(parent)
+#include "schat.h"
+
+class SCHAT_REST_EXPORT RestApiCore : public QObject
 {
-  Storage::addFeature(LS("rest"));
-}
+  Q_OBJECT
 
+public:
+  RestApiCore(QObject *parent = 0);
+};
 
-NodePlugin *RestApiPlugin::create()
-{
-  m_plugin = new RestApiImpl(this);
-  return m_plugin;
-}
-
-Q_EXPORT_PLUGIN2(RestApi, RestApiPlugin);
+#endif /* RESTAPICORE_H_ */
