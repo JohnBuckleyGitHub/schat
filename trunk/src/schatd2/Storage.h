@@ -43,10 +43,12 @@ public:
   inline static QString authServer()       { return m_self->m_authServer; }
   inline static Settings *settings()       { return m_self->m_settings; }
   inline static Storage *i()               { return m_self; }
+  static bool hasFeature(const QString &name);
   static QString etcPath();
   static QString serverName();
   static QString sharePath();
   static QString varPath();
+  static void addFeature(const QString &name);
 
   int load();
   int start();
@@ -55,15 +57,16 @@ private:
   void setDefaultSslConf();
   void setMaxOpenFiles(int max);
 
-  bool m_anonymous;         ///< \b true если разрешена анонимная авторизация.
-  bool m_nickOverride;      ///< \b true если разрешено зарегистрированным пользователям во время внешней авторизации, занимать ники анонимных пользователей если те не в сети.
-  NodeLog *m_log;           ///< Журнал.
-  QByteArray m_id;          ///< Публичный идентификатор сервера.
-  QByteArray m_privateId;   ///< Приватный идентификатор сервера.
-  QString m_authServer;     ///< Адрес авторизационного сервера.
-  ServerData *m_serverData; ///< Информация о сервере.
-  Settings *m_settings;     ///< Настройки сервера.
-  static Storage *m_self;   ///< Указатель на себя.
+  bool m_anonymous;              ///< \b true если разрешена анонимная авторизация.
+  bool m_nickOverride;           ///< \b true если разрешено зарегистрированным пользователям во время внешней авторизации, занимать ники анонимных пользователей если те не в сети.
+  NodeLog *m_log;                ///< Журнал.
+  QByteArray m_id;               ///< Публичный идентификатор сервера.
+  QByteArray m_privateId;        ///< Приватный идентификатор сервера.
+  QString m_authServer;          ///< Адрес авторизационного сервера.
+  ServerData *m_serverData;      ///< Информация о сервере.
+  Settings *m_settings;          ///< Настройки сервера.
+  static QStringList m_features; ///< Список дополнительных API.
+  static Storage *m_self;        ///< Указатель на себя.
 };
 
 #endif /* STORAGE_H_ */

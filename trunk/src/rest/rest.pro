@@ -15,16 +15,30 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-CONFIG   += ordered
-TEMPLATE = subdirs
-SUBDIRS  = \
-    schatd2/schatd.pro \
-    tufao \
-    schatd2 \
-    rest \
-    authd \
-    client \
-    schat2/schat2-core.pro \
-    schat2 \
+TEMPLATE = lib
+QT = core network
+TARGET = schat-rest
+DEFINES += SCHAT_REST_LIBRARY
+win32:RC_FILE = rest.rc
 
-include(common/plugins.pri)
+SCHAT_DAEMON_LIB  = 1
+SCHAT_TUFAO_LIB   = 1
+
+unix:!macx{
+  target.path += $$SCHAT_PREFIX/usr/lib
+  INSTALLS += target
+}
+
+win32 {
+  target.path += ../../os/win32/schatd2/
+  INSTALLS += target
+}
+
+HEADERS += \
+    RestApiCore.h \
+
+SOURCES += \
+    RestApiCore.cpp \
+
+include(../common/config.pri)
+include(../common/common.pri)

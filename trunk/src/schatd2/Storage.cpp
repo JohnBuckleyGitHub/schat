@@ -42,7 +42,9 @@
 #include "sglobal.h"
 #include "Storage.h"
 
+QStringList Storage::m_features;
 Storage *Storage::m_self = 0;
+
 
 Storage::Storage(QObject *parent)
   : QObject(parent)
@@ -79,6 +81,12 @@ Storage::Storage(QObject *parent)
 Storage::~Storage()
 {
   delete m_log;
+}
+
+
+bool Storage::hasFeature(const QString &name)
+{
+  return m_features.contains(name);
 }
 
 
@@ -120,6 +128,13 @@ QString Storage::varPath()
 # endif
 
   return Path::cache();
+}
+
+
+void Storage::addFeature(const QString &name)
+{
+  if (!m_features.contains(name))
+    m_features.append(name);
 }
 
 
