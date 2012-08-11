@@ -16,27 +16,27 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#ifndef RESTHANDLER_H_
+#define RESTHANDLER_H_
 
-#include "RestApiPlugin.h"
-#include "RestApiPlugin_p.h"
-#include "sglobal.h"
-#include "Storage.h"
-#include "RestApiCore.h"
+#include <QString>
 
-RestApiImpl::RestApiImpl(QObject *parent)
-  : NodePlugin(parent)
-{
-  m_apiCore = new RestApiCore(this);
+#include "schat.h"
 
-  Storage::addFeature(LS("rest"));
+namespace Tufao {
+  class HttpServerRequest;
+  class HttpServerResponse;
 }
 
+class QUrl;
+class QObject;
 
-NodePlugin *RestApiPlugin::create()
+class SCHAT_REST_EXPORT RestHandler
 {
-  m_plugin = new RestApiImpl(this);
-  return m_plugin;
-}
+public:
+  RestHandler() {}
+  virtual ~RestHandler() {}
+  virtual bool serve(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent);
+};
 
-Q_EXPORT_PLUGIN2(RestApi, RestApiPlugin);
+#endif /* RESTHANDLER_H_ */

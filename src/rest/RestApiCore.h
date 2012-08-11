@@ -23,12 +23,38 @@
 
 #include "schat.h"
 
+namespace Tufao {
+  class HttpServer;
+  class HttpServerRequest;
+  class HttpServerResponse;
+}
+
+class Settings;
+class QUrl;
+class RestHandler;
+
 class SCHAT_REST_EXPORT RestApiCore : public QObject
 {
   Q_OBJECT
 
 public:
   RestApiCore(QObject *parent = 0);
+  ~RestApiCore();
+
+  inline static RestApiCore *i() { return m_self; }
+  static bool add(const QUrl &url);
+  static bool add(RestHandler *handler);
+
+private slots:
+  void start();
+  void handleRequest(Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response);
+
+private:
+  int m_prefixSize;                     ///< Длина префикса пути.
+  QList<RestHandler *> m_handlers;      ///< Обработчики запросов.
+  QList<Tufao::HttpServer *> m_servers; ///< HTTP или HTTPS сервера ожидающие подключений.
+  Settings *m_settings;                 ///< Настройки сервера.
+  static RestApiCore *m_self;           ///< Указатель на себя.
 };
 
 #endif /* RESTAPICORE_H_ */

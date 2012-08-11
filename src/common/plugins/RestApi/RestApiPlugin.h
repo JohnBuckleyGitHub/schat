@@ -38,6 +38,7 @@ public:
     out["Site"]     = "http://wiki.schat.me/Plugin/RestApi";
     out["Desc"]     = "REST API";
     out["Required"] = "1.99.38";
+    out["Enabled"]  = false;
 
     return out;
   }
