@@ -25,6 +25,7 @@
 
 namespace Tufao {
   class HttpServerRequest;
+  class Headers;
   class HttpServerResponse;
 }
 
@@ -37,6 +38,12 @@ public:
   RestHandler() {}
   virtual ~RestHandler() {}
   virtual bool serve(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent);
+
+  static bool ifModified(const Tufao::Headers &headers, const QByteArray &etag);
+  static QByteArray etag(qint64 date, const QByteArray &salt);
+  static void setContentLength(Tufao::Headers &headers, qint64 size);
+  static void setETag(Tufao::Headers &headers, const QByteArray &etag);
+  static void setLastModified(Tufao::Headers &headers, qint64 date);
 };
 
 #endif /* RESTHANDLER_H_ */

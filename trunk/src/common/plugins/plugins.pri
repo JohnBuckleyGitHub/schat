@@ -88,8 +88,14 @@ contains( SCHAT_REST_LIB, 1 ) {
   } else {
     LIBS = -L../../../../out -lschat-rest $${LIBS}
   }
+}
 
-  PLUGIN_TARGET = schatd2
+contains( SCHAT_TUFAO_LIB, 1 ) {
+  CONFIG(debug, debug|release) {
+    LIBS = -L../../../../out/debug -lschat-tufao $${LIBS}
+  } else {
+    LIBS = -L../../../../out -lschat-tufao $${LIBS}
+  }
 }
 
 win32:RC_FILE = $${TARGET}.rc

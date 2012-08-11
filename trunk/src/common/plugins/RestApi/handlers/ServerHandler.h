@@ -16,25 +16,23 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NODESERVERFEED_H_
-#define NODESERVERFEED_H_
+#ifndef SERVERHANDLER_H_
+#define SERVERHANDLER_H_
 
-#include "feeds/Feed.h"
+#include "RestHandler.h"
 
-class NodeServerFeed : public Feed
+class ServerHandler : public RestHandler
 {
 public:
-  NodeServerFeed(const QString &name, const QVariantMap &data);
-  NodeServerFeed(const QString &name = QLatin1String("server"), qint64 date = 0);
-  Feed* create(const QString &name);
-  Feed* load(const QString &name, const QVariantMap &data);
-
-  QVariantMap feed(Channel *channel = 0);
+  ServerHandler();
+  bool serve(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent);
 
 private:
-  void init();
+  void server(Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response);
 
-  qint64 m_startupTime;
+  QByteArray m_body; ///< Кешированное тело фила "server".
+  QByteArray m_etag; ///< ETag заголовок.
+  qint64 m_date;     ///< Дата последнего обновления фида "server".
 };
 
-#endif /* NODESERVERFEED_H_ */
+#endif /* SERVERHANDLER_H_ */

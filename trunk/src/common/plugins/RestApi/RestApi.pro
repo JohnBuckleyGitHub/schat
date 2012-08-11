@@ -17,13 +17,16 @@
 
 SCHAT_DAEMON_LIB = 1
 SCHAT_REST_LIB   = 1
+SCHAT_TUFAO_LIB  = 1
 QT = core network
 
 HEADERS  = \
+   handlers/ServerHandler.h \
    RestApiPlugin.h \
    RestApiPlugin_p.h \
 
 SOURCES  = \
    RestApiPlugin.cpp \
+   handlers/ServerHandler.cpp \
 
 include(../plugins.pri)

@@ -16,10 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDateTime>
-
 #include "DateTime.h"
-
 
 /*!
  * Возвращает смещение в секундах относительно UTC.
@@ -32,6 +29,16 @@ int DateTime::tz()
   return local.secsTo(utc);
 }
 
+
+QDateTime DateTime::toDateTime(qint64 date)
+{
+# if QT_VERSION >= 0x040700
+  return QDateTime::fromMSecsSinceEpoch(date);
+# else
+  qint64 t = date / 1000;
+  return QDateTime::fromTime_t(t).addMSecs(date - t * 1000);
+# endif
+}
 
 
 /*!
