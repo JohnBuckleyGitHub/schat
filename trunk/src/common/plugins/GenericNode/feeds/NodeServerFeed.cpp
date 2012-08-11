@@ -16,42 +16,43 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "feeds/FeedStorage.h"
-#include "GenericCh.h"
+#include <QDebug>
+
+#include "feeds/NodeServerFeed.h"
+#include "DateTime.h"
 #include "sglobal.h"
 
-GenericCh::GenericCh(QObject *parent)
-  : Ch(parent)
+NodeServerFeed::NodeServerFeed(const QString &name, const QVariantMap &data)
+  : Feed(name, data)
+  , m_startupTime(0)
 {
+  init();
 }
 
 
-void GenericCh::channelImpl(ChatChannel channel, ChatChannel /*user*/)
+NodeServerFeed::NodeServerFeed(const QString &name, qint64 date)
+  : Feed(name, date)
+  , m_startupTime(0)
 {
-  channel->feed(LS("topic"));
+  init();
 }
 
 
-void GenericCh::newChannelImpl(ChatChannel channel, ChatChannel user)
+Feed* NodeServerFeed::create(const QString &name)
 {
-  addNewFeedIfNotExist(channel, LS("acl"), user);
+  return new NodeServerFeed(name, DateTime::utc());
 }
 
 
-void GenericCh::serverImpl(ChatChannel channel, bool /*created*/)
+Feed* NodeServerFeed::load(const QString &name, const QVariantMap &data)
 {
-  channel->feed(LS("acl"));
-  channel->feed(LS("server"));
+  return new NodeServerFeed(name, data);
 }
 
 
-void GenericCh::userChannelImpl(ChatChannel channel, const AuthRequest & /*data*/, const QString & /*host*/, bool /*created*/, quint64 /*socket*/)
+void NodeServerFeed::init()
 {
-  if (!channel->account())
-    channel->createAccount();
-
-  channel->feed(LS("account"));
-
-  addNewUserFeedIfNotExist(channel, LS("acl"));
-  addNewUserFeedIfNotExist(channel, LS("profile"));
+  m_header.acl().setMask(0444);
+  m_startupTime = DateTime::utc();
+  head().data()[LS("date")] = m_startupTime;
 }

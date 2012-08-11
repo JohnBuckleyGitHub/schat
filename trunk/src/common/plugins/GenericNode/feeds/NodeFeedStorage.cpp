@@ -26,6 +26,7 @@
 #include "feeds/NodeFeedStorage.h"
 #include "feeds/NodeHostsFeed.h"
 #include "feeds/NodeProfileFeed.h"
+#include "feeds/NodeServerFeed.h"
 #include "feeds/NodeTopicFeed.h"
 #include "feeds/NodeUserFeed.h"
 #include "JSON.h"
@@ -41,6 +42,7 @@ NodeFeedStorage::NodeFeedStorage(QObject *parent)
   add(new NodeHostsFeed());
   add(new NodeUserFeed());
   add(new NodeProfileFeed());
+  add(new NodeServerFeed());
 
   start();
 }
