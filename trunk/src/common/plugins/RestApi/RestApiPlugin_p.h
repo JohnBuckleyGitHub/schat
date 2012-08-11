@@ -21,12 +21,17 @@
 
 #include "plugins/NodePlugin.h"
 
+class RestApiCore;
+
 class RestApiImpl : public NodePlugin
 {
   Q_OBJECT
 
 public:
   RestApiImpl(QObject *parent);
+
+private:
+  RestApiCore *m_apiCore;
 };
 
 #endif /* RESTAPIPLUGIN_P_H_ */

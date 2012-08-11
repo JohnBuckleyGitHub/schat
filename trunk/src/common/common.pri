@@ -62,32 +62,32 @@ contains( SCHAT_DEVEL_MODE, 1 ) {
 
 contains( SCHAT_CLIENT_LIB, 1 ) {
   CONFIG(debug, debug|release) {
-    LIBS += -L../../out/debug -lschat-client
+    LIBS = -L../../out/debug -lschat-client $${LIBS}
   } else {
-    LIBS += -L../../out -lschat-client
+    LIBS = -L../../out -lschat-client $${LIBS}
   }
 }
 
 contains( SCHAT_CORE_LIB, 1 ) {
   CONFIG(debug, debug|release) {
-    LIBS += -L../../out/debug -lschat
+    LIBS = -L../../out/debug -lschat $${LIBS}
   } else {
-    LIBS += -L../../out -lschat
+    LIBS = -L../../out -lschat $${LIBS}
   }
 }
 
 contains( SCHAT_DAEMON_LIB, 1 ) {
   CONFIG(debug, debug|release) {
-    LIBS += -L../../out/debug -lschatd
+    LIBS = -L../../out/debug -lschatd $${LIBS}
   } else {
-    LIBS += -L../../out -lschatd
+    LIBS = -L../../out -lschatd $${LIBS}
   }
 }
 
 contains( SCHAT_TUFAO_LIB, 1 ) {
   CONFIG(debug, debug|release) {
-    LIBS += -L../../out/debug -lschat-tufao
+    LIBS = -L../../out/debug -lschat-tufao $${LIBS}
   } else {
-    LIBS += -L../../out -lschat-tufao
+    LIBS = -L../../out -lschat-tufao $${LIBS}
   }
 }

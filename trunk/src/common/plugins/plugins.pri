@@ -49,37 +49,44 @@ contains( SCHAT_DEBUG, 1 ) {
 
 contains( SCHAT_CLIENT_LIB, 1 ) {
   CONFIG(debug, debug|release) { 
-    LIBS += -L../../../../out/debug -lschat-client 
+    LIBS = -L../../../../out/debug -lschat-client $${LIBS}
   } else { 
-    LIBS += -L../../../../out -lschat-client  
+    LIBS = -L../../../../out -lschat-client $${LIBS}
   }
 }
 
 contains( SCHAT_CORE_LIB, 1 ) {
-  DEPENDPATH += \
-    ../../../schat2 \
+  DEPENDPATH += ../../../schat2
+  INCLUDEPATH += ../../../schat2
 
-  INCLUDEPATH += \
-    ../../../schat2 \
-    
   CONFIG(debug, debug|release) {
-    LIBS += -L../../../../out/debug -lschat
+    LIBS = -L../../../../out/debug -lschat $${LIBS}
   } else {
-    LIBS += -L../../../../out -lschat
+    LIBS = -L../../../../out -lschat $${LIBS}
   }
 }
 
 contains( SCHAT_DAEMON_LIB, 1 ) {
-  DEPENDPATH += \
-    ../../../schatd2 \
+  DEPENDPATH += ../../../schatd2
+  INCLUDEPATH += ../../../schatd2
 
-  INCLUDEPATH += \
-    ../../../schatd2 \
-    
   CONFIG(debug, debug|release) {
-    LIBS += -L../../../../out/debug -lschatd
+    LIBS = -L../../../../out/debug -lschatd $${LIBS}
   } else {
-    LIBS += -L../../../../out -lschatd
+    LIBS = -L../../../../out -lschatd $${LIBS}
+  }
+
+  PLUGIN_TARGET = schatd2
+}
+
+contains( SCHAT_REST_LIB, 1 ) {
+  DEPENDPATH += ../../../rest
+  INCLUDEPATH += ../../../rest
+
+  CONFIG(debug, debug|release) {
+    LIBS = -L../../../../out/debug -lschat-rest $${LIBS}
+  } else {
+    LIBS = -L../../../../out -lschat-rest $${LIBS}
   }
 
   PLUGIN_TARGET = schatd2

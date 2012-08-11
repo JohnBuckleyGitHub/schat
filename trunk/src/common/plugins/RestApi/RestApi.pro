@@ -16,6 +16,7 @@
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 SCHAT_DAEMON_LIB = 1
+SCHAT_REST_LIB   = 1
 QT = core network
 
 HEADERS  = \

@@ -24,6 +24,9 @@ win32:RC_FILE = rest.rc
 SCHAT_DAEMON_LIB  = 1
 SCHAT_TUFAO_LIB   = 1
 
+DEPENDPATH  += ../schatd2
+INCLUDEPATH += ../schatd2
+
 unix:!macx{
   target.path += $$SCHAT_PREFIX/usr/lib
   INSTALLS += target
@@ -36,9 +39,11 @@ win32 {
 
 HEADERS += \
     RestApiCore.h \
+    RestHandler.h \
 
 SOURCES += \
     RestApiCore.cpp \
+    RestHandler.cpp \
 
 include(../common/config.pri)
 include(../common/common.pri)

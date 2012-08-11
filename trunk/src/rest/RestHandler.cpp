@@ -16,27 +16,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#include "RestHandler.h"
 
-#include "RestApiPlugin.h"
-#include "RestApiPlugin_p.h"
-#include "sglobal.h"
-#include "Storage.h"
-#include "RestApiCore.h"
-
-RestApiImpl::RestApiImpl(QObject *parent)
-  : NodePlugin(parent)
+bool RestHandler::serve(const QUrl &, const QString &, Tufao::HttpServerRequest *, Tufao::HttpServerResponse *, QObject *)
 {
-  m_apiCore = new RestApiCore(this);
-
-  Storage::addFeature(LS("rest"));
+  return false;
 }
-
-
-NodePlugin *RestApiPlugin::create()
-{
-  m_plugin = new RestApiImpl(this);
-  return m_plugin;
-}
-
-Q_EXPORT_PLUGIN2(RestApi, RestApiPlugin);
