@@ -19,7 +19,7 @@
 #ifndef DATETIME_H_
 #define DATETIME_H_
 
-#include <QtGlobal>
+#include <QDateTime>
 
 #include "schat.h"
 
@@ -29,6 +29,7 @@ class SCHAT_EXPORT DateTime
 
 public:
   static int tz();
+  static QDateTime toDateTime(qint64 date);
   static qint64 utc();
 };
 

@@ -19,8 +19,10 @@
 #include <QDebug>
 
 #include "feeds/NodeServerFeed.h"
+#include "Channel.h"
 #include "DateTime.h"
 #include "sglobal.h"
+#include "net/SimpleID.h"
 
 NodeServerFeed::NodeServerFeed(const QString &name, const QVariantMap &data)
   : Feed(name, data)
@@ -47,6 +49,27 @@ Feed* NodeServerFeed::create(const QString &name)
 Feed* NodeServerFeed::load(const QString &name, const QVariantMap &data)
 {
   return new NodeServerFeed(name, data);
+}
+
+
+/*!
+ * Получение тела фида.
+ */
+QVariantMap NodeServerFeed::feed(Channel *channel)
+{
+  Channel *server = head().channel();
+  if (server->type() != SimpleID::ServerId)
+    return QVariantMap();
+
+  QVariantMap header = head().get(channel);
+  if (header.isEmpty())
+    return QVariantMap();
+
+  QVariantMap out;
+  out[LS("head")] = header;
+  out[LS("name")] = server->name();
+  out[LS("id")]   = SimpleID::encode(server->id());
+  return out;
 }
 
 

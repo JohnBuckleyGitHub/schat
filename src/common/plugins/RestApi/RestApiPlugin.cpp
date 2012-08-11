@@ -23,11 +23,13 @@
 #include "sglobal.h"
 #include "Storage.h"
 #include "RestApiCore.h"
+#include "handlers/ServerHandler.h"
 
 RestApiImpl::RestApiImpl(QObject *parent)
   : NodePlugin(parent)
 {
   m_apiCore = new RestApiCore(this);
+  RestApiCore::add(new ServerHandler());
 
   Storage::addFeature(LS("rest"));
 }
