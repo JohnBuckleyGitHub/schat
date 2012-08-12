@@ -54,31 +54,16 @@ public:
   static void addNewFeedIfNotExist(ChatChannel channel, const QString &name, ChatChannel user = ChatChannel());
   static void addNewUserFeedIfNotExist(ChatChannel channel, const QString &name);
 
-protected:
-  /// Внутренний кэш хранилища.
-  class Cache
-  {
-  public:
-    Cache() {}
-    inline ChatChannel channel(const QByteArray &id) const { return m_channels.value(id); }
-    void add(ChatChannel channel);
-    void remove(const QByteArray &id);
-    void rename(ChatChannel channel, const QByteArray &before);
-
-  private:
-    QHash<QByteArray, ChatChannel> m_channels;
-  };
-
-protected:
-  Cache m_cache;      ///< Кеш хранилища.
-
 private:
   ChatChannel channelImpl(const QByteArray &id, int type = SimpleID::ChannelId, bool db = true);
   ChatChannel channelImpl(const QString &name, ChatChannel user);
+  void cache(ChatChannel channel);
+  void remove(const QByteArray &id);
   void sync(ChatChannel channel, ChatChannel user = ChatChannel());
 
-  QList<ChHook *> m_hooks; ///< Хуки.
-  static Ch *m_self;       ///< Указатель на себя.
+  QHash<QByteArray, ChatChannel> m_channels; ///< Кеш каналов.
+  QList<ChHook *> m_hooks;                   ///< Хуки.
+  static Ch *m_self;                         ///< Указатель на себя.
 };
 
 #endif /* CH_H_ */

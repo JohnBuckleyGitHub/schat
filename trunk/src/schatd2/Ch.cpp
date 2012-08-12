@@ -51,7 +51,7 @@ bool Ch::add(ChatChannel channel)
   if (DataBase::add(channel) == -1)
     return false;
 
-  m_self->m_cache.add(channel);
+  m_self->cache(channel);
 
   foreach (ChHook *hook, m_self->m_hooks) {
     hook->add(channel);
@@ -177,7 +177,8 @@ int Ch::rename(ChatChannel channel, const QString &name)
   if (!channel->setName(name))
     return Notice::BadRequest;
 
-  m_self->m_cache.rename(channel, normalized);
+  m_self->m_channels.remove(normalized);
+  m_self->m_channels[channel->normalized()] = channel;
   DataBase::add(channel);
   return Notice::OK;
 }
@@ -224,7 +225,7 @@ void Ch::load()
 void Ch::remove(ChatChannel channel)
 {
   DataBase::add(channel);
-  m_self->m_cache.remove(channel->id());
+  m_self->remove(channel->id());
 
   foreach (ChHook *hook, m_self->m_hooks) {
     hook->remove(channel);
@@ -253,7 +254,7 @@ void Ch::userChannel(ChatChannel channel, const AuthRequest &data, const QString
     hook->userChannel(channel);
   }
 
-  m_self->m_cache.add(channel);
+  m_self->cache(channel);
   channel->setSynced(true);
 }
 
@@ -302,56 +303,6 @@ void Ch::addNewUserFeedIfNotExist(ChatChannel channel, const QString &name)
 
 
 /*!
- * Добавление канала в кеш.
- */
-void Ch::Cache::add(ChatChannel channel)
-{
-  if (!channel)
-    return;
-
-  if (channel->type() != SimpleID::ServerId)
-    Ch::server()->channels().add(channel->id());
-
-  m_channels[channel->id()] = channel;
-  m_channels[channel->normalized()] = channel;
-
-  if (channel->account())
-    m_channels[channel->account()->cookie] = channel;
-}
-
-
-/*!
- * Удаление канала из кэша.
- */
-void Ch::Cache::remove(const QByteArray &id)
-{
-  ChatChannel channel = this->channel(id);
-  if (!channel)
-    return;
-
-//  Ch::server()->channels().remove(channel->id());
-
-  m_channels.remove(channel->id());
-  m_channels.remove(channel->normalized());
-
-  if (channel->account())
-    m_channels.remove(channel->account()->cookie);
-
-  return;
-}
-
-
-/*!
- * Переименование канала.
- */
-void Ch::Cache::rename(ChatChannel channel, const QByteArray &before)
-{
-  m_channels.remove(before);
-  m_channels[channel->normalized()] = channel;
-}
-
-
-/*!
  * Получение канала по идентификатору.
  *
  * \param id   Идентификатор канала, либо идентификатор нормализированного имени, либо идентификатор cookie.
@@ -360,13 +311,13 @@ void Ch::Cache::rename(ChatChannel channel, const QByteArray &before)
  */
 ChatChannel Ch::channelImpl(const QByteArray &id, int type, bool db)
 {
-  ChatChannel channel = m_cache.channel(id);
+  ChatChannel channel = m_channels.value(id);
   if (channel || !db)
     return channel;
 
   channel = DataBase::channel(id, type);
   if (channel)
-    m_cache.add(channel);
+    cache(channel);
 
   return channel;
 }
@@ -393,6 +344,39 @@ ChatChannel Ch::channelImpl(const QString &name, ChatChannel user)
   }
 
   return channel;
+}
+
+
+/*!
+ * Добавление канала в кеш.
+ */
+void Ch::cache(ChatChannel channel)
+{
+  if (!channel)
+    return;
+
+  if (channel->type() != SimpleID::ServerId)
+    Ch::server()->channels().add(channel->id());
+
+  m_channels[channel->id()] = channel;
+  m_channels[channel->normalized()] = channel;
+
+  if (channel->account())
+    m_channels[channel->account()->cookie] = channel;
+}
+
+
+void Ch::remove(const QByteArray &id)
+{
+  ChatChannel channel = m_channels.value(id);
+  if (!channel)
+    return;
+
+  m_channels.remove(channel->id());
+  m_channels.remove(channel->normalized());
+
+  if (channel->account())
+    m_channels.remove(channel->account()->cookie);
 }
 
 
