@@ -23,6 +23,7 @@
 #include "ChHook.h"
 #include "cores/Core.h"
 #include "DataBase.h"
+#include "DateTime.h"
 #include "feeds/FeedStorage.h"
 #include "net/packets/auth.h"
 #include "net/packets/Notice.h"
@@ -35,6 +36,7 @@ Ch *Ch::m_self = 0;
 
 Ch::Ch(QObject *parent)
   : QObject(parent)
+  , m_peakUsers(0)
 {
   m_self = this;
 }
@@ -233,6 +235,8 @@ void Ch::load()
   Ch::server();
   Ch::channel(QString(LS("Main")));
 
+  m_self->m_peakUsers = Storage::value(LS("PeakUsers")).toMap().value(LS("count")).toInt();
+
   foreach (ChHook *hook, m_self->m_hooks) {
     hook->load();
   }
@@ -362,15 +366,8 @@ void Ch::cache(ChatChannel channel)
     return;
 
   const QByteArray &id = channel->id();
-  if (channel->type() != SimpleID::ServerId && Ch::server()->channels().add(id)) {
-    if (channel->type() == SimpleID::UserId && !m_users.contains(id)) {
-      m_users.append(id);
-
-      foreach (ChHook *hook, m_self->m_hooks) {
-        hook->updateStatistics();
-      }
-    }
-  }
+  if (channel->type() != SimpleID::ServerId)
+    setOnline(channel->id());
 
   m_channels[id] = channel;
   m_channels[channel->normalized()] = channel;
@@ -402,6 +399,33 @@ void Ch::remove(const QByteArray &id)
 
   if (channel->account())
     m_channels.remove(channel->account()->cookie);
+}
+
+
+void Ch::setOnline(const QByteArray &id)
+{
+  if (!Ch::server()->channels().add(id))
+    return;
+
+  if (SimpleID::typeOf(id) == SimpleID::UserId) {
+    if (m_users.contains(id))
+      return;
+
+    m_users.append(id);
+
+    if (m_users.size() >= m_peakUsers) {
+      m_peakUsers = m_users.size();
+
+      QVariantMap data;
+      data[LS("count")] = m_peakUsers;
+      data[LS("date")]  = DateTime::utc();
+      Storage::setValue(LS("PeakUsers"), data);
+    }
+
+    foreach (ChHook *hook, m_self->m_hooks) {
+      hook->updateStatistics();
+    }
+  }
 }
 
 

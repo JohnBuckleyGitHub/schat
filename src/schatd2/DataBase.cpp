@@ -43,7 +43,8 @@ bool DataBase::noMaster = false;
 DataBase *DataBase::m_self = 0;
 
 AddHostTask::AddHostTask(Host *host)
-  : m_host(*host)
+  : QRunnable()
+  , m_host(*host)
 {
 }
 
@@ -90,7 +91,8 @@ void AddHostTask::run()
 
 
 AddProfileTask::AddProfileTask(User *user)
-  : m_user(*user)
+  : QRunnable()
+  , m_user(*user)
 {
 }
 
@@ -131,6 +133,48 @@ void AddProfileTask::run()
   query.bindValue(LS(":site"),     m_user.site);
   query.bindValue(LS(":birthday"), m_user.birthday);
   query.bindValue(LS(":extra"),    JSON::generate(m_user.extra));
+
+  query.exec();
+}
+
+
+AddValueTask::AddValueTask(const QString &key, const QVariant &value)
+  : QRunnable()
+  , m_key(key)
+  , m_value(value)
+{
+}
+
+
+void AddValueTask::run()
+{
+  qDebug() << "AddValueTask::run()" << m_key << m_value;
+
+  QSqlQuery query;
+  query.prepare(LS("SELECT id FROM storage WHERE k = :k LIMIT 1;"));
+  query.bindValue(LS(":k"), m_key);
+  query.exec();
+
+  qint64 key = -1;
+  if (query.first())
+    key = query.value(0).toLongLong();
+
+  int format = AutoFormat;
+  int type = m_value.type();
+  if (type == QVariant::StringList || type == QVariant::List || type == QVariant::Map || type == QVariant::Hash)
+    format = JSonFormat;
+
+  if (key == -1) {
+    query.prepare(LS("INSERT INTO storage (k, f, v) VALUES (:k, :f, :v)"));
+    query.bindValue(LS(":k"), m_key);
+  }
+  else {
+    query.prepare(LS("UPDATE storage SET f = :f, v = :v WHERE id = :id;"));
+    query.bindValue(LS(":id"), key);
+  }
+
+  query.bindValue(LS(":f"), format);
+  query.bindValue(LS(":v"), format == JSonFormat ? JSON::generate(m_value) : m_value);
 
   query.exec();
 }
@@ -238,6 +282,15 @@ int DataBase::start()
     "  site       TEXT,"
     "  birthday   TEXT,"
     "  extra      BLOB"
+    ");"
+  ));
+
+  query.exec(LS(
+    "CREATE TABLE IF NOT EXISTS storage ( "
+    "  id         INTEGER PRIMARY KEY,"
+    "  k          TEXT UNIQUE,"
+    "  f          INTEGER DEFAULT ( 0 ),"
+    "  v          BLOB"
     ");"
   ));
 
@@ -527,6 +580,33 @@ User DataBase::user(qint64 channel)
   out.extra    = JSON::parse(query.value(8).toByteArray()).toMap();
 
   return out;
+}
+
+
+QVariant DataBase::value(const QString &key, const QVariant &defaultValue)
+{
+  QSqlQuery query;
+  query.prepare(LS("SELECT f, v FROM storage WHERE k = :k LIMIT 1;"));
+  query.bindValue(LS(":k"), key);
+  query.exec();
+
+  if (!query.first())
+    return defaultValue;
+
+  int format = query.value(0).toInt();
+  if (format == AddValueTask::JSonFormat)
+    return JSON::parse(query.value(1).toByteArray());
+
+  return query.value(1);
+}
+
+
+void DataBase::setValue(const QString &key, const QVariant &value)
+{
+  AddValueTask *task = new AddValueTask(key, value);
+  m_self->m_tasks.append(task);
+  if (m_self->m_tasks.size() == 1)
+    QTimer::singleShot(0, m_self, SLOT(startTasks()));
 }
 
 

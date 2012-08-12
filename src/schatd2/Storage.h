@@ -48,7 +48,9 @@ public:
   static QString serverName();
   static QString sharePath();
   static QString varPath();
+  static QVariant value(const QString &key, const QVariant &defaultValue = QVariant());
   static void addFeature(const QString &name);
+  static void setValue(const QString &key, const QVariant &value);
 
   int load();
   int start();
