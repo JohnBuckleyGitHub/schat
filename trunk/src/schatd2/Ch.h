@@ -34,8 +34,9 @@ class SCHAT_EXPORT Ch : public QObject
 public:
   Ch(QObject *parent = 0);
   ~Ch();
-  inline static void add(ChHook *hook)    { if (!m_self) return; if (!m_self->m_hooks.contains(hook)) m_self->m_hooks.append(hook); }
-  inline static void remove(ChHook *hook) { if (!m_self) return; m_self->m_hooks.removeAll(hook); }
+  inline static const QList<QByteArray>& users() { return m_self->m_users; }
+  inline static void add(ChHook *hook)           { if (!m_self) return; if (!m_self->m_hooks.contains(hook)) m_self->m_hooks.append(hook); }
+  inline static void remove(ChHook *hook)        { if (!m_self) return; m_self->m_hooks.removeAll(hook); }
   static bool add(ChatChannel channel);
   static bool gc(ChatChannel channel);
   static bool isCollision(const QByteArray &id, const QString &name, bool override = false);
@@ -47,7 +48,6 @@ public:
   static QByteArray makeId(const QByteArray &normalized);
   static QByteArray userId(const QByteArray &uniqueId);
   static void load();
-  static void remove(ChatChannel channel);
   static void userChannel(ChatChannel channel, const AuthRequest &data, const QString &host, bool created = false, quint64 socket = 0);
 
   // Служебные функции.
@@ -58,11 +58,13 @@ private:
   ChatChannel channelImpl(const QByteArray &id, int type = SimpleID::ChannelId, bool db = true);
   ChatChannel channelImpl(const QString &name, ChatChannel user);
   void cache(ChatChannel channel);
+  void remove(ChatChannel channel);
   void remove(const QByteArray &id);
   void sync(ChatChannel channel, ChatChannel user = ChatChannel());
 
   QHash<QByteArray, ChatChannel> m_channels; ///< Кеш каналов.
   QList<ChHook *> m_hooks;                   ///< Хуки.
+  QList<QByteArray> m_users;                 ///< Число пользователей подключенных к серверу.
   static Ch *m_self;                         ///< Указатель на себя.
 };
 

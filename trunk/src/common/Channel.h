@@ -122,10 +122,10 @@ public:
 
   inline Account *account() const         { return m_account; }
   inline bool isSynced() const            { return m_synced; }
+  inline const QByteArray& id() const     { return m_id; }
   inline const QString& name() const      { return m_name; }
   inline const QVariantMap& data() const  { return m_data; }
   inline int type() const                 { return m_type; }
-  inline QByteArray id() const            { return m_id; }
   inline qint64 date() const              { return m_date; }
   inline qint64 key() const               { return m_key; }
   inline QVariantMap& data()              { return m_data; }

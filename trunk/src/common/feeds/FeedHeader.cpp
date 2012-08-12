@@ -16,8 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
+#include "DateTime.h"
 #include "feeds/FeedHeader.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
@@ -83,4 +82,13 @@ void FeedHeader::setData(const QVariantMap &data)
   m_data = data;
   m_data.remove(LS("acl"));
   setRev(rev());
+}
+
+
+void FeedHeader::setDate(qint64 date)
+{
+  if (!date)
+    date = DateTime::utc();
+
+  m_data[LS("date")] = date;
 }

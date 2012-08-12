@@ -73,12 +73,22 @@ bool Ch::gc(ChatChannel channel)
       return false;
 
     channel->status() = Status::Offline;
+
+    const QByteArray &id = channel->id();
+    if (m_self->m_users.contains(id)) {
+      m_self->m_users.removeAll(id);
+      Ch::server()->channels().remove(id);
+
+      foreach (ChHook *hook, m_self->m_hooks) {
+        hook->updateStatistics();
+      }
+    }
   }
 
   if (channel->channels().all().size())
     return false;
 
-  remove(channel);
+  m_self->remove(channel);
   return true;
 }
 
@@ -229,17 +239,6 @@ void Ch::load()
 }
 
 
-void Ch::remove(ChatChannel channel)
-{
-  DataBase::add(channel);
-  m_self->remove(channel->id());
-
-  foreach (ChHook *hook, m_self->m_hooks) {
-    hook->remove(channel);
-  }
-}
-
-
 /*!
  * Создание нового или успешная авторизация существующего пользователя.
  *
@@ -362,14 +361,33 @@ void Ch::cache(ChatChannel channel)
   if (!channel)
     return;
 
-  if (channel->type() != SimpleID::ServerId)
-    Ch::server()->channels().add(channel->id());
+  const QByteArray &id = channel->id();
+  if (channel->type() != SimpleID::ServerId && Ch::server()->channels().add(id)) {
+    if (channel->type() == SimpleID::UserId && !m_users.contains(id)) {
+      m_users.append(id);
 
-  m_channels[channel->id()] = channel;
+      foreach (ChHook *hook, m_self->m_hooks) {
+        hook->updateStatistics();
+      }
+    }
+  }
+
+  m_channels[id] = channel;
   m_channels[channel->normalized()] = channel;
 
   if (channel->account())
     m_channels[channel->account()->cookie] = channel;
+}
+
+
+void Ch::remove(ChatChannel channel)
+{
+  DataBase::add(channel);
+  remove(channel->id());
+
+  foreach (ChHook *hook, m_hooks) {
+    hook->remove(channel);
+  }
 }
 
 
