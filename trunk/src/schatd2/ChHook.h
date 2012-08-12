@@ -35,6 +35,7 @@ public:
   virtual void load();
   virtual void newChannel(ChatChannel channel, ChatChannel user = ChatChannel());
   virtual void remove(ChatChannel channel);
+  virtual void rename(ChatChannel channel);
   virtual void server(ChatChannel channel, bool created);
   virtual void sync(ChatChannel channel, ChatChannel user = ChatChannel());
   virtual void userChannel(ChatChannel channel);

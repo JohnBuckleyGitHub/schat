@@ -18,10 +18,9 @@
 
 #include <QDir>
 
-#include "debugstream.h"
-
 #include "Account.h"
 #include "Channel.h"
+#include "DateTime.h"
 #include "feeds/FeedStorage.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
@@ -62,6 +61,7 @@ Channel::Channel()
   : m_account(0)
   , m_synced(false)
   , m_type(SimpleID::InvalidId)
+  , m_date(0)
   , m_key(0)
 {
 }
@@ -71,6 +71,7 @@ Channel::Channel(const QByteArray &id, const QString &name)
   : m_account(0)
   , m_synced(false)
   , m_type(SimpleID::InvalidId)
+  , m_date(0)
   , m_key(0)
 {
   setId(id);
@@ -140,6 +141,15 @@ void Channel::setAccount(Account *account)
 
   if (account)
     *m_account = *account;
+}
+
+
+void Channel::setDate(qint64 date)
+{
+  if (!date)
+    date = DateTime::utc();
+
+  m_date = date;
 }
 
 

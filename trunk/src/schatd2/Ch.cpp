@@ -179,7 +179,14 @@ int Ch::rename(ChatChannel channel, const QString &name)
 
   m_self->m_channels.remove(normalized);
   m_self->m_channels[channel->normalized()] = channel;
+
+  channel->setDate();
   DataBase::add(channel);
+
+  foreach (ChHook *hook, m_self->m_hooks) {
+    hook->rename(channel);
+  }
+
   return Notice::OK;
 }
 
