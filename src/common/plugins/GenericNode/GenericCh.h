@@ -28,6 +28,7 @@ class GenericCh : public ChHook
 public:
   GenericCh(QObject *parent = 0);
   void newChannel(ChatChannel channel, ChatChannel user = ChatChannel());
+  void rename(ChatChannel channel);
   void server(ChatChannel channel, bool created);
   void userChannel(ChatChannel channel);
 };

@@ -126,6 +126,7 @@ public:
   inline const QVariantMap& data() const  { return m_data; }
   inline int type() const                 { return m_type; }
   inline QByteArray id() const            { return m_id; }
+  inline qint64 date() const              { return m_date; }
   inline qint64 key() const               { return m_key; }
   inline QVariantMap& data()              { return m_data; }
 
@@ -135,6 +136,7 @@ public:
   inline void setData(const QVariantMap &data) { m_data = data; }
   inline void setSynced(bool synced)           { m_synced = synced; }
   void setAccount(Account *account = 0);
+  void setDate(qint64 date = 0);
 
   inline Channels& channels()             { return m_channels; }
   inline const Channels& channels() const { return m_channels; }
@@ -161,6 +163,7 @@ private:
   Gender m_gender;                 ///< Пол и цвет иконки.
   int m_type;                      ///< Тип канала, соответствует типу идентификатора канала \sa SimpleID::Types.
   QByteArray m_id;                 ///< Уникальный идентификатор канала.
+  qint64 m_date;                   ///< Дата модификации.
   qint64 m_key;                    ///< Ключ в таблице базы данных.
   QString m_name;                  ///< Имя канала.
   QVariantMap m_data;              ///< JSON данные канала.

@@ -73,6 +73,15 @@ void ChHook::remove(ChatChannel channel)
 
 
 /*!
+ * Обработка успешного переименования канала.
+ */
+void ChHook::rename(ChatChannel channel)
+{
+  Q_UNUSED(channel);
+}
+
+
+/*!
  * Инициализация серверного канала.
  *
  * \param channel Канал сервера.

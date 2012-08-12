@@ -298,8 +298,8 @@ qint64 DataBase::add(ChatChannel channel)
   }
 
   QSqlQuery query;
-  query.prepare(LS("INSERT INTO channels (channel, normalized, type, gender, name, data) "
-                     "VALUES (:channel, :normalized, :type, :gender, :name, :data);"));
+  query.prepare(LS("INSERT INTO channels (channel, normalized, type, gender, name, data, date) "
+                     "VALUES (:channel, :normalized, :type, :gender, :name, :data, :date);"));
 
   query.bindValue(LS(":channel"),    channel->id());
   query.bindValue(LS(":normalized"), channel->normalized());
@@ -307,6 +307,7 @@ qint64 DataBase::add(ChatChannel channel)
   query.bindValue(LS(":gender"),     channel->gender().raw());
   query.bindValue(LS(":name"),       channel->name());
   query.bindValue(LS(":data"),       JSON::generate(channel->data()));
+  query.bindValue(LS(":date"),       channel->date());
   query.exec();
 
   if (query.numRowsAffected() <= 0) {
@@ -569,7 +570,7 @@ Account DataBase::account(qint64 key)
 ChatChannel DataBase::channel(qint64 id)
 {
   QSqlQuery query;
-  query.prepare(LS("SELECT channel, gender, status, name, data FROM channels WHERE id = :id LIMIT 1;"));
+  query.prepare(LS("SELECT channel, gender, status, name, data, date FROM channels WHERE id = :id LIMIT 1;"));
   query.bindValue(LS(":id"), id);
   query.exec();
 
@@ -588,6 +589,7 @@ ChatChannel DataBase::channel(qint64 id)
   }
 
   channel->setData(JSON::parse(query.value(4).toByteArray()).toMap());
+  channel->setDate(query.value(5).toLongLong());
   FeedStorage::load(channel.data());
 
   return channel;
@@ -710,13 +712,14 @@ void DataBase::update(ChatChannel channel)
     return;
 
   QSqlQuery query;
-  query.prepare(LS("UPDATE channels SET channel = :channel, normalized = :normalized, type = :type, gender = :gender, name = :name, data = :data WHERE id = :id;"));
+  query.prepare(LS("UPDATE channels SET channel = :channel, normalized = :normalized, type = :type, gender = :gender, name = :name, data = :data, date = :date WHERE id = :id;"));
   query.bindValue(LS(":channel"),    channel->id());
   query.bindValue(LS(":normalized"), channel->normalized());
   query.bindValue(LS(":type"),       channel->type());
   query.bindValue(LS(":gender"),     channel->gender().raw());
   query.bindValue(LS(":name"),       channel->name());
   query.bindValue(LS(":data"),       JSON::generate(channel->data()));
+  query.bindValue(LS(":date"),       channel->date());
   query.bindValue(LS(":id"),         channel->key());
   query.exec();
 
