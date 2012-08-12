@@ -131,10 +131,35 @@ QString Storage::varPath()
 }
 
 
+
+/*!
+ * Получение данных из хранилища.
+ *
+ * \param key          Ключ в хранилище.
+ * \param defaultValue Значение по умолчанию.
+ */
+QVariant Storage::value(const QString &key, const QVariant &defaultValue)
+{
+  return DataBase::value(key, defaultValue);
+}
+
+
 void Storage::addFeature(const QString &name)
 {
   if (!m_features.contains(name))
     m_features.append(name);
+}
+
+
+/*!
+ * Запись данных в хранилище.
+ *
+ * \param key   Ключ в хранилище.
+ * \param value Данные для записи в хранилище.
+ */
+void Storage::setValue(const QString &key, const QVariant &value)
+{
+  DataBase::setValue(key, value);
 }
 
 

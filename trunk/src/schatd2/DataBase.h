@@ -62,6 +62,9 @@ public:
   static void add(User *user);
   static User user(qint64 channel);
 
+  static QVariant value(const QString &key, const QVariant &defaultValue = QVariant());
+  static void setValue(const QString &key, const QVariant &value);
+
   static bool noMaster; /// \b true если отсутвует Master пользователь, значение устанавливается в \b true если таблицы channels не существовало и она была создана.
 
 private slots:
@@ -107,6 +110,24 @@ public:
 
 private:
   User m_user;
+};
+
+
+class AddValueTask : public QRunnable
+{
+public:
+  /// Формат данных в таблице storage.
+  enum Format {
+    AutoFormat,    ///< Автоматическое определение формата.
+    JSonFormat,    ///< JSON формат.
+  };
+
+  AddValueTask(const QString &key, const QVariant &value);
+  void run();
+
+private:
+  QString m_key;
+  QVariant m_value;
 };
 
 #endif /* DATABASE_H_ */
