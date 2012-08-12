@@ -179,7 +179,7 @@ AuthResult ExternalAuthTask::auth(const QVariantMap &data)
     return AuthResult(Notice::BadRequest, m_data.id);
 
   Core::add(channel);
-  Ch::newUserChannel(channel, m_data, m_host, created, m_socket);
+  Ch::userChannel(channel, m_data, m_host, created, m_socket);
 
   SCHAT_LOG_INFO_STR("EXTERNAL AUTH: " + channel->name().toUtf8() + '@' + m_host.toUtf8() + '/' + SimpleID::encode(channel->id()) + ", " + m_data.host.toUtf8());
   m_cache.remove(m_data.id + m_data.cookie);

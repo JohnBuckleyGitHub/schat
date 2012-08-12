@@ -19,7 +19,6 @@
 #ifndef MESSAGESCH_H_
 #define MESSAGESCH_H_
 
-#include "Ch.h"
 #include "ChHook.h"
 
 class MessagesCh : public ChHook
@@ -28,20 +27,9 @@ class MessagesCh : public ChHook
 
 public:
   MessagesCh(QObject *parent = 0);
+  void newChannel(ChatChannel channel, ChatChannel user = ChatChannel());
   void sync(ChatChannel channel, ChatChannel user = ChatChannel());
-};
-
-
-class MessagesCh2 : public Ch
-{
-  Q_OBJECT
-
-public:
-  MessagesCh2(QObject *parent = 0);
-
-protected:
-  void newChannelImpl(ChatChannel channel, ChatChannel user = ChatChannel());
-  void userChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host, bool created, quint64 socket);
+  void userChannel(ChatChannel channel);
 };
 
 #endif /* MESSAGESCH_H_ */

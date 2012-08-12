@@ -32,7 +32,6 @@ GenericNode::GenericNode(QObject *parent)
   new NodeChannels(Core::i());
   new NodeFeeds(Core::i());
   new GenericCh(this);
-  new GenericCh2(this);
   new NodeFeedStorage(this);
 }
 
