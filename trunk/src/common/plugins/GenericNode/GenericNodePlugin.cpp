@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QtPlugin>
 
 #include "cores/Core.h"
@@ -34,6 +32,7 @@ GenericNode::GenericNode(QObject *parent)
   new NodeChannels(Core::i());
   new NodeFeeds(Core::i());
   new GenericCh(this);
+  new GenericCh2(this);
   new NodeFeedStorage(this);
 }
 

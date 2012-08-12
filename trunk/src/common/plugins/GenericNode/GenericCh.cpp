@@ -16,36 +16,39 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include "feeds/FeedStorage.h"
 #include "GenericCh.h"
 #include "sglobal.h"
 
+
 GenericCh::GenericCh(QObject *parent)
+  : ChHook(parent)
+{
+}
+
+
+GenericCh2::GenericCh2(QObject *parent)
   : Ch(parent)
 {
 }
 
 
-void GenericCh::channelImpl(ChatChannel channel, ChatChannel /*user*/)
-{
-  channel->feed(LS("topic"));
-}
-
-
-void GenericCh::newChannelImpl(ChatChannel channel, ChatChannel user)
+void GenericCh2::newChannelImpl(ChatChannel channel, ChatChannel user)
 {
   addNewFeedIfNotExist(channel, LS("acl"), user);
 }
 
 
-void GenericCh::serverImpl(ChatChannel channel, bool /*created*/)
+void GenericCh2::serverImpl(ChatChannel channel, bool /*created*/)
 {
   channel->feed(LS("acl"));
   channel->feed(LS("server"));
 }
 
 
-void GenericCh::userChannelImpl(ChatChannel channel, const AuthRequest & /*data*/, const QString & /*host*/, bool /*created*/, quint64 /*socket*/)
+void GenericCh2::userChannelImpl(ChatChannel channel, const AuthRequest & /*data*/, const QString & /*host*/, bool /*created*/, quint64 /*socket*/)
 {
   if (!channel->account())
     channel->createAccount();

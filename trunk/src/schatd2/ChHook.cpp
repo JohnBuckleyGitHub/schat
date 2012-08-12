@@ -16,32 +16,30 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MESSAGESCH_H_
-#define MESSAGESCH_H_
-
-#include "Ch.h"
 #include "ChHook.h"
+#include "Ch.h"
 
-class MessagesCh : public ChHook
+ChHook::ChHook(QObject *parent)
+  : QObject(parent)
 {
-  Q_OBJECT
-
-public:
-  MessagesCh(QObject *parent = 0);
-  void sync(ChatChannel channel, ChatChannel user = ChatChannel());
-};
+  Ch::add(this);
+}
 
 
-class MessagesCh2 : public Ch
+ChHook::~ChHook()
 {
-  Q_OBJECT
+  Ch::remove(this);
+}
 
-public:
-  MessagesCh2(QObject *parent = 0);
 
-protected:
-  void newChannelImpl(ChatChannel channel, ChatChannel user = ChatChannel());
-  void userChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host, bool created, quint64 socket);
-};
-
-#endif /* MESSAGESCH_H_ */
+/*!
+ * Синхронизация обычного канала.
+ *
+ * \param channel Указатель на канал.
+ * \param user    Пользователь создавший канал, если есть такой.
+ */
+void ChHook::sync(ChatChannel channel, ChatChannel user)
+{
+  Q_UNUSED(channel)
+  Q_UNUSED(user)
+}
