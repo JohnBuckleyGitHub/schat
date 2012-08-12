@@ -51,6 +51,7 @@ public:
   inline void setName(const QString &name) { m_name = name; }
   inline void setRev(qint64 rev)           { m_data[QLatin1String("rev")] = rev; }
   void setData(const QVariantMap &data);
+  void setDate(qint64 date = 0);
 
 private:
   Acl m_acl;          ///< Права доступа к фиду.

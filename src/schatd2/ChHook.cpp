@@ -108,6 +108,14 @@ void ChHook::sync(ChatChannel channel, ChatChannel user)
 
 
 /*!
+ * Обновление статистики.
+ */
+void ChHook::updateStatistics()
+{
+}
+
+
+/*!
  * Создание нового или успешная авторизация существующего пользователя.
  */
 void ChHook::userChannel(ChatChannel channel)

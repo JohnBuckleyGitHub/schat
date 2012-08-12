@@ -30,6 +30,7 @@ public:
   void newChannel(ChatChannel channel, ChatChannel user = ChatChannel());
   void rename(ChatChannel channel);
   void server(ChatChannel channel, bool created);
+  void updateStatistics();
   void userChannel(ChatChannel channel);
 };
 

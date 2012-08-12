@@ -49,6 +49,12 @@ void GenericCh::server(ChatChannel channel, bool created)
 }
 
 
+void GenericCh::updateStatistics()
+{
+  Ch::server()->feed(LS("server"))->head().setDate();
+}
+
+
 void GenericCh::userChannel(ChatChannel channel)
 {
   if (!channel->account())

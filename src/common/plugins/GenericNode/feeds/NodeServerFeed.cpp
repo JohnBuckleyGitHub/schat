@@ -16,13 +16,15 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
+#include <QCoreApplication>
 
-#include "feeds/NodeServerFeed.h"
+#include "Ch.h"
 #include "Channel.h"
 #include "DateTime.h"
-#include "sglobal.h"
+#include "feeds/NodeServerFeed.h"
 #include "net/SimpleID.h"
+#include "sglobal.h"
+#include "tools/OsInfo.h"
 
 NodeServerFeed::NodeServerFeed(const QString &name, const QVariantMap &data)
   : Feed(name, data)
@@ -66,9 +68,16 @@ QVariantMap NodeServerFeed::feed(Channel *channel)
     return QVariantMap();
 
   QVariantMap out;
-  out[LS("head")] = header;
-  out[LS("name")] = server->name();
-  out[LS("id")]   = SimpleID::encode(server->id());
+  out[LS("head")]    = header;
+  out[LS("name")]    = server->name();
+  out[LS("id")]      = SimpleID::encode(server->id());
+  out[LS("version")] = QCoreApplication::applicationVersion();
+  out[LS("os")]      = OsInfo::type();
+
+  QVariantMap users;
+  users[LS("online")] = Ch::users().size();
+  out[LS("users")] = users;
+
   return out;
 }
 
