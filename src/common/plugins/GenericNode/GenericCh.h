@@ -20,16 +20,25 @@
 #define GENERICCH_H_
 
 #include "Ch.h"
+#include "ChHook.h"
 
-class GenericCh : public Ch
+class GenericCh : public ChHook
 {
   Q_OBJECT
 
 public:
   GenericCh(QObject *parent = 0);
+};
+
+
+class GenericCh2 : public Ch
+{
+  Q_OBJECT
+
+public:
+  GenericCh2(QObject *parent = 0);
 
 protected:
-  void channelImpl(ChatChannel channel, ChatChannel user = ChatChannel());
   void newChannelImpl(ChatChannel channel, ChatChannel user = ChatChannel());
   void serverImpl(ChatChannel channel, bool created);
   void userChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host, bool created, quint64 socket);

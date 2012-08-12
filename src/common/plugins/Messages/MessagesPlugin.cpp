@@ -32,6 +32,7 @@ NodeMessagesBase::NodeMessagesBase(QObject *parent)
 {
   new NodeMessages(Core::i());
   new MessagesCh(this);
+  new MessagesCh2(this);
   FeedStorage::add(new NodeHistoryFeed());
 
   NodeMessagesDB::open();

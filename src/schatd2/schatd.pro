@@ -27,6 +27,7 @@ SCHAT_LITTLE_CLIENT = 1
 
 HEADERS = \
     Ch.h \
+    ChHook.h \
     cores/AnonymousAuth.h \
     cores/CookieAuth.h \
     cores/Core.h \
@@ -56,6 +57,7 @@ HEADERS = \
 
 SOURCES = \
     Ch.cpp \
+    ChHook.cpp \
     cores/AnonymousAuth.cpp \
     cores/CookieAuth.cpp \
     cores/Core.cpp \

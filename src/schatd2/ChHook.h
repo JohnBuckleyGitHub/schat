@@ -16,32 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MESSAGESCH_H_
-#define MESSAGESCH_H_
+#ifndef CHHOOK_H_
+#define CHHOOK_H_
 
-#include "Ch.h"
-#include "ChHook.h"
+#include <QObject>
 
-class MessagesCh : public ChHook
+#include "ServerChannel.h"
+
+class SCHAT_EXPORT ChHook : public QObject
 {
   Q_OBJECT
 
 public:
-  MessagesCh(QObject *parent = 0);
-  void sync(ChatChannel channel, ChatChannel user = ChatChannel());
+  ChHook(QObject *parent = 0);
+  ~ChHook();
+
+  virtual void sync(ChatChannel channel, ChatChannel user = ChatChannel());
 };
 
-
-class MessagesCh2 : public Ch
-{
-  Q_OBJECT
-
-public:
-  MessagesCh2(QObject *parent = 0);
-
-protected:
-  void newChannelImpl(ChatChannel channel, ChatChannel user = ChatChannel());
-  void userChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host, bool created, quint64 socket);
-};
-
-#endif /* MESSAGESCH_H_ */
+#endif /* CHHOOK_H_ */
