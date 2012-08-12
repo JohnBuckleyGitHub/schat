@@ -16,12 +16,10 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
+#include "Ch.h"
 #include "feeds/FeedStorage.h"
 #include "GenericCh.h"
 #include "sglobal.h"
-
 
 GenericCh::GenericCh(QObject *parent)
   : ChHook(parent)
@@ -29,32 +27,28 @@ GenericCh::GenericCh(QObject *parent)
 }
 
 
-GenericCh2::GenericCh2(QObject *parent)
-  : Ch(parent)
+void GenericCh::newChannel(ChatChannel channel, ChatChannel user)
 {
+  Ch::addNewFeedIfNotExist(channel, LS("acl"), user);
 }
 
 
-void GenericCh2::newChannelImpl(ChatChannel channel, ChatChannel user)
+void GenericCh::server(ChatChannel channel, bool created)
 {
-  addNewFeedIfNotExist(channel, LS("acl"), user);
-}
+  Q_UNUSED(created)
 
-
-void GenericCh2::serverImpl(ChatChannel channel, bool /*created*/)
-{
   channel->feed(LS("acl"));
   channel->feed(LS("server"));
 }
 
 
-void GenericCh2::userChannelImpl(ChatChannel channel, const AuthRequest & /*data*/, const QString & /*host*/, bool /*created*/, quint64 /*socket*/)
+void GenericCh::userChannel(ChatChannel channel)
 {
   if (!channel->account())
     channel->createAccount();
 
   channel->feed(LS("account"));
 
-  addNewUserFeedIfNotExist(channel, LS("acl"));
-  addNewUserFeedIfNotExist(channel, LS("profile"));
+  Ch::addNewUserFeedIfNotExist(channel, LS("acl"));
+  Ch::addNewUserFeedIfNotExist(channel, LS("profile"));
 }

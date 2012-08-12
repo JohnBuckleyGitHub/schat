@@ -36,17 +36,28 @@ Ch *Ch::m_self = 0;
 Ch::Ch(QObject *parent)
   : QObject(parent)
 {
-  if (!m_self)
-    m_self = this;
-  else
-    add2(this);
+  m_self = this;
 }
 
 
 Ch::~Ch()
 {
-  if (m_self == this)
-    m_self = 0;
+  m_self = 0;
+}
+
+
+bool Ch::add(ChatChannel channel)
+{
+  if (DataBase::add(channel) == -1)
+    return false;
+
+  m_self->m_cache.add(channel);
+
+  foreach (ChHook *hook, m_self->m_hooks) {
+    hook->add(channel);
+  }
+
+  return true;
 }
 
 
@@ -145,10 +156,30 @@ ChatChannel Ch::server()
     created = true;
   }
 
-  if (!server->isSynced())
-    m_self->serverImpl(server, created);
+  if (!server->isSynced()) {
+    foreach (ChHook *hook, m_self->m_hooks) {
+      hook->server(server, created);
+    }
+
+    server->setSynced(true);
+  }
 
   return server;
+}
+
+
+int Ch::rename(ChatChannel channel, const QString &name)
+{
+  QByteArray normalized = channel->normalized();
+  if (isCollision(channel->id(), name))
+    return Notice::ObjectAlreadyExists;
+
+  if (!channel->setName(name))
+    return Notice::BadRequest;
+
+  m_self->m_cache.rename(channel, normalized);
+  DataBase::add(channel);
+  return Notice::OK;
 }
 
 
@@ -179,6 +210,28 @@ QByteArray Ch::userId(const QByteArray &uniqueId)
 }
 
 
+void Ch::load()
+{
+  Ch::server();
+  Ch::channel(QString(LS("Main")));
+
+  foreach (ChHook *hook, m_self->m_hooks) {
+    hook->load();
+  }
+}
+
+
+void Ch::remove(ChatChannel channel)
+{
+  DataBase::add(channel);
+  m_self->m_cache.remove(channel->id());
+
+  foreach (ChHook *hook, m_self->m_hooks) {
+    hook->remove(channel);
+  }
+}
+
+
 /*!
  * Создание нового или успешная авторизация существующего пользователя.
  *
@@ -188,15 +241,16 @@ QByteArray Ch::userId(const QByteArray &uniqueId)
  * \param created \b true если пользователь был создан.
  * \param socket  Сокет пользователя.
  */
-void Ch::newUserChannel(ChatChannel channel, const AuthRequest &data, const QString &host, bool created, quint64 socket)
+void Ch::userChannel(ChatChannel channel, const AuthRequest &data, const QString &host, bool created, quint64 socket)
 {
   if (!socket)
     socket = Core::socket();
 
   channel->hosts()->add(HostInfo(new Host(data, host, socket)));
 
-  foreach (Ch *hook, m_self->m_hooks2) {
-    hook->userChannelImpl(channel, data, host, created, socket);
+  foreach (ChHook *hook, m_self->m_hooks) {
+    hook->userChannel(channel, data, host, created, socket);
+    hook->userChannel(channel);
   }
 
   m_self->m_cache.add(channel);
@@ -244,128 +298,6 @@ void Ch::addNewUserFeedIfNotExist(ChatChannel channel, const QString &name)
   feed->head().acl().add(channel->id());
 
   FeedStorage::save(feed);
-}
-
-
-/*!
- * Переименование канала.
- */
-int Ch::renameImpl(ChatChannel channel, const QString &name)
-{
-  QByteArray normalized = channel->normalized();
-  if (isCollision(channel->id(), name))
-    return Notice::ObjectAlreadyExists;
-
-  if (!channel->setName(name))
-    return Notice::BadRequest;
-
-  m_cache.rename(channel, normalized);
-  DataBase::add(channel);
-  return Notice::OK;
-}
-
-
-/*!
- * Добавление канала.
- */
-bool Ch::addImpl(ChatChannel channel)
-{
-  if (m_self != this)
-    return false;
-
-  if (DataBase::add(channel) == -1)
-    return false;
-
-  m_cache.add(channel);
-
-  foreach (Ch *hook, m_hooks2) {
-    hook->addImpl(channel);
-  }
-
-  return true;
-}
-
-
-/*!
- * Загрузка основных каналов сервера.
- */
-void Ch::loadImpl()
-{
-  if (m_self != this)
-    return;
-
-  Ch::server();
-  Ch::channel(QString(LS("Main")));
-
-  foreach (Ch *hook, m_hooks2) {
-    hook->loadImpl();
-  }
-}
-
-
-/*!
- * Создание нового обычного канала.
- *
- * \param channel Созданный канал.
- * \param user    Пользователь создавший канал, если есть такой.
- */
-void Ch::newChannelImpl(ChatChannel channel, ChatChannel user)
-{
-  if (m_self != this)
-    return;
-
-  foreach (Ch *hook, m_hooks2) {
-    hook->newChannelImpl(channel, user);
-  }
-}
-
-
-void Ch::userChannelImpl(ChatChannel channel, const AuthRequest &data, const QString &host, bool created, quint64 socket)
-{
-  Q_UNUSED(channel)
-  Q_UNUSED(data)
-  Q_UNUSED(host)
-  Q_UNUSED(created)
-  Q_UNUSED(socket)
-}
-
-
-/*!
- * Удаление канала.
- *
- * Сначала происходит обновление базы данных, затем канал удаляется из кеша.
- * После этого вызываются хуки.
- */
-void Ch::removeImpl(ChatChannel channel)
-{
-  if (m_self != this)
-    return;
-
-  DataBase::add(channel);
-  m_cache.remove(channel->id());
-
-  foreach (Ch *hook, m_hooks2) {
-    hook->removeImpl(channel);
-  }
-}
-
-
-/*!
- * Инициализация серверного канала.
- *
- * \param channel Канал сервера.
- * \param created \b true если канал был создан, фактически это происходит только при первом запуске сервера.
- */
-void Ch::serverImpl(ChatChannel channel, bool created)
-{
-  if (m_self != this)
-    return;
-
-  foreach (Ch *hook, m_hooks2) {
-    hook->serverImpl(channel, created);
-  }
-
-  channel->setSynced(true);
 }
 
 
@@ -454,7 +386,10 @@ ChatChannel Ch::channelImpl(const QString &name, ChatChannel user)
   if (!channel) {
     channel = ChatChannel(new ServerChannel(makeId(normalized), name));
     add(channel);
-    newChannelImpl(channel, user);
+
+    foreach (ChHook *hook, m_hooks) {
+      hook->newChannel(channel, user);
+    }
   }
 
   return channel;

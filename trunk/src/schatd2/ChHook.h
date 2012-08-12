@@ -31,7 +31,14 @@ public:
   ChHook(QObject *parent = 0);
   ~ChHook();
 
+  virtual void add(ChatChannel channel);
+  virtual void load();
+  virtual void newChannel(ChatChannel channel, ChatChannel user = ChatChannel());
+  virtual void remove(ChatChannel channel);
+  virtual void server(ChatChannel channel, bool created);
   virtual void sync(ChatChannel channel, ChatChannel user = ChatChannel());
+  virtual void userChannel(ChatChannel channel);
+  virtual void userChannel(ChatChannel channel, const AuthRequest &data, const QString &host, bool created, quint64 socket);
 };
 
 #endif /* CHHOOK_H_ */
