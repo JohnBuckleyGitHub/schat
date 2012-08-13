@@ -367,7 +367,7 @@ void Ch::cache(ChatChannel channel)
 
   const QByteArray &id = channel->id();
   if (channel->type() != SimpleID::ServerId)
-    setOnline(channel->id());
+    setOnline(channel);
 
   m_channels[id] = channel;
   m_channels[channel->normalized()] = channel;
@@ -402,16 +402,23 @@ void Ch::remove(const QByteArray &id)
 }
 
 
-void Ch::setOnline(const QByteArray &id)
+/*!
+ * Обновление при необходимости статистики каналов.
+ */
+void Ch::setOnline(ChatChannel channel)
 {
-  if (!Ch::server()->channels().add(id))
+  const QByteArray &id = channel->id();
+  Channels &channels = Ch::server()->channels();
+
+  if (channels.contains(id))
     return;
 
-  if (SimpleID::typeOf(id) == SimpleID::UserId) {
-    if (m_users.contains(id))
+  if (channel->type() == SimpleID::UserId) {
+    if (channel->sockets().isEmpty() || m_users.contains(id))
       return;
 
     m_users.append(id);
+    channels.add(id);
 
     if (m_users.size() >= m_peakUsers) {
       m_peakUsers = m_users.size();
@@ -426,6 +433,8 @@ void Ch::setOnline(const QByteArray &id)
       hook->updateStatistics();
     }
   }
+  else
+    channels.add(id);
 }
 
 

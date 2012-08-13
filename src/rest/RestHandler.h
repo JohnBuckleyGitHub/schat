@@ -25,8 +25,8 @@
 
 namespace Tufao {
   class HttpServerRequest;
-  class Headers;
   class HttpServerResponse;
+  struct Headers;
 }
 
 class QUrl;

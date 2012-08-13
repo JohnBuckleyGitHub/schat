@@ -60,7 +60,7 @@ private:
   void cache(ChatChannel channel);
   void remove(ChatChannel channel);
   void remove(const QByteArray &id);
-  void setOnline(const QByteArray &id);
+  void setOnline(ChatChannel channel);
   void sync(ChatChannel channel, ChatChannel user = ChatChannel());
 
   int m_peakUsers;                           ///< Максимальное количество пользователей подключеных к серверу, за всё время работы.
