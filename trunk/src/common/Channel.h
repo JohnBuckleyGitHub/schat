@@ -90,6 +90,7 @@ public:
   Channels() {}
 
   bool add(const QByteArray &id);
+  inline bool contains(const QByteArray &id) const   { return m_channels.contains(id); }
   inline const QList<QByteArray>& all() const        { return m_channels; }
   inline void clear()                                { m_channels.clear(); }
   inline void remove(const QByteArray &id)           { m_channels.removeAll(id); }
