@@ -24,6 +24,7 @@
 #include "feeds/NodeServerFeed.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
+#include "Storage.h"
 #include "tools/OsInfo.h"
 
 NodeServerFeed::NodeServerFeed(const QString &name, const QVariantMap &data)
@@ -76,6 +77,8 @@ QVariantMap NodeServerFeed::feed(Channel *channel)
 
   QVariantMap users;
   users[LS("online")] = Ch::users().size();
+  users[LS("peak")] = Storage::value(LS("PeakUsers")).toMap();
+
   out[LS("users")] = users;
 
   return out;
