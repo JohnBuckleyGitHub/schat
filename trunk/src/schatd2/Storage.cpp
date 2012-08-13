@@ -41,6 +41,7 @@
 #include "Settings.h"
 #include "sglobal.h"
 #include "Storage.h"
+#include "StorageHook.h"
 
 QStringList Storage::m_features;
 Storage *Storage::m_self = 0;
@@ -80,6 +81,7 @@ Storage::Storage(QObject *parent)
 
 Storage::~Storage()
 {
+  qDeleteAll(m_hooks);
   delete m_log;
 }
 
@@ -160,6 +162,24 @@ void Storage::addFeature(const QString &name)
 void Storage::setValue(const QString &key, const QVariant &value)
 {
   DataBase::setValue(key, value);
+}
+
+
+void Storage::add(StorageHook *hook)
+{
+  if (!hook)
+    return;
+
+  QStringList keys = hook->keys();
+  if (keys.isEmpty()) {
+    delete hook;
+    return;
+  }
+
+  m_hooks.append(hook);
+  foreach (const QString &key, keys) {
+    m_keys[key] = hook;
+  }
 }
 
 

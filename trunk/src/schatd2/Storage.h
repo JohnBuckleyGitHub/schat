@@ -28,6 +28,7 @@
 class NodeLog;
 class ServerData;
 class Settings;
+class StorageHook;
 
 class SCHAT_EXPORT Storage : public QObject
 {
@@ -51,6 +52,7 @@ public:
   static QVariant value(const QString &key, const QVariant &defaultValue = QVariant());
   static void addFeature(const QString &name);
   static void setValue(const QString &key, const QVariant &value);
+  void add(StorageHook *hook);
 
   int load();
   int start();
@@ -59,16 +61,19 @@ private:
   void setDefaultSslConf();
   void setMaxOpenFiles(int max);
 
-  bool m_anonymous;              ///< \b true если разрешена анонимная авторизация.
-  bool m_nickOverride;           ///< \b true если разрешено зарегистрированным пользователям во время внешней авторизации, занимать ники анонимных пользователей если те не в сети.
-  NodeLog *m_log;                ///< Журнал.
-  QByteArray m_id;               ///< Публичный идентификатор сервера.
-  QByteArray m_privateId;        ///< Приватный идентификатор сервера.
-  QString m_authServer;          ///< Адрес авторизационного сервера.
-  ServerData *m_serverData;      ///< Информация о сервере.
-  Settings *m_settings;          ///< Настройки сервера.
-  static QStringList m_features; ///< Список дополнительных API.
-  static Storage *m_self;        ///< Указатель на себя.
+  bool m_anonymous;                    ///< \b true если разрешена анонимная авторизация.
+  bool m_nickOverride;                 ///< \b true если разрешено зарегистрированным пользователям во время внешней авторизации, занимать ники анонимных пользователей если те не в сети.
+  NodeLog *m_log;                      ///< Журнал.
+  QByteArray m_id;                     ///< Публичный идентификатор сервера.
+  QByteArray m_privateId;              ///< Приватный идентификатор сервера.
+  QList<StorageHook *> m_hooks;        ///< Хуки хранилища.
+  QMap<QString, QVariant> m_cache;     ///< Кеш хранилища.
+  QMap<QString, StorageHook *> m_keys; ///< Ключи значений хранилища обрабатываемые хуками.
+  QString m_authServer;                ///< Адрес авторизационного сервера.
+  ServerData *m_serverData;            ///< Информация о сервере.
+  Settings *m_settings;                ///< Настройки сервера.
+  static QStringList m_features;       ///< Список дополнительных API.
+  static Storage *m_self;              ///< Указатель на себя.
 };
 
 #endif /* STORAGE_H_ */
