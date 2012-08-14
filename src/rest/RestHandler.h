@@ -44,6 +44,8 @@ public:
   static void setContentLength(Tufao::Headers &headers, qint64 size);
   static void setETag(Tufao::Headers &headers, const QByteArray &etag);
   static void setLastModified(Tufao::Headers &headers, qint64 date);
+  static void setNoCache(Tufao::Headers &headers);
+  static void setNoStore(Tufao::Headers &headers);
 };
 
 #endif /* RESTHANDLER_H_ */
