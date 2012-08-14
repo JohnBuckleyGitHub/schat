@@ -29,8 +29,8 @@ ServerHandler::ServerHandler()
   : RestHandler()
   , m_date(0)
 {
-
 }
+
 
 bool ServerHandler::serve(const QUrl &, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *)
 {
@@ -75,6 +75,7 @@ void ServerHandler::server(Tufao::HttpServerRequest *request, Tufao::HttpServerR
 
   setLastModified(headers, m_date);
   setETag(headers, m_etag);
+  setNoCache(headers);
 
   if (!ifModified(request->headers(), m_etag)) {
     response->writeHead(Tufao::HttpServerResponse::NOT_MODIFIED);

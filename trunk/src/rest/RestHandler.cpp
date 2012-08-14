@@ -66,3 +66,21 @@ void RestHandler::setLastModified(Tufao::Headers &headers, qint64 date)
 {
   headers.insert("Last-Modified", Tufao::Headers::fromDateTime(DateTime::toDateTime(date)));
 }
+
+
+void RestHandler::setNoCache(Tufao::Headers &headers)
+{
+  headers.insert("Cache-Control", "no-cache, must-revalidate");
+  headers.insert("Pragma", "no-cache");
+}
+
+
+void RestHandler::setNoStore(Tufao::Headers &headers)
+{
+  headers.insert("Cache-Control", "no-cache, no-store, max-age=0, must-revalidate");
+  headers.insert("Pragma", "no-cache");
+  headers.insert("Expires", "Fri, 01 Jan 1990 00:00:00 GMT");
+}
+
+
+
