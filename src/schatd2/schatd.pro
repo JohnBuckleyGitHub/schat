@@ -51,8 +51,10 @@ HEADERS = \
     plugins/GeoHook.h \
     plugins/NodePlugin.h \
     ServerChannel.h \
+    SettingsHook.h \
     Sockets.h \
     Storage.h \
+    StorageHook.h \
     User.h \
 
 SOURCES = \
@@ -80,8 +82,10 @@ SOURCES = \
     plugins/GeoHook.cpp \
     plugins/NodePlugin.cpp \
     ServerChannel.cpp \
+    SettingsHook.cpp \
     Sockets.cpp \
     Storage.cpp \
+    StorageHook.cpp \
     User.cpp \
 
 include(../common/client.pri)

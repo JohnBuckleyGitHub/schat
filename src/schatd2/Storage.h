@@ -37,11 +37,8 @@ class SCHAT_EXPORT Storage : public QObject
 public:
   Storage(QObject *parent = 0);
   ~Storage();
-  inline static bool anonymous()           { return m_self->m_anonymous; }
-  inline static bool nickOverride()        { return m_self->m_nickOverride; }
   inline static QByteArray privateId()     { return m_self->m_privateId; }
   inline static QByteArray serverId()      { return m_self->m_id; }
-  inline static QString authServer()       { return m_self->m_authServer; }
   inline static Settings *settings()       { return m_self->m_settings; }
   inline static Storage *i()               { return m_self; }
   static bool hasFeature(const QString &name);
@@ -57,19 +54,19 @@ public:
   int load();
   int start();
 
+signals:
+  void valueChanged(const QString &key, const QVariant &value);
+
 private:
   void setDefaultSslConf();
   void setMaxOpenFiles(int max);
 
-  bool m_anonymous;                    ///< \b true если разрешена анонимная авторизация.
-  bool m_nickOverride;                 ///< \b true если разрешено зарегистрированным пользователям во время внешней авторизации, занимать ники анонимных пользователей если те не в сети.
   NodeLog *m_log;                      ///< Журнал.
   QByteArray m_id;                     ///< Публичный идентификатор сервера.
   QByteArray m_privateId;              ///< Приватный идентификатор сервера.
   QList<StorageHook *> m_hooks;        ///< Хуки хранилища.
   QMap<QString, QVariant> m_cache;     ///< Кеш хранилища.
   QMap<QString, StorageHook *> m_keys; ///< Ключи значений хранилища обрабатываемые хуками.
-  QString m_authServer;                ///< Адрес авторизационного сервера.
   ServerData *m_serverData;            ///< Информация о сервере.
   Settings *m_settings;                ///< Настройки сервера.
   static QStringList m_features;       ///< Список дополнительных API.
