@@ -19,6 +19,7 @@
 #include "Account.h"
 #include "cores/NodeAuth.h"
 #include "net/NodeAuthReply.h"
+#include "sglobal.h"
 #include "Storage.h"
 
 NodeAuthReply::NodeAuthReply(const AuthResult &result, ChatChannel channel)
@@ -31,7 +32,7 @@ NodeAuthReply::NodeAuthReply(const AuthResult &result, ChatChannel channel)
   json       = result.json;
   serverName = Storage::serverName();
 
-  if (Storage::anonymous())
+  if (Storage::value(LS("AnonymousAuth")).toBool())
     flags = 1;
 
   if (channel) {
@@ -41,5 +42,5 @@ NodeAuthReply::NodeAuthReply(const AuthResult &result, ChatChannel channel)
     provider = channel->account()->provider;
   }
   else
-    provider = Storage::authServer();
+    provider = Storage::value(LS("AuthServer")).toString();
 }

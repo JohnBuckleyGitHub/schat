@@ -40,6 +40,7 @@
 #include "NodeLog.h"
 #include "NodeNoticeReader.h"
 #include "NodePlugins.h"
+#include "sglobal.h"
 #include "Sockets.h"
 #include "Storage.h"
 
@@ -321,13 +322,13 @@ bool Core::auth()
   }
 
   if (m_auth.isEmpty()) {
-    if (Storage::anonymous())
+    if (Storage::value(LS("AnonymousAuth")).toBool())
       addAuth(new AnonymousAuth(this));
 
     addAuth(new CookieAuth(this));
     addAuth(new DiscoveryAuth(this));
 
-    if (!Storage::authServer().isEmpty())
+    if (!Storage::value(LS("AuthServer")).toString().isEmpty())
       addAuth(new ExternalAuth(this));
   }
 

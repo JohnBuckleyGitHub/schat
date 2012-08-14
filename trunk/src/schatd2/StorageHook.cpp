@@ -16,14 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Storage.h"
 #include "StorageHook.h"
 
 StorageHook::StorageHook()
   : m_cache(true)
 {
-  if (Storage::i())
-    Storage::i()->add(this);
 }
 
 

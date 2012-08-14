@@ -20,11 +20,14 @@
 #define STORAGEHOOK_H_
 
 #include <QStringList>
+#include <QVariant>
+
+#include "schat.h"
 
 /*!
  * Базовый класс для хуков хранилища данных сервера.
  */
-class StorageHook
+class SCHAT_EXPORT StorageHook
 {
 public:
   StorageHook();

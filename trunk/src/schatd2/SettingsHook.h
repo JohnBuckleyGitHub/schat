@@ -16,29 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "cores/DiscoveryAuth.h"
-#include "net/packets/auth.h"
-#include "sglobal.h"
-#include "Storage.h"
+#ifndef SETTINGSHOOK_H_
+#define SETTINGSHOOK_H_
 
-DiscoveryAuth::DiscoveryAuth(Core *core)
-  : AnonymousAuth(core)
+#include "StorageHook.h"
+
+class SettingsHook : public StorageHook
 {
-  m_anonymous = Storage::value(LS("AnonymousAuth")).toBool();
-  m_authServer = Storage::value(LS("AuthServer")).toString();
-}
+public:
+  SettingsHook();
+  QStringList keys() const;
+  QVariant value(const QString &key, const QVariant &defaultValue = QVariant()) const;
+};
 
-
-AuthResult DiscoveryAuth::auth(const AuthRequest &data)
-{
-  if (m_anonymous && m_authServer.isEmpty())
-    return AnonymousAuth::auth(data);
-
-  return AuthResult(Notice::Found, data.id);
-}
-
-
-int DiscoveryAuth::type() const
-{
-  return AuthRequest::Discovery;
-}
+#endif /* SETTINGSHOOK_H_ */

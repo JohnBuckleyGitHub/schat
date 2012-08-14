@@ -16,29 +16,29 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "cores/DiscoveryAuth.h"
-#include "net/packets/auth.h"
+#include "Settings.h"
+#include "SettingsHook.h"
 #include "sglobal.h"
 #include "Storage.h"
 
-DiscoveryAuth::DiscoveryAuth(Core *core)
-  : AnonymousAuth(core)
+SettingsHook::SettingsHook()
+  : StorageHook()
 {
-  m_anonymous = Storage::value(LS("AnonymousAuth")).toBool();
-  m_authServer = Storage::value(LS("AuthServer")).toString();
 }
 
 
-AuthResult DiscoveryAuth::auth(const AuthRequest &data)
+QStringList SettingsHook::keys() const
 {
-  if (m_anonymous && m_authServer.isEmpty())
-    return AnonymousAuth::auth(data);
+  QStringList keys;
+  keys.append(LS("AnonymousAuth"));
+  keys.append(LS("AuthServer"));
+  keys.append(LS("NickOverride"));
 
-  return AuthResult(Notice::Found, data.id);
+  return keys;
 }
 
 
-int DiscoveryAuth::type() const
+QVariant SettingsHook::value(const QString &key, const QVariant &defaultValue) const
 {
-  return AuthRequest::Discovery;
+  return Storage::settings()->value(key, defaultValue);
 }
