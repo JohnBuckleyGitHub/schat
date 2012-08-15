@@ -49,6 +49,9 @@ HistoryDB::HistoryDB(QObject *parent)
  */
 bool HistoryDB::open(const QByteArray &id, const QString &dir)
 {
+  if (SimpleID::typeOf(id) != SimpleID::ServerId || dir.isEmpty())
+    return false;
+
   QString newId = SimpleID::encode(id) + LS("-history");
 
   if (!m_id.isEmpty() && m_id == newId)

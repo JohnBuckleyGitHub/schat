@@ -136,6 +136,9 @@ CacheDB::CacheDB(QObject *parent)
  */
 bool CacheDB::open(const QByteArray &id, const QString &dir)
 {
+  if (SimpleID::typeOf(id) != SimpleID::ServerId || dir.isEmpty())
+    return false;
+
   QString newId = SimpleID::encode(id) + LS("-cache");
 
   if (!m_id.isEmpty() && m_id == newId)
