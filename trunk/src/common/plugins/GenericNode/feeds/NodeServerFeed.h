@@ -32,9 +32,13 @@ public:
   QVariantMap feed(Channel *channel = 0);
 
 private:
+  QVariantMap auth() const;
+  QVariantMap users() const;
   void init();
 
-  qint64 m_startupTime;
+  qint64 m_date;        ///< Дата последнего обновления фида, используется для кеширования.
+  qint64 m_startupTime; ///< Время запуска сервера.
+  QVariantMap m_body;   ///< Кешированное тело фила.
 };
 
 #endif /* NODESERVERFEED_H_ */
