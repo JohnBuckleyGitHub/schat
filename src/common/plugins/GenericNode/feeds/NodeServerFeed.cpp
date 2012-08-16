@@ -63,11 +63,7 @@ Feed* NodeServerFeed::load(const QString &name, const QVariantMap &data)
 QVariantMap NodeServerFeed::feed(Channel *channel)
 {
   Channel *server = head().channel();
-  if (server->type() != SimpleID::ServerId)
-    return QVariantMap();
-
-  QVariantMap header = head().get(channel);
-  if (header.isEmpty())
+  if (server->type() != SimpleID::ServerId || !head().acl().can(channel, Acl::Read))
     return QVariantMap();
 
   if (head().date() != m_date) {
@@ -81,8 +77,6 @@ QVariantMap NodeServerFeed::feed(Channel *channel)
     m_body[LS("users")]   = users();
     m_body[LS("auth")]    = auth();
   }
-
-  m_body[LS("head")]      = header;
 
   return m_body;
 }

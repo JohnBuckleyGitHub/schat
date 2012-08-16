@@ -156,21 +156,49 @@ int NodeFeeds::clear()
 
 
 /*!
- * Получение тела фида.
+ * Получение тела фида или обработка GET запроса к данным фида.
  */
 int NodeFeeds::get()
 {
-  int status = check(Acl::Read);
-  if (status != Notice::OK)
-    return status;
+  const QString &text = m_packet->text();
+  if (text.isEmpty())
+    return Notice::BadRequest;
 
-  FeedPtr feed = m_channel->feed(m_packet->text(), false);
+  QPair<QString, QString> request = split(text);
+  FeedPtr feed = m_channel->feed(request.first, false);
+  if (!feed)
+    return Notice::NotFound;
+
+  if (!feed->head().acl().can(m_user.data(), Acl::Read))
+    return Notice::Forbidden;
+
+  if (!request.second.isEmpty())
+    return get(feed, request.second);
+
   QVariantMap json = feed->feed(m_user.data());
   if (json.isEmpty())
     return Notice::Forbidden;
 
-  m_core->send(FeedNotice::feed(*m_packet, json));
+  FeedPacket packet(new FeedNotice(m_packet->dest(), m_packet->sender(), LS("feed")));
+  packet->setDirection(FeedNotice::Server2Client);
+  packet->setText(request.first);
+  packet->setData(Feed::merge(request.first, json));
+  packet->setDate(feed->head().date());
+
+  m_core->send(packet);
   return Notice::OK;
+}
+
+
+/*!
+ * Обработка GET запроса к данным фида.
+ */
+int NodeFeeds::get(FeedPtr feed, const QString &request)
+{
+  Q_UNUSED(feed)
+  Q_UNUSED(request)
+
+  return Notice::NotImplemented;
 }
 
 
@@ -324,7 +352,7 @@ int NodeFeeds::update()
  */
 int NodeFeeds::check(int acl)
 {
-  QString name = m_packet->text();
+  const QString &name = m_packet->text();
   if (name.isEmpty())
     return Notice::BadRequest;
 
@@ -336,6 +364,27 @@ int NodeFeeds::check(int acl)
     return Notice::Forbidden;
 
   return Notice::OK;
+}
+
+
+/*!
+ * Разделение строки на имя фида и запрос.
+ *
+ * Например, строка "server/uptime" будет разбита на "server" и "uptime".
+ * Запрос может быть пустым, если нужно получить тело фида.
+ */
+QPair<QString, QString> NodeFeeds::split(const QString &text) const
+{
+  QPair<QString, QString> pair;
+  int index = text.indexOf(LC('/'));
+  if (index != -1) {
+    pair.first  = text.mid(0, index);
+    pair.second = text.mid(index + 1);
+  }
+  else
+    pair.first = text;
+
+  return pair;
 }
 
 

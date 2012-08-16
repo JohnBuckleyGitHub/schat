@@ -36,6 +36,7 @@ private:
   int add();
   int clear();
   int get();
+  int get(FeedPtr feed, const QString &request);
   int headers();
   int query();
   int remove();
@@ -43,8 +44,10 @@ private:
   int update();
 
   int check(int acl);
+  QPair<QString, QString> split(const QString &text) const;
   void broadcast(FeedPtr feed, bool echo = true);
   void reply(int status);
+
 
   FeedNotice *m_packet;
   ChatChannel m_channel;
