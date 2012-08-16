@@ -33,7 +33,6 @@ public:
   FeedNotice(const QByteArray &sender, const QByteArray &dest, const QString &command, const QByteArray &id = QByteArray());
   FeedNotice(quint16 type, PacketReader *reader);
 
-  static FeedPacket feed(const FeedNotice &source, const QVariantMap &json);
   static FeedPacket headers(const QByteArray &user, const QByteArray &channel);
   static FeedPacket reply(const FeedNotice &source, const FeedQueryReply &reply);
   static FeedPacket reply(const FeedNotice &source, const QVariantMap &json);
