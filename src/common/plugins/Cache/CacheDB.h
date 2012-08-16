@@ -39,7 +39,6 @@ public:
   inline static QString id() { return m_id; }
   static bool open(const QByteArray &id, const QString &dir);
   static ClientChannel channel(const QByteArray &id, bool feeds = true);
-  static ClientChannel channel(qint64 id, bool feeds = true);
   static qint64 key(Channel *channel);
   static qint64 key(const QByteArray &id, int type);
   static void add(ClientChannel channel);
@@ -51,6 +50,7 @@ private slots:
   void start();
 
 private:
+  static ClientChannel channel(qint64 id, bool feeds = true);
   static void create();
   static void version();
 

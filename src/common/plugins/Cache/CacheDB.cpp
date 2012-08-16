@@ -51,44 +51,25 @@ public:
     if (m_key <= 0)
       m_key = CacheDB::key(m_id, m_type);
 
-    if (m_key > 0)
-      update();
-    else
-      add();
-  }
-
-private:
-  /*!
-   * Добавление канала в базу данных.
-   */
-  void add()
-  {
     QSqlQuery query(QSqlDatabase::database(CacheDB::id()));
-    query.prepare(LS("INSERT INTO channels (channel, type, gender, name, data) "
-                       "VALUES (:channel, :type, :gender, :name, :data);"));
 
-    query.bindValue(LS(":channel"), m_id);
-    query.bindValue(LS(":type"),    m_type);
-    query.bindValue(LS(":gender"),  m_gender);
-    query.bindValue(LS(":name"),    m_name);
-    query.bindValue(LS(":data"),    JSON::generate(m_data));
-    query.exec();
-  }
+    if (m_key > 0) {
+      query.prepare(LS("UPDATE channels SET gender = :gender, name = :name, data = :data WHERE id = :id;"));
+      query.bindValue(LS(":id"), m_key);
+    }
+    else {
+      query.prepare(LS("INSERT INTO channels (channel, type, gender, name, data) VALUES (:channel, :type, :gender, :name, :data);"));
+      query.bindValue(LS(":channel"), m_id);
+      query.bindValue(LS(":type"),    m_type);
+    }
 
-  /*!
-   * Обновление информации о канале.
-   */
-  void update()
-  {
-    QSqlQuery query(QSqlDatabase::database(CacheDB::id()));
-    query.prepare(LS("UPDATE channels SET gender = :gender, name = :name, data = :data WHERE id = :id;"));
     query.bindValue(LS(":gender"), m_gender);
     query.bindValue(LS(":name"),   m_name);
     query.bindValue(LS(":data"),   JSON::generate(m_data));
-    query.bindValue(LS(":id"),     m_key);
     query.exec();
   }
 
+private:
   int m_gender;       ///< Пол.
   int m_type;         ///< Тип канала.
   QByteArray m_id;    ///< Идентификатор канала.
@@ -164,31 +145,6 @@ ClientChannel CacheDB::channel(const QByteArray &id, bool feeds)
     return ClientChannel();
 
   return channel(key, feeds);
-}
-
-
-ClientChannel CacheDB::channel(qint64 id, bool feeds)
-{
-  QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(LS("SELECT channel, gender, name, data FROM channels WHERE id = :id LIMIT 1;"));
-  query.bindValue(LS(":id"), id);
-  query.exec();
-
-  if (!query.first())
-    return ClientChannel();
-
-  ClientChannel channel(new Channel(query.value(0).toByteArray(), query.value(2).toString()));
-  channel->setKey(id);
-  channel->gender().setRaw(query.value(1).toLongLong());
-  channel->setData(JSON::parse(query.value(3).toByteArray()).toMap());
-
-  if (channel->type() == SimpleID::UserId)
-    channel->setAccount();
-
-  if (feeds)
-    FeedStorage::load(channel.data());
-
-  return channel;
 }
 
 
@@ -288,6 +244,31 @@ void CacheDB::start()
 {
   while (!m_tasks.isEmpty())
     m_pool->start(m_tasks.takeFirst());
+}
+
+
+ClientChannel CacheDB::channel(qint64 id, bool feeds)
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.prepare(LS("SELECT channel, gender, name, data FROM channels WHERE id = :id LIMIT 1;"));
+  query.bindValue(LS(":id"), id);
+  query.exec();
+
+  if (!query.first())
+    return ClientChannel();
+
+  ClientChannel channel(new Channel(query.value(0).toByteArray(), query.value(2).toString()));
+  channel->setKey(id);
+  channel->gender().setRaw(query.value(1).toLongLong());
+  channel->setData(JSON::parse(query.value(3).toByteArray()).toMap());
+
+  if (channel->type() == SimpleID::UserId)
+    channel->setAccount();
+
+  if (feeds)
+    FeedStorage::load(channel.data());
+
+  return channel;
 }
 
 

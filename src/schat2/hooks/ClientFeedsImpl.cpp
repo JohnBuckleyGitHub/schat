@@ -98,6 +98,9 @@ void ClientFeedsImpl::feed()
     return;
 
   FeedHeader &head = feed->head();
+  if (!head.date())
+    head.setDate(m_packet->date());
+
   if (head.rev() != rev)
     key = 0;
 
