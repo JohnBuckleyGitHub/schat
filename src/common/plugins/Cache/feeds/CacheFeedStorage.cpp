@@ -39,16 +39,7 @@ CacheFeedStorage::CacheFeedStorage(QObject *parent)
  */
 int CacheFeedStorage::saveImpl(FeedPtr feed, qint64 /*date*/)
 {
-  FeedHeader &head = feed->head();
-  QVariantMap feeds = head.channel()->data().value(LS("feeds")).toMap();
-  qint64 id = save(feed, feed->save());
-  if (id == -1)
-    return Notice::InternalError;
-
-  feeds[head.name()] = id;
-  head.channel()->data()[LS("feeds")] = feeds;
-  CacheDB::setData(head.channel());
-
+  CacheDB::add(feed);
   return Notice::OK;
 }
 
@@ -65,49 +56,6 @@ void CacheFeedStorage::loadImpl(Channel *channel)
     i.next();
     load(channel, i.key(), i.value().toLongLong());
   }
-}
-
-
-/*!
- * Запись в базу тела фида.
- */
-qint64 CacheFeedStorage::save(FeedPtr feed, const QVariantMap &data)
-{
-  FeedHeader &head = feed->head();
-  if (head.key() > 0)
-    return update(feed, data);
-
-  QSqlQuery query(QSqlDatabase::database(CacheDB::id()));
-  query.prepare(LS("INSERT INTO feeds (channel, rev, date, name, json) VALUES (:channel, :rev, :date, :name, :json);"));
-
-  query.bindValue(LS(":channel"), CacheDB::key(head.channel()));
-  query.bindValue(LS(":rev"),     head.rev());
-  query.bindValue(LS(":date"),    head.date());
-  query.bindValue(LS(":name"),    head.name());
-  query.bindValue(LS(":json"),    JSON::generate(data));
-  query.exec();
-
-  if (query.numRowsAffected() <= 0)
-    return -1;
-
-  qint64 key = query.lastInsertId().toLongLong();
-  head.setKey(key);
-  return key;
-}
-
-
-qint64 CacheFeedStorage::update(FeedPtr feed, const QVariantMap &data)
-{
-  const FeedHeader &head = feed->head();
-  QSqlQuery query(QSqlDatabase::database(CacheDB::id()));
-  query.prepare(LS("UPDATE feeds SET rev = :rev, date = :date, json = :json WHERE id = :id;"));
-  query.bindValue(LS(":rev"),  head.rev());
-  query.bindValue(LS(":date"), head.date());
-  query.bindValue(LS(":json"), JSON::generate(data));
-  query.bindValue(LS(":id"),   head.key());
-  query.exec();
-
-  return head.key();
 }
 
 

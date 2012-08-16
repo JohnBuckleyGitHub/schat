@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QThreadPool>
@@ -35,9 +37,17 @@ CacheDB *CacheDB::m_self = 0;
  */
 class AddChannelTask : public QRunnable
 {
+  int m_gender;       ///< Пол.
+  int m_type;         ///< Тип канала.
+  QByteArray m_id;    ///< Идентификатор канала.
+  qint64 m_key;       ///< Ключ в таблице.
+  QString m_name;     ///< Имя канала.
+  QVariantMap m_data; ///< JSON данные.
+
 public:
   AddChannelTask(ClientChannel channel)
-  : m_gender(channel->gender().raw())
+  : QRunnable()
+  , m_gender(channel->gender().raw())
   , m_type(channel->type())
   , m_id(channel->id())
   , m_key(channel->key())
@@ -49,7 +59,7 @@ public:
   void run()
   {
     if (m_key <= 0)
-      m_key = CacheDB::key(m_id, m_type);
+      m_key = CacheDB::key(m_id);
 
     QSqlQuery query(QSqlDatabase::database(CacheDB::id()));
 
@@ -68,22 +78,18 @@ public:
     query.bindValue(LS(":data"),   JSON::generate(m_data));
     query.exec();
   }
-
-private:
-  int m_gender;       ///< Пол.
-  int m_type;         ///< Тип канала.
-  QByteArray m_id;    ///< Идентификатор канала.
-  qint64 m_key;       ///< Ключ в таблице.
-  QString m_name;     ///< Имя канала.
-  QVariantMap m_data; ///< JSON данные.
 };
 
 
 class ChannelDataTask : public QRunnable
 {
+  qint64 m_key;       ///< Ключ в таблице.
+  QVariantMap m_data; ///< JSON данные.
+
 public:
   ChannelDataTask(Channel *channel)
-  : m_key(channel->key())
+  : QRunnable()
+  , m_key(channel->key())
   , m_data(channel->data())
   {
   }
@@ -96,10 +102,58 @@ public:
     query.bindValue(LS(":id"),   m_key);
     query.exec();
   }
+};
 
-private:
-  qint64 m_key;       ///< Ключ в таблице.
-  QVariantMap m_data; ///< JSON данные.
+
+class AddFeedTask : public QRunnable
+{
+  QByteArray m_id;    ///< Идентификатор канала.
+  qint64 m_date;      ///< Дата модификации фида.
+  QString m_name;     ///< Имя фида.
+  QVariantMap m_body; ///< Тело фида.
+
+public:
+  AddFeedTask(FeedPtr feed)
+  : QRunnable()
+  , m_id(feed->head().channel()->id())
+  , m_date(feed->head().date())
+  , m_name(feed->head().name())
+  , m_body(feed->save())
+  {
+  }
+
+
+  void run()
+  {
+    qint64 channel = CacheDB::key(m_id);
+    if (channel <= 0)
+      return;
+
+    QSqlQuery query(QSqlDatabase::database(CacheDB::id()));
+    query.prepare(LS("SELECT id FROM feeds WHERE channel = :channel AND name = :name LIMIT 1;"));
+    query.bindValue(LS(":channel"), channel);
+    query.bindValue(LS(":name"), m_name);
+    query.exec();
+
+
+    qint64 key = -1;
+    if (query.first())
+      key = query.value(0).toLongLong();
+
+    if (key == -1) {
+      query.prepare(LS("INSERT INTO feeds (channel, date, name, json) VALUES (:channel, :date, :name, :json);"));
+      query.bindValue(LS(":channel"), channel);
+      query.bindValue(LS(":name"),    m_name);
+    }
+    else {
+      query.prepare(LS("UPDATE feeds SET date = :date, json = :json WHERE id = :id;"));
+      query.bindValue(LS(":id"), key);
+    }
+
+    query.bindValue(LS(":date"), m_date);
+    query.bindValue(LS(":json"), JSON::generate(m_body));
+    query.exec();
+  }
 };
 
 
@@ -140,7 +194,7 @@ bool CacheDB::open(const QByteArray &id, const QString &dir)
 
 ClientChannel CacheDB::channel(const QByteArray &id, bool feeds)
 {
-  qint64 key = CacheDB::key(id, SimpleID::typeOf(id));
+  qint64 key = CacheDB::key(id);
   if (key == -1)
     return ClientChannel();
 
@@ -149,47 +203,30 @@ ClientChannel CacheDB::channel(const QByteArray &id, bool feeds)
 
 
 /*!
- * Возвращает ключ в таблице \b channels.
- * Функция поддерживает кэширование ключа в канале.
+ * Получение первичного ключа в таблице channels для канала с идентификатором \p id.
  *
- * \param channel Канал.
- *
- * \return Ключ в таблице или -1 в случае ошибки.
+ * \return первичный ключ или -1 в случае если канал не найден в кеше.
  */
-qint64 CacheDB::key(Channel *channel)
+qint64 CacheDB::key(const QByteArray &id)
 {
-  if (channel->key() > 0)
-    return channel->key();
+  m_self->m_mutex.lock();
+  qint64 key = m_self->m_cache.value(id);
+  m_self->m_mutex.unlock();
 
-  qint64 key = CacheDB::key(channel->id(), channel->type());
-  if (key <= 0)
-    return -1;
+  if (key)
+    return key;
 
-  channel->setKey(key);
-  return key;
-}
-
-
-/*!
- * Возвращает ключ в таблице \b channels на основе идентификатора канала и типа канала.
- *
- * \param id   Идентификатор канала.
- * \param type Тип канала.
- *
- * \return Ключ в таблице или -1 в случае ошибки.
- */
-qint64 CacheDB::key(const QByteArray &id, int type)
-{
   QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(LS("SELECT id FROM channels WHERE channel = :id AND type = :type LIMIT 1;"));
-  query.bindValue(LS(":id"),   id);
-  query.bindValue(LS(":type"), type);
+  query.prepare(LS("SELECT id FROM channels WHERE channel = :channel LIMIT 1;"));
+  query.bindValue(LS(":channel"), id);
   query.exec();
 
   if (!query.first())
     return -1;
 
-  return query.value(0).toLongLong();
+  key = query.value(0).toLongLong();
+  setKey(id, key);
+  return key;
 }
 
 
@@ -201,6 +238,15 @@ qint64 CacheDB::key(const QByteArray &id, int type)
 void CacheDB::add(ClientChannel channel)
 {
   AddChannelTask *task = new AddChannelTask(channel);
+  m_self->m_tasks.append(task);
+  if (m_self->m_tasks.size() == 1)
+    QTimer::singleShot(0, m_self, SLOT(start()));
+}
+
+
+void CacheDB::add(FeedPtr feed)
+{
+  AddFeedTask *task = new AddFeedTask(feed);
   m_self->m_tasks.append(task);
   if (m_self->m_tasks.size() == 1)
     QTimer::singleShot(0, m_self, SLOT(start()));
@@ -240,6 +286,16 @@ void CacheDB::setData(Channel *channel)
 }
 
 
+void CacheDB::setKey(const QByteArray &id, qint64 key)
+{
+  if (key <= 0)
+    return;
+
+  QMutexLocker locker(&m_self->m_mutex);
+  m_self->m_cache[id] = key;
+}
+
+
 void CacheDB::start()
 {
   while (!m_tasks.isEmpty())
@@ -258,7 +314,7 @@ ClientChannel CacheDB::channel(qint64 id, bool feeds)
     return ClientChannel();
 
   ClientChannel channel(new Channel(query.value(0).toByteArray(), query.value(2).toString()));
-  channel->setKey(id);
+  setKey(channel->id(), id);
   channel->gender().setRaw(query.value(1).toLongLong());
   channel->setData(JSON::parse(query.value(3).toByteArray()).toMap());
 
