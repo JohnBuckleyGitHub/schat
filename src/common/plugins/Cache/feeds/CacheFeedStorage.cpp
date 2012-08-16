@@ -49,39 +49,20 @@ int CacheFeedStorage::saveImpl(FeedPtr feed, qint64 /*date*/)
  */
 void CacheFeedStorage::loadImpl(Channel *channel)
 {
-  QVariantMap feeds = channel->data()[LS("feeds")].toMap();
-
-  QMapIterator<QString, QVariant> i(feeds);
-  while (i.hasNext()) {
-    i.next();
-    load(channel, i.key(), i.value().toLongLong());
-  }
-}
-
-
-/*!
- * Загрузка фида из базы данных.
- *
- * \param channel Канал.
- * \param name    Имя фида.
- * \param id      Ключ в таблице фидов.
- */
-void CacheFeedStorage::load(Channel *channel, const QString &name, qint64 id)
-{
-  if (id <= 0)
+  qint64 key = CacheDB::key(channel->id());
+  if (key <= 0)
     return;
 
   QSqlQuery query(QSqlDatabase::database(CacheDB::id()));
-  query.prepare(LS("SELECT json FROM feeds WHERE id = :id LIMIT 1;"));
-  query.bindValue(LS(":id"), id);
+  query.prepare(LS("SELECT name, json FROM feeds WHERE channel = :channel;"));
+  query.bindValue(LS(":channel"), key);
   query.exec();
 
-  if (!query.first())
-    return;
+  while (query.next()) {
+    QString name = query.value(0).toString();
+    Feed *feed = FeedStorage::load(name, JSON::parse(query.value(1).toByteArray()).toMap());
+    channel->feeds().add(feed, false);
 
-  Feed *feed = FeedStorage::load(name, JSON::parse(query.value(0).toByteArray()).toMap());
-  feed->head().setKey(id);
-  channel->feeds().add(feed, false);
-
-  ChatNotify::start(new FeedNotify(Notify::FeedData, channel->id(), name));
+    ChatNotify::start(new FeedNotify(Notify::FeedData, channel->id(), name));
+  }
 }
