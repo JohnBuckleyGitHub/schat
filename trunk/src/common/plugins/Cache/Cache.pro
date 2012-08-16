@@ -24,14 +24,12 @@ HEADERS  = \
    CacheDB.h \
    CachePlugin.h \
    CachePlugin_p.h \
-   feeds/CacheFeeds.h \
    feeds/CacheFeedStorage.h \
 
 SOURCES  = \
    CacheChannels.cpp \
    CacheDB.cpp \
    CachePlugin.cpp \
-   feeds/CacheFeeds.cpp \
    feeds/CacheFeedStorage.cpp \
 
 RESOURCES += Cache.qrc

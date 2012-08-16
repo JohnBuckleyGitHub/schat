@@ -28,7 +28,6 @@
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
-#include "feeds/CacheFeeds.h"
 #include "feeds/CacheFeedStorage.h"
 #include "JSON.h"
 #include "net/dns/ChatDNS.h"
@@ -42,7 +41,6 @@ Cache::Cache(QObject *parent)
 {
   new CacheDB(this);
   new Hooks::CacheChannels(this);
-  new Hooks::CacheFeeds(this);
   new CacheFeedStorage(this);
   open();
 
