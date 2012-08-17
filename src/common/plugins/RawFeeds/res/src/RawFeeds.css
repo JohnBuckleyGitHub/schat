@@ -2,6 +2,21 @@
   margin: 0 0 5px 0;
   color: #000;
 }
+.raw-feeds-title-icon {
+  background: url("qrc:/images/RawFeeds/feeds.png") no-repeat left center;
+  background-position: -12px center;
+  padding-left: 16px;
+}
+
+.feed-info {
+  padding-left: 16px;
+}
+
+.feed-info .date-time-block {
+  color: inherit;
+  font-size: inherit;
+}
+
 .feed-name {
   font-weight: bold;
 }

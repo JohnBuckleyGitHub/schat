@@ -17,6 +17,9 @@
  */
 
 RawFeeds = {
+  /*
+   * Формирование HTML кода со ссылками на фиды.
+   */
   headers: function(json) {
     var html = '<div class="feeds-headers">';
     for (var key in json) if (json.hasOwnProperty(key)) {
@@ -26,12 +29,28 @@ RawFeeds = {
     html += '</div>';
     return html;
   },
-  
+
+  /*
+   * Формирование HTML кода для отображения информации об одиночном фиде.
+   */
   feed: function(name, data) {
     return '<div class="feed-header">' + RawFeeds.icon(data.cached) + DateTime.template(data.date, true) + ' <a href="#" class="feed-name">' + name + '</a></div>';
   },
 
+  /*
+   * Базовая информация о фиде.
+   */
+  feedInfo: function(json) {
+    return '<div class="feed-info">Last modified: <b>' + DateTime.template(json.date, true) + '</b><br>Size: <b>' + json.size + '</b></div>';
+  },
+
+  /*
+   * Функциональность кнопки для показа сырого содержимого фида.
+   */
   raw: function(json) {
+    if (!json.Text.length)
+      return;
+
     var id = json.Id;
     $('#' + id + ' .raw-feeds-title').append(' <a class="btn btn-toggle" id=""><i class="icon-plus-small"></i></a>');
     $.JSONView(json.Text, $('#' + id + " .jsonoutput"));
@@ -51,6 +70,9 @@ RawFeeds = {
     });
   },
 
+  /*
+   * Иконка фида в зависимости от того кэширован он или нет.
+   */
   icon: function(cached) {
     return '<i class="icon-feed' + (cached ? '-cached' : '') + '"></i> ';
   }
@@ -74,9 +96,11 @@ Messages.addRawFeedsMessage = function(json)
 
   html += '</div>';
 
-  if (json.Command == 'headers') {
+  var command = json.Command;
+  if (command == 'headers')
     html += RawFeeds.headers(json.Data);
-  }
+  else if (command == 'feed')
+    html += RawFeeds.feedInfo(json.Data);
 
   html += '<div class="jsonoutput" style="display:none;"></div>';
 
@@ -86,6 +110,11 @@ Messages.addRawFeedsMessage = function(json)
 
   Messages.addRawMessage(html);
   RawFeeds.raw(json);
+
+  if (command == 'feed') {
+    $('#' + json.Id + ' .raw-feeds-title').addClass('raw-feeds-title-icon');
+  }
+
   alignChat();
 };
 

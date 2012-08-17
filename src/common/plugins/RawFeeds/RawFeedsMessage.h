@@ -30,6 +30,7 @@ public:
   RawFeedsMessage(const QByteArray &tab, const QString &command, const QVariantMap &data);
 
 private:
+  void feed(const QString &name, int size);
   void headers(const QVariantMap &data);
 };
 
