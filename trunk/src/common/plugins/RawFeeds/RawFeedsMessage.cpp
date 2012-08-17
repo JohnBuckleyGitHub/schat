@@ -95,5 +95,5 @@ void RawFeedsMessage::headers(const QVariantMap &data)
     feeds[i.key()] = feed;
   }
 
-  m_data[LS("Feeds")] = feeds;
+  m_data[LS("Data")] = feeds;
 }

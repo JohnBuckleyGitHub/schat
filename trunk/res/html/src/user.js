@@ -138,7 +138,6 @@ var Profile = {
     Settings.status = status;
     $('#user-status-text').attr('data-tr', 'status_' + status);
     $('#user-status-text').text(Utils.tr('status_' + status));
-    console.log(id + ' ' + status);
   },
 
 
