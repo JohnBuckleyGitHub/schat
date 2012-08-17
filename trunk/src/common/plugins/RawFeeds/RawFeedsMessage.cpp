@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include "ChatCore.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
@@ -50,6 +48,13 @@ RawFeedsMessage::RawFeedsMessage(const FeedNotice &packet)
     title = "Feeds";
     headers(packet.json().value(LS("feeds")).toMap());
   }
+  else if (title == LS("feed")) {
+    title = packet.text();
+    feed(title, packet.raw().size());
+  }
+  else if (title == LS("get")) {
+    title = LS("get ") + packet.text();
+  }
 
   m_data[LS("Title")] = title;
 }
@@ -72,6 +77,29 @@ RawFeedsMessage::RawFeedsMessage(const QByteArray &tab, const QString &command, 
   status[LS("Desc")] = LS("OK");
 
   m_data[LS("Status")] = status;
+}
+
+
+/*!
+ * Формирование данных для отображения информации о фиде.
+ *
+ * \param name Имя фида.
+ * \param size Размер фида.
+ */
+void RawFeedsMessage::feed(const QString &name, int size)
+{
+  ClientChannel channel = ChatClient::channels()->get(m_tab);
+  if (!channel)
+    return;
+
+  FeedPtr feed = channel->feed(name, false);
+  if (!feed)
+    return;
+
+  QVariantMap out;
+  out[LS("date")]    = feed->head().date();
+  out[LS("size")]    = size;
+  m_data[LS("Data")] = out;
 }
 
 
