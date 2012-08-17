@@ -505,6 +505,13 @@ $(document).ready(function() {
       Modal.shown[Modal.current]();
   });
 
+
+  $('body').on('click', '[data-dismiss="alert"]', function(event) {
+    event.preventDefault();
+    $(this).parent().remove();
+    alignChat();
+  });
+
   Loader.load(jsfiles);
 });
 

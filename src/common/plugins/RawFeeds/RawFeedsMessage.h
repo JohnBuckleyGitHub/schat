@@ -28,6 +28,9 @@ class RawFeedsMessage : public Message
 public:
   RawFeedsMessage(const FeedNotice &packet);
   RawFeedsMessage(const QByteArray &tab, const QString &command, const QVariantMap &data);
+
+private:
+  void headers(const QVariantMap &data);
 };
 
 #endif /* RAWFEEDSMESSAGE_H_ */

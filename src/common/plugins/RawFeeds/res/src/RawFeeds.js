@@ -16,6 +16,43 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+RawFeeds = {
+  headers: function(json) {
+    var html = '<div class="feeds-headers">';
+    for (var key in json) if (json.hasOwnProperty(key)) {
+      html += RawFeeds.feed(key, json[key]);
+    }
+
+    html += '</div>';
+    return html;
+  },
+  
+  feed: function(name, data) {
+    return '<div class="feed-header">' + DateTime.template(data.date, true) + ' <a href="#" class="feed-name">' + name + '</a></div>';
+  },
+
+  raw: function(json) {
+    var id = json.Id;
+    $('#' + id + ' .raw-feeds-title').append(' <a class="btn btn-toggle" id=""><i class="icon-plus-small"></i></a>');
+    $.JSONView(json.Text, $('#' + id + " .jsonoutput"));
+
+    $('#' + id + ' .btn-toggle').on('click', function(event) {
+      var c = $(this).children();
+      if (c.attr('class') == 'icon-plus-small') {
+        $('#' + id + ' .jsonoutput').show();
+        c.attr('class', 'icon-minus-small');
+      }
+      else {
+        $('#' + id + ' .jsonoutput').hide();
+        c.attr('class', 'icon-plus-small');
+      }
+
+      alignChat();
+    });
+  }
+};
+
+
 Messages.addRawFeedsMessage = function(json)
 {
   var html = '<div class="container ' + json.Type + '-type" id="' + json.Id + '">';
@@ -23,25 +60,35 @@ Messages.addRawFeedsMessage = function(json)
   if (json.Extra !== undefined)
     html += json.Extra;
 
-  html += '">';
+  html += '"><div class="alert ' + (json.Status.Code == 200 ? 'alert-info' : 'alert-error') +'">' +
+          '<a class="close" data-dismiss="alert" href="#">×</a>';
 
   html += '<div class="raw-feeds-header">';
-  html += DateTime.template(json.Date, false);
-  html += '<b class="raw-feeds-command">' + json.Command + '</b>';
+  html += '<h3 class="raw-feeds-title">' + json.Title + '</h3>';
   if (json.Status.Code != 200)
     html += ' <span class="raw-feeds-bad-status">' + json.Status.Code + ' ' + json.Status.Desc + '</span>';
 
   html += '</div>';
 
-  html += '<div class="jsonoutput"></div>';
+  if (json.Command == 'headers') {
+    html += RawFeeds.headers(json.Feeds);
+  }
 
+  html += '<div class="jsonoutput" style="display:none;"></div>';
+
+  html += '</div>';
   html += '</div>';
   html += '</div>';
 
   Messages.addRawMessage(html);
-
-  if (json.Text.length)
-    $.JSONView(json.Text, $('#' + json.Id + " .jsonoutput"));
-
+  RawFeeds.raw(json);
   alignChat();
 };
+
+
+$(document).ready(function() {
+  $('body').on('click', '.feed-name', function(event) {
+    event.preventDefault();
+    SimpleChat.feed(Settings.id, $(this).text(), false);
+  });
+});
