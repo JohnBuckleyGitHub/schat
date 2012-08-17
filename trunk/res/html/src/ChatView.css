@@ -626,3 +626,42 @@ a:active, a:hover {
   min-height: 16px;
   vertical-align: middle;
 }
+
+.alert {
+  padding: 8px 35px 8px 14px;
+  margin: 4px 0px 4px 2px;
+  background-color: #fcf8e3;
+  border: 1px solid #fbeed5;
+  -webkit-border-radius: 4px;
+  color: #c09853;
+}
+.alert .close {
+  position: relative;
+  top: -2px;
+  right: -26px;
+  line-height: 15px;
+}
+.alert-success {
+  background-color: #dff0d8;
+  border-color: #d6e9c6;
+  color: #468847;
+}
+.alert-error {
+  background-color: #f2dede;
+  border-color: #eed3d7;
+  color: #b94a48;
+}
+.alert-info {
+  background-color: #d9edf7;
+  border-color: #bce8f1;
+  color: #3a87ad;
+}
+
+.btn-toggle {
+  padding: 3px;
+  width: 7px;
+  height: 7px;
+  line-height: 0;
+  vertical-align: bottom;
+  margin-left: 2px;
+}

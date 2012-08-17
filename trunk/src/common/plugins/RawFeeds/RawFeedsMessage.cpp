@@ -16,8 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include "ChatCore.h"
 #include "client/ChatClient.h"
+#include "client/ClientChannels.h"
 #include "JSON.h"
 #include "net/packets/FeedNotice.h"
 #include "net/SimpleID.h"
@@ -41,6 +44,14 @@ RawFeedsMessage::RawFeedsMessage(const FeedNotice &packet)
   status[LS("Desc")] = FeedNotice::status(packet.status());
 
   m_data[LS("Status")] = status;
+
+  QString title = packet.command();
+  if (title == LS("headers")) {
+    title = "Feeds";
+    headers(packet.json().value(LS("feeds")).toMap());
+  }
+
+  m_data[LS("Title")] = title;
 }
 
 
@@ -61,4 +72,28 @@ RawFeedsMessage::RawFeedsMessage(const QByteArray &tab, const QString &command, 
   status[LS("Desc")] = LS("OK");
 
   m_data[LS("Status")] = status;
+}
+
+
+/*!
+ * Формирование данных для отображения списка фидов.
+ */
+void RawFeedsMessage::headers(const QVariantMap &data)
+{
+  ClientChannel channel = ChatClient::channels()->get(m_tab);
+  if (!channel)
+    return;
+
+  QVariantMap feeds;
+
+  QMapIterator<QString, QVariant> i(data);
+  while (i.hasNext()) {
+    i.next();
+    QVariantMap feed;
+    feed[LS("date")]   = i.value().toMap().value(LS("date"));
+    feed[LS("cached")] = static_cast<bool>(channel->feed(i.key(), false));
+    feeds[i.key()] = feed;
+  }
+
+  m_data[LS("Feeds")] = feeds;
 }
