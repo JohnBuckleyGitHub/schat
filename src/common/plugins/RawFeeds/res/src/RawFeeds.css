@@ -5,11 +5,21 @@
 .feed-name {
   font-weight: bold;
 }
-
 .raw-feeds-bad-status
 {
   color:#da251d;
 }
+
+.icon-feed, .icon-feed-cached {
+  width: 12px;
+  height: 12px;
+  background-image: url("qrc:/images/RawFeeds/feeds.png");
+}
+
+.icon-feed-cached {
+  background-position: -12px 0;
+}
+
 .KelpJSONView
 {
   width:100%;

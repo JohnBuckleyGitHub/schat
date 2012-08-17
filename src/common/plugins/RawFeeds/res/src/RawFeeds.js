@@ -28,7 +28,7 @@ RawFeeds = {
   },
   
   feed: function(name, data) {
-    return '<div class="feed-header">' + DateTime.template(data.date, true) + ' <a href="#" class="feed-name">' + name + '</a></div>';
+    return '<div class="feed-header">' + RawFeeds.icon(data.cached) + DateTime.template(data.date, true) + ' <a href="#" class="feed-name">' + name + '</a></div>';
   },
 
   raw: function(json) {
@@ -49,6 +49,10 @@ RawFeeds = {
 
       alignChat();
     });
+  },
+
+  icon: function(cached) {
+    return '<i class="icon-feed' + (cached ? '-cached' : '') + '"></i> ';
   }
 };
 
@@ -71,7 +75,7 @@ Messages.addRawFeedsMessage = function(json)
   html += '</div>';
 
   if (json.Command == 'headers') {
-    html += RawFeeds.headers(json.Feeds);
+    html += RawFeeds.headers(json.Data);
   }
 
   html += '<div class="jsonoutput" style="display:none;"></div>';
