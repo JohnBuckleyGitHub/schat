@@ -66,6 +66,8 @@ void ClientFeedsImpl::readFeedImpl(const FeedNotice &packet)
 
   if (cmd == LS("feed"))
     feed();
+  else if (cmd == LS("get"))
+    get();
   else if (cmd == LS("headers"))
     headers();
   else if (cmd == LS("query"))
@@ -84,16 +86,7 @@ void ClientFeedsImpl::feed()
   if (name.isEmpty())
     return;
 
-  qint64 key = 0;
-  qint64 rev = 0;
-  FeedPtr feed = m_channel->feed(name, false);
-  if (feed) {
-    const FeedHeader &head = feed->head();
-    key = head.key();
-    rev = head.rev();
-  }
-
-  feed = FeedPtr(FeedStorage::load(name, m_packet->json().value(name).toMap()));
+  FeedPtr feed = FeedPtr(FeedStorage::load(name, m_packet->json().value(name).toMap()));
   if (!feed)
     return;
 
@@ -101,14 +94,19 @@ void ClientFeedsImpl::feed()
   if (!head.date())
     head.setDate(m_packet->date());
 
-  if (head.rev() != rev)
-    key = 0;
-
-  head.setKey(key);
   m_channel->feeds().add(feed);
-  ChatNotify::start(FeedNotify(Notify::FeedData, m_channel->id(), name));
+  ChatNotify::start(new FeedNotify(Notify::FeedData, m_channel->id(), name));
 }
 
+
+void ClientFeedsImpl::get()
+{
+  QPair<QString, QString> request = FeedNotice::split(m_packet->text());
+  if (request.second.isEmpty()) {
+    if (m_packet->status() == Notice::NotModified && m_channel->feed(request.first, false))
+      ChatNotify::start(new FeedNotify(Notify::FeedData, m_channel->id(), request.first));
+  }
+}
 
 
 /*!
@@ -123,7 +121,7 @@ void ClientFeedsImpl::get(const QByteArray &id, const QStringList &feeds)
     return;
 
   foreach (QString name, feeds) {
-    ChatClient::feeds()->request(id, LS("get"), name);
+    ClientFeeds::request(id, LS("get"), name);
   }
 }
 

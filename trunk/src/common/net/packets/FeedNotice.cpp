@@ -105,5 +105,22 @@ FeedPacket FeedNotice::request(const QByteArray &user, const QByteArray &channel
   FeedPacket packet(new FeedNotice(user, channel, command));
   packet->setText(name);
   packet->setData(json);
+
   return packet;
 }
+
+
+QPair<QString, QString> FeedNotice::split(const QString &text)
+{
+  QPair<QString, QString> pair;
+  int index = text.indexOf(LC('/'));
+  if (index != -1) {
+    pair.first  = text.mid(0, index);
+    pair.second = text.mid(index + 1);
+  }
+  else
+    pair.first = text;
+
+  return pair;
+}
+

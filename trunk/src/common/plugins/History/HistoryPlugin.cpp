@@ -63,7 +63,7 @@ bool History::get(const QList<MessageId> &ids)
   data.insert(LS("action"), LS("get"));
   data.insert(LS("ids"), MessageId::toString(required));
 
-  return ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("history"), data);
+  return ClientFeeds::request(ChatClient::id(), LS("query"), LS("history"), data);
 }
 
 
@@ -71,6 +71,8 @@ bool History::get(const QList<MessageId> &ids)
  * Отправка пакета с запросом на получение последних сообщений в канале.
  *
  * \param id Идентификатор канала.
+ *
+ * \deprecated Необходимо использовать GET запрос.
  */
 bool History::getLast(const QByteArray &id)
 {
@@ -89,12 +91,14 @@ bool History::getLast(const QByteArray &id)
     channel = ChatClient::id();
   }
 
-  return ChatClient::feeds()->request(channel, LS("query"), LS("history"), data);
+  return ClientFeeds::request(channel, LS("query"), LS("history"), data);
 }
 
 
 /*!
  * Отправка пакета с запросом на получение офлайн сообщений.
+ *
+ * \deprecated Необходимо использовать GET запрос.
  */
 bool History::getOffline()
 {
@@ -103,7 +107,7 @@ bool History::getOffline()
 
   QVariantMap data;
   data.insert(LS("action"), LS("offline"));
-  return ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("history"), data);
+  return ClientFeeds::request(ChatClient::id(), LS("query"), LS("history"), data);
 }
 
 

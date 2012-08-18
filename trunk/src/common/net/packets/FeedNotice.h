@@ -38,6 +38,7 @@ public:
   static FeedPacket reply(const FeedNotice &source, const QVariantMap &json);
   static FeedPacket reply(const FeedNotice &source, int status);
   static FeedPacket request(const QByteArray &user, const QByteArray &channel, const QString &command, const QString &name, const QVariantMap &json = QVariantMap());
+  static QPair<QString, QString> split(const QString &text);
 };
 
 #endif /* FEEDNOTICE_H_ */

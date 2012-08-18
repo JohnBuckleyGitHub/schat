@@ -55,6 +55,7 @@ public:
     Found               = 300, ///< Found, сообщение из журнала, доставленное во время активного разговора.
     Unread              = 301, ///< Unread, не прочитанное офлайн сообщение.
     Read                = 302, ///< Read, прочитанное офлайн сообщение.
+    NotModified         = 303, ///< Not Modified.
     BadRequest          = 400, ///< Bad Request.
     Unauthorized        = 401, ///< Unauthorized.
     Forbidden           = 402, ///< Forbidden.
