@@ -104,7 +104,7 @@ var Hosts = {
     $("#main-spinner").css("display", "inline-block");
     Utils.TR("my_computers");
 
-    Hosts.read(SimpleChat.feed("hosts", false));
+    Hosts.read(SimpleChat.feed("hosts", 1));
   },
 
 

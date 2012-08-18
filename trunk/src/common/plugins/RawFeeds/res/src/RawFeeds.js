@@ -122,6 +122,6 @@ Messages.addRawFeedsMessage = function(json)
 $(document).ready(function() {
   $('body').on('click', '.feed-name', function(event) {
     event.preventDefault();
-    SimpleChat.feed(Settings.id, $(this).text(), false);
+    SimpleChat.feed(Settings.id, $(this).text(), 2);
   });
 });

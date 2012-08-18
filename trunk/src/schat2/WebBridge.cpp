@@ -164,22 +164,22 @@ QStringList WebBridge::fields() const
 /*!
  * Получение фида по идентификатору канала и имени.
  */
-QVariantMap WebBridge::feed(const QString &id, const QString &name, bool cache) const
+QVariant WebBridge::feed(const QString &id, const QString &name, int options) const
 {
   ClientChannel channel = ChatClient::channels()->get(SimpleID::decode(id));
   if (!channel)
-    return QVariantMap();
+    return false;
 
-  return feed(channel, name, cache);
+  return feed(channel, name, options);
 }
 
 
 /*!
  * Получение собственного фида по имени.
  */
-QVariantMap WebBridge::feed(const QString &name, bool cache) const
+QVariant WebBridge::feed(const QString &name, int options) const
 {
-  return feed(ChatClient::channel(), name, cache);
+  return feed(ChatClient::channel(), name, options);
 }
 
 
@@ -199,6 +199,37 @@ void WebBridge::setTabPage(const QString &id, int page)
 }
 
 
+/*!
+ * Базовая функция получения фида.
+ *
+ * \param channel Канал владелец фида.
+ * \param name    Имя фида.
+ * \param options - 0 Если фид не найден в кэше он будет запрошен с сервера, иначе будет использоваться кэшированная копия.
+ *                - 1 Запросить фид сервера, с проверкой на модификацию фида, если фид не изменился его тело не будет передано и клиент будет использовать кэш.
+ *                - 2 Форсированная загрузка фида.
+ *                - 3 Отключить взаимодействие с сервером, если фид не найден в кэше вернуть false.
+ *
+ * \return JSON тело фида или false, если фид не доступен локально.
+ */
+QVariant WebBridge::feed(ClientChannel channel, const QString &name, int options)
+{
+  if (options == 0 || options == 3) {
+    FeedPtr feed = channel->feed(name, false);
+    if (feed)
+      return feed->data();
+
+    if (options == 0)
+      ClientFeeds::request(channel->id(), LS("get"), name);
+  }
+  else if (options == 1)
+    ClientFeeds::request(channel, LS("get"), name);
+  else if (options == 2)
+    ClientFeeds::request(channel->id(), LS("get"), name);
+
+  return false;
+}
+
+
 QVariantMap WebBridge::channel(const QByteArray &id)
 {
   ClientChannel channel = ChatClient::channels()->get(id);
@@ -212,28 +243,6 @@ QVariantMap WebBridge::channel(const QByteArray &id)
   data[LS("Color")]  = channel->gender().toString();
   data[LS("Status")] = channel->status().toString();
   return data;
-}
-
-
-/*!
- * Базовая функция получения фида.
- *
- * \param channel Канал владелец фида.
- * \param name    Имя фида.
- * \param cache   \b false если необходимо игнорировать локальный кэш и получить фид с сервера.
- *
- * \return JSON тело фида или пустую таблицу, если фид не доступен локально.
- */
-QVariantMap WebBridge::feed(ClientChannel channel, const QString &name, bool cache)
-{
-  FeedPtr feed = channel->feed(name, false);
-  if (!cache || !feed)
-    ClientFeeds::request(channel, LS("get"), name);
-
-  if (!feed)
-    return QVariantMap();
-
-  return feed->data();
 }
 
 

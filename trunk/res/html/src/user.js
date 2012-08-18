@@ -52,7 +52,7 @@ var Profile = {
    * Чтение фида.
    */
   read: function(json) {
-    if (!json.hasOwnProperty("head"))
+    if (json === false)
       return;
 
     if (json.hasOwnProperty('provider')) {
@@ -90,7 +90,7 @@ var Profile = {
     $("#main-spinner").css("display", "inline-block");
     Utils.TR("profile");
 
-    Profile.read(SimpleChat.feed(Settings.id, "profile"));
+    Profile.read(SimpleChat.feed(Settings.id, 'profile'));
     Profile.setStatus();
   },
 
@@ -198,7 +198,7 @@ var Connections = {
    * Чтение фида.
    */
   read: function(json) {
-    if (!json.hasOwnProperty("head") && !json.hasOwnProperty("connections"))
+    if (json === false || !json.hasOwnProperty("connections"))
       return;
 
     $(".connection-row").remove();
@@ -277,8 +277,8 @@ Modal.create.connection = function(e)
 
   var id = $(e.target).data('id');
 
-  var feed = SimpleChat.feed(Settings.id, "user");
-  if (!feed.hasOwnProperty("head") && !feed.hasOwnProperty("connections"))
+  var feed = SimpleChat.feed(Settings.id, 'user');
+  if (feed === false || !feed.hasOwnProperty("connections"))
     return;
 
   var json = feed.connections[id];

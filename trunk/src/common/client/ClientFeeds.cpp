@@ -67,6 +67,8 @@ bool ClientFeeds::query(const QByteArray &id, const QString &name, const QString
 /*!
  * Запрос к фиду.
  *
+ * Если фид не изменился, сервер вернут статус "303 Not Modified".
+ *
  * \param id      Канал, к которому предназначен запрос.
  * \param command Команда отправленная фиду.
  * \param name    Имя фида с опциональным путём запроса.
