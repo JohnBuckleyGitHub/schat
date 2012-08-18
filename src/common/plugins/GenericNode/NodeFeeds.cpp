@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include "Ch.h"
 #include "cores/Core.h"
 #include "feeds/FeedStorage.h"
@@ -55,8 +53,6 @@ bool NodeFeeds::read(PacketReader *reader)
   m_packet = &packet;
 
   QString cmd = m_packet->command();
-  qDebug() << "NodeFeeds::read()" << Core::socket() << cmd << m_packet->text();
-
   int status = Notice::NotImplemented;
 
   if (cmd == LS("add") || cmd == LS("new"))
@@ -178,6 +174,9 @@ int NodeFeeds::get()
   QVariantMap json = feed->feed(m_user.data());
   if (json.isEmpty())
     return Notice::Forbidden;
+
+  if (m_packet->date() == feed->head().date())
+    return Notice::NotModified;
 
   FeedPacket packet(new FeedNotice(m_packet->dest(), m_packet->sender(), LS("feed")));
   packet->setDirection(FeedNotice::Server2Client);

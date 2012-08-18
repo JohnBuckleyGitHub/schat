@@ -116,7 +116,7 @@ void RawFeedsCmd::request(const QByteArray &dest, const ClientCmd &cmd)
     return;
 
   QVariantMap json = JSON::parse(body.body().toUtf8()).toMap();
-  ChatClient::feeds()->request(dest, cmd.command(), body.command(), json);
+  ClientFeeds::request(ChatClient::channels()->get(dest), cmd.command(), body.command(), json);
 }
 
 
@@ -127,7 +127,7 @@ void RawFeedsCmd::revert(const QByteArray &dest, const ClientCmd &cmd)
     return;
 
   qint64 rev = body.body().toLongLong();
-  ChatClient::feeds()->revert(dest, body.command(), rev);
+  ClientFeeds::revert(dest, body.command(), rev);
 }
 
 } // namespace Hooks

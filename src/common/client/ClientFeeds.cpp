@@ -53,6 +53,9 @@ bool ClientFeeds::query(const QString &name, const QString &action, const QVaria
 }
 
 
+/*!
+ * \deprecated query запрос должен быть заменён на get, post или put запрос.
+ */
 bool ClientFeeds::query(const QByteArray &id, const QString &name, const QString &action, const QVariantMap &json)
 {
   QVariantMap data = json;
@@ -61,15 +64,44 @@ bool ClientFeeds::query(const QByteArray &id, const QString &name, const QString
 }
 
 
+/*!
+ * Запрос к фиду.
+ *
+ * \param id      Канал, к которому предназначен запрос.
+ * \param command Команда отправленная фиду.
+ * \param name    Имя фида с опциональным путём запроса.
+ * \param json    Опциональные JSON данные.
+ */
+bool ClientFeeds::request(ClientChannel channel, const QString &command, const QString &name, const QVariantMap &json)
+{
+  if (!channel || command.isEmpty() || name.isEmpty())
+    return false;
+
+  FeedPacket packet = FeedNotice::request(ChatClient::id(), channel->id(), command, name, json);
+  if (FeedNotice::split(name).second.isEmpty()) {
+    FeedPtr feed = channel->feed(name, false);
+    if (feed)
+      packet->setDate(feed->head().date());
+  }
+
+  return ChatClient::io()->send(packet);
+}
+
+
+/*!
+ * Запрос к фиду.
+ *
+ * \param id      Идентификатор канала, к которому предназначен запрос.
+ * \param command Команда отправленная фиду.
+ * \param name    Имя фида с опциональным путём запроса.
+ * \param json    Опциональные JSON данные.
+ */
 bool ClientFeeds::request(const QByteArray &id, const QString &command, const QString &name, const QVariantMap &json)
 {
   if (!Channel::isCompatibleId(id))
     return false;
 
-  if (command.isEmpty())
-    return false;
-
-  if (name.isEmpty())
+  if (command.isEmpty() || name.isEmpty())
     return false;
 
   return ChatClient::io()->send(FeedNotice::request(ChatClient::id(), id, command, name, json));

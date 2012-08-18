@@ -97,6 +97,9 @@ void ChatSettings::notify(const Notify &notify)
 }
 
 
+/*!
+ * \deprecated Необходимо использовать PUT запрос.
+ */
 void ChatSettings::ready()
 {
   FeedPtr feed = ChatClient::channel()->feed(LS("settings"), false);
@@ -106,8 +109,8 @@ void ChatSettings::ready()
     query[LS("mask")] = 0700;
 
     ChatClient::io()->lock();
-    ChatClient::feeds()->request(ChatClient::id(), LS("add"), LS("settings"));
-    ChatClient::feeds()->request(ChatClient::id(), LS("query"), LS("settings"), query);
+    ClientFeeds::request(ChatClient::id(), LS("add"), LS("settings"));
+    ClientFeeds::request(ChatClient::id(), LS("query"), LS("settings"), query);
     ChatClient::io()->unlock();
   }
 }

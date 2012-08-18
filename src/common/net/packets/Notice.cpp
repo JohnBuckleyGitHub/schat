@@ -170,6 +170,9 @@ QString Notice::status(int status)
 //    case Undelivered:
 //      return QObject::tr("Undelivered");
 
+    case NotModified:
+      return QObject::tr("Not Modified");
+
     case BadRequest:
       return QObject::tr("Bad Request");
 

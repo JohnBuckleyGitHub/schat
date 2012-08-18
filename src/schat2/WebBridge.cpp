@@ -185,7 +185,7 @@ QVariantMap WebBridge::feed(const QString &name, bool cache) const
 
 void WebBridge::request(const QString &command, const QString &name, const QVariantMap &json)
 {
-  ChatClient::feeds()->request(ChatClient::id(), command, name, json);
+  ClientFeeds::request(ChatClient::channel(), command, name, json);
 }
 
 
@@ -228,7 +228,7 @@ QVariantMap WebBridge::feed(ClientChannel channel, const QString &name, bool cac
 {
   FeedPtr feed = channel->feed(name, false);
   if (!cache || !feed)
-    ChatClient::feeds()->request(channel->id(), LS("get"), name);
+    ClientFeeds::request(channel, LS("get"), name);
 
   if (!feed)
     return QVariantMap();

@@ -36,6 +36,7 @@ protected:
 
 private:
   void feed();
+  void get();
   void get(const QByteArray &id, const QStringList &feeds);
   void headers();
   void query();

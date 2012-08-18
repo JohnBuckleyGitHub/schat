@@ -151,11 +151,14 @@ QString Profile::translateImpl(const QString & /*field*/) const
 }
 
 
+/*!
+ * \deprecated Клиенту больше нет необходимости создавать фид profile самостоятельно.
+ */
 void Profile::ready()
 {
   FeedPtr feed = ChatClient::channel()->feed(LS("profile"), false);
   if (!feed) {
-    ChatClient::feeds()->request(ChatClient::id(), LS("add"), LS("profile"));
-    ChatClient::feeds()->request(ChatClient::id(), LS("get"), LS("profile"));
+    ClientFeeds::request(ChatClient::id(), LS("add"), LS("profile"));
+    ClientFeeds::request(ChatClient::id(), LS("get"), LS("profile"));
   }
 }
