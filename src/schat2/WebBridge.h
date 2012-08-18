@@ -43,13 +43,13 @@ public:
   Q_INVOKABLE QString status(const QString &id) const;
   Q_INVOKABLE QString translate(const QString &key) const;
   Q_INVOKABLE QStringList fields() const;
-  Q_INVOKABLE QVariantMap feed(const QString &id, const QString &name, bool cache = true) const;
-  Q_INVOKABLE QVariantMap feed(const QString &name, bool cache = true) const;
+  Q_INVOKABLE QVariant feed(const QString &id, const QString &name, int options = 0) const;
+  Q_INVOKABLE QVariant feed(const QString &name, int options = 0) const;
   Q_INVOKABLE void request(const QString &command, const QString &name, const QVariantMap &json = QVariantMap());
   Q_INVOKABLE void setTabPage(const QString &id, int page);
 
+  static QVariant feed(ClientChannel channel, const QString &name, int options = 0);
   static QVariantMap channel(const QByteArray &id);
-  static QVariantMap feed(ClientChannel channel, const QString &name, bool cache = true);
   static QVariantMap feed(const FeedNotify &notify);
 
   void retranslate();
