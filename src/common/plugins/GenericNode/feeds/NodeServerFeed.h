@@ -29,6 +29,7 @@ public:
   Feed* create(const QString &name);
   Feed* load(const QString &name, const QVariantMap &data);
 
+  FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0);
   QVariantMap feed(Channel *channel = 0);
 
 private:

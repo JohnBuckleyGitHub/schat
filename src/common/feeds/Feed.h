@@ -45,6 +45,27 @@ public:
   QVariantMap json;          ///< JSON ответ на запрос.
 };
 
+
+class FeedReply
+{
+public:
+  FeedReply(int status, qint64 date = 0)
+  : status(status)
+  , date(date)
+  {}
+
+  FeedReply(int status, const QVariantMap &json, qint64 date = 0)
+  : status(status)
+  , date(date)
+  , json(json)
+  {}
+
+  int status;       ///< Статус операции.
+  qint64 date;      ///< Дата модификации, если 0 будет определена автоматически.
+  QVariantMap json; ///< JSON ответ на запрос.
+};
+
+
 /*!
  * Базовый класс для фидов.
  */
@@ -59,6 +80,7 @@ public:
   virtual Feed* create(const QString &name);
   virtual Feed* load(const QString &name, const QVariantMap &data);
   virtual FeedQueryReply query(const QVariantMap &json, Channel *channel = 0);
+  virtual FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0);
   virtual int clear(Channel *channel = 0);
   virtual int update(const QVariantMap &json, Channel *channel = 0);
   virtual QVariantMap feed(Channel *channel = 0);
@@ -66,9 +88,6 @@ public:
 
   virtual void setChannel(Channel *channel);
 
-  bool canEdit(Channel *channel) const;
-  bool canRead(Channel *channel) const;
-  bool canWrite(Channel *channel) const;
   inline const FeedHeader& head() const    { return m_header; }
   inline const QVariantMap& data() const   { return m_data; }
   inline FeedHeader& head()                { return m_header; }

@@ -32,6 +32,18 @@ namespace Tufao {
 class QUrl;
 class QObject;
 
+struct RestReplyCache
+{
+  RestReplyCache()
+  : date(0)
+  {}
+
+  QByteArray body; ///< Тело ответа.
+  QByteArray etag; ///< ETag заголовок.
+  qint64 date;     ///< Дата последнего обновления.
+};
+
+
 class SCHAT_REST_EXPORT RestHandler
 {
 public:

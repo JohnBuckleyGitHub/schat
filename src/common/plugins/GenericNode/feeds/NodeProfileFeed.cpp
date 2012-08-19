@@ -80,7 +80,7 @@ FeedQueryReply NodeProfileFeed::set(const QVariantMap &json, Channel *channel)
   if (head().channel()->type() != SimpleID::UserId)
     return FeedQueryReply(Notice::InternalError);
 
-  if (!canWrite(channel))
+  if (!Acl::canWrite(this, channel))
     return FeedQueryReply(Notice::Forbidden);
 
   QStringList keys = json.keys();

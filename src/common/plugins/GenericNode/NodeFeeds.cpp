@@ -165,7 +165,7 @@ int NodeFeeds::get()
   if (!feed)
     return Notice::NotFound;
 
-  if (!feed->head().acl().can(m_user.data(), Acl::Read))
+  if (!Acl::canRead(feed.data(), m_user.data()))
     return Notice::Forbidden;
 
   if (!request.second.isEmpty())
@@ -190,14 +190,24 @@ int NodeFeeds::get()
 
 
 /*!
- * Обработка GET запроса к данным фида.
+ * Обработка \b get запроса к данным фида.
  */
 int NodeFeeds::get(FeedPtr feed, const QString &request)
 {
-  Q_UNUSED(feed)
-  Q_UNUSED(request)
+  const FeedReply reply = feed->get(request, m_packet->json(), m_user.data());
+  if (reply.status != Notice::OK)
+    return reply.status;
 
-  return Notice::NotImplemented;
+  FeedPacket packet(new FeedNotice(m_packet->dest(), m_packet->sender(), LS("get")));
+  packet->setDirection(FeedNotice::Server2Client);
+  packet->setText(m_packet->text());
+  packet->setData(reply.json);
+
+  if (reply.date)
+    packet->setDate(reply.date);
+
+  m_core->send(packet);
+  return Notice::OK;
 }
 
 

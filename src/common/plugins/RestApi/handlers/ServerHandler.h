@@ -30,9 +30,7 @@ public:
 private:
   void server(Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response);
 
-  QByteArray m_body; ///< Кешированное тело фила "server".
-  QByteArray m_etag; ///< ETag заголовок.
-  qint64 m_date;     ///< Дата последнего обновления фида "server".
+  RestReplyCache m_cache; ///< Кешированный ответ.
 };
 
 #endif /* SERVERHANDLER_H_ */
