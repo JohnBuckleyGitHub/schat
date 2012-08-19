@@ -16,31 +16,16 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#ifndef CHANNELHANDLER_H_
+#define CHANNELHANDLER_H_
 
-#include "handlers/ChannelHandler.h"
-#include "handlers/ServerHandler.h"
-#include "RestApiCore.h"
-#include "RestApiPlugin.h"
-#include "RestApiPlugin_p.h"
-#include "sglobal.h"
-#include "Storage.h"
+#include "RestHandler.h"
 
-RestApiImpl::RestApiImpl(QObject *parent)
-  : NodePlugin(parent)
+class ChannelHandler : public RestHandler
 {
-  m_apiCore = new RestApiCore(this);
-  RestApiCore::add(new ServerHandler());
-  RestApiCore::add(new ChannelHandler());
+public:
+  ChannelHandler();
+  bool serve();
+};
 
-  Storage::addFeature(LS("rest"));
-}
-
-
-NodePlugin *RestApiPlugin::create()
-{
-  m_plugin = new RestApiImpl(this);
-  return m_plugin;
-}
-
-Q_EXPORT_PLUGIN2(RestApi, RestApiPlugin);
+#endif /* CHANNELHANDLER_H_ */

@@ -116,7 +116,7 @@ void RestApiCore::handleRequest(Tufao::HttpServerRequest *request, Tufao::HttpSe
   response->headers().insert("Access-Control-Allow-Origin", "*");
 
   foreach (RestHandler *handler, m_handlers) {
-    if (handler->serve(url, path, request, response, this))
+    if (handler->serve(url, path, request, response))
       return;
   }
 

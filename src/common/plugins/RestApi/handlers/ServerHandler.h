@@ -25,10 +25,12 @@ class ServerHandler : public RestHandler
 {
 public:
   ServerHandler();
-  bool serve(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent);
+
+protected:
+  bool serve();
 
 private:
-  bool server(Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response);
+  bool server();
   bool uptime(Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response);
 
   RestReplyCache m_cache; ///< Кешированный ответ.

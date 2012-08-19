@@ -21,12 +21,14 @@ SCHAT_TUFAO_LIB  = 1
 QT = core network
 
 HEADERS  = \
+   handlers/ChannelHandler.h \
    handlers/ServerHandler.h \
    RestApiPlugin.h \
    RestApiPlugin_p.h \
 
 SOURCES  = \
-   RestApiPlugin.cpp \
+   handlers/ChannelHandler.cpp \
    handlers/ServerHandler.cpp \
+   RestApiPlugin.cpp \
 
 include(../plugins.pri)
