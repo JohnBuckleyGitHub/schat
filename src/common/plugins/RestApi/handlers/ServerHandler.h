@@ -28,7 +28,8 @@ public:
   bool serve(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent);
 
 private:
-  void server(Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response);
+  bool server(Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response);
+  bool uptime(Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response);
 
   RestReplyCache m_cache; ///< Кешированный ответ.
 };

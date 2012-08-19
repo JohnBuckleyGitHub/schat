@@ -113,6 +113,7 @@ void RestApiCore::handleRequest(Tufao::HttpServerRequest *request, Tufao::HttpSe
     path.remove(0, m_prefixSize);
 
   response->headers().replace("Content-Type", "application/json");
+  response->headers().insert("Access-Control-Allow-Origin", "*");
 
   foreach (RestHandler *handler, m_handlers) {
     if (handler->serve(url, path, request, response, this))
