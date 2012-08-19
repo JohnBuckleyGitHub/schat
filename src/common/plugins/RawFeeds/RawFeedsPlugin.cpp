@@ -40,14 +40,14 @@ RawFeeds::RawFeeds(QObject *parent)
 
 void RawFeeds::init(ChatView *view)
 {
-//  view->addJS(LS("qrc:/js/RawFeeds/KelpJSONView.js"));
-//  view->addJS(LS("qrc:/js/RawFeeds/RawFeeds.js"));
+  view->addJS(LS("qrc:/js/RawFeeds/KelpJSONView.js"));
+  view->addJS(LS("qrc:/js/RawFeeds/RawFeeds.js"));
 }
 
 
 void RawFeeds::loadFinished(ChatView *view)
 {
-//  view->addCSS(LS("qrc:/css/RawFeeds/RawFeeds.css"));
+  view->addCSS(LS("qrc:/css/RawFeeds/RawFeeds.css"));
 }
 
 
