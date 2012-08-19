@@ -31,26 +31,16 @@ ServerHandler::ServerHandler()
 }
 
 
-bool ServerHandler::serve(const QUrl &, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *)
+bool ServerHandler::serve()
 {
-  if (!path.startsWith(LS("/v1/server")))
+  if (!m_path.startsWith(LS("/v1/server")))
     return false;
 
-  const QByteArray method(request->method());
-  Tufao::Headers &headers = response->headers();
+  if (m_path == LS("/v1/server"))
+    return server();
 
-  if (method != "GET" && method != "HEAD") {
-    response->writeHead(Tufao::HttpServerResponse::METHOD_NOT_ALLOWED);
-    headers.insert("Allow", "GET, HEAD");
-    response->end();
-    return true;
-  }
-
-  if (path == LS("/v1/server"))
-    return server(request, response);
-
-  else if (path == LS("/v1/server/uptime"))
-    return uptime(request, response);
+  else if (m_path == LS("/v1/server/uptime"))
+    return uptime(m_request, m_response);
 
   return false;
 }
@@ -59,11 +49,13 @@ bool ServerHandler::serve(const QUrl &, const QString &path, Tufao::HttpServerRe
 /*!
  * Обработка запроса "/api/v1/server".
  */
-bool ServerHandler::server(Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response)
+bool ServerHandler::server()
 {
-  Tufao::Headers &headers = response->headers();
+  if (!ifMethodAllowed())
+    return true;
+
   FeedPtr feed = Ch::server()->feed(LS("server"));
-  qint64 date = feed->head().date();
+  qint64 date  = feed->head().date();
 
   if (m_cache.date != date) {
     m_cache.date = date;
@@ -74,23 +66,23 @@ bool ServerHandler::server(Tufao::HttpServerRequest *request, Tufao::HttpServerR
     m_cache.body = JSON::generate(data);
   }
 
-  setLastModified(headers, date);
-  setETag(headers, m_cache.etag);
-  setNoCache(headers);
+  setLastModified(date);
+  setETag(m_cache.etag);
+  setNoCache();
 
-  if (!ifModified(request->headers(), m_cache.etag)) {
-    response->writeHead(Tufao::HttpServerResponse::NOT_MODIFIED);
-    response->end();
+  if (!ifModified(m_cache.etag)) {
+    m_response->writeHead(Tufao::HttpServerResponse::NOT_MODIFIED);
+    m_response->end();
     return true;
   }
 
-  response->writeHead(Tufao::HttpServerResponse::OK);
-  if (request->method() != "HEAD") {
-    setContentLength(headers, m_cache.body.size());
-    response->end(m_cache.body);
+  m_response->writeHead(Tufao::HttpServerResponse::OK);
+  if (m_request->method() != "HEAD") {
+    setContentLength(m_cache.body.size());
+    m_response->end(m_cache.body);
   }
   else
-    response->end();
+    m_response->end();
 
   return true;
 }
@@ -101,15 +93,17 @@ bool ServerHandler::server(Tufao::HttpServerRequest *request, Tufao::HttpServerR
  */
 bool ServerHandler::uptime(Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response)
 {
-  Tufao::Headers &headers = response->headers();
+  if (!ifMethodAllowed())
+    return true;
+
   FeedPtr feed = Ch::server()->feed(LS("server"));
 
-  setNoStore(headers);
+  setNoStore();
 
   response->writeHead(Tufao::HttpServerResponse::OK);
   if (request->method() != "HEAD") {
     QByteArray body = JSON::generate(feed->get(LS("uptime")).json);
-    setContentLength(headers, body.size());
+    setContentLength(body.size());
     response->end(body);
   }
   else

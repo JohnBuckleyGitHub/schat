@@ -19,7 +19,8 @@
 #ifndef RESTHANDLER_H_
 #define RESTHANDLER_H_
 
-#include <QString>
+#include <QStringList>
+#include <QUrl>
 
 #include "schat.h"
 
@@ -28,9 +29,6 @@ namespace Tufao {
   class HttpServerResponse;
   struct Headers;
 }
-
-class QUrl;
-class QObject;
 
 struct RestReplyCache
 {
@@ -47,17 +45,30 @@ struct RestReplyCache
 class SCHAT_REST_EXPORT RestHandler
 {
 public:
-  RestHandler() {}
-  virtual ~RestHandler() {}
-  virtual bool serve(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent);
+  RestHandler()
+  : m_request(0)
+  , m_response(0)
+  {}
 
-  static bool ifModified(const Tufao::Headers &headers, const QByteArray &etag);
+  virtual ~RestHandler() {}
+  bool serve(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response);
   static QByteArray etag(qint64 date, const QByteArray &salt);
-  static void setContentLength(Tufao::Headers &headers, qint64 size);
-  static void setETag(Tufao::Headers &headers, const QByteArray &etag);
-  static void setLastModified(Tufao::Headers &headers, qint64 date);
-  static void setNoCache(Tufao::Headers &headers);
-  static void setNoStore(Tufao::Headers &headers);
+
+protected:
+  virtual bool serve();
+
+  bool ifMethodAllowed(const QStringList &methods = QStringList() << "GET" << "HEAD");
+  bool ifModified(const QByteArray &etag);
+  void setContentLength(qint64 size);
+  void setETag(const QByteArray &etag);
+  void setLastModified(qint64 date);
+  void setNoCache();
+  void setNoStore();
+
+  QString m_path;                        ///< Путь API.
+  QUrl m_url;                            ///< Полный url адрес запроса.
+  Tufao::HttpServerRequest *m_request;   ///< HTTP запрос.
+  Tufao::HttpServerResponse *m_response; ///< HTTP ответ.
 };
 
 #endif /* RESTHANDLER_H_ */

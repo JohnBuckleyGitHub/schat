@@ -21,21 +21,18 @@
 #include "DateTime.h"
 #include "net/SimpleID.h"
 #include "RestHandler.h"
+#include "sglobal.h"
 #include "Tufao/headers.h"
+#include "Tufao/httpserverrequest.h"
+#include "Tufao/httpserverresponse.h"
 
-bool RestHandler::serve(const QUrl &, const QString &, Tufao::HttpServerRequest *, Tufao::HttpServerResponse *, QObject *)
+bool RestHandler::serve(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response)
 {
-  return false;
-}
-
-
-bool RestHandler::ifModified(const Tufao::Headers &headers, const QByteArray &etag)
-{
-  QByteArray tag = headers.value("If-None-Match");
-  if (tag.isEmpty() || tag != etag)
-    return true;
-
-  return false;
+  m_url      = url;
+  m_path     = path;
+  m_request  = request;
+  m_response = response;
+  return serve();
 }
 
 
@@ -50,37 +47,65 @@ QByteArray RestHandler::etag(qint64 date, const QByteArray &salt)
 }
 
 
-void RestHandler::setContentLength(Tufao::Headers &headers, qint64 size)
+bool RestHandler::serve()
 {
-  headers.insert("Content-Length", QByteArray::number(size));
+  return false;
 }
 
 
-void RestHandler::setETag(Tufao::Headers &headers, const QByteArray &etag)
+bool RestHandler::ifMethodAllowed(const QStringList &methods)
 {
-  headers.insert("ETag", etag);
+  if (methods.contains(m_request->method()))
+    return true;
+
+  setNoStore();
+  m_response->writeHead(Tufao::HttpServerResponse::METHOD_NOT_ALLOWED);
+  m_response->headers().insert("Allow", methods.join(LS(", ")).toLatin1());
+  m_response->end();
+  return false;
 }
 
 
-void RestHandler::setLastModified(Tufao::Headers &headers, qint64 date)
+bool RestHandler::ifModified(const QByteArray &etag)
 {
-  headers.insert("Last-Modified", Tufao::Headers::fromDateTime(DateTime::toDateTime(date)));
+  QByteArray tag = m_request->headers().value("If-None-Match");
+  if (tag.isEmpty() || tag != etag)
+    return true;
+
+  return false;
 }
 
 
-void RestHandler::setNoCache(Tufao::Headers &headers)
+void RestHandler::setContentLength(qint64 size)
 {
+  m_response->headers().insert("Content-Length", QByteArray::number(size));
+}
+
+
+void RestHandler::setETag(const QByteArray &etag)
+{
+  m_response->headers().insert("ETag", etag);
+}
+
+
+void RestHandler::setLastModified(qint64 date)
+{
+  m_response->headers().insert("Last-Modified", Tufao::Headers::fromDateTime(DateTime::toDateTime(date)));
+}
+
+
+void RestHandler::setNoCache()
+{
+  Tufao::Headers &headers = m_response->headers();
   headers.insert("Cache-Control", "no-cache, must-revalidate");
   headers.insert("Pragma", "no-cache");
 }
 
 
-void RestHandler::setNoStore(Tufao::Headers &headers)
+void RestHandler::setNoStore()
 {
+  Tufao::Headers &headers = m_response->headers();
   headers.insert("Cache-Control", "no-cache, no-store, max-age=0, must-revalidate");
   headers.insert("Pragma", "no-cache");
   headers.insert("Expires", "Fri, 01 Jan 1990 00:00:00 GMT");
 }
-
-
-
