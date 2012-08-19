@@ -46,9 +46,11 @@ bool ServerHandler::serve(const QUrl &, const QString &path, Tufao::HttpServerRe
     return true;
   }
 
-  if (path == LS("/v1/server")) {
-    server(request, response);
-  }
+  if (path == LS("/v1/server"))
+    return server(request, response);
+
+  else if (path == LS("/v1/server/uptime"))
+    return uptime(request, response);
 
   return false;
 }
@@ -57,7 +59,7 @@ bool ServerHandler::serve(const QUrl &, const QString &path, Tufao::HttpServerRe
 /*!
  * Обработка запроса "/api/v1/server".
  */
-void ServerHandler::server(Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response)
+bool ServerHandler::server(Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response)
 {
   Tufao::Headers &headers = response->headers();
   FeedPtr feed = Ch::server()->feed(LS("server"));
@@ -79,7 +81,7 @@ void ServerHandler::server(Tufao::HttpServerRequest *request, Tufao::HttpServerR
   if (!ifModified(request->headers(), m_cache.etag)) {
     response->writeHead(Tufao::HttpServerResponse::NOT_MODIFIED);
     response->end();
-    return;
+    return true;
   }
 
   response->writeHead(Tufao::HttpServerResponse::OK);
@@ -89,4 +91,29 @@ void ServerHandler::server(Tufao::HttpServerRequest *request, Tufao::HttpServerR
   }
   else
     response->end();
+
+  return true;
+}
+
+
+/*!
+ * Обработка запроса "/api/v1/server/uptime".
+ */
+bool ServerHandler::uptime(Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response)
+{
+  Tufao::Headers &headers = response->headers();
+  FeedPtr feed = Ch::server()->feed(LS("server"));
+
+  setNoStore(headers);
+
+  response->writeHead(Tufao::HttpServerResponse::OK);
+  if (request->method() != "HEAD") {
+    QByteArray body = JSON::generate(feed->get(LS("uptime")).json);
+    setContentLength(headers, body.size());
+    response->end(body);
+  }
+  else
+    response->end();
+
+  return true;
 }
