@@ -22,6 +22,7 @@
 #include "Channel.h"
 #include "DateTime.h"
 #include "feeds/NodeServerFeed.h"
+#include "net/packets/Notice.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
 #include "Storage.h"
@@ -54,6 +55,28 @@ Feed* NodeServerFeed::create(const QString &name)
 Feed* NodeServerFeed::load(const QString &name, const QVariantMap &data)
 {
   return new NodeServerFeed(name, data);
+}
+
+
+/*!
+ * Обработка \b get запросов.
+ *
+ * Поддерживаемые запросы:
+ * - \b uptime информация о дате запуска сервера и количестве секунд с момента запуска.
+ */
+FeedReply NodeServerFeed::get(const QString &path, const QVariantMap &json, Channel *channel)
+{
+  Q_UNUSED(json)
+  Q_UNUSED(channel)
+
+  if (path == LS("uptime")) {
+    FeedReply reply(Notice::OK);
+    reply.json[LS("date")]    = m_startupTime;
+    reply.json[LS("seconds")] = qAbs((DateTime::utc() - m_startupTime) / 1000);
+    return reply;
+  }
+
+  return FeedReply(Notice::NotImplemented);
 }
 
 

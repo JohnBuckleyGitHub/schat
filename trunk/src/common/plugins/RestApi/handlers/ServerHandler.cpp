@@ -27,7 +27,6 @@
 
 ServerHandler::ServerHandler()
   : RestHandler()
-  , m_date(0)
 {
 }
 
@@ -64,20 +63,20 @@ void ServerHandler::server(Tufao::HttpServerRequest *request, Tufao::HttpServerR
   FeedPtr feed = Ch::server()->feed(LS("server"));
   qint64 date = feed->head().date();
 
-  if (m_date != date) {
-    m_date = date;
-    m_etag = etag(m_date, "/v1/server");
+  if (m_cache.date != date) {
+    m_cache.date = date;
+    m_cache.etag = etag(date, "/v1/server");
 
     QVariantMap data = feed->feed();
     data.remove(LS("head"));
-    m_body = JSON::generate(data);
+    m_cache.body = JSON::generate(data);
   }
 
-  setLastModified(headers, m_date);
-  setETag(headers, m_etag);
+  setLastModified(headers, date);
+  setETag(headers, m_cache.etag);
   setNoCache(headers);
 
-  if (!ifModified(request->headers(), m_etag)) {
+  if (!ifModified(request->headers(), m_cache.etag)) {
     response->writeHead(Tufao::HttpServerResponse::NOT_MODIFIED);
     response->end();
     return;
@@ -85,8 +84,8 @@ void ServerHandler::server(Tufao::HttpServerRequest *request, Tufao::HttpServerR
 
   response->writeHead(Tufao::HttpServerResponse::OK);
   if (request->method() != "HEAD") {
-    setContentLength(headers, m_body.size());
-    response->end(m_body);
+    setContentLength(headers, m_cache.body.size());
+    response->end(m_cache.body);
   }
   else
     response->end();

@@ -26,6 +26,7 @@
 #include "schat.h"
 
 class Channel;
+class Feed;
 
 class SCHAT_EXPORT Acl
 {
@@ -62,6 +63,9 @@ public:
   int match(Channel *channel) const;
   QVariantMap get(Channel *channel);
   QVariantMap save();
+  static bool canEdit(Feed *feed, Channel *channel = 0);
+  static bool canRead(Feed *feed, Channel *channel = 0);
+  static bool canWrite(Feed *feed, Channel *channel = 0);
   void add(const QByteArray &owner);
   void load(const QVariantMap &json);
 

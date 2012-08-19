@@ -94,6 +94,22 @@ FeedQueryReply Feed::query(const QVariantMap &json, Channel *channel)
 }
 
 
+/*!
+ * Обработка \b get запроса к фиду.
+ *
+ * \param path Путь запроса.
+ * \param json Опциональные JSON данные запроса.
+ * \param channel Пользователь совершивший запрос, если такой есть, функция не проверяет правда доступа.
+ */
+FeedReply Feed::get(const QString &path, const QVariantMap &json, Channel *channel)
+{
+  Q_UNUSED(path)
+  Q_UNUSED(json)
+  Q_UNUSED(channel);
+  return FeedReply(Notice::NotImplemented);
+}
+
+
 int Feed::clear(Channel *channel)
 {
   Q_UNUSED(channel)
@@ -139,33 +155,6 @@ void Feed::setChannel(Channel *channel)
 }
 
 
-/*!
- * Проверка прав канала на редактирование.
- */
-bool Feed::canEdit(Channel *channel) const
-{
-  return head().acl().can(channel, Acl::Edit);
-}
-
-
-/*!
- * Проверка прав канала на чтение.
- */
-bool Feed::canRead(Channel *channel) const
-{
-  return head().acl().can(channel, Acl::Read);
-}
-
-
-/*!
- * Проверка прав канала на запись.
- */
-bool Feed::canWrite(Channel *channel) const
-{
-  return head().acl().can(channel, Acl::Write);
-}
-
-
 bool Feed::merge(const QString &key, QVariantMap &out, const QVariantMap &in)
 {
   if (in.isEmpty())
@@ -201,7 +190,7 @@ void Feed::merge(QVariantMap &out, const QVariantMap &in)
 
 FeedQueryReply Feed::set(const QVariantMap &json, Channel *channel)
 {
-  if (!canWrite(channel))
+  if (!Acl::canWrite(this, channel))
     return FeedQueryReply(Notice::Forbidden);
 
   QStringList keys = json.keys();
@@ -240,7 +229,7 @@ FeedQueryReply Feed::set(const QVariantMap &json, Channel *channel)
  */
 FeedQueryReply Feed::mask(const QVariantMap &json, Channel *channel)
 {
-  if (!canEdit(channel))
+  if (!Acl::canEdit(this, channel))
     return FeedQueryReply(Notice::Forbidden);
 
   if (!json.contains(LS("mask")))

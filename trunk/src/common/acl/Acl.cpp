@@ -110,6 +110,24 @@ QVariantMap Acl::save()
 }
 
 
+bool Acl::canEdit(Feed *feed, Channel *channel)
+{
+  return feed->head().acl().can(channel, Edit);
+}
+
+
+bool Acl::canRead(Feed *feed, Channel *channel)
+{
+  return feed->head().acl().can(channel, Read);
+}
+
+
+bool Acl::canWrite(Feed *feed, Channel *channel)
+{
+  return feed->head().acl().can(channel, Write);
+}
+
+
 void Acl::add(const QByteArray &owner)
 {
   if (SimpleID::typeOf(owner) != SimpleID::UserId)
