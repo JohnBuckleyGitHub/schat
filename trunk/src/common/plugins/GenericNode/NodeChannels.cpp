@@ -16,11 +16,10 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-#include "debugstream.h"
-
 #include "Ch.h"
 #include "cores/Core.h"
+#include "DataBase.h"
+#include "debugstream.h"
 #include "events.h"
 #include "net/PacketReader.h"
 #include "net/packets/ChannelNotice.h"
@@ -194,6 +193,9 @@ int NodeChannels::name()
   if (status != Notice::OK)
     return status;
 
+  channel->setDate();
+  DataBase::add(channel);
+
   QList<quint64> sockets;
   if (channel->type() == SimpleID::UserId)
     sockets = Sockets::all(channel, true);
@@ -270,6 +272,9 @@ int NodeChannels::update()
 
   if (!updates)
     return Notice::BadRequest;
+
+  m_user->setDate();
+  DataBase::add(m_user);
 
   m_core->send(Sockets::all(m_user, true), ChannelNotice::info(m_user));
   return Notice::OK;

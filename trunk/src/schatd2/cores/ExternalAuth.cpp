@@ -172,8 +172,10 @@ AuthResult ExternalAuthTask::auth(const QVariantMap &data)
     channel->user()->set(User(data.value(LS("user")).toMap()));
   }
 
-  if (channel->status().value() == Status::Offline)
+  if (channel->status().value() == Status::Offline) {
+    channel->setDate();
     channel->status().set(m_data.status);
+  }
 
   if (!channel->isValid())
     return AuthResult(Notice::BadRequest, m_data.id);
