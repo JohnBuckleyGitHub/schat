@@ -40,7 +40,7 @@ bool ServerHandler::serve()
     return server();
 
   else if (m_path == LS("/v1/server/uptime"))
-    return uptime(m_request, m_response);
+    return uptime();
 
   return false;
 }
@@ -91,7 +91,7 @@ bool ServerHandler::server()
 /*!
  * Обработка запроса "/api/v1/server/uptime".
  */
-bool ServerHandler::uptime(Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response)
+bool ServerHandler::uptime()
 {
   if (!ifMethodAllowed())
     return true;
@@ -100,14 +100,14 @@ bool ServerHandler::uptime(Tufao::HttpServerRequest *request, Tufao::HttpServerR
 
   setNoStore();
 
-  response->writeHead(Tufao::HttpServerResponse::OK);
-  if (request->method() != "HEAD") {
+  m_response->writeHead(Tufao::HttpServerResponse::OK);
+  if (m_request->method() != "HEAD") {
     QByteArray body = JSON::generate(feed->get(LS("uptime")).json);
     setContentLength(body.size());
-    response->end(body);
+    m_response->end(body);
   }
   else
-    response->end();
+    m_response->end();
 
   return true;
 }

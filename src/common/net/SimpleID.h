@@ -61,6 +61,7 @@ public:
   static QByteArray setType(int type, const QByteArray &id);
   static QByteArray toBase32(const QByteArray &data);
   static QByteArray uniqueId();
+  static QString typeName(int type);
 };
 
 #endif /* SIMPLEID_H_ */

@@ -31,7 +31,7 @@ protected:
 
 private:
   bool server();
-  bool uptime(Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response);
+  bool uptime();
 
   RestReplyCache m_cache; ///< Кешированный ответ.
 };

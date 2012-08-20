@@ -19,13 +19,22 @@
 #ifndef CHANNELHANDLER_H_
 #define CHANNELHANDLER_H_
 
+#include <QMap>
+
 #include "RestHandler.h"
+#include "ServerChannel.h"
 
 class ChannelHandler : public RestHandler
 {
 public:
   ChannelHandler();
   bool serve();
+
+private:
+  bool badRequest();
+  bool channel(ChatChannel channel);
+
+  QMap<QByteArray, RestReplyCache> m_cache; ///< Кешированные ответы.
 };
 
 #endif /* CHANNELHANDLER_H_ */
