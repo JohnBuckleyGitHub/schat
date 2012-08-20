@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include "Account.h"
 #include "Ch.h"
 #include "ChHook.h"
@@ -75,6 +73,7 @@ bool Ch::gc(ChatChannel channel)
       return false;
 
     channel->status() = Status::Offline;
+    channel->setDate();
 
     const QByteArray &id = channel->id();
     if (m_self->m_users.contains(id)) {
@@ -191,9 +190,6 @@ int Ch::rename(ChatChannel channel, const QString &name)
 
   m_self->m_channels.remove(normalized);
   m_self->m_channels[channel->normalized()] = channel;
-
-  channel->setDate();
-  DataBase::add(channel);
 
   foreach (ChHook *hook, m_self->m_hooks) {
     hook->rename(channel);

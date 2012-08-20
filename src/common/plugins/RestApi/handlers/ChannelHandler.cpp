@@ -95,7 +95,7 @@ bool ChannelHandler::channel(ChatChannel channel)
 
     if (channel->type() == SimpleID::UserId) {
       data[LS("status")] = channel->status().toString();
-      data[LS("gender")] = channel->gender().value();
+      data[LS("gender")] = channel->gender().raw();
       data[LS("color")]  = channel->gender().toString();
     }
 

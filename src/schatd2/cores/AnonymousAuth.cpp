@@ -105,6 +105,8 @@ AuthResult AnonymousAuth::isCollision(const QByteArray &id, const QString &name,
 
 void AnonymousAuth::update(ServerChannel *channel, const AuthRequest &data)
 {
-  if (channel->status().value() == Status::Offline)
+  if (channel->status().value() == Status::Offline) {
+    channel->setDate();
     channel->status().set(data.status);
+  }
 }

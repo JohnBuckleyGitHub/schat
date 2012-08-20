@@ -148,8 +148,6 @@ AddValueTask::AddValueTask(const QString &key, const QVariant &value)
 
 void AddValueTask::run()
 {
-  qDebug() << "AddValueTask::run()" << m_key << m_value;
-
   QSqlQuery query;
   query.prepare(LS("SELECT id FROM storage WHERE k = :k LIMIT 1;"));
   query.bindValue(LS(":k"), m_key);
