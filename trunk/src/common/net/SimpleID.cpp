@@ -34,6 +34,7 @@
 #include "base32/base32.h"
 #include "net/Protocol.h"
 #include "net/SimpleID.h"
+#include "sglobal.h"
 
 /*!
  * Возвращает тип идентификатора.
@@ -171,4 +172,40 @@ QByteArray SimpleID::uniqueId()
   }
 
   return make("", UniqueUserId);
+}
+
+
+QString SimpleID::typeName(int type)
+{
+  switch (type) {
+    case UniqueUserId:
+      return LS("unique");
+
+    case UserId:
+      return LS("user");
+
+    case ServerId:
+      return LS("server");
+
+    case CookieId:
+      return LS("cookie");
+
+    case ChannelId:
+      return LS("channel");
+
+    case MessageId:
+      return LS("message");
+
+    case PasswordId:
+      return LS("password");
+
+    case NormalizedId:
+      return LS("normalized");
+
+    case HostId:
+      return LS("host");
+
+    default:
+      return LS("invalid");
+  }
 }
