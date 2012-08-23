@@ -25,7 +25,7 @@
 #include <QList>
 #include <QPointer>
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 
 #include <qt_windows.h>
 
@@ -105,7 +105,7 @@ static bool resolveLibs()
   */
 bool QtWin::isCompositionEnabled()
 {
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     if (resolveLibs()) {
         HRESULT hr = S_OK;
         BOOL isEnabled = false;
@@ -126,7 +126,7 @@ bool QtWin::enableBlurBehindWindow(QWidget *widget, bool enable)
 {
     Q_ASSERT(widget);
     bool result = false;
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     if (resolveLibs()) {
         DWM_BLURBEHIND bb = {0};
         HRESULT hr = S_OK;
@@ -171,7 +171,7 @@ bool QtWin::extendFrameIntoClientArea(QWidget *widget, int left, int top, int ri
     Q_UNUSED(bottom)
 
     bool result = false;
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     if (resolveLibs()) {
         QLibrary dwmLib(QString::fromAscii("dwmapi"));
         HRESULT hr = S_OK;
@@ -196,7 +196,7 @@ QColor QtWin::colorizatinColor()
 {
     QColor resultColor = QApplication::palette().window().color();
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
     if (resolveLibs()) {
         DWORD color = 0;
         BOOL opaque = FALSE;
@@ -210,7 +210,7 @@ QColor QtWin::colorizatinColor()
     return resultColor;
 }
 
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN32
 WindowNotifier *QtWin::windowNotifier()
 {
     static WindowNotifier *windowNotifierInstance = 0;

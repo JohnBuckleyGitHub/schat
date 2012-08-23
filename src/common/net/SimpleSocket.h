@@ -67,6 +67,10 @@ public:
   void setDate(qint64 date);
   void setId(quint64 id);
 
+# if QT_VERSION >= 0x050000
+  void connectToHost(const QString & hostName, quint16 port, OpenMode openMode = ReadWrite, NetworkLayerProtocol protocol = AnyIPProtocol);
+# endif
+
 signals:
   void allDelivered(quint64 id);
   void newPackets(quint64 id, const QList<QByteArray> &packets);

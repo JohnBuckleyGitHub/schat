@@ -92,7 +92,7 @@ void SendWidget::insertHtml(const QString &text)
 
 bool SendWidget::event(QEvent *event)
 {
-# if defined(Q_WS_WIN)
+# if defined(Q_OS_WIN32)
   if (event->type() == QEvent::ApplicationPaletteChange) {
     updateStyleSheet();
   }
@@ -312,7 +312,7 @@ void SendWidget::remove(ToolBarAction action)
 void SendWidget::updateStyleSheet()
 {
 # if !defined(Q_OS_MAC)
-#  if defined(Q_WS_WIN)
+#  if defined(Q_OS_WIN32)
     m_toolBar->setStyleSheet(QString("QToolBar { background-color: %1; margin:0px; border:0px; }").arg(palette().color(QPalette::Window).name()));
 #  else
     m_toolBar->setStyleSheet("QToolBar { margin:0px; border:0px; }");

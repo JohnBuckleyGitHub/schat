@@ -70,7 +70,7 @@ TabWidget::TabWidget(QWidget *parent)
   setTabBar(m_tabBar);
   setDocumentMode(true);
 
-  #if !defined(Q_WS_MAC)
+  #if !defined(Q_OS_MAC)
   setStyleSheet(LS("QToolBar { margin:0px; border:0px; }"));
   #endif
 
@@ -221,7 +221,7 @@ bool TabWidget::isActiveChatWindow()
 # if defined(Q_OS_WIN32)
   if (widget->isActiveWindow()) {
     HWND active = GetForegroundWindow();
-    if (active == widget->window()->internalWinId() || ::IsChild(active, widget->window()->internalWinId()))
+    if (active == (HWND) widget->window()->internalWinId() || ::IsChild(active, (HWND) widget->window()->internalWinId()))
       return true;
     else
       return false;

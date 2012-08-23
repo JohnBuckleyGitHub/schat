@@ -33,7 +33,7 @@ public:
     if (metric == PM_TabBarTabHSpace)
       return result / 2;
 
-#   if defined(Q_WS_WIN)
+#   if defined(Q_OS_WIN32)
     else if (metric == PM_TabBarTabVSpace)
       return result + 2;
 #   endif

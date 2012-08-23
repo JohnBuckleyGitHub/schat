@@ -18,7 +18,7 @@
 
 #include <QTextCodec>
 
-#if defined(Q_WS_WIN)
+#if defined(Q_OS_WIN)
 # include <QFileInfo>
 # include <QProcess>
 #endif
@@ -42,12 +42,13 @@ ChatApp::ChatApp(int &argc, char **argv)
   setOrganizationDomain(SCHAT_DOMAIN);
   setQuitOnLastWindowClosed(false);
 
-# if defined(Q_WS_X11)
+# if defined(Q_OS_LINUX)
   setAttribute(Qt::AA_DontShowIconsInMenus, false);
 # endif
-
+# if QT_VERSION < 0x050000
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
   QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
+# endif
 
   Path::init();
 

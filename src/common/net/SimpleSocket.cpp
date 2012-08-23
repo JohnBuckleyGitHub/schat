@@ -533,6 +533,15 @@ void SimpleSocket::setId(quint64 id)
 }
 
 
+#if QT_VERSION >= 0x050000
+void SimpleSocket::connectToHost(const QString & hostName, quint16 port, OpenMode openMode, NetworkLayerProtocol protocol)
+{
+  connectToHostImplementation(hostName, port, openMode);
+  QSslSocket::connectToHost(hostName, port, openMode, protocol);
+}
+#endif
+
+
 void SimpleSocket::setDate(qint64 date)
 {
   d_func()->date = date;
@@ -568,7 +577,11 @@ void SimpleSocket::connectToHostImplementation(const QString &hostName, quint16 
   d->release = false;
   d->setTimerState(SimpleSocketPrivate::WaitingConnect);
 
+# if QT_VERSION < 0x050000
   QSslSocket::connectToHostImplementation(hostName, port, openMode);
+# else
+  Q_UNUSED(openMode)
+# endif
 }
 
 
