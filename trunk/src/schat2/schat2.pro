@@ -38,7 +38,7 @@ SOURCES = \
     main.cpp \
     ui/ChatWindow.cpp \
     
-win32 {
+win32:contains(QT_VERSION, ^4.*) {
     HEADERS += qtwin/qtwin.h
     SOURCES += qtwin/qtwin.cpp
 }

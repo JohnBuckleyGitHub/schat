@@ -27,6 +27,10 @@ class RestApiPlugin : public QObject, CoreApi, NodeApi
   Q_OBJECT
   Q_INTERFACES(CoreApi NodeApi)
 
+# if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "me.schat.server.RestApi" FILE "RestApi.json")
+# endif
+
 public:
   QVariantMap header() const
   {

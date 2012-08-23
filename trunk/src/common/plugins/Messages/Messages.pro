@@ -17,6 +17,7 @@
 
 SCHAT_DAEMON_LIB = 1
 QT = core network sql
+OTHER_FILES += Messages.json
 
 HEADERS  = \
    feeds/NodeHistoryFeed.h \

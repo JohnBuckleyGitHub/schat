@@ -19,6 +19,7 @@ SCHAT_DAEMON_LIB = 1
 SCHAT_REST_LIB   = 1
 SCHAT_TUFAO_LIB  = 1
 QT = core network
+OTHER_FILES += RestApi.json
 
 HEADERS  = \
    handlers/ChannelHandler.h \
