@@ -17,6 +17,7 @@
 
 SCHAT_DAEMON_LIB = 1
 QT = core network
+OTHER_FILES += GeoIP.json
 
 DEFINES += GEOIPDATADIR=\\\"./res\\\"
 

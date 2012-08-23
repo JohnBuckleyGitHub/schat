@@ -41,4 +41,6 @@ NodePlugin *GeoIPPlugin::create()
   return m_plugin;
 }
 
-Q_EXPORT_PLUGIN2(GeoIP, GeoIPPlugin);
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2(GeoIP, GeoIPPlugin);
+#endif
