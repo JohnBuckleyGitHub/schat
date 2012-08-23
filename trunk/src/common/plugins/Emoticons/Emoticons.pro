@@ -18,6 +18,9 @@
 SCHAT_CLIENT_LIB = 1
 SCHAT_CORE_LIB = 1
 QT = core gui
+OTHER_FILES += Emoticons.json
+
+contains(QT_VERSION, ^5.*):QT += widgets
 
 HEADERS  = \
    EmoticonData.h \

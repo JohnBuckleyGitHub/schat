@@ -18,6 +18,7 @@
 SCHAT_CLIENT_LIB = 1
 SCHAT_CORE_LIB = 1
 QT = core gui network sql
+OTHER_FILES += Cache.json
 
 HEADERS  = \
    CacheChannels.h \

@@ -478,4 +478,6 @@ ChatPlugin *ProfilePlugin::create()
   return m_plugin;
 }
 
-Q_EXPORT_PLUGIN2(Profile, ProfilePlugin);
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2(Profile, ProfilePlugin);
+#endif

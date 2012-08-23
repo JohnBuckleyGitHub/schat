@@ -27,6 +27,10 @@ class CachePlugin : public QObject, CoreApi, ChatApi
   Q_OBJECT
   Q_INTERFACES(CoreApi ChatApi)
 
+# if QT_VERSION >= 0x050000
+  Q_PLUGIN_METADATA(IID "me.schat.client.Cache" FILE "Cache.json")
+# endif
+
 public:
   QVariantMap header() const
   {

@@ -28,4 +28,6 @@ ChatPlugin *SpellCheckerPlugin::create()
   return m_plugin;
 }
 
-Q_EXPORT_PLUGIN2(SpellChecker, SpellCheckerPlugin);
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2(SpellChecker, SpellCheckerPlugin);
+#endif
