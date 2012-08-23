@@ -82,7 +82,7 @@ StatusBar::StatusBar(QWidget *parent)
 
 bool StatusBar::event(QEvent *event)
 {
-  #if defined(Q_WS_WIN)
+  #if defined(Q_OS_WIN32)
   if (event->type() == QEvent::ApplicationPaletteChange) {
     updateStyleSheet();
   }
@@ -228,7 +228,7 @@ void StatusBar::updateStyleSheet()
   #if defined(Q_OS_MAC)
   setStyleSheet(LS("QStatusBar { background: qlineargradient(x1: 1, y1: 0, x2: 1, y2: 1, stop: 0 #ededed, stop: 1 #c8c8c8); } QStatusBar::item { border-width: 0; }"));
   #else
-    #if defined(Q_WS_WIN)
+    #if defined(Q_OS_WIN32)
     setStyleSheet(QString(LS("QStatusBar { background-color: %1; } QStatusBar::item { border-width: 0; }")).arg(parentWidget()->palette().color(QPalette::Window).name()));
     #else
     setStyleSheet(LS("QStatusBar::item { border-width: 0; }"));

@@ -37,7 +37,7 @@
 #include "ui/tabs/AbstractTab.h"
 #include "ui/TabWidget.h"
 
-#if defined(Q_WS_WIN)
+#if defined(Q_OS_WIN32)
   #include "qtwin/qtwin.h"
   #include <qt_windows.h>
   #define WM_DWMCOMPOSITIONCHANGED 0x031E // Composition changed window message
@@ -72,7 +72,7 @@ ChatWindow::ChatWindow(QWidget *parent)
   m_mainLay->setSpacing(0);
   setCentralWidget(m_central);
 
-  #if defined(Q_WS_WIN)
+  #if defined(Q_OS_WIN32)
   setWindowsAero();
   #endif
 
@@ -169,7 +169,7 @@ void ChatWindow::showEvent(QShowEvent *event)
 }
 
 
-#if defined(Q_WS_WIN)
+#if defined(Q_OS_WIN32)
 bool ChatWindow::winEvent(MSG *message, long *result)
 {
   if (message && message->message == WM_DWMCOMPOSITIONCHANGED) {
@@ -295,7 +295,7 @@ void ChatWindow::saveGeometry()
 }
 
 
-#if defined(Q_WS_WIN)
+#if defined(Q_OS_WIN32)
 void ChatWindow::setWindowsAero()
 {
   if (SCHAT_OPTION("WindowsAero").toBool() && QtWin::isCompositionEnabled()) {

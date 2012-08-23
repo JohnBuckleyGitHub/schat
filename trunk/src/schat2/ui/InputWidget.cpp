@@ -22,6 +22,7 @@
 #include <QFile>
 #include <QKeyEvent>
 #include <QMenu>
+#include <QMimeData>
 #include <QScrollBar>
 #include <QToolBar>
 #include <QWidgetAction>

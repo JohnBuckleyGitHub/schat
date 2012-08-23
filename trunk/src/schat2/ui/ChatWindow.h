@@ -50,7 +50,7 @@ protected:
   void moveEvent(QMoveEvent *event);
   void resizeEvent(QResizeEvent *event);
   void showEvent(QShowEvent *event);
-  #if defined(Q_WS_WIN)
+  #if defined(Q_OS_WIN32)
   bool winEvent(MSG *message, long *result);
   #endif
 
@@ -67,7 +67,7 @@ private:
   void retranslateUi();
   void saveGeometry();
 
-  #if defined(Q_WS_WIN)
+  #if defined(Q_OS_WIN32)
   void setWindowsAero();
   #endif
 

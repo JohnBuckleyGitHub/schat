@@ -25,7 +25,9 @@
 int main(int argc, char *argv[])
 {
   QCoreApplication app(argc, argv);
+# if QT_VERSION < 0x050000
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
+# endif
   app.setApplicationName(SCHAT_NAME);
   app.setApplicationVersion(SCHAT_VERSION);
   app.setOrganizationName(SCHAT_ORGANIZATION);

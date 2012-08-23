@@ -67,7 +67,7 @@ SpellChecker::~SpellChecker()
 
 QString SpellChecker::path()
 {
-# if defined(Q_WS_X11)
+# if defined(Q_OS_LINUX)
   return LS("/usr/share/hunspell/");
 # else
   return Path::data(Path::SystemScope) + LS("/spelling");

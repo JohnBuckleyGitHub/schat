@@ -21,7 +21,7 @@
 int main(int argc, char *argv[])
 {
   ChatApp app(argc, argv);
-# if defined(Q_WS_WIN)
+# if defined(Q_OS_WIN32)
   if (ChatApp::selfUpdate())
     return 0;
 # endif

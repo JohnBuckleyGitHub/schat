@@ -152,9 +152,9 @@ void Plugins::load(const QString &path)
   QDir dir(path);
   QStringList filters;
 
-# if defined(Q_WS_WIN) || defined(Q_OS_SYMBIAN)
+# if defined(Q_OS_WIN32) || defined(Q_OS_SYMBIAN)
   filters.append(LS("*.dll"));
-# elif defined(Q_WS_MAC)
+# elif defined(Q_OS_MAC)
   filters.append(LS("*.dylib"));
   filters.append(LS("*.so"));
 # else
