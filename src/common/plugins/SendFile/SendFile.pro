@@ -18,6 +18,7 @@
 SCHAT_CLIENT_LIB = 1
 SCHAT_CORE_LIB = 1
 QT = core network gui webkit sql
+OTHER_FILES += SendFile.json
 
 HEADERS  = \
    SendFileAction.h \

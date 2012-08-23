@@ -18,6 +18,7 @@
 SCHAT_CLIENT_LIB = 1
 SCHAT_CORE_LIB = 1
 QT = core gui webkit
+OTHER_FILES += YouTube.json
 
 HEADERS  = \
    YouTubeFilter.h \

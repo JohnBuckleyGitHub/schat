@@ -57,4 +57,6 @@ ChatPlugin *RawFeedsPlugin::create()
   return m_plugin;
 }
 
-Q_EXPORT_PLUGIN2(RawFeeds, RawFeedsPlugin);
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2(RawFeeds, RawFeedsPlugin);
+#endif
