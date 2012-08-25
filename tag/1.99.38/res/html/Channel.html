@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="qrc:/css/ChatView.css">
+  <script src="qrc:/js/jquery.js"></script>
+  <script src="qrc:/js/ChatView.js"></script>
+</head>
+<body id="body" class="no-seconds no-service no-topic-author">
+<div class="tabbable">
+  <div class="tab-content">
+    <div class="tab-pane active" id="messages">
+      <div id="Chat">
+      </div>
+      <button id="page-switcher-end" class="page-switcher" data-toggle="tab" href="#info" style="right: 0;">›</button>
+    </div>
+    <div class="tab-pane" id="info">
+      <button id="page-switcher-start" class="page-switcher" data-toggle="tab" href="#messages">‹</button>
+      <div id="info-content"><div id="page-header"><span id="channel-name"></span></div></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
