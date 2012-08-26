@@ -29,41 +29,33 @@ var AboutUtils = {
 
   TR: function(key) {
     $("[data-tr='" + key + "']").html(AboutUtils.tr(key));
+  },
+
+  toggle: function() {
+    var body = $('#' + $(this).attr('id') + '-body');
+    if (body.is(':hidden')) {
+      body.show();
+      $(this).removeClass('toggle-expand');
+      $(this).addClass('toggle');
+    }
+    else {
+      body.hide();
+      $(this).removeClass('toggle');
+      $(this).addClass('toggle-expand');
+    }
   }
 };
 
 
 $(document).ready(function() {
 
-  $('#paths').click(function() {
-    toggle('#paths');
-  });
-
-  $('#other').click(function() {
-    toggle('#other');
-  });
+  $('.header').click(AboutUtils.toggle);
 
   AboutUtils.retranslate();
   $('#version').html('<a href="http://wiki.schat.me/Simple_Chat_' + About.version('app') + '">' + About.version('app') + '</a>');
   $('#qt-version').text(About.version('qt'));
   $('#webkit-version').text(About.version('webkit'));
   $('#preferences').html(About.path('preferences'));
-
-  function toggle(prefix) {
-    var paths = $(prefix);
-    var pathsBody = $(prefix + '-body');
-
-    if (pathsBody.is(':hidden')) {
-      pathsBody.show();
-      paths.removeClass('toggle-expand');
-      paths.addClass('toggle');
-    }
-    else {
-      pathsBody.hide();
-      paths.removeClass('toggle');
-      paths.addClass('toggle-expand');
-    }
-  }
 });
 
 if (typeof About === "undefined") {
