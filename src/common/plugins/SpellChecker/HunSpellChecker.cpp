@@ -89,15 +89,10 @@ QStringList HunspellChecker::dictionaries() const
   QStringList dict;
   QDir dir(m_path);
   if (dir.exists()) {
-    QStringList lstDic = dir.entryList(QStringList(LS("*.dic")), QDir::Files);
-    foreach(QString tmp, lstDic) {
-      if (tmp.startsWith(LS("hyph_")))
-        continue;
-      if (tmp.startsWith(LS("th_")))
-        continue;
-      if (tmp.endsWith(LS(".dic")))
-        tmp = tmp.mid(0, tmp.length() - 4);
-      dict << tmp;
+    QStringList entryList = dir.entryList(QStringList(LS("*.dic")), QDir::Files);
+    foreach(const QString &file, entryList) {
+      if (!file.startsWith(LS("hyph_")))
+        dict << file.left(file.size() - 4);
     }
   }
   return dict;
