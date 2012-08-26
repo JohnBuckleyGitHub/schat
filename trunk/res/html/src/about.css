@@ -86,7 +86,7 @@ a:active, a:hover {
   color: rgba(0,0,0,0.5);
 }
 
-#paths {
+#thanks {
   margin-top: 24px;
 }
 
@@ -104,7 +104,7 @@ a:active, a:hover {
   background: url("qrc:/images/toggle-small.png") no-repeat left center transparent;
 }
 
-#paths-body, #other-body {
+.toggle-data {
   display:none;
   padding-left:11px;
 }

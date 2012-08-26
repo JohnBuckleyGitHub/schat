@@ -182,56 +182,56 @@
 <context>
     <name>InputWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="448"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="529"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="449"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="530"/>
         <source>Cut</source>
         <translation>Вырезать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="449"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="530"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="450"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="531"/>
         <source>Copy</source>
         <translation>Копировать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="450"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="531"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="451"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="532"/>
         <source>Paste</source>
         <translation>Вставить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="451"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="532"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="452"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="533"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="452"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="533"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="453"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="534"/>
         <source>Select All</source>
         <translation>Выделить всё</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="462"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="534"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="463"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="535"/>
         <source>Bold</source>
         <translation>Полужирный</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="468"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="535"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="469"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="536"/>
         <source>Italic</source>
         <translation>Курсив</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="474"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="536"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="475"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="537"/>
         <source>Underline</source>
         <translation>Подчёркнутый</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="480"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="537"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="481"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="538"/>
         <source>Strikeout</source>
         <translation>Зачёркнутый</translation>
     </message>
@@ -817,6 +817,11 @@
         <location filename="../../src/schat2/WebBridge.cpp" line="73"/>
         <source>Offline</source>
         <translation>Не в сети</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="74"/>
+        <source>Thanks</source>
+        <translation>Благодарности</translation>
     </message>
 </context>
 <context>

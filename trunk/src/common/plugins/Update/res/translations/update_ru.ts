@@ -5,17 +5,17 @@
 <context>
     <name>UpdatePluginImpl</name>
     <message>
-        <location filename="../../UpdatePlugin.cpp" line="124"/>
+        <location filename="../../UpdatePlugin.cpp" line="127"/>
         <source>Downloading update</source>
         <translation>Загрузка обновления</translation>
     </message>
     <message>
-        <location filename="../../UpdatePlugin.cpp" line="282"/>
+        <location filename="../../UpdatePlugin.cpp" line="287"/>
         <source>Update Ready</source>
         <translation>Обновление готово к установке</translation>
     </message>
     <message>
-        <location filename="../../UpdatePlugin.cpp" line="287"/>
+        <location filename="../../UpdatePlugin.cpp" line="292"/>
         <source>Update Error</source>
         <translation>Ошибка обновления</translation>
     </message>
