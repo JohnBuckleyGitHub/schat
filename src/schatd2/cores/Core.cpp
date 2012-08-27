@@ -84,10 +84,15 @@ qint64 Core::date()
  */
 bool Core::route()
 {
-  if (m_timestamp == 0)
-    m_timestamp = DateTime::utc();
+  return route(Ch::channel(m_reader->dest(), SimpleID::typeOf(m_reader->dest())));
+}
 
-  ChatChannel channel = Ch::channel(m_reader->dest(), SimpleID::typeOf(m_reader->dest()));
+
+/*!
+ * Маршрутизация входящих пакетов.
+ */
+bool Core::route(ChatChannel channel)
+{
   if (!channel)
     return false;
 

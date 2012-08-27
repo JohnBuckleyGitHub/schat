@@ -66,3 +66,9 @@ MessageNotice::MessageNotice(quint16 type, PacketReader *reader)
   : Notice(type, reader)
 {
 }
+
+
+QByteArray MessageNotice::toId() const
+{
+  return SimpleID::make(m_sender + dest() + QByteArray::number(m_date) + m_id, SimpleID::MessageId);
+}

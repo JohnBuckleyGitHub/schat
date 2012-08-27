@@ -55,8 +55,10 @@ bool NodeMessages::read(PacketReader *reader)
     return false;
   }
 
-  if (packet.direction() == Notice::Internal)
-    return true;
+  if (packet.direction() == Notice::Internal) {
+    Core::i()->route(m_dest);
+    return false;
+  }
 
   if (m_dest->type() == SimpleID::UserId && m_dest->status().value() == Status::Offline) {
     reject(Notice::ChannelOffline);
@@ -65,9 +67,11 @@ bool NodeMessages::read(PacketReader *reader)
     return false;
   }
 
+  m_packet->setDate(Core::date());
   NodeMessagesDB::add(packet);
 
-  return true;
+  Core::i()->route(m_dest);
+  return false;
 }
 
 

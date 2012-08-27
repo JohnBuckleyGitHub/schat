@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/ClientCmd.h"
