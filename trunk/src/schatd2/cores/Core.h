@@ -48,6 +48,7 @@ public:
 
   // Функции отправки пакетов.
   bool route();
+  bool route(ChatChannel channel);
   bool send(const QList<quint64> &sockets, const QByteArray &packet, int option = 0, const QByteArray &userId = QByteArray());
   bool send(const QList<quint64> &sockets, const QList<QByteArray> &packets, int option = 0, const QByteArray &userId = QByteArray());
   bool send(const QList<quint64> &sockets, Packet packet, int option = 0, const QByteArray &userId = QByteArray());

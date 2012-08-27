@@ -49,6 +49,7 @@ public:
   MessageNotice(const MessageRecord &record, bool parse = false);
   MessageNotice(const QByteArray &sender, const QByteArray &dest, const QString &text, quint64 date = 0, const QByteArray &id = QByteArray());
   MessageNotice(quint16 type, PacketReader *reader);
+  QByteArray toId() const;
 };
 
 typedef QSharedPointer<MessageNotice> MessagePacket;
