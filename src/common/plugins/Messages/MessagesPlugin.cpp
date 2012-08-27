@@ -30,6 +30,7 @@
 NodeMessagesBase::NodeMessagesBase(QObject *parent)
   : NodePlugin(parent)
 {
+  new NodeMessagesDB(this);
   new NodeMessages(Core::i());
   new MessagesCh(this);
   FeedStorage::add(new NodeHistoryFeed());

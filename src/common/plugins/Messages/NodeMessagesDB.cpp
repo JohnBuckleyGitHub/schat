@@ -16,10 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QSqlDatabase>
 #include <QSqlQuery>
+#include <QThreadPool>
+#include <QSqlError>
+#include <QTimer>
 
 #include "cores/Core.h"
 #include "net/packets/MessageNotice.h"
@@ -27,12 +28,17 @@
 #include "sglobal.h"
 #include "Storage.h"
 #include "text/PlainTextFilter.h"
+#include "DataBase.h"
 
 bool NodeMessagesDB::m_isOpen = true;
-QString NodeMessagesDB::m_id = LS("messages");
+NodeMessagesDB *NodeMessagesDB::m_self = 0;
+QString NodeMessagesDB::m_id;
 
-NodeMessagesDB::NodeMessagesDB()
+NodeMessagesDB::NodeMessagesDB(QObject *parent)
+  : QObject(parent)
 {
+  m_self = this;
+  m_id = LS("messages");
 }
 
 
@@ -222,20 +228,10 @@ QList<MessageRecord> NodeMessagesDB::offline(const QByteArray &user)
 
 void NodeMessagesDB::add(const MessageNotice &packet, int status)
 {
-  QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(LS("INSERT INTO messages (messageId, senderId, destId, status, date, command, text, plain, data) "
-                     "VALUES (:messageId, :senderId, :destId, :status, :date, :command, :text, :plain, :data);"));
-
-  query.bindValue(LS(":messageId"), packet.id());
-  query.bindValue(LS(":senderId"),  packet.sender());
-  query.bindValue(LS(":destId"),    packet.dest());
-  query.bindValue(LS(":status"),    NodeMessagesDB::status(status));
-  query.bindValue(LS(":date"),      Core::date());
-  query.bindValue(LS(":command"),   packet.command());
-  query.bindValue(LS(":text"),      packet.text());
-  query.bindValue(LS(":plain"),     PlainTextFilter::filter(packet.text()));
-  query.bindValue(LS(":data"),      packet.raw());
-  query.exec();
+  AddMessageTask *task = new AddMessageTask(packet, status);
+  m_self->m_tasks.append(task);
+  if (m_self->m_tasks.size() == 1)
+    QTimer::singleShot(0, m_self, SLOT(startTasks()));
 }
 
 
@@ -259,6 +255,17 @@ void NodeMessagesDB::markAsRead(const QList<MessageRecord> &records)
   }
 
   db.commit();
+}
+
+
+void NodeMessagesDB::startTasks()
+{
+  if (m_tasks.isEmpty())
+    return;
+
+  QThreadPool *pool = DataBase::pool();
+  while (!m_tasks.isEmpty())
+    pool->start(m_tasks.takeFirst());
 }
 
 
@@ -292,4 +299,31 @@ void NodeMessagesDB::V2()
   QSqlQuery query(QSqlDatabase::database(m_id));
   query.exec(LS("ALTER TABLE messages ADD data BLOB"));
   query.exec(LS("PRAGMA user_version = 2"));
+}
+
+
+AddMessageTask::AddMessageTask(const MessageNotice &packet, int status)
+  : QRunnable()
+  , m_status(status)
+  , m_packet(packet)
+{
+}
+
+
+void AddMessageTask::run()
+{
+  QSqlQuery query(QSqlDatabase::database(NodeMessagesDB::id()));
+  query.prepare(LS("INSERT INTO messages (messageId,  senderId,  destId,  status,  date,  command,  text,  plain,  data) "
+                                 "VALUES (:messageId, :senderId, :destId, :status, :date, :command, :text, :plain, :data);"));
+
+  query.bindValue(LS(":messageId"), m_packet.toId());
+  query.bindValue(LS(":senderId"),  m_packet.sender());
+  query.bindValue(LS(":destId"),    m_packet.dest());
+  query.bindValue(LS(":status"),    NodeMessagesDB::status(m_status));
+  query.bindValue(LS(":date"),      m_packet.date());
+  query.bindValue(LS(":command"),   m_packet.command());
+  query.bindValue(LS(":text"),      m_packet.text());
+  query.bindValue(LS(":plain"),     PlainTextFilter::filter(m_packet.text()));
+  query.bindValue(LS(":data"),      m_packet.raw());
+  query.exec();
 }

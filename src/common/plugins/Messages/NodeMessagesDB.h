@@ -19,7 +19,8 @@
 #ifndef NODEMESSAGESDB_H_
 #define NODEMESSAGESDB_H_
 
-#include <QString>
+#include <QObject>
+#include <QRunnable>
 
 #include "net/packets/MessageNotice.h"
 #include "text/MessageId.h"
@@ -27,11 +28,13 @@
 class MessageNotice;
 class QSqlQuery;
 
-class NodeMessagesDB
+class NodeMessagesDB : public QObject
 {
-  NodeMessagesDB();
+  Q_OBJECT
 
 public:
+  NodeMessagesDB(QObject *parent = 0);
+  inline static QString id() { return m_id;}
   static bool open();
   static int status(int status);
   static QList<MessageId> ids(QSqlQuery &query);
@@ -43,13 +46,36 @@ public:
   static void add(const MessageNotice &packet, int status = 300);
   static void markAsRead(const QList<MessageRecord> &records);
 
+private slots:
+  void startTasks();
+
 private:
   static void version();
 
   static void V2();
 
-  static bool m_isOpen; ///< true если база открыта.
-  static QString m_id;  ///< Идентификатор сооединения с базой, это строка всегда равна "messages".
+  QList<QRunnable*> m_tasks;     ///< Задачи для выполнения в отдельном потоке.
+  static bool m_isOpen;          ///< true если база открыта.
+  static NodeMessagesDB *m_self; ///< Указатель на себя.
+  static QString m_id;           ///< Идентификатор сооединения с базой, это строка всегда равна "messages".
+};
+
+
+class AddMessageTask : public QRunnable
+{
+public:
+  /// Формат данных в таблице storage.
+  enum Format {
+    AutoFormat,    ///< Автоматическое определение формата.
+    JSonFormat,    ///< JSON формат.
+  };
+
+  AddMessageTask(const MessageNotice &packet, int status = 300);
+  void run();
+
+private:
+  int m_status;           ///< Статус сообщения.
+  MessageNotice m_packet; ///< Копия пакета.
 };
 
 #endif /* NODEMESSAGESDB_H_ */
