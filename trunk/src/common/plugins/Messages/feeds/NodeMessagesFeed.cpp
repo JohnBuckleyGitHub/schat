@@ -16,33 +16,30 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Ch.h"
-#include "MessagesCh.h"
-#include "sglobal.h"
+#include "DateTime.h"
+#include "feeds/NodeMessagesFeed.h"
 
-MessagesCh::MessagesCh(QObject *parent)
-  : ChHook(parent)
+NodeMessagesFeed::NodeMessagesFeed(const QString &name, const QVariantMap &data)
+  : Feed(name, data)
 {
+  m_header.acl().setMask(0644);
 }
 
 
-void MessagesCh::newChannel(ChatChannel channel, ChatChannel user)
+NodeMessagesFeed::NodeMessagesFeed(const QString &name, qint64 date)
+  : Feed(name, date)
 {
-  Ch::addNewFeedIfNotExist(channel, LS("history"), user);
-  Ch::addNewFeedIfNotExist(channel, LS("messages"), user);
+  m_header.acl().setMask(0644);
 }
 
 
-void MessagesCh::sync(ChatChannel channel, ChatChannel user)
+Feed* NodeMessagesFeed::create(const QString &name)
 {
-  Q_UNUSED(user)
-  Ch::addNewFeedIfNotExist(channel, LS("history"));
-  Ch::addNewFeedIfNotExist(channel, LS("messages"));
+  return new NodeMessagesFeed(name, DateTime::utc());
 }
 
 
-void MessagesCh::userChannel(ChatChannel channel)
+Feed* NodeMessagesFeed::load(const QString &name, const QVariantMap &data)
 {
-  Ch::addNewUserFeedIfNotExist(channel, LS("history"));
-  Ch::addNewUserFeedIfNotExist(channel, LS("messages"));
+  return new NodeMessagesFeed(name, data);
 }

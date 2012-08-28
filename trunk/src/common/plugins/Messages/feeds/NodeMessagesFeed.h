@@ -16,33 +16,18 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Ch.h"
-#include "MessagesCh.h"
-#include "sglobal.h"
+#ifndef NODEMESSAGESFEED_H_
+#define NODEMESSAGESFEED_H_
 
-MessagesCh::MessagesCh(QObject *parent)
-  : ChHook(parent)
+#include "feeds/Feed.h"
+
+class NodeMessagesFeed : public Feed
 {
-}
+public:
+  NodeMessagesFeed(const QString &name, const QVariantMap &data);
+  NodeMessagesFeed(const QString &name = QLatin1String("messages"), qint64 date = 0);
+  Feed* create(const QString &name);
+  Feed* load(const QString &name, const QVariantMap &data);
+};
 
-
-void MessagesCh::newChannel(ChatChannel channel, ChatChannel user)
-{
-  Ch::addNewFeedIfNotExist(channel, LS("history"), user);
-  Ch::addNewFeedIfNotExist(channel, LS("messages"), user);
-}
-
-
-void MessagesCh::sync(ChatChannel channel, ChatChannel user)
-{
-  Q_UNUSED(user)
-  Ch::addNewFeedIfNotExist(channel, LS("history"));
-  Ch::addNewFeedIfNotExist(channel, LS("messages"));
-}
-
-
-void MessagesCh::userChannel(ChatChannel channel)
-{
-  Ch::addNewUserFeedIfNotExist(channel, LS("history"));
-  Ch::addNewUserFeedIfNotExist(channel, LS("messages"));
-}
+#endif /* NODEMESSAGESFEED_H_ */
