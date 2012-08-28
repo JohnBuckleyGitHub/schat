@@ -57,6 +57,9 @@ bool FeedNotify::match(const QString &name, const QString &action) const
 }
 
 
+/*!
+ * \deprecated Использование "action" устарело.
+ */
 QString FeedNotify::action() const
 {
   return m_json.value(LS("action")).toString();

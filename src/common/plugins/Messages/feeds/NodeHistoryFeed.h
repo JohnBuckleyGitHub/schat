@@ -36,10 +36,8 @@ public:
 
 private:
   FeedQueryReply get(const QVariantMap &json, Channel *channel);
-  FeedQueryReply last(const QVariantMap &json, Channel *channel);
   FeedQueryReply offline(const QVariantMap &json, Channel *channel);
 
-  QList<MessageId> last(const QVariantMap &json);
   QList<QByteArray> toPackets(const QList<MessageRecord> &data);
   void toPackets(QList<QByteArray> &out, const QList<MessageRecord> &records);
 };

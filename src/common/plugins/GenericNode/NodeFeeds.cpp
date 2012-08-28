@@ -184,7 +184,7 @@ int NodeFeeds::get()
   packet->setData(Feed::merge(request.first, json));
   packet->setDate(feed->head().date());
 
-  m_core->send(packet);
+  Core::send(packet);
   return Notice::OK;
 }
 
@@ -206,7 +206,7 @@ int NodeFeeds::get(FeedPtr feed, const QString &request)
   if (reply.date)
     packet->setDate(reply.date);
 
-  m_core->send(packet);
+  Core::send(packet);
   return Notice::OK;
 }
 

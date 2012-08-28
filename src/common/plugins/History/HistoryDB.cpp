@@ -122,13 +122,12 @@ QList<MessageId> HistoryDB::last(const QByteArray &channel, int limit)
 }
 
 
-MessageRecord HistoryDB::get(const MessageId &id)
+MessageRecord HistoryDB::get(const QByteArray &id)
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(LS("SELECT id, senderId, destId, status, command, text, data FROM messages WHERE messageId = :messageId AND date = :date LIMIT 1;"));
+  query.prepare(LS("SELECT id, senderId, destId, status, date, command, text, data FROM messages WHERE messageId = :messageId LIMIT 1;"));
 
-  query.bindValue(LS(":messageId"), id.id());
-  query.bindValue(LS(":date"), id.date());
+  query.bindValue(LS(":messageId"), id);
   query.exec();
 
   if (!query.first())
@@ -136,14 +135,14 @@ MessageRecord HistoryDB::get(const MessageId &id)
 
   MessageRecord record;
   record.id        = query.value(0).toLongLong();
-  record.messageId = id.id();
+  record.messageId = id;
   record.senderId  = query.value(1).toByteArray();
   record.destId    = query.value(2).toByteArray();
   record.status    = query.value(3).toLongLong();
-  record.date      = id.date();
-  record.command   = query.value(4).toString();
-  record.text      = query.value(5).toString();
-  record.data      = query.value(6).toByteArray();
+  record.date      = query.value(4).toLongLong();
+  record.command   = query.value(5).toString();
+  record.text      = query.value(6).toString();
+  record.data      = query.value(7).toByteArray();
 
   return record;
 }

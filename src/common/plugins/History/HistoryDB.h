@@ -37,7 +37,7 @@ public:
   static bool open(const QByteArray &id, const QString &dir);
   static int status(int status);
   static QList<MessageId> last(const QByteArray &channel, int limit);
-  static MessageRecord get(const MessageId &id);
+  static MessageRecord get(const QByteArray &id);
   static void add(MessagePacket packet);
   static void clear();
   static void close();

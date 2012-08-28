@@ -32,8 +32,8 @@ public:
   FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0);
 
 private:
+  FeedReply get(const QVariantMap &json, Channel *user);
   FeedReply last(const QVariantMap &json, Channel *user);
-  QStringList encode(const QList<QByteArray> &ids);
 };
 
 #endif /* NODEMESSAGESFEED_H_ */

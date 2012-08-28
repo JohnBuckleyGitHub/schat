@@ -19,6 +19,8 @@
 #ifndef MESSAGENOTICE_H_
 #define MESSAGENOTICE_H_
 
+#include <QStringList>
+
 #include "net/packets/Notice.h"
 
 struct SCHAT_EXPORT MessageRecord
@@ -50,6 +52,8 @@ public:
   MessageNotice(const QByteArray &sender, const QByteArray &dest, const QString &text, quint64 date = 0, const QByteArray &id = QByteArray());
   MessageNotice(quint16 type, PacketReader *reader);
   QByteArray toId() const;
+  static QList<QByteArray> decode(const QStringList &ids);
+  static QStringList encode(const QList<QByteArray> &ids);
 };
 
 typedef QSharedPointer<MessageNotice> MessagePacket;
