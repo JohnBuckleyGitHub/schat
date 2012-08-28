@@ -36,7 +36,7 @@
 #include "ui/tabs/PrivateTab.h"
 #include "client/ClientMessages.h"
 
-History::History(QObject *parent)
+HistoryImpl::HistoryImpl(QObject *parent)
   : ChatPlugin(parent)
 {
   m_chatView = new HistoryChatView(this);
@@ -51,7 +51,7 @@ History::History(QObject *parent)
 /*!
  * Загрузка сообщений по идентификаторам.
  */
-bool History::get(const QList<MessageId> &ids)
+bool HistoryImpl::get(const QList<MessageId> &ids)
 {
   QList<MessageId> required = getLocal(ids);
   if (required.isEmpty())
@@ -74,7 +74,7 @@ bool History::get(const QList<MessageId> &ids)
  *
  * \deprecated Необходимо использовать GET запрос.
  */
-bool History::getLast(const QByteArray &id)
+bool HistoryImpl::getLast(const QByteArray &id)
 {
   if (ChatClient::state() != ChatClient::Online) {
     getLocal(HistoryDB::last(id, 20));
@@ -100,7 +100,7 @@ bool History::getLast(const QByteArray &id)
  *
  * \deprecated Необходимо использовать GET запрос.
  */
-bool History::getOffline()
+bool HistoryImpl::getOffline()
 {
   if (ChatClient::state() != ChatClient::Online)
     return false;
@@ -111,7 +111,7 @@ bool History::getOffline()
 }
 
 
-QList<MessageId> History::getLocal(const QList<MessageId> &ids)
+QList<MessageId> HistoryImpl::getLocal(const QList<MessageId> &ids)
 {
   QList<MessageId> out;
   for (int i = 0; i < ids.size(); ++i) {
@@ -128,13 +128,13 @@ QList<MessageId> History::getLocal(const QList<MessageId> &ids)
 }
 
 
-void History::getLast()
+void HistoryImpl::getLast()
 {
   m_chatView->getLast(SimpleID::UserId);
 }
 
 
-void History::notify(const Notify &notify)
+void HistoryImpl::notify(const Notify &notify)
 {
   if (notify.type() == Notify::FeedReply) {
     const FeedNotify &n = static_cast<const FeedNotify &>(notify);
@@ -155,7 +155,7 @@ void History::notify(const Notify &notify)
 }
 
 
-void History::open()
+void HistoryImpl::open()
 {
   QByteArray id = ChatClient::serverId();
   if (!id.isEmpty())
@@ -166,7 +166,7 @@ void History::open()
 /*!
  * Обработка ответа на успешный запрос \b last к фиду \b history.
  */
-void History::lastReady(const FeedNotify &notify)
+void HistoryImpl::lastReady(const FeedNotify &notify)
 {
   QList<MessageId> ids = MessageId::toList(notify.json().value(LS("ids")).toString());
   if (ids.isEmpty())
@@ -178,7 +178,7 @@ void History::lastReady(const FeedNotify &notify)
 
 ChatPlugin *HistoryPlugin::create()
 {
-  m_plugin = new History(this);
+  m_plugin = new HistoryImpl(this);
   return m_plugin;
 }
 
