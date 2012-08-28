@@ -21,6 +21,7 @@ OTHER_FILES += Messages.json
 
 HEADERS  = \
    feeds/NodeHistoryFeed.h \
+   feeds/NodeMessagesFeed.h \
    MessagesCh.h \
    MessagesPlugin.h \
    MessagesPlugin_p.h \
@@ -29,6 +30,7 @@ HEADERS  = \
 
 SOURCES  = \
    feeds/NodeHistoryFeed.cpp \
+   feeds/NodeMessagesFeed.cpp \
    MessagesCh.cpp \
    MessagesPlugin.cpp \
    NodeMessages.cpp \

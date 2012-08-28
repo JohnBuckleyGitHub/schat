@@ -21,6 +21,7 @@
 #include "cores/Core.h"
 #include "feeds/FeedStorage.h"
 #include "feeds/NodeHistoryFeed.h"
+#include "feeds/NodeMessagesFeed.h"
 #include "MessagesCh.h"
 #include "MessagesPlugin.h"
 #include "MessagesPlugin_p.h"
@@ -34,6 +35,7 @@ NodeMessagesBase::NodeMessagesBase(QObject *parent)
   new NodeMessages(Core::i());
   new MessagesCh(this);
   FeedStorage::add(new NodeHistoryFeed());
+  FeedStorage::add(new NodeMessagesFeed());
 
   NodeMessagesDB::open();
 }
