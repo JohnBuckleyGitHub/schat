@@ -173,22 +173,22 @@ FeedQueryReply NodeHistoryFeed::offline(const QVariantMap &json, Channel *channe
  */
 QList<MessageId> NodeHistoryFeed::last(const QVariantMap &json)
 {
-  int count = json.value(LS("count")).toInt();
-  if (count <= 0)
+//  int count = json.value(LS("count")).toInt();
+//  if (count <= 0)
     return QList<MessageId>();
 
-  Channel *channel = head().channel();
-  if (channel->type() == SimpleID::ChannelId)
-    return NodeMessagesDB::last(head().channel()->id(), count);
-
-  if (channel->type() != SimpleID::UserId)
-    return QList<MessageId>();
-
-  QByteArray id = SimpleID::decode(json.value(LS("id")).toByteArray());
-  if (SimpleID::typeOf(id) != SimpleID::UserId)
-    return NodeMessagesDB::last(channel->id(), count);
-  else
-    return NodeMessagesDB::last(channel->id(), id, count);
+//  Channel *channel = head().channel();
+//  if (channel->type() == SimpleID::ChannelId)
+//    return NodeMessagesDB::last(head().channel()->id(), count);
+//
+//  if (channel->type() != SimpleID::UserId)
+//    return QList<MessageId>();
+//
+//  QByteArray id = SimpleID::decode(json.value(LS("id")).toByteArray());
+//  if (SimpleID::typeOf(id) != SimpleID::UserId)
+//    return NodeMessagesDB::last(channel->id(), count);
+//  else
+//    return NodeMessagesDB::last(channel->id(), id, count);
 }
 
 

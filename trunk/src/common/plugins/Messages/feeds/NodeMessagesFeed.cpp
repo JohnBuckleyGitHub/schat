@@ -16,8 +16,15 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include "DateTime.h"
 #include "feeds/NodeMessagesFeed.h"
+#include "net/packets/Notice.h"
+#include "net/SimpleID.h"
+#include "ServerChannel.h"
+#include "sglobal.h"
+#include "NodeMessagesDB.h"
 
 NodeMessagesFeed::NodeMessagesFeed(const QString &name, const QVariantMap &data)
   : Feed(name, data)
@@ -43,3 +50,60 @@ Feed* NodeMessagesFeed::load(const QString &name, const QVariantMap &data)
 {
   return new NodeMessagesFeed(name, data);
 }
+
+
+FeedReply NodeMessagesFeed::get(const QString &path, const QVariantMap &json, Channel *channel)
+{
+  if (path == LS("last"))
+    return last(json, channel);
+
+  return FeedReply(Notice::NotImplemented);
+}
+
+
+/*!
+ * Запрос последних сообщений в канале.
+ *
+ * \param json JSON данные запроса, могут содержать значение "count" для определения количества сообщений, по умолчанию 20.
+ * \param user Пользователь совершивший запрос.
+ */
+FeedReply NodeMessagesFeed::last(const QVariantMap &json, Channel *user)
+{
+  int count = json.value(LS("count"), 20).toInt();
+  if (count <= 0)
+    return FeedReply(Notice::BadRequest);
+
+  QList<QByteArray> messages;
+  Channel *channel = head().channel();
+
+  if (channel->type() == SimpleID::ChannelId) {
+    messages = NodeMessagesDB::last(head().channel()->id(), count);
+  }
+  else if (channel->type() == SimpleID::UserId) {
+    if (!user)
+      return FeedReply(Notice::BadRequest);
+
+    messages = NodeMessagesDB::last(channel->id(), user->id(), count);
+  }
+
+  if (messages.isEmpty())
+    return FeedReply(Notice::NotFound);
+
+  FeedReply reply(Notice::OK);
+  reply.json[LS("count")]    = messages.size();
+  reply.json[LS("messages")] = encode(messages);
+  return reply;
+}
+
+
+QStringList NodeMessagesFeed::encode(const QList<QByteArray> &ids)
+{
+  QStringList out;
+  out.reserve(ids.size());
+  foreach (const QByteArray &id, ids) {
+    out.append(SimpleID::encode(id));
+  }
+
+  return out;
+}
+
