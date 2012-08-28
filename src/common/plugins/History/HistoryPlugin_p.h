@@ -26,12 +26,12 @@ class HistoryChatView;
 class Notify;
 class FeedNotify;
 
-class History : public ChatPlugin
+class HistoryImpl : public ChatPlugin
 {
   Q_OBJECT
 
 public:
-  History(QObject *parent);
+  HistoryImpl(QObject *parent);
   static bool get(const QList<MessageId> &ids);
   static bool getLast(const QByteArray &id);
   static bool getOffline();

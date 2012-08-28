@@ -37,7 +37,7 @@ void HistoryChatView::getLast(int type) const
 
   foreach (ChatView *view, i()->views()) {
     if (SimpleID::typeOf(view->id()) == type)
-      History::getLast(view->id());
+      HistoryImpl::getLast(view->id());
   }
 
   ChatClient::io()->unlock();
@@ -47,12 +47,12 @@ void HistoryChatView::getLast(int type) const
 void HistoryChatView::addImpl(ChatView *view)
 {
   if (SimpleID::typeOf(view->id()) == SimpleID::ChannelId || SimpleID::typeOf(view->id()) == SimpleID::UserId)
-    History::getLast(view->id());
+    HistoryImpl::getLast(view->id());
 }
 
 
 void HistoryChatView::ready()
 {
   getLast(SimpleID::ChannelId);
-  History::getOffline();
+  HistoryImpl::getOffline();
 }
