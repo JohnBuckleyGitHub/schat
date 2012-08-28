@@ -207,6 +207,9 @@ int NodeFeeds::get(FeedPtr feed, const QString &request)
     packet->setDate(reply.date);
 
   Core::send(packet);
+  if (!reply.packets.isEmpty())
+    Core::send(reply.packets);
+
   return Notice::OK;
 }
 

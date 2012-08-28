@@ -138,13 +138,13 @@ QList<QByteArray> NodeMessagesDB::last(const QByteArray &user1, const QByteArray
 /*!
  * Получения списка сообщений по их идентификаторам.
  */
-QList<MessageRecord> NodeMessagesDB::get(const QList<MessageId> &ids)
+QList<MessageRecord> NodeMessagesDB::get(const QList<QByteArray> &ids, const QByteArray &userId)
 {
   if (ids.isEmpty())
     return QList<MessageRecord>();
 
   QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(LS("SELECT id, senderId, destId, status, command, text, data FROM messages WHERE messageId = :messageId AND date = :date LIMIT 1;"));
+  query.prepare(LS("SELECT id, senderId, destId, status, date, command, text, data FROM messages WHERE messageId = :messageId LIMIT 1;"));
 
   QList<MessageRecord> out;
 # if QT_VERSION >= 0x040700
@@ -152,9 +152,8 @@ QList<MessageRecord> NodeMessagesDB::get(const QList<MessageId> &ids)
 # endif
 
   for (int i = 0; i < ids.size(); ++i) {
-    const MessageId &id = ids.at(i);
-    query.bindValue(LS(":messageId"), id.id());
-    query.bindValue(LS(":date"), id.date());
+    const QByteArray &id = ids.at(i);
+    query.bindValue(LS(":messageId"), id);
     query.exec();
 
     if (!query.first())
@@ -162,14 +161,17 @@ QList<MessageRecord> NodeMessagesDB::get(const QList<MessageId> &ids)
 
     MessageRecord record;
     record.id        = query.value(0).toLongLong();
-    record.messageId = id.id();
+    record.messageId = id;
     record.senderId  = query.value(1).toByteArray();
     record.destId    = query.value(2).toByteArray();
+    if (!userId.isEmpty() && (record.senderId != userId && record.destId != userId))
+      continue;
+
     record.status    = query.value(3).toLongLong();
-    record.date      = id.date();
-    record.command   = query.value(4).toString();
-    record.text      = query.value(5).toString();
-    record.data      = query.value(6).toByteArray();
+    record.date      = query.value(4).toLongLong();
+    record.command   = query.value(5).toString();
+    record.text      = query.value(6).toString();
+    record.data      = query.value(7).toByteArray();
     out.append(record);
   }
 

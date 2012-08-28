@@ -32,7 +32,7 @@ public:
   FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0);
 
 private:
-  FeedReply get(const QVariantMap &json, Channel *user);
+  FeedReply fetch(const QVariantMap &json, Channel *user);
   FeedReply last(const QVariantMap &json, Channel *user);
 };
 
