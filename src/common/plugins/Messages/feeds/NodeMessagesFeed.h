@@ -28,6 +28,12 @@ public:
   NodeMessagesFeed(const QString &name = QLatin1String("messages"), qint64 date = 0);
   Feed* create(const QString &name);
   Feed* load(const QString &name, const QVariantMap &data);
+
+  FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0);
+
+private:
+  FeedReply last(const QVariantMap &json, Channel *user);
+  QStringList encode(const QList<QByteArray> &ids);
 };
 
 #endif /* NODEMESSAGESFEED_H_ */

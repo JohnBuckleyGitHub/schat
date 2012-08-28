@@ -37,9 +37,8 @@ public:
   inline static QString id() { return m_id;}
   static bool open();
   static int status(int status);
-  static QList<MessageId> ids(QSqlQuery &query);
-  static QList<MessageId> last(const QByteArray &channel, int limit);
-  static QList<MessageId> last(const QByteArray &user1, const QByteArray &user2, int limit);
+  static QList<QByteArray> last(const QByteArray &channel, int limit);
+  static QList<QByteArray> last(const QByteArray &user1, const QByteArray &user2, int limit);
   static QList<MessageRecord> get(const QList<MessageId> &ids);
   static QList<MessageRecord> messages(QSqlQuery &query);
   static QList<MessageRecord> offline(const QByteArray &user);
@@ -50,9 +49,9 @@ private slots:
   void startTasks();
 
 private:
-  static void version();
-
+  static QList<QByteArray> ids(QSqlQuery &query);
   static void V2();
+  static void version();
 
   QList<QRunnable*> m_tasks;     ///< Задачи для выполнения в отдельном потоке.
   static bool m_isOpen;          ///< true если база открыта.
