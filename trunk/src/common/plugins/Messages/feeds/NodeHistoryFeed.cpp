@@ -91,7 +91,8 @@ FeedQueryReply NodeHistoryFeed::get(const QVariantMap &json, Channel *channel)
   if (ids.isEmpty())
     return FeedQueryReply(Notice::BadRequest);
 
-  QList<MessageRecord> records = NodeMessagesDB::get(ids);
+  QList<MessageRecord> records;
+//  QList<MessageRecord> records = NodeMessagesDB::get(ids);
   if (records.isEmpty())
     return FeedQueryReply(Notice::NotFound);
 

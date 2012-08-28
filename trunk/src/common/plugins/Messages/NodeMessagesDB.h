@@ -39,7 +39,7 @@ public:
   static int status(int status);
   static QList<QByteArray> last(const QByteArray &channel, int limit);
   static QList<QByteArray> last(const QByteArray &user1, const QByteArray &user2, int limit);
-  static QList<MessageRecord> get(const QList<MessageId> &ids);
+  static QList<MessageRecord> get(const QList<QByteArray> &ids, const QByteArray &userId);
   static QList<MessageRecord> messages(QSqlQuery &query);
   static QList<MessageRecord> offline(const QByteArray &user);
   static void add(const MessageNotice &packet, int status = 300);

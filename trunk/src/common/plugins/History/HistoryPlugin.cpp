@@ -64,7 +64,7 @@ bool HistoryImpl::get(const QList<QByteArray> &ids)
 
   QVariantMap data;
   data[LS("messages")] = MessageNotice::encode(required);
-  return ClientFeeds::request(ChatClient::id(), LS("get"), LS("messages/fetch"));
+  return ClientFeeds::request(ChatClient::id(), LS("get"), LS("messages/fetch"), data);
 }
 
 

@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include "DateTime.h"
 #include "feeds/NodeMessagesFeed.h"
 #include "net/packets/Notice.h"
@@ -25,6 +23,7 @@
 #include "ServerChannel.h"
 #include "sglobal.h"
 #include "NodeMessagesDB.h"
+#include "cores/Core.h"
 
 NodeMessagesFeed::NodeMessagesFeed(const QString &name, const QVariantMap &data)
   : Feed(name, data)
@@ -54,10 +53,43 @@ Feed* NodeMessagesFeed::load(const QString &name, const QVariantMap &data)
 
 FeedReply NodeMessagesFeed::get(const QString &path, const QVariantMap &json, Channel *channel)
 {
-  if (path == LS("last"))
+  if (path == LS("fetch"))
+    return fetch(json, channel);
+  else if (path == LS("last"))
     return last(json, channel);
 
   return FeedReply(Notice::NotImplemented);
+}
+
+
+/*!
+ * Загрузка сообщений по идентификаторам.
+ */
+FeedReply NodeMessagesFeed::fetch(const QVariantMap &json, Channel *user)
+{
+  if (!user)
+    return FeedReply(Notice::BadRequest);
+
+  QList<QByteArray> ids = MessageNotice::decode(json.value(LS("messages")).toStringList());
+  if (ids.isEmpty())
+    return FeedReply(Notice::BadRequest);
+
+  QList<MessageRecord> records = NodeMessagesDB::get(ids, head().channel()->type() == SimpleID::UserId ? user->id() : QByteArray());
+  if (records.isEmpty())
+    return FeedReply(Notice::NotFound);
+
+  FeedReply reply(Notice::OK);
+  for (int i = 0; i < records.size(); ++i) {
+    const MessageRecord& record = records.at(i);
+    if (!record.id)
+      continue;
+
+    MessageNotice packet(record);
+    reply.packets.append(packet.data(Core::stream()));
+  }
+
+  reply.json[LS("count")] = reply.packets.size();
+  return reply;
 }
 
 
