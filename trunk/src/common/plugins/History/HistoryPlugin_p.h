@@ -32,10 +32,10 @@ class HistoryImpl : public ChatPlugin
 
 public:
   HistoryImpl(QObject *parent);
-  static bool get(const QList<MessageId> &ids);
+  static bool get(const QList<QByteArray> &ids);
   static bool getLast(const QByteArray &id);
   static bool getOffline();
-  static QList<MessageId> getLocal(const QList<MessageId> &ids);
+  static QList<QByteArray> getLocal(const QList<QByteArray> &ids);
 
 private slots:
   void getLast();
@@ -43,8 +43,6 @@ private slots:
   void open();
 
 private:
-  void lastReady(const FeedNotify &notify);
-
   HistoryChatView *m_chatView;
 };
 

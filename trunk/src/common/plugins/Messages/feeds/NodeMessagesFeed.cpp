@@ -91,19 +91,6 @@ FeedReply NodeMessagesFeed::last(const QVariantMap &json, Channel *user)
 
   FeedReply reply(Notice::OK);
   reply.json[LS("count")]    = messages.size();
-  reply.json[LS("messages")] = encode(messages);
+  reply.json[LS("messages")] = MessageNotice::encode(messages);
   return reply;
 }
-
-
-QStringList NodeMessagesFeed::encode(const QList<QByteArray> &ids)
-{
-  QStringList out;
-  out.reserve(ids.size());
-  foreach (const QByteArray &id, ids) {
-    out.append(SimpleID::encode(id));
-  }
-
-  return out;
-}
-

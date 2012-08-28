@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include <QTime>
 #include <QTimer>
 #include <QtPlugin>
@@ -51,19 +53,18 @@ HistoryImpl::HistoryImpl(QObject *parent)
 /*!
  * Загрузка сообщений по идентификаторам.
  */
-bool HistoryImpl::get(const QList<MessageId> &ids)
+bool HistoryImpl::get(const QList<QByteArray> &ids)
 {
-  QList<MessageId> required = getLocal(ids);
-  if (required.isEmpty())
+  if (ids.isEmpty())
+    return false;
 
-  if (ChatClient::state() != ChatClient::Online)
+  QList<QByteArray> required = getLocal(ids);
+  if (required.isEmpty() || ChatClient::state() != ChatClient::Online)
     return false;
 
   QVariantMap data;
-  data.insert(LS("action"), LS("get"));
-  data.insert(LS("ids"), MessageId::toString(required));
-
-  return ClientFeeds::request(ChatClient::id(), LS("query"), LS("history"), data);
+  data[LS("messages")] = MessageNotice::encode(required);
+  return ClientFeeds::request(ChatClient::id(), LS("get"), LS("messages/fetch"));
 }
 
 
@@ -71,27 +72,15 @@ bool HistoryImpl::get(const QList<MessageId> &ids)
  * Отправка пакета с запросом на получение последних сообщений в канале.
  *
  * \param id Идентификатор канала.
- *
- * \deprecated Необходимо использовать GET запрос.
  */
 bool HistoryImpl::getLast(const QByteArray &id)
 {
   if (ChatClient::state() != ChatClient::Online) {
-    getLocal(HistoryDB::last(id, 20));
+//    getLocal(HistoryDB::last(id, 20));
     return false;
   }
 
-  QVariantMap data;
-  data.insert(LS("action"), LS("last"));
-  data.insert(LS("count"), 20);
-
-  QByteArray channel = id;
-  if (SimpleID::typeOf(id) == SimpleID::UserId && ChatClient::id() != id) {
-    data.insert(LS("id"), SimpleID::encode(id));
-    channel = ChatClient::id();
-  }
-
-  return ClientFeeds::request(channel, LS("query"), LS("history"), data);
+  return ClientFeeds::request(id, LS("get"), LS("messages/last"));
 }
 
 
@@ -111,9 +100,9 @@ bool HistoryImpl::getOffline()
 }
 
 
-QList<MessageId> HistoryImpl::getLocal(const QList<MessageId> &ids)
+QList<QByteArray> HistoryImpl::getLocal(const QList<QByteArray> &ids)
 {
-  QList<MessageId> out;
+  QList<QByteArray> out;
   for (int i = 0; i < ids.size(); ++i) {
     MessageRecord record = HistoryDB::get(ids.at(i));
     if (!record.id) {
@@ -138,19 +127,11 @@ void HistoryImpl::notify(const Notify &notify)
 {
   if (notify.type() == Notify::FeedReply) {
     const FeedNotify &n = static_cast<const FeedNotify &>(notify);
-    if (n.match(LS("history"), LS("last"))) {
-      lastReady(n);
-    }
+    if (n.name() == LS("messages/last"))
+      get(MessageNotice::decode(n.json().value(LS("messages")).toStringList()));
   }
   else if (notify.type() == Notify::ClearCache) {
     HistoryDB::clear();
-  }
-
-  if (notify.type() == Notify::FeedReply || notify.type() == Notify::QueryError) {
-    if (!static_cast<const FeedNotify &>(notify).match(ChatClient::id(), LS("history"), LS("offline")))
-      return;
-
-    QTimer::singleShot(0, this, SLOT(getLast()));
   }
 }
 
@@ -160,19 +141,6 @@ void HistoryImpl::open()
   QByteArray id = ChatClient::serverId();
   if (!id.isEmpty())
     HistoryDB::open(id, ChatCore::networks()->root(SimpleID::encode(id)));
-}
-
-
-/*!
- * Обработка ответа на успешный запрос \b last к фиду \b history.
- */
-void HistoryImpl::lastReady(const FeedNotify &notify)
-{
-  QList<MessageId> ids = MessageId::toList(notify.json().value(LS("ids")).toString());
-  if (ids.isEmpty())
-    return;
-
-  get(ids);
 }
 
 

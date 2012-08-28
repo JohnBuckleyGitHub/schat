@@ -106,6 +106,8 @@ void ClientFeedsImpl::get()
     if (m_packet->status() == Notice::NotModified && m_channel->feed(request.first, false))
       ChatNotify::start(new FeedNotify(Notify::FeedData, m_channel->id(), request.first));
   }
+  else
+    ChatNotify::start(new FeedNotify(Notify::FeedReply, m_channel->id(), m_packet->text(), m_packet->json()));
 }
 
 

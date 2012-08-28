@@ -72,3 +72,30 @@ QByteArray MessageNotice::toId() const
 {
   return SimpleID::make(m_sender + dest() + QByteArray::number(m_date) + m_id, SimpleID::MessageId);
 }
+
+
+QList<QByteArray> MessageNotice::decode(const QStringList &ids)
+{
+  QList<QByteArray> out;
+  QByteArray messageId;
+
+  foreach (const QString &id, ids) {
+    messageId = SimpleID::decode(id);
+    if (SimpleID::typeOf(messageId) == SimpleID::MessageId)
+      out.append(messageId);
+  }
+
+  return out;
+}
+
+
+QStringList MessageNotice::encode(const QList<QByteArray> &ids)
+{
+  QStringList out;
+  out.reserve(ids.size());
+  foreach (const QByteArray &id, ids) {
+    out.append(SimpleID::encode(id));
+  }
+
+  return out;
+}
