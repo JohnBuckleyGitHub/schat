@@ -20,7 +20,6 @@
 #define HISTORYPLUGIN_P_H_
 
 #include "plugins/ChatPlugin.h"
-#include "text/MessageId.h"
 
 class HistoryChatView;
 class Notify;

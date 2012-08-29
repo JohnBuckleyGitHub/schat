@@ -60,9 +60,6 @@ FeedQueryReply NodeHistoryFeed::query(const QVariantMap &json, Channel *channel)
   if (action.isEmpty())
     return FeedQueryReply(Notice::BadRequest);
 
-  if (action == LS("get"))
-    return get(json, channel);
-
   else if (action == LS("offline"))
     return offline(json, channel);
 
@@ -76,35 +73,6 @@ void NodeHistoryFeed::setChannel(Channel *channel)
 
   if (channel->type() == SimpleID::UserId)
     head().acl().setMask(0400);
-}
-
-
-FeedQueryReply NodeHistoryFeed::get(const QVariantMap &json, Channel *channel)
-{
-  if (!channel)
-    return FeedQueryReply(Notice::BadRequest);
-
-  if (head().channel()->id() != channel->id())
-    return FeedQueryReply(Notice::Forbidden);
-
-  QList<MessageId> ids = MessageId::toList(json.value(LS("ids")).toString());
-  if (ids.isEmpty())
-    return FeedQueryReply(Notice::BadRequest);
-
-  QList<MessageRecord> records;
-//  QList<MessageRecord> records = NodeMessagesDB::get(ids);
-  if (records.isEmpty())
-    return FeedQueryReply(Notice::NotFound);
-
-  FeedQueryReply reply = FeedQueryReply(Notice::OK);
-  toPackets(reply.packets, records);
-  if (reply.packets.isEmpty())
-    return FeedQueryReply(Notice::InternalError);
-
-  reply.single = true;
-  reply.json[LS("action")] = LS("get");
-  reply.json[LS("count")]  = reply.packets.size();
-  return reply;
 }
 
 

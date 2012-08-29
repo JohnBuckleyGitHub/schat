@@ -32,7 +32,6 @@
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
 #include "sglobal.h"
-#include "text/MessageId.h"
 #include "ui/tabs/PrivateTab.h"
 #include "client/ClientMessages.h"
 

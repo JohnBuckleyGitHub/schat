@@ -26,7 +26,6 @@
 #include "HistoryDB.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
-#include "text/MessageId.h"
 #include "text/PlainTextFilter.h"
 
 QString HistoryDB::m_id;

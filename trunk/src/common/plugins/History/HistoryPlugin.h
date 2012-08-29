@@ -39,11 +39,11 @@ public:
     QVariantMap out = CoreApi::header();
     out["Id"]       = "History";
     out["Name"]     = "History";
-    out["Version"]  = "0.2.5";
+    out["Version"]  = "0.3.0";
     out["Site"]     = "http://wiki.schat.me/Plugin/History";
     out["Desc"]     = "Adds support for access to the message history";
     out["Desc/ru"]  = "Добавляет поддержку доступа к истории сообщений";
-    out["Required"] = "1.99.36";
+    out["Required"] = "1.99.39";
 
     return out;
   }

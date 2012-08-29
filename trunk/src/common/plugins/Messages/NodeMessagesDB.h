@@ -23,7 +23,6 @@
 #include <QRunnable>
 
 #include "net/packets/MessageNotice.h"
-#include "text/MessageId.h"
 
 class MessageNotice;
 class QSqlQuery;
