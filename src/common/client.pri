@@ -52,7 +52,6 @@ HEADERS += \
     sglobal.h \
     text/HtmlFilter.h \
     text/HtmlToken.h \
-    text/MessageId.h \
     text/PlainTextFilter.h \
     tools/OsInfo.h \
     tools/Ver.h \
@@ -88,7 +87,6 @@ SOURCES += \
     Plugins.cpp \
     Settings.cpp \
     text/HtmlFilter.cpp \
-    text/MessageId.cpp \
     text/PlainTextFilter.cpp \
     tools/OsInfo.cpp \
     tools/Ver.cpp \

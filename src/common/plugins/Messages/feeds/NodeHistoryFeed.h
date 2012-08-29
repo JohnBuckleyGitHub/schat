@@ -21,7 +21,6 @@
 
 #include "feeds/Feed.h"
 #include "net/packets/MessageNotice.h"
-#include "text/MessageId.h"
 
 class NodeHistoryFeed : public Feed
 {
@@ -35,7 +34,6 @@ public:
   void setChannel(Channel *channel);
 
 private:
-  FeedQueryReply get(const QVariantMap &json, Channel *channel);
   FeedQueryReply offline(const QVariantMap &json, Channel *channel);
 
   QList<QByteArray> toPackets(const QList<MessageRecord> &data);
