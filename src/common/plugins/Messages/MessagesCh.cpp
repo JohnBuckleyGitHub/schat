@@ -28,7 +28,6 @@ MessagesCh::MessagesCh(QObject *parent)
 
 void MessagesCh::newChannel(ChatChannel channel, ChatChannel user)
 {
-  Ch::addNewFeedIfNotExist(channel, LS("history"), user);
   Ch::addNewFeedIfNotExist(channel, LS("messages"), user);
 }
 
@@ -36,13 +35,11 @@ void MessagesCh::newChannel(ChatChannel channel, ChatChannel user)
 void MessagesCh::sync(ChatChannel channel, ChatChannel user)
 {
   Q_UNUSED(user)
-  Ch::addNewFeedIfNotExist(channel, LS("history"));
   Ch::addNewFeedIfNotExist(channel, LS("messages"));
 }
 
 
 void MessagesCh::userChannel(ChatChannel channel)
 {
-  Ch::addNewUserFeedIfNotExist(channel, LS("history"));
   Ch::addNewUserFeedIfNotExist(channel, LS("messages"));
 }

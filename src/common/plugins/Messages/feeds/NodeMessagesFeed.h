@@ -20,6 +20,7 @@
 #define NODEMESSAGESFEED_H_
 
 #include "feeds/Feed.h"
+#include "net/packets/MessageNotice.h"
 
 class NodeMessagesFeed : public Feed
 {
@@ -34,6 +35,8 @@ public:
 private:
   FeedReply fetch(const QVariantMap &json, Channel *user);
   FeedReply last(const QVariantMap &json, Channel *user);
+  FeedReply offline(Channel *user);
+  void toPackets(QList<QByteArray> &out, const QList<MessageRecord> &records);
 };
 
 #endif /* NODEMESSAGESFEED_H_ */
