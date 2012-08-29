@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QTime>
 #include <QTimer>
 #include <QtPlugin>
@@ -53,7 +51,7 @@ HistoryImpl::HistoryImpl(QObject *parent)
 /*!
  * Загрузка сообщений по идентификаторам.
  */
-bool HistoryImpl::get(const QList<QByteArray> &ids)
+bool HistoryImpl::get(const QByteArray &id, const QList<QByteArray> &ids)
 {
   if (ids.isEmpty())
     return false;
@@ -64,7 +62,7 @@ bool HistoryImpl::get(const QList<QByteArray> &ids)
 
   QVariantMap data;
   data[LS("messages")] = MessageNotice::encode(required);
-  return ClientFeeds::request(ChatClient::id(), LS("get"), LS("messages/fetch"), data);
+  return ClientFeeds::request(id, LS("get"), LS("messages/fetch"), data);
 }
 
 
@@ -76,7 +74,7 @@ bool HistoryImpl::get(const QList<QByteArray> &ids)
 bool HistoryImpl::getLast(const QByteArray &id)
 {
   if (ChatClient::state() != ChatClient::Online) {
-//    getLocal(HistoryDB::last(id, 20));
+    getLocal(HistoryDB::last(id, 20));
     return false;
   }
 
@@ -128,7 +126,7 @@ void HistoryImpl::notify(const Notify &notify)
   if (notify.type() == Notify::FeedReply) {
     const FeedNotify &n = static_cast<const FeedNotify &>(notify);
     if (n.name() == LS("messages/last"))
-      get(MessageNotice::decode(n.json().value(LS("messages")).toStringList()));
+      get(n.channel(), MessageNotice::decode(n.json().value(LS("messages")).toStringList()));
   }
   else if (notify.type() == Notify::ClearCache) {
     HistoryDB::clear();
