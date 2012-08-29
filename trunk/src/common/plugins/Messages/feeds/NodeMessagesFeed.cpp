@@ -57,6 +57,8 @@ FeedReply NodeMessagesFeed::get(const QString &path, const QVariantMap &json, Ch
     return fetch(json, channel);
   else if (path == LS("last"))
     return last(json, channel);
+  else if (path == LS("offline"))
+    return offline(channel);
 
   return FeedReply(Notice::NotImplemented);
 }
@@ -79,14 +81,7 @@ FeedReply NodeMessagesFeed::fetch(const QVariantMap &json, Channel *user)
     return FeedReply(Notice::NotFound);
 
   FeedReply reply(Notice::OK);
-  for (int i = 0; i < records.size(); ++i) {
-    const MessageRecord& record = records.at(i);
-    if (!record.id)
-      continue;
-
-    MessageNotice packet(record);
-    reply.packets.append(packet.data(Core::stream()));
-  }
+  toPackets(reply.packets, records);
 
   reply.json[LS("count")] = reply.packets.size();
   return reply;
@@ -125,4 +120,39 @@ FeedReply NodeMessagesFeed::last(const QVariantMap &json, Channel *user)
   reply.json[LS("count")]    = messages.size();
   reply.json[LS("messages")] = MessageNotice::encode(messages);
   return reply;
+}
+
+
+FeedReply NodeMessagesFeed::offline(Channel *user)
+{
+  if (!user)
+    return FeedReply(Notice::BadRequest);
+
+  if (head().channel()->id() != user->id())
+    return FeedReply(Notice::Forbidden);
+
+  QList<MessageRecord> records = NodeMessagesDB::offline(user->id());
+  if (records.isEmpty())
+    return FeedReply(Notice::NotFound);
+
+  NodeMessagesDB::markAsRead(records);
+
+  FeedReply reply(Notice::OK);
+  toPackets(reply.packets, records);
+
+  reply.json[LS("count")] = reply.packets.size();
+  return reply;
+}
+
+
+void NodeMessagesFeed::toPackets(QList<QByteArray> &out, const QList<MessageRecord> &records)
+{
+  for (int i = 0; i < records.size(); ++i) {
+    const MessageRecord& record = records.at(i);
+    if (!record.id)
+      continue;
+
+    MessageNotice packet(record);
+    out.append(packet.data(Core::stream()));
+  }
 }

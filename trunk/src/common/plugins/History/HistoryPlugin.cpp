@@ -83,17 +83,13 @@ bool HistoryImpl::getLast(const QByteArray &id)
 
 /*!
  * Отправка пакета с запросом на получение офлайн сообщений.
- *
- * \deprecated Необходимо использовать GET запрос.
  */
 bool HistoryImpl::getOffline()
 {
   if (ChatClient::state() != ChatClient::Online)
     return false;
 
-  QVariantMap data;
-  data.insert(LS("action"), LS("offline"));
-  return ClientFeeds::request(ChatClient::id(), LS("query"), LS("history"), data);
+  return ClientFeeds::request(ChatClient::id(), LS("get"), LS("messages/offline"));
 }
 
 
