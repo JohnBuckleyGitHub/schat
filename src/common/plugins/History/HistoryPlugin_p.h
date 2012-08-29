@@ -32,7 +32,7 @@ class HistoryImpl : public ChatPlugin
 
 public:
   HistoryImpl(QObject *parent);
-  static bool get(const QList<QByteArray> &ids);
+  static bool get(const QByteArray &id, const QList<QByteArray> &ids);
   static bool getLast(const QByteArray &id);
   static bool getOffline();
   static QList<QByteArray> getLocal(const QList<QByteArray> &ids);
