@@ -29,6 +29,7 @@ class ChatPlugins;
 class ChatSettings;
 class Extensions;
 class NetworkManager;
+class QThreadPool;
 class SimpleClient;
 class Translation;
 
@@ -47,6 +48,7 @@ public:
   inline static Extensions *extensions()                { return m_self->m_extensions; }
   inline static NetworkManager *networks()              { return m_self->m_networkManager; }
   inline static QByteArray currentId()                  { return m_self->m_currentId; }
+  inline static QThreadPool *pool()                     { return m_self->m_pool; }
   inline static Translation *translation()              { return m_self->m_translation; }
   inline static void setCurrentId(const QByteArray &id) { m_self->m_currentId = id; }
   static QByteArray randomId();
@@ -62,13 +64,14 @@ private slots:
 private:
   void loadTranslation();
 
-  ChatPlugins *m_plugins;                         ///< Загрузчик плагинов.
-  ChatSettings *m_settings;                       ///< Настройки.
-  Extensions *m_extensions;                       ///< Загрузчик расширений.
-  NetworkManager *m_networkManager;               ///< Объект управляющих сетями.
-  QByteArray m_currentId;                         ///< Идентификатор текущей вкладки.
-  static ChatCore *m_self;                        ///< Указатель на себя.
-  Translation *m_translation;                     ///< Модуль загрузки переводов.
+  ChatPlugins *m_plugins;           ///< Загрузчик плагинов.
+  ChatSettings *m_settings;         ///< Настройки.
+  Extensions *m_extensions;         ///< Загрузчик расширений.
+  NetworkManager *m_networkManager; ///< Объект управляющих сетями.
+  QByteArray m_currentId;           ///< Идентификатор текущей вкладки.
+  QThreadPool *m_pool;              ///< Пул для запуска потоков.
+  static ChatCore *m_self;          ///< Указатель на себя.
+  Translation *m_translation;       ///< Модуль загрузки переводов.
 };
 
 #endif /* CHATCORE_H_ */

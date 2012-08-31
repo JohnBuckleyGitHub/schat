@@ -38,6 +38,7 @@
 HistoryImpl::HistoryImpl(QObject *parent)
   : ChatPlugin(parent)
 {
+  new HistoryDB(this);
   m_chatView = new HistoryChatView(this);
   new HistoryMessages(this);
 

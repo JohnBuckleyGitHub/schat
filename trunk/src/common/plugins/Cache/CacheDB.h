@@ -25,7 +25,6 @@
 #include "Channel.h"
 
 class QRunnable;
-class QThreadPool;
 
 /*!
  * Интерфейс базы данных плагина \b Cache.
@@ -59,7 +58,6 @@ private:
   QList<QRunnable*> m_tasks;        ///< Задачи для выполнения в отдельном потоке.
   QMap<QByteArray, qint64> m_cache; ///< Кеш каналов, ключ в таблице идентификатор канала, значение первичный ключ в таблице channels.
   QMutex m_mutex;                   ///< Мьютекс защищающий доступ к кешу каналов.
-  QThreadPool *m_pool;              ///< Пул для запуска потоков.
   static CacheDB *m_self;           ///< Указатель на себя.
   static QString m_id;              ///< Идентификатор соединения с базой.
 };

@@ -16,12 +16,16 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QRunnable>
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QStringList>
+#include <QThreadPool>
+#include <QTimer>
 #include <QVariant>
 
 #include "Channel.h"
+#include "ChatCore.h"
 #include "client/ChatClient.h"
 #include "HistoryDB.h"
 #include "net/SimpleID.h"
@@ -29,10 +33,50 @@
 #include "text/PlainTextFilter.h"
 
 QString HistoryDB::m_id;
+HistoryDB *HistoryDB::m_self = 0;
+
+class AddMessageTask : public QRunnable
+{
+  MessageNotice m_packet;
+
+public:
+  AddMessageTask(MessagePacket packet)
+  : QRunnable()
+  , m_packet(*packet)
+  {}
+
+  void run()
+  {
+    QByteArray id = m_packet.toId();
+
+    QSqlQuery query(QSqlDatabase::database(HistoryDB::id()));
+    query.prepare(LS("SELECT id FROM messages WHERE messageId = :messageId LIMIT 1;"));
+    query.bindValue(LS(":messageId"), id);
+    query.exec();
+
+    if (query.first() && query.value(0).toLongLong() > 0)
+      return;
+
+    query.prepare(LS("INSERT INTO messages (messageId, senderId, destId, status, date, command, text, plain, data) "
+                       "VALUES (:messageId, :senderId, :destId, :status, :date, :command, :text, :plain, :data);"));
+
+    query.bindValue(LS(":messageId"), id);
+    query.bindValue(LS(":senderId"),  m_packet.sender());
+    query.bindValue(LS(":destId"),    m_packet.dest());
+    query.bindValue(LS(":status"),    HistoryDB::status(m_packet.status()));
+    query.bindValue(LS(":date"),      m_packet.date());
+    query.bindValue(LS(":command"),   m_packet.command());
+    query.bindValue(LS(":text"),      m_packet.text());
+    query.bindValue(LS(":plain"),     PlainTextFilter::filter(m_packet.text()));
+    query.bindValue(LS(":data"),      m_packet.raw());
+    query.exec();
+  }
+};
 
 HistoryDB::HistoryDB(QObject *parent)
   : QObject(parent)
 {
+  m_self = this;
 }
 
 
@@ -149,28 +193,10 @@ MessageRecord HistoryDB::get(const QByteArray &id)
 
 void HistoryDB::add(MessagePacket packet)
 {
-  QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(LS("SELECT id FROM messages WHERE messageId = :messageId AND date = :date LIMIT 1;"));
-  query.bindValue(LS(":messageId"), packet->id());
-  query.bindValue(LS(":date"), packet->date());
-  query.exec();
-
-  if (query.first() && query.value(0).toLongLong() > 0)
-    return;
-
-  query.prepare(LS("INSERT INTO messages (messageId, senderId, destId, status, date, command, text, plain, data) "
-                     "VALUES (:messageId, :senderId, :destId, :status, :date, :command, :text, :plain, :data);"));
-
-  query.bindValue(LS(":messageId"), packet->id());
-  query.bindValue(LS(":senderId"),  packet->sender());
-  query.bindValue(LS(":destId"),    packet->dest());
-  query.bindValue(LS(":status"),    status(packet->status()));
-  query.bindValue(LS(":date"),      packet->date());
-  query.bindValue(LS(":command"),   packet->command());
-  query.bindValue(LS(":text"),      packet->text());
-  query.bindValue(LS(":plain"),     PlainTextFilter::filter(packet->text()));
-  query.bindValue(LS(":data"),      packet->raw());
-  query.exec();
+  AddMessageTask *task = new AddMessageTask(packet);
+  m_self->m_tasks.append(task);
+  if (m_self->m_tasks.size() == 1)
+    QTimer::singleShot(0, m_self, SLOT(startTasks()));
 }
 
 
@@ -191,6 +217,14 @@ void HistoryDB::close()
 {
   QSqlDatabase::removeDatabase(m_id);
   m_id.clear();
+}
+
+
+void HistoryDB::startTasks()
+{
+  QThreadPool *pool = ChatCore::pool();
+  while (!m_tasks.isEmpty())
+    pool->start(m_tasks.takeFirst());
 }
 
 
