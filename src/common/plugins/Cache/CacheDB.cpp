@@ -24,6 +24,7 @@
 #include <QTimer>
 
 #include "CacheDB.h"
+#include "ChatCore.h"
 #include "feeds/FeedStorage.h"
 #include "JSON.h"
 #include "net/SimpleID.h"
@@ -161,8 +162,6 @@ CacheDB::CacheDB(QObject *parent)
   : QObject(parent)
 {
   m_self = this;
-  m_pool = new QThreadPool(this);
-  m_pool->setMaxThreadCount(1);
 }
 
 
@@ -177,7 +176,7 @@ bool CacheDB::open(const QByteArray &id, const QString &dir)
   QString newId = SimpleID::encode(id) + LS("-cache");
 
   if (!m_id.isEmpty() && m_id == newId)
-      return false;
+    return false;
 
   close();
   m_id = newId;
@@ -298,8 +297,9 @@ void CacheDB::setKey(const QByteArray &id, qint64 key)
 
 void CacheDB::start()
 {
+  QThreadPool *pool = ChatCore::pool();
   while (!m_tasks.isEmpty())
-    m_pool->start(m_tasks.takeFirst());
+    pool->start(m_tasks.takeFirst());
 }
 
 

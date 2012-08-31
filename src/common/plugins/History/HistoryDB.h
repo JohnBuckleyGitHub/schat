@@ -25,14 +25,15 @@
 #include "net/packets/MessageNotice.h"
 
 class MessageId;
+class QRunnable;
 
 class HistoryDB : public QObject
 {
   Q_OBJECT
 
+public:
   HistoryDB(QObject *parent = 0);
 
-public:
   inline static QString id() { return m_id; }
   static bool open(const QByteArray &id, const QString &dir);
   static int status(int status);
@@ -42,13 +43,18 @@ public:
   static void clear();
   static void close();
 
+private slots:
+  void startTasks();
+
 private:
   static void create();
   static void version();
 
   static void V2();
 
-  static QString m_id; ///< Идентификатор соединения с базой.
+  QList<QRunnable*> m_tasks; ///< Задачи для выполнения в отдельном потоке.
+  static HistoryDB *m_self;  ///< Указатель на себя.
+  static QString m_id;       ///< Идентификатор соединения с базой.
 };
 
 #endif /* HISTORYDB_H_ */

@@ -20,6 +20,7 @@
 #include <QDesktopServices>
 #include <QPainter>
 #include <QTextDocument>
+#include <QThreadPool>
 #include <QTimer>
 #include <QWidget>
 
@@ -67,6 +68,9 @@ ChatCore::ChatCore(QObject *parent)
   m_self = this;
 
   qsrand(QTime(0,0,0).msecsTo(QTime::currentTime()) ^ reinterpret_cast<quintptr>(this));
+
+  m_pool = new QThreadPool(this);
+  m_pool->setMaxThreadCount(1);
 
   new ChatUrls(this);
   m_settings = new ChatSettings(Path::config(), this);
