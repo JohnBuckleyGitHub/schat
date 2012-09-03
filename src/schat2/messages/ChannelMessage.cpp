@@ -28,6 +28,11 @@ ChannelMessage::ChannelMessage(MessagePacket packet)
   , m_packet(packet)
 {
   setDate(m_packet->date());
+  setAuthor(m_packet->sender());
+  m_tab = detectTab(m_packet->sender(), m_packet->dest());
+
+  if (!m_packet->internalId().isEmpty())
+    m_data[LS("InternalId")] = QString(SimpleID::encode(m_packet->internalId()));
 
   m_data[LS("Command")]   = packet->command();
   m_data[LS("Text")]      = TokenFilter::filter(LS("channel"), packet->text());
@@ -43,9 +48,6 @@ ChannelMessage::ChannelMessage(MessagePacket packet)
 
   if (isFullDate(status))
     m_data["Day"] = true;
-
-  setAuthor(m_packet->sender());
-  m_tab = detectTab(m_packet->sender(), m_packet->dest());
 }
 
 

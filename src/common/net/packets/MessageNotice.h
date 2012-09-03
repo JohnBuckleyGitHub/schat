@@ -51,9 +51,14 @@ public:
   MessageNotice(const MessageRecord &record, bool parse = false);
   MessageNotice(const QByteArray &sender, const QByteArray &dest, const QString &text, quint64 date = 0, const QByteArray &id = QByteArray());
   MessageNotice(quint16 type, PacketReader *reader);
+  inline const QByteArray& internalId() const     { return m_internalId; }
+  inline void setInternalId(const QByteArray &id) { m_internalId = id; }
   QByteArray toId() const;
   static QList<QByteArray> decode(const QStringList &ids);
   static QStringList encode(const QList<QByteArray> &ids);
+
+private:
+  QByteArray m_internalId; ///< Внутренний идентификатор сообщения.
 };
 
 typedef QSharedPointer<MessageNotice> MessagePacket;
