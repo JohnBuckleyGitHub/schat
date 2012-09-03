@@ -176,10 +176,15 @@ Pages.onInfo.push(function() {
 var Messages = {
   onAdd: [],
 
-  // Добавление сообщения пользователя.
+  /*
+   * Добавление сообщения пользователя.
+   */
   addChannelMessage: function(json)
   {
-    if ($("#" + json.Id).length) {
+    if (json.hasOwnProperty('InternalId'))
+      $('#' + json.InternalId).attr('id', json.Id);
+
+    if ($('#' + json.Id).length) {
       Messages.updateChannelMessage(json);
       return;
     }

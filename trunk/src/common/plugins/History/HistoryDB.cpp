@@ -47,7 +47,7 @@ public:
 
   void run()
   {
-    QByteArray id = m_packet.toId();
+    QByteArray id = m_packet.id();
 
     QSqlQuery query(QSqlDatabase::database(HistoryDB::id()));
     query.prepare(LS("SELECT id FROM messages WHERE messageId = :messageId LIMIT 1;"));

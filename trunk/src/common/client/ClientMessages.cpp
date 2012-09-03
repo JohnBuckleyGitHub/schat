@@ -153,8 +153,11 @@ void ClientMessages::readText(MessagePacket packet)
   if (!packet->isValid())
     return;
 
-  if (isClientDate(packet->status()))
+  if (isClientDate(packet->status())) {
     packet->setDate(ChatClient::date());
+    packet->setInternalId(packet->id());
+    packet->setId(packet->toId());
+  }
 
   /// В случае если отправитель сообщения неизвестен клиенту, то будет произведён вход в канал
   /// этого пользователя для получения информации о нём, само сообщения будет добавлено в очередь

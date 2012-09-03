@@ -318,7 +318,7 @@ void AddMessageTask::run()
   query.prepare(LS("INSERT INTO messages (messageId,  senderId,  destId,  status,  date,  command,  text,  plain,  data) "
                                  "VALUES (:messageId, :senderId, :destId, :status, :date, :command, :text, :plain, :data);"));
 
-  query.bindValue(LS(":messageId"), m_packet.toId());
+  query.bindValue(LS(":messageId"), m_packet.id());
   query.bindValue(LS(":senderId"),  m_packet.sender());
   query.bindValue(LS(":destId"),    m_packet.dest());
   query.bindValue(LS(":status"),    NodeMessagesDB::status(m_status));
