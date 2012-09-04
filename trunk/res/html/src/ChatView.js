@@ -215,20 +215,15 @@ var Messages = {
   // Добавление сырого сообщения, с подсказкой по размещению.
   addHintedRawMessage: function(html, hint, id)
   {
-    if (hint.Hint == "before") {
-      if (!$("#" + hint.Id).length) {
-        Messages.addRawMessage(html, id);
-        return;
-      }
-
-      $("#" + hint.Id).before(html);
+    if (hint.Hint == 'before' && $('#' + hint.Id).length) {
+      $('#' + hint.Id).before(html);
       for (var i = 0; i < Messages.onAdd.length; i++)
         Messages.onAdd[i](id);
 
       alignChat();
     }
     else
-      Messages.addRawMessage(html, id);
+      Messages.addRawMessage(html, id, hint.Day);
   },
 
 
@@ -240,16 +235,23 @@ var Messages = {
       return;
 
     try {
+      Messages.day(json.Hint.Day);
       Messages[func](json);
     }
     catch (e) {}
   },
 
 
-  // Добавление сырого сообщения.
-  addRawMessage: function (html, id)
+  /*
+   * Добавление сырого сообщения.
+   *
+   * \param html HTML текст сообщения.
+   * \param id   Идентификатор сообщения.
+   * \param day  День сообщения.
+   */
+  addRawMessage: function (html, id, day)
   {
-    $('#Chat').append(html);
+    $('#day-' + day + ' .day-body').append(html);
     for (var i = 0; i < Messages.onAdd.length; i++)
       Messages.onAdd[i](id);
 
@@ -274,7 +276,7 @@ var Messages = {
     html += '</div>';
     html += '</div>';
 
-    Messages.addRawMessage(html, json.Id);
+    Messages.addRawMessage(html, json.Id, json.Hint.Day);
   },
 
 
@@ -331,6 +333,27 @@ var Messages = {
       $(id + ' > .date-time-block > .time').text(DateTime.time(date));
       $(id + ' > .date-time-block > .seconds').text(DateTime.seconds(date));
     }
+  },
+
+
+  /*
+   * Создание при необходимости блока с сообщениями за 1 день.
+   */
+  day: function(day)
+  {
+    if ($('#day-' + day).length)
+      return;
+
+    var hint = ChatView.dayHint(day);
+    var html = '<div class="day" id="day-' + day + '">' +
+               '<div class="day-header">' + day + '</div>' +
+               '<div class="day-body"></div>' +
+               '</div>';
+
+    if (hint.Hint == 'before' && $('#day-' + hint.Day).length)
+      $('#day-' + hint.Day).before(html);
+    else
+      $('#Chat').append(html);
   },
 
   rename: function(data)
@@ -658,7 +681,8 @@ if (typeof ChatView === "undefined") {
 
   ChatView = {
     jsfiles: function() { return []; },
-    loadFinished: function() {}
+    loadFinished: function() {},
+    dayHint: function(day) { return {'Hint':'End'}; }
   }
 }
 else {

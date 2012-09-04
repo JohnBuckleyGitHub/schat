@@ -29,6 +29,7 @@
 #include "ChatUrls.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
+#include "DateTime.h"
 #include "debugstream.h"
 #include "hooks/ChannelMenu.h"
 #include "hooks/ChatViewHooks.h"
@@ -122,6 +123,28 @@ void ChatView::setId(const QByteArray &id)
 {
   m_id = id;
   evaluateJavaScript(LS("Settings.id = \"") + SimpleID::encode(m_id) + LS("\";"));
+}
+
+
+/*!
+ * Формирование подсказки по размещению блока даты.
+ */
+QVariantMap ChatView::dayHint(const QString &day) const
+{
+  QVariantMap out;
+  out[LS("Hint")] = LS("end");
+
+  if (m_messages.size() > 1) {
+    const QStringList keys = m_messages.keys();
+    int index = keys.indexOf(day);
+    if (index == -1 || index == keys.size() - 1)
+      return out;
+
+    out[LS("Hint")] = LS("before");
+    out[LS("Day")]  = keys.at(index + 1);
+  }
+
+  return out;
 }
 
 
@@ -293,28 +316,32 @@ QVariantMap ChatView::addHint(const Message &message)
   out[LS("Hint")] = LS("end");
 
   const QVariantMap &data = message.data();
-  if (data.value(LS("Status")) == LS("undelivered"))
+  qint64 date = data.value(LS("Date")).toLongLong();
+  if (!date)
     return out;
 
-  qint64 date = data.value(LS("Date")).toLongLong();
-  if (date == 0)
+  const QString day = DateTime::toDateTime(date).toString(LS("yyyy_MM_dd"));
+  out[LS("Day")] = day;
+
+  if (data.value(LS("Status")) == LS("undelivered"))
     return out;
 
   QByteArray id = data.value(LS("Id")).toByteArray();
   if (id.isEmpty())
     return out;
 
-  m_messages[date] = id;
-  if (m_messages.size() == 1)
+  QMap<qint64, QByteArray> &messages = m_messages[day];
+  messages[date] = id;
+  if (messages.size() == 1)
     return out;
 
-  QList<qint64> dates = m_messages.keys();
+  QList<qint64> dates = messages.keys();
   int index = dates.indexOf(date);
   if (index == dates.size() - 1)
     return out;
 
   out[LS("Hint")] = LS("before");
-  out["Id"] = QString(m_messages.value(dates.at(index + 1)));
+  out[LS("Id")]   = QString(messages.value(dates.at(index + 1)));
 
   return out;
 }
@@ -322,8 +349,6 @@ QVariantMap ChatView::addHint(const Message &message)
 
 void ChatView::clearPage()
 {
-//  m_loaded = false;
-//  page()->triggerAction(QWebPage::Reload);
   m_messages.clear();
   emit reload();
   emit reloaded();

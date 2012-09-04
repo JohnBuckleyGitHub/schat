@@ -64,7 +64,7 @@ void MessagesImpl::readText(MessagePacket packet)
     ChatAlerts::start(alert);
   }
 
-  m_undelivered.remove(packet->id());
+  m_undelivered.remove(packet->internalId());
 }
 
 

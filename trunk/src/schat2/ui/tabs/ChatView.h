@@ -46,6 +46,7 @@ public:
   void setId(const QByteArray &id);
 
   Q_INVOKABLE QStringList jsfiles() const     { return m_jsfiles; }
+  Q_INVOKABLE QVariantMap dayHint(const QString &day) const;
   Q_INVOKABLE void addJS(const QString &file) { if (!m_jsfiles.contains(file)) m_jsfiles.append(file); }
   Q_INVOKABLE void loadFinished();
 
@@ -74,19 +75,19 @@ private:
   void createActions();
   void retranslateUi();
 
-  bool m_loaded;                       ///< true если документ загружен.
-  QAction *m_clear;                    ///< Очистить.
-  QAction *m_copy;                     ///< Копировать.
-  QAction *m_copyLink;                 ///< Копировать ссылку.
-  QAction *m_reload;                   ///< Обновить.
-  QAction *m_seconds;                  ///< Секунды.
-  QAction *m_selectAll;                ///< Выделить всё.
-  QAction *m_service;                  ///< Сервисные сообщения.
-  QByteArray m_id;                     ///< Идентификатор.
-  QMap<qint64, QByteArray> m_messages; ///< Сортированные по времени сообщения.
-  QQueue<QString> m_pendingJs;         ///< Очередь сообщений ожидающих загрузки документа.
-  QQueue<QVariantMap> m_pending;       ///< Очередь сообщений ожидающих загрузки документа.
-  QStringList m_jsfiles;               ///< Дополнительные динамически загружаемые JavaScript скрипты.
+  bool m_loaded;                                       ///< true если документ загружен.
+  QAction *m_clear;                                    ///< Очистить.
+  QAction *m_copy;                                     ///< Копировать.
+  QAction *m_copyLink;                                 ///< Копировать ссылку.
+  QAction *m_reload;                                   ///< Обновить.
+  QAction *m_seconds;                                  ///< Секунды.
+  QAction *m_selectAll;                                ///< Выделить всё.
+  QAction *m_service;                                  ///< Сервисные сообщения.
+  QByteArray m_id;                                     ///< Идентификатор.
+  QMap<QString, QMap<qint64, QByteArray> > m_messages; ///< Сортированные по времени сообщения.
+  QQueue<QString> m_pendingJs;                         ///< Очередь сообщений ожидающих загрузки документа.
+  QQueue<QVariantMap> m_pending;                       ///< Очередь сообщений ожидающих загрузки документа.
+  QStringList m_jsfiles;                               ///< Дополнительные динамически загружаемые JavaScript скрипты.
 };
 
 #endif /* CHATVIEW_H_ */
