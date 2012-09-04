@@ -127,28 +127,6 @@ void ChatView::setId(const QByteArray &id)
 
 
 /*!
- * Формирование подсказки по размещению блока даты.
- */
-QVariantMap ChatView::dayHint(const QString &day) const
-{
-  QVariantMap out;
-  out[LS("Hint")] = LS("end");
-
-  if (m_messages.size() > 1) {
-    const QStringList keys = m_messages.keys();
-    int index = keys.indexOf(day);
-    if (index == -1 || index == keys.size() - 1)
-      return out;
-
-    out[LS("Hint")] = LS("before");
-    out[LS("Day")]  = keys.at(index + 1);
-  }
-
-  return out;
-}
-
-
-/*!
  * Завершение загрузки документа.
  */
 void ChatView::loadFinished()
