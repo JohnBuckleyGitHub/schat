@@ -17,6 +17,8 @@
  */
 
 #include <QCoreApplication>
+#include <QDate>
+#include <QLocale>
 
 #include "ChatCore.h"
 #include "ChatNotify.h"
@@ -29,6 +31,7 @@
 #include "Profile.h"
 #include "sglobal.h"
 #include "Tr.h"
+#include "Translation.h"
 #include "WebBridge.h"
 
 WebBridge *WebBridge::m_self = 0;
@@ -128,6 +131,13 @@ QString WebBridge::bytesToHuman(qint64 size, bool html)
 QString WebBridge::channel(const QString &id) const
 {
   return JSON::generate(channel(SimpleID::decode(id.toLatin1())));
+}
+
+
+QString WebBridge::day(const QString &day) const
+{
+  QLocale locale(ChatCore::translation()->name());
+  return locale.toString(QDate::fromString(day, LS("yyyy_MM_dd")));
 }
 
 

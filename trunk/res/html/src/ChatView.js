@@ -175,6 +175,7 @@ Pages.onInfo.push(function() {
 // Объект сообщений.
 var Messages = {
   onAdd: [],
+  days: [],
 
   /*
    * Добавление сообщения пользователя.
@@ -344,16 +345,21 @@ var Messages = {
     if ($('#day-' + day).length)
       return;
 
-    var hint = ChatView.dayHint(day);
     var html = '<div class="day" id="day-' + day + '">' +
-               '<div class="day-header">' + day + '</div>' +
+               '<div class="day-header">' + SimpleChat.day(day) + '</div>' +
                '<div class="day-body"></div>' +
                '</div>';
 
-    if (hint.Hint == 'before' && $('#day-' + hint.Day).length)
-      $('#day-' + hint.Day).before(html);
-    else
+    if (Messages.days.indexOf(day) == -1) {
+      Messages.days.push(day);
+      Messages.days.sort();
+    }
+
+    var index = Messages.days.indexOf(day);
+    if (index == Messages.days.length - 1)
       $('#Chat').append(html);
+    else
+      $('#day-' + Messages.days[index + 1]).before(html);
   },
 
   rename: function(data)
@@ -676,7 +682,8 @@ if (typeof ChatView === "undefined") {
     feed: function(id, name) { return {}; },
     randomId: function() { return ''; },
     bytesToHuman: function(size) { return '0 bytes'; },
-    status: function(id) { return 'Offline'; }
+    status: function(id) { return 'Offline'; },
+    day: function(day) { return day; }
   };
 
   ChatView = {
