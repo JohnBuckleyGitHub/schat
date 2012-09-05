@@ -308,7 +308,9 @@ var Messages = {
     if (Pages.current != 0)
       return;
 
-    $(".container").remove();
+    $('.day').remove();
+    Messages.days = [];
+    alignChat();
   },
 
 
@@ -346,7 +348,7 @@ var Messages = {
       return;
 
     var html = '<div class="day" id="day-' + day + '">' +
-               '<div class="day-header">' + SimpleChat.day(day) + '</div>' +
+               '<div class="day-header"><a class="btn btn-toggle" id=""><i class="icon-minus-small"></i></a> <a href="#">' + SimpleChat.day(day) + '</a></div>' +
                '<div class="day-body"></div>' +
                '</div>';
 
@@ -360,6 +362,26 @@ var Messages = {
       $('#Chat').append(html);
     else
       $('#day-' + Messages.days[index + 1]).before(html);
+
+    var d = $('#day-' + day);
+    d.data('state', 'open');
+
+    $('#day-' + day + ' .day-header a').on('click', function(event) {
+      event.preventDefault();
+
+      if (d.data('state') == 'open') {
+        d.data('state', 'closed');
+        $('#day-' + day + ' .btn-toggle i').attr('class', 'icon-plus-small');
+        $('#day-' + day + ' .day-body').hide();
+      }
+      else {
+        d.data('state', 'open');
+        $('#day-' + day + ' .btn-toggle i').attr('class', 'icon-minus-small');
+        $('#day-' + day + ' .day-body').show();
+      }
+
+      alignChat();
+    })
   },
 
   rename: function(data)
