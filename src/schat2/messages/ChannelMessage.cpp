@@ -45,24 +45,6 @@ ChannelMessage::ChannelMessage(MessagePacket packet)
     m_data[LS("Status")] = LS("offline");
   else if (status != Notice::OK && status != Notice::Found)
     m_data[LS("Status")] = LS("rejected");
-
-  if (isFullDate(status))
-    m_data["Day"] = true;
-}
-
-
-bool ChannelMessage::isFullDate(int status)
-{
-  if (status == Notice::Found)
-    return true;
-
-  if (status == Notice::Unread)
-    return true;
-
-  if (status == Notice::Read)
-    return true;
-
-  return false;
 }
 
 

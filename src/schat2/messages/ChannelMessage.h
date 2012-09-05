@@ -29,7 +29,6 @@ class SCHAT_CORE_EXPORT ChannelMessage : public Message
 public:
   ChannelMessage(MessagePacket packet);
   inline MessagePacket packet() const { return m_packet; }
-  static bool isFullDate(int status);
   static bool isOffline(int status);
 
 private:

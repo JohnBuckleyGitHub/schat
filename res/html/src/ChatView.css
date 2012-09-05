@@ -658,10 +658,14 @@ a:active, a:hover {
 }
 
 .btn-toggle {
-  padding: 3px;
+  padding: 2px;
   width: 7px;
   height: 7px;
   line-height: 0;
   vertical-align: bottom;
   margin-left: 2px;
+}
+
+.day-header {
+  padding: 6px 0 0 2px;
 }
