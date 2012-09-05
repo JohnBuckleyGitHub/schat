@@ -108,12 +108,11 @@ Messages.addRawFeedsMessage = function(json)
   html += '</div>';
   html += '</div>';
 
-  Messages.addRawMessage(html);
+  Messages.addRawMessage(html, json.Id, json.Hint.Day);
   RawFeeds.raw(json);
 
-  if (command == 'feed') {
+  if (command == 'feed')
     $('#' + json.Id + ' .raw-feeds-title').addClass('raw-feeds-title-icon');
-  }
 
   alignChat();
 };
