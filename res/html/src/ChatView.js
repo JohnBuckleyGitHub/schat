@@ -348,7 +348,7 @@ var Messages = {
       return;
 
     var html = '<div class="day" id="day-' + day + '">' +
-               '<div class="day-header"><a class="btn btn-toggle" id=""><i class="icon-minus-small"></i></a> <a href="#">' + SimpleChat.day(day) + '</a></div>' +
+               '<div class="day-header"><a href="#">' + SimpleChat.day(day) + '</a></div>' +
                '<div class="day-body"></div>' +
                '</div>';
 

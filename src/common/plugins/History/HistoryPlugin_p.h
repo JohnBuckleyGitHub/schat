@@ -21,6 +21,7 @@
 
 #include "plugins/ChatPlugin.h"
 
+class ChatView;
 class HistoryChatView;
 class Notify;
 class FeedNotify;
@@ -38,6 +39,8 @@ public:
 
 private slots:
   void getLast();
+  void init(ChatView *view);
+  void loadFinished(ChatView *view);
   void notify(const Notify &notify);
   void open();
 

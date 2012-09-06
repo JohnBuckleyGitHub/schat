@@ -24,6 +24,7 @@
 #include "ChatNotify.h"
 #include "client/ChatClient.h"
 #include "client/ClientFeeds.h"
+#include "client/ClientMessages.h"
 #include "HistoryChatView.h"
 #include "HistoryDB.h"
 #include "HistoryMessages.h"
@@ -32,8 +33,8 @@
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
 #include "sglobal.h"
+#include "ui/tabs/ChatView.h"
 #include "ui/tabs/PrivateTab.h"
-#include "client/ClientMessages.h"
 
 HistoryImpl::HistoryImpl(QObject *parent)
   : ChatPlugin(parent)
@@ -45,6 +46,8 @@ HistoryImpl::HistoryImpl(QObject *parent)
   open();
   connect(ChatClient::i(), SIGNAL(online()), SLOT(open()));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+  connect(ChatViewHooks::i(), SIGNAL(initHook(ChatView*)), SLOT(init(ChatView*)));
+  connect(ChatViewHooks::i(), SIGNAL(loadFinishedHook(ChatView*)), SLOT(loadFinished(ChatView*)));
 }
 
 
@@ -114,6 +117,18 @@ QList<QByteArray> HistoryImpl::getLocal(const QList<QByteArray> &ids)
 void HistoryImpl::getLast()
 {
   m_chatView->getLast(SimpleID::UserId);
+}
+
+
+void HistoryImpl::init(ChatView *view)
+{
+  view->addJS(LS("qrc:/js/History/History.js"));
+}
+
+
+void HistoryImpl::loadFinished(ChatView *view)
+{
+  view->addCSS(LS("qrc:/css/History/History.css"));
 }
 
 
