@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QApplication>
 #include <QTime>
 #include <QTimer>
 #include <QtPlugin>
@@ -33,11 +34,30 @@
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
 #include "sglobal.h"
+#include "Tr.h"
+#include "Translation.h"
 #include "ui/tabs/PrivateTab.h"
+
+class HistoryPluginTr : public Tr
+{
+  Q_DECLARE_TR_FUNCTIONS(ProfilePluginTr)
+
+public:
+  HistoryPluginTr() : Tr() { m_prefix = LS("history_"); }
+
+protected:
+  QString valueImpl(const QString &key) const
+  {
+    if (key == LS("loading")) return tr("Loading messages");
+    return QString();
+  }
+};
+
 
 HistoryImpl::HistoryImpl(QObject *parent)
   : ChatPlugin(parent)
 {
+  m_tr = new HistoryPluginTr();
   new HistoryDB(this);
   m_chatView = new HistoryChatView(this);
   new HistoryMessages(this);
@@ -45,6 +65,14 @@ HistoryImpl::HistoryImpl(QObject *parent)
   open();
   connect(ChatClient::i(), SIGNAL(online()), SLOT(open()));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+
+  ChatCore::translation()->addOther(LS("history"));
+}
+
+
+HistoryImpl::~HistoryImpl()
+{
+  delete m_tr;
 }
 
 

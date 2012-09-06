@@ -36,3 +36,7 @@ SOURCES  = \
 RESOURCES += History.qrc
 
 include(../plugins.pri)
+
+TRANSLATIONS += res/translations/history_en.ts
+TRANSLATIONS += res/translations/history_ru.ts
+CODECFORTR = UTF-8
