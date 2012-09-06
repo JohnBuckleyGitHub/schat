@@ -17,6 +17,7 @@
  */
 
 #include "client/ChatClient.h"
+#include "client/ClientFeeds.h"
 #include "client/SimpleClient.h"
 #include "HistoryChatView.h"
 #include "HistoryPlugin_p.h"
@@ -31,28 +32,52 @@ HistoryChatView::HistoryChatView(QObject *parent)
 }
 
 
-void HistoryChatView::getLast(int type) const
+void HistoryChatView::addImpl(ChatView *view)
+{
+  if (compatible(view->id()))
+    HistoryImpl::last(view->id());
+}
+
+
+void HistoryChatView::initImpl(ChatView *view)
+{
+  if (compatible(view->id()))
+    view->addJS(LS("qrc:/js/History/History.js"));
+}
+
+
+void HistoryChatView::loadFinishedImpl(ChatView *view)
+{
+  if (compatible(view->id()))
+    view->addCSS(LS("qrc:/css/History/History.css"));
+}
+
+
+/*!
+ * Запрос последних сообщений для всех открытых каналов.
+ */
+void HistoryChatView::ready()
 {
   ChatClient::io()->lock();
 
   foreach (ChatView *view, i()->views()) {
-    if (SimpleID::typeOf(view->id()) == type)
-      HistoryImpl::getLast(view->id());
+    if (compatible(view->id()))
+      HistoryImpl::last(view->id());
   }
 
+  ClientFeeds::request(ChatClient::id(), LS("get"), LS("messages/offline"));
   ChatClient::io()->unlock();
 }
 
 
-void HistoryChatView::addImpl(ChatView *view)
+/*!
+ * Возвращает \b true если идентификатор является идентификатором обычного канала или пользователя.
+ */
+bool HistoryChatView::compatible(const QByteArray &id) const
 {
-  if (SimpleID::typeOf(view->id()) == SimpleID::ChannelId || SimpleID::typeOf(view->id()) == SimpleID::UserId)
-    HistoryImpl::getLast(view->id());
-}
+  int type = SimpleID::typeOf(id);
+  if (type == SimpleID::ChannelId || type == SimpleID::UserId)
+    return true;
 
-
-void HistoryChatView::ready()
-{
-  getLast(SimpleID::ChannelId);
-  HistoryImpl::getOffline();
+  return false;
 }

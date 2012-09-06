@@ -21,7 +21,6 @@
 
 #include "plugins/ChatPlugin.h"
 
-class ChatView;
 class HistoryChatView;
 class Notify;
 class FeedNotify;
@@ -33,14 +32,10 @@ class HistoryImpl : public ChatPlugin
 public:
   HistoryImpl(QObject *parent);
   static bool get(const QByteArray &id, const QList<QByteArray> &ids);
-  static bool getLast(const QByteArray &id);
-  static bool getOffline();
+  static bool last(const QByteArray &id);
   static QList<QByteArray> getLocal(const QList<QByteArray> &ids);
 
 private slots:
-  void getLast();
-  void init(ChatView *view);
-  void loadFinished(ChatView *view);
   void notify(const Notify &notify);
   void open();
 

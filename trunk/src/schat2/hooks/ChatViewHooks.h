@@ -53,9 +53,8 @@ protected:
   virtual void loadFinishedImpl(ChatView *view);
   virtual void removeImpl(ChatView *view);
 
-  QList<ChatView *> m_views;     ///< Список окон.
-
 private:
+  QList<ChatView *> m_views;     ///< Список окон.
   QList<ChatViewHooks*> m_hooks; ///< Хуки.
   static ChatViewHooks *m_self;  ///< Указатель на себя.
 };
