@@ -92,7 +92,10 @@ QList<QByteArray> MessageNotice::decode(const QStringList &ids)
 QStringList MessageNotice::encode(const QList<QByteArray> &ids)
 {
   QStringList out;
+# if QT_VERSION >= 0x040700
   out.reserve(ids.size());
+# endif
+
   foreach (const QByteArray &id, ids) {
     out.append(SimpleID::encode(id));
   }

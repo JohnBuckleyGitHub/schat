@@ -27,13 +27,17 @@ class HistoryChatView : public ChatViewHooks
 
 public:
   HistoryChatView(QObject *parent = 0);
-  void getLast(int type) const;
 
 protected:
   void addImpl(ChatView *view);
+  void initImpl(ChatView *view);
+  void loadFinishedImpl(ChatView *view);
 
 private slots:
   void ready();
+
+private:
+  bool compatible(const QByteArray &id) const;
 };
 
 #endif /* HISTORYCHATVIEW_H_ */

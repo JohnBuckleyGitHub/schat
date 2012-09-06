@@ -33,7 +33,6 @@
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
 #include "sglobal.h"
-#include "ui/tabs/ChatView.h"
 #include "ui/tabs/PrivateTab.h"
 
 HistoryImpl::HistoryImpl(QObject *parent)
@@ -46,8 +45,6 @@ HistoryImpl::HistoryImpl(QObject *parent)
   open();
   connect(ChatClient::i(), SIGNAL(online()), SLOT(open()));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
-  connect(ChatViewHooks::i(), SIGNAL(initHook(ChatView*)), SLOT(init(ChatView*)));
-  connect(ChatViewHooks::i(), SIGNAL(loadFinishedHook(ChatView*)), SLOT(loadFinished(ChatView*)));
 }
 
 
@@ -74,7 +71,7 @@ bool HistoryImpl::get(const QByteArray &id, const QList<QByteArray> &ids)
  *
  * \param id Идентификатор канала.
  */
-bool HistoryImpl::getLast(const QByteArray &id)
+bool HistoryImpl::last(const QByteArray &id)
 {
   if (ChatClient::state() != ChatClient::Online) {
     getLocal(HistoryDB::last(id, 20));
@@ -82,18 +79,6 @@ bool HistoryImpl::getLast(const QByteArray &id)
   }
 
   return ClientFeeds::request(id, LS("get"), LS("messages/last"));
-}
-
-
-/*!
- * Отправка пакета с запросом на получение офлайн сообщений.
- */
-bool HistoryImpl::getOffline()
-{
-  if (ChatClient::state() != ChatClient::Online)
-    return false;
-
-  return ClientFeeds::request(ChatClient::id(), LS("get"), LS("messages/offline"));
 }
 
 
@@ -111,24 +96,6 @@ QList<QByteArray> HistoryImpl::getLocal(const QList<QByteArray> &ids)
   }
 
   return out;
-}
-
-
-void HistoryImpl::getLast()
-{
-  m_chatView->getLast(SimpleID::UserId);
-}
-
-
-void HistoryImpl::init(ChatView *view)
-{
-  view->addJS(LS("qrc:/js/History/History.js"));
-}
-
-
-void HistoryImpl::loadFinished(ChatView *view)
-{
-  view->addCSS(LS("qrc:/css/History/History.css"));
 }
 
 
