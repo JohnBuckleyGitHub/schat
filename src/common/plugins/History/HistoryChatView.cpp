@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QWebFrame>
+
 #include "client/ChatClient.h"
 #include "client/ClientFeeds.h"
 #include "client/SimpleClient.h"
@@ -34,15 +36,17 @@ HistoryChatView::HistoryChatView(QObject *parent)
 
 void HistoryChatView::addImpl(ChatView *view)
 {
-  if (compatible(view->id()))
-    HistoryImpl::last(view->id());
+  if (compatible(view->id()) && HistoryImpl::last(view->id()))
+    emit loading(SimpleID::encode(view->id()));
 }
 
 
 void HistoryChatView::initImpl(ChatView *view)
 {
-  if (compatible(view->id()))
+  if (compatible(view->id())) {
+    view->page()->mainFrame()->addToJavaScriptWindowObject(LS("HistoryView"), this);
     view->addJS(LS("qrc:/js/History/History.js"));
+  }
 }
 
 
@@ -61,8 +65,8 @@ void HistoryChatView::ready()
   ChatClient::io()->lock();
 
   foreach (ChatView *view, i()->views()) {
-    if (compatible(view->id()))
-      HistoryImpl::last(view->id());
+    if (compatible(view->id()) && HistoryImpl::last(view->id()))
+      emit loading(SimpleID::encode(view->id()));
   }
 
   ClientFeeds::request(ChatClient::id(), LS("get"), LS("messages/offline"));

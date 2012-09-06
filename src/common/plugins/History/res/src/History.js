@@ -17,5 +17,44 @@
  */
 
 $(document).ready(function() {
-  $('#Chat').prepend('<div class="history-bar"><div class="history-bar-inner">o_O</div></div>');
+  History.loading(Settings.id);
 });
+
+
+var History = {
+  /*
+   * Показ виджета истории.
+   */
+  show: function() {
+    if (!$('#history').length)
+      $('#Chat').prepend('<div class="history-bar"><div class="history-bar-inner"><div id="history"></div></div></div>');
+
+    $('.history-bar').show();
+  },
+
+
+  /*
+   * Уведомление пользователя о загрузке сообщений.
+   */
+  loading: function(id) {
+    if (Settings.id != id)
+      return;
+
+    History.show();
+    $('#history').html('<i class="icon-spinner-small"></i> <span data-tr="history_loading">' + Utils.tr('history_loading') + '</span>')
+  },
+
+  feed: function(json)
+  {
+    console.log(json);
+  }
+};
+
+
+if (typeof HistoryView === "undefined") {
+  HistoryView = {}
+}
+else {
+  HistoryView.loading.connect(History.loading);
+  ChatView.feed.connect(History.feed);
+}
