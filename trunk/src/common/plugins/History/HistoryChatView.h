@@ -28,6 +28,9 @@ class HistoryChatView : public ChatViewHooks
 public:
   HistoryChatView(QObject *parent = 0);
 
+signals:
+  void loading(const QString &id);
+
 protected:
   void addImpl(ChatView *view);
   void initImpl(ChatView *view);
