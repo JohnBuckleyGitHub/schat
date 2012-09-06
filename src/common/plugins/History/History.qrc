@@ -3,5 +3,6 @@
   <file alias="css/History/History.css">res/css/History.min.css</file>
   <file alias="images/History/icon.png">res/images/oxygen/book.png</file>
   <file alias="js/History/History.js">res/js/History.min.js</file>
+  <file alias="translations/history_ru.qm">res/translations/history_ru.qm</file>
 </qresource>
 </RCC>
