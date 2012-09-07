@@ -107,7 +107,7 @@ void ClientFeedsImpl::get()
       ChatNotify::start(new FeedNotify(Notify::FeedData, m_channel->id(), request.first));
   }
   else
-    ChatNotify::start(new FeedNotify(Notify::FeedReply, m_channel->id(), m_packet->text(), m_packet->json()));
+    ChatNotify::start(new FeedNotify(m_channel->id(), m_packet));
 }
 
 

@@ -8,5 +8,9 @@
         <source>Loading messages</source>
         <translation>Загрузка сообщений</translation>
     </message>
+    <message>
+        <source>More messages</source>
+        <translation>Больше сообщений</translation>
+    </message>
 </context>
 </TS>

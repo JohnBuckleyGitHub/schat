@@ -126,6 +126,12 @@ void ChatView::setId(const QByteArray &id)
 }
 
 
+QString ChatView::getId() const
+{
+  return SimpleID::encode(id());
+}
+
+
 /*!
  * Завершение загрузки документа.
  */

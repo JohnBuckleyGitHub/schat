@@ -26,6 +26,8 @@
 
 #include "schat.h"
 
+class FeedNotice;
+
 /*!
  * Базовый класс уведомления.
  */
@@ -82,10 +84,12 @@ typedef QSharedPointer<Notify> NotifyPtr;
 class SCHAT_CORE_EXPORT FeedNotify : public Notify
 {
 public:
+  FeedNotify(const QByteArray &channel, const FeedNotice *packet);
   FeedNotify(int type, const QByteArray &channel, const QString &name, const QVariantMap &json = QVariantMap(), int status = 200);
   bool match(const QByteArray &id, const QString &name, const QString &action = QString()) const;
   bool match(const QString &name, const QString &action = QString()) const;
   inline const QByteArray& channel() const { return m_channel; }
+  inline const QString command() const     { return m_command; }
   inline const QString& name() const       { return m_name; }
   inline const QVariantMap& json() const   { return m_json; }
   inline int status() const                { return m_status; }
@@ -94,6 +98,7 @@ public:
 private:
   int m_status;         ///< Статус.
   QByteArray m_channel; ///< Идентификатор канала.
+  QString m_command;    ///< Команда.
   QString m_name;       ///< Имя фида.
   QVariantMap m_json;   ///< JSON данные.
 };

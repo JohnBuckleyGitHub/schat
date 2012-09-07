@@ -22,6 +22,9 @@ $(document).ready(function() {
 
 
 var History = {
+  date: 0,     /// Дата самого старого полученного сообщения.
+  message: '', /// Идентификатор самого старого полученного сообщения.
+
   /*
    * Показ виджета истории.
    */
@@ -30,6 +33,17 @@ var History = {
       $('#Chat').prepend('<div class="history-bar"><div class="history-bar-inner"><div id="history"></div></div></div>');
 
     $('.history-bar').show();
+    alignChat();
+  },
+
+
+  /*
+   * Сокрытие виджета истории.
+   */
+  hide: function() {
+    $('.history-bar').hide();
+    History.date = 0;
+    alignChat();
   },
 
 
@@ -41,12 +55,64 @@ var History = {
       return;
 
     History.show();
-    $('#history').html('<i class="icon-spinner-small"></i> <span data-tr="history_loading">' + Utils.tr('history_loading') + '</span>')
+    $('#history').html('<i class="icon-spinner-small"></i> <span data-tr="history_loading">' + Utils.tr('history_loading') + '</span>');
+    alignChat();
   },
 
-  feed: function(json)
-  {
-    console.log(json);
+
+  /*
+   * Обработка получения данных фидов.
+   */
+  feed: function(json) {
+    if (json.id != Settings.getId())
+      return;
+
+    if (json.type == 'reply' && json.cmd == 'get' && json.name == 'messages/last') {
+      History.last(json);
+    }
+  },
+
+
+  /*
+   * Обработка ответа на "get" запрос к "messages/last".
+   */
+  last: function(json) {
+    History.date    = 0;
+    History.message = '';
+
+    if (json.status == 200 && json.data.messages.length) {
+      var id = json.data.messages[0];
+      if ($('#' + id).length) {
+        History.date = $('#' + id).attr('data-time');
+        History.done();
+      }
+      else
+        History.message = id;
+    }
+    else
+      History.hide();
+  },
+
+
+  /*
+   * Показ ссылки для загрузки сообщений.
+   */
+  done: function() {
+    $('#history').html('<a class="history-more" href="#" data-tr="history_more">' + Utils.tr('history_more') + '</a>');
+  },
+
+
+  /*
+   * Обработка добавления сообщения.
+   */
+  onAdd: function(id) {
+    if (History.message != '' && History.message == id) {
+      History.date    = $('#' + id).attr('data-time');
+      History.message = '';
+
+      if (History.date)
+        History.done();
+    }
   }
 };
 
@@ -58,3 +124,5 @@ else {
   HistoryView.loading.connect(History.loading);
   ChatView.feed.connect(History.feed);
 }
+
+Messages.onAdd.push(History.onAdd);
