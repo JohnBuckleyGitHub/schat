@@ -33,4 +33,6 @@
 .history-more {
   background: url(qrc:/images/History/up.png) no-repeat;
   padding-left: 20px;
+  display: inline-block;
+  height: 14px;
 }

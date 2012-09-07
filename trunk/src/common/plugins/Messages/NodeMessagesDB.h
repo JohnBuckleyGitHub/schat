@@ -36,8 +36,8 @@ public:
   inline static QString id() { return m_id;}
   static bool open();
   static int status(int status);
-  static QList<QByteArray> last(const QByteArray &channel, int limit);
-  static QList<QByteArray> last(const QByteArray &user1, const QByteArray &user2, int limit);
+  static QList<QByteArray> last(const QByteArray &channel, int limit, qint64 before);
+  static QList<QByteArray> last(const QByteArray &user1, const QByteArray &user2, int limit, qint64 before);
   static QList<MessageRecord> get(const QList<QByteArray> &ids, const QByteArray &userId);
   static QList<MessageRecord> messages(QSqlQuery &query);
   static QList<MessageRecord> offline(const QByteArray &user);
