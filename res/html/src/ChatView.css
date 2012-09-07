@@ -332,6 +332,8 @@ a:active, a:hover {
 }
 
 .icon-spinner-small {
+  width: 14px;
+  height: 14px;
   background-image: url("qrc:/images/spinner-small.gif");
 }
 

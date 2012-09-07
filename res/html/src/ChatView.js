@@ -713,7 +713,8 @@ if (typeof ChatView === "undefined") {
     randomId: function() { return ''; },
     bytesToHuman: function(size) { return '0 bytes'; },
     status: function(id) { return 'Offline'; },
-    day: function(day) { return day; }
+    day: function(day) { return day; },
+    get: function(id, name, json) {}
   };
 
   ChatView = {

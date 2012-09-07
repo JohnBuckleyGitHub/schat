@@ -194,6 +194,12 @@ QVariant WebBridge::feed(const QString &name, int options) const
 }
 
 
+void WebBridge::get(const QString &id, const QString &name, const QVariantMap &json)
+{
+  ClientFeeds::request(ChatClient::channels()->get(SimpleID::decode(id)), LS("get"), name, json);
+}
+
+
 void WebBridge::request(const QString &command, const QString &name, const QVariantMap &json)
 {
   ClientFeeds::request(ChatClient::channel(), command, name, json);

@@ -89,21 +89,21 @@ int NodeMessagesDB::status(int status)
  *
  * \param channel Идентификатор канала.
  * \param limit   Максимальное количество сообщений.
+ * \param before  Дата, для загрузки сообщений старее этой даты.
  */
-QList<QByteArray> NodeMessagesDB::last(const QByteArray &channel, int limit)
+QList<QByteArray> NodeMessagesDB::last(const QByteArray &channel, int limit, qint64 before)
 {
+  if (SimpleID::typeOf(channel) != SimpleID::ChannelId)
+    return QList<QByteArray>();
+
   QSqlQuery query(QSqlDatabase::database(m_id));
 
-  int type = SimpleID::typeOf(channel);
-  if (type == SimpleID::ChannelId) {
-    query.prepare(LS("SELECT messageId FROM messages WHERE destId = :destId ORDER BY id DESC LIMIT :limit;"));
-  }
-  else if (type == SimpleID::UserId) {
-    query.prepare(LS("SELECT messageId FROM messages WHERE senderId = :senderId AND destId = :destId ORDER BY id DESC LIMIT :limit;"));
-    query.bindValue(LS(":senderId"), channel);
+  if (before) {
+    query.prepare(LS("SELECT messageId FROM messages WHERE destId = :destId AND date < :before ORDER BY id DESC LIMIT :limit;"));
+    query.bindValue(LS(":before"), before);
   }
   else
-    return QList<QByteArray>();
+    query.prepare(LS("SELECT messageId FROM messages WHERE destId = :destId ORDER BY id DESC LIMIT :limit;"));
 
   query.bindValue(LS(":destId"), channel);
   query.bindValue(LS(":limit"), limit);
@@ -116,14 +116,21 @@ QList<QByteArray> NodeMessagesDB::last(const QByteArray &channel, int limit)
 /*!
  * Получение идентификаторов последних приватных сообщений между двумя пользователями.
  *
- * \param user1 Идентификатор одного пользователя.
- * \param user2 Идентификатор другого пользователя.
- * \param limit Максимальное количество сообщений.
+ * \param user1  Идентификатор одного пользователя.
+ * \param user2  Идентификатор другого пользователя.
+ * \param limit  Максимальное количество сообщений.
+ * \param before Дата, для загрузки сообщений старее этой даты.
  */
-QList<QByteArray> NodeMessagesDB::last(const QByteArray &user1, const QByteArray &user2, int limit)
+QList<QByteArray> NodeMessagesDB::last(const QByteArray &user1, const QByteArray &user2, int limit, qint64 before)
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(LS("SELECT messageId FROM messages WHERE (senderId = :id1 AND destId = :id2) OR (senderId = :id3 AND destId = :id4) ORDER BY id DESC LIMIT :limit;"));
+  if (before) {
+    query.prepare(LS("SELECT messageId FROM messages WHERE ((senderId = :id1 AND destId = :id2) OR (senderId = :id3 AND destId = :id4)) AND date < :before ORDER BY id DESC LIMIT :limit;"));
+    query.bindValue(LS(":before"), before);
+  }
+  else
+    query.prepare(LS("SELECT messageId FROM messages WHERE (senderId = :id1 AND destId = :id2) OR (senderId = :id3 AND destId = :id4) ORDER BY id DESC LIMIT :limit;"));
+
   query.bindValue(LS(":id1"), user1);
   query.bindValue(LS(":id2"), user2);
   query.bindValue(LS(":id3"), user2);

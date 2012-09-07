@@ -100,17 +100,18 @@ FeedReply NodeMessagesFeed::last(const QVariantMap &json, Channel *user)
   if (count <= 0)
     return FeedReply(Notice::BadRequest);
 
+  qint64 before = json.value(LS("before"), 0).toLongLong();
   QList<QByteArray> messages;
   Channel *channel = head().channel();
 
   if (channel->type() == SimpleID::ChannelId) {
-    messages = NodeMessagesDB::last(head().channel()->id(), count);
+    messages = NodeMessagesDB::last(channel->id(), count, before);
   }
   else if (channel->type() == SimpleID::UserId) {
     if (!user)
       return FeedReply(Notice::BadRequest);
 
-    messages = NodeMessagesDB::last(channel->id(), user->id(), count);
+    messages = NodeMessagesDB::last(channel->id(), user->id(), count, before);
   }
 
   if (messages.isEmpty())

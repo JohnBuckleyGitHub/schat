@@ -17,6 +17,8 @@
  */
 
 $(document).ready(function() {
+  $('body').on('click.history', '#history a', History.click);
+
   History.loading(Settings.id);
 });
 
@@ -42,8 +44,20 @@ var History = {
    */
   hide: function() {
     $('.history-bar').hide();
-    History.date = 0;
     alignChat();
+  },
+
+
+  /*
+   * Обработка клика для загрузки сообщений.
+   */
+  click: function(event) {
+    event.preventDefault();
+    if (!History.date)
+      return;
+
+    History.loading(Settings.id);
+    SimpleChat.get(Settings.id, 'messages/last', { before: History.date });
   },
 
 
