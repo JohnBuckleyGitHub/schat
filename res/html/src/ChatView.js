@@ -321,28 +321,31 @@ var Messages = {
   },
 
 
-  // Обновление информации сообщения.
+  /*
+   * Обновление сообщения.
+   */
   updateChannelMessage: function(json)
   {
-    var id = '#' + json.Id + ' > div.blocks';
     var classes = json.Direction;
-
     if (json.Status !== undefined)
       classes += ' ' + json.Status;
 
-      if (json.Command == "me")
+      if (json.Command == 'me')
       classes += ' me-action';
 
-    $(id).attr('class', 'blocks ' + classes);
-    $('#' + json.Id).attr('data-time', json.Date);
+    $('#' + json.Id + ' > div.blocks').attr('class', 'blocks ' + classes);
 
-    if (json.Date > 0) {
+    if (json.Date > 0 && $('#' + json.Id).attr('data-time') != json.Date) {
       var date = new Date(json.Date);
-      if (json.Day === true)
-        $(id + ' > .date-time-block > .day').text(DateTime.day(date));
+      var block = $('#' + json.Id + ' > div.blocks > .date-time-block');
 
-      $(id + ' > .date-time-block > .time').text(DateTime.time(date));
-      $(id + ' > .date-time-block > .seconds').text(DateTime.seconds(date));
+      if (json.Day === true)
+        block.children('.day').text(DateTime.day(date));
+
+      block.children('.time').text(DateTime.time(date));
+      block.children('.seconds').text(DateTime.seconds(date));
+
+      $('#' + json.Id).attr('data-time', json.Date);
     }
   },
 
@@ -379,12 +382,10 @@ var Messages = {
 
       if (d.data('state') == 'open') {
         d.data('state', 'closed');
-        $('#day-' + day + ' .btn-toggle i').attr('class', 'icon-plus-small');
         $('#day-' + day + ' .day-body').hide();
       }
       else {
         d.data('state', 'open');
-        $('#day-' + day + ' .btn-toggle i').attr('class', 'icon-minus-small');
         $('#day-' + day + ' .day-body').show();
       }
 

@@ -61,15 +61,17 @@ bool NodeMessages::read(PacketReader *reader)
   }
 
   m_packet->setDate(Core::date());
-  m_packet->setId(m_packet->toId());
 
   if (m_dest->type() == SimpleID::UserId && m_dest->status().value() == Status::Offline) {
     reject(Notice::ChannelOffline);
+
+    m_packet->setId(m_packet->toId());
     NodeMessagesDB::add(packet, Notice::ChannelOffline);
     Ch::gc(m_dest);
     return false;
   }
 
+  m_packet->setId(m_packet->toId());
   NodeMessagesDB::add(packet);
 
   Core::i()->route(m_dest);
