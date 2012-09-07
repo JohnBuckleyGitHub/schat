@@ -8,5 +8,9 @@
         <source>Loading messages</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>More messages</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

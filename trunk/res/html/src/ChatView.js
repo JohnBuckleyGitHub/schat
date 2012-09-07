@@ -18,7 +18,14 @@
 
 var Settings = {
   id: '',
-  status: ''
+  status: '',
+
+  getId: function() {
+    if (Settings.id == '')
+      Settings.id = ChatView.getId();
+
+    return Settings.id;
+  }
 };
 
 
@@ -190,7 +197,7 @@ var Messages = {
       return;
     }
 
-    var html = '<div class="container ' + json.Type + '-type" id="' + json.Id + '">';
+    var html = '<div class="container ' + json.Type + '-type" id="' + json.Id + '" data-time="' + json.Date + '">';
     html += '<div class="blocks ';
     html += json.Direction;
 
@@ -327,6 +334,7 @@ var Messages = {
       classes += ' me-action';
 
     $(id).attr('class', 'blocks ' + classes);
+    $('#' + json.Id).attr('data-time', json.Date);
 
     if (json.Date > 0) {
       var date = new Date(json.Date);
@@ -711,7 +719,7 @@ if (typeof ChatView === "undefined") {
   ChatView = {
     jsfiles: function() { return []; },
     loadFinished: function() {},
-    dayHint: function(day) { return {'Hint':'End'}; }
+    getId: function() { return ''; }
   }
 }
 else {

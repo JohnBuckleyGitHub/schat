@@ -19,9 +19,22 @@
 #include <QTimer>
 
 #include "ChatNotify.h"
+#include "net/packets/FeedNotice.h"
 #include "sglobal.h"
 
 ChatNotify *ChatNotify::m_self = 0;
+
+
+FeedNotify::FeedNotify(const QByteArray &channel, const FeedNotice *packet)
+  : Notify(FeedReply)
+  , m_status(packet->status())
+  , m_channel(channel)
+  , m_command(packet->command())
+  , m_name(packet->text())
+  , m_json(packet->json())
+{
+}
+
 
 FeedNotify::FeedNotify(int type, const QByteArray &channel, const QString &name, const QVariantMap &json, int status)
   : Notify(type)
