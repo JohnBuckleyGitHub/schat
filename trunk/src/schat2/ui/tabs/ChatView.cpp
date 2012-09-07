@@ -301,8 +301,10 @@ QVariantMap ChatView::addHint(const Message &message)
 
   const QVariantMap &data = message.data();
   qint64 date = data.value(LS("Date")).toLongLong();
-  if (!date)
+  if (!date) {
+    out[LS("Day")] = QDateTime::currentDateTime().toString(LS("yyyy_MM_dd"));
     return out;
+  }
 
   const QString day = DateTime::toDateTime(date).toString(LS("yyyy_MM_dd"));
   out[LS("Day")] = day;
