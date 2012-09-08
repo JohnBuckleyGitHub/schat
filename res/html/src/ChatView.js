@@ -337,7 +337,7 @@ var Messages = {
 
     if (json.Date > 0 && $('#' + json.Id).attr('data-time') != json.Date) {
       var date = new Date(json.Date);
-      var block = $('#' + json.Id + ' > div.blocks > .date-time-block');
+      var block = $('#' + json.Id + ' > .blocks > .date-time-block');
 
       if (json.Day === true)
         block.children('.day').text(DateTime.day(date));

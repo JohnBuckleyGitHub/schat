@@ -139,7 +139,7 @@ Messages.addFileMessage = function(json)
   var id = json.Id;
   var imageId = SimpleChat.randomId();
 
-  var html = '<div class="container ' + json.Type + '-type" id="' + json.Id + '">';
+  var html = '<div class="container ' + json.Type + '-type" id="' + json.Id + '" data-time="' + json.Date + '">';
   html += '<div class="blocks ' + json.Direction + '">';
   html += '<div class="file-sender">' + DateTime.template(json.Date, json.Day) + Messages.nameBlock(json.Author) + '</div>';
   html += '<div class="file-icon"><img id="' + imageId + '" src="" width="16" height="16" alt="" /></div>';
@@ -155,7 +155,7 @@ Messages.addFileMessage = function(json)
 
 
 /*
- * Обновление идентификатора исходящей передачи файла.
+ * Обновление идентификатора и отметки времени исходящей передачи файла.
  */
 Messages.upgradeFileMessage = function(json) {
   if (!$('#' + json.InternalId).length)
@@ -163,6 +163,13 @@ Messages.upgradeFileMessage = function(json) {
 
   $('#' + json.InternalId).attr('id', json.Id);
   $('#' + json.Id + ' .btn-file-cancel').attr('href', 'chat-sendfile:cancel/' + json.Id);
+
+  $('#' + json.Id).attr('data-time', json.Date);
+  var date = new Date(json.Date);
+  var block = $('#' + json.Id + ' .date-time-block');
+
+  block.children('.time').text(DateTime.time(date));
+  block.children('.seconds').text(DateTime.seconds(date));
 };
 
 
