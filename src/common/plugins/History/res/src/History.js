@@ -16,13 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-$(document).ready(function() {
-  $('body').on('click.history', '#history a', History.click);
-
-  History.loading(Settings.id);
-});
-
-
 var History = {
   date: 0,     /// Дата самого старого полученного сообщения.
   message: '', /// Идентификатор самого старого полученного сообщения.
@@ -35,7 +28,6 @@ var History = {
       $('#Chat').prepend('<div id="history-bar" class="history-bar"><div class="history-bar-inner"><div id="history"></div></div></div>');
 
     $('.history-bar').show();
-    alignChat();
   },
 
 
@@ -140,3 +132,9 @@ else {
 }
 
 Messages.onAdd.push(History.onAdd);
+
+$(document).ready(function() {
+  $('body').on('click.history', '#history a', History.click);
+
+  History.loading(Settings.id);
+});

@@ -85,8 +85,9 @@ private:
   QAction *m_service;                                  ///< Сервисные сообщения.
   QByteArray m_id;                                     ///< Идентификатор.
   QMap<QString, QMap<qint64, QByteArray> > m_messages; ///< Сортированные по времени сообщения.
-  QQueue<QString> m_pendingJs;                         ///< Очередь сообщений ожидающих загрузки документа.
-  QQueue<QVariantMap> m_pending;                       ///< Очередь сообщений ожидающих загрузки документа.
+  QQueue<QString> m_pendingJs;                         ///< Очередь JavaScript кода ожидающего загрузки документа.
+  QQueue<QVariantMap> m_pendingFeeds;                  ///< Очередь данных фидов ожидающих загрузки документа.
+  QQueue<QVariantMap> m_pendingMessages;               ///< Очередь сообщений ожидающих загрузки документа.
   QStringList m_jsfiles;                               ///< Дополнительные динамически загружаемые JavaScript скрипты.
 };
 
