@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QCoreApplication>
 #include <QDesktopServices>
 #include <QFileDialog>
@@ -161,9 +159,6 @@ bool SendFilePluginImpl::sendFile(const QByteArray &dest, const QString &file)
   packet->setData(transaction->toReceiver());
 
   if (ChatClient::io()->send(packet, true)) {
-    if (transaction->file().size > 0)
-      m_thread->add(transaction);
-
     m_transactions[transaction->id()] = transaction;
     transaction->setVisible();
     transaction->setState(SendFile::WaitingState);
@@ -173,6 +168,7 @@ bool SendFilePluginImpl::sendFile(const QByteArray &dest, const QString &file)
     message.setDate();
     message.data()[LS("File")]      = transaction->fileName();
     message.data()[LS("Direction")] = LS("outgoing");
+    message.data()[LS("WeakId")]    = true;
     TabWidget::add(message);
     return true;
   }
@@ -487,6 +483,35 @@ void SendFilePluginImpl::setState(const SendFileTransaction &transaction, SendFi
 }
 
 
+/*
+ * Обновление при необходимости идентификатора транзакции.
+ * Используется для исходящих файлов, т.к. на момент отправки глобальный идентификатор сообщения ещё не известен.
+ */
+bool SendFilePluginImpl::upgrade(const MessagePacket &packet)
+{
+  if (packet->internalId().isEmpty())
+    return false;
+
+  SendFileTransaction transaction = m_transactions.value(packet->internalId());
+  if (!transaction)
+    return false;
+
+  m_transactions.remove(transaction->id());
+
+  transaction->setId(packet->id());
+  m_transactions[transaction->id()] = transaction;
+
+  Message message(packet->id(), packet->dest(), LS("file"), LS("upgradeFileMessage"));
+  message.data()[LS("InternalId")] = QString(SimpleID::encode(packet->internalId()));
+  TabWidget::add(message);
+
+  if (transaction->file().size > 0)
+    m_thread->add(transaction);
+
+  return false;
+}
+
+
 /*!
  * Принятие удалённой стороной входящего файла.
  * В поле \b hosts передаются адреса и порты удалённой стороны.
@@ -523,6 +548,9 @@ void SendFilePluginImpl::cancel(const MessagePacket &packet)
  */
 void SendFilePluginImpl::incomingFile(const MessagePacket &packet)
 {
+  if (upgrade(packet))
+    return;
+
   SendFileTransaction transaction = m_transactions.value(packet->id());
   // Создание новой транзакции.
   if (!transaction) {
@@ -558,11 +586,14 @@ void SendFilePluginImpl::incomingFile(const MessagePacket &packet)
   message.data()[LS("File")]      = transaction->fileName();
   message.data()[LS("Size")]      = transaction->file().size;
   message.data()[LS("Direction")] = transaction->role() ? LS("incoming") : LS("outgoing");
+  message.data()[LS("WeakId")]    = false;
   TabWidget::add(message);
 
-  Alert alert = Alert(LS("file"), packet->id(), packet->date(), Alert::Tab | Alert::Global);
-  alert.setTab(packet->sender(), packet->dest());
-  ChatAlerts::start(alert);
+  if (packet->status() == Notice::OK) {
+    Alert alert = Alert(LS("file"), packet->id(), packet->date(), Alert::Tab | Alert::Global);
+    alert.setTab(packet->sender(), packet->dest());
+    ChatAlerts::start(alert);
+  }
 }
 
 

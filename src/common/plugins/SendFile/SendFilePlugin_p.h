@@ -91,6 +91,7 @@ private:
   void accept(const SendFileTransaction &transaction);
   void setState(const SendFileTransaction &transaction, SendFile::TransactionState state);
 
+  bool upgrade(const MessagePacket &packet);
   void accept(const MessagePacket &packet);
   void cancel(const MessagePacket &packet);
   void incomingFile(const MessagePacket &packet);
