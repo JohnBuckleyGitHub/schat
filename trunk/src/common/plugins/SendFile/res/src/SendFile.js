@@ -154,6 +154,18 @@ Messages.addFileMessage = function(json)
 };
 
 
+/*
+ * Обновление идентификатора исходящей передачи файла.
+ */
+Messages.upgradeFileMessage = function(json) {
+  if (!$('#' + json.InternalId).length)
+    return;
+
+  $('#' + json.InternalId).attr('id', json.Id);
+  $('#' + json.Id + ' .btn-file-cancel').attr('href', 'chat-sendfile:cancel/' + json.Id);
+};
+
+
 if (typeof SendFile === "undefined") {
   SendFile = {
     state: function(id) { return 'U'; },

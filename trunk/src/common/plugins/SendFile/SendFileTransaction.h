@@ -127,6 +127,7 @@ public:
   inline TransactionState state() const        { return m_state; }
 
   inline void setFile(const File &file)        { m_file = file; }
+  inline void setId(const QByteArray &id)      { m_id = id; }
   inline void setLocal(const Hosts &hosts)     { m_local = hosts; }
   inline void setPos(qint64 pos)               { m_pos = pos; }
   inline void setRemote(const Hosts &hosts)    { m_remote = hosts; }
