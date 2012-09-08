@@ -155,8 +155,11 @@ void ClientMessages::readText(MessagePacket packet)
 
   if (isClientDate(packet->status())) {
     packet->setDate(ChatClient::date());
-    packet->setInternalId(packet->id());
-    packet->setId(packet->toId());
+
+    if (packet->direction() != Notice::Internal) {
+      packet->setInternalId(packet->id());
+      packet->setId(packet->toId());
+    }
   }
 
   /// В случае если отправитель сообщения неизвестен клиенту, то будет произведён вход в канал

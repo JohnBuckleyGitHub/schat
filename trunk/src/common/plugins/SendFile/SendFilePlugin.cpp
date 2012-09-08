@@ -502,6 +502,7 @@ bool SendFilePluginImpl::upgrade(const MessagePacket &packet)
   m_transactions[transaction->id()] = transaction;
 
   Message message(packet->id(), packet->dest(), LS("file"), LS("upgradeFileMessage"));
+  message.setDate(packet->date());
   message.data()[LS("InternalId")] = QString(SimpleID::encode(packet->internalId()));
   TabWidget::add(message);
 

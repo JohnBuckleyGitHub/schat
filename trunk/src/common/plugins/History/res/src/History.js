@@ -32,7 +32,7 @@ var History = {
    */
   show: function() {
     if (!$('#history').length)
-      $('#Chat').prepend('<div class="history-bar"><div class="history-bar-inner"><div id="history"></div></div></div>');
+      $('#Chat').prepend('<div id="history-bar" class="history-bar"><div class="history-bar-inner"><div id="history"></div></div></div>');
 
     $('.history-bar').show();
     alignChat();
