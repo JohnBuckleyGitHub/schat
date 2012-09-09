@@ -36,6 +36,7 @@ private:
   FeedReply fetch(const QVariantMap &json, Channel *user);
   FeedReply last(const QVariantMap &json, Channel *user);
   FeedReply offline(Channel *user);
+  FeedReply since(const QVariantMap &json, Channel *user);
   void toPackets(QList<QByteArray> &out, const QList<MessageRecord> &records);
 };
 

@@ -59,6 +59,8 @@ FeedReply NodeMessagesFeed::get(const QString &path, const QVariantMap &json, Ch
     return last(json, channel);
   else if (path == LS("offline"))
     return offline(channel);
+  else if (path == LS("since"))
+    return since(json, channel);
 
   return FeedReply(Notice::NotImplemented);
 }
@@ -143,6 +145,38 @@ FeedReply NodeMessagesFeed::offline(Channel *user)
 
   reply.json[LS("count")] = reply.packets.size();
   return reply;
+}
+
+
+FeedReply NodeMessagesFeed::since(const QVariantMap &json, Channel *user)
+{
+  qint64 date = json.value(LS("date"), 0).toLongLong();
+  if (date <= 0)
+    return FeedReply(Notice::BadRequest);
+
+  qint64 end = json.value(LS("end"), DateTime::utc()).toLongLong();
+  QList<QByteArray> messages;
+  Channel *channel = head().channel();
+
+  if (channel->type() == SimpleID::ChannelId) {
+    messages = NodeMessagesDB::since(channel->id(), date, end);
+  }
+  else if (channel->type() == SimpleID::UserId) {
+    if (!user)
+      return FeedReply(Notice::BadRequest);
+
+    messages = NodeMessagesDB::since(channel->id(), user->id(), date, end);
+  }
+
+  if (messages.isEmpty())
+    return FeedReply(Notice::NotFound);
+
+  FeedReply reply(Notice::OK);
+  reply.json[LS("count")]    = messages.size();
+  reply.json[LS("messages")] = MessageNotice::encode(messages);
+  return reply;
+
+  return FeedReply(Notice::InternalError);
 }
 
 
