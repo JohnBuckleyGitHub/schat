@@ -218,6 +218,11 @@ var Messages = {
     html += '</div>';
 
     Messages.addHintedRawMessage(html, json.Hint, json.Id);
+
+    if (json.hasOwnProperty('Status') && json.Status == 'undelivered')
+      return;
+
+    ChatView.setLastMessage(json.Date);
   },
 
 
@@ -347,6 +352,7 @@ var Messages = {
       block.children('.seconds').text(DateTime.seconds(date));
 
       $('#' + json.Id).attr('data-time', json.Date);
+      ChatView.setLastMessage(json.Date);
     }
   },
 
@@ -725,7 +731,8 @@ if (typeof ChatView === "undefined") {
   ChatView = {
     jsfiles: function() { return []; },
     loadFinished: function() {},
-    getId: function() { return ''; }
+    getId: function() { return ''; },
+    setLastMessage: function(date) {}
   }
 }
 else {

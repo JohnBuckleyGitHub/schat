@@ -45,6 +45,7 @@ ChatView::ChatView(const QByteArray &id, const QString &url, QWidget *parent)
   : QWebView(parent)
   , m_loaded(false)
   , m_id(id)
+  , m_lastMessage(0)
 {
   setAcceptDrops(false);
   page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
@@ -155,6 +156,13 @@ void ChatView::loadFinished()
     emit feed(m_pendingFeeds.dequeue());
 
   QTimer::singleShot(0, this, SLOT(alignChat()));
+}
+
+
+void ChatView::setLastMessage(qint64 date)
+{
+  if (date > m_lastMessage)
+    m_lastMessage = date;
 }
 
 
