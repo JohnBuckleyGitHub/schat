@@ -36,11 +36,13 @@ public:
   inline static QString id() { return m_id;}
   static bool open();
   static int status(int status);
-  static QList<QByteArray> last(const QByteArray &channel, int limit, qint64 before);
-  static QList<QByteArray> last(const QByteArray &user1, const QByteArray &user2, int limit, qint64 before);
   static QList<MessageRecord> get(const QList<QByteArray> &ids, const QByteArray &userId);
   static QList<MessageRecord> messages(QSqlQuery &query);
   static QList<MessageRecord> offline(const QByteArray &user);
+  static QList<QByteArray> last(const QByteArray &channel, int limit, qint64 before);
+  static QList<QByteArray> last(const QByteArray &user1, const QByteArray &user2, int limit, qint64 before);
+  static QList<QByteArray> since(const QByteArray &channel, qint64 start, qint64 end);
+  static QList<QByteArray> since(const QByteArray &user1, const QByteArray &user2, qint64 start, qint64 end);
   static void add(const MessageNotice &packet, int status = 300);
   static void markAsRead(const QList<MessageRecord> &records);
 
