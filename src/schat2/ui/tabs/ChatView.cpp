@@ -153,6 +153,8 @@ void ChatView::loadFinished()
 
   while (!m_pendingFeeds.isEmpty())
     emit feed(m_pendingFeeds.dequeue());
+
+  QTimer::singleShot(0, this, SLOT(alignChat()));
 }
 
 
@@ -219,6 +221,12 @@ void ChatView::showEvent(QShowEvent *event)
 {
   evaluateJavaScript(LS("alignChat();"));
   QWebView::showEvent(event);
+}
+
+
+void ChatView::alignChat()
+{
+  page()->mainFrame()->evaluateJavaScript(LS("Settings.sortable = true; alignChat();"));
 }
 
 
