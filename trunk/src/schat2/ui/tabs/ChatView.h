@@ -62,6 +62,7 @@ protected:
   void showEvent(QShowEvent *event);
 
 private slots:
+  void alignChat();
   void menuTriggered(QAction *action);
   void notify(const Notify &notify);
   void openUrl(const QUrl &url);

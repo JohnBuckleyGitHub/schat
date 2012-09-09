@@ -19,6 +19,7 @@
 var Settings = {
   id: '',
   status: '',
+  sortable: false,
 
   getId: function() {
     if (Settings.id == '')
@@ -581,6 +582,9 @@ $(document).ready(function() {
 });
 
 function alignChat() {
+  if (!Settings.sortable)
+    return;
+
   var windowHeight = window.innerHeight;
 
   if (windowHeight > 0) {
