@@ -149,6 +149,9 @@ Messages.addFileMessage = function(json)
   html += '</div></div>';
 
   Messages.addHintedRawMessage(html, json.Hint, id);
+  if (json.WeakId === false)
+    ChatView.setLastMessage(json.Date);
+
   $('#' + id).data('imageId', imageId);
   SendFileUtils.setFileIcon(id);
 };
@@ -170,6 +173,7 @@ Messages.upgradeFileMessage = function(json) {
 
   block.children('.time').text(DateTime.time(date));
   block.children('.seconds').text(DateTime.seconds(date));
+  ChatView.setLastMessage(json.Date);
 };
 
 

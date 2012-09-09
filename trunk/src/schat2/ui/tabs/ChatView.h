@@ -45,10 +45,12 @@ public:
   void evaluateJavaScript(const QString &js);
   void setId(const QByteArray &id);
 
+  Q_INVOKABLE qint64 lastMessage() const      { return m_lastMessage; }
   Q_INVOKABLE QString getId() const;
   Q_INVOKABLE QStringList jsfiles() const     { return m_jsfiles; }
   Q_INVOKABLE void addJS(const QString &file) { if (!m_jsfiles.contains(file)) m_jsfiles.append(file); }
   Q_INVOKABLE void loadFinished();
+  Q_INVOKABLE void setLastMessage(qint64 date);
 
 signals:
   void feed(const QVariantMap &data);
@@ -85,6 +87,7 @@ private:
   QAction *m_selectAll;                                ///< Выделить всё.
   QAction *m_service;                                  ///< Сервисные сообщения.
   QByteArray m_id;                                     ///< Идентификатор.
+  qint64 m_lastMessage;                                ///< Время последнего сообщения.
   QMap<QString, QMap<qint64, QByteArray> > m_messages; ///< Сортированные по времени сообщения.
   QQueue<QString> m_pendingJs;                         ///< Очередь JavaScript кода ожидающего загрузки документа.
   QQueue<QVariantMap> m_pendingFeeds;                  ///< Очередь данных фидов ожидающих загрузки документа.
