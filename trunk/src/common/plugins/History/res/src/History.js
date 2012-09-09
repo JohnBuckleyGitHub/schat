@@ -45,9 +45,6 @@ var History = {
    */
   click: function(event) {
     event.preventDefault();
-    if (!History.date)
-      return;
-
     History.loading(Settings.id);
     SimpleChat.get(Settings.id, 'messages/last', { before: History.date });
   },
@@ -73,8 +70,11 @@ var History = {
     if (json.id != Settings.getId())
       return;
 
-    if (json.type == 'reply' && json.cmd == 'get' && json.name == 'messages/last') {
-      History.last(json);
+    if (json.type == 'reply' && json.cmd == 'get') {
+      if (json.name == 'messages/last')
+        History.last(json);
+      else if (json.name == 'messages/since')
+        History.done();
     }
   },
 

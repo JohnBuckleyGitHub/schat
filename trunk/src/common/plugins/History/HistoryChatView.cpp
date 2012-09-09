@@ -64,9 +64,21 @@ void HistoryChatView::ready()
 {
   ChatClient::io()->lock();
 
+  bool sent = false;
   foreach (ChatView *view, i()->views()) {
-    if (compatible(view->id()) && HistoryImpl::last(view->id()))
-      emit loading(SimpleID::encode(view->id()));
+    const QByteArray &id = view->id();
+    if (compatible(id)) {
+      if (view->lastMessage()) {
+        QVariantMap data;
+        data[LS("date")] = view->lastMessage();
+        sent = ClientFeeds::request(id, LS("get"), LS("messages/since"), data);
+      }
+      else
+        sent = HistoryImpl::last(id);
+
+      if (sent)
+        emit loading(SimpleID::encode(id));
+    }
   }
 
   ClientFeeds::request(ChatClient::id(), LS("get"), LS("messages/offline"));
