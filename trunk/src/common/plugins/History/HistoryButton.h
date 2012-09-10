@@ -16,36 +16,36 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef HISTORYPLUGIN_P_H_
-#define HISTORYPLUGIN_P_H_
+#ifndef HISTORYBUTTON_H_
+#define HISTORYBUTTON_H_
 
-#include "plugins/ChatPlugin.h"
+#include <QApplication>
+#include <QToolButton>
 
-class FeedNotify;
-class HistoryChatView;
-class HistoryPluginTr;
-class Notify;
+#include "ui/ToolBarAction.h"
 
-class HistoryImpl : public ChatPlugin
+class HistoryButton : public QToolButton
 {
   Q_OBJECT
 
 public:
-  HistoryImpl(QObject *parent);
-  ~HistoryImpl();
-  static bool get(const QByteArray &id, const QList<QByteArray> &ids);
-  static bool last(const QByteArray &id);
-  static QList<QByteArray> getLocal(const QList<QByteArray> &ids);
-
-private slots:
-  void notify(const Notify &notify);
-  void open();
-  void start();
+  HistoryButton(QWidget *parent = 0);
 
 private:
-  HistoryChatView *m_chatView;
-  HistoryPluginTr *m_tr;
+  QMenu *m_menu; ///< Меню для показа календаря.
 };
 
 
-#endif /* HISTORYPLUGIN_P_H_ */
+class HistoryAction : public ToolBarActionCreator
+{
+  Q_DECLARE_TR_FUNCTIONS(HistoryAction)
+
+public:
+  HistoryAction();
+  bool isVisible(const QString &type, const QByteArray &id);
+  QIcon icon() const;
+  QString title() const;
+  QWidget* createWidget(QWidget *parent) const;
+};
+
+#endif /* HISTORYBUTTON_H_ */
