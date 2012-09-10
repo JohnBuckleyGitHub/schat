@@ -26,6 +26,7 @@
 #include "client/ChatClient.h"
 #include "client/ClientFeeds.h"
 #include "client/ClientMessages.h"
+#include "HistoryButton.h"
 #include "HistoryChatView.h"
 #include "HistoryDB.h"
 #include "HistoryMessages.h"
@@ -36,6 +37,7 @@
 #include "sglobal.h"
 #include "Tr.h"
 #include "Translation.h"
+#include "ui/SendWidget.h"
 #include "ui/tabs/PrivateTab.h"
 
 class HistoryPluginTr : public Tr
@@ -68,6 +70,8 @@ HistoryImpl::HistoryImpl(QObject *parent)
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 
   ChatCore::translation()->addOther(LS("history"));
+
+  QTimer::singleShot(0, this, SLOT(start()));
 }
 
 
@@ -146,6 +150,12 @@ void HistoryImpl::open()
   QByteArray id = ChatClient::serverId();
   if (!id.isEmpty())
     HistoryDB::open(id, ChatCore::networks()->root(SimpleID::encode(id)));
+}
+
+
+void HistoryImpl::start()
+{
+  SendWidget::add(new HistoryAction());
 }
 
 

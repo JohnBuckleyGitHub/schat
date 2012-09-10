@@ -21,6 +21,7 @@ QT = core gui network sql webkit
 OTHER_FILES += History.json
 
 HEADERS  = \
+   HistoryButton.h \
    HistoryChatView.h \
    HistoryDB.h \
    HistoryMessages.h \
@@ -28,6 +29,7 @@ HEADERS  = \
    HistoryPlugin_p.h \
 
 SOURCES  = \
+   HistoryButton.cpp \
    HistoryChatView.cpp \
    HistoryDB.cpp \
    HistoryMessages.cpp \
