@@ -47,7 +47,7 @@ void EmoticonsButton::changeEvent(QEvent *event)
   if (event->type() == QEvent::LanguageChange)
     retranslateUi();
 
-  QWidget::changeEvent(event);
+  QToolButton::changeEvent(event);
 }
 
 

@@ -24,6 +24,8 @@
 
 #include "ui/ToolBarAction.h"
 
+class QDate;
+
 class HistoryButton : public QToolButton
 {
   Q_OBJECT
@@ -31,7 +33,17 @@ class HistoryButton : public QToolButton
 public:
   HistoryButton(QWidget *parent = 0);
 
+protected:
+  void changeEvent(QEvent *event);
+
+private slots:
+  void activated(const QDate &date);
+  void menuAboutToHide();
+  void menuAboutToShow();
+
 private:
+  void retranslateUi();
+
   QMenu *m_menu; ///< Меню для показа календаря.
 };
 
