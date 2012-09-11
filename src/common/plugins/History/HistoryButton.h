@@ -20,11 +20,11 @@
 #define HISTORYBUTTON_H_
 
 #include <QApplication>
+#include <QDate>
+#include <QMap>
 #include <QToolButton>
 
 #include "ui/ToolBarAction.h"
-
-class QDate;
 
 class HistoryButton : public QToolButton
 {
@@ -44,7 +44,8 @@ private slots:
 private:
   void retranslateUi();
 
-  QMenu *m_menu; ///< Меню для показа календаря.
+  QMap<QByteArray, QDate> m_dates; ///< Сохранённы даты для вкладок.
+  QMenu *m_menu;                   ///< Меню для показа календаря.
 };
 
 

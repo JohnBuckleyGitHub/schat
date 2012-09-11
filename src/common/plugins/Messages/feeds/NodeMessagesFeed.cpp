@@ -174,9 +174,11 @@ FeedReply NodeMessagesFeed::since(const QVariantMap &json, Channel *user)
   FeedReply reply(Notice::OK);
   reply.json[LS("count")]    = messages.size();
   reply.json[LS("messages")] = MessageNotice::encode(messages);
-  return reply;
 
-  return FeedReply(Notice::InternalError);
+  if (json.contains(LS("day")))
+    reply.json[LS("day")] = json.value(LS("day"));
+
+  return reply;
 }
 
 
