@@ -64,6 +64,8 @@ void HistoryButton::activated(const QDate &date)
   qint64 start = qint64(QDateTime(date).toTime_t()) * 1000;
 # endif
 
+  m_dates[ChatCore::currentId()] = date;
+
   QVariantMap data;
   data[LS("date")] = start;
   data[LS("end")]  = start + 86400000;
@@ -87,6 +89,7 @@ void HistoryButton::menuAboutToShow()
   QCalendarWidget *calendar = new QCalendarWidget(this);
   calendar->setVerticalHeaderFormat(QCalendarWidget::NoVerticalHeader);
   calendar->setMaximumDate(QDate::currentDate());
+  calendar->setSelectedDate(m_dates.value(ChatCore::currentId(), QDate::currentDate()));
 
   QLocale locale(ChatCore::translation()->name());
   calendar->setLocale(locale);
