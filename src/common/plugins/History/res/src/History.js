@@ -55,6 +55,7 @@ var History = {
   date: 0,      /// Дата самого старого полученного сообщения.
   message: '',  /// Идентификатор самого старого полученного сообщения.
   scroll: null, /// Отложенный скролл ожидающий загрузки сообщений.
+  top: false,   /// true если полученны все сообщения.
 
   /*
    * Показ виджета истории.
@@ -128,10 +129,14 @@ var History = {
       else
         History.message = id;
 
-      if (json.data.count < 20)
+      if (json.data.count < 20) {
         History.hide();
+        History.top = true;
+      }
       else
         History.done();
+
+      alignChat();
 
       if (json.data.user === true)
         new HistoryScroll('last', json.data);
@@ -147,8 +152,12 @@ var History = {
    * Обработка ответа на "get" запрос к "messages/since".
    */
   since: function(json) {
-    History.done();
+    if (History.top)
+      History.hide();
+    else
+      History.done();
 
+    alignChat();
     if (json.data.hasOwnProperty('day'))
       new HistoryScroll('since', json.data);
   },
@@ -186,6 +195,7 @@ var History = {
     History.message = '';
     History.date    = 0;
 
+    History.top = false;
     History.done();
     History.show();
     alignChat();

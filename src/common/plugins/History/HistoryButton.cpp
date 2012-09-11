@@ -27,6 +27,9 @@
 #include "net/SimpleID.h"
 #include "sglobal.h"
 #include "Translation.h"
+#include "ui/tabs/ChannelBaseTab.h"
+#include "ui/tabs/ChatView.h"
+#include "ui/TabWidget.h"
 
 HistoryButton::HistoryButton(QWidget *parent)
   : QToolButton(parent)
@@ -71,6 +74,9 @@ void HistoryButton::activated(const QDate &date)
   data[LS("end")]  = start + 86400000;
   data[LS("day")]  = date.toString(LS("yyyy_MM_dd"));
   ClientFeeds::request(ChatCore::currentId(), LS("get"), LS("messages/since"), data);
+
+  ChannelBaseTab *tab = TabWidget::i()->channelTab(ChatCore::currentId(), false, false);
+  tab->chatView()->evaluateJavaScript(LS("History.loading(Settings.id);"));
 }
 
 
