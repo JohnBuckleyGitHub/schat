@@ -120,6 +120,7 @@ FeedReply NodeMessagesFeed::last(const QVariantMap &json, Channel *user)
     return FeedReply(Notice::NotFound);
 
   FeedReply reply(Notice::OK);
+  reply.json = json;
   reply.json[LS("count")]    = messages.size();
   reply.json[LS("messages")] = MessageNotice::encode(messages);
   return reply;
@@ -172,17 +173,15 @@ FeedReply NodeMessagesFeed::since(const QVariantMap &json, Channel *user)
     return FeedReply(Notice::NotFound);
 
   FeedReply reply(Notice::OK);
+  reply.json = json;
   reply.json[LS("count")]    = messages.size();
   reply.json[LS("messages")] = MessageNotice::encode(messages);
-
-  if (json.contains(LS("day")))
-    reply.json[LS("day")] = json.value(LS("day"));
 
   return reply;
 }
 
 
-void NodeMessagesFeed::toPackets(QList<QByteArray> &out, const QList<MessageRecord> &records)
+void NodeMessagesFeed::toPackets(QList<QByteArray> &out, const QList<MessageRecord> &records) const
 {
   for (int i = 0; i < records.size(); ++i) {
     const MessageRecord& record = records.at(i);

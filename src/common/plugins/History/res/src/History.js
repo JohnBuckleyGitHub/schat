@@ -16,9 +16,45 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+/*
+ * Автоматическая прокрутка к заданному id когда получены все сообщения.
+ */
+function HistoryScroll(type, data) {
+  this.id       = 'Chat';
+  this.messages = [];
+
+  if (type == 'since')
+    this.id = 'day-' + data.day;
+
+  for (var i = 0; i < data.messages.length; i++) {
+    if (document.getElementById(data.messages[i]) === null)
+      this.messages.push(data.messages[i]);
+  }
+
+  if (this.messages.length)
+    History.scroll = this;
+  else
+    document.getElementById(this.id).scrollIntoView();
+
+  this.remove = function(id) {
+    var index = this.messages.indexOf(id);
+    if (index != -1) {
+      this.messages.splice(index, 1);
+
+      if (!this.messages.length) {
+        History.scroll = null;
+        Settings.scrollTo = this.id;
+      }
+    }
+  }
+}
+
+
 var History = {
-  date: 0,     /// Дата самого старого полученного сообщения.
-  message: '', /// Идентификатор самого старого полученного сообщения.
+  date: 0,      /// Дата самого старого полученного сообщения.
+  message: '',  /// Идентификатор самого старого полученного сообщения.
+  scroll: null, /// Отложенный скролл ожидающий загрузки сообщений.
 
   /*
    * Показ виджета истории.
@@ -36,7 +72,6 @@ var History = {
    */
   hide: function() {
     $('.history-bar').hide();
-    alignChat();
   },
 
 
@@ -46,7 +81,7 @@ var History = {
   click: function(event) {
     event.preventDefault();
     History.loading(Settings.id);
-    SimpleChat.get(Settings.id, 'messages/last', { before: History.date });
+    SimpleChat.get(Settings.id, 'messages/last', { before: History.date, user: true });
   },
 
 
@@ -74,7 +109,7 @@ var History = {
       if (json.name == 'messages/last')
         History.last(json);
       else if (json.name == 'messages/since')
-        History.done();
+        History.since(json);
     }
   },
 
@@ -88,15 +123,34 @@ var History = {
 
     if (json.status == 200 && json.data.messages.length) {
       var id = json.data.messages[0];
-      if ($('#' + id).length) {
+      if ($('#' + id).length)
         History.date = $('#' + id).attr('data-time');
-        History.done();
-      }
       else
         History.message = id;
+
+      if (json.data.count < 20)
+        History.hide();
+      else
+        History.done();
+
+      if (json.data.user === true)
+        new HistoryScroll('last', json.data);
     }
-    else
+    else {
       History.hide();
+      alignChat();
+    }
+  },
+
+
+  /*
+   * Обработка ответа на "get" запрос к "messages/since".
+   */
+  since: function(json) {
+    History.done();
+
+    if (json.data.hasOwnProperty('day'))
+      new HistoryScroll('since', json.data);
   },
 
 
@@ -119,6 +173,22 @@ var History = {
       if (History.date)
         History.done();
     }
+
+    if (History.scroll instanceof HistoryScroll)
+      History.scroll.remove(id);
+  },
+
+
+  /*
+   * Очистка страницы.
+   */
+  reload: function() {
+    History.message = '';
+    History.date    = 0;
+
+    History.done();
+    History.show();
+    alignChat();
   }
 };
 
@@ -129,6 +199,7 @@ if (typeof HistoryView === "undefined") {
 else {
   HistoryView.loading.connect(History.loading);
   ChatView.feed.connect(History.feed);
+  ChatView.reload.connect(History.reload);
 }
 
 Messages.onAdd.push(History.onAdd);

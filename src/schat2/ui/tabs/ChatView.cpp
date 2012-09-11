@@ -234,7 +234,7 @@ void ChatView::showEvent(QShowEvent *event)
 
 void ChatView::alignChat()
 {
-  page()->mainFrame()->evaluateJavaScript(LS("Settings.sortable = true; alignChat();"));
+  page()->mainFrame()->evaluateJavaScript(LS("Settings.scroll = true; alignChat();"));
 }
 
 
