@@ -37,7 +37,7 @@ private:
   FeedReply last(const QVariantMap &json, Channel *user);
   FeedReply offline(Channel *user);
   FeedReply since(const QVariantMap &json, Channel *user);
-  void toPackets(QList<QByteArray> &out, const QList<MessageRecord> &records);
+  void toPackets(QList<QByteArray> &out, const QList<MessageRecord> &records) const;
 };
 
 #endif /* NODEMESSAGESFEED_H_ */

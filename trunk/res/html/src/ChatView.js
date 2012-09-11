@@ -19,7 +19,8 @@
 var Settings = {
   id: '',
   status: '',
-  sortable: false,
+  scroll: false,
+  scrollTo: null,
 
   getId: function() {
     if (Settings.id == '')
@@ -185,6 +186,23 @@ var Messages = {
   onAdd: [],
   days: [],
 
+
+  /*
+   * Вызов хуков добавления сообщения.
+   */
+  add: function(id) {
+    for (var i = 0; i < Messages.onAdd.length; i++)
+      Messages.onAdd[i](id);
+
+    alignChat();
+
+    if (Settings.scrollTo !== null) {
+      document.getElementById(Settings.scrollTo).scrollIntoView();
+      Settings.scrollTo = null;
+    }
+  },
+
+
   /*
    * Добавление сообщения пользователя.
    */
@@ -231,10 +249,7 @@ var Messages = {
   {
     if (hint.Hint == 'before' && $('#' + hint.Id).length) {
       $('#' + hint.Id).before(html);
-      for (var i = 0; i < Messages.onAdd.length; i++)
-        Messages.onAdd[i](id);
-
-      alignChat();
+      Messages.add(id);
     }
     else
       Messages.addRawMessage(html, id, hint.Day);
@@ -266,10 +281,7 @@ var Messages = {
   addRawMessage: function (html, id, day)
   {
     $('#day-' + day + ' .day-body').append(html);
-    for (var i = 0; i < Messages.onAdd.length; i++)
-      Messages.onAdd[i](id);
-
-    alignChat();
+    Messages.add(id);
   },
 
 
@@ -588,7 +600,7 @@ $(document).ready(function() {
 });
 
 function alignChat() {
-  if (!Settings.sortable)
+  if (!Settings.scroll)
     return;
 
   var windowHeight = window.innerHeight;
