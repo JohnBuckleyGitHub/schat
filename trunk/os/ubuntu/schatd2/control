@@ -4,7 +4,7 @@ Priority: extra
 Maintainer: Alexander Sedov <impomezia@gmail.com>
 Build-Depends: debhelper (>= 7), libqt4-dev, qt4-qmake
 Standards-Version: 3.8.3
-Homepage: http://schat.me
+Homepage: https://schat.me
 
 Package: schatd2
 Architecture: any 
