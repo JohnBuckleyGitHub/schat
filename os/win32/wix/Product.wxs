@@ -35,8 +35,8 @@
     <!-- Indormation about program -->
     <SetProperty Id="ARPINSTALLLOCATION" Value="[APPLICATIONFOLDER]" After="CostFinalize" />
     <Property Id="ARPHELPLINK">http://wiki.schat.me/</Property>
-    <Property Id="ARPURLINFOABOUT">http://schat.me/</Property>
-    <Property Id="ARPURLUPDATEINFO">http://schat.me/download</Property>
+    <Property Id="ARPURLINFOABOUT">https://schat.me/</Property>
+    <Property Id="ARPURLUPDATEINFO">https://schat.me/download</Property>
     <Property Id="ARPCONTACT">support@impomezia.com</Property>
     <Property Id="ARPPRODUCTICON" Value="icon.ico" />
     <Icon Id="icon.ico" SourceFile="..\schat2\schat2.exe" />

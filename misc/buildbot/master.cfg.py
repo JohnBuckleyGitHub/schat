@@ -16,7 +16,7 @@ from buildbot.steps.master import MasterShellCommand
 import schat_passwords
 import os
 
-SCHAT_VERSION        = "1.99.39"
+SCHAT_VERSION        = "1.99.40"
 SCHAT_UPLOAD_BASE    = "/var/www/download.schat.me/htdocs/schat2/snapshots/" + SCHAT_VERSION
 
 authz = web.authz.Authz(
@@ -33,7 +33,7 @@ authz = web.authz.Authz(
 
 c = BuildmasterConfig = {
   'title':        "Simple Chat 2",
-  'titleURL':     "http://schat.me",
+  'titleURL':     "https://schat.me",
   'buildbotURL':  "http://buildbot.schat.me/",
   'slavePortnum': 9989,
   'slaves': [
