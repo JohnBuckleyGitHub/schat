@@ -75,6 +75,7 @@ protected:
     else if (key == LS("status_FreeForChat"))return tr("Free for Chat");
     else if (key == LS("status_Offline"))    return tr("Offline");
     else if (key == LS("thanks"))            return tr("Thanks");
+    else if (key == LS("loading"))           return tr("Loading...");
     return QString();
   }
 };

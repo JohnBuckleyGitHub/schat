@@ -671,3 +671,32 @@ a:active, a:hover {
 .day-header {
   padding: 6px 0 0 4px;
 }
+
+#loading {
+  position: fixed;
+  top: 4px;
+  left: 0;
+  width: 100%;
+  display: -webkit-box;
+  -webkit-box-pack: center;
+
+}
+
+#loading-body {
+  display: none;
+  background: #f9edbe;
+  border: #f0c36d 1px solid;
+  padding: 4px 12px 4px 4px;
+  -webkit-border-radius: 4px;
+  -webkit-box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.loading-text {
+  display: inline-block;
+  min-height: 16px;
+  vertical-align: middle;
+}
+
+#loading-body .icon-spinner {
+  background-image: url("qrc:/images/spinner-yellow.gif");
+}

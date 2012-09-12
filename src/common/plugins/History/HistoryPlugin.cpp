@@ -50,8 +50,8 @@ public:
 protected:
   QString valueImpl(const QString &key) const
   {
-    if (key == LS("loading"))   return tr("Loading messages");
-    else if (key == LS("more")) return tr("More messages");
+    if (key == LS("history_loading"))   return tr("Loading messages");
+    else if (key == LS("history_more")) return tr("More messages");
     return QString();
   }
 };
