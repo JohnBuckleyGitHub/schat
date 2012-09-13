@@ -525,6 +525,52 @@ var Loader = {
     Loader.jsfiles.splice(index, 1);
     if (Loader.jsfiles.length === 0)
       Loader.done();
+  },
+
+
+  /*
+   * Служебный класс для отображения состояния загрузки.
+   */
+  spinner: {
+    tasks: [],
+    current: null,
+
+    add: function(name) {
+      if (Loader.spinner.current !== null && Loader.spinner.current == name)
+        return;
+
+      Loader.spinner.current = name;
+      $('#loading-text').html(Utils.tr(name));
+      $('#loading-text').attr('data-tr', name);
+      $('#loading-body').show();
+
+      var tasks = Loader.spinner.tasks;
+      var index = tasks.indexOf(name);
+      if (index != -1)
+        tasks.splice(index, 1);
+
+      tasks.unshift(name);
+    },
+
+
+    remove: function(name) {
+      Loader.spinner.current = null;
+
+      var tasks = Loader.spinner.tasks;
+      var index = tasks.indexOf(name);
+      if (index == -1)
+        return;
+
+      tasks.splice(index, 1);
+
+      if (index == 0) {
+        Loader.spinner.current = null;
+        if (tasks.length)
+          Loader.spinner.add(tasks[0]);
+        else
+          $('#loading-body').hide();
+      }
+    }
   }
 };
 
