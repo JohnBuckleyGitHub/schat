@@ -18,7 +18,7 @@
 
 
 /*
- * Автоматическая прокрутка к заданному id когда получены все сообщения.
+ * Ожидание загрузки всех сообщений.
  */
 function HistoryScroll(type, data) {
   this.id       = '';
@@ -34,14 +34,14 @@ function HistoryScroll(type, data) {
       this.messages.push(data.messages[i]);
   }
 
-  if (this.messages.length)
-    History.scroll = this;
-  else {
-    Loader.spinner.remove('history_loading');
+  if (!this.messages.length) {
+    History.done();
 
     if (this.id != '')
       document.getElementById(this.id).scrollIntoView();
   }
+  else
+    History.scroll = this;
 
   this.remove = function(id) {
     var index = this.messages.indexOf(id);
@@ -50,7 +50,7 @@ function HistoryScroll(type, data) {
 
       if (!this.messages.length) {
         History.scroll = null;
-        Loader.spinner.remove('history_loading');
+        History.done();
 
         if (this.id != '')
           Settings.scrollTo = this.id;
@@ -61,19 +61,19 @@ function HistoryScroll(type, data) {
 
 
 var History = {
-  date: 0,      /// Дата самого старого полученного сообщения.
-  message: '',  /// Идентификатор самого старого полученного сообщения.
-  scroll: null, /// Отложенный скролл ожидающий загрузки сообщений.
-  top: false,   /// true если полученны все сообщения.
+  date: 0,       /// Дата самого старого полученного сообщения.
+  message: null, /// Идентификатор самого старого полученного сообщения.
+  scroll: null,  /// Отложенный скролл ожидающий загрузки сообщений.
+  top: false,    /// true если полученны все сообщения.
 
   /*
    * Показ виджета истории.
    */
   show: function() {
     if (!$('#history').length)
-      $('#Chat').prepend('<div id="history-bar" class="history-bar"><div class="history-bar-inner"><div id="history"></div></div></div>');
+      $('#Chat').prepend('<div id="history-bar"><div id="history"></div></div>');
 
-    $('.history-bar').show();
+    $('#history-bar').show();
   },
 
 
@@ -81,7 +81,10 @@ var History = {
    * Сокрытие виджета истории.
    */
   hide: function() {
-    $('.history-bar').hide();
+    $('#history-bar').hide();
+
+    alignChat();
+    Loader.spinner.remove('history_loading');
   },
 
 
@@ -91,6 +94,7 @@ var History = {
   click: function(event) {
     event.preventDefault();
     History.loading(Settings.id);
+
     SimpleChat.get(Settings.id, 'messages/last', { before: History.date, user: true });
   },
 
@@ -101,10 +105,6 @@ var History = {
   loading: function(id) {
     if (Settings.id != id)
       return;
-
-    History.show();
-    $('#history').html('<i class="icon-spinner-small"></i> <span data-tr="history_loading">' + Utils.tr('history_loading') + '</span>');
-    alignChat();
 
     Loader.spinner.add('history_loading');
   },
@@ -131,7 +131,7 @@ var History = {
    */
   last: function(json) {
     History.date    = 0;
-    History.message = '';
+    History.message = null;
 
     if (json.status == 200 && json.data.messages.length) {
       var id = json.data.messages[0];
@@ -140,21 +140,14 @@ var History = {
       else
         History.message = id;
 
-      if (json.data.count < 20) {
-        History.hide();
+      if (json.data.count < 20)
         History.top = true;
-      }
-      else
-        History.done();
 
       alignChat();
       new HistoryScroll('last', json.data);
     }
-    else {
+    else
       History.hide();
-      alignChat();
-      Loader.spinner.remove('history_loading');
-    }
   },
 
 
@@ -162,12 +155,10 @@ var History = {
    * Обработка ответа на "get" запрос к "messages/since".
    */
   since: function(json) {
-    if (History.top)
-      History.hide();
+    if (json.status == 200 && json.data.messages.length)
+      new HistoryScroll('since', json.data);
     else
       History.done();
-
-    new HistoryScroll('since', json.data);
   },
 
 
@@ -175,7 +166,15 @@ var History = {
    * Показ ссылки для загрузки сообщений.
    */
   done: function() {
-    $('#history').html('<a class="history-more" href="#" data-tr="history_more">' + Utils.tr('history_more') + '</a>');
+    if (!History.top) {
+      History.show();
+      $('#history').html('<a class="history-more btn btn-small" href="#"><i class="icon-history-more"></i> <span data-tr="history_more">' + Utils.tr('history_more') + '</span></a>');
+    }
+    else
+      $('#history-bar').hide();
+
+    alignChat();
+    Loader.spinner.remove('history_loading');
   },
 
 
@@ -183,12 +182,9 @@ var History = {
    * Обработка добавления сообщения.
    */
   onAdd: function(id) {
-    if (History.message != '' && History.message == id) {
+    if (History.message !== null && History.message == id) {
       History.date    = $('#' + id).attr('data-time');
-      History.message = '';
-
-      if (History.date)
-        History.done();
+      History.message = null;
     }
 
     if (History.scroll instanceof HistoryScroll)
@@ -200,18 +196,17 @@ var History = {
    * Очистка страницы.
    */
   reload: function() {
-    History.message = '';
+    History.message = null;
     History.date    = 0;
 
     History.top = false;
     History.done();
-    History.show();
     alignChat();
   }
 };
 
 
-if (typeof HistoryView === "undefined") {
+if (typeof HistoryView === 'undefined') {
   HistoryView = {}
 }
 else {
