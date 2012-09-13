@@ -52,6 +52,12 @@ void OsInfo::init()
 # if defined(Q_OS_WIN32)
   m_type = Windows;
   switch (QSysInfo::WindowsVersion) {
+#   if QT_VERSION >= 0x040803
+    case QSysInfo::WV_WINDOWS8:
+      os = LS("Windows 8");
+      break;
+#   endif
+
     case QSysInfo::WV_WINDOWS7:
       os = LS("Windows 7");
       break;
@@ -79,6 +85,12 @@ void OsInfo::init()
 # elif defined(Q_OS_MAC)
   m_type = MacOSX;
   switch (QSysInfo::MacintoshVersion) {
+#   if QT_VERSION >= 0x040803
+    case QSysInfo::MV_MOUNTAINLION:
+      os = LS("Mac OS X 10.7 Mountain Lion");
+      break;
+#   endif
+
     case QSysInfo::MV_LION:
       os = LS("Mac OS X 10.7 Lion");
       break;
