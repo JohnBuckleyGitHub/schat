@@ -34,8 +34,10 @@ function HistoryScroll(type, data) {
 
   if (this.messages.length)
     History.scroll = this;
-  else
+  else {
     document.getElementById(this.id).scrollIntoView();
+    Loader.spinner.remove('history_loading');
+  }
 
   this.remove = function(id) {
     var index = this.messages.indexOf(id);
@@ -45,6 +47,7 @@ function HistoryScroll(type, data) {
       if (!this.messages.length) {
         History.scroll = null;
         Settings.scrollTo = this.id;
+        Loader.spinner.remove('history_loading');
       }
     }
   }
@@ -96,6 +99,8 @@ var History = {
     History.show();
     $('#history').html('<i class="icon-spinner-small"></i> <span data-tr="history_loading">' + Utils.tr('history_loading') + '</span>');
     alignChat();
+
+    Loader.spinner.add('history_loading');
   },
 
 
@@ -140,10 +145,13 @@ var History = {
 
       if (json.data.user === true)
         new HistoryScroll('last', json.data);
+      else
+        Loader.spinner.remove('history_loading');
     }
     else {
       History.hide();
       alignChat();
+      Loader.spinner.remove('history_loading');
     }
   },
 
@@ -160,6 +168,8 @@ var History = {
     alignChat();
     if (json.data.hasOwnProperty('day'))
       new HistoryScroll('since', json.data);
+    else
+      Loader.spinner.remove('history_loading');
   },
 
 

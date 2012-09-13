@@ -691,7 +691,7 @@ a:active, a:hover {
   -webkit-box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
 }
 
-.loading-text {
+#loading-text {
   display: inline-block;
   min-height: 16px;
   vertical-align: middle;
