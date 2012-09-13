@@ -21,11 +21,13 @@
  * Автоматическая прокрутка к заданному id когда получены все сообщения.
  */
 function HistoryScroll(type, data) {
-  this.id       = 'Chat';
+  this.id       = '';
   this.messages = [];
 
-  if (type == 'since')
+  if (type == 'since' && data.hasOwnProperty('day'))
     this.id = 'day-' + data.day;
+  else if (type == 'last' && data.user === true)
+    this.id = 'Chat';
 
   for (var i = 0; i < data.messages.length; i++) {
     if (document.getElementById(data.messages[i]) === null)
@@ -35,8 +37,10 @@ function HistoryScroll(type, data) {
   if (this.messages.length)
     History.scroll = this;
   else {
-    document.getElementById(this.id).scrollIntoView();
     Loader.spinner.remove('history_loading');
+
+    if (this.id != '')
+      document.getElementById(this.id).scrollIntoView();
   }
 
   this.remove = function(id) {
@@ -46,8 +50,10 @@ function HistoryScroll(type, data) {
 
       if (!this.messages.length) {
         History.scroll = null;
-        Settings.scrollTo = this.id;
         Loader.spinner.remove('history_loading');
+
+        if (this.id != '')
+          Settings.scrollTo = this.id;
       }
     }
   }
@@ -142,11 +148,7 @@ var History = {
         History.done();
 
       alignChat();
-
-      if (json.data.user === true)
-        new HistoryScroll('last', json.data);
-      else
-        Loader.spinner.remove('history_loading');
+      new HistoryScroll('last', json.data);
     }
     else {
       History.hide();
@@ -165,11 +167,7 @@ var History = {
     else
       History.done();
 
-    alignChat();
-    if (json.data.hasOwnProperty('day'))
-      new HistoryScroll('since', json.data);
-    else
-      Loader.spinner.remove('history_loading');
+    new HistoryScroll('since', json.data);
   },
 
 

@@ -542,7 +542,7 @@ var Loader = {
       Loader.spinner.current = name;
       $('#loading-text').html(Utils.tr(name));
       $('#loading-text').attr('data-tr', name);
-      $('#loading-body').show();
+      $('#loading-body').fadeIn('fast');
 
       var tasks = Loader.spinner.tasks;
       var index = tasks.indexOf(name);
@@ -568,7 +568,7 @@ var Loader = {
         if (tasks.length)
           Loader.spinner.add(tasks[0]);
         else
-          $('#loading-body').hide();
+          $('#loading-body').fadeOut('fast');
       }
     }
   }
