@@ -16,7 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-.history-bar {
+#history-bar {
   padding: 2px;
 }
 
@@ -31,8 +31,28 @@
 }
 
 .history-more {
-  background: url(qrc:/images/History/up.png) no-repeat;
-  padding-left: 20px;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #fafafa;
+  background-image: -webkit-linear-gradient(top, #ffffff, #f2f2f2);
+  background-repeat: repeat-x;
+  border: 1px solid #d4d4d4;
+  -webkit-border-radius: 4px;
+  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
+}
+
+.history-more:hover {
+  background-color: #f2f2f2;
+  background-position: 0 -17px;
+}
+
+.history-more > span {
   display: inline-block;
-  height: 14px;
+  min-height: 16px;
+  vertical-align: middle;
+  padding-left: 2px;
+}
+
+.icon-history-more {
+  background-image: url(qrc:/images/History/up.png);
 }
