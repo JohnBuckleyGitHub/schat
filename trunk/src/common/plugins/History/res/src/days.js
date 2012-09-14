@@ -22,11 +22,15 @@ Messages.days = [];
  * Создание при необходимости блока с сообщениями за 1 день.
  */
 Messages.day = function(day) {
-  if ($('#day-' + day).length)
+  var prefix = '#day-' + day;
+  if ($(prefix).length)
     return;
 
   var html = '<div class="day" id="day-' + day + '">' +
-             '<div class="day-header"><div class="day-day"><a href="#">' + SimpleChat.day(day) + '</a></div></div>' +
+             '<div class="day-header expanded">' +
+             '  <div class="day-day"><a href="#">' + SimpleChat.day(day) + '</a></div>' +
+             '  <div class="day-close"><a class="close" href="#">&times;</a></div>' +
+             '</div>' +
              '<div class="day-body"></div></div>';
 
   if (Messages.days.indexOf(day) == -1) {
@@ -40,22 +44,53 @@ Messages.day = function(day) {
   else
     $('#day-' + Messages.days[index + 1]).before(html);
 
-  var d = $('#day-' + day);
-  d.data('state', 'open');
+  Utils.adjustWidth($('.day-day'));
 
-  $('#day-' + day + ' .day-header a').on('click', function(event) {
+  /*
+   * Сворачивание или разворачивание блока сообщений.
+   */
+  $(prefix + ' .day-day a').on('click', function(event) {
     event.preventDefault();
 
-    if (d.data('state') == 'open') {
-      d.data('state', 'closed');
-      $('#day-' + day + ' .day-body').hide();
+    var header = $(prefix + ' .day-header');
+    if (header.hasClass('expanded')) {
+      header.removeClass('expanded');
+      $(prefix + ' .day-body').hide();
     }
     else {
-      d.data('state', 'open');
-      $('#day-' + day + ' .day-body').show();
+      header.addClass('expanded');
+      $(prefix + ' .day-body').show();
     }
 
     alignChat();
+  });
+
+  /*
+   * Удаление блока сообщений.
+   */
+  $(prefix + ' .day-close a').on('click', function(event) {
+    event.preventDefault();
+    $(prefix).remove();
+
+    var index = Messages.days.indexOf(day);
+    if (index != -1)
+      Messages.days.splice(index, 1);
+
+    alignChat();
+  });
+
+  /*
+   * Показ кнопки закрытия.
+   */
+  $('#day-' + day + ' .day-day').on('mouseenter', function() {
+    $('#day-' + day + ' .day-close').fadeIn('fast');
+  });
+
+  /*
+   * Сокрытие кнопки закрытия.
+   */
+  $('#day-' + day + ' .day-header').on('mouseleave', function() {
+    $('#day-' + day + ' .day-close').fadeOut('fast');
   });
 };
 
