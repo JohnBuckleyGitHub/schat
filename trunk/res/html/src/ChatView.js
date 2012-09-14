@@ -94,6 +94,8 @@ var Utils = {
     if (!obj.length || obj.width() < 1)
       return;
 
+    obj.css('width', '');
+
     var max = 0;
     var current = 0;
 
