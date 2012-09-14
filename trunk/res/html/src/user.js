@@ -29,13 +29,10 @@ var Profile = {
 
 
   feed: function(json) {
-    if (Pages.current != 1)
+    if (!json.hasOwnProperty('type'))
       return;
 
-    if (!json.hasOwnProperty("type"))
-      return;
-
-    if (json.name !== "profile")
+    if (json.name !== 'profile')
       return;
 
     if (json.id !== Settings.id)
@@ -166,13 +163,10 @@ var Connections = {
   },
 
   feed: function(json) {
-    if (Pages.current != 1)
+    if (!json.hasOwnProperty('type'))
       return;
 
-    if (!json.hasOwnProperty("type"))
-      return;
-
-    if (json.name !== "user")
+    if (json.name !== 'user')
       return;
 
     if (json.id !== Settings.id)
@@ -198,10 +192,10 @@ var Connections = {
    * Чтение фида.
    */
   read: function(json) {
-    if (json === false || !json.hasOwnProperty("connections"))
+    if (json === false || !json.hasOwnProperty('connections'))
       return;
 
-    $(".connection-row").remove();
+    $('.connection-row').remove();
 
     if (!json.hasOwnProperty('provider'))
       Profile.setAnonymous();
