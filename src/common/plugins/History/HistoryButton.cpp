@@ -76,7 +76,8 @@ void HistoryButton::activated(const QDate &date)
   ClientFeeds::request(ChatCore::currentId(), LS("get"), LS("messages/since"), data);
 
   ChannelBaseTab *tab = TabWidget::i()->channelTab(ChatCore::currentId(), false, false);
-  tab->chatView()->evaluateJavaScript(LS("History.loading(Settings.id);"));
+  if (tab)
+    tab->chatView()->evaluateJavaScript(LS("History.loading(Settings.id);"));
 }
 
 

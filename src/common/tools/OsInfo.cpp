@@ -87,7 +87,7 @@ void OsInfo::init()
   switch (QSysInfo::MacintoshVersion) {
 #   if QT_VERSION >= 0x040803
     case QSysInfo::MV_MOUNTAINLION:
-      os = LS("Mac OS X 10.7 Mountain Lion");
+      os = LS("Mac OS X 10.8 Mountain Lion");
       break;
 #   endif
 

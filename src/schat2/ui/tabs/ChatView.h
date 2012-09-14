@@ -56,7 +56,6 @@ signals:
   void feed(const QVariantMap &data);
   void message(const QVariantMap &data);
   void reload();
-  void reloaded();
 
 protected:
   void changeEvent(QEvent *event);
@@ -76,6 +75,7 @@ private:
   QVariantMap addHint(const Message &message);
   void clearPage();
   void createActions();
+  void reloadPage();
   void retranslateUi();
 
   bool m_loaded;                                       ///< true если документ загружен.

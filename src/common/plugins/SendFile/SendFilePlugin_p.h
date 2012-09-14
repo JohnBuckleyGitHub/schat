@@ -83,6 +83,7 @@ private slots:
   void started(const QByteArray &id);
 
 private:
+  bool isVisible(const SendFileTransaction &transaction);
   MessagePacket reply(const SendFileTransaction &transaction, const QString &text);
   QPixmap makeFileIcon(const QString &fileName) const;
   QString getDir(const QString &key);
