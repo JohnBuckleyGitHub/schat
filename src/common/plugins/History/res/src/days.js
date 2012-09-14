@@ -28,7 +28,7 @@ Messages.day = function(day) {
 
   var html = '<div class="day" id="day-' + day + '">' +
              '<div class="day-header expanded">' +
-             '  <div class="day-day"><a href="#">' + SimpleChat.day(day) + '</a></div>' +
+             '  <div class="day-day"><a href="#" data-day="' + day + '">' + SimpleChat.day(day) + '</a></div>' +
              '  <div class="day-close"><a class="close" href="#">&times;</a></div>' +
              '</div>' +
              '<div class="day-body"></div></div>';
@@ -44,7 +44,8 @@ Messages.day = function(day) {
   else
     $('#day-' + Messages.days[index + 1]).before(html);
 
-  Utils.adjustWidth($('.day-day'));
+  if ($('.day-day').width() > 100)
+    Utils.adjustWidth($('.day-day'));
 
   /*
    * Сворачивание или разворачивание блока сообщений.
@@ -120,3 +121,21 @@ Messages.reload = function()
   Messages.days = [];
   alignChat();
 };
+
+
+/*
+ * Перевод дат при смене языка.
+ */
+Messages.retranslate = function() {
+  $("[data-day]").each(function() {
+    $(this).text(SimpleChat.day($(this).attr('data-day')));
+  });
+
+  Utils.adjustWidth($('.day-day'));
+};
+
+if (typeof ChatView !== 'undefined')
+  ChatView.reload.connect(Messages.reload);
+
+if (typeof SimpleChat !== 'undefined')
+  SimpleChat.retranslated.connect(Messages.retranslate);
