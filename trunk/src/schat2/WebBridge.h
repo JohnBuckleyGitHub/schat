@@ -37,7 +37,8 @@ public:
   ~WebBridge();
   inline static WebBridge *i() { return m_self; }
 
-  Q_INVOKABLE QString bytesToHuman(qint64 size, bool html = true);
+  Q_INVOKABLE bool isOnline() const;
+  Q_INVOKABLE QString bytesToHuman(qint64 size, bool html = true) const;
   Q_INVOKABLE QString channel(const QString &id) const;
   Q_INVOKABLE QString day(const QString &day) const;
   Q_INVOKABLE QString randomId() const;

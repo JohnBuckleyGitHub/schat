@@ -22,6 +22,7 @@
 #include <QWidgetAction>
 
 #include "ChatCore.h"
+#include "client/ChatClient.h"
 #include "client/ClientFeeds.h"
 #include "HistoryButton.h"
 #include "net/SimpleID.h"
@@ -60,6 +61,9 @@ void HistoryButton::changeEvent(QEvent *event)
 void HistoryButton::activated(const QDate &date)
 {
   m_menu->close();
+
+  if (ChatClient::state() != ChatClient::Online)
+    return;
 
 # if QT_VERSION >= 0x040700
   qint64 start = QDateTime(date).toMSecsSinceEpoch();

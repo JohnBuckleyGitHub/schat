@@ -95,8 +95,10 @@ var History = {
    */
   click: function(event) {
     event.preventDefault();
-    History.loading(Settings.id);
+    if (!SimpleChat.isOnline())
+      return;
 
+    History.loading(Settings.id);
     SimpleChat.get(Settings.id, 'messages/last', { before: History.date, user: true });
   },
 
@@ -222,5 +224,8 @@ Messages.onAdd.push(History.onAdd);
 $(document).ready(function() {
   $('body').on('click.history', '#history a', History.click);
 
-  History.loading(Settings.id);
+  if (SimpleChat.isOnline())
+    History.loading(Settings.id);
+  else
+    History.done();
 });

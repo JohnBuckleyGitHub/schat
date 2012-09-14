@@ -101,7 +101,13 @@ WebBridge::~WebBridge()
 }
 
 
-QString WebBridge::bytesToHuman(qint64 size, bool html)
+bool WebBridge::isOnline() const
+{
+  return ChatClient::state() == ChatClient::Online;
+}
+
+
+QString WebBridge::bytesToHuman(qint64 size, bool html) const
 {
   QString num;
   QString key;
@@ -231,6 +237,9 @@ void WebBridge::setTabPage(const QString &id, int page)
  */
 QVariant WebBridge::feed(ClientChannel channel, const QString &name, int options)
 {
+  if (ChatClient::state() != ChatClient::Online)
+    options = 3;
+
   if (options == 0 || options == 3) {
     FeedPtr feed = channel->feed(name, false);
     if (feed)

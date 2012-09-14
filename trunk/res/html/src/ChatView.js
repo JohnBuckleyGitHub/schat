@@ -743,15 +743,16 @@ function htmlspecialchars (string, quote_style, charset, double_encode) {
 
 if (typeof ChatView === "undefined") {
   SimpleChat = {
-    channel: function(id) { return "{}"; },
-    translate: function(key) { return key; },
+    channel: function(id)          { return '{}'; },
+    translate: function(key)       { return key; },
     setTabPage: function(id, page) {},
-    feed: function(id, name) { return {}; },
-    randomId: function() { return ''; },
-    bytesToHuman: function(size) { return '0 bytes'; },
-    status: function(id) { return 'Offline'; },
-    day: function(day) { return day; },
-    get: function(id, name, json) {}
+    feed: function(id, name)       { return {}; },
+    randomId: function()           { return ''; },
+    bytesToHuman: function(size)   { return '0 bytes'; },
+    status: function(id)           { return 'Offline'; },
+    day: function(day)             { return day; },
+    get: function(id, name, json)  {},
+    isOnline: function()           { return true; }
   };
 
   ChatView = {
