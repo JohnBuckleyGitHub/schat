@@ -43,6 +43,8 @@ void HistoryChatView::addImpl(ChatView *view)
 
 void HistoryChatView::initImpl(ChatView *view)
 {
+  view->addJS(LS("qrc:/js/History/days.js"));
+
   if (compatible(view->id())) {
     view->page()->mainFrame()->addToJavaScriptWindowObject(LS("HistoryView"), this);
     view->addJS(LS("qrc:/js/History/History.js"));
@@ -52,8 +54,7 @@ void HistoryChatView::initImpl(ChatView *view)
 
 void HistoryChatView::loadFinishedImpl(ChatView *view)
 {
-  if (compatible(view->id()))
-    view->addCSS(LS("qrc:/css/History/History.css"));
+  view->addCSS(LS("qrc:/css/History/History.css"));
 }
 
 

@@ -27,5 +27,6 @@ java -jar yuicompressor.jar ..\..\src\common\plugins\SendFile\res\src\SendFile.j
 java -jar yuicompressor.jar ..\..\src\common\plugins\SendFile\res\src\SendFile.css -o ..\..\src\common\plugins\SendFile\res\css\SendFile.min.css
 
 java -jar yuicompressor.jar ..\..\src\common\plugins\History\res\src\History.js -o ..\..\src\common\plugins\History\res\js\History.min.js
+java -jar yuicompressor.jar ..\..\src\common\plugins\History\res\src\days.js -o ..\..\src\common\plugins\History\res\js\days.min.js
 java -jar yuicompressor.jar ..\..\src\common\plugins\History\res\src\History.css -o ..\..\src\common\plugins\History\res\css\History.min.css
 pause

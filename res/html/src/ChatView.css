@@ -668,10 +668,6 @@ a:active, a:hover {
   margin-left: 2px;
 }
 
-.day-header {
-  padding: 6px 0 0 4px;
-}
-
 #loading {
   position: fixed;
   top: 4px;
