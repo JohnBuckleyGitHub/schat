@@ -187,12 +187,12 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
 
   QWebHitTestResult r = page()->mainFrame()->hitTestContent(event->pos());
   QUrl url = r.linkUrl();
-  if (!url.isEmpty() && url.scheme() != "chat")
+  if (!url.isEmpty() && url.scheme() != LS("chat"))
     menu.addAction(m_copyLink);
 
   menu.addSeparator();
 
-  if (url.scheme() == "chat" && url.host() == "channel")
+  if (url.scheme() == "chat" && url.host() == LS("channel"))
     Hooks::ChannelMenu::bind(&menu, url);
   else
     Hooks::ChannelMenu::bind(&menu, m_id);
@@ -240,8 +240,11 @@ void ChatView::alignChat()
 
 void ChatView::menuTriggered(QAction *action)
 {
-  if (action == m_clear || action == m_reload) {
-    clearPage();
+  if (action == m_clear) {
+    ChatNotify::start(Notify::ClearChat, id());
+  }
+  else if (action == m_reload) {
+    reloadPage();
   }
   else if (action == m_seconds) {
     ChatCore::settings()->setValue(LS("Display/Seconds"), action->isChecked());
@@ -357,7 +360,6 @@ void ChatView::clearPage()
 {
   m_messages.clear();
   emit reload();
-  emit reloaded();
 }
 
 
@@ -380,6 +382,12 @@ void ChatView::createActions()
 
   m_service = new QAction(tr("Service messages"), this);
   m_service->setCheckable(true);
+}
+
+
+void ChatView::reloadPage()
+{
+  emit reload();
 }
 
 

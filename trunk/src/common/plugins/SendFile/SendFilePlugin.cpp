@@ -23,6 +23,7 @@
 #include <QHostAddress>
 #include <QTimer>
 #include <QtPlugin>
+#include <QWebElement>
 #include <QWebFrame>
 
 #include "ChatAlerts.h"
@@ -51,6 +52,7 @@
 #include "Tr.h"
 #include "Translation.h"
 #include "ui/SendWidget.h"
+#include "ui/tabs/ChannelBaseTab.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/TabWidget.h"
 #include "WebBridge.h"
@@ -397,6 +399,27 @@ void SendFilePluginImpl::started(const QByteArray &id)
 }
 
 
+/*!
+ * Проверка на видимость транзакции.
+ *
+ * Если у транзакции установлен флаг видимости, выполняется проверка на реальное присутствие сообщения в окне чата.
+ */
+bool SendFilePluginImpl::isVisible(const SendFileTransaction &transaction)
+{
+  if (!transaction->isVisible())
+    return false;
+
+  ChannelBaseTab *tab = TabWidget::i()->channelTab(transaction->user(), false, false);
+  if (!tab)
+    return false;
+
+  if (tab->chatView()->page()->mainFrame()->findFirstElement(LS("#" + SimpleID::encode(transaction->id()))).isNull())
+    return false;
+
+  return true;
+}
+
+
 MessagePacket SendFilePluginImpl::reply(const SendFileTransaction &transaction, const QString &text)
 {
   MessagePacket packet(new MessageNotice(ChatClient::id(), transaction->user(), text, DateTime::utc(), transaction->id()));
@@ -576,7 +599,7 @@ void SendFilePluginImpl::incomingFile(const MessagePacket &packet)
   }
 
   // Если транзакция уже отображается нет смысла показывать её ещё раз.
-  if (transaction->isVisible())
+  if (isVisible(transaction))
     return;
 
   transaction->setVisible();
