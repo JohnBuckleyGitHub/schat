@@ -63,7 +63,8 @@ var YouTube = {
       });
     }
 
-    alignChat();
+    if (Settings.scrollTo === null)
+      alignChat();
   },
 
   click: function(id, vid) {
