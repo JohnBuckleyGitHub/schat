@@ -79,7 +79,7 @@ var Profile = {
     }
 
     Profile.retranslate();
-    $("#main-spinner").hide();
+    Loader.spinner.remove('loading/profile');
   },
 
 
@@ -87,10 +87,10 @@ var Profile = {
     if (Pages.current != 1)
       return;
 
-    $("#main-spinner").css("display", "inline-block");
+    Loader.spinner.add('loading/profile');
     Utils.TR("profile");
 
-    Profile.read(SimpleChat.feed(Settings.id, 'profile'));
+    Profile.read(SimpleChat.feed(Settings.id, 'profile', 1));
     Profile.setStatus();
   },
 
@@ -99,7 +99,7 @@ var Profile = {
     if (json.action !== "x-set")
       return;
 
-    Profile.read(SimpleChat.feed(Settings.id, "profile"));
+    Profile.read(SimpleChat.feed(Settings.id, 'profile', 3));
   },
 
 
@@ -218,20 +218,19 @@ var Connections = {
       }
     }
 
-    $("#connections-spinner").hide();
     if (count > 0) {
       $("#user-offline").hide();
       $(".icon-os").tooltip();
     } else
       Connections.offline();
+
+    Loader.spinner.remove('loading/connections');
   },
 
 
   reload: function() {
     if (Pages.current != 1)
       return;
-
-    Utils.TR("connections");
 
     if (SimpleChat.status(Settings.id) != 'Offline')
       Connections.online();
@@ -249,8 +248,8 @@ var Connections = {
   {
     Utils.TR("user_offline");
     $("#user-offline").show();
-    $("#connections-spinner").hide();
     $(".connection-row").remove();
+    Loader.spinner.remove('loading/connections');
   },
 
 
@@ -259,8 +258,8 @@ var Connections = {
    */
   online: function()
   {
-    $("#connections-spinner").css("display", "inline-block");
-    Connections.read(SimpleChat.feed(Settings.id, "user"));
+    Loader.spinner.add('loading/connections');
+    Connections.read(SimpleChat.feed(Settings.id, 'user', 1));
   }
 };
 
@@ -277,8 +276,8 @@ Modal.create.connection = function(e)
 
   var id = $(e.target).data('id');
 
-  var feed = SimpleChat.feed(Settings.id, 'user');
-  if (feed === false || !feed.hasOwnProperty("connections"))
+  var feed = SimpleChat.feed(Settings.id, 'user', 3);
+  if (feed === false || !feed.hasOwnProperty('connections'))
     return;
 
   var json = feed.connections[id];
