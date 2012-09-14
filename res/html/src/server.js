@@ -76,18 +76,18 @@ var Hosts = {
   // Чтение тела фида hosts.
   read: function(json)
   {
-    if (!json.hasOwnProperty("head"))
+    if (json === false || !json.hasOwnProperty('head'))
       return;
 
-    $(".host-row").hide();
+    $('.host-row').hide();
 
     for (var key in json) if (json.hasOwnProperty(key) && key.length == 34) {
       Hosts.processSingleHost(key, json[key]);
     }
 
-    $("#hosts-content p").show();
-    $("#hosts-content #fieldset").show();
-    $(".host-row:hidden").remove();
+    $('#hosts-content p').show();
+    $('#hosts-content #fieldset').show();
+    $('.host-row:hidden').remove();
     $('a[rel=tooltip]').tooltip();
 
     Loader.spinner.remove('loading/hosts');
@@ -100,8 +100,10 @@ var Hosts = {
     if (Pages.current != 1)
       return;
 
+    if (SimpleChat.isOnline())
+      Loader.spinner.add('loading/hosts');
+
     $("#info-content > h1").html(Messages.nameTemplate(JSON.parse(SimpleChat.channel(Settings.id))));
-    Loader.spinner.add('loading/hosts');
     Utils.TR("my_computers");
 
     Hosts.read(SimpleChat.feed("hosts", 1));

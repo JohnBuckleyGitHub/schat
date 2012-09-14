@@ -84,8 +84,10 @@ var Profile = {
     if (Pages.current != 1)
       return;
 
-    Loader.spinner.add('loading/profile');
-    Utils.TR("profile");
+    if (SimpleChat.isOnline())
+      Loader.spinner.add('loading/profile');
+
+    Utils.TR('profile');
 
     Profile.read(SimpleChat.feed(Settings.id, 'profile', 1));
     Profile.setStatus();
@@ -252,7 +254,9 @@ var Connections = {
    */
   online: function()
   {
-    Loader.spinner.add('loading/connections');
+    if (SimpleChat.isOnline())
+      Loader.spinner.add('loading/connections');
+
     Connections.read(SimpleChat.feed(Settings.id, 'user', 1));
   }
 };
