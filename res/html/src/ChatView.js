@@ -91,7 +91,7 @@ var Utils = {
    * \param obj jQuery объект.
    */
   adjustWidth: function(obj) {
-    if (!obj.length || obj.width() < 1)
+    if (!obj.length || obj.width() < 1 || !obj.is(':visible'))
       return;
 
     obj.css('width', '');
