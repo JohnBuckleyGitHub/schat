@@ -506,9 +506,10 @@ var Loader = {
       if (Loader.spinner.current !== null && Loader.spinner.current == name)
         return;
 
+      var key = name.split('/')[0];
       Loader.spinner.current = name;
-      $('#loading-text').html(Utils.tr(name));
-      $('#loading-text').attr('data-tr', name);
+      $('#loading-text').html(Utils.tr(key));
+      $('#loading-text').attr('data-tr', key);
       $('#loading-body').fadeIn('fast');
 
       var tasks = Loader.spinner.tasks;

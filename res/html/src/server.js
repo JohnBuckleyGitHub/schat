@@ -90,7 +90,7 @@ var Hosts = {
     $(".host-row:hidden").remove();
     $('a[rel=tooltip]').tooltip();
 
-    $("#main-spinner").hide();
+    Loader.spinner.remove('loading/hosts');
     Utils.retranslate();
   },
 
@@ -101,7 +101,7 @@ var Hosts = {
       return;
 
     $("#info-content > h1").html(Messages.nameTemplate(JSON.parse(SimpleChat.channel(Settings.id))));
-    $("#main-spinner").css("display", "inline-block");
+    Loader.spinner.add('loading/hosts');
     Utils.TR("my_computers");
 
     Hosts.read(SimpleChat.feed("hosts", 1));
