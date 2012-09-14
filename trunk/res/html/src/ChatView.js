@@ -196,10 +196,8 @@ var Messages = {
 
     alignChat();
 
-    if (Settings.scrollTo !== null) {
+    if (Settings.scrollTo !== null)
       document.getElementById(Settings.scrollTo).scrollIntoView();
-      Settings.scrollTo = null;
-    }
   },
 
 
@@ -262,6 +260,8 @@ var Messages = {
     var func = json.Func;
     if (func == undefined)
       return;
+
+    Settings.scrollTo = null;
 
     try {
       Messages.day(json.Hint.Day);
