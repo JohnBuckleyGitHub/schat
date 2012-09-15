@@ -94,7 +94,7 @@
   <file alias="js/bootstrap-modal.js">html/js/bootstrap-modal.min.js</file>
   <file alias="js/bootstrap-tooltip.js">html/js/bootstrap-tooltip.min.js</file>
   <file alias="js/ChatView.js">html/js/ChatView.min.js</file>
-  <file alias="js/jquery.js">html/js/jquery-1.7.2.min.js</file>
+  <file alias="js/jquery.js">html/js/jquery-1.8.1.min.js</file>
   <file alias="js/PluginsView.js">html/js/PluginsView.min.js</file>
   <file alias="js/server.js">html/js/server.min.js</file>
   <file alias="js/user.js">html/js/user.min.js</file>
