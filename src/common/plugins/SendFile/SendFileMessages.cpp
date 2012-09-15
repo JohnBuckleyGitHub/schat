@@ -51,13 +51,14 @@ bool SendFileMessages::command(const QByteArray &dest, const ClientCmd &cmd)
 }
 
 
-void SendFileMessages::readText(MessagePacket packet)
+int SendFileMessages::readText(MessagePacket packet)
 {
   if (packet->command() != LS("file"))
-    return;
+    return 0;
 
   if (SimpleID::typeOf(packet->id()) != SimpleID::MessageId)
-    return;
+    return 0;
 
   m_plugin->read(packet);
+  return 1;
 }

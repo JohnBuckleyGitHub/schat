@@ -47,10 +47,12 @@ public:
 
   virtual bool command(const QByteArray &dest, const ClientCmd &cmd);
   virtual bool command(const QByteArray &dest, const QString &text, const QString &plain);
-  virtual void readText(MessagePacket packet);
+  virtual int readText(MessagePacket packet);
   virtual void sendText(MessagePacket packet);
 
 protected:
+  virtual void unhandled(MessagePacket packet) const;
+
   QList<Messages*> m_hooks; ///< Хуки.
 };
 

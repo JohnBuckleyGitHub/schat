@@ -30,7 +30,8 @@ HistoryMessages::HistoryMessages(QObject *parent)
 }
 
 
-void HistoryMessages::readText(MessagePacket packet)
+int HistoryMessages::readText(MessagePacket packet)
 {
   HistoryDB::add(packet);
+  return 0;
 }

@@ -138,15 +138,29 @@ bool Messages::command(const QByteArray &dest, const QString &text, const QStrin
 
 /*!
  * Чтение полученного сообщения.
+ *
+ * \param packet Пакет с сообщением.
+ *
+ * \return 0 если пакет не был обработан или 1 если обработан.
  */
-void Messages::readText(MessagePacket packet)
+int Messages::readText(MessagePacket packet)
 {
   if (m_hooks.isEmpty())
-    return;
+    return 0;
+
+  int matches = 0;
+  foreach (Messages *hook, m_hooks) {
+    matches += hook->readText(packet);
+  }
+
+  if (matches)
+    return matches;
 
   foreach (Messages *hook, m_hooks) {
-    hook->readText(packet);
+    hook->unhandled(packet);
   }
+
+  return 0;
 }
 
 
@@ -161,6 +175,11 @@ void Messages::sendText(MessagePacket packet)
   foreach (Messages *hook, m_hooks) {
     hook->sendText(packet);
   }
+}
+
+
+void Messages::unhandled(MessagePacket /*packet*/) const
+{
 }
 
 

@@ -47,17 +47,17 @@ MessagesImpl::MessagesImpl(QObject *parent)
 /*!
  * Чтение полученного сообщения.
  */
-void MessagesImpl::readText(MessagePacket packet)
+int MessagesImpl::readText(MessagePacket packet)
 {
   QString command = packet->command();
   if (command != LS("m") && command != LS("me") && command != LS("say"))
-    return;
+    return 0;
 
   ChannelMessage message(packet);
   TabWidget::add(message);
 
   if (packet->status() == Notice::Found || packet->status() == Notice::Read)
-    return;
+    return 1;
 
   if (packet->sender() != ChatClient::id() || !m_undelivered.contains(packet->id())) {
     MessageAlert alert(message);
@@ -65,6 +65,7 @@ void MessagesImpl::readText(MessagePacket packet)
   }
 
   m_undelivered.remove(packet->internalId());
+  return 1;
 }
 
 
@@ -78,6 +79,22 @@ void MessagesImpl::sendText(MessagePacket packet)
   message.data()[LS("Status")] = LS("undelivered");
 
   m_undelivered[packet->id()] = packet;
+  TabWidget::add(message);
+}
+
+
+void MessagesImpl::unhandled(MessagePacket packet) const
+{
+  if (packet->direction() == Notice::Internal)
+    return;
+
+  Message message(packet->id(), Message::detectTab(packet->sender(), packet->dest()), LS("unhandled"), LS("addUnhandledMessage"));
+  message.setAuthor(packet->sender());
+  message.setDate(packet->date());
+  message.data()[LS("Command")] = packet->command();
+  message.data()[LS("Text")]    = packet->text();
+  message.data()[LS("Status")]  = packet->status();
+  message.data()[LS("JSON")]    = packet->json();
   TabWidget::add(message);
 }
 

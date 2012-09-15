@@ -28,7 +28,7 @@ class HistoryMessages : public Hooks::Messages
 public:
   HistoryMessages(QObject *parent = 0);
 
-  void readText(MessagePacket packet);
+  int readText(MessagePacket packet);
 };
 
 #endif /* HISTORYMESSAGES_H_ */
