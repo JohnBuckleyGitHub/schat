@@ -183,9 +183,12 @@ Pages.onInfo.push(function() {
 });
 
 
-// Объект сообщений.
+/*
+ * Объект сообщений.
+ */
 var Messages = {
   onAdd: [],
+  unhandled: [],
 
   /*
    * Вызов хуков добавления сообщения.
@@ -254,7 +257,9 @@ var Messages = {
   },
 
 
-  // Добавление сообщения.
+  /*
+   * Добавление сообщения.
+   */
   addMessage: function(json)
   {
     var func = json.Func;
@@ -262,9 +267,13 @@ var Messages = {
       return;
 
     Settings.scrollTo = null;
+    if (!Messages.hasOwnProperty(func))
+      return;
 
     try {
-      Messages.day(json.Hint.Day);
+      if (json.Type !== 'unhandled')
+        Messages.day(json.Hint.Day);
+
       Messages[func](json);
     }
     catch (e) {}
@@ -303,6 +312,15 @@ var Messages = {
     html += '</div>';
 
     Messages.addRawMessage(html, json.Id, json.Hint.Day);
+  },
+
+
+  /*
+   * Обработка не поддерживаемых сообщений.
+   */
+  addUnhandledMessage: function(json) {
+    for (var i = 0; i < Messages.unhandled.length; i++)
+      Messages.unhandled[i](json);
   },
 
 

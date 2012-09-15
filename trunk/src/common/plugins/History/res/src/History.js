@@ -30,12 +30,13 @@ function HistoryScroll(type, data) {
     this.id = 'Chat';
 
   for (var i = 0; i < data.messages.length; i++) {
-    if (document.getElementById(data.messages[i]) === null)
+    if (document.getElementById(data.messages[i]) === null && History.unhandled.indexOf(data.messages[i]) == -1)
       this.messages.push(data.messages[i]);
   }
 
   if (!this.messages.length) {
     History.done();
+    History.unhandled = [];
 
     if (this.id != '') {
       Settings.scrollTo = this.id;
@@ -52,6 +53,7 @@ function HistoryScroll(type, data) {
 
       if (!this.messages.length) {
         History.scroll = null;
+        History.unhandled = [];
         History.done();
 
         if (this.id != '')
@@ -67,6 +69,7 @@ var History = {
   message: null, /// Идентификатор самого старого полученного сообщения.
   scroll: null,  /// Отложенный скролл ожидающий загрузки сообщений.
   top: false,    /// true если полученны все сообщения.
+  unhandled: [], /// Необработанные сообщения.
 
   /*
    * Показ виджета истории.
@@ -197,6 +200,19 @@ var History = {
 
 
   /*
+   * Обработка не поддерживаемых сообщений.
+   */
+  unhandledMessage: function(json) {
+    var id = json.Id;
+    if (History.scroll instanceof HistoryScroll) {
+      History.scroll.remove(id);
+    }
+    else if (History.unhandled.indexOf(id) == -1)
+      History.unhandled.push(id);
+  },
+
+
+  /*
    * Очистка страницы.
    */
   reload: function() {
@@ -220,6 +236,7 @@ else {
 }
 
 Messages.onAdd.push(History.onAdd);
+Messages.unhandled.push(History.unhandledMessage);
 
 $(document).ready(function() {
   $('body').on('click.history', '#history a', History.click);
