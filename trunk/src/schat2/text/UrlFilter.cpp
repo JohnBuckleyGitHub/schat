@@ -51,6 +51,10 @@ bool UrlFilter::filter(QList<HtmlToken> &tokens, const QVariantHash &/*options*/
 
         tokens[i].text = tag.toText();
       }
+      else if (tag.title.isEmpty()) {
+        tag.title = tag.url;
+        tokens[i].text = tag.toText();
+      }
     }
     else if (token.type == HtmlToken::Text && !name.isEmpty()) {
       tokens[i].text = Qt::escape(name);

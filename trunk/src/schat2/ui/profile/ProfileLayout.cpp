@@ -43,6 +43,7 @@ ProfileLayout::ProfileLayout(QWidget *parent)
 
   m_layout = new QGridLayout(this);
   m_layout->setContentsMargins(10, 10, 3, 0);
+  m_layout->setColumnStretch(1, 1);
 
   connect(m_menu, SIGNAL(aboutToShow()), SLOT(menuAboutToShow()));
   connect(m_menu, SIGNAL(triggered(QAction *)), SLOT(menuTriggered(QAction *)));
