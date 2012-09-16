@@ -75,6 +75,7 @@ Messages.day = function(day) {
   $(prefix + ' .day-close a').on('click', function(event) {
     event.preventDefault();
     $(prefix).remove();
+    ChatView.removeDay(day);
 
     var index = Messages.days.indexOf(day);
     if (index != -1)
