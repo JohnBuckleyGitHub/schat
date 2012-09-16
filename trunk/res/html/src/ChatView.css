@@ -694,5 +694,5 @@ a:active, a:hover {
 }
 
 #loading-body .icon-spinner {
-  background-image: url("qrc:/images/spinner-yellow.gif");
+  background-image: url(qrc:/images/spinner-yellow.gif);
 }
