@@ -30,6 +30,7 @@ Messages.day = function(day) {
              '<div class="day-header expanded">' +
              '  <div class="day-day"><a href="#" data-day="' + day + '">' + SimpleChat.day(day) + '</a></div>' +
              '  <div class="day-close"><a class="close" href="#">&times;</a></div>' +
+             '  <div class="day-badge">0</div>' +
              '</div>' +
              '<div class="day-body"></div></div>';
 
@@ -61,6 +62,8 @@ Messages.day = function(day) {
     else {
       header.addClass('expanded');
       $(prefix + ' .day-body').show();
+      $(prefix + ' .day-badge').text(0);
+      $(prefix + ' .day-badge').hide();
     }
 
     alignChat();

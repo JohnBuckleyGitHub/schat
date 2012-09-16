@@ -420,6 +420,10 @@ var DateTime = {
     return DateTime.pad(date.getDate()) + ':' + DateTime.pad(date.getMonth() + 1) + ':' + date.getFullYear();
   },
 
+  dayId: function(date) {
+    return date.getFullYear() + '_' + DateTime.pad(date.getMonth() + 1) + '_' + DateTime.pad(date.getDate());
+  },
+
 
   // Дополняет число ведущим 0 при необходимости.
   pad: function(n)

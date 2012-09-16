@@ -196,6 +196,36 @@ var History = {
 
     if (History.scroll instanceof HistoryScroll)
       History.scroll.remove(id);
+
+    History.count(id);
+  },
+
+
+  count: function(id) {
+    if (document.getElementById(id) === null)
+      return;
+
+    var time = $('#' + id).attr('data-time');
+    if (time === undefined)
+      return;
+
+    var day = DateTime.dayId(new Date(parseInt(time)));
+    if (day.length != 10)
+      return;
+
+    if (document.getElementById('day-' + day) === null)
+      return;
+
+    if ($('#day-' + day + ' .day-body').is(':visible'))
+      return;
+
+    var badge = $('#day-' + day + ' .day-badge');
+    var count = parseInt(badge.text());
+    count++;
+    badge.text(count);
+
+    if (count == 1)
+      badge.fadeIn('fast');
   },
 
 
