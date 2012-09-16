@@ -24,7 +24,8 @@
 #include "sglobal.h"
 
 EmoticonData::EmoticonData(const QString &file, const QString &id, const QVariantMap &data)
-  : m_height(0)
+  : m_hidden(false)
+  , m_height(0)
   , m_width(0)
   , m_file(file)
   , m_id(id)
@@ -39,6 +40,7 @@ EmoticonData::EmoticonData(const QString &file, const QString &id, const QVarian
   m_file   += LC('/') + icon.at(0).toString();
   m_width  = icon.at(1).toInt();
   m_height = icon.at(2).toInt();
+  m_hidden = data.value(LS("hidden"), false).toBool();
 
   for (int i = 3; i < icon.size(); ++i) {
     QString text = Qt::escape(icon.at(i).toString());

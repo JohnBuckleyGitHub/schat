@@ -119,7 +119,8 @@ void Emoticons::add(Emoticon emoticon, QList<Emoticon> &theme)
     m_emoticons[text] = emoticon;
   }
 
-  theme.append(emoticon);
+  if (!emoticon->isHidden())
+    theme.append(emoticon);
 }
 
 
