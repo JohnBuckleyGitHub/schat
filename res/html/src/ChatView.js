@@ -756,7 +756,7 @@ function htmlspecialchars (string, quote_style, charset, double_encode) {
     classes = classes.split(' ');
 
     for (var i = 0, len = classes.length; i < len; i++)
-      if (!classes[i].match(regex)) classArray.push(classes[i])
+      if (!classes[i].match(regex)) classArray.push(classes[i]);
 
     $(this).attr('class', classArray.join(' '));
   };
@@ -781,7 +781,8 @@ if (typeof ChatView === "undefined") {
     jsfiles: function() { return []; },
     loadFinished: function() {},
     getId: function() { return ''; },
-    setLastMessage: function(date) {}
+    setLastMessage: function(date) {},
+    removeDay: function(day) {}
   }
 }
 else {

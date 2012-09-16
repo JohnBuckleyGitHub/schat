@@ -159,6 +159,12 @@ void ChatView::loadFinished()
 }
 
 
+void ChatView::removeDay(const QString &day)
+{
+  m_messages.remove(day);
+}
+
+
 void ChatView::setLastMessage(qint64 date)
 {
   if (date > m_lastMessage)

@@ -50,6 +50,7 @@ public:
   Q_INVOKABLE QStringList jsfiles() const     { return m_jsfiles; }
   Q_INVOKABLE void addJS(const QString &file) { if (!m_jsfiles.contains(file)) m_jsfiles.append(file); }
   Q_INVOKABLE void loadFinished();
+  Q_INVOKABLE void removeDay(const QString &day);
   Q_INVOKABLE void setLastMessage(qint64 date);
 
 signals:
