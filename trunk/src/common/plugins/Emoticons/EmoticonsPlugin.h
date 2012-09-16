@@ -37,7 +37,7 @@ public:
     QVariantMap out = CoreApi::header();
     out["Id"]       = "Emoticons";
     out["Name"]     = "Emoticons";
-    out["Version"]  = "0.2.2";
+    out["Version"]  = "0.2.3";
     out["Site"]     = "http://wiki.schat.me/Plugin/Emoticons";
     out["Desc"]     = "Adds support for graphical emoticons";
     out["Desc/ru"]  = "Добавляет поддержку графических смайликов";

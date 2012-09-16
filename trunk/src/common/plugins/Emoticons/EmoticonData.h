@@ -32,6 +32,7 @@ class EmoticonData
 public:
   EmoticonData(const QString &file, const QString &id, const QVariantMap &data);
   bool isValid() const;
+  inline bool isHidden() const            { return m_hidden; }
   inline const QString& file() const      { return m_file; }
   inline const QString& id() const        { return m_id; }
   inline const QStringList& texts() const { return m_texts; }
@@ -39,6 +40,7 @@ public:
   inline int width() const                { return m_width; }
 
 private:
+  bool m_hidden;       ///< \b true если смайл скрыт.
   int m_height;        ///< Высота смайла.
   int m_width;         ///< Ширина смайла.
   QString m_file;      ///< Имя файла смайла.
