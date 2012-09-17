@@ -33,6 +33,8 @@ namespace Hooks
 
 /*!
  * Хуки, связанные с обработкой сообщений.
+ *
+ * \sa ClientMessages.
  */
 class SCHAT_EXPORT Messages : public QObject
 {

@@ -36,6 +36,7 @@ CacheFeedStorage::CacheFeedStorage(QObject *parent)
  * Реализация сохранения фида.
  *
  * \param feed Фид.
+ * \param date Дата.
  */
 int CacheFeedStorage::saveImpl(FeedPtr feed, qint64 /*date*/)
 {

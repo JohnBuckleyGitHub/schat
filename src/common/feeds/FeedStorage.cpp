@@ -71,7 +71,7 @@ Feed* FeedStorage::load(const QString &name, const QVariantMap &data)
  * \param feed Фид.
  * \param date Дата модификации фида, если 0 будет использована текущая дата.
  *
- * \rerurn Notice::OK если фид сохранён успешно.
+ * \return Notice::OK если фид сохранён успешно.
  */
 int FeedStorage::save(FeedPtr feed, qint64 date)
 {
