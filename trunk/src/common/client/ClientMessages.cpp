@@ -29,11 +29,8 @@
 
 ClientMessages::ClientMessages(QObject *parent)
   : QObject(parent)
-  , m_hooks(0)
   , m_client(ChatClient::io())
 {
-  m_hooks = new Hooks::Messages(this);
-
   connect(m_client, SIGNAL(notice(int)), SLOT(notice(int)));
   connect(ChatClient::channels(), SIGNAL(channels(const QList<QByteArray> &)), SLOT(channels(const QList<QByteArray> &)));
 }
@@ -74,7 +71,7 @@ bool ClientMessages::send(const QByteArray &dest, const QString &text)
   if (!plain.startsWith(LC('/')))
     return sendText(dest, text);
 
-  if (m_hooks->command(dest, text, plain))
+  if (command(dest, text, plain))
     return true;
 
   /// Для обработки обычных команд используется хук: Hooks::Messages::command(const QByteArray &dest, const ClientCmd &cmd).
@@ -82,7 +79,7 @@ bool ClientMessages::send(const QByteArray &dest, const QString &text)
   int matches = 0;
   for (int i = 0; i < commands.size(); ++i) {
     ClientCmd cmd(commands.at(i));
-    if (cmd.isValid() && m_hooks->command(dest, cmd))
+    if (cmd.isValid() && command(dest, cmd))
       matches++;
   }
 
@@ -106,12 +103,15 @@ bool ClientMessages::sendText(const QByteArray &dest, const QString &text, const
     packet->setCommand(command);
 
   if (m_client->send(packet, true)) {
-    m_hooks->sendText(packet);
-
+    sent(packet);
     return true;
   }
+  else {
+    foreach (Hooks::Messages *hook, m_hooks)
+      hook->error(packet);
 
-  return false;
+    return false;
+  }
 }
 
 
@@ -128,7 +128,7 @@ void ClientMessages::channels(const QList<QByteArray> &channels)
       QList<MessagePacket> packets = m_pending.value(id);
 
       for (int i = 0; i < packets.size(); ++i)
-        m_hooks->readText(packets.at(i));
+        read(packets.at(i));
 
       m_pending.remove(id);
     }
@@ -145,6 +145,80 @@ void ClientMessages::notice(int type)
     return;
 
   readText(MessagePacket(new MessageNotice(type, ChatClient::io()->reader())));
+}
+
+
+bool ClientMessages::command(const QByteArray &dest, const ClientCmd &cmd)
+{
+  for (int i = 0; i < m_hooks.size(); ++i) {
+    if (m_hooks.at(i)->command(dest, cmd))
+      return true;
+  }
+
+  QString command = cmd.command().toLower();
+
+  if (command == LS("join")) {
+    if (cmd.isBody())
+      ChatClient::channels()->join(cmd.body());
+    else
+      ChatClient::channels()->join(dest);
+
+    return true;
+  }
+
+  if (command == LS("nick")) {
+    ChatClient::channels()->nick(cmd.body());
+    return true;
+  }
+
+  if (command == LS("name")) {
+    ChatClient::channels()->name(dest, cmd.body());
+    return true;
+  }
+
+  if (command == LS("part")) {
+    ChatClient::channels()->part(dest);
+    return true;
+  }
+
+  return false;
+}
+
+
+bool ClientMessages::command(const QByteArray &dest, const QString &text, const QString &plain)
+{
+  for (int i = 0; i < m_hooks.size(); ++i) {
+    if (m_hooks.at(i)->command(dest, text, plain))
+      return true;
+  }
+
+  if (plain.startsWith(LS("/me "), Qt::CaseInsensitive)) {
+    sendText(dest, Hooks::Messages::remove(LS("/me "), text), LS("me"));
+    return true;
+  }
+
+  if (plain.startsWith(LS("/say "), Qt::CaseInsensitive)) {
+    sendText(dest, Hooks::Messages::remove(LS("/say "), text), LS("say"));
+    return true;
+  }
+
+  return false;
+}
+
+
+void ClientMessages::read(MessagePacket packet)
+{
+  int matches = 0;
+  foreach (Hooks::Messages *hook, m_hooks) {
+    matches += hook->read(packet);
+  }
+
+  if (matches)
+    return;
+
+  foreach (Hooks::Messages *hook, m_hooks) {
+    hook->unhandled(packet);
+  }
 }
 
 
@@ -179,5 +253,13 @@ void ClientMessages::readText(MessagePacket packet)
   else if (!user)
     return;
 
-  m_hooks->readText(packet);
+  read(packet);
+}
+
+
+void ClientMessages::sent(MessagePacket packet)
+{
+  foreach (Hooks::Messages *hook, m_hooks) {
+    hook->sent(packet);
+  }
 }

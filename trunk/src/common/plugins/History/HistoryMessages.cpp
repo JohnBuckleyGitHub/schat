@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include "client/ChatClient.h"
 #include "client/ClientMessages.h"
 #include "HistoryMessages.h"
@@ -26,11 +24,11 @@
 HistoryMessages::HistoryMessages(QObject *parent)
   : Messages(parent)
 {
-  ChatClient::messages()->hooks()->add(this);
+  ChatClient::messages()->add(this);
 }
 
 
-int HistoryMessages::readText(MessagePacket packet)
+int HistoryMessages::read(MessagePacket packet)
 {
   HistoryDB::add(packet);
   return 0;

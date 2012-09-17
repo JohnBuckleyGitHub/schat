@@ -35,7 +35,7 @@ namespace Hooks
 CommandsImpl::CommandsImpl(QObject *parent)
   : Messages(parent)
 {
-  ChatClient::messages()->hooks()->add(this);
+  ChatClient::messages()->add(this);
 }
 
 

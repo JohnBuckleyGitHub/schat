@@ -24,6 +24,7 @@
 
 #include "net/packets/MessageNotice.h"
 
+class ClientCmd;
 class MessageNotice;
 class SimpleClient;
 
@@ -43,7 +44,8 @@ class SCHAT_EXPORT ClientMessages : public QObject
 
 public:
   ClientMessages(QObject *parent = 0);
-  inline Hooks::Messages *hooks() const { return m_hooks; }
+  inline void add(Hooks::Messages *hook)    { if (!m_hooks.contains(hook)) m_hooks.append(hook); }
+  inline void remove(Hooks::Messages *hook) { m_hooks.removeAll(hook); }
   QByteArray randomId() const;
   static bool isClientDate(int status);
 
@@ -56,11 +58,15 @@ private slots:
   void notice(int type);
 
 private:
+  bool command(const QByteArray &dest, const ClientCmd &cmd);
+  bool command(const QByteArray &dest, const QString &text, const QString &plain);
+  void read(MessagePacket packet);
   void readText(MessagePacket packet);
+  void sent(MessagePacket packet);
 
-  Hooks::Messages *m_hooks;                           ///< Хуки.
   QByteArray m_destId;                                ///< Текущий получатель сообщения.
   QHash<QByteArray, QList<MessagePacket> > m_pending; ///< Сообщения отображение которых отложена, т.к. не известна информация об отправителе.
+  QList<Hooks::Messages*> m_hooks;                    ///< Хуки.
   SimpleClient *m_client;                             ///< Клиент чата.
 };
 

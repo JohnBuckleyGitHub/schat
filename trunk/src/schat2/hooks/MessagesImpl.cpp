@@ -35,7 +35,7 @@ namespace Hooks
 MessagesImpl::MessagesImpl(QObject *parent)
   : Messages(parent)
 {
-  ChatClient::messages()->hooks()->add(this);
+  ChatClient::messages()->add(this);
 
   TokenFilter::add(LS("channel"), new LinksFilter());
   TokenFilter::add(LS("channel"), new UrlFilter());
@@ -47,7 +47,7 @@ MessagesImpl::MessagesImpl(QObject *parent)
 /*!
  * Чтение полученного сообщения.
  */
-int MessagesImpl::readText(MessagePacket packet)
+int MessagesImpl::read(MessagePacket packet)
 {
   QString command = packet->command();
   if (command != LS("m") && command != LS("me") && command != LS("say"))
@@ -69,11 +69,17 @@ int MessagesImpl::readText(MessagePacket packet)
 }
 
 
+void MessagesImpl::error(MessagePacket packet)
+{
+  Q_UNUSED(packet)
+}
+
+
 /*!
  * Обработка отправки сообщения, пакет сообщения добавляется в список не доставленных сообщений
  * и происходи немедленное отображение сообщения в пользовательском интерфейсе со статусом "undelivered".
  */
-void MessagesImpl::sendText(MessagePacket packet)
+void MessagesImpl::sent(MessagePacket packet)
 {
   ChannelMessage message(packet);
   message.data()[LS("Status")] = LS("undelivered");
@@ -83,7 +89,7 @@ void MessagesImpl::sendText(MessagePacket packet)
 }
 
 
-void MessagesImpl::unhandled(MessagePacket packet) const
+void MessagesImpl::unhandled(MessagePacket packet)
 {
   if (packet->direction() == Notice::Internal)
     return;

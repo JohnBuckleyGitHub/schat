@@ -31,11 +31,10 @@ class SCHAT_CORE_EXPORT MessagesImpl : public Messages
 
 public:
   MessagesImpl(QObject *parent = 0);
-  int readText(MessagePacket packet);
-  void sendText(MessagePacket packet);
-
-protected:
-  virtual void unhandled(MessagePacket packet) const;
+  int read(MessagePacket packet);
+  void error(MessagePacket packet);
+  void sent(MessagePacket packet);
+  void unhandled(MessagePacket packet);
 
 private slots:
   void clientStateChanged(int state, int previousState);
