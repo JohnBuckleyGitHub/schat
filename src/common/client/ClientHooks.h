@@ -42,20 +42,14 @@ class SCHAT_EXPORT Messages : public QObject
 
 public:
   Messages(QObject *parent = 0);
-  inline void add(Messages *hook)    { if (!m_hooks.contains(hook)) m_hooks.append(hook); }
-  inline void remove(Messages *hook) { m_hooks.removeAll(hook); }
-
   static QString remove(const QString &cmd, const QString &msg);
 
   virtual bool command(const QByteArray &dest, const ClientCmd &cmd);
   virtual bool command(const QByteArray &dest, const QString &text, const QString &plain);
-  virtual int readText(MessagePacket packet);
-  virtual void sendText(MessagePacket packet);
-
-protected:
-  virtual void unhandled(MessagePacket packet) const;
-
-  QList<Messages*> m_hooks; ///< Хуки.
+  virtual int read(MessagePacket packet);
+  virtual void error(MessagePacket packet);
+  virtual void sent(MessagePacket packet);
+  virtual void unhandled(MessagePacket packet);
 };
 
 

@@ -37,7 +37,7 @@ RawFeedsCmd::RawFeedsCmd(RawFeeds *parent)
   : Messages(parent)
   , m_plugin(parent)
 {
-  ChatClient::messages()->hooks()->add(this);
+  ChatClient::messages()->add(this);
 }
 
 

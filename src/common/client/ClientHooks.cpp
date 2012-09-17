@@ -65,40 +65,8 @@ QString Messages::remove(const QString &cmd, const QString &msg)
  */
 bool Messages::command(const QByteArray &dest, const ClientCmd &cmd)
 {
-  if (m_hooks.isEmpty())
-    return false;
-
-  for (int i = 0; i < m_hooks.size(); ++i) {
-    if (m_hooks.at(i)->command(dest, cmd))
-      return true;
-  }
-
-  QString command = cmd.command().toLower();
-
-  if (command == LS("join")) {
-    if (cmd.isBody())
-      ChatClient::channels()->join(cmd.body());
-    else
-      ChatClient::channels()->join(dest);
-
-    return true;
-  }
-
-  if (command == LS("nick")) {
-    ChatClient::channels()->nick(cmd.body());
-    return true;
-  }
-
-  if (command == LS("name")) {
-    ChatClient::channels()->name(dest, cmd.body());
-    return true;
-  }
-
-  if (command == LS("part")) {
-    ChatClient::channels()->part(dest);
-    return true;
-  }
-
+  Q_UNUSED(dest)
+  Q_UNUSED(cmd)
   return false;
 }
 
@@ -114,24 +82,9 @@ bool Messages::command(const QByteArray &dest, const ClientCmd &cmd)
  */
 bool Messages::command(const QByteArray &dest, const QString &text, const QString &plain)
 {
-  if (m_hooks.isEmpty())
-    return false;
-
-  for (int i = 0; i < m_hooks.size(); ++i) {
-    if (m_hooks.at(i)->command(dest, text, plain))
-      return true;
-  }
-
-  if (plain.startsWith(LS("/me "), Qt::CaseInsensitive)) {
-    ChatClient::messages()->sendText(dest, remove(LS("/me "), text), LS("me"));
-    return true;
-  }
-
-  if (plain.startsWith(LS("/say "), Qt::CaseInsensitive)) {
-    ChatClient::messages()->sendText(dest, remove(LS("/say "), text), LS("say"));
-    return true;
-  }
-
+  Q_UNUSED(dest)
+  Q_UNUSED(text)
+  Q_UNUSED(plain)
   return false;
 }
 
@@ -143,43 +96,38 @@ bool Messages::command(const QByteArray &dest, const QString &text, const QStrin
  *
  * \return 0 если пакет не был обработан или 1 если обработан.
  */
-int Messages::readText(MessagePacket packet)
+int Messages::read(MessagePacket packet)
 {
-  if (m_hooks.isEmpty())
-    return 0;
-
-  int matches = 0;
-  foreach (Messages *hook, m_hooks) {
-    matches += hook->readText(packet);
-  }
-
-  if (matches)
-    return matches;
-
-  foreach (Messages *hook, m_hooks) {
-    hook->unhandled(packet);
-  }
-
+  Q_UNUSED(packet)
   return 0;
 }
 
 
-/*!
- * Обработка копии только что отправленного сообщения.
- */
-void Messages::sendText(MessagePacket packet)
+void Messages::error(MessagePacket packet)
 {
-  if (m_hooks.isEmpty())
-    return;
-
-  foreach (Messages *hook, m_hooks) {
-    hook->sendText(packet);
-  }
+  Q_UNUSED(packet)
 }
 
 
-void Messages::unhandled(MessagePacket /*packet*/) const
+/*!
+ * Обработка копии только что успешно отправленого отправленного сообщения.
+ *
+ * \param packet Отправленный пакет.
+ */
+void Messages::sent(MessagePacket packet)
 {
+  Q_UNUSED(packet)
+}
+
+
+/*!
+ * Обработка необработанный сообщений.
+ *
+ * \param packet Входящий пакет.
+ */
+void Messages::unhandled(MessagePacket packet)
+{
+  Q_UNUSED(packet)
 }
 
 

@@ -28,7 +28,7 @@ SendFileMessages::SendFileMessages(SendFilePluginImpl *parent)
   : Messages(parent)
   , m_plugin(parent)
 {
-  ChatClient::messages()->hooks()->add(this);
+  ChatClient::messages()->add(this);
 }
 
 
@@ -51,7 +51,7 @@ bool SendFileMessages::command(const QByteArray &dest, const ClientCmd &cmd)
 }
 
 
-int SendFileMessages::readText(MessagePacket packet)
+int SendFileMessages::read(MessagePacket packet)
 {
   if (packet->command() != LS("file"))
     return 0;
