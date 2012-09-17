@@ -84,7 +84,7 @@ bool ClientMessages::send(const QByteArray &dest, const QString &text)
   }
 
   if (!matches)
-    return sendText(dest, text);;
+    return sendText(dest, text);
 
   return true;
 }

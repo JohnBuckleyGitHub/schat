@@ -41,6 +41,7 @@ MessagesImpl::MessagesImpl(QObject *parent)
   TokenFilter::add(LS("channel"), new UrlFilter());
 
   connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
+  connect(ChatClient::i(), SIGNAL(ready()), SLOT(ready()));
 }
 
 
@@ -71,7 +72,7 @@ int MessagesImpl::read(MessagePacket packet)
 
 void MessagesImpl::error(MessagePacket packet)
 {
-  Q_UNUSED(packet)
+  sent(packet);
 }
 
 
@@ -112,20 +113,38 @@ void MessagesImpl::clientStateChanged(int state, int previousState)
 {
   Q_UNUSED(state)
 
-  /// В случае если предыдущее состояние клиента было в "В сети" и имеются не доставленные
-  /// сообщения, то они помечаются недоставленными для отображения в пользовательском интерфейсе.
-  if (previousState == SimpleClient::ClientOnline && !m_undelivered.isEmpty()) {
-    QHashIterator<QByteArray, MessagePacket> i(m_undelivered);
-    while (i.hasNext()) {
-      i.next();
-      ChannelMessage message(i.value());
-      message.data()[LS("Status")] = LS("rejected");
+  if (previousState == SimpleClient::ClientOnline)
+    m_serverId = ChatClient::serverId();
+}
 
-      TabWidget::add(message);
-    }
 
-    m_undelivered.clear();
+void MessagesImpl::ready()
+{
+  if (m_serverId.isEmpty()) {
+    m_serverId = ChatClient::serverId();
   }
+  else if (m_serverId != ChatClient::serverId()) {
+    rejectAll();
+    return;
+  }
+
+  SimpleClient *client = ChatClient::io();
+  foreach (MessagePacket packet, m_undelivered) {
+    client->send(packet, true);
+  }
+}
+
+
+void MessagesImpl::rejectAll()
+{
+  foreach (MessagePacket packet, m_undelivered) {
+    ChannelMessage message(packet);
+    message.data()[LS("Status")] = LS("rejected");
+
+    TabWidget::add(message);
+  }
+
+  m_undelivered.clear();
 }
 
 } // namespace Hooks

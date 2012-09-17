@@ -38,9 +38,14 @@ public:
 
 private slots:
   void clientStateChanged(int state, int previousState);
+  void ready();
 
 private:
-  QHash<QByteArray, MessagePacket> m_undelivered; ///< Таблица сообщений доставка которых не подтверждена.
+  void rejectAll();
+
+  QByteArray m_serverId;                          ///< Идентификатор последнего сервера.
+  QHash<QByteArray, MessagePacket> m_undelivered; ///< Таблица сообщений, доставка которых не подтверждена.
+
 };
 
 } // namespace Hooks
