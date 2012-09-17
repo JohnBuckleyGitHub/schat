@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QSqlQuery>
 
 #include "DataBase.h"
@@ -87,6 +85,7 @@ int NodeFeedStorage::revertImpl(FeedPtr feed, const QVariantMap &data)
  * Реализация сохранения фида.
  *
  * \param feed Фид.
+ * \param date Дата.
  */
 int NodeFeedStorage::saveImpl(FeedPtr feed, qint64 date)
 {

@@ -32,6 +32,11 @@ namespace Hooks
   class Messages;
 }
 
+/*!
+ * Базовый класс обрабатывающий сообщения пользователя.
+ *
+ * \sa Hooks::Messages.
+ */
 class SCHAT_EXPORT ClientMessages : public QObject
 {
   Q_OBJECT

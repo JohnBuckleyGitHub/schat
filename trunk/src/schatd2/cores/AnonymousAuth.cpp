@@ -80,9 +80,10 @@ int AnonymousAuth::type() const
  * Проверка на коллизию ника.
  * Допускается не более 20 попыток разрешить коллизию без разрыва соединения.
  *
- * \param id     Идентификатор канала.
- * \param name   Имя канала.
- * \param authId Идентификатор авторизации.
+ * \param id       Идентификатор канала.
+ * \param name     Имя канала.
+ * \param authId   Идентификатор авторизации.
+ * \param override \b true если допустима попытка безопасной перезаписи ника.
  */
 AuthResult AnonymousAuth::isCollision(const QByteArray &id, const QString &name, const QByteArray &authId, bool override)
 {
