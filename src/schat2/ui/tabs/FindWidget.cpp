@@ -16,30 +16,34 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHANNELBAR_H_
-#define CHANNELBAR_H_
-
-#include <QToolBar>
+#include <QHBoxLayout>
 #include <QLabel>
+#include <QToolBar>
 
-class ChannelTopic;
-class InputWidget;
+#include "arora/lineedit.h"
+#include "ui/tabs/FindWidget.h"
+#include "sglobal.h"
 
-/*!
- * \deprecated Этот класс должен быть удалён, т.к. больше не используется для установки темы канала.
- */
-class ChannelBar : public QToolBar
+FindWidget::FindWidget(QWidget *parent)
+  : QFrame(parent)
 {
-  Q_OBJECT
+  m_toolBar = new QToolBar(this);
 
-public:
-  ChannelBar(const QString &title, QWidget *parent = 0);
-  ChannelBar(QWidget *parent = 0);
-  inline InputWidget *topic() { return m_topic; }
+  QLabel *label = new QLabel(this);
+  label->setPixmap(QPixmap(LS(":/images/search.png")));
 
-private:
-  void init();
-  InputWidget *m_topic;
-};
+  m_editFind = new LineEdit(this);
+  m_editFind->addWidget(label, LineEdit::LeftSide);
+  m_editFind->setWidgetSpacing(3);
 
-#endif /* CHANNELBAR_H_ */
+  m_toolBar->addWidget(m_editFind);
+
+  QHBoxLayout *mainLay = new QHBoxLayout(this);
+  mainLay->addWidget(m_toolBar);
+  mainLay->setMargin(4);
+
+# if defined(Q_OS_WIN32)
+  setObjectName(LS("FindWidget"));
+  setStyleSheet(QString("FindWidget { background-color:%1; }").arg(palette().color(QPalette::Window).name()));
+# endif
+}

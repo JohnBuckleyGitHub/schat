@@ -25,6 +25,7 @@
 class Alert;
 class ChannelInfo;
 class ChatView;
+class FindWidget;
 class Message;
 class Notify;
 
@@ -61,8 +62,9 @@ protected:
   QString page() const;
   virtual void reload();
 
-  bool m_joined;           ///< \b true если пользователь уже вошёл в канал.
-  ChatView *m_chatView;    ///< Виджет отображающий текст чата.
+  bool m_joined;            ///< \b true если пользователь уже вошёл в канал.
+  ChatView *m_chatView;     ///< Виджет отображающий текст чата.
+  FindWidget *m_findWidget; ///< Виджета поиска текста в окне чата.
 
 private:
   ClientChannel m_channel; ///< Канал.

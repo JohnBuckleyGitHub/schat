@@ -33,6 +33,7 @@
 #include "ui/ChatIcons.h"
 #include "ui/tabs/ChannelBaseTab.h"
 #include "ui/tabs/ChatView.h"
+#include "ui/tabs/FindWidget.h"
 #include "ui/TabWidget.h"
 #include "WebBridge.h"
 
@@ -50,6 +51,8 @@ ChannelBaseTab::ChannelBaseTab(ClientChannel channel, const QString &type, TabWi
     file = "qrc:/html/" + page();
 
   m_chatView = new ChatView(channel->id(), file, this);
+  m_findWidget = new FindWidget(this);
+  m_findWidget->setVisible(false);
   setIcon(channelIcon());
 
   connect(ChatClient::channels(), SIGNAL(channel(const ChannelInfo &)), SLOT(channel(const ChannelInfo &)));

@@ -29,22 +29,19 @@
 #include "messages/ServiceMessage.h"
 #include "sglobal.h"
 #include "ui/InputWidget.h"
-#include "ui/tabs/ChannelBar.h"
 #include "ui/tabs/ChannelTab.h"
 #include "ui/tabs/ChatView.h"
+#include "ui/tabs/FindWidget.h"
 #include "ui/tabs/UserView.h"
 #include "ui/TabWidget.h"
 
 ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   : ChannelBaseTab(channel, LS("channel"), parent)
 {
-  m_bar = new ChannelBar(this);
-  m_bar->setVisible(false);
-
   m_userView = new UserView(this);
 
   m_leftLayout = new QVBoxLayout(this);
-  m_leftLayout->addWidget(m_bar);
+  m_leftLayout->addWidget(m_findWidget);
   m_leftLayout->addWidget(m_chatView);
   m_leftLayout->setMargin(0);
   m_leftLayout->setSpacing(0);
