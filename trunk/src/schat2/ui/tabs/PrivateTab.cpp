@@ -24,6 +24,7 @@
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
 #include "ui/tabs/ChatView.h"
+#include "ui/tabs/FindWidget.h"
 #include "ui/tabs/PrivateTab.h"
 #include "ui/TabWidget.h"
 
@@ -31,6 +32,7 @@ PrivateTab::PrivateTab(ClientChannel channel, TabWidget *parent)
   : ChannelBaseTab(channel, LS("talk"), parent)
 {
   QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->addWidget(m_findWidget);
   mainLay->addWidget(m_chatView);
   mainLay->setMargin(0);
   mainLay->setSpacing(0);

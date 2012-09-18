@@ -93,10 +93,10 @@ HEADERS = \
     ui/TabBar.h \
     ui/tabs/AboutTab.h \
     ui/tabs/AbstractTab.h \
-    ui/tabs/ChannelBar.h \
     ui/tabs/ChannelBaseTab.h \
     ui/tabs/ChannelTab.h \
     ui/tabs/ChatView.h \
+    ui/tabs/FindWidget.h \
     ui/tabs/PrivateTab.h \
     ui/tabs/ProgressTab.h \
     ui/tabs/ServerTab.h \
@@ -176,10 +176,10 @@ SOURCES = \
     ui/TabBar.cpp \
     ui/tabs/AboutTab.cpp \
     ui/tabs/AbstractTab.cpp \
-    ui/tabs/ChannelBar.cpp \
     ui/tabs/ChannelBaseTab.cpp \
     ui/tabs/ChannelTab.cpp \
     ui/tabs/ChatView.cpp \
+    ui/tabs/FindWidget.cpp \
     ui/tabs/PrivateTab.cpp \
     ui/tabs/ProgressTab.cpp \
     ui/tabs/ServerTab.cpp \

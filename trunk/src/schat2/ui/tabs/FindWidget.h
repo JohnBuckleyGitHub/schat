@@ -16,29 +16,24 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ui/InputWidget.h"
-#include "ui/tabs/ChannelBar.h"
+#ifndef FINDWIDGET_H_
+#define FINDWIDGET_H_
 
-ChannelBar::ChannelBar(const QString &title, QWidget *parent)
-  : QToolBar(title, parent)
+#include <QFrame>
+
+class LineEdit;
+class QToolBar;
+
+class FindWidget : public QFrame
 {
-  init();
-}
+  Q_OBJECT
 
+public:
+  FindWidget(QWidget *parent = 0);
 
-ChannelBar::ChannelBar(QWidget *parent)
-  : QToolBar(parent)
-{
-  init();
-}
+private:
+  LineEdit *m_editFind; ///< Виджет для ввода текста.
+  QToolBar *m_toolBar;  ///< Основной тулбар для размещения виджетов.
+};
 
-
-void ChannelBar::init()
-{
-  setIconSize(QSize(10, 10));
-  setObjectName(QLatin1String("ChannelBar"));
-  setStyleSheet(QString("ChannelBar { background-color:%1; margin:0px; border:0px; }").arg(palette().color(QPalette::Window).name()));
-
-  m_topic = new InputWidget(this);
-  addWidget(m_topic);
-}
+#endif /* FINDWIDGET_H_ */
