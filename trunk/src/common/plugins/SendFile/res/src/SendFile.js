@@ -161,23 +161,18 @@ Messages.addFileMessage = function(json)
  * Обновление идентификатора и отметки времени исходящей передачи файла.
  */
 Messages.upgradeFileMessage = function(json) {
-  if (!$('#' + json.InternalId).length)
+  if (document.getElementById(json.InternalId) === null)
     return;
 
   $('#' + json.InternalId).attr('id', json.Id);
   $('#' + json.Id + ' .btn-file-cancel').attr('href', 'chat-sendfile:cancel/' + json.Id);
 
-  $('#' + json.Id).attr('data-time', json.Date);
-  var date = new Date(json.Date);
-  var block = $('#' + json.Id + ' .date-time-block');
-
-  block.children('.time').text(DateTime.time(date));
-  block.children('.seconds').text(DateTime.seconds(date));
+  DateTime.update(json);
   ChatView.setLastMessage(json.Date);
 };
 
 
-if (typeof SendFile === "undefined") {
+if (typeof SendFile === 'undefined') {
   SendFile = {
     state: function(id) { return 'U'; },
     role: function(id) { return 1; },
