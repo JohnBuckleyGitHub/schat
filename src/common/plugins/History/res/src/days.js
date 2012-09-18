@@ -22,8 +22,7 @@ Messages.days = [];
  * Создание при необходимости блока с сообщениями за 1 день.
  */
 Messages.day = function(day) {
-  var prefix = '#day-' + day;
-  if ($(prefix).length)
+  if (document.getElementById('day-' + day) !== null)
     return;
 
   var html = '<div class="day" id="day-' + day + '">' +
@@ -45,8 +44,11 @@ Messages.day = function(day) {
   else
     $('#day-' + Messages.days[index + 1]).before(html);
 
-  if ($('.day-day').width() > 100)
-    Utils.adjustWidth($('.day-day'));
+  var dayDay =  $('.day-day');
+  var prefix = '#day-' + day;
+
+  if (dayDay.width() > 100)
+    Utils.adjustWidth(dayDay);
 
   /*
    * Сворачивание или разворачивание блока сообщений.
@@ -127,11 +129,34 @@ Messages.reload = function()
 };
 
 
+DateTime.update = function(json) {
+  var date  = new Date(json.Date);
+  var block = $('#' + json.Id + ' .date-time-block');
+
+  if (json.Day === true)
+    block.children('.day').text(DateTime.day(date));
+
+  block.children('.time').text(DateTime.time(date));
+  block.children('.seconds').text(DateTime.seconds(date));
+
+  var id = $('#' + json.Id);
+  id.attr('data-time', json.Date);
+  if (json.Hint.Hint == 'before' && document.getElementById(json.Hint.Id) !== null) {
+    id.detach().insertBefore('#' + json.Hint.Id);
+  }
+  else {
+    id.detach().appendTo('#day-' + json.Hint.Day + ' .day-body');
+  }
+
+  alignChat();
+};
+
+
 /*
  * Перевод дат при смене языка.
  */
 Messages.retranslate = function() {
-  $("[data-day]").each(function() {
+  $('[data-day]').each(function() {
     $(this).text(SimpleChat.day($(this).attr('data-day')));
   });
 

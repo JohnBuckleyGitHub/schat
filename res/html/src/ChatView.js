@@ -248,7 +248,7 @@ var Messages = {
   // Добавление сырого сообщения, с подсказкой по размещению.
   addHintedRawMessage: function(html, hint, id)
   {
-    if (hint.Hint == 'before' && $('#' + hint.Id).length) {
+    if (hint.Hint == 'before' && document.getElementById(hint.Id) !== null) {
       $('#' + hint.Id).before(html);
       Messages.add(id);
     }
@@ -373,16 +373,7 @@ var Messages = {
     $('#' + json.Id + ' > div.blocks').attr('class', 'blocks ' + classes);
 
     if (json.Date > 0 && $('#' + json.Id).attr('data-time') != json.Date) {
-      var date = new Date(json.Date);
-      var block = $('#' + json.Id + ' > .blocks > .date-time-block');
-
-      if (json.Day === true)
-        block.children('.day').text(DateTime.day(date));
-
-      block.children('.time').text(DateTime.time(date));
-      block.children('.seconds').text(DateTime.seconds(date));
-
-      $('#' + json.Id).attr('data-time', json.Date);
+      DateTime.update(json);
       ChatView.setLastMessage(json.Date);
     }
   },
@@ -414,54 +405,90 @@ var Messages = {
 
 
 var DateTime = {
-  // Возвращает день в формате день:месяц:год.
-  day: function(date)
-  {
+  /*
+   * Возвращает день в формате день:месяц:год.
+   *
+   * \param date объект даты.
+   */
+  day: function(date) {
     return DateTime.pad(date.getDate()) + ':' + DateTime.pad(date.getMonth() + 1) + ':' + date.getFullYear();
   },
 
+  /*
+   * Возвращает день в формате год_месяц_день.
+   *
+   * \param date объект даты.
+   */
   dayId: function(date) {
     return date.getFullYear() + '_' + DateTime.pad(date.getMonth() + 1) + '_' + DateTime.pad(date.getDate());
   },
 
 
-  // Дополняет число ведущим 0 при необходимости.
-  pad: function(n)
-  {
+  /*
+   * Дополняет число ведущим 0 при необходимости.
+   */
+  pad: function(n) {
     return n < 10 ? '0' + n : n
   },
 
 
-  // Возвращает секунды в формате :секунды.
-  seconds: function(date)
-  {
+  /*
+   * Возвращает секунды в формате :секунды.
+   *
+   * \param date объект даты.
+   */
+  seconds: function(date) {
     return ':' + DateTime.pad(date.getSeconds());
   },
 
 
-  // Возвращает HTML шаблон времени сообщения.
-  template: function(milliseconds, day)
-  {
-    var out = '';
-
+  /*
+   * Возвращает HTML шаблон времени сообщения.
+   *
+   * \param milliseconds Время в виде милисекунд.
+   * \param day          true если необходимо показать день сообщения.
+   */
+  template: function(milliseconds, day) {
     if (milliseconds > 0) {
       var date = new Date(milliseconds);
-      out += '<span class="date-time-block">';
+      var out = '<span class="date-time-block">';
       if (day === true)
         out += '<span class="day">' + DateTime.day(date) + '</span> ';
 
-      out += '<span class="time">' + DateTime.time(date) + '</span>';
-      out += '<span class="seconds">' + DateTime.seconds(date) + '</span> ';
-      out += '</span>';
+      out += '<span class="time">' + DateTime.time(date) + '</span>' +
+             '<span class="seconds">' + DateTime.seconds(date) + '</span> </span>';
+
+      return out;
     }
 
-    return out;
+    return '';
   },
 
 
-  // Возвращает время в формате часы:минуты.
-  time: function(date)
-  {
+  /*
+   * Обновление отметки времени.
+   *
+   * \param json  Данные сообщения.
+   */
+  update: function(json) {
+    var date  = new Date(json.Date);
+    var block = $('#' + json.Id + ' .date-time-block');
+
+    if (json.Day === true)
+      block.children('.day').text(DateTime.day(date));
+
+    block.children('.time').text(DateTime.time(date));
+    block.children('.seconds').text(DateTime.seconds(date));
+    $('#' + json.Id).attr('data-time', json.Date);
+  },
+
+
+  /*
+   * Возвращает время в формате часы:минуты.
+   *
+   * \param date объект даты.
+   */
+  time: function(date) {
     return DateTime.pad(date.getHours()) + ':' + DateTime.pad(date.getMinutes());
   }
 };
