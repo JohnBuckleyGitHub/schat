@@ -18,6 +18,7 @@
 
 #include <QApplication>
 #include <QFile>
+#include <QTimer>
 
 #include "ChatAlerts.h"
 #include "ChatNotify.h"
@@ -60,6 +61,7 @@ ChannelBaseTab::ChannelBaseTab(ClientChannel channel, const QString &type, TabWi
   connect(ChatClient::i(), SIGNAL(offline()), SLOT(offline()));
   connect(ChatAlerts::i(), SIGNAL(alert(const Alert &)), SLOT(alert(const Alert &)));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+  connect(m_findWidget, SIGNAL(find(QString,bool)), SLOT(find(QString,bool)));
 }
 
 
@@ -140,11 +142,26 @@ void ChannelBaseTab::channel(const ChannelInfo &info)
 }
 
 
+void ChannelBaseTab::find(const QString &text, bool forward)
+{
+  m_findWidget->setPalette(m_chatView->find(text, forward));
+
+  if (!m_findWidget->isVisible())
+    m_findWidget->show();
+
+  if (!m_findWidget->hasFocus())
+    m_findWidget->setFocus();
+}
+
+
 void ChannelBaseTab::notify(const Notify &notify)
 {
   if (notify.type() == Notify::ShowID) {
     if (notify.data().toByteArray() == id())
       add(ServiceMessage::showId(notify.data().toByteArray()));
+  }
+  else if (notify.type() == Notify::Find && notify.data().toByteArray() == id()) {
+    find(m_findWidget->text());
   }
 }
 
