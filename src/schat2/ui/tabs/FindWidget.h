@@ -40,10 +40,20 @@ public slots:
   void find();
   void setFocus();
 
+protected:
+  void changeEvent(QEvent *event);
+
+private slots:
+  void actionTriggered(QAction *action);
+
 private:
   bool eventFilter(QObject *watched, QEvent *event);
+  void retranslateUi();
 
   LineEdit *m_editFind; ///< Виджет для ввода текста.
+  QAction *m_close;     ///< Кнопка закрытия виджета.
+  QAction *m_next;      ///< Кнопка поиска следующей позиции найденого текста.
+  QAction *m_previous;  ///< Кнопка поиска предыдущей позиции найденого текста.
   QToolBar *m_toolBar;  ///< Основной тулбар для размещения виджетов.
 };
 

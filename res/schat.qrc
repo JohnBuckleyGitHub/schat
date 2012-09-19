@@ -105,6 +105,8 @@
   <file>html/User.html</file>
   <file>images/color.png</file>
   <file>images/color-map.png</file>
+  <file>images/find_next.png</file>
+  <file>images/find_previous.png</file>
   <file>images/icons/96x96/schat2.png</file>
   <file>images/minus-small.png</file>
   <file>images/os.png</file>
@@ -118,6 +120,7 @@
   <file>images/spinner.png</file>
   <file>images/spinner-small.gif</file>
   <file>images/spinner-yellow.gif</file>
+  <file>images/stop.png</file>
   <file>translations/en.png</file>
   <file>translations/schat2_en.qm</file>
   <file>translations/unknown.png</file>
