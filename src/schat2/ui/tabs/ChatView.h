@@ -37,6 +37,7 @@ public:
   ChatView(const QByteArray &id, const QString &url, QWidget *parent = 0);
   ~ChatView();
 
+  bool find(const QString &text, bool forward = true);
   inline const QByteArray& id() const { return m_id; }
   void add(const Message &msg);
   void addCSS(const QString &file);

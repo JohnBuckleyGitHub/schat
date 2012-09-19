@@ -46,4 +46,33 @@ FindWidget::FindWidget(QWidget *parent)
   setObjectName(LS("FindWidget"));
   setStyleSheet(QString("FindWidget { background-color:%1; }").arg(palette().color(QPalette::Window).name()));
 # endif
+
+  connect(m_editFind, SIGNAL(returnPressed()), SLOT(find()));
+  connect(m_editFind, SIGNAL(textChanged(QString)), SLOT(find()));
+}
+
+
+void FindWidget::setPalette(bool found)
+{
+  QPalette palette = m_editFind->palette();
+  palette.setColor(QPalette::Active, QPalette::Base, found ? Qt::white : QColor(255, 102, 102));
+  m_editFind->setPalette(palette);
+}
+
+
+QString FindWidget::text() const
+{
+  return m_editFind->text();
+}
+
+
+void FindWidget::find()
+{
+  emit find(m_editFind->text(), true);
+}
+
+
+void FindWidget::setFocus()
+{
+  m_editFind->setFocus();
 }

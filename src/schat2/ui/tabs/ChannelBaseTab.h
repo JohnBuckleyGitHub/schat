@@ -52,6 +52,7 @@ public:
 private slots:
   void alert(const Alert &alert);
   void channel(const ChannelInfo &info);
+  void find(const QString &text, bool forward = true);
   void notify(const Notify &notify);
   void offline();
   void part(const QByteArray &channel, const QByteArray &user);

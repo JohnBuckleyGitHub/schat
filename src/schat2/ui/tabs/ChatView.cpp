@@ -72,6 +72,25 @@ ChatView::~ChatView()
 }
 
 
+bool ChatView::find(const QString &text, bool forward)
+{
+  QWebPage::FindFlags options = QWebPage::FindWrapsAroundDocument;
+  if (!forward)
+    options |= QWebPage::FindBackward;
+
+  bool found = findText(text, options);
+
+  options = QWebPage::HighlightAllOccurrences;
+  findText(QString(), options);
+  findText(text, options);
+
+  if (!found && text.isEmpty())
+    found = true;
+
+  return found;
+}
+
+
 void ChatView::add(const Message &msg)
 {
   if (!msg.isValid())

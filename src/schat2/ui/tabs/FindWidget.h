@@ -30,6 +30,15 @@ class FindWidget : public QFrame
 
 public:
   FindWidget(QWidget *parent = 0);
+  QString text() const;
+  void setPalette(bool found);
+
+signals:
+  void find(const QString &text, bool forward);
+
+public slots:
+  void find();
+  void setFocus();
 
 private:
   LineEdit *m_editFind; ///< Виджет для ввода текста.

@@ -218,6 +218,11 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
     return;
   }
 
+  if (event->matches(QKeySequence::Find)) {
+    ChatNotify::start(Notify::Find, ChatCore::currentId());
+    return;
+  }
+
   if (modifiers == Qt::ControlModifier) {
     if (key == Qt::Key_Down) {
       nextMsg();
