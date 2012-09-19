@@ -163,6 +163,9 @@ void ChannelBaseTab::notify(const Notify &notify)
   else if (notify.type() == Notify::Find && notify.data().toByteArray() == id()) {
     find(m_findWidget->text());
   }
+  else if (notify.type() == Notify::FindPrevious && notify.data().toByteArray() == id()) {
+    find(m_findWidget->text(), false);
+  }
 }
 
 

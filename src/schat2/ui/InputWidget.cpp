@@ -218,8 +218,13 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
     return;
   }
 
-  if (event->matches(QKeySequence::Find)) {
+  if (event->matches(QKeySequence::Find) || event->matches(QKeySequence::FindNext)) {
     ChatNotify::start(Notify::Find, ChatCore::currentId());
+    return;
+  }
+
+  if (event->matches(QKeySequence::FindPrevious)) {
+    ChatNotify::start(Notify::FindPrevious, ChatCore::currentId());
     return;
   }
 

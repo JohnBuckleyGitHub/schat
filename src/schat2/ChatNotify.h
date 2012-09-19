@@ -59,6 +59,7 @@ public:
     ChannelTabClosed = 0x7443, ///< "tC" Уведомление о закрытии вкладки канала.
     Restart          = 0x5273, ///< "Rs" Перезапуск чата.
     Find             = 0x4669, ///< "Fi" Поиск текста в чате.
+    FindPrevious     = 0x4650  ///< "FP" Поиск текста в чате в обратном направлении.
   };
 
   Notify(int type, const QVariant &data = QVariant())

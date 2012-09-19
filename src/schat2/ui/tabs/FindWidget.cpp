@@ -19,14 +19,19 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QToolBar>
+#include <QKeyEvent>
 
 #include "arora/lineedit.h"
-#include "ui/tabs/FindWidget.h"
+#include "ChatCore.h"
+#include "ChatNotify.h"
 #include "sglobal.h"
+#include "ui/tabs/FindWidget.h"
 
 FindWidget::FindWidget(QWidget *parent)
   : QFrame(parent)
 {
+  installEventFilter(this);
+
   m_toolBar = new QToolBar(this);
 
   QLabel *label = new QLabel(this);
@@ -75,4 +80,28 @@ void FindWidget::find()
 void FindWidget::setFocus()
 {
   m_editFind->setFocus();
+}
+
+
+bool FindWidget::eventFilter(QObject *watched, QEvent *event)
+{
+  if (event->type() == QEvent::KeyPress) {
+    QKeyEvent *e = static_cast<QKeyEvent*>(event);
+
+    if (e->matches(QKeySequence::Find) || e->matches(QKeySequence::FindNext)) {
+      ChatNotify::start(Notify::Find, ChatCore::currentId());
+      return true;
+    }
+    else if (e->matches(QKeySequence::FindPrevious)) {
+      ChatNotify::start(Notify::FindPrevious, ChatCore::currentId());
+      return true;
+    }
+    else if (e->key() == Qt::Key_Escape) {
+      hide();
+      ChatNotify::start(Notify::SetSendFocus);
+      return true;
+    }
+  }
+
+  return QWidget::eventFilter(watched, event);
 }
