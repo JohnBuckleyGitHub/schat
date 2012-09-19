@@ -41,6 +41,8 @@ public slots:
   void setFocus();
 
 private:
+  bool eventFilter(QObject *watched, QEvent *event);
+
   LineEdit *m_editFind; ///< Виджет для ввода текста.
   QToolBar *m_toolBar;  ///< Основной тулбар для размещения виджетов.
 };
