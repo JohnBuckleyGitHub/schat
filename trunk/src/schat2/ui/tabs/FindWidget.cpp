@@ -16,10 +16,12 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QAction>
 #include <QHBoxLayout>
+#include <QIcon>
+#include <QKeyEvent>
 #include <QLabel>
 #include <QToolBar>
-#include <QKeyEvent>
 
 #include "arora/lineedit.h"
 #include "ChatCore.h"
@@ -33,6 +35,7 @@ FindWidget::FindWidget(QWidget *parent)
   installEventFilter(this);
 
   m_toolBar = new QToolBar(this);
+  m_toolBar->setIconSize(QSize(16, 16));
 
   QLabel *label = new QLabel(this);
   label->setPixmap(QPixmap(LS(":/images/search.png")));
@@ -42,6 +45,10 @@ FindWidget::FindWidget(QWidget *parent)
   m_editFind->setWidgetSpacing(3);
 
   m_toolBar->addWidget(m_editFind);
+  m_previous = m_toolBar->addAction(QIcon(LS(":/images/find_previous.png")), tr("Previous"));
+  m_next = m_toolBar->addAction(QIcon(LS(":/images/find_next.png")), tr("Next"));
+  m_toolBar->addSeparator();
+  m_close = m_toolBar->addAction(QIcon(LS(":/images/stop.png")), tr("Close"));
 
   QHBoxLayout *mainLay = new QHBoxLayout(this);
   mainLay->addWidget(m_toolBar);
@@ -54,6 +61,7 @@ FindWidget::FindWidget(QWidget *parent)
 
   connect(m_editFind, SIGNAL(returnPressed()), SLOT(find()));
   connect(m_editFind, SIGNAL(textChanged(QString)), SLOT(find()));
+  connect(m_toolBar, SIGNAL(actionTriggered(QAction*)), SLOT(actionTriggered(QAction*)));
 }
 
 
@@ -83,6 +91,29 @@ void FindWidget::setFocus()
 }
 
 
+void FindWidget::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  QWidget::changeEvent(event);
+}
+
+
+void FindWidget::actionTriggered(QAction *action)
+{
+
+  if (action == m_close) {
+    hide();
+    ChatNotify::start(Notify::SetSendFocus);
+  }
+  else if (action == m_next)
+    find();
+  else if (action == m_previous)
+    emit find(m_editFind->text(), false);
+}
+
+
 bool FindWidget::eventFilter(QObject *watched, QEvent *event)
 {
   if (event->type() == QEvent::KeyPress) {
@@ -104,4 +135,12 @@ bool FindWidget::eventFilter(QObject *watched, QEvent *event)
   }
 
   return QWidget::eventFilter(watched, event);
+}
+
+
+void FindWidget::retranslateUi()
+{
+  m_next->setText(tr("Next"));
+  m_previous->setText(tr("Previous"));
+  m_close->setText(tr("Close"));
 }

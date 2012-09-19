@@ -64,44 +64,44 @@
 <context>
     <name>ChatView</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="200"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="225"/>
         <source>Display</source>
         <translation>Отображать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="372"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="390"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="399"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="423"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="373"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="391"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="400"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="424"/>
         <source>Reload</source>
         <translation>Обновить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="378"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="405"/>
         <source>Seconds</source>
         <translation>Секунды</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="381"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="408"/>
         <source>Service messages</source>
         <translation>Сервисные сообщения</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="388"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="421"/>
         <source>Copy</source>
         <translation>Копировать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="389"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="422"/>
         <source>Copy Link</source>
         <translation>Копировать ссылку</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="392"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="425"/>
         <source>Select All</source>
         <translation>Выделить всё</translation>
     </message>
@@ -120,6 +120,27 @@
         <location filename="../../src/schat2/ui/ColorButton.cpp" line="136"/>
         <source>Text color</source>
         <translation>Цвет текста</translation>
+    </message>
+</context>
+<context>
+    <name>FindWidget</name>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="48"/>
+        <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="144"/>
+        <source>Previous</source>
+        <translation>Найти предыдущее</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="49"/>
+        <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="143"/>
+        <source>Next</source>
+        <translation>Найти далее</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="51"/>
+        <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="145"/>
+        <source>Close</source>
+        <translation>Закрыть</translation>
     </message>
 </context>
 <context>
@@ -182,56 +203,56 @@
 <context>
     <name>InputWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="449"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="530"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="459"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="540"/>
         <source>Cut</source>
         <translation>Вырезать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="450"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="531"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="460"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="541"/>
         <source>Copy</source>
         <translation>Копировать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="451"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="532"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="461"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="542"/>
         <source>Paste</source>
         <translation>Вставить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="452"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="533"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="462"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="543"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="453"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="534"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="463"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="544"/>
         <source>Select All</source>
         <translation>Выделить всё</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="463"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="535"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="473"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="545"/>
         <source>Bold</source>
         <translation>Полужирный</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="469"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="536"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="479"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="546"/>
         <source>Italic</source>
         <translation>Курсив</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="475"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="537"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="485"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="547"/>
         <source>Underline</source>
         <translation>Подчёркнутый</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="481"/>
-        <location filename="../../src/schat2/ui/InputWidget.cpp" line="538"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="491"/>
+        <location filename="../../src/schat2/ui/InputWidget.cpp" line="548"/>
         <source>Strikeout</source>
         <translation>Зачёркнутый</translation>
     </message>
