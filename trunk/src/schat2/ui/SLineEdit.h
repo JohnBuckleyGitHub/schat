@@ -16,37 +16,24 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NICKEDIT_H_
-#define NICKEDIT_H_
+#ifndef SLINEEDIT_H_
+#define SLINEEDIT_H_
 
-#include "ui/SLineEdit.h"
+#include "arora/lineedit.h"
 
-class ChannelNotice;
-class QLabel;
-class Spinner;
-
-/*!
- * Виджет редактирования ника пользователя.
- */
-class NickEdit : public SLineEdit
+class SLineEdit : public LineEdit
 {
   Q_OBJECT
 
 public:
-  NickEdit(QWidget *parent = 0);
+  SLineEdit(QWidget *parent = 0);
+  SLineEdit(const QString &contents, QWidget *parent = 0);
+
+protected:
+  void contextMenuEvent(QContextMenuEvent *event);
 
 private slots:
-  void editingFinished();
-  void notice(const ChannelNotice &notice);
-  void settingsChanged(const QString &key, const QVariant &value);
-  void textChanged();
-
-private:
-  void makeRed(bool red = true);
-  void spinner(bool start = true);
-
-  QLabel *m_error;    ///< Виджет для отображения ошибки.
-  Spinner *m_spinner; ///< Отображает состояние подключения.
+  inline void deleteSelected() { if (!hasSelectedText()) return; del(); }
 };
 
-#endif /* NICKEDIT_H_ */
+#endif /* SLINEEDIT_H_ */

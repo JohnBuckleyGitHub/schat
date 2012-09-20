@@ -23,10 +23,10 @@
 #include <QLabel>
 #include <QToolBar>
 
-#include "arora/lineedit.h"
 #include "ChatCore.h"
 #include "ChatNotify.h"
 #include "sglobal.h"
+#include "ui/SLineEdit.h"
 #include "ui/tabs/FindWidget.h"
 
 FindWidget::FindWidget(QWidget *parent)
@@ -40,7 +40,7 @@ FindWidget::FindWidget(QWidget *parent)
   QLabel *label = new QLabel(this);
   label->setPixmap(QPixmap(LS(":/images/search.png")));
 
-  m_editFind = new LineEdit(this);
+  m_editFind = new SLineEdit(this);
   m_editFind->addWidget(label, LineEdit::LeftSide);
   m_editFind->setWidgetSpacing(3);
 

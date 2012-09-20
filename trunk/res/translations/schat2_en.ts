@@ -126,19 +126,19 @@
     <name>FindWidget</name>
     <message>
         <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="48"/>
-        <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="144"/>
+        <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="151"/>
         <source>Previous</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="49"/>
-        <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="143"/>
+        <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="150"/>
         <source>Next</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="51"/>
-        <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="145"/>
+        <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="152"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
@@ -427,6 +427,34 @@
     <message>
         <location filename="../../src/schat2/ui/tabs/ProgressTab.cpp" line="55"/>
         <source>Connecting</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SLineEdit</name>
+    <message>
+        <location filename="../../src/schat2/ui/SLineEdit.cpp" line="46"/>
+        <source>Cut</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/SLineEdit.cpp" line="49"/>
+        <source>Copy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/SLineEdit.cpp" line="52"/>
+        <source>Paste</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/SLineEdit.cpp" line="55"/>
+        <source>Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/SLineEdit.cpp" line="61"/>
+        <source>Select All</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
