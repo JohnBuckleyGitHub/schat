@@ -41,7 +41,6 @@ public:
     out["Site"]     = "http://wiki.schat.me/Plugin/Idle";
     out["Desc"]     = "Detect idle time to automatically set Away status";
     out["Desc/ru"]  = "Обнаружение времени простоя для автоматической установки статуса Отсутствую";
-    out["Required"] = "1.99.34";
 
     return out;
   }

@@ -41,7 +41,6 @@ public:
     out["Site"]     = "http://wiki.schat.me/Plugin/Emoticons";
     out["Desc"]     = "Adds support for graphical emoticons";
     out["Desc/ru"]  = "Добавляет поддержку графических смайликов";
-    out["Required"] = "1.99.34";
 
     return out;
   }

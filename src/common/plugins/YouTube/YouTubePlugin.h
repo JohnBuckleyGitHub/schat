@@ -41,7 +41,6 @@ public:
     out["Site"]     = "http://wiki.schat.me/Plugin/YouTube";
     out["Desc"]     = "Adds support for embedding YouTube videos in messages";
     out["Desc/ru"]  = "Добавляет поддержку встраивания видео c YouTube в сообщения";
-    out["Required"] = "1.99.40";
 
     return out;
   }

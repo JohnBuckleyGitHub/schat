@@ -41,7 +41,6 @@ public:
     out["Site"]     = "http://wiki.schat.me/Plugin/Cache";
     out["Desc"]     = "Improves performance and reduces network traffic";
     out["Desc/ru"]  = "Повышает производительность и уменьшает сетевой трафик";
-    out["Required"] = "1.99.36";
 
     return out;
   }

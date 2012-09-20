@@ -128,14 +128,8 @@ bool Plugins::check(PluginItem *plugin)
   if (m_type != plugin->header().value(LS("Type")).toString())
     return false;
 
-  Ver required = Ver(plugin->header().value(LS("Required")).toString());
-
-  // Отклоняем плагин если он требует более новую версию ядра чем имеется.
-  if (Ver::current() < required)
-    return false;
-
-  // Отклоняем плагин если он требует версию, ниже разрещённой.
-  if (Ver(m_min) > required)
+  // Отключаем плагин если требуемая версия не совместима.
+  if (Ver::current() != Ver(plugin->header().value(LS("Required")).toString()))
     return false;
 
   return true;
