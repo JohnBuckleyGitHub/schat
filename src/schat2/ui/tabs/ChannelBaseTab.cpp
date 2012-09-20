@@ -62,6 +62,7 @@ ChannelBaseTab::ChannelBaseTab(ClientChannel channel, const QString &type, TabWi
   connect(ChatAlerts::i(), SIGNAL(alert(const Alert &)), SLOT(alert(const Alert &)));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
   connect(m_findWidget, SIGNAL(find(QString,bool)), SLOT(find(QString,bool)));
+  connect(m_findWidget, SIGNAL(hidden()), SLOT(hidden()));
 }
 
 
@@ -151,6 +152,12 @@ void ChannelBaseTab::find(const QString &text, bool forward)
 
   if (!m_findWidget->hasFocus())
     m_findWidget->setFocus();
+}
+
+
+void ChannelBaseTab::hidden()
+{
+  m_chatView->find(QString());
 }
 
 

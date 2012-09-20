@@ -35,6 +35,7 @@ public:
 
 signals:
   void find(const QString &text, bool forward);
+  void hidden();
 
 public slots:
   void find();

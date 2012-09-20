@@ -112,6 +112,8 @@ void FindWidget::actionTriggered(QAction *action)
 
   if (action == m_close) {
     hide();
+    emit hidden();
+
     ChatNotify::start(Notify::SetSendFocus);
   }
   else if (action == m_next)
@@ -136,6 +138,8 @@ bool FindWidget::eventFilter(QObject *watched, QEvent *event)
     }
     else if (e->key() == Qt::Key_Escape) {
       hide();
+      emit hidden();
+
       ChatNotify::start(Notify::SetSendFocus);
       return true;
     }
