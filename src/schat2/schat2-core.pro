@@ -85,6 +85,7 @@ HEADERS = \
     ui/profile/ProfileLayout.h \
     ui/profile/TextField.h \
     ui/SendWidget.h \
+    ui/SLineEdit.h \
     ui/SoundButton.h \
     ui/Spinner.h \
     ui/StatusBar.h \
@@ -168,6 +169,7 @@ SOURCES = \
     ui/profile/ProfileLayout.cpp \
     ui/profile/TextField.cpp \
     ui/SendWidget.cpp \
+    ui/SLineEdit.cpp \
     ui/SoundButton.cpp \
     ui/Spinner.cpp \
     ui/StatusBar.cpp \

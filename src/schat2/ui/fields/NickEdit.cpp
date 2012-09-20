@@ -30,7 +30,7 @@
 #include "ui/Spinner.h"
 
 NickEdit::NickEdit(QWidget *parent)
-  : LineEdit(parent)
+  : SLineEdit(parent)
 {
   setText(ChatClient::io()->nick());
   setMaxLength(Channel::MaxNameLength);
