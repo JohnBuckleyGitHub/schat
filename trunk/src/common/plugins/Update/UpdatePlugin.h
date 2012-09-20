@@ -41,7 +41,6 @@ public:
     out["Site"]     = "http://wiki.schat.me/Plugin/Update";
     out["Desc"]     = "Automatically downloads and installs updates";
     out["Desc/ru"]  = "Автоматически загружает и устанавливает обновления";
-    out["Required"] = "1.99.38";
 
     return out;
   }

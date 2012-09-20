@@ -41,7 +41,6 @@ public:
     out["Site"]     = "http://wiki.schat.me/Plugin/Profile";
     out["Desc"]     = "Adds support for additional profile fields";
     out["Desc/ru"]  = "Добавляет поддержку дополнительных полей профиля";
-    out["Required"] = "1.99.34";
 
     return out;
   }

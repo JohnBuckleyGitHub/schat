@@ -42,7 +42,6 @@ public:
     out["Site"]     = "http://wiki.schat.me/Plugin/SpellChecker";
     out["Desc"]     = "Automatic spell checking";
     out["Desc/ru"]  = "Автоматическая проверка орфографии";
-    out["Required"] = "1.99.37";
 
     return out;
   }

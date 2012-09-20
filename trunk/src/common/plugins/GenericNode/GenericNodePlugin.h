@@ -41,7 +41,6 @@ public:
     out["Type"]     = "server";
     out["Site"]     = "http://wiki.schat.me/Plugin/GenericNode";
     out["Desc"]     = "Standard core of server";
-    out["Required"] = "1.99.36";
 
     return out;
   }

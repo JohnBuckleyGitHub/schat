@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -40,15 +40,15 @@ public:
   virtual QVariantMap header() const
   {
     QVariantMap out;
-    out["Author"]   = "IMPOMEZIA";       // Автор плагина.
-    out["Id"]       = "";                // Машинное имя плагина.
-    out["Name"]     = "";                // Имя плагина.
-    out["Version"]  = "0.1.0";           // Версия плагина.
-    out["Type"]     = "chat";            // Тип приложения для которого предназначается плагин, например "chat", "bot" или "server".
-    out["Site"]     = "http://schat.me"; // Домашняя страница плагина.
-    out["Desc"]     = "";                // Описание плагина.
-    out["Required"] = "1.99.7";          // Минимальная версия чата необходимая для работы плагина.
-    out["Enabled"]  = true;              // \b true если плагин по умолчанию включен.
+    out["Author"]   = "IMPOMEZIA";        // Автор плагина.
+    out["Id"]       = "";                 // Машинное имя плагина.
+    out["Name"]     = "";                 // Имя плагина.
+    out["Version"]  = "0.1.0";            // Версия плагина.
+    out["Type"]     = "chat";             // Тип приложения для которого предназначается плагин, например "chat", "bot" или "server".
+    out["Site"]     = "https://schat.me"; // Домашняя страница плагина.
+    out["Desc"]     = "";                 // Описание плагина.
+    out["Required"] = SCHAT_VERSION;      // Версия чата необходимая для работы плагина.
+    out["Enabled"]  = true;               // \b true если плагин по умолчанию включен.
 
     return out;
   }

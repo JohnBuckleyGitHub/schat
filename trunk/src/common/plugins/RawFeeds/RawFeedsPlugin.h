@@ -41,7 +41,6 @@ public:
     out["Site"]     = "http://wiki.schat.me/Plugin/RawFeeds";
     out["Desc"]     = "Debug plugin to access the raw data feeds";
     out["Desc/ru"]  = "Отладочный плагин для доступа к данным фидов";
-    out["Required"] = "1.99.41";
 
     return out;
   }

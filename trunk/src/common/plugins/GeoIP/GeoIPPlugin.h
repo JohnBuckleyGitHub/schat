@@ -41,7 +41,6 @@ public:
     out["Type"]     = "server";
     out["Site"]     = "http://wiki.schat.me/Plugin/GeoIP";
     out["Desc"]     = "Geo IP Support";
-    out["Required"] = "1.99.27";
 
     return out;
   }
