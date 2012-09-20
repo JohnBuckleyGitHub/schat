@@ -52,12 +52,19 @@ FindWidget::FindWidget(QWidget *parent)
 
   QHBoxLayout *mainLay = new QHBoxLayout(this);
   mainLay->addWidget(m_toolBar);
+
+# if defined(Q_OS_MACX)
+  mainLay->setMargin(0);
+# else
   mainLay->setMargin(4);
+# endif
 
 # if defined(Q_OS_WIN32)
   setObjectName(LS("FindWidget"));
   setStyleSheet(QString("FindWidget { background-color:%1; }").arg(palette().color(QPalette::Window).name()));
 # endif
+
+  setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
 
   connect(m_editFind, SIGNAL(returnPressed()), SLOT(find()));
   connect(m_editFind, SIGNAL(textChanged(QString)), SLOT(find()));
