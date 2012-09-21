@@ -109,6 +109,26 @@ SettingsPage* NetworkPageCreator::page(QWidget *parent)
 }
 
 
+AlertsPage::AlertsPage(QWidget *parent)
+  : SettingsPage(SCHAT_ICON(Bell), LS("alerts"), parent)
+{
+  m_label = new QLabel(this);
+
+  m_mainLayout = new QVBoxLayout();
+  m_mainLayout->addWidget(m_label);
+
+  setupLayout();
+  retranslateUi();
+}
+
+
+void AlertsPage::retranslateUi()
+{
+  m_name = tr("Notifications");
+  m_label->setText(LS("<b>") + m_name + LS("</b>"));
+}
+
+
 LocalePage::LocalePage(QWidget *parent)
   : SettingsPage(SCHAT_ICON(Locale), LS("locale"), parent)
 {

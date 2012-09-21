@@ -36,18 +36,18 @@
 <context>
     <name>SendFilePluginImpl</name>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="131"/>
+        <location filename="../../SendFilePlugin.cpp" line="133"/>
         <source>Open</source>
         <translation>Открыть</translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="295"/>
-        <location filename="../../SendFilePlugin.cpp" line="386"/>
+        <location filename="../../SendFilePlugin.cpp" line="297"/>
+        <location filename="../../SendFilePlugin.cpp" line="388"/>
         <source>%1 of %2</source>
         <translation>%1 из %2</translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="623"/>
+        <location filename="../../SendFilePlugin.cpp" line="646"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>
@@ -55,47 +55,47 @@
 <context>
     <name>SendFileTr</name>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="70"/>
+        <location filename="../../SendFilePlugin.cpp" line="72"/>
         <source>Waiting</source>
         <translation>Ожидание</translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="71"/>
+        <location filename="../../SendFilePlugin.cpp" line="73"/>
         <source>Cancel</source>
         <translation>Отменить</translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="72"/>
+        <location filename="../../SendFilePlugin.cpp" line="74"/>
         <source>Cancelled</source>
         <translation>Отменено</translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="73"/>
+        <location filename="../../SendFilePlugin.cpp" line="75"/>
         <source>Save as</source>
         <translation>Сохранить как</translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="74"/>
+        <location filename="../../SendFilePlugin.cpp" line="76"/>
         <source>Connecting...</source>
         <translation>Подключение...</translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="75"/>
+        <location filename="../../SendFilePlugin.cpp" line="77"/>
         <source>File sent</source>
         <translation>Файл отправлен</translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="76"/>
+        <location filename="../../SendFilePlugin.cpp" line="78"/>
         <source>File received.</source>
         <translation>Файл получен.</translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="77"/>
+        <location filename="../../SendFilePlugin.cpp" line="79"/>
         <source>Show in folder</source>
         <translation>Показать в папке</translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="78"/>
+        <location filename="../../SendFilePlugin.cpp" line="80"/>
         <source>Open file</source>
         <translation>Открыть файл</translation>
     </message>

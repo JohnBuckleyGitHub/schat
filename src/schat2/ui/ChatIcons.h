@@ -80,7 +80,8 @@ public:
     Locale             = 0x4C6F, ///< "Lo"
     Computer           = 0x4370, ///< "Cp"
     Reload             = 0x526C, ///< "Rl"
-    Plugin             = 0x506C  ///< "Pl"
+    Plugin             = 0x506C, ///< "Pl"
+    Bell               = 0x4265  ///< "Be"
   };
 
   /// Опции получения иконки канала.

@@ -91,6 +91,31 @@ public:
 
 
 /*!
+ * Страница настройки уведомлений.
+ */
+class AlertsPage : public SettingsPage
+{
+  Q_OBJECT
+
+public:
+  AlertsPage(QWidget *parent = 0);
+
+private:
+  void retranslateUi();
+
+  QLabel *m_label;
+};
+
+
+class AlertsPageCreator : public SettingsPageCreator
+{
+public:
+  inline AlertsPageCreator() : SettingsPageCreator(2100) {}
+  inline SettingsPage* page(QWidget *parent = 0)         { return new AlertsPage(parent); }
+};
+
+
+/*!
  * Страница настройки языка.
  */
 class LocalePage : public SettingsPage
