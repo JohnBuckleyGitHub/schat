@@ -123,7 +123,7 @@ Section
 
   SetOutPath "$INSTDIR\www\js"
   File "${SCHAT_SOURCE}\www\js\html5.js"
-  File "${SCHAT_SOURCE}\www\js\jquery-1.8.1.min.js"
+  File "${SCHAT_SOURCE}\www\js\jquery-1.8.2.min.js"
   File "${SCHAT_SOURCE}\www\js\main.js"
   File "${SCHAT_SOURCE}\www\js\result.js"
 
@@ -187,7 +187,7 @@ Section "Uninstall"
   Delete "$INSTDIR\www\img\logo.png"
   Delete "$INSTDIR\www\img\providers.png"
   Delete "$INSTDIR\www\js\html5.js"
-  Delete "$INSTDIR\www\js\jquery-1.8.1.min.js"
+  Delete "$INSTDIR\www\js\jquery-1.8.2.min.js"
   Delete "$INSTDIR\www\js\main.js"
   Delete "$INSTDIR\www\js\result.js"
   Delete "$INSTDIR\www\receiver.html"
