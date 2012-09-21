@@ -136,7 +136,9 @@ var SendFileUtils = {
  */
 Messages.addFileMessage = function(json)
 {
-  var id = json.Id;
+  if (document.getElementById(json.Id) !== null)
+    return;
+
   var imageId = SimpleChat.randomId();
 
   var html = '<div class="container ' + json.Type + '-type" id="' + json.Id + '" data-time="' + json.Date + '">';
@@ -148,6 +150,7 @@ Messages.addFileMessage = function(json)
   html += '<div class="file-progress"><div class="bar"></div></div><div style="clear:both;"></div>';
   html += '</div></div>';
 
+  var id = json.Id;
   Messages.addHintedRawMessage(html, json.Hint, id);
   if (json.WeakId === false)
     ChatView.setLastMessage(json.Date);
@@ -164,8 +167,10 @@ Messages.upgradeFileMessage = function(json) {
   if (document.getElementById(json.InternalId) === null)
     return;
 
-  $('#' + json.InternalId).attr('id', json.Id);
-  $('#' + json.Id + ' .btn-file-cancel').attr('href', 'chat-sendfile:cancel/' + json.Id);
+  if (document.getElementById(json.Id) === null) {
+    $('#' + json.InternalId).attr('id', json.Id);
+    $('#' + json.Id + ' .btn-file-cancel').attr('href', 'chat-sendfile:cancel/' + json.Id);
+  }
 
   DateTime.update(json);
   ChatView.setLastMessage(json.Date);
