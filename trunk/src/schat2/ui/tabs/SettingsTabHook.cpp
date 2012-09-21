@@ -58,6 +58,7 @@ SettingsTabHook::SettingsTabHook(QObject *parent)
 
   add(new ProfilePageCreator());
   add(new NetworkPageCreator());
+  add(new AlertsPageCreator());
   add(new PluginsPageCreator());
   add(new LocalePageCreator());
 }

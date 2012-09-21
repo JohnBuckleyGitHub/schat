@@ -49,6 +49,14 @@
     </message>
 </context>
 <context>
+    <name>AlertsPage</name>
+    <message>
+        <location filename="../../src/schat2/hooks/SettingsTabImpl.cpp" line="127"/>
+        <source>Notifications</source>
+        <translation>Уведомления</translation>
+    </message>
+</context>
+<context>
     <name>ChannelMenuImpl</name>
     <message>
         <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="51"/>
@@ -126,19 +134,19 @@
     <name>FindWidget</name>
     <message>
         <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="48"/>
-        <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="151"/>
+        <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="155"/>
         <source>Previous</source>
         <translation>Найти предыдущее</translation>
     </message>
     <message>
         <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="49"/>
-        <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="150"/>
+        <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="154"/>
         <source>Next</source>
         <translation>Найти далее</translation>
     </message>
     <message>
         <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="51"/>
-        <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="152"/>
+        <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="156"/>
         <source>Close</source>
         <translation>Закрыть</translation>
     </message>
@@ -260,7 +268,7 @@
 <context>
     <name>LocalePage</name>
     <message>
-        <location filename="../../src/schat2/hooks/SettingsTabImpl.cpp" line="136"/>
+        <location filename="../../src/schat2/hooks/SettingsTabImpl.cpp" line="156"/>
         <source>Language</source>
         <translation>Язык</translation>
     </message>
