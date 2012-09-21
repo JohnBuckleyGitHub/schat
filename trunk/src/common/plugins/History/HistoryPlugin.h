@@ -43,7 +43,6 @@ public:
     out["Site"]     = "http://wiki.schat.me/Plugin/History";
     out["Desc"]     = "Adds support for access to the message history";
     out["Desc/ru"]  = "Добавляет поддержку доступа к истории сообщений";
-    out["Required"] = "1.99.41";
 
     return out;
   }
