@@ -24,31 +24,23 @@
 
 #include "schat.h"
 
+class AlertType;
+
 /*!
  * Базовый класс для оповещений чата.
  */
 class SCHAT_CORE_EXPORT Alert
 {
 public:
-  /// Опции оповещения.
-  enum Option {
-    NoOptions = 0, ///< Нет опций.
-    Tab       = 1, ///< Оповещение меняет состояние вкладки.
-    Global    = 2  ///< Оповещение запускает глобальное оповещение.
-  };
-
-  Q_DECLARE_FLAGS(Options, Option)
-
-  Alert(const QString &type, Options options = NoOptions);
-  Alert(const QString &type, const QByteArray &id, qint64 date, Options options = NoOptions);
-  Alert(const QString &type, qint64 date, Options options = NoOptions);
+  Alert(const QString &type);
+  Alert(const QString &type, const QByteArray &id, qint64 date);
+  Alert(const QString &type, qint64 date);
   virtual ~Alert() {}
 
   inline const QByteArray id() const       { return m_id; }
   inline const QByteArray& tab() const     { return m_tab; }
   inline const QString& type() const       { return m_type; }
   inline const QVariantMap& data() const   { return m_data; }
-  inline Options options() const           { return m_options; }
   inline qint64 date() const               { return m_date; }
 
   inline QVariantMap& data()               { return m_data; }
@@ -56,15 +48,12 @@ public:
   void setTab(const QByteArray &sender, const QByteArray &dest);
 
 protected:
-  Options m_options;   ///< Опции оповещения.
   QByteArray m_id;     ///< Уникальный идентификатор оповещения.
   QByteArray m_tab;    ///< Идентификатор вкладки канала.
   qint64 m_date;       ///< Отметка времени.
   QString m_type;      ///< Тип оповещения.
   QVariantMap m_data;  ///< JSON данные.
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(Alert::Options)
 
 
 class SCHAT_CORE_EXPORT ChatAlerts : public QObject
@@ -73,15 +62,16 @@ class SCHAT_CORE_EXPORT ChatAlerts : public QObject
 
 public:
   ChatAlerts(QObject *parent = 0);
+  ~ChatAlerts();
   inline static bool hasAlerts()                  { return !m_self->m_channels.isEmpty(); }
   inline static ChatAlerts *i()                   { return m_self; }
   inline static int count(const QByteArray &id)   { return m_count.value(id); }
   inline static int total()                       { return m_alerts; }
   inline static QList<QByteArray>& channels()     { return m_channels; }
+  static bool add(AlertType *type);
+  static bool start(const Alert &alert);
   static QByteArray last()                        { if (!m_channels.isEmpty()) return m_channels.first(); return QByteArray(); }
-  static void add(const QByteArray &id);
   static void remove(const QByteArray &id);
-  static void start(const Alert &alert);
 
 signals:
   void alert(bool alert);
@@ -93,10 +83,13 @@ private slots:
   void online();
 
 private:
-  static ChatAlerts *m_self;             ///< Указатель на себя.
-  static int m_alerts;                   ///< Количество непрочитанных уведомлений.
-  static QHash<QByteArray, int> m_count; ///< Количество непрочитанных уведомлений для каждого канала.
-  static QList<QByteArray> m_channels;   ///< Сортированный список каналов для которых активно глобальное уведомление о новых сообщениях.
+  static void add(const QByteArray &id);
+
+  QMap<QString, AlertType*> m_types;        ///< Таблица типов уведомлений.
+  static ChatAlerts *m_self;                ///< Указатель на себя.
+  static int m_alerts;                      ///< Количество непрочитанных уведомлений.
+  static QHash<QByteArray, int> m_count;    ///< Количество непрочитанных уведомлений для каждого канала.
+  static QList<QByteArray> m_channels;      ///< Сортированный список каналов для которых активно глобальное уведомление о новых сообщениях.
 };
 
 #endif /* CHATALERTS_H_ */

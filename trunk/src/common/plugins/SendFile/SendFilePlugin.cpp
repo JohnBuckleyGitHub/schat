@@ -614,7 +614,7 @@ void SendFilePluginImpl::incomingFile(const MessagePacket &packet)
   TabWidget::add(message);
 
   if (packet->status() == Notice::OK) {
-    Alert alert = Alert(LS("file"), packet->id(), packet->date(), Alert::Tab | Alert::Global);
+    Alert alert = Alert(LS("file"), packet->id(), packet->date());
     alert.setTab(packet->sender(), packet->dest());
     ChatAlerts::start(alert);
   }

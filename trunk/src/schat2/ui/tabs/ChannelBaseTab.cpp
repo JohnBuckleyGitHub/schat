@@ -59,7 +59,7 @@ ChannelBaseTab::ChannelBaseTab(ClientChannel channel, const QString &type, TabWi
   connect(ChatClient::channels(), SIGNAL(channel(const ChannelInfo &)), SLOT(channel(const ChannelInfo &)));
   connect(ChatClient::channels(), SIGNAL(part(const QByteArray &, const QByteArray &)), SLOT(part(const QByteArray &, const QByteArray &)));
   connect(ChatClient::i(), SIGNAL(offline()), SLOT(offline()));
-  connect(ChatAlerts::i(), SIGNAL(alert(const Alert &)), SLOT(alert(const Alert &)));
+  connect(ChatAlerts::i(), SIGNAL(countChanged(int,int,QByteArray)), SLOT(countChanged(int,int,QByteArray)));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
   connect(m_findWidget, SIGNAL(find(QString,bool)), SLOT(find(QString,bool)));
   connect(m_findWidget, SIGNAL(hidden()), SLOT(hidden()));
@@ -111,26 +111,6 @@ void ChannelBaseTab::stopAlert()
 }
 
 
-/*!
- * Обработка новых уведомлений.
- *
- * В случае если уведомление предназначено для этой вкладки и окно не активно, запускаеся визуальное оповещение.
- */
-void ChannelBaseTab::alert(const Alert &alert)
-{
-  if (!alert.options().testFlag(Alert::Tab) || alert.tab() != id())
-    return;
-
-  if (TabWidget::isActive(alert.tab()))
-    return;
-
-  if (alert.options().testFlag(Alert::Global))
-    ChatAlerts::add(id());
-
-  setIcon(channelIcon());
-}
-
-
 void ChannelBaseTab::channel(const ChannelInfo &info)
 {
   if (info.id() != id())
@@ -140,6 +120,16 @@ void ChannelBaseTab::channel(const ChannelInfo &info)
 
   if (!m_online)
     m_online = true;
+}
+
+
+void ChannelBaseTab::countChanged(int total, int count, const QByteArray &channel)
+{
+  Q_UNUSED(total)
+  Q_UNUSED(count)
+
+  if (id() == channel)
+    setIcon(channelIcon());
 }
 
 
