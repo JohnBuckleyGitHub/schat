@@ -27,6 +27,7 @@ win32:RC_FILE = schat2-core.rc
 
 HEADERS = \
     actions/MenuBuilder.h \
+    alerts/AlertType.h \
     alerts/MessageAlert.h \
     arora/lineedit.h \
     arora/lineedit_p.h \
@@ -113,6 +114,7 @@ HEADERS = \
 
 SOURCES = \
     actions/MenuBuilder.cpp \
+    alerts/AlertType.cpp \
     alerts/MessageAlert.cpp \
     arora/lineedit.cpp \
     AuthBridge.cpp \
