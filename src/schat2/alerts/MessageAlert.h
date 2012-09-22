@@ -19,6 +19,7 @@
 #ifndef MESSAGEALERT_H_
 #define MESSAGEALERT_H_
 
+#include "alerts/AlertType.h"
 #include "ChatAlerts.h"
 
 class ChannelMessage;
@@ -27,6 +28,13 @@ class MessageAlert : public Alert
 {
 public:
   MessageAlert(const ChannelMessage &message);
+};
+
+
+class MessageAlertType : public AlertType
+{
+public:
+  MessageAlertType(const QString &type, int weight);
 };
 
 #endif /* MESSAGEALERT_H_ */

@@ -22,7 +22,6 @@
 #include "Channel.h"
 #include "ui/tabs/AbstractTab.h"
 
-class Alert;
 class ChannelInfo;
 class ChatView;
 class FindWidget;
@@ -50,8 +49,8 @@ public:
   void stopAlert();
 
 private slots:
-  void alert(const Alert &alert);
   void channel(const ChannelInfo &info);
+  void countChanged(int total, int count, const QByteArray &channel);
   void find(const QString &text, bool forward = true);
   void hidden();
   void notify(const Notify &notify);

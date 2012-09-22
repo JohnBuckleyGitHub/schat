@@ -23,7 +23,7 @@
 #include "sglobal.h"
 
 MessageAlert::MessageAlert(const ChannelMessage &message)
-  : Alert(LS("public"), message.packet()->id(), message.packet()->date(), Tab | Global)
+  : Alert(LS("public"), message.packet()->id(), message.packet()->date())
 {
   m_tab = message.tab();
 
@@ -31,4 +31,14 @@ MessageAlert::MessageAlert(const ChannelMessage &message)
     m_type = LS("private");
 
   m_data[LS("Message")] = message.data();
+}
+
+
+MessageAlertType::MessageAlertType(const QString &type, int weight)
+  : AlertType(type, weight)
+{
+  if (type == LS("private"))
+    m_defaults[LS("popup")] = true;
+
+  m_defaults[LS("tray")]  = true;
 }
