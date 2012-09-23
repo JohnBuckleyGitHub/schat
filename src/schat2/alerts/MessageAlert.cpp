@@ -37,8 +37,21 @@ MessageAlert::MessageAlert(const ChannelMessage &message)
 MessageAlertType::MessageAlertType(const QString &type, int weight)
   : AlertType(type, weight)
 {
-  if (type == LS("private"))
-    m_defaults[LS("popup")] = true;
-
+  m_defaults[LS("popup")] = (type == LS("private"));
   m_defaults[LS("tray")]  = true;
+  m_defaults[LS("sound")] = QString();
+
+  if (type == LS("public"))
+    m_icon = QIcon(LS(":/images/channel.png"));
+  else
+    m_icon = QIcon(LS(":/images/balloon.png"));
+}
+
+
+QString MessageAlertType::name() const
+{
+  if (m_type == LS("public"))
+    return QObject::tr("Public message");
+  else
+    return QObject::tr("Private message");
 }

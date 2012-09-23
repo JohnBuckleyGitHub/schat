@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,26 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MESSAGEALERT_H_
-#define MESSAGEALERT_H_
+#ifndef ALERTSWIDGET_H_
+#define ALERTSWIDGET_H_
 
-#include "alerts/AlertType.h"
-#include "ChatAlerts.h"
+#include <QWidget>
 
-class ChannelMessage;
+class QComboBox;
 
-class MessageAlert : public Alert
+class AlertsWidget : public QWidget
 {
+  Q_OBJECT
+
 public:
-  MessageAlert(const ChannelMessage &message);
+  AlertsWidget(QWidget *parent = 0);
+
+private:
+  QComboBox *m_combo; ///< Комбобокс со списком уведомлений.
 };
 
-
-class MessageAlertType : public AlertType
-{
-public:
-  MessageAlertType(const QString &type, int weight);
-  QString name() const;
-};
-
-#endif /* MESSAGEALERT_H_ */
+#endif /* ALERTSWIDGET_H_ */

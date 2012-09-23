@@ -71,6 +71,7 @@ public:
   static bool add(AlertType *type);
   static bool start(const Alert &alert);
   static QByteArray last()                        { if (!m_channels.isEmpty()) return m_channels.first(); return QByteArray(); }
+  static QList<AlertType*> types();
   static void remove(const QByteArray &id);
 
 signals:

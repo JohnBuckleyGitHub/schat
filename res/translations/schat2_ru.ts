@@ -51,7 +51,7 @@
 <context>
     <name>AlertsPage</name>
     <message>
-        <location filename="../../src/schat2/hooks/SettingsTabImpl.cpp" line="127"/>
+        <location filename="../../src/schat2/hooks/SettingsTabImpl.cpp" line="134"/>
         <source>Notifications</source>
         <translation>Уведомления</translation>
     </message>
@@ -268,7 +268,7 @@
 <context>
     <name>LocalePage</name>
     <message>
-        <location filename="../../src/schat2/hooks/SettingsTabImpl.cpp" line="156"/>
+        <location filename="../../src/schat2/hooks/SettingsTabImpl.cpp" line="163"/>
         <source>Language</source>
         <translation>Язык</translation>
     </message>
@@ -312,7 +312,7 @@
 <context>
     <name>NetworkPage</name>
     <message>
-        <location filename="../../src/schat2/hooks/SettingsTabImpl.cpp" line="101"/>
+        <location filename="../../src/schat2/hooks/SettingsTabImpl.cpp" line="102"/>
         <source>Network</source>
         <translation>Сеть</translation>
     </message>
@@ -398,17 +398,17 @@
 <context>
     <name>ProfilePage</name>
     <message>
-        <location filename="../../src/schat2/hooks/SettingsTabImpl.cpp" line="64"/>
+        <location filename="../../src/schat2/hooks/SettingsTabImpl.cpp" line="65"/>
         <source>Profile</source>
         <translation>Профиль</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/hooks/SettingsTabImpl.cpp" line="67"/>
+        <location filename="../../src/schat2/hooks/SettingsTabImpl.cpp" line="68"/>
         <source>Nick:</source>
         <translation>Ник:</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/hooks/SettingsTabImpl.cpp" line="68"/>
+        <location filename="../../src/schat2/hooks/SettingsTabImpl.cpp" line="69"/>
         <source>Gender:</source>
         <translation>Пол:</translation>
     </message>
@@ -427,6 +427,19 @@
         <location filename="../../src/schat2/ui/tabs/ProgressTab.cpp" line="55"/>
         <source>Connecting</source>
         <translation>Подключение</translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="54"/>
+        <source>Public message</source>
+        <translation>Публичное сообщение</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="56"/>
+        <source>Private message</source>
+        <translation>Личное сообщение</translation>
     </message>
 </context>
 <context>

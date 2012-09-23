@@ -21,6 +21,7 @@
 
 #include "ui/tabs/SettingsTabHook.h"
 
+class AlertsWidget;
 class GenderField;
 class LanguageField;
 class NetworkWidget;
@@ -103,6 +104,7 @@ public:
 private:
   void retranslateUi();
 
+  AlertsWidget *m_alertsWidget;
   QLabel *m_label;
 };
 

@@ -36,6 +36,7 @@ public:
   inline const QString& type() const  { return m_type; }
   inline int weight() const           { return m_weight; }
   inline QString sound() const        { return value(QLatin1String("sound"), QString()).toString(); }
+  inline QStringList supports() const { return m_defaults.keys(); }
   inline virtual QString name() const { return m_type; }
   QVariant value(const QString &key, const QVariant &defaultValue = QVariant()) const;
 
