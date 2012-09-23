@@ -20,13 +20,14 @@
 #include <QHBoxLayout>
 #include <QToolButton>
 
+#include "alerts/AlertsWidget.h"
 #include "hooks/SettingsTabImpl.h"
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
-#include "ui/fields/LanguageField.h"
-#include "ui/network/NetworkWidget.h"
 #include "ui/fields/GenderField.h"
+#include "ui/fields/LanguageField.h"
 #include "ui/fields/NickEdit.h"
+#include "ui/network/NetworkWidget.h"
 #include "ui/profile/ProfileLayout.h"
 
 ProfilePage::ProfilePage(QWidget *parent)
@@ -113,9 +114,15 @@ AlertsPage::AlertsPage(QWidget *parent)
   : SettingsPage(SCHAT_ICON(Bell), LS("alerts"), parent)
 {
   m_label = new QLabel(this);
+  m_alertsWidget = new AlertsWidget(this);
+
+  QVBoxLayout *layout = new QVBoxLayout();
+  layout->addWidget(m_alertsWidget);
+  layout->setContentsMargins(10, 0, 3, 0);
 
   m_mainLayout = new QVBoxLayout();
   m_mainLayout->addWidget(m_label);
+  m_mainLayout->addLayout(layout);
 
   setupLayout();
   retranslateUi();

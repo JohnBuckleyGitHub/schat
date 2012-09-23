@@ -27,6 +27,7 @@ win32:RC_FILE = schat2-core.rc
 
 HEADERS = \
     actions/MenuBuilder.h \
+    alerts/AlertsWidget.h \
     alerts/AlertType.h \
     alerts/MessageAlert.h \
     arora/lineedit.h \
@@ -114,6 +115,7 @@ HEADERS = \
 
 SOURCES = \
     actions/MenuBuilder.cpp \
+    alerts/AlertsWidget.cpp \
     alerts/AlertType.cpp \
     alerts/MessageAlert.cpp \
     arora/lineedit.cpp \

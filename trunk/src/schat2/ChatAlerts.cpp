@@ -123,6 +123,18 @@ bool ChatAlerts::start(const Alert &alert)
 }
 
 
+QList<AlertType*> ChatAlerts::types()
+{
+  QMap<int, AlertType*> map;
+
+  foreach (AlertType *type, m_self->m_types) {
+    map[type->weight()] = type;
+  }
+
+  return map.values();
+}
+
+
 /*!
  * Удаление глобального уведомления для канала.
  */

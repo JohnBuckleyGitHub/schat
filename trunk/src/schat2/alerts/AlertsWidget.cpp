@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,27 +15,24 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#include <QComboBox>
+#include <QVBoxLayout>
 
-#ifndef MESSAGEALERT_H_
-#define MESSAGEALERT_H_
-
+#include "alerts/AlertsWidget.h"
 #include "alerts/AlertType.h"
 #include "ChatAlerts.h"
 
-class ChannelMessage;
-
-class MessageAlert : public Alert
+AlertsWidget::AlertsWidget(QWidget *parent)
+  : QWidget(parent)
 {
-public:
-  MessageAlert(const ChannelMessage &message);
-};
+  m_combo = new QComboBox(this);
 
+  QVBoxLayout *layout = new QVBoxLayout(this);
+  layout->addWidget(m_combo);
+  layout->setMargin(0);
 
-class MessageAlertType : public AlertType
-{
-public:
-  MessageAlertType(const QString &type, int weight);
-  QString name() const;
-};
-
-#endif /* MESSAGEALERT_H_ */
+  QList<AlertType*> types = ChatAlerts::types();
+  foreach (AlertType *type, types) {
+    m_combo->addItem(type->icon(), type->name(), type->type());
+  }
+}
