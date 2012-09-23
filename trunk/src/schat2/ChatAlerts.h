@@ -63,14 +63,15 @@ class SCHAT_CORE_EXPORT ChatAlerts : public QObject
 public:
   ChatAlerts(QObject *parent = 0);
   ~ChatAlerts();
-  inline static bool hasAlerts()                  { return !m_self->m_channels.isEmpty(); }
-  inline static ChatAlerts *i()                   { return m_self; }
-  inline static int count(const QByteArray &id)   { return m_count.value(id); }
-  inline static int total()                       { return m_alerts; }
-  inline static QList<QByteArray>& channels()     { return m_channels; }
+  inline static AlertType* type(const QString &id) { return m_self->m_types.value(id); }
+  inline static bool hasAlerts()                   { return !m_self->m_channels.isEmpty(); }
+  inline static ChatAlerts *i()                    { return m_self; }
+  inline static int count(const QByteArray &id)    { return m_count.value(id); }
+  inline static int total()                        { return m_alerts; }
+  inline static QList<QByteArray>& channels()      { return m_channels; }
   static bool add(AlertType *type);
   static bool start(const Alert &alert);
-  static QByteArray last()                        { if (!m_channels.isEmpty()) return m_channels.first(); return QByteArray(); }
+  static QByteArray last()                         { if (!m_channels.isEmpty()) return m_channels.first(); return QByteArray(); }
   static QList<AlertType*> types();
   static void remove(const QByteArray &id);
 

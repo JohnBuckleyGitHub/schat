@@ -21,7 +21,9 @@
 
 #include <QWidget>
 
+class QCheckBox;
 class QComboBox;
+class QToolBar;
 
 class AlertsWidget : public QWidget
 {
@@ -30,8 +32,29 @@ class AlertsWidget : public QWidget
 public:
   AlertsWidget(QWidget *parent = 0);
 
+protected:
+  void changeEvent(QEvent *event);
+  void showEvent(QShowEvent *event);
+
+private slots:
+  void indexChanged(int index);
+  void popupClicked(bool checked);
+  void soundClicked(bool checked);
+  void trayClicked(bool checked);
+
 private:
-  QComboBox *m_combo; ///< Комбобокс со списком уведомлений.
+  void retranslateUi();
+  void setSoundVisible(bool visible);
+  void setValue(const QString &key, bool checked);
+
+  bool m_init;            ///< \b false если виджет не был показан.
+  QAction *m_control;     ///< Управление воспроизведением звукового файла.
+  QCheckBox *m_popup;     ///< Флажок для включения всплывающих уведомлений.
+  QCheckBox *m_sound;     ///< Флажок для включения звуковых уведомлений.
+  QCheckBox *m_tray;      ///< Флажок для включения уведомлений в трее.
+  QComboBox *m_combo;     ///< Комбобокс со списком уведомлений.
+  QComboBox *m_file;      ///< Комбобокс для выбора звукового файла.
+  QToolBar *m_toolBar;    ///< Виджет для размещения виджетов управления звуком.
 };
 
 #endif /* ALERTSWIDGET_H_ */
