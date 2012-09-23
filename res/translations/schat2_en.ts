@@ -57,6 +57,29 @@
     </message>
 </context>
 <context>
+    <name>AlertsWidget</name>
+    <message>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="34"/>
+        <source>Play sound</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="43"/>
+        <source>Play</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="45"/>
+        <source>Show notification in tray</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="46"/>
+        <source>Show popup window</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ChannelMenuImpl</name>
     <message>
         <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="51"/>

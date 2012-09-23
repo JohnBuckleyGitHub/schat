@@ -14,6 +14,7 @@
   <file alias="images/channel.png">images/hypic/forum_16.png</file>
   <file alias="images/channel-alert.png">images/diagona/029.png</file>
   <file alias="images/computer.png">images/fugue/computer.png</file>
+  <file alias="images/control-play.png">images/silk/control_play.png</file>
   <file alias="images/dnd-small.png">images/fugue/cross-circle-small.png</file>
   <file alias="images/edit-clear.png">images/fugue/broom.png</file>
   <file alias="images/edit-copy.png">images/crystal/editcopy.png</file>
@@ -48,7 +49,7 @@
   <file alias="images/providers.png">www/img/providers.png</file>
   <file alias="images/quit.png">images/crystal/exit.png</file>
   <file alias="images/reload.png">images/fugue/arrow-circle-315.png</file>
-  <file alias="images/remove.png">images/diagona/101.png</file>
+  <file alias="images/remove.png">images/silk/cross.png</file>
   <file alias="images/secure.png">images/fugue/lock.png</file>
   <file alias="images/send.png">images/oxygen/go-jump-locationbar.png</file>
   <file alias="images/settings.png">images/diagona/086.png</file>
