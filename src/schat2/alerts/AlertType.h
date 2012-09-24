@@ -22,10 +22,12 @@
 #include <QIcon>
 #include <QVariant>
 
+#include "schat.h"
+
 /*!
  * Базовый класс, хранящий информацию об обработке уведомления.
  */
-class AlertType
+class SCHAT_CORE_EXPORT AlertType
 {
 public:
   AlertType(const QString &type, int weight);

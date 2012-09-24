@@ -26,6 +26,7 @@
 #include <QWebElement>
 #include <QWebFrame>
 
+#include "alerts/AlertType.h"
 #include "ChatAlerts.h"
 #include "ChatCore.h"
 #include "ChatNotify.h"
@@ -83,6 +84,25 @@ protected:
 };
 
 
+class IncomingFileAlertType : public AlertType
+{
+public:
+  IncomingFileAlertType(int weight)
+  : AlertType(LS("file"), weight)
+  {
+    m_defaults[LS("popup")] = true;
+    m_defaults[LS("tray")]  = true;
+    m_defaults[LS("sound")] = true;
+    m_icon = QIcon(LS(":/images/SendFile/attach.png"));
+  }
+
+  QString name() const
+  {
+    return QObject::tr("Incoming file");
+  }
+};
+
+
 SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
   : ChatPlugin(parent)
   , m_port(0)
@@ -100,6 +120,7 @@ SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
   ChatCore::translation()->addOther(LS("sendfile"));
   QDesktopServices::setUrlHandler(LS("chat-sendfile"), this, "openUrl");
   SettingsTabHook::add(new SendFilePageCreator(this));
+  ChatAlerts::add(new IncomingFileAlertType(400));
 
   m_thread = new SendFile::Thread(m_port);
   connect(m_thread, SIGNAL(finished(QByteArray, qint64)), SLOT(finished(QByteArray)));
