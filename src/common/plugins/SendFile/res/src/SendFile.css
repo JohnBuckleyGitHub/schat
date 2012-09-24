@@ -49,6 +49,9 @@
 
 .file-state {
   color: rgba(0, 0, 50, .5);
+}
+
+.file-state-inactive {
   display: none;
 }
 

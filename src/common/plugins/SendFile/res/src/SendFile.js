@@ -28,7 +28,7 @@ var SendFileUtils = {
     var state = $('#' + id + ' .file-state');
     state.html(Utils.tr(text));
     state.attr('data-tr', text);
-    state.show();
+    state.removeClass('file-state-inactive');
   },
 
   setStateText: function(id, text)
@@ -36,7 +36,7 @@ var SendFileUtils = {
     var state = $('#' + id + ' .file-state');
     state.html(text);
     state.removeAttr('data-tr');
-    state.show();
+    state.removeClass('file-state-inactive');
   },
 
 
@@ -72,11 +72,12 @@ var SendFileUtils = {
    */
   updateState: function(id)
   {
-    if (!$('#' + id).length)
+    if (document.getElementById(id) === null)
       return;
 
-    var role = SendFile.role(id);
-    var state = SendFile.state(id);
+    var role    = SendFile.role(id);
+    var state   = SendFile.state(id);
+    var buttons = $('#' + id + ' .file-buttons');
 
     if (state != 'U') {
       $('#' + id + ' .file-name').removeClass('file-only-name');
@@ -88,7 +89,7 @@ var SendFileUtils = {
     if (state == 'W') {
       if (role) {
         SendFileUtils.setStateText(id, SimpleChat.bytesToHuman(SendFile.size(id)));
-        $('#' + id + ' .file-buttons').append(SendFileUtils.button('saveas', id));
+        buttons.append(SendFileUtils.button('saveas', id));
       }
       else
         SendFileUtils.setStateTr(id, 'file-waiting');
@@ -116,7 +117,7 @@ var SendFileUtils = {
         SendFileUtils.setStateText(id, '<span data-tr="file-received">' + Utils.tr('file-received') + '</span> ' +
               '<a href="' + urls.dir + '" data-tr="file-show">' + Utils.tr('file-show') + '</a>');
 
-        $('#' + id + ' .file-buttons').append(SendFileUtils.button('open', id));
+        buttons.append(SendFileUtils.button('open', id));
         $('#' + id + ' .btn-file-open').attr('href', urls.file);
       }
       else
@@ -124,7 +125,7 @@ var SendFileUtils = {
     }
 
     if (state == 'W' || state == 'C' || state == 'T')
-      $('#' + id + ' .file-buttons').append(SendFileUtils.button('cancel', id));
+      buttons.append(SendFileUtils.button('cancel', id));
 
     alignChat();
   }
@@ -145,7 +146,7 @@ Messages.addFileMessage = function(json)
   html += '<div class="blocks ' + json.Direction + '">';
   html += '<div class="file-sender">' + DateTime.template(json.Date, json.Day) + Messages.nameBlock(json.Author) + '</div>';
   html += '<div class="file-icon"><img id="' + imageId + '" src="" width="16" height="16" alt="" /></div>';
-  html += '<div class="file-block"><span class="file-name file-only-name">' + json.File + '</span><br><span class="file-state">&nbsp;</span></div>';
+  html += '<div class="file-block"><span class="file-name file-only-name">' + json.File + '</span><br><span class="file-state file-state-inactive">&nbsp;</span></div>';
   html += '<div class="file-buttons btn-group"></div>';
   html += '<div class="file-progress"><div class="bar"></div></div><div style="clear:both;"></div>';
   html += '</div></div>';
