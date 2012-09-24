@@ -54,6 +54,7 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   m_splitter->addWidget(m_userView);
   m_splitter->setStretchFactor(0, 1);
   m_splitter->setStretchFactor(1, 1);
+  m_splitter->setOpaqueResize(false);
 
 //  m_userCount = SCHAT_OPTION("ChannelUserCount").toBool();
 
