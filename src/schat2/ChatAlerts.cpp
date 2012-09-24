@@ -63,6 +63,42 @@ void Alert::setTab(const QByteArray &sender, const QByteArray &dest)
 }
 
 
+class OnlineAlertType : public AlertType
+{
+public:
+  OnlineAlertType(int weight)
+  : AlertType(LS("online"), weight)
+  {
+    m_defaults[LS("popup")] = false;
+    m_defaults[LS("sound")] = false;
+    m_icon = QIcon(LS(":/images/online.png"));
+  }
+
+  QString name() const
+  {
+    return QObject::tr("Online");
+  }
+};
+
+
+class OfflineAlertType : public AlertType
+{
+public:
+  OfflineAlertType(int weight)
+  : AlertType(LS("offline"), weight)
+  {
+    m_defaults[LS("popup")] = false;
+    m_defaults[LS("sound")] = false;
+    m_icon = QIcon(LS(":/images/offline.png"));
+  }
+
+  QString name() const
+  {
+    return QObject::tr("Offline");
+  }
+};
+
+
 ChatAlerts::ChatAlerts(QObject *parent)
   : QObject(parent)
 {
@@ -70,9 +106,11 @@ ChatAlerts::ChatAlerts(QObject *parent)
 
   add(new MessageAlertType(LS("public"),  100));
   add(new MessageAlertType(LS("private"), 200));
+  add(new OnlineAlertType(1000));
+  add(new OfflineAlertType(1100));
 
   connect(ChatClient::i(), SIGNAL(offline()), SLOT(offline()));
-  connect(ChatClient::i(), SIGNAL(online()), SLOT(online()));
+  connect(ChatClient::i(), SIGNAL(ready()), SLOT(online()));
 }
 
 

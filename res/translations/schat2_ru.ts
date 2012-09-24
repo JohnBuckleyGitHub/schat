@@ -59,22 +59,26 @@
 <context>
     <name>AlertsWidget</name>
     <message>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="34"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="39"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="136"/>
         <source>Play sound</source>
         <translation>Воспроизвести звук</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="43"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="45"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="137"/>
         <source>Play</source>
         <translation>Воспроизвести</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="45"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="37"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="134"/>
         <source>Show notification in tray</source>
         <translation>Показать уведомление в трее</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="46"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="38"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="135"/>
         <source>Show popup window</source>
         <translation>Показать всплывающее окно</translation>
     </message>
@@ -463,6 +467,16 @@
         <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="56"/>
         <source>Private message</source>
         <translation>Личное сообщение</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="79"/>
+        <source>Online</source>
+        <translation>В сети</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="97"/>
+        <source>Offline</source>
+        <translation>Не в сети</translation>
     </message>
 </context>
 <context>
