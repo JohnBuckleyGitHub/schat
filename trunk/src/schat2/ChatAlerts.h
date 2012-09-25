@@ -25,6 +25,7 @@
 #include "schat.h"
 
 class AlertType;
+class ChatSettings;
 
 /*!
  * Базовый класс для оповещений чата.
@@ -83,10 +84,12 @@ signals:
 private slots:
   void offline();
   void online();
+  void settingsChanged(const QString &key, const QVariant &value);
 
 private:
   static void add(const QByteArray &id);
 
+  ChatSettings *m_settings;                 ///< Настройки чата.
   QMap<QString, AlertType*> m_types;        ///< Таблица типов уведомлений.
   static ChatAlerts *m_self;                ///< Указатель на себя.
   static int m_alerts;                      ///< Количество непрочитанных уведомлений.

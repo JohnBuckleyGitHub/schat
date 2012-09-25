@@ -20,6 +20,7 @@
 #include "alerts/MessageAlert.h"
 #include "ChatAlerts.h"
 #include "ChatCore.h"
+#include "ChatSettings.h"
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "DateTime.h"
@@ -101,6 +102,7 @@ public:
 
 ChatAlerts::ChatAlerts(QObject *parent)
   : QObject(parent)
+  , m_settings(ChatCore::settings())
 {
   m_self = this;
 
@@ -111,6 +113,7 @@ ChatAlerts::ChatAlerts(QObject *parent)
 
   connect(ChatClient::i(), SIGNAL(offline()), SLOT(offline()));
   connect(ChatClient::i(), SIGNAL(ready()), SLOT(online()));
+  connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
 }
 
 
@@ -120,12 +123,24 @@ ChatAlerts::~ChatAlerts()
 }
 
 
+/*!
+ * Добавление типа уведомления и загрузка его настроек.
+ */
 bool ChatAlerts::add(AlertType *type)
 {
   if (!type || m_self->m_types.contains(type->type()))
     return false;
 
   m_self->m_types[type->type()] = type;
+
+  QString prefix = LS("Alerts/") + type->type() + LC('.');
+  QMapIterator<QString, QVariant> i(type->defaults());
+  while (i.hasNext()) {
+    i.next();
+    m_self->m_settings->setDefault(prefix + i.key(), i.value());
+    type->options[i.key()] = m_self->m_settings->value(prefix + i.key());
+  }
+
   return true;
 }
 
@@ -201,6 +216,23 @@ void ChatAlerts::online()
 {
   Alert alert(LS("online"), ChatClient::io()->date());
   start(alert);
+}
+
+
+void ChatAlerts::settingsChanged(const QString &key, const QVariant &value)
+{
+  if (!key.startsWith(LS("Alerts/")))
+    return;
+
+  QStringList detect = key.mid(7).split(LC('.'));
+  if (detect.size() != 2)
+    return;
+
+  AlertType *type = m_types.value(detect.at(0));
+  if (!type)
+    return;
+
+  type->options[detect.at(1)] = value;
 }
 
 
