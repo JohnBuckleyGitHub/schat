@@ -32,14 +32,15 @@ class SCHAT_CORE_EXPORT AlertType
 public:
   AlertType(const QString &type, int weight);
   virtual ~AlertType() {}
-  inline bool popup() const           { return value(QLatin1String("popup"), false).toBool(); }
-  inline bool sound() const           { return value(QLatin1String("sound"), false).toBool(); }
-  inline bool tray() const            { return value(QLatin1String("tray"), false).toBool(); }
-  inline const QIcon& icon() const    { return m_icon; }
-  inline const QString& type() const  { return m_type; }
-  inline int weight() const           { return m_weight; }
-  inline QStringList supports() const { return m_defaults.keys(); }
-  inline virtual QString name() const { return m_type; }
+  inline bool popup() const                  { return value(QLatin1String("popup"), false).toBool(); }
+  inline bool sound() const                  { return value(QLatin1String("sound"), false).toBool(); }
+  inline bool tray() const                   { return value(QLatin1String("tray"),  false).toBool(); }
+  inline const QIcon& icon() const           { return m_icon; }
+  inline const QString& type() const         { return m_type; }
+  inline const QVariantMap& defaults() const { return m_defaults; }
+  inline int weight() const                  { return m_weight; }
+  inline QStringList supports() const        { return m_defaults.keys(); }
+  inline virtual QString name() const        { return m_type; }
   QVariant value(const QString &key, const QVariant &defaultValue = QVariant()) const;
 
   QVariantMap options;    ///< Выбранные опции.

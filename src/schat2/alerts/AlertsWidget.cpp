@@ -26,6 +26,8 @@
 #include "alerts/AlertsWidget.h"
 #include "alerts/AlertType.h"
 #include "ChatAlerts.h"
+#include "ChatCore.h"
+#include "ChatSettings.h"
 #include "sglobal.h"
 
 AlertsWidget::AlertsWidget(QWidget *parent)
@@ -151,5 +153,5 @@ void AlertsWidget::setValue(const QString &key, bool checked)
   if (!type)
     return;
 
-  type->options[key] = checked;
+  ChatCore::settings()->setValue(LS("Alerts/") + type->type() + LC('.') + key, checked);
 }
