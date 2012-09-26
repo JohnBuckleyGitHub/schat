@@ -27,7 +27,9 @@ MessageAlert::MessageAlert(const ChannelMessage &message)
 {
   m_tab = message.tab();
 
-  if (SimpleID::typeOf(m_tab) == SimpleID::UserId)
+  if (message.data().value(LS("Status")) == LS("referring"))
+    m_type = LS("referring");
+  else if (SimpleID::typeOf(m_tab) == SimpleID::UserId)
     m_type = LS("private");
 
   m_data[LS("Message")] = message.data();
@@ -37,7 +39,7 @@ MessageAlert::MessageAlert(const ChannelMessage &message)
 MessageAlertType::MessageAlertType(const QString &type, int weight)
   : AlertType(type, weight)
 {
-  m_defaults[LS("popup")] = (type == LS("private"));
+  m_defaults[LS("popup")] = type != LS("public");
   m_defaults[LS("tray")]  = true;
   m_defaults[LS("sound")] = true;
 
@@ -52,6 +54,8 @@ QString MessageAlertType::name() const
 {
   if (m_type == LS("public"))
     return QObject::tr("Public message");
+  else if (m_type == LS("referring"))
+    return QObject::tr("Referring to you");
   else
     return QObject::tr("Private message");
 }
