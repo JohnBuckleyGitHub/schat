@@ -24,6 +24,7 @@
 #include "hooks/MessagesImpl.h"
 #include "messages/ChannelMessage.h"
 #include "net/packets/MessageNotice.h"
+#include "net/SimpleID.h"
 #include "sglobal.h"
 #include "text/LinksFilter.h"
 #include "text/UrlFilter.h"
@@ -55,12 +56,15 @@ int MessagesImpl::read(MessagePacket packet)
     return 0;
 
   ChannelMessage message(packet);
+  if (referring(message))
+    message.data()[LS("Status")] = LS("referring");
+
   TabWidget::add(message);
 
   if (packet->status() == Notice::Found || packet->status() == Notice::Read)
     return 1;
 
-  if (packet->sender() != ChatClient::id() || !m_undelivered.contains(packet->id())) {
+  if (packet->sender() != ChatClient::id() || !m_undelivered.contains(packet->internalId())) {
     MessageAlert alert(message);
     ChatAlerts::start(alert);
   }
@@ -132,6 +136,23 @@ void MessagesImpl::ready()
   foreach (MessagePacket packet, m_undelivered) {
     client->send(packet, true);
   }
+}
+
+
+/*!
+ * Определение наличия обращения к пользователю в сообщении.
+ *
+ * \return \b true если в тексте сообщения была обнаружена ссылка с ником пользователя.
+ */
+bool MessagesImpl::referring(const ChannelMessage &message) const
+{
+  if (SimpleID::typeOf(message.tab()) != SimpleID::ChannelId)
+    return false;
+
+  if (!message.data().value(LS("Text")).toString().contains(LS("chat://channel/") + SimpleID::encode(ChatClient::id())))
+    return false;
+
+  return true;
 }
 
 
