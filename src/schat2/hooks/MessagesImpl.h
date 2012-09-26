@@ -22,6 +22,8 @@
 #include "client/ClientHooks.h"
 #include "net/packets/MessageNotice.h"
 
+class ChannelMessage;
+
 namespace Hooks
 {
 
@@ -41,6 +43,7 @@ private slots:
   void ready();
 
 private:
+  bool referring(const ChannelMessage &message) const;
   void rejectAll();
 
   QByteArray m_serverId;                          ///< Идентификатор последнего сервера.
