@@ -106,8 +106,9 @@ ChatAlerts::ChatAlerts(QObject *parent)
 {
   m_self = this;
 
-  add(new MessageAlertType(LS("public"),  100));
-  add(new MessageAlertType(LS("private"), 200));
+  add(new MessageAlertType(LS("public"),    100));
+  add(new MessageAlertType(LS("private"),   200));
+  add(new MessageAlertType(LS("referring"), 300));
   add(new OnlineAlertType(1000));
   add(new OfflineAlertType(1100));
 

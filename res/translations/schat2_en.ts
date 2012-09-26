@@ -59,26 +59,26 @@
 <context>
     <name>AlertsWidget</name>
     <message>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="39"/>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="136"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="41"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="138"/>
         <source>Play sound</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="45"/>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="137"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="47"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="139"/>
         <source>Play</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="37"/>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="134"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="39"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="136"/>
         <source>Show notification in tray</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="38"/>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="135"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="40"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="137"/>
         <source>Show popup window</source>
         <translation type="unfinished"></translation>
     </message>
@@ -468,22 +468,27 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="54"/>
+        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="56"/>
         <source>Public message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="56"/>
+        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="58"/>
+        <source>Referring to you</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="60"/>
         <source>Private message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ChatAlerts.cpp" line="79"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="80"/>
         <source>Online</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ChatAlerts.cpp" line="97"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="98"/>
         <source>Offline</source>
         <translation type="unfinished"></translation>
     </message>
