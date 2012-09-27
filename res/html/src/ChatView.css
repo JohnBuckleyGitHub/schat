@@ -130,13 +130,13 @@ a:active, a:hover {
 
 /* Исходящие сообщения */
 .outgoing {
-  background:#f2ffe1;
-  border:1px solid #ebffcd;
+  background:#ecffeb;
+  border:1px solid #d9ffd7;
 }
 
 .outgoing:hover {
-  background-color:#e3ffb9;
-  border:1px solid #ddffa5;
+  background-color:#d9ffd7;
+  border:1px solid #c5ffc3;
 }
 
 /* Отображение прогресс-бара для недоставленных сообщений */
