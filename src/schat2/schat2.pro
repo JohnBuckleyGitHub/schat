@@ -52,11 +52,14 @@ translations.files += ../../res/translations/schat2_ru.qm
 translations.files += ../../res/translations/schat2_en.qm
 translations.files += ../../res/translations/ru.png
 
-unix {
+sounds.files += ../../res/sounds/Received.wav
+
+unix {  
   macx {
     translations.path += ../../out/SimpleChat2.app/Contents/Resources/translations
+    sounds.path  += ../../out/SimpleChat2.app/Contents/Resources/sounds/
 
-    INSTALLS += translations
+    INSTALLS += translations sounds
   } else {
     icon16.files = ../../res/images/icons/16x16/schat2.png
     icon16.path = $$SCHAT_PREFIX/usr/share/icons/hicolor/16x16/apps
@@ -101,10 +104,10 @@ unix {
     applications.path = $$SCHAT_PREFIX/usr/share/applications
 
     translations.path = $$SCHAT_PREFIX/usr/share/schat2/translations
-
+    sounds.path  += $$SCHAT_PREFIX/usr/share/schat2/sounds/
     target.path += $$SCHAT_PREFIX/usr/bin
     
-    INSTALLS += target applications translations icon16 icon22 icon24 icon32 icon36 icon48 icon64 icon72 icon96 icon128 icon196 icon256 icon512
+    INSTALLS += target applications translations sounds icon16 icon22 icon24 icon32 icon36 icon48 icon64 icon72 icon96 icon128 icon196 icon256 icon512
   }
 }
 
@@ -136,8 +139,10 @@ win32 {
   doc.files += ../../res/doc/ChangeLog.html
   doc.path += ../../os/win32/schat2/doc/
 
+  sounds.path += ../../os/win32/schat2/sounds/
+
   target.path += ../../os/win32/schat2/
-  INSTALLS += target translations qt imageformats sqldrivers doc
+  INSTALLS += target translations qt imageformats sqldrivers doc sounds
 }
 
 include(../common/config.pri)

@@ -31,7 +31,10 @@ ${Section}
 
   SetOutPath "$INSTDIR\doc"
   File "${SCHAT_SOURCE}\doc\ChangeLog.html"
-  
+
+  SetOutPath "$INSTDIR\sounds"
+  File "${SCHAT_SOURCE}\sounds\Received.wav"
+
   SetOutPath "$INSTDIR\translations"
   File "${SCHAT_SOURCE}\translations\schat2_en.qm"
   File "${SCHAT_SOURCE}\translations\schat2_ru.qm"
@@ -51,12 +54,14 @@ ${Uninstall}
   Delete "$INSTDIR\license.txt"
   Delete "$INSTDIR\uninstall.exe"
   Delete "$INSTDIR\doc\ChangeLog.html"
+  Delete "$INSTDIR\sounds\Received.wav"
   Delete "$INSTDIR\translations\schat2_en.qm"
   Delete "$INSTDIR\translations\schat2_ru.qm"
   Delete "$INSTDIR\translations\qt_ru.qm"
   Delete "$INSTDIR\translations\ru.png"
 
   RMDir "$INSTDIR\doc"
+  RMDir "$INSTDIR\sounds"
   RMDir "$INSTDIR\translations"
 
   DeleteRegKey HKCU "${SCHAT_REGKEY}"
