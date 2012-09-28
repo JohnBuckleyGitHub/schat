@@ -138,6 +138,8 @@ void ChatSettings::set(const FeedNotify &notify)
 {
   QStringList keys = notify.json().keys();
   keys.removeAll(LS("action"));
+  keys.removeAll(LS("date"));
+  keys.removeAll(LS("size"));
   if (keys.isEmpty())
     return;
 
