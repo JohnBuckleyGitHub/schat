@@ -20,7 +20,9 @@
 #define CHATALERTS_H_
 
 #include <QObject>
+#include <QStringList>
 #include <QVariant>
+#include <QQueue>
 
 #include "schat.h"
 
@@ -70,10 +72,12 @@ public:
   inline static int count(const QByteArray &id)    { return m_count.value(id); }
   inline static int total()                        { return m_alerts; }
   inline static QList<QByteArray>& channels()      { return m_channels; }
+  inline static QStringList sounds()               { return m_self->m_sounds.keys(); }
   static bool add(AlertType *type);
   static bool start(const Alert &alert);
   static QByteArray last()                         { if (!m_channels.isEmpty()) return m_channels.first(); return QByteArray(); }
   static QList<AlertType*> types();
+  static void play(const QString &file);
   static void remove(const QByteArray &id);
 
 signals:
@@ -82,8 +86,10 @@ signals:
   void countChanged(int total, int count, const QByteArray &channel);
 
 private slots:
+  void loadSounds();
   void offline();
   void online();
+  void playSound();
   void settingsChanged(const QString &key, const QVariant &value);
 
 private:
@@ -91,6 +97,8 @@ private:
 
   ChatSettings *m_settings;                 ///< Настройки чата.
   QMap<QString, AlertType*> m_types;        ///< Таблица типов уведомлений.
+  QMap<QString, QString> m_sounds;          ///< Таблица соответствия имён звуковых файлов с их именами.
+  QQueue<QString> m_soundQueue;             ///< Очередь звуковых файлов на воспроизведение.
   static ChatAlerts *m_self;                ///< Указатель на себя.
   static int m_alerts;                      ///< Количество непрочитанных уведомлений.
   static QHash<QByteArray, int> m_count;    ///< Количество непрочитанных уведомлений для каждого канала.

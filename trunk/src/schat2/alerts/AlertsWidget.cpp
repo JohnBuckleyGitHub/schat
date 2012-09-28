@@ -43,6 +43,8 @@ AlertsWidget::AlertsWidget(QWidget *parent)
   m_toolBar = new QToolBar(this);
   m_toolBar->setIconSize(QSize(16, 16));
   m_file = new QComboBox(this);
+  m_file->addItems(ChatAlerts::sounds());
+
   m_toolBar->addWidget(m_file);
   m_control = m_toolBar->addAction(QIcon(LS(":/images/control-play.png")), tr("Play"));
 
@@ -64,10 +66,12 @@ AlertsWidget::AlertsWidget(QWidget *parent)
     m_combo->addItem(type->icon(), type->name(), type->type());
   }
 
-  connect(m_combo, SIGNAL(currentIndexChanged(int)), SLOT(indexChanged(int)));
-  connect(m_popup, SIGNAL(clicked(bool)), SLOT(popupClicked(bool)));
-  connect(m_sound, SIGNAL(clicked(bool)), SLOT(soundClicked(bool)));
-  connect(m_tray, SIGNAL(clicked(bool)), SLOT(trayClicked(bool)));
+  connect(m_combo,   SIGNAL(currentIndexChanged(int)),     SLOT(indexChanged(int)));
+  connect(m_file,    SIGNAL(currentIndexChanged(QString)), SLOT(soundChanged(QString)));
+  connect(m_popup,   SIGNAL(clicked(bool)),                SLOT(popupClicked(bool)));
+  connect(m_sound,   SIGNAL(clicked(bool)),                SLOT(soundClicked(bool)));
+  connect(m_tray,    SIGNAL(clicked(bool)),                SLOT(trayClicked(bool)));
+  connect(m_control, SIGNAL(triggered(bool)),              SLOT(play()));
 }
 
 
@@ -109,6 +113,18 @@ void AlertsWidget::indexChanged(int index)
   m_tray->setVisible(supports.contains(LS("tray")));
   m_popup->setVisible(supports.contains(LS("popup")));
   setSoundVisible(supports.contains(LS("sound")));
+
+  if (m_sound->isChecked() && m_toolBar->isVisible())
+    m_file->setCurrentIndex(m_file->findText(type->value(LS("file")).toString()));
+}
+
+
+void AlertsWidget::play()
+{
+  if (m_file->currentIndex() == -1)
+    return;
+
+  ChatAlerts::play(m_file->currentText());
 }
 
 
@@ -118,10 +134,20 @@ void AlertsWidget::popupClicked(bool checked)
 }
 
 
+void AlertsWidget::soundChanged(const QString &file)
+{
+  if (file.isEmpty())
+    return;
+
+  setValue(LS("file"), file);
+}
+
+
 void AlertsWidget::soundClicked(bool checked)
 {
   setValue(LS("sound"), checked);
   m_toolBar->setVisible(checked);
+
 }
 
 
@@ -147,11 +173,14 @@ void AlertsWidget::setSoundVisible(bool visible)
 }
 
 
-void AlertsWidget::setValue(const QString &key, bool checked)
+void AlertsWidget::setValue(const QString &key, const QVariant &value)
 {
   AlertType *type = ChatAlerts::type(m_combo->itemData(m_combo->currentIndex()).toString());
   if (!type)
     return;
 
-  ChatCore::settings()->setValue(LS("Alerts/") + type->type() + LC('.') + key, checked);
+  ChatCore::settings()->setValue(LS("Alerts/") + type->type() + LC('.') + key, value);
+
+  if (key == LS("sound") && value == true)
+    m_file->setCurrentIndex(m_file->findText(type->value(LS("file")).toString()));
 }

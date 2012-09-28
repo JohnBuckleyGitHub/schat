@@ -42,6 +42,7 @@ MessageAlertType::MessageAlertType(const QString &type, int weight)
   m_defaults[LS("popup")] = type != LS("public");
   m_defaults[LS("tray")]  = true;
   m_defaults[LS("sound")] = true;
+  m_defaults[LS("file")]  = LS("Received.wav");
 
   if (type == LS("public"))
     m_icon = QIcon(LS(":/images/channel.png"));

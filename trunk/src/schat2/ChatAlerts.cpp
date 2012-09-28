@@ -16,6 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDir>
+#include <QProcess>
+#include <QSound>
+#include <QTimer>
+
 #include "alerts/AlertType.h"
 #include "alerts/MessageAlert.h"
 #include "ChatAlerts.h"
@@ -26,6 +31,7 @@
 #include "DateTime.h"
 #include "messages/Message.h"
 #include "net/SimpleID.h"
+#include "Path.h"
 #include "sglobal.h"
 #include "ui/TabWidget.h"
 
@@ -115,6 +121,8 @@ ChatAlerts::ChatAlerts(QObject *parent)
   connect(ChatClient::i(), SIGNAL(offline()), SLOT(offline()));
   connect(ChatClient::i(), SIGNAL(ready()), SLOT(online()));
   connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
+
+  QTimer::singleShot(0, this, SLOT(loadSounds()));
 }
 
 
@@ -172,6 +180,9 @@ bool ChatAlerts::start(const Alert &alert)
       return false;
   }
 
+  if (type->sound())
+    play(type->value(LS("file")).toString());
+
   emit m_self->alert(alert);
   return true;
 }
@@ -186,6 +197,17 @@ QList<AlertType*> ChatAlerts::types()
   }
 
   return map.values();
+}
+
+
+void ChatAlerts::play(const QString &file)
+{
+  if (!m_self->m_sounds.contains(file) || m_self->m_soundQueue.contains(file))
+    return;
+
+  m_self->m_soundQueue.enqueue(file);
+  if (m_self->m_soundQueue.size() == 1)
+    QTimer::singleShot(0, m_self, SLOT(playSound()));
 }
 
 
@@ -206,6 +228,24 @@ void ChatAlerts::remove(const QByteArray &id)
 }
 
 
+/*!
+ * Заполение таблицы звуков.
+ */
+void ChatAlerts::loadSounds()
+{
+  QStringList paths(Path::data(Path::SystemScope));
+  if (!Path::isPortable())
+    paths.append(Path::data());
+
+  foreach (QString path, paths) {
+    QDir dir(path + LS("/sounds"));
+    foreach (QFileInfo info, dir.entryInfoList(QStringList(LS("*.wav")), QDir::Files)) {
+      m_sounds[info.fileName()] = info.absoluteFilePath();
+    }
+  }
+}
+
+
 void ChatAlerts::offline()
 {
   Alert alert(LS("offline"));
@@ -217,6 +257,18 @@ void ChatAlerts::online()
 {
   Alert alert(LS("online"), ChatClient::io()->date());
   start(alert);
+}
+
+
+void ChatAlerts::playSound()
+{
+  while (!m_soundQueue.isEmpty()) {
+#   if defined(Q_OS_LINUX)
+    QProcess::startDetached(QString(LS("aplay -q -N %1")).arg(m_soundQueue.dequeue()));
+#   else
+    QSound::play(m_sounds.value(m_soundQueue.dequeue()));
+#   endif
+  }
 }
 
 
