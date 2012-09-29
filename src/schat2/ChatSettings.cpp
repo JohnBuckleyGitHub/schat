@@ -47,6 +47,13 @@ ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
 }
 
 
+QVariant ChatSettings::setDefaultAndRead(const QString &key, const QVariant &value)
+{
+  setDefault(key, value);
+  return this->value(key);
+}
+
+
 void ChatSettings::init()
 {
   connect(ChatClient::i(), SIGNAL(ready()), SLOT(ready()));

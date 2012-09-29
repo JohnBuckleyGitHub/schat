@@ -141,14 +141,14 @@ a:active, a:hover {
 
 /* Отображение прогресс-бара для недоставленных сообщений */
 .undelivered {
-  background:url("qrc:/images/progress.gif") top right no-repeat #f2ffe1;
+  background:url(qrc:/images/progress.gif) top right no-repeat #ecffeb;
 }
 
 /* Изменение внешнего вида для /me сообщений */
 .me-action .nick, .me-action { color:#be00c4; }
 .me-action { background:#ffebff; border:1px solid #ffe1ff; }
 .me-action:hover { background:#ffe1ff; border:1px solid #fed7ff; }
-.me-action.undelivered { background:url("qrc:/images/progress-pink.gif") top right no-repeat #ffebff; }
+.me-action.undelivered { background:url(qrc:/images/progress-pink.gif) top right no-repeat #ffebff; }
 
 .referring {
   background: #fde8cf;

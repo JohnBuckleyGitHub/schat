@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -18,16 +18,22 @@
 
 #include <QEvent>
 
+#include "ChatAlerts.h"
+#include "ChatCore.h"
+#include "ChatSettings.h"
+#include "client/ChatClient.h"
+#include "sglobal.h"
 #include "ui/SoundButton.h"
 
-SoundButton::SoundButton(bool mute, QWidget *parent)
+SoundButton::SoundButton(QWidget *parent)
   : QToolButton(parent)
-  , m_mute(mute)
+  , m_mute(ChatAlerts::isMute())
 {
   setAutoRaise(true);
   setMute(m_mute);
 
   connect(this, SIGNAL(clicked(bool)), SLOT(clicked()));
+  connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
 }
 
 
@@ -36,9 +42,9 @@ void SoundButton::setMute(bool mute)
   m_mute = mute;
 
   if (m_mute)
-    setIcon(QIcon(":/images/sound_mute.png"));
+    setIcon(QIcon(LS(":/images/sound_mute.png")));
   else
-    setIcon(QIcon(":/images/sound.png"));
+    setIcon(QIcon(LS(":/images/sound.png")));
 
   retranslateUi();
 }
@@ -56,6 +62,20 @@ void SoundButton::changeEvent(QEvent *event)
 void SoundButton::clicked()
 {
   setMute(!m_mute);
+
+  if (ChatClient::channel()->status() == Status::DnD)
+    ChatCore::settings()->setValue(LS("Alerts/Sounds.DnD"), !m_mute);
+  else
+    ChatCore::settings()->setValue(LS("Alerts/Sounds"), !m_mute);
+}
+
+
+void SoundButton::settingsChanged(const QString &key, const QVariant &value)
+{
+  Q_UNUSED(value)
+
+  if (key == LS("Profile/Status"))
+    setMute(ChatAlerts::isMute());
 }
 
 

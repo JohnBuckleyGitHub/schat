@@ -32,6 +32,7 @@ class SCHAT_CORE_EXPORT ChatSettings : public Settings
 
 public:
   ChatSettings(const QString &fileName, QObject *parent = 0);
+  QVariant setDefaultAndRead(const QString &key, const QVariant &value);
   void init();
   void setLocalDefault(const QString &key, const QVariant &value);
   void setValue(const QString &key, const QVariant &value, bool notify = true, bool local = false);
