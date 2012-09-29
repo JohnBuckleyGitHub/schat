@@ -93,6 +93,8 @@ public:
     m_defaults[LS("popup")] = true;
     m_defaults[LS("tray")]  = true;
     m_defaults[LS("sound")] = true;
+    m_defaults[LS("file")]  = LS("Received.wav");
+
     m_icon = QIcon(LS(":/images/SendFile/attach.png"));
   }
 

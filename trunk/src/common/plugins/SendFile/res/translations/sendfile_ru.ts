@@ -5,7 +5,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="101"/>
+        <location filename="../../SendFilePlugin.cpp" line="103"/>
         <source>Incoming file</source>
         <translation>Входящий файл</translation>
     </message>
@@ -44,18 +44,18 @@
 <context>
     <name>SendFilePluginImpl</name>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="154"/>
+        <location filename="../../SendFilePlugin.cpp" line="156"/>
         <source>Open</source>
         <translation>Открыть</translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="318"/>
-        <location filename="../../SendFilePlugin.cpp" line="409"/>
+        <location filename="../../SendFilePlugin.cpp" line="320"/>
+        <location filename="../../SendFilePlugin.cpp" line="411"/>
         <source>%1 of %2</source>
         <translation>%1 из %2</translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="667"/>
+        <location filename="../../SendFilePlugin.cpp" line="669"/>
         <source>Save</source>
         <translation>Сохранить</translation>
     </message>

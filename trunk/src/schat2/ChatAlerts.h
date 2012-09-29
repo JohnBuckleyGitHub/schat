@@ -86,8 +86,10 @@ signals:
   void alert(const Alert &alert);
   void countChanged(int total, int count, const QByteArray &channel);
 
-private slots:
+public slots:
   void loadSounds();
+
+private slots:
   void offline();
   void online();
   void playSound();
