@@ -112,6 +112,9 @@ ChatAlerts::ChatAlerts(QObject *parent)
 {
   m_self = this;
 
+  m_sounds    = m_settings->setDefaultAndRead(LS("Alerts/Sounds"),     true).toBool();
+  m_soundsDnD = m_settings->setDefaultAndRead(LS("Alerts/Sounds.DnD"), false).toBool();
+
   add(new MessageAlertType(LS("public"),    100));
   add(new MessageAlertType(LS("private"),   200));
   add(new MessageAlertType(LS("referring"), 300));
@@ -155,6 +158,18 @@ bool ChatAlerts::add(AlertType *type)
 
 
 /*!
+ * \return \b true если звук отключен.
+ */
+bool ChatAlerts::isMute()
+{
+  if (ChatClient::channel()->status() == Status::DnD)
+    return !m_self->m_soundsDnD;
+
+  return !m_self->m_sounds;
+}
+
+
+/*!
  * Запуск уведомления.
  */
 bool ChatAlerts::start(const Alert &alert)
@@ -180,7 +195,7 @@ bool ChatAlerts::start(const Alert &alert)
       return false;
   }
 
-  if (type->sound())
+  if (type->sound() && !isMute())
     play(type->value(LS("file")).toString());
 
   emit m_self->alert(alert);
@@ -202,7 +217,7 @@ QList<AlertType*> ChatAlerts::types()
 
 void ChatAlerts::play(const QString &file)
 {
-  if (!m_self->m_sounds.contains(file) || m_self->m_soundQueue.contains(file))
+  if (!m_self->m_soundMap.contains(file) || m_self->m_soundQueue.contains(file))
     return;
 
   m_self->m_soundQueue.enqueue(file);
@@ -240,7 +255,7 @@ void ChatAlerts::loadSounds()
   foreach (QString path, paths) {
     QDir dir(path + LS("/sounds"));
     foreach (QFileInfo info, dir.entryInfoList(QStringList(LS("*.wav")), QDir::Files)) {
-      m_sounds[info.fileName()] = info.absoluteFilePath();
+      m_soundMap[info.fileName()] = info.absoluteFilePath();
     }
   }
 }
@@ -264,9 +279,9 @@ void ChatAlerts::playSound()
 {
   while (!m_soundQueue.isEmpty()) {
 #   if defined(Q_OS_LINUX)
-    QProcess::startDetached(QString(LS("aplay -q -N %1")).arg(m_soundQueue.dequeue()));
+    QProcess::startDetached(QString(LS("aplay -q -N %1")).arg(m_soundMap.value(m_soundQueue.dequeue())));
 #   else
-    QSound::play(m_sounds.value(m_soundQueue.dequeue()));
+    QSound::play(m_soundMap.value(m_soundQueue.dequeue()));
 #   endif
   }
 }
@@ -277,15 +292,23 @@ void ChatAlerts::settingsChanged(const QString &key, const QVariant &value)
   if (!key.startsWith(LS("Alerts/")))
     return;
 
-  QStringList detect = key.mid(7).split(LC('.'));
-  if (detect.size() != 2)
-    return;
+  if (key == LS("Alerts/Sounds")) {
+    m_sounds = value.toBool();
+  }
+  else if (key == LS("Alerts/Sounds.DnD")) {
+    m_soundsDnD = value.toBool();
+  }
+  else {
+    QStringList detect = key.mid(7).split(LC('.'));
+    if (detect.size() != 2)
+      return;
 
-  AlertType *type = m_types.value(detect.at(0));
-  if (!type)
-    return;
+    AlertType *type = m_types.value(detect.at(0));
+    if (!type)
+      return;
 
-  type->options[detect.at(1)] = value;
+    type->options[detect.at(1)] = value;
+  }
 }
 
 
