@@ -168,3 +168,7 @@ if (typeof ChatView !== 'undefined')
 
 if (typeof SimpleChat !== 'undefined')
   SimpleChat.retranslated.connect(Messages.retranslate);
+
+Pages.onMessages.push(function() {
+  Utils.adjustWidth($('.day-day'));
+});

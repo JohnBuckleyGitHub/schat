@@ -216,7 +216,7 @@ var History = {
     if (document.getElementById('day-' + day) === null)
       return;
 
-    if ($('#day-' + day + ' .day-body').is(':visible'))
+    if ($('#day-' + day + ' .day-header').hasClass('expanded'))
       return;
 
     var badge = $('#day-' + day + ' .day-badge');
