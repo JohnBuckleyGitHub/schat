@@ -59,26 +59,37 @@
 <context>
     <name>AlertsWidget</name>
     <message>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="41"/>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="138"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="47"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="195"/>
         <source>Play sound</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="47"/>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="139"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="55"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="196"/>
         <source>Play</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="39"/>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="136"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="56"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="197"/>
+        <source>Add sounds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="110"/>
+        <source>Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="45"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="193"/>
         <source>Show notification in tray</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="40"/>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="137"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="46"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="194"/>
         <source>Show popup window</source>
         <translation type="unfinished"></translation>
     </message>
@@ -468,27 +479,27 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="56"/>
+        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="57"/>
         <source>Public message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="58"/>
+        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="59"/>
         <source>Referring to you</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="60"/>
+        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="61"/>
         <source>Private message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ChatAlerts.cpp" line="80"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="86"/>
         <source>Online</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ChatAlerts.cpp" line="98"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="104"/>
         <source>Offline</source>
         <translation type="unfinished"></translation>
     </message>
@@ -643,12 +654,12 @@
 <context>
     <name>SoundButton</name>
     <message>
-        <location filename="../../src/schat2/ui/SoundButton.cpp" line="65"/>
+        <location filename="../../src/schat2/ui/SoundButton.cpp" line="85"/>
         <source>Turn on sounds</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/SoundButton.cpp" line="67"/>
+        <location filename="../../src/schat2/ui/SoundButton.cpp" line="87"/>
         <source>Turn off sounds</source>
         <translation type="unfinished"></translation>
     </message>

@@ -19,7 +19,9 @@
 #include <QAction>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QDesktopServices>
 #include <QEvent>
+#include <QFileDialog>
 #include <QGridLayout>
 #include <QToolBar>
 
@@ -28,7 +30,9 @@
 #include "ChatAlerts.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "Path.h"
 #include "sglobal.h"
+#include "ui/ChatIcons.h"
 
 AlertsWidget::AlertsWidget(QWidget *parent)
   : QWidget(parent)
@@ -46,7 +50,8 @@ AlertsWidget::AlertsWidget(QWidget *parent)
   m_file->addItems(ChatAlerts::sounds());
 
   m_toolBar->addWidget(m_file);
-  m_control = m_toolBar->addAction(QIcon(LS(":/images/control-play.png")), tr("Play"));
+  m_control = m_toolBar->addAction(QIcon(LS(":/images/play.png")), tr("Play"), this, SLOT(play()));
+  m_add     = m_toolBar->addAction(QIcon(LS(":/images/add-gray.png")), tr("Add sounds"), this, SLOT(add()));
 
   QGridLayout *options = new QGridLayout();
   options->addWidget(m_tray, 0, 0, 1, 2);
@@ -71,7 +76,6 @@ AlertsWidget::AlertsWidget(QWidget *parent)
   connect(m_popup,   SIGNAL(clicked(bool)),                SLOT(popupClicked(bool)));
   connect(m_sound,   SIGNAL(clicked(bool)),                SLOT(soundClicked(bool)));
   connect(m_tray,    SIGNAL(clicked(bool)),                SLOT(trayClicked(bool)));
-  connect(m_control, SIGNAL(triggered(bool)),              SLOT(play()));
 }
 
 
@@ -96,6 +100,31 @@ void AlertsWidget::showEvent(QShowEvent *event)
   }
 
   QWidget::showEvent(event);
+}
+
+
+void AlertsWidget::add()
+{
+  QStringList files = QFileDialog::getOpenFileNames(this, tr("Open"), QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation), LS("*.wav"));
+  if (files.isEmpty())
+    return;
+
+  QString dest = Path::data() + LS("/sounds/");
+  foreach (const QString &name, files) {
+    const QString newName = dest + QFileInfo(name).fileName();
+    if (QFile::exists(newName))
+      QFile::remove(newName);
+
+    QFile::copy(name, newName);
+  }
+
+  ChatAlerts::i()->loadSounds();
+
+  QString text = m_file->currentText();
+  m_file->clear();
+  m_file->addItems(ChatAlerts::sounds());
+
+  m_file->setCurrentIndex(m_file->findText(text));
 }
 
 
@@ -163,6 +192,7 @@ void AlertsWidget::retranslateUi()
   m_popup->setText(tr("Show popup window"));
   m_sound->setText(tr("Play sound"));
   m_control->setText(tr("Play"));
+  m_add->setText(tr("Add sounds"));
 }
 
 
