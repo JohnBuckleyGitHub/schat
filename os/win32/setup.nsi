@@ -21,6 +21,7 @@
 !define Cache
 !define History
 !define Profile
+!define Popup
 !define Emoticons
 !define SendFile
 !define SpellChecker

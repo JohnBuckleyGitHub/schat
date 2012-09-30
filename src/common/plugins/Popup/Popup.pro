@@ -15,19 +15,18 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-CONFIG   += ordered
-TEMPLATE = subdirs
-SUBDIRS  = \
-    client \
-    schat2/schat2-core.pro \
-    schat2 \
-    common/plugins/Cache \
-    common/plugins/History \
-    common/plugins/Profile \
-    common/plugins/Popup \
-    common/plugins/Emoticons \
-    common/plugins/Idle \
-    common/plugins/SendFile \
-    common/plugins/SpellChecker \
-    common/plugins/RawFeeds \
-    common/plugins/YouTube \
+SCHAT_CLIENT_LIB = 1
+SCHAT_CORE_LIB = 1
+QT = core gui
+OTHER_FILES += Popup.json
+
+HEADERS  = \
+   PopupPlugin.h \
+   PopupPlugin_p.h \
+
+SOURCES  = \
+   PopupPlugin.cpp \
+
+#RESOURCES += Popup.qrc
+
+include(../plugins.pri)

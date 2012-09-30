@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright Â© 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,38 +16,24 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-!ifndef mod
-  !define mod "!insertmacro SCHAT_MOD "
-!endif
-!ifmacrondef SCHAT_MOD
-  !macro SCHAT_MOD _NAME
-    !ifdef ${_NAME} | SCHAT_UNINSTALL
-      !include "engine\sections\${_NAME}.nsh"
-    !endif
-  !macroend
-!endif
+#include <QtPlugin>
 
-${mod} Core
-${mod} Qt
+#include "PopupPlugin.h"
+#include "PopupPlugin_p.h"
 
-!ifdef SCHAT_SECTIONS
-  !if ${SCHAT_PLUGINS_GRP} == 1
-    SectionGroup "$(STR1005)" GroupPlugins
-  !endif
-!endif
-${mod} Cache
-${mod} History
-${mod} Profile
-${mod} Popup
-${mod} Emoticons
-${mod} SendFile
-${mod} SpellChecker
-${mod} Idle
-${mod} Update
-${mod} YouTube
-${mod} RawFeeds
-!ifdef SCHAT_SECTIONS
-  !if ${SCHAT_PLUGINS_GRP} == 1
-    SectionGroupEnd
-  !endif
-!endif
+PopupPluginImpl::PopupPluginImpl(QObject *parent)
+  : ChatPlugin(parent)
+{
+}
+
+
+ChatPlugin *PopupPlugin::create()
+{
+  m_plugin = new PopupPluginImpl(this);
+  return m_plugin;
+}
+
+
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2(Popup, PopupPlugin);
+#endif

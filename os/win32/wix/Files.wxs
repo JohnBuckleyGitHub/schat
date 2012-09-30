@@ -70,6 +70,9 @@
         <Component Id="ChangeLog.Profile.html" Guid="{0E7B13C3-B611-4810-A116-E20B3E0F6BC4}">
           <File Id="ChangeLog.Profile.html" KeyPath="yes" Source="..\schat2\doc\ChangeLog.Profile.html" />
         </Component>
+        <Component Id="ChangeLog.Popup.html" Guid="{C252E92D-C976-41DF-87C4-FC6B2D99500E}">
+          <File Id="ChangeLog.Popup.html" KeyPath="yes" Source="..\schat2\doc\ChangeLog.Popup.html" />
+        </Component>
         <Component Id="ChangeLog.RawFeeds.html" Guid="{DA7A5152-3984-4286-A1FE-67C0DDE385E9}">
           <File Id="ChangeLog.RawFeeds.html" KeyPath="yes" Source="..\schat2\doc\ChangeLog.RawFeeds.html" />
         </Component>
@@ -105,6 +108,9 @@
         </Component>
         <Component Id="Profile.dll" Guid="{98D0CFB1-E6E8-4E69-8D32-A1A8F047AD0E}">
           <File Id="Profile.dll" KeyPath="yes" Source="..\schat2\plugins\Profile.dll" />
+        </Component>
+        <Component Id="Popup.dll" Guid="{3EF3DD8B-ED11-495B-A6E3-BC1D243DDCC6}">
+          <File Id="Popup.dll" KeyPath="yes" Source="..\schat2\plugins\Popup.dll" />
         </Component>
         <Component Id="RawFeeds.dll" Guid="{031C61D4-E1C8-46F5-80A6-E6D0646B61D4}">
           <File Id="RawFeeds.dll" KeyPath="yes" Source="..\schat2\plugins\RawFeeds.dll" />
@@ -244,6 +250,10 @@
       <ComponentRef Id="ChangeLog.Profile.html" />
       <ComponentRef Id="profile_en.qm" />
       <ComponentRef Id="profile_ru.qm" />
+    </ComponentGroup>
+    <ComponentGroup Id="Popup">
+      <ComponentRef Id="Popup.dll" />
+      <ComponentRef Id="ChangeLog.Popup.html" />
     </ComponentGroup>
     <ComponentGroup Id="RawFeeds">
       <ComponentRef Id="RawFeeds.dll" />

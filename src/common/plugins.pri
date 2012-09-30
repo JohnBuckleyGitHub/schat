@@ -23,6 +23,7 @@ SUBDIRS += \
     common/plugins/Cache \
     common/plugins/History \
     common/plugins/Profile \
+    common/plugins/Popup \
     common/plugins/Emoticons \
     common/plugins/Idle \
     common/plugins/SendFile \

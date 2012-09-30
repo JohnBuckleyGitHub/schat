@@ -25,6 +25,9 @@
       <Feature Id="Profile" Title="Profile" Description="Profile Plugin" Level="1" AllowAdvertise="no">
         <ComponentGroupRef Id="Profile" />
       </Feature>
+      <Feature Id="Popup" Title="Popup" Description="Popup Plugin" Level="1" AllowAdvertise="no">
+        <ComponentGroupRef Id="Popup" />
+      </Feature>
       <Feature Id="RawFeeds" Title="Raw Feeds" Description="Raw Feeds Plugin" Level="1" AllowAdvertise="no">
         <ComponentGroupRef Id="RawFeeds" />
       </Feature>
