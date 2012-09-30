@@ -183,6 +183,11 @@
           <File Id="ru_RU.dic" KeyPath="yes" Source="..\schat2\spelling\ru_RU.dic" />
         </Component>
       </Directory>
+      <Directory Id="sounds" Name="sounds">
+        <Component Id="Received.wav" Guid="{498600CC-7A98-4ED3-9510-1233820FFF9D}">
+          <File Id="Received.wav" KeyPath="yes" Source="..\schat2\sounds\Received.wav" />
+        </Component>
+      </Directory>
     </DirectoryRef>
   </Fragment>
   <Fragment>
@@ -201,6 +206,7 @@
       <ComponentRef Id="ru.png" />
       <ComponentRef Id="schat2_en.qm" />
       <ComponentRef Id="schat2_ru.qm" />
+      <ComponentRef Id="Received.wav" />
     </ComponentGroup>
     <ComponentGroup Id="Qt">
       <ComponentRef Id="qt_ru.qm" />
