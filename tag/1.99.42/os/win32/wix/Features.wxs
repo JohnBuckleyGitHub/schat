@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?include Variables.wxi?>
+  <Fragment>
+    <Feature Id="Product" Title="Core Components" Description="Core Components" Level="1" AllowAdvertise="no" Absent="disallow" ConfigurableDirectory="INSTALLLOCATION">
+      <ComponentGroupRef Id="Core" />
+      <ComponentRef Id="StartMenuFolder" />
+    </Feature>
+    <Feature Id="Qt" Title="Qt Components" Description="Qt Components" Level="1" AllowAdvertise="no" Absent="disallow" ConfigurableDirectory="INSTALLLOCATION">
+      <ComponentGroupRef Id="Qt" />
+    </Feature>
+    <Feature Id="Plugins" Title="Main Plugins" Description="Main Plugins" Level="1" AllowAdvertise="no" ConfigurableDirectory="INSTALLLOCATION">
+      <Feature Id="Cache" Title="Cache" Description="Cache Plugin" Level="1" AllowAdvertise="no">
+        <ComponentGroupRef Id="Cache" />
+      </Feature>
+      <Feature Id="Emoticons" Title="Emoticons" Description="Emoticons Plugin" Level="1" AllowAdvertise="no">
+        <ComponentGroupRef Id="Emoticons" />
+      </Feature>
+      <Feature Id="History" Title="History" Description="History Plugin" Level="1" AllowAdvertise="no">
+        <ComponentGroupRef Id="History" />
+      </Feature>
+      <Feature Id="Idle" Title="Idle" Description="Idle Plugin" Level="1" AllowAdvertise="no">
+        <ComponentGroupRef Id="Idle" />
+      </Feature>
+      <Feature Id="Profile" Title="Profile" Description="Profile Plugin" Level="1" AllowAdvertise="no">
+        <ComponentGroupRef Id="Profile" />
+      </Feature>
+      <Feature Id="RawFeeds" Title="Raw Feeds" Description="Raw Feeds Plugin" Level="1" AllowAdvertise="no">
+        <ComponentGroupRef Id="RawFeeds" />
+      </Feature>
+      <Feature Id="SendFile" Title="Send File" Description="Send File Plugin" Level="1" AllowAdvertise="no">
+        <ComponentGroupRef Id="SendFile" />
+      </Feature>
+      <Feature Id="SpellChecker" Title="Spell Checker" Description="Spell Checker Plugin" Level="1" AllowAdvertise="no">
+        <ComponentGroupRef Id="SpellChecker" />
+      </Feature>
+      <Feature Id="YouTube" Title="YouTube" Description="YouTube Plugin" Level="1" AllowAdvertise="no">
+        <ComponentGroupRef Id="YouTube" />
+      </Feature>
+    </Feature>
+  </Fragment>
+</Wix>
