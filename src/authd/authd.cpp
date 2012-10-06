@@ -17,9 +17,11 @@
  */
 
 #include <QCoreApplication>
+#include <QStringList>
 #include <QTextCodec>
 
 #include "AuthCore.h"
+#include "sglobal.h"
 #include "version.h"
 
 int main(int argc, char *argv[])
@@ -32,6 +34,14 @@ int main(int argc, char *argv[])
   app.setApplicationVersion(SCHAT_VERSION);
   app.setOrganizationName(SCHAT_ORGANIZATION);
   app.setOrganizationDomain(SCHAT_DOMAIN);
+
+  QStringList arguments = app.arguments();
+  if (arguments.contains(LS("--version"))) {
+    AuthCore::version();
+    return 0;
+  }
+
+  AuthCore::version();
 
   AuthCore core;
   return app.exec();

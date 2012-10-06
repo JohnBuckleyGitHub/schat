@@ -16,17 +16,19 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QTimer>
 #include <QCoreApplication>
-
-#include "debugstream.h"
+#include <QTextStream>
+#include <QTimer>
 
 #include "cores/Core.h"
+#include "debugstream.h"
+#include "net/NodePool.h"
 #include "NodeInit.h"
 #include "NodePlugins.h"
 #include "Settings.h"
+#include "sglobal.h"
 #include "Storage.h"
-#include "net/NodePool.h"
+#include "version.h"
 
 /*!
  * Инициализация сервера.
@@ -45,6 +47,18 @@ NodeInit::NodeInit(QObject *parent)
 # endif
 
   QTimer::singleShot(0, this, SLOT(start()));
+}
+
+
+void NodeInit::version()
+{
+  QTextStream out(stdout);
+  out << LS("Simple Chat Daemon, version ") << SCHAT_VERSION;
+  if (SCHAT_REVISION)
+    out << LC('.') << SCHAT_REVISION;
+
+  out << endl << endl;
+  out << QString(SCHAT_COPYRIGHT).replace("©", LS("(C)")) << LS(", https://schat.me") << endl;
 }
 
 

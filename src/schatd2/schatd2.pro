@@ -21,6 +21,7 @@ SCHAT_SINGLEAPP   = 0
 
 QT = core network sql
 TEMPLATE = app
+CONFIG += console
 
 HEADERS = \
     NodeInit.h \

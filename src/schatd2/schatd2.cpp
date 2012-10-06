@@ -18,8 +18,10 @@
 
 #include <QCoreApplication>
 #include <QTextCodec>
+#include <QStringList>
 
 #include "NodeInit.h"
+#include "sglobal.h"
 #include "version.h"
 
 int main(int argc, char *argv[])
@@ -32,6 +34,14 @@ int main(int argc, char *argv[])
   app.setApplicationVersion(SCHAT_VERSION);
   app.setOrganizationName(SCHAT_ORGANIZATION);
   app.setOrganizationDomain(SCHAT_DOMAIN);
+
+  QStringList arguments = app.arguments();
+  if (arguments.contains(LS("--version"))) {
+    NodeInit::version();
+    return 0;
+  }
+
+  NodeInit::version();
 
   NodeInit *init = new NodeInit();
   int result = app.exec();

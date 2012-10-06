@@ -41,6 +41,7 @@
 #include "sglobal.h"
 #include "Storage.h"
 #include "Tufao/httpserver.h"
+#include "version.h"
 
 AuthCore *AuthCore::m_self = 0;
 
@@ -94,6 +95,18 @@ AuthCore::~AuthCore()
 QString AuthCore::root()
 {
   return m_self->m_handler->root();
+}
+
+
+void AuthCore::version()
+{
+  QTextStream out(stdout);
+  out << LS("Simple Chat Auth Daemon, version ") << SCHAT_VERSION;
+  if (SCHAT_REVISION)
+    out << LC('.') << SCHAT_REVISION;
+
+  out << endl << endl;
+  out << QString(SCHAT_COPYRIGHT).replace("©", LS("(C)")) << LS(", https://schat.me") << endl;
 }
 
 
