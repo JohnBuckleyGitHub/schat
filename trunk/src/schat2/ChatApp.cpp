@@ -67,11 +67,17 @@ ChatApp::~ChatApp()
 
 void ChatApp::start()
 {
+  QStringList args = arguments();
+
   m_core = new ChatCore(this);
   if (!ChatCore::settings()->value("Labs/DisableUI").toBool()) {
     m_window = new ChatWindow();
     connect(m_window, SIGNAL(restartRequest()), SLOT(restart()));
-    m_window->showChat();
+
+    if (args.contains(LS("-hide")))
+      m_window->hide();
+    else
+      m_window->showChat();
   }
 }
 
