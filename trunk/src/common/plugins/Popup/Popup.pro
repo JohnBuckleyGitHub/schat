@@ -21,10 +21,12 @@ QT = core gui
 OTHER_FILES += Popup.json
 
 HEADERS  = \
+   PopupManager.h \
    PopupPlugin.h \
    PopupPlugin_p.h \
 
 SOURCES  = \
+   PopupManager.cpp \
    PopupPlugin.cpp \
 
 #RESOURCES += Popup.qrc

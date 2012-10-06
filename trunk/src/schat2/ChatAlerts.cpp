@@ -199,6 +199,10 @@ bool ChatAlerts::start(const Alert &alert)
     play(type->value(LS("file")).toString());
 
   emit m_self->alert(alert);
+
+  if (type->popup())
+    emit m_self->popup(alert);
+
   return true;
 }
 
