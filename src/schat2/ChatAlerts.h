@@ -85,6 +85,7 @@ signals:
   void alert(bool alert);
   void alert(const Alert &alert);
   void countChanged(int total, int count, const QByteArray &channel);
+  void popup(const Alert &alert);
 
 public slots:
   void loadSounds();
