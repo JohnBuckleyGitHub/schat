@@ -48,6 +48,7 @@ public:
   inline static QByteArray baseUrl()                          { return m_self->m_baseUrl; }
   inline static Settings *settings()                          { return m_self->m_settings; }
   static QString root();
+  static void version();
 
 private slots:
   void start();

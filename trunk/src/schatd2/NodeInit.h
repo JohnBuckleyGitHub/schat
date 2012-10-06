@@ -35,6 +35,7 @@ class NodeInit : public QObject
 
 public:
   NodeInit(QObject *parent = 0);
+  static void version();
   void quit();
 
 public slots:

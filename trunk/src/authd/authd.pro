@@ -25,6 +25,7 @@ SCHAT_TUFAO_LIB   = 1
 
 QT = core network
 TEMPLATE = app
+CONFIG += console
 
 DEPENDPATH  += ../schatd2
 INCLUDEPATH += ../schatd2
