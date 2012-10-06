@@ -24,8 +24,23 @@
 #include "sglobal.h"
 #include "version.h"
 
+#if defined(Q_OS_LINUX)
+#include <stdio.h>
+#include <unistd.h>
+#endif
+
 int main(int argc, char *argv[])
 {
+# if defined(Q_OS_LINUX)
+  if (argc > 1) {
+    char d[] = "-D";
+    for (int count = 1; count < argc; count++) {
+      if (strncmp(argv[count], d, 2) == 0)
+        daemon(0, 0);
+    }
+  }
+# endif
+
   QCoreApplication app(argc, argv);
 # if QT_VERSION < 0x050000
   QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
