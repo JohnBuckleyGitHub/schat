@@ -21,7 +21,9 @@
 
 #include "plugins/ChatPlugin.h"
 
+class Alert;
 class Notify;
+class PopupManager;
 
 class PopupPluginImpl : public ChatPlugin
 {
@@ -29,6 +31,9 @@ class PopupPluginImpl : public ChatPlugin
 
 public:
   PopupPluginImpl(QObject *parent);
+
+private:
+  PopupManager *m_manager;
 };
 
 #endif /* POPUPPLUGIN_P_H_ */

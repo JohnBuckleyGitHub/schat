@@ -21,12 +21,26 @@
 
 #include <QObject>
 
+class Alert;
+class PopupWindow;
+class QDesktopWidget;
+
 class PopupManager : public QObject
 {
   Q_OBJECT
 
 public:
   PopupManager(QObject *parent = 0);
+  ~PopupManager();
+
+private slots:
+  void popup(const Alert &alert);
+
+private:
+  void layoutWidgets();
+
+  QDesktopWidget *m_desktop;      ///< Виджет для определения геометрии экрана.
+  QList<PopupWindow *> m_windows; ///< Список окон.
 };
 
 #endif /* POPUPMANAGER_H_ */
