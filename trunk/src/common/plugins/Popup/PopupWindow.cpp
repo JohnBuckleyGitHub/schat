@@ -16,26 +16,21 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#include <QDebug>
 
-#include "PopupPlugin.h"
-#include "PopupPlugin_p.h"
-#include "PopupManager.h"
+#include "PopupWindow.h"
 
-PopupPluginImpl::PopupPluginImpl(QObject *parent)
-  : ChatPlugin(parent)
+PopupWindow::PopupWindow()
+  : QFrame(0, Qt::ToolTip | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint)
 {
-  m_manager = new PopupManager(this);
+  setAttribute(Qt::WA_DeleteOnClose, true);
+  setWindowOpacity(0.9);
+
+  setFixedSize(QSize(Width, Height));
 }
 
 
-ChatPlugin *PopupPlugin::create()
+PopupWindow::~PopupWindow()
 {
-  m_plugin = new PopupPluginImpl(this);
-  return m_plugin;
+  qDebug() << "~PopupWindow()";
 }
-
-
-#if QT_VERSION < 0x050000
-  Q_EXPORT_PLUGIN2(Popup, PopupPlugin);
-#endif

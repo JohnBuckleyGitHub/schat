@@ -16,26 +16,25 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#ifndef POPUPWINDOW_H_
+#define POPUPWINDOW_H_
 
-#include "PopupPlugin.h"
-#include "PopupPlugin_p.h"
-#include "PopupManager.h"
+#include <QFrame>
 
-PopupPluginImpl::PopupPluginImpl(QObject *parent)
-  : ChatPlugin(parent)
+class PopupWindow : public QFrame
 {
-  m_manager = new PopupManager(this);
-}
+  Q_OBJECT
 
+public:
+  /// Установки для фиксированного размера окна.
+  enum Size {
+    Width  = 240, ///< Ширина.
+    Height = 90,  ///< Высота.
+    Space  = 3    ///< Свободное пространство между окнами.
+  };
 
-ChatPlugin *PopupPlugin::create()
-{
-  m_plugin = new PopupPluginImpl(this);
-  return m_plugin;
-}
+  PopupWindow();
+  ~PopupWindow();
+};
 
-
-#if QT_VERSION < 0x050000
-  Q_EXPORT_PLUGIN2(Popup, PopupPlugin);
-#endif
+#endif /* POPUPWINDOW_H_ */
