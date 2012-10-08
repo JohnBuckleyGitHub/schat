@@ -20,6 +20,7 @@
 #include <QGridLayout>
 #include <QTextBrowser>
 #include <QMouseEvent>
+#include <QTimer>
 
 #include "alerts/AlertType.h"
 #include "ChatAlerts.h"
@@ -28,7 +29,7 @@
 #include "PopupWindow.h"
 #include "sglobal.h"
 
-PopupWindow::PopupWindow(const Alert &alert)
+PopupWindow::PopupWindow(const Alert &alert, int timeout)
   : QFrame(0, Qt::ToolTip | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint)
   , m_id(alert.id())
   , m_tab(alert.tab())
@@ -65,6 +66,9 @@ PopupWindow::PopupWindow(const Alert &alert)
   setFixedSize(QSize(Width, Height));
 
   connect(ChatAlerts::i(), SIGNAL(removed(QByteArray)), SLOT(removed(QByteArray)));
+
+  if (timeout)
+    QTimer::singleShot(timeout * 1000, this, SLOT(close()));
 }
 
 

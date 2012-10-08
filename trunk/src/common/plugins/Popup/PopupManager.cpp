@@ -19,16 +19,21 @@
 #include <QDesktopWidget>
 
 #include "ChatAlerts.h"
+#include "ChatCore.h"
+#include "ChatSettings.h"
 #include "PopupManager.h"
-#include "ui/TabWidget.h"
 #include "PopupWindow.h"
+#include "sglobal.h"
+#include "ui/TabWidget.h"
 
 PopupManager::PopupManager(QObject *parent)
   : QObject(parent)
 {
   m_desktop = new QDesktopWidget();
+  m_timeout = ChatCore::settings()->setDefaultAndRead(LS("Popup/Timeout"), 10).toUInt();
 
   connect(ChatAlerts::i(), SIGNAL(popup(Alert)), SLOT(popup(Alert)));
+  connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
 }
 
 
@@ -40,11 +45,18 @@ PopupManager::~PopupManager()
 
 void PopupManager::popup(const Alert &alert)
 {
-  PopupWindow *window = new PopupWindow(alert);
+  PopupWindow *window = new PopupWindow(alert, m_timeout);
   connect(window, SIGNAL(destroyed(QObject*)), SLOT(windowDestroyed(QObject*)));
 
   m_windows.prepend(window);
   layoutWidgets();
+}
+
+
+void PopupManager::settingsChanged(const QString &key, const QVariant &value)
+{
+  if (key == LS("Popup/Timeout"))
+    m_timeout = value.toUInt();
 }
 
 
