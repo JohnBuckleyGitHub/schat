@@ -70,7 +70,7 @@ public:
   inline static AlertType* type(const QString &id)  { return m_self->m_types.value(id); }
   inline static bool hasAlerts()                    { return !m_self->m_channels.isEmpty(); }
   inline static ChatAlerts *i()                     { return m_self; }
-  inline static int count(const QByteArray &id)     { return m_count.value(id); }
+  inline static int count(const QByteArray &id)     { return m_count.value(id).size(); }
   inline static int total()                         { return m_alerts; }
   inline static QList<QByteArray>& channels()       { return m_channels; }
   inline static QStringList sounds()                { return m_self->m_soundMap.keys(); }
@@ -80,13 +80,15 @@ public:
   static QByteArray last()                          { if (!m_channels.isEmpty()) return m_channels.first(); return QByteArray(); }
   static QList<AlertType*> types();
   static void play(const QString &file);
-  static void remove(const QByteArray &id);
+  static void remove(const QByteArray &channelId);
+  static void remove(const QByteArray &channelId, const QByteArray &alertId);
 
 signals:
   void alert(bool alert);
   void alert(const Alert &alert);
   void countChanged(int total, int count, const QByteArray &channel);
   void popup(const Alert &alert);
+  void removed(const QByteArray &alertId);
 
 public slots:
   void loadSounds();
@@ -98,18 +100,18 @@ private slots:
   void settingsChanged(const QString &key, const QVariant &value);
 
 private:
-  static void add(const QByteArray &id);
+  static void add(const QByteArray &channelId, const QByteArray &alertId);
 
-  bool m_sounds;                            ///< \b true если разрешены звуки.
-  bool m_soundsDnD;                         ///< \b true если разрешены звуки при статусе не беспокоить.
-  ChatSettings *m_settings;                 ///< Настройки чата.
-  QMap<QString, AlertType*> m_types;        ///< Таблица типов уведомлений.
-  QMap<QString, QString> m_soundMap;        ///< Таблица соответствия имён звуковых файлов с их именами.
-  QQueue<QString> m_soundQueue;             ///< Очередь звуковых файлов на воспроизведение.
-  static ChatAlerts *m_self;                ///< Указатель на себя.
-  static int m_alerts;                      ///< Количество непрочитанных уведомлений.
-  static QHash<QByteArray, int> m_count;    ///< Количество непрочитанных уведомлений для каждого канала.
-  static QList<QByteArray> m_channels;      ///< Сортированный список каналов для которых активно глобальное уведомление о новых сообщениях.
+  bool m_sounds;                                       ///< \b true если разрешены звуки.
+  bool m_soundsDnD;                                    ///< \b true если разрешены звуки при статусе не беспокоить.
+  ChatSettings *m_settings;                            ///< Настройки чата.
+  QMap<QString, AlertType*> m_types;                   ///< Таблица типов уведомлений.
+  QMap<QString, QString> m_soundMap;                   ///< Таблица соответствия имён звуковых файлов с их именами.
+  QQueue<QString> m_soundQueue;                        ///< Очередь звуковых файлов на воспроизведение.
+  static ChatAlerts *m_self;                           ///< Указатель на себя.
+  static int m_alerts;                                 ///< Количество непрочитанных уведомлений.
+  static QList<QByteArray> m_channels;                 ///< Сортированный список каналов для которых активно глобальное уведомление о новых сообщениях.
+  static QMap<QByteArray, QList<QByteArray> > m_count; ///< Количество непрочитанных уведомлений для каждого канала.
 };
 
 #endif /* CHATALERTS_H_ */

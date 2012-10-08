@@ -23,12 +23,15 @@
 
 #include "alerts/AlertType.h"
 #include "ChatAlerts.h"
+#include "ChatNotify.h"
+#include "DateTime.h"
 #include "PopupWindow.h"
 #include "sglobal.h"
-#include "DateTime.h"
 
 PopupWindow::PopupWindow(const Alert &alert)
   : QFrame(0, Qt::ToolTip | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint)
+  , m_id(alert.id())
+  , m_tab(alert.tab())
 {
   setAttribute(Qt::WA_DeleteOnClose, true);
   setWindowOpacity(0.9);
@@ -60,11 +63,27 @@ PopupWindow::PopupWindow(const Alert &alert)
   mainLay->setColumnStretch(1, 1);
 
   setFixedSize(QSize(Width, Height));
+
+  connect(ChatAlerts::i(), SIGNAL(removed(QByteArray)), SLOT(removed(QByteArray)));
 }
 
 
 void PopupWindow::mouseReleaseEvent(QMouseEvent *event)
 {
-  Q_UNUSED(event)
-  close();
+  if (event->button() == Qt::LeftButton) {
+    ChatNotify::start(Notify::OpenChannel, m_tab);
+    ChatNotify::start(Notify::ShowChat);
+    close();
+  }
+  else if (event->button() == Qt::RightButton) {
+    ChatAlerts::remove(m_tab, m_id);
+    close();
+  }
+}
+
+
+void PopupWindow::removed(const QByteArray &alertId)
+{
+  if (m_id == alertId)
+    close();
 }

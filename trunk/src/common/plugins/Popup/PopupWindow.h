@@ -42,7 +42,12 @@ public:
 protected:
   void mouseReleaseEvent(QMouseEvent *event);
 
+private slots:
+  void removed(const QByteArray &alertId);
+
 private:
+  QByteArray m_id;      ///< Уникальный идентификатор оповещения.
+  QByteArray m_tab;     ///< Идентификатор вкладки канала.
   QLabel *m_date;       ///< Время уведомления.
   QLabel *m_icon;       ///< Иконка уведомления.
   QLabel *m_title;      ///< Заголовок уведомления.
