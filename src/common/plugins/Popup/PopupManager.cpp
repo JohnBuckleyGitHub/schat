@@ -40,9 +40,17 @@ PopupManager::~PopupManager()
 
 void PopupManager::popup(const Alert &alert)
 {
-  PopupWindow *window = new PopupWindow();
+  PopupWindow *window = new PopupWindow(alert);
+  connect(window, SIGNAL(destroyed(QObject*)), SLOT(windowDestroyed(QObject*)));
 
   m_windows.prepend(window);
+  layoutWidgets();
+}
+
+
+void PopupManager::windowDestroyed(QObject *obj)
+{
+  m_windows.removeAll(static_cast<PopupWindow *>(obj));
   layoutWidgets();
 }
 
