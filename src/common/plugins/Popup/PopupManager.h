@@ -35,11 +35,13 @@ public:
 
 private slots:
   void popup(const Alert &alert);
+  void settingsChanged(const QString &key, const QVariant &value);
   void windowDestroyed(QObject *obj);
 
 private:
   void layoutWidgets();
 
+  int m_timeout;                  ///< Время в секундах после которого всплывающие окна будут автоматически закрыты.
   QDesktopWidget *m_desktop;      ///< Виджет для определения геометрии экрана.
   QList<PopupWindow *> m_windows; ///< Список окон.
 };

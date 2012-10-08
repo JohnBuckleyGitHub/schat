@@ -37,7 +37,7 @@ public:
     Space  = 3    ///< Свободное пространство между окнами.
   };
 
-  PopupWindow(const Alert &alert);
+  PopupWindow(const Alert &alert, int timeout);
 
 protected:
   void mouseReleaseEvent(QMouseEvent *event);
