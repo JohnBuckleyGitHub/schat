@@ -35,6 +35,7 @@ public:
 
 private slots:
   void popup(const Alert &alert);
+  void windowDestroyed(QObject *obj);
 
 private:
   void layoutWidgets();

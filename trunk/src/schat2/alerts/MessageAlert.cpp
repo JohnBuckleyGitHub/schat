@@ -17,6 +17,8 @@
  */
 
 #include "alerts/MessageAlert.h"
+#include "client/ChatClient.h"
+#include "client/ClientChannels.h"
 #include "messages/ChannelMessage.h"
 #include "net/packets/MessageNotice.h"
 #include "net/SimpleID.h"
@@ -32,7 +34,39 @@ MessageAlert::MessageAlert(const ChannelMessage &message)
   else if (SimpleID::typeOf(m_tab) == SimpleID::UserId)
     m_type = LS("private");
 
-  m_data[LS("Message")] = message.data();
+  const QVariantMap &data  = message.data();
+  m_data[LS("Message")] = data;
+
+  popup(data);
+}
+
+
+/*!
+ * Формирование данных для всплывающего окна.
+ */
+void MessageAlert::popup(const QVariantMap &data)
+{
+  AlertType *type = ChatAlerts::type(m_type);
+  if (!type || !type->popup())
+    return;
+
+  const QVariantMap author = data.value(LS("Author")).toMap();
+  const QString nick = QString(LS("<b class=\"color-%1\">%2</b>")).arg(author.value(LS("Color")).toString(), author.value(LS("Name")).toString());
+  QVariantMap popup;
+
+  if (SimpleID::typeOf(m_tab) == SimpleID::ChannelId) {
+    ClientChannel channel = ChatClient::channels()->get(m_tab);
+    if (channel)
+      popup[LS("title")] = QString(LS("<b>%1</b>")).arg(channel->name());
+
+    popup[LS("text")]  = nick + LS(": ") + data.value(LS("Text")).toString();
+  }
+  else {
+    popup[LS("text")]  = data.value(LS("Text"));
+    popup[LS("title")] = nick;
+  }
+
+  m_data[LS("popup")] = popup;
 }
 
 

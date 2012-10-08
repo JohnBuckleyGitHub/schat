@@ -21,6 +21,10 @@
 
 #include <QFrame>
 
+class Alert;
+class QLabel;
+class QTextBrowser;
+
 class PopupWindow : public QFrame
 {
   Q_OBJECT
@@ -33,8 +37,16 @@ public:
     Space  = 3    ///< Свободное пространство между окнами.
   };
 
-  PopupWindow();
-  ~PopupWindow();
+  PopupWindow(const Alert &alert);
+
+protected:
+  void mouseReleaseEvent(QMouseEvent *event);
+
+private:
+  QLabel *m_date;       ///< Время уведомления.
+  QLabel *m_icon;       ///< Иконка уведомления.
+  QLabel *m_title;      ///< Заголовок уведомления.
+  QTextBrowser *m_text; ///< Виджет отображения текста.
 };
 
 #endif /* POPUPWINDOW_H_ */

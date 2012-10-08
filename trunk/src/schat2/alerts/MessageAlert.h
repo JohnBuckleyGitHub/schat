@@ -28,6 +28,9 @@ class MessageAlert : public Alert
 {
 public:
   MessageAlert(const ChannelMessage &message);
+
+private:
+  void popup(const QVariantMap &data);
 };
 
 
