@@ -37,7 +37,7 @@
 
 ChatAlerts *ChatAlerts::m_self = 0;
 int ChatAlerts::m_alerts = 0;
-QHash<QByteArray, int> ChatAlerts::m_count;
+QMap<QByteArray, QList<QByteArray> > ChatAlerts::m_count;
 QList<QByteArray> ChatAlerts::m_channels;
 
 Alert::Alert(const QString &type)
@@ -189,7 +189,7 @@ bool ChatAlerts::start(const Alert &alert)
       if (!tab)
         return false;
 
-      add(tabId);
+      add(tabId, alert.id());
     }
     else
       return false;
@@ -232,18 +232,46 @@ void ChatAlerts::play(const QString &file)
 
 /*!
  * Удаление глобального уведомления для канала.
+ *
+ * \param channelId идентификатор канала.
  */
-void ChatAlerts::remove(const QByteArray &id)
+void ChatAlerts::remove(const QByteArray &channelId)
 {
-  int count = m_count.value(id);
-  m_channels.removeAll(id);
-  m_count.remove(id);
-  m_alerts -= count;
+  QList<QByteArray> count = m_count.value(channelId);
+  if (count.isEmpty())
+    return;
+
+  m_channels.removeAll(channelId);
+  m_count.remove(channelId);
+  m_alerts -= count.size();
 
   if (m_channels.isEmpty())
     emit m_self->alert(false);
 
-  emit m_self->countChanged(m_alerts, count, id);
+  emit m_self->countChanged(m_alerts, count.size(), channelId);
+
+  foreach (const QByteArray &alertId, count) {
+    emit m_self->removed(alertId);
+  }
+}
+
+
+void ChatAlerts::remove(const QByteArray &channelId, const QByteArray &alertId)
+{
+  QList<QByteArray> &count = m_count[channelId];
+  if (!count.size() || !count.contains(alertId))
+    return;
+
+  if (count.size() > 1) {
+    count.removeAll(alertId);
+    m_alerts--;
+    emit m_self->countChanged(m_alerts, count.size(), channelId);
+    emit m_self->removed(alertId);
+  }
+  else
+    remove(channelId);
+
+
 }
 
 
@@ -318,19 +346,24 @@ void ChatAlerts::settingsChanged(const QString &key, const QVariant &value)
 
 /*!
  * Добавление глобального уведомления для канала.
+ *
+ * \param channelId идентификатор канала.
+ * \param alertId   идентификатор уведомления.
  */
-void ChatAlerts::add(const QByteArray &id)
+void ChatAlerts::add(const QByteArray &channelId, const QByteArray &alertId)
 {
-  m_channels.removeAll(id);
-  m_channels.prepend(id);
+  m_channels.removeAll(channelId);
+  m_channels.prepend(channelId);
 
-  int count = m_count.value(id);
-  count++;
+  QList<QByteArray> &count = m_count[channelId];
+  if (count.contains(alertId))
+    return;
+
+  count.append(alertId);
   m_alerts++;
-  m_count[id] = count;
 
   if (m_channels.size() == 1)
     emit m_self->alert(true);
 
-  emit m_self->countChanged(m_alerts, count, id);
+  emit m_self->countChanged(m_alerts, count.size(), channelId);
 }
