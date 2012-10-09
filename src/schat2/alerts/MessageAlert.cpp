@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QTextDocument>
+
 #include "alerts/MessageAlert.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
@@ -51,7 +53,7 @@ void MessageAlert::popup(const QVariantMap &data)
     return;
 
   const QVariantMap author = data.value(LS("Author")).toMap();
-  const QString nick = QString(LS("<b>%1</b>")).arg(author.value(LS("Name")).toString());
+  const QString nick = QString(LS("<b>%1</b>")).arg(Qt::escape(author.value(LS("Name")).toString()));
   QVariantMap popup;
 
   if (SimpleID::typeOf(m_tab) == SimpleID::ChannelId) {

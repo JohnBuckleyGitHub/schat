@@ -493,17 +493,17 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="91"/>
+        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="93"/>
         <source>Public message</source>
         <translation>Публичное сообщение</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="93"/>
+        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="95"/>
         <source>Referring to you</source>
         <translation>Обращение к вам</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="95"/>
+        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="97"/>
         <source>Private message</source>
         <translation>Личное сообщение</translation>
     </message>

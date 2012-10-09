@@ -502,17 +502,17 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="91"/>
+        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="93"/>
         <source>Public message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="93"/>
+        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="95"/>
         <source>Referring to you</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="95"/>
+        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="97"/>
         <source>Private message</source>
         <translation type="unfinished"></translation>
     </message>
