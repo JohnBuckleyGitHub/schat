@@ -90,10 +90,18 @@ void ServerTab::changeEvent(QEvent *event)
 
 void ServerTab::alert(const Alert &alert)
 {
-  if (alert.type() == LS("online"))
-    m_chatView->add(ServiceMessage::connected());
-  else if (alert.type() == LS("offline"))
-    m_chatView->add(ServiceMessage::connectionLost());
+  if (alert.type() == LS("online")) {
+    ServiceMessage message(alert.data().value(LS("popup")).toMap().value(LS("text")).toString());
+    message.data()[LS("Type")]  = LS("info");
+    message.data()[LS("Extra")] = LS("green-text");
+
+    m_chatView->add(message);
+  }
+  else if (alert.type() == LS("offline")) {
+    ServiceMessage message(alert.data().value(LS("popup")).toMap().value(LS("text")).toString());
+    message.data()[LS("Type")]  = LS("info");
+    message.data()[LS("Extra")] = LS("red-text");
+  }
 }
 
 

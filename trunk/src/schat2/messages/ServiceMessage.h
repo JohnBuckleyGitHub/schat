@@ -31,8 +31,6 @@ public:
   ServiceMessage(const QString &text, const QByteArray &user = QByteArray());
   bool isValid() const;
 
-  static ServiceMessage connected();
-  static ServiceMessage connectionLost();
   static ServiceMessage joined(const QByteArray &user);
   static ServiceMessage part(const QByteArray &user);
   static ServiceMessage quit(const QByteArray &user);

@@ -59,37 +59,37 @@
 <context>
     <name>AlertsWidget</name>
     <message>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="47"/>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="195"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="45"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="193"/>
         <source>Play sound</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="55"/>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="196"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="53"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="194"/>
         <source>Play</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="56"/>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="197"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="54"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="195"/>
         <source>Add sounds</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="110"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="108"/>
         <source>Open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="45"/>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="193"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="43"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="191"/>
         <source>Show notification in tray</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="46"/>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="194"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="44"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="192"/>
         <source>Show popup window</source>
         <translation type="unfinished"></translation>
     </message>
@@ -104,6 +104,29 @@
     <message>
         <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="57"/>
         <source>Information...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ChatAlerts</name>
+    <message>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="302"/>
+        <source>Offline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="303"/>
+        <source>Connection lost</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="315"/>
+        <source>Online</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="316"/>
+        <source>Successfully connected to &lt;b&gt;%1&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -479,27 +502,27 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="57"/>
+        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="91"/>
         <source>Public message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="59"/>
+        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="93"/>
         <source>Referring to you</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="61"/>
+        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="95"/>
         <source>Private message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ChatAlerts.cpp" line="86"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="87"/>
         <source>Online</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ChatAlerts.cpp" line="104"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="105"/>
         <source>Offline</source>
         <translation type="unfinished"></translation>
     </message>
@@ -583,12 +606,12 @@
 <context>
     <name>ServerTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="108"/>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="116"/>
         <source>Server %1 requires authorization</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="176"/>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="184"/>
         <source>Network</source>
         <translation type="unfinished"></translation>
     </message>
@@ -596,47 +619,37 @@
 <context>
     <name>ServiceMessage</name>
     <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="53"/>
-        <source>Successfully connected to &lt;b&gt;%1&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="62"/>
-        <source>Connection lost</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="79"/>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="61"/>
         <source>has joined</source>
         <comment>Female</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="81"/>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="63"/>
         <source>has joined</source>
         <comment>Male</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="98"/>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="80"/>
         <source>has left</source>
         <comment>Female</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="100"/>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="82"/>
         <source>has left</source>
         <comment>Male</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="117"/>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="99"/>
         <source>has quit chat</source>
         <comment>Female</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="119"/>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="101"/>
         <source>has quit chat</source>
         <comment>Male</comment>
         <translation type="unfinished"></translation>
