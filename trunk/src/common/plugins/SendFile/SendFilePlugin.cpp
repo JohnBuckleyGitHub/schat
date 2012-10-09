@@ -21,6 +21,7 @@
 #include <QFileDialog>
 #include <QFileIconProvider>
 #include <QHostAddress>
+#include <QTextDocument>
 #include <QTimer>
 #include <QtPlugin>
 #include <QWebElement>
@@ -33,6 +34,7 @@
 #include "ChatSettings.h"
 #include "ChatUrls.h"
 #include "client/ChatClient.h"
+#include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
 #include "DateTime.h"
 #include "debugstream.h"
@@ -636,11 +638,25 @@ void SendFilePluginImpl::incomingFile(const MessagePacket &packet)
   message.data()[LS("WeakId")]    = false;
   TabWidget::add(message);
 
-  if (packet->status() == Notice::OK) {
-    Alert alert = Alert(LS("file"), packet->id(), packet->date());
-    alert.setTab(packet->sender(), packet->dest());
-    ChatAlerts::start(alert);
+  if (packet->status() != Notice::OK)
+    return;
+
+  Alert alert = Alert(LS("file"), packet->id(), packet->date());
+  alert.setTab(packet->sender(), packet->dest());
+
+  AlertType *type = ChatAlerts::type(LS("file"));
+  if (type && type->popup()) {
+    QVariantMap popup;
+    popup[LS("text")] = tr("Incoming file: %1").arg(LS("<b>") + Qt::escape(transaction->fileName()) + LS("</b>"));
+
+    ClientChannel user = ChatClient::channels()->get(packet->sender());
+    if (user)
+      popup[LS("title")] = QString(LS("<b>%1</b>")).arg(Qt::escape(user->name()));;
+
+    alert.data()[LS("popup")] = popup;
   }
+
+  ChatAlerts::start(alert);
 }
 
 

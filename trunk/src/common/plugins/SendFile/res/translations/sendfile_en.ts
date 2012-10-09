@@ -5,7 +5,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="103"/>
+        <location filename="../../SendFilePlugin.cpp" line="105"/>
         <source>Incoming file</source>
         <translation type="unfinished"></translation>
     </message>
@@ -44,18 +44,23 @@
 <context>
     <name>SendFilePluginImpl</name>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="156"/>
+        <location filename="../../SendFilePlugin.cpp" line="158"/>
         <source>Open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="320"/>
-        <location filename="../../SendFilePlugin.cpp" line="411"/>
+        <location filename="../../SendFilePlugin.cpp" line="322"/>
+        <location filename="../../SendFilePlugin.cpp" line="413"/>
         <source>%1 of %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="669"/>
+        <location filename="../../SendFilePlugin.cpp" line="650"/>
+        <source>Incoming file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../SendFilePlugin.cpp" line="685"/>
         <source>Save</source>
         <translation type="unfinished"></translation>
     </message>
@@ -63,47 +68,47 @@
 <context>
     <name>SendFileTr</name>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="73"/>
+        <location filename="../../SendFilePlugin.cpp" line="75"/>
         <source>Waiting</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="74"/>
+        <location filename="../../SendFilePlugin.cpp" line="76"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="75"/>
+        <location filename="../../SendFilePlugin.cpp" line="77"/>
         <source>Cancelled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="76"/>
+        <location filename="../../SendFilePlugin.cpp" line="78"/>
         <source>Save as</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="77"/>
+        <location filename="../../SendFilePlugin.cpp" line="79"/>
         <source>Connecting...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="78"/>
+        <location filename="../../SendFilePlugin.cpp" line="80"/>
         <source>File sent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="79"/>
+        <location filename="../../SendFilePlugin.cpp" line="81"/>
         <source>File received.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="80"/>
+        <location filename="../../SendFilePlugin.cpp" line="82"/>
         <source>Show in folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="81"/>
+        <location filename="../../SendFilePlugin.cpp" line="83"/>
         <source>Open file</source>
         <translation type="unfinished"></translation>
     </message>
