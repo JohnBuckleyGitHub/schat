@@ -20,6 +20,7 @@
 #include <QProcess>
 #include <QSound>
 #include <QTimer>
+#include <QTextDocument>
 
 #include "alerts/AlertType.h"
 #include "alerts/MessageAlert.h"
@@ -296,6 +297,12 @@ void ChatAlerts::loadSounds()
 void ChatAlerts::offline()
 {
   Alert alert(LS("offline"));
+
+  QVariantMap popup;
+  popup[LS("title")] = QString(LS("<b>%1</b>")).arg(tr("Offline"));
+  popup[LS("text")]  = tr("Connection lost");
+  alert.data()[LS("popup")] = popup;
+
   start(alert);
 }
 
@@ -303,6 +310,12 @@ void ChatAlerts::offline()
 void ChatAlerts::online()
 {
   Alert alert(LS("online"), ChatClient::io()->date());
+
+  QVariantMap popup;
+  popup[LS("title")] = QString(LS("<b>%1</b>")).arg(tr("Online"));
+  popup[LS("text")]  = tr("Successfully connected to <b>%1</b>").arg(Qt::escape(ChatClient::serverName()));
+  alert.data()[LS("popup")] = popup;
+
   start(alert);
 }
 

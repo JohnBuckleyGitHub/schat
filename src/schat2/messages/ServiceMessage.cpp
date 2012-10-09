@@ -48,24 +48,6 @@ bool ServiceMessage::isValid() const
 }
 
 
-ServiceMessage ServiceMessage::connected()
-{
-  ServiceMessage message(tr("Successfully connected to <b>%1</b>").arg(Qt::escape(ChatClient::serverName())));
-  message.data()[LS("Type")]  = LS("info");
-  message.data()[LS("Extra")] = LS("green-text");
-  return message;
-}
-
-
-ServiceMessage ServiceMessage::connectionLost()
-{
-  ServiceMessage message(tr("Connection lost"));
-  message.data()[LS("Type")]  = LS("info");
-  message.data()[LS("Extra")] = LS("red-text");
-  return message;
-}
-
-
 /*!
  * Сообщение о входе пользователя в канал.
  */

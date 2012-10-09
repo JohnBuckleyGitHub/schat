@@ -51,7 +51,7 @@ void MessageAlert::popup(const QVariantMap &data)
     return;
 
   const QVariantMap author = data.value(LS("Author")).toMap();
-  const QString nick = QString(LS("<b class=\"color-%1\">%2</b>")).arg(author.value(LS("Color")).toString(), author.value(LS("Name")).toString());
+  const QString nick = QString(LS("<b>%1</b>")).arg(author.value(LS("Name")).toString());
   QVariantMap popup;
 
   if (SimpleID::typeOf(m_tab) == SimpleID::ChannelId) {
