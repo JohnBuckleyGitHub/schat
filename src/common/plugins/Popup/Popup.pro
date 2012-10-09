@@ -31,6 +31,6 @@ SOURCES  = \
    PopupPlugin.cpp \
    PopupWindow.cpp \
 
-#RESOURCES += Popup.qrc
+RESOURCES += Popup.qrc
 
 include(../plugins.pri)

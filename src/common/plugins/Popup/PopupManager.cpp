@@ -16,11 +16,15 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QBasicTimer>
 #include <QDesktopWidget>
+#include <QFile>
+#include <QTimerEvent>
 
 #include "ChatAlerts.h"
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "Path.h"
 #include "PopupManager.h"
 #include "PopupWindow.h"
 #include "sglobal.h"
@@ -28,9 +32,13 @@
 
 PopupManager::PopupManager(QObject *parent)
   : QObject(parent)
+  , m_flashed(true)
+  , m_stylesLoaded(false)
 {
   m_desktop = new QDesktopWidget();
   m_timeout = ChatCore::settings()->setDefaultAndRead(LS("Popup/Timeout"), 10).toUInt();
+
+  m_timer = new QBasicTimer();
 
   connect(ChatAlerts::i(), SIGNAL(popup(Alert)), SLOT(popup(Alert)));
   connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
@@ -40,12 +48,37 @@ PopupManager::PopupManager(QObject *parent)
 PopupManager::~PopupManager()
 {
   delete m_desktop;
+  delete m_timer;
+}
+
+
+void PopupManager::timerEvent(QTimerEvent *event)
+{
+  if (event->timerId() == m_timer->timerId()) {
+    m_flashed = !m_flashed;
+    foreach (PopupWindow *window, m_windows) {
+      window->setStyleSheet(m_flashed ? m_flashedCSS : m_windowsCSS);
+    }
+  }
+
+  QObject::timerEvent(event);
 }
 
 
 void PopupManager::popup(const Alert &alert)
 {
-  PopupWindow *window = new PopupWindow(alert, m_timeout);
+  if (!m_stylesLoaded) {
+    m_textCSS = loadCSS(LS("text"));
+    m_windowsCSS = loadCSS(LS("window"));
+    m_flashedCSS = m_windowsCSS + loadCSS(LS("flashed"));
+    m_stylesLoaded = true;
+  }
+
+  if (!m_timer->isActive())
+    m_timer->start(1500, this);
+
+  PopupWindow *window = new PopupWindow(alert, m_timeout, m_textCSS);
+  window->setStyleSheet(m_flashedCSS);
   connect(window, SIGNAL(destroyed(QObject*)), SLOT(windowDestroyed(QObject*)));
 
   m_windows.prepend(window);
@@ -64,6 +97,31 @@ void PopupManager::windowDestroyed(QObject *obj)
 {
   m_windows.removeAll(static_cast<PopupWindow *>(obj));
   layoutWidgets();
+
+  if (m_windows.isEmpty()) {
+    m_timer->stop();
+    m_flashed = true;
+  }
+}
+
+
+QString PopupManager::loadCSS(const QString &baseName)
+{
+  QString out;
+  QFile file(LS(":/css/Popup/") + baseName + LS(".css"));
+
+  if (file.open(QFile::ReadOnly)) {
+    out = file.readAll();
+    file.close();
+  }
+
+  file.setFileName(Path::cache() + LS("/popup/") + baseName + LS(".css"));
+  if (file.exists() && file.open(QFile::ReadOnly)) {
+    out += file.readAll();
+    file.close();
+  }
+
+  return out;
 }
 
 
