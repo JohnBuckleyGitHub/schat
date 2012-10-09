@@ -16,10 +16,10 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QLabel>
 #include <QGridLayout>
-#include <QTextBrowser>
+#include <QLabel>
 #include <QMouseEvent>
+#include <QTextBrowser>
 #include <QTimer>
 
 #include "alerts/AlertType.h"
@@ -29,26 +29,32 @@
 #include "PopupWindow.h"
 #include "sglobal.h"
 
-PopupWindow::PopupWindow(const Alert &alert, int timeout)
+PopupWindow::PopupWindow(const Alert &alert, int timeout, const QString &css)
   : QFrame(0, Qt::ToolTip | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint)
   , m_id(alert.id())
   , m_tab(alert.tab())
 {
+  setObjectName(LS("PopupWindow"));
   setAttribute(Qt::WA_DeleteOnClose, true);
   setWindowOpacity(0.9);
 
   m_icon = new QLabel(this);
+  m_icon->setObjectName(LS("IconLabel"));
   AlertType *type = ChatAlerts::type(alert);
   if (type)
     m_icon->setPixmap(type->icon().pixmap(16, 16));
 
   m_title = new QLabel(this);
+  m_title->setObjectName(LS("TitleLabel"));
+
   m_date = new QLabel(DateTime::toDateTime(alert.date()).toString(LS("hh:mm:ss")), this);
+  m_date->setObjectName(LS("DateLabel"));
 
   m_text = new QTextBrowser(this);
   m_text->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   m_text->setContextMenuPolicy(Qt::NoContextMenu);
   m_text->setAttribute(Qt::WA_TransparentForMouseEvents);
+  m_text->document()->setDefaultStyleSheet(css);
 
   QVariantMap popup = alert.data().value(LS("popup")).toMap();
   m_text->setHtml(popup.value(LS("text")).toString());

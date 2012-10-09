@@ -32,12 +32,12 @@ class PopupWindow : public QFrame
 public:
   /// Установки для фиксированного размера окна.
   enum Size {
-    Width  = 240, ///< Ширина.
-    Height = 90,  ///< Высота.
+    Width  = 280, ///< Ширина.
+    Height = 80,  ///< Высота.
     Space  = 3    ///< Свободное пространство между окнами.
   };
 
-  PopupWindow(const Alert &alert, int timeout);
+  PopupWindow(const Alert &alert, int timeout, const QString &css);
 
 protected:
   void mouseReleaseEvent(QMouseEvent *event);

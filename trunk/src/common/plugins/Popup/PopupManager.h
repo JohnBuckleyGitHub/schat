@@ -23,6 +23,7 @@
 
 class Alert;
 class PopupWindow;
+class QBasicTimer;
 class QDesktopWidget;
 
 class PopupManager : public QObject
@@ -33,17 +34,27 @@ public:
   PopupManager(QObject *parent = 0);
   ~PopupManager();
 
+protected:
+  void timerEvent(QTimerEvent *event);
+
 private slots:
   void popup(const Alert &alert);
   void settingsChanged(const QString &key, const QVariant &value);
   void windowDestroyed(QObject *obj);
 
 private:
+  QString loadCSS(const QString &baseName);
   void layoutWidgets();
 
+  bool m_flashed;                 ///< \b true если активен оранжевый стиль всплывающего окна.
+  bool m_stylesLoaded;            ///< \b true если CSS стили загружены.
   int m_timeout;                  ///< Время в секундах после которого всплывающие окна будут автоматически закрыты.
+  QBasicTimer *m_timer;           ///< Таймер обслуживающий соединение.
   QDesktopWidget *m_desktop;      ///< Виджет для определения геометрии экрана.
   QList<PopupWindow *> m_windows; ///< Список окон.
+  QString m_flashedCSS;           ///< Оранжевый QSS для всплывающего окна.
+  QString m_textCSS;              ///< CSS стиль для текста всплывающего окна.
+  QString m_windowsCSS;           ///< QSS для всплывающего окна.
 };
 
 #endif /* POPUPMANAGER_H_ */
