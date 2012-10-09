@@ -24,6 +24,7 @@
 class Alert;
 class Notify;
 class PopupManager;
+class SettingsPage;
 
 class PopupPluginImpl : public ChatPlugin
 {
@@ -31,6 +32,9 @@ class PopupPluginImpl : public ChatPlugin
 
 public:
   PopupPluginImpl(QObject *parent);
+
+private slots:
+  void added(const QString &id, SettingsPage *page);
 
 private:
   PopupManager *m_manager;

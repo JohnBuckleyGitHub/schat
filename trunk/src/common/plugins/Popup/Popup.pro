@@ -24,11 +24,13 @@ HEADERS  = \
    PopupManager.h \
    PopupPlugin.h \
    PopupPlugin_p.h \
+   PopupSettings.h \
    PopupWindow.h \
 
 SOURCES  = \
    PopupManager.cpp \
    PopupPlugin.cpp \
+   PopupSettings.cpp \
    PopupWindow.cpp \
 
 RESOURCES += Popup.qrc

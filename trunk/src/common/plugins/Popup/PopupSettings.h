@@ -16,41 +16,24 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
-#include <QVBoxLayout>
+#ifndef POPUPSETTINGS_H_
+#define POPUPSETTINGS_H_
 
-#include "PopupPlugin.h"
-#include "PopupPlugin_p.h"
-#include "PopupManager.h"
-#include "ui/tabs/SettingsTabHook.h"
-#include "sglobal.h"
-#include "PopupSettings.h"
+#include <QWidget>
 
-PopupPluginImpl::PopupPluginImpl(QObject *parent)
-  : ChatPlugin(parent)
+class QLabel;
+
+class PopupSettings : public QWidget
 {
-  m_manager = new PopupManager(this);
+  Q_OBJECT
 
-  connect(SettingsTabHook::i(), SIGNAL(added(QString,SettingsPage*)), SLOT(added(QString,SettingsPage*)));
-}
+public:
+  PopupSettings(QWidget *parent = 0);
 
+private:
+  void retranslateUi();
 
-void PopupPluginImpl::added(const QString &id, SettingsPage *page)
-{
-  if (id != LS("alerts"))
-    return;
+  QLabel *m_label; ///< Надпись вверху.
+};
 
-  page->mainLayout()->addWidget(new PopupSettings(page));
-}
-
-
-ChatPlugin *PopupPlugin::create()
-{
-  m_plugin = new PopupPluginImpl(this);
-  return m_plugin;
-}
-
-
-#if QT_VERSION < 0x050000
-  Q_EXPORT_PLUGIN2(Popup, PopupPlugin);
-#endif
+#endif /* POPUPSETTINGS_H_ */

@@ -36,7 +36,7 @@ PopupManager::PopupManager(QObject *parent)
   , m_stylesLoaded(false)
 {
   m_desktop = new QDesktopWidget();
-  m_timeout = ChatCore::settings()->setDefaultAndRead(LS("Popup/Timeout"), 10).toUInt();
+  m_timeout = ChatCore::settings()->setDefaultAndRead(LS("Alerts/PopupTimeout"), 10).toUInt();
 
   m_timer = new QBasicTimer();
 
@@ -88,7 +88,7 @@ void PopupManager::popup(const Alert &alert)
 
 void PopupManager::settingsChanged(const QString &key, const QVariant &value)
 {
-  if (key == LS("Popup/Timeout"))
+  if (key == LS("Alerts/PopupTimeout"))
     m_timeout = value.toUInt();
 }
 
