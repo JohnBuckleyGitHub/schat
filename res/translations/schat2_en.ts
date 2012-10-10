@@ -59,37 +59,37 @@
 <context>
     <name>AlertsWidget</name>
     <message>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="45"/>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="193"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="42"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="178"/>
         <source>Play sound</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="53"/>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="194"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="49"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="179"/>
         <source>Play</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="54"/>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="195"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="50"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="180"/>
         <source>Add sounds</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="108"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="93"/>
         <source>Open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="43"/>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="191"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="53"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="176"/>
         <source>Show notification in tray</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="44"/>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="192"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="52"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="177"/>
         <source>Show popup window</source>
         <translation type="unfinished"></translation>
     </message>
@@ -110,22 +110,22 @@
 <context>
     <name>ChatAlerts</name>
     <message>
-        <location filename="../../src/schat2/ChatAlerts.cpp" line="302"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="304"/>
         <source>Offline</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ChatAlerts.cpp" line="303"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="305"/>
         <source>Connection lost</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ChatAlerts.cpp" line="315"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="317"/>
         <source>Online</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ChatAlerts.cpp" line="316"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="318"/>
         <source>Successfully connected to &lt;b&gt;%1&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>

@@ -16,9 +16,12 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QVBoxLayout>
+#include <QCheckBox>
 #include <QLabel>
+#include <QVBoxLayout>
 
+#include "ChatCore.h"
+#include "ChatSettings.h"
 #include "PopupSettings.h"
 #include "sglobal.h"
 
@@ -26,16 +29,39 @@ PopupSettings::PopupSettings(QWidget *parent)
   : QWidget(parent)
 {
   m_label = new QLabel(this);
+  m_enable = new QCheckBox(this);
+  m_enable->setChecked(ChatCore::settings()->value(LS("Alerts/Popup")).toBool());
+
+  QVBoxLayout *layout = new QVBoxLayout();
+  layout->addWidget(m_enable);
+  layout->setContentsMargins(10, 0, 3, 0);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_label);
+  mainLay->addLayout(layout);
   mainLay->setContentsMargins(0, 6, 0, 0);
 
   retranslateUi();
+
+  connect(m_enable, SIGNAL(clicked(bool)),SLOT(enable(bool)));
+}
+
+
+void PopupSettings::enable(bool enable)
+{
+  ChatCore::settings()->setValue(LS("Alerts/Popup"), enable);
+}
+
+
+void PopupSettings::settingsChanged(const QString &key, const QVariant &value)
+{
+  if (key == LS("Alerts/Popup"))
+    m_enable->setChecked(value.toBool());
 }
 
 
 void PopupSettings::retranslateUi()
 {
   m_label->setText(LS("<b>") + tr("Popup windows") + LS("</b>"));
+  m_enable->setText(tr("Enable"));
 }

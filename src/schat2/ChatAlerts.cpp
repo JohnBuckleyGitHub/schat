@@ -113,6 +113,8 @@ ChatAlerts::ChatAlerts(QObject *parent)
 {
   m_self = this;
 
+  m_popup     = m_settings->setDefaultAndRead(LS("Alerts/Popup"),      true).toBool();
+  m_popupDnD  = m_settings->setDefaultAndRead(LS("Alerts/Popup.DnD"),  false).toBool();
   m_sounds    = m_settings->setDefaultAndRead(LS("Alerts/Sounds"),     true).toBool();
   m_soundsDnD = m_settings->setDefaultAndRead(LS("Alerts/Sounds.DnD"), false).toBool();
 
@@ -171,6 +173,21 @@ bool ChatAlerts::isMute()
 
 
 /*!
+ * \return \b true если разрешены всплывающие окна.
+ */
+bool ChatAlerts::isPopup()
+{
+  if (!m_self->m_popup)
+    return false;
+
+  if (ChatClient::channel()->status() == Status::DnD)
+    return m_self->m_popupDnD;
+
+  return true;
+}
+
+
+/*!
  * Запуск уведомления.
  */
 bool ChatAlerts::start(const Alert &alert)
@@ -201,7 +218,7 @@ bool ChatAlerts::start(const Alert &alert)
 
   emit m_self->alert(alert);
 
-  if (type->popup())
+  if (type->popup() && isPopup())
     emit m_self->popup(alert);
 
   return true;
@@ -342,6 +359,12 @@ void ChatAlerts::settingsChanged(const QString &key, const QVariant &value)
   }
   else if (key == LS("Alerts/Sounds.DnD")) {
     m_soundsDnD = value.toBool();
+  }
+  else if (key == LS("Alerts/Popup")) {
+    m_popup = value.toBool();
+  }
+  else if (key == LS("Alerts/Popup.DnD")) {
+    m_popupDnD = value.toBool();
   }
   else {
     QStringList detect = key.mid(7).split(LC('.'));

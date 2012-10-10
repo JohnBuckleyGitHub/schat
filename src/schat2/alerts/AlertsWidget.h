@@ -34,7 +34,6 @@ public:
 
 protected:
   void changeEvent(QEvent *event);
-  void showEvent(QShowEvent *event);
 
 private slots:
   void add();
@@ -50,7 +49,6 @@ private:
   void setSoundVisible(bool visible);
   void setValue(const QString &key, const QVariant &value);
 
-  bool m_init;            ///< \b false если виджет не был показан.
   QAction *m_add;         ///< Добавение новых звуковых файлов.
   QAction *m_control;     ///< Управление воспроизведением звукового файла.
   QCheckBox *m_popup;     ///< Флажок для включения всплывающих уведомлений.
