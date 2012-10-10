@@ -23,6 +23,7 @@
 
 class QCheckBox;
 class QLabel;
+class QSpinBox;
 
 class PopupSettings : public QWidget
 {
@@ -34,12 +35,15 @@ public:
 private slots:
   void enable(bool enable);
   void settingsChanged(const QString &key, const QVariant &value);
+  void timeChanged(int time);
 
 private:
   void retranslateUi();
 
   QCheckBox *m_enable; ///< Настройка "Alerts/Popup".
   QLabel *m_label;     ///< Надпись вверху.
+  QLabel *m_timeLabel; ///< Надпись поясняющая действие опции "Alerts/PopupTimeout".
+  QSpinBox *m_timeBox; ///< Настройка "Alerts/PopupTimeout".
 };
 
 #endif /* POPUPSETTINGS_H_ */

@@ -19,6 +19,7 @@
 #include <QCheckBox>
 #include <QLabel>
 #include <QVBoxLayout>
+#include <QSpinBox>
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
@@ -32,18 +33,31 @@ PopupSettings::PopupSettings(QWidget *parent)
   m_enable = new QCheckBox(this);
   m_enable->setChecked(ChatCore::settings()->value(LS("Alerts/Popup")).toBool());
 
+  m_timeLabel = new QLabel(this);
+  m_timeBox = new QSpinBox(this);
+  m_timeBox->setRange(0, 60);
+  m_timeBox->setValue(ChatCore::settings()->value(LS("Alerts/PopupTimeout")).toInt());
+
   QVBoxLayout *layout = new QVBoxLayout();
   layout->addWidget(m_enable);
-  layout->setContentsMargins(10, 0, 3, 0);
+  layout->setContentsMargins(10, 0, 0, 0);
+
+  QHBoxLayout *timeLay = new QHBoxLayout();
+  timeLay->addWidget(m_timeLabel);
+  timeLay->addWidget(m_timeBox);
+  timeLay->addStretch();
+  timeLay->setContentsMargins(10, 0, 0, 0);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_label);
   mainLay->addLayout(layout);
+  mainLay->addLayout(timeLay);
   mainLay->setContentsMargins(0, 6, 0, 0);
 
   retranslateUi();
 
   connect(m_enable, SIGNAL(clicked(bool)),SLOT(enable(bool)));
+  connect(m_timeBox, SIGNAL(valueChanged(int)),SLOT(timeChanged(int)));
 }
 
 
@@ -57,6 +71,14 @@ void PopupSettings::settingsChanged(const QString &key, const QVariant &value)
 {
   if (key == LS("Alerts/Popup"))
     m_enable->setChecked(value.toBool());
+  else if (key == LS("Alerts/PopupTimeout"))
+    m_timeBox->setValue(value.toInt());
+}
+
+
+void PopupSettings::timeChanged(int time)
+{
+  ChatCore::settings()->setValue(LS("Alerts/PopupTimeout"), time);
 }
 
 
@@ -64,4 +86,6 @@ void PopupSettings::retranslateUi()
 {
   m_label->setText(LS("<b>") + tr("Popup windows") + LS("</b>"));
   m_enable->setText(tr("Enable"));
+  m_timeLabel->setText(tr("Time to display popup window"));
+  m_timeBox->setSuffix(tr(" sec"));
 }
