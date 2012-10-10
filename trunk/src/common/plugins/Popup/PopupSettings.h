@@ -21,6 +21,7 @@
 
 #include <QWidget>
 
+class QCheckBox;
 class QLabel;
 
 class PopupSettings : public QWidget
@@ -30,10 +31,15 @@ class PopupSettings : public QWidget
 public:
   PopupSettings(QWidget *parent = 0);
 
+private slots:
+  void enable(bool enable);
+  void settingsChanged(const QString &key, const QVariant &value);
+
 private:
   void retranslateUi();
 
-  QLabel *m_label; ///< Надпись вверху.
+  QCheckBox *m_enable; ///< Настройка "Alerts/Popup".
+  QLabel *m_label;     ///< Надпись вверху.
 };
 
 #endif /* POPUPSETTINGS_H_ */

@@ -36,14 +36,10 @@
 
 AlertsWidget::AlertsWidget(QWidget *parent)
   : QWidget(parent)
-  , m_init(false)
 {
   m_combo = new QComboBox(this);
 
-  m_tray  = new QCheckBox(tr("Show notification in tray"), this);
-  m_popup = new QCheckBox(tr("Show popup window"), this);
   m_sound = new QCheckBox(tr("Play sound"), this);
-
   m_toolBar = new QToolBar(this);
   m_toolBar->setIconSize(QSize(16, 16));
   m_file = new QComboBox(this);
@@ -53,13 +49,15 @@ AlertsWidget::AlertsWidget(QWidget *parent)
   m_control = m_toolBar->addAction(QIcon(LS(":/images/play.png")), tr("Play"), this, SLOT(play()));
   m_add     = m_toolBar->addAction(QIcon(LS(":/images/add-gray.png")), tr("Add sounds"), this, SLOT(add()));
 
+  m_popup = new QCheckBox(tr("Show popup window"), this);
+  m_tray  = new QCheckBox(tr("Show notification in tray"), this);
+
   QGridLayout *options = new QGridLayout();
-  options->addWidget(m_tray, 0, 0, 1, 2);
-  options->addWidget(m_popup, 1, 0, 1, 2);
-  options->addWidget(m_sound, 2, 0);
-  options->addWidget(m_toolBar, 2, 1);
+  options->addWidget(m_sound, 0, 0);
+  options->addWidget(m_toolBar, 0, 1, 2, 1, Qt::AlignTop | Qt::AlignRight);
+  options->addWidget(m_popup, 1, 0);
+  options->addWidget(m_tray, 2, 0, 1, 2);
   options->setColumnStretch(0, 1);
-  options->setSpacing(0);
 
   QVBoxLayout *layout = new QVBoxLayout(this);
   layout->addWidget(m_combo);
@@ -70,6 +68,8 @@ AlertsWidget::AlertsWidget(QWidget *parent)
   foreach (AlertType *type, types) {
     m_combo->addItem(type->icon(), type->name(), type->type());
   }
+
+  indexChanged(0);
 
   connect(m_combo,   SIGNAL(currentIndexChanged(int)),     SLOT(indexChanged(int)));
   connect(m_file,    SIGNAL(currentIndexChanged(QString)), SLOT(soundChanged(QString)));
@@ -85,21 +85,6 @@ void AlertsWidget::changeEvent(QEvent *event)
     retranslateUi();
 
   QWidget::changeEvent(event);
-}
-
-
-void AlertsWidget::showEvent(QShowEvent *event)
-{
-  if (!m_init) {
-    m_init = true;
-    int height = m_toolBar->height();
-    m_tray->setMinimumHeight(height);
-    m_popup->setMinimumHeight(height);
-    m_sound->setMinimumHeight(height);
-    indexChanged(0);
-  }
-
-  QWidget::showEvent(event);
 }
 
 

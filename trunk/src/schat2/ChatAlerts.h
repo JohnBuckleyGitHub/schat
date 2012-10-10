@@ -76,6 +76,7 @@ public:
   inline static QStringList sounds()                { return m_self->m_soundMap.keys(); }
   static bool add(AlertType *type);
   static bool isMute();
+  static bool isPopup();
   static bool start(const Alert &alert);
   static QByteArray last()                          { if (!m_channels.isEmpty()) return m_channels.first(); return QByteArray(); }
   static QList<AlertType*> types();
@@ -102,6 +103,8 @@ private slots:
 private:
   static void add(const QByteArray &channelId, const QByteArray &alertId);
 
+  bool m_popup;                                        ///< \b true если разрешены всплывающие окна.
+  bool m_popupDnD;                                     ///< \b true если разрешены всплывающие окна при статусе не беспокоить.
   bool m_sounds;                                       ///< \b true если разрешены звуки.
   bool m_soundsDnD;                                    ///< \b true если разрешены звуки при статусе не беспокоить.
   ChatSettings *m_settings;                            ///< Настройки чата.
