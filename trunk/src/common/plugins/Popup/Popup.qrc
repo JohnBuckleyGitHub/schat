@@ -3,5 +3,6 @@
   <file alias="css/Popup/flashed.css">res/css/flashed.css</file>
   <file alias="css/Popup/text.css">res/css/text.css</file>
   <file alias="css/Popup/window.css">res/css/window.css</file>
+  <file alias="translations/popup_ru.qm">res/translations/popup_ru.qm</file>
 </qresource>
 </RCC>

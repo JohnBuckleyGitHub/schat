@@ -19,17 +19,20 @@
 #include <QtPlugin>
 #include <QVBoxLayout>
 
+#include "ChatCore.h"
+#include "PopupManager.h"
 #include "PopupPlugin.h"
 #include "PopupPlugin_p.h"
-#include "PopupManager.h"
-#include "ui/tabs/SettingsTabHook.h"
-#include "sglobal.h"
 #include "PopupSettings.h"
+#include "sglobal.h"
+#include "Translation.h"
+#include "ui/tabs/SettingsTabHook.h"
 
 PopupPluginImpl::PopupPluginImpl(QObject *parent)
   : ChatPlugin(parent)
 {
   m_manager = new PopupManager(this);
+  ChatCore::translation()->addOther(LS("popup"));
 
   connect(SettingsTabHook::i(), SIGNAL(added(QString,SettingsPage*)), SLOT(added(QString,SettingsPage*)));
 }

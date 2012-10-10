@@ -35,4 +35,8 @@ SOURCES  = \
 
 RESOURCES += Popup.qrc
 
+TRANSLATIONS += res/translations/popup_en.ts
+TRANSLATIONS += res/translations/popup_ru.ts
+CODECFORTR = UTF-8
+
 include(../plugins.pri)
