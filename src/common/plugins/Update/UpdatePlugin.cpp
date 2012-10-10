@@ -284,7 +284,7 @@ void UpdatePluginImpl::setDone(Status status)
   BgOperationWidget::progress()->setVisible(false);
 
   if (status == UpdateReady) {
-    BgOperationWidget::label()->setText(tr("Update Ready"));
+    BgOperationWidget::label()->setText(QString(LS("<a href='#' style='text-decoration:none; color:#216ea7;'>%1</a>")).arg(tr("Install Update Now")));
     return;
   }
 

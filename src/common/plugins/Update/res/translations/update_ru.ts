@@ -11,8 +11,8 @@
     </message>
     <message>
         <location filename="../../UpdatePlugin.cpp" line="287"/>
-        <source>Update Ready</source>
-        <translation>Обновление готово к установке</translation>
+        <source>Install Update Now</source>
+        <translation>Установить обновление сейчас</translation>
     </message>
     <message>
         <location filename="../../UpdatePlugin.cpp" line="292"/>
