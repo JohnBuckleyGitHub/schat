@@ -110,22 +110,22 @@
 <context>
     <name>ChatAlerts</name>
     <message>
-        <location filename="../../src/schat2/ChatAlerts.cpp" line="304"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="319"/>
         <source>Offline</source>
         <translation>Не в сети</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ChatAlerts.cpp" line="305"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="320"/>
         <source>Connection lost</source>
         <translation>Соединение потеряно</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ChatAlerts.cpp" line="317"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="332"/>
         <source>Online</source>
         <translation>В сети</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ChatAlerts.cpp" line="318"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="333"/>
         <source>Successfully connected to &lt;b&gt;%1&lt;/b&gt;</source>
         <translation>Успешно подключены к &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>

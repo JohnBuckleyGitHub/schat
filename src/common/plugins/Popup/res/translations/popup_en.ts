@@ -5,13 +5,23 @@
 <context>
     <name>PopupSettings</name>
     <message>
-        <location filename="../../PopupSettings.cpp" line="50"/>
+        <location filename="../../PopupSettings.cpp" line="76"/>
         <source>Popup windows</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../PopupSettings.cpp" line="51"/>
+        <location filename="../../PopupSettings.cpp" line="77"/>
         <source>Enable</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../PopupSettings.cpp" line="78"/>
+        <source>Time to display popup window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../PopupSettings.cpp" line="79"/>
+        <source> sec</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
