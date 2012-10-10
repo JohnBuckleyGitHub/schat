@@ -32,6 +32,7 @@ BgOperationWidget::BgOperationWidget(QWidget *parent)
 
   m_label = new QLabel(this);
   m_label->setVisible(false);
+  m_label->setAttribute(Qt::WA_TransparentForMouseEvents);
 
   m_progress = new QProgressBar(this);
   m_progress->setMaximumHeight(16);

@@ -11,7 +11,7 @@
     </message>
     <message>
         <location filename="../../UpdatePlugin.cpp" line="287"/>
-        <source>Update Ready</source>
+        <source>Install Update Now</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
