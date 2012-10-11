@@ -41,7 +41,6 @@ private:
   void retranslateUi();
 
   QCheckBox *m_enable; ///< Настройка "Alerts/Popup".
-  QLabel *m_label;     ///< Надпись вверху.
   QLabel *m_timeLabel; ///< Надпись поясняющая действие опции "Alerts/PopupTimeout".
   QSpinBox *m_timeBox; ///< Настройка "Alerts/PopupTimeout".
 };

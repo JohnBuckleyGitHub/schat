@@ -18,7 +18,7 @@
 
 #include <QCheckBox>
 #include <QLabel>
-#include <QVBoxLayout>
+#include <QGridLayout>
 #include <QSpinBox>
 
 #include "ChatCore.h"
@@ -29,30 +29,29 @@
 PopupSettings::PopupSettings(QWidget *parent)
   : QWidget(parent)
 {
-  m_label = new QLabel(this);
   m_enable = new QCheckBox(this);
   m_enable->setChecked(ChatCore::settings()->value(LS("Alerts/Popup")).toBool());
+
+  QFont font = m_enable->font();
+  font.setBold(true);
+  m_enable->setFont(font);
 
   m_timeLabel = new QLabel(this);
   m_timeBox = new QSpinBox(this);
   m_timeBox->setRange(0, 60);
   m_timeBox->setValue(ChatCore::settings()->value(LS("Alerts/PopupTimeout")).toInt());
 
-  QVBoxLayout *layout = new QVBoxLayout();
-  layout->addWidget(m_enable);
-  layout->setContentsMargins(10, 0, 0, 0);
+  if (!m_enable->isChecked()) {
+    m_timeLabel->hide();
+    m_timeBox->hide();
+  }
 
-  QHBoxLayout *timeLay = new QHBoxLayout();
-  timeLay->addWidget(m_timeLabel);
-  timeLay->addWidget(m_timeBox);
-  timeLay->addStretch();
-  timeLay->setContentsMargins(10, 0, 0, 0);
-
-  QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(m_label);
-  mainLay->addLayout(layout);
-  mainLay->addLayout(timeLay);
-  mainLay->setContentsMargins(0, 6, 0, 0);
+  QGridLayout *mainLay = new QGridLayout(this);
+  mainLay->addWidget(m_enable, 0, 0, 1, 3);
+  mainLay->addWidget(m_timeLabel, 1, 0);
+  mainLay->addWidget(m_timeBox, 1, 1);
+  mainLay->setColumnStretch(2, 1);
+  mainLay->setContentsMargins(10, 16, 0, 0);
 
   retranslateUi();
 
@@ -63,6 +62,8 @@ PopupSettings::PopupSettings(QWidget *parent)
 
 void PopupSettings::enable(bool enable)
 {
+  m_timeLabel->setVisible(enable);
+  m_timeBox->setVisible(enable);
   ChatCore::settings()->setValue(LS("Alerts/Popup"), enable);
 }
 
@@ -84,8 +85,7 @@ void PopupSettings::timeChanged(int time)
 
 void PopupSettings::retranslateUi()
 {
-  m_label->setText(LS("<b>") + tr("Popup windows") + LS("</b>"));
-  m_enable->setText(tr("Enable"));
+  m_enable->setText(tr("Popup windows"));
   m_timeLabel->setText(tr("Time to display popup window"));
   m_timeBox->setSuffix(tr(" sec"));
 }
