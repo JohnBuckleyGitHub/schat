@@ -1,0 +1,79 @@
+/* $Id$
+ * IMPOMEZIA Simple Chat
+ * Copyright (c) 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#hosts-content h3 {
+  margin-bottom: 0;
+}
+
+#hosts-content p {
+  margin: 4px 0 8px;
+}
+
+#hosts-content p, #hosts-content #fieldset, #main-spinner {
+  display: none;
+}
+
+#fieldset {
+  border: 1px solid rgba(204, 204, 204, 0.4);
+  border-radius:4px;
+  padding: 4px 10px 10px 10px;
+  max-width: 980px;
+}
+
+#account-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+#account-table th, #account-table td {
+  text-align: left;
+  padding: 2px;
+}
+
+#account-table th {
+  border-bottom: 1px solid rgba(204, 204, 204, 0.4);
+}
+
+.table-striped tbody tr:nth-child(odd) td {
+  background-color: #f9f9f9;
+}
+
+.os-cell {
+  width: 32px;
+}
+
+
+.last-activity .date-time-block {
+  font-size: inherit;
+  color: inherit;
+}
+
+#providers .btn {
+  font-weight: bold;
+  text-align: left;
+  margin: 0 3px 3px 0;
+}
+
+#modal-body {
+  padding-bottom: 0;
+}
+
+#anonymous-auth {
+  margin-top: 10px;
+}
