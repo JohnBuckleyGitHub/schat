@@ -17,7 +17,7 @@
  */
 
 ${Name} RawFeeds
-${State} 0
+${State} 1
 
 ${Body}
 ${Section}
