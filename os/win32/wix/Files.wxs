@@ -73,6 +73,9 @@
         <Component Id="ChangeLog.Popup.html" Guid="{C252E92D-C976-41DF-87C4-FC6B2D99500E}">
           <File Id="ChangeLog.Popup.html" KeyPath="yes" Source="..\schat2\doc\ChangeLog.Popup.html" />
         </Component>
+        <Component Id="ChangeLog.Proxy.html" Guid="{39BFD195-48B8-47FE-B712-6C78BC2FA64F}">
+          <File Id="ChangeLog.Proxy.html" KeyPath="yes" Source="..\schat2\doc\ChangeLog.Proxy.html" />
+        </Component>
         <Component Id="ChangeLog.RawFeeds.html" Guid="{DA7A5152-3984-4286-A1FE-67C0DDE385E9}">
           <File Id="ChangeLog.RawFeeds.html" KeyPath="yes" Source="..\schat2\doc\ChangeLog.RawFeeds.html" />
         </Component>
@@ -111,6 +114,9 @@
         </Component>
         <Component Id="Popup.dll" Guid="{3EF3DD8B-ED11-495B-A6E3-BC1D243DDCC6}">
           <File Id="Popup.dll" KeyPath="yes" Source="..\schat2\plugins\Popup.dll" />
+        </Component>
+        <Component Id="Proxy.dll" Guid="{76BCBEC3-C6B0-4877-A7C4-F141E9F33AF1}">
+          <File Id="Proxy.dll" KeyPath="yes" Source="..\schat2\plugins\Proxy.dll" />
         </Component>
         <Component Id="RawFeeds.dll" Guid="{031C61D4-E1C8-46F5-80A6-E6D0646B61D4}">
           <File Id="RawFeeds.dll" KeyPath="yes" Source="..\schat2\plugins\RawFeeds.dll" />
@@ -254,6 +260,10 @@
     <ComponentGroup Id="Popup">
       <ComponentRef Id="Popup.dll" />
       <ComponentRef Id="ChangeLog.Popup.html" />
+    </ComponentGroup>
+    <ComponentGroup Id="Proxy">
+      <ComponentRef Id="Proxy.dll" />
+      <ComponentRef Id="ChangeLog.Proxy.html" />
     </ComponentGroup>
     <ComponentGroup Id="RawFeeds">
       <ComponentRef Id="RawFeeds.dll" />

@@ -9,46 +9,30 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *   GNU General Public License for more details.
  *
  *   You should have received a copy of the GNU General Public License
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-!ifndef mod
-  !define mod "!insertmacro SCHAT_MOD "
-!endif
-!ifmacrondef SCHAT_MOD
-  !macro SCHAT_MOD _NAME
-    !ifdef ${_NAME} | SCHAT_UNINSTALL
-      !include "engine\sections\${_NAME}.nsh"
-    !endif
-  !macroend
-!endif
+${Name} Proxy
+${State} 1
 
-${mod} Core
-${mod} Qt
+${Body}
+${Section}
+  SetOutPath "$INSTDIR\plugins"
+  File "${SCHAT_SOURCE}\plugins\Proxy.dll"
 
-!ifdef SCHAT_SECTIONS
-  !if ${SCHAT_PLUGINS_GRP} == 1
-    SectionGroup "$(STR1005)" GroupPlugins
-  !endif
-!endif
-${mod} Cache
-${mod} History
-${mod} Profile
-${mod} Popup
-${mod} Proxy
-${mod} Emoticons
-${mod} SendFile
-${mod} SpellChecker
-${mod} Idle
-${mod} Update
-${mod} YouTube
-${mod} RawFeeds
-!ifdef SCHAT_SECTIONS
-  !if ${SCHAT_PLUGINS_GRP} == 1
-    SectionGroupEnd
-  !endif
-!endif
+  SetOutPath "$INSTDIR\doc"
+  File "${SCHAT_SOURCE}\doc\ChangeLog.Proxy.html"
+${SectionEnd}
+${BodyEnd}
+
+${Uninstall}
+  Delete "$INSTDIR\doc\ChangeLog.Proxy.html"
+  Delete "$INSTDIR\plugins\Proxy.dll"
+
+  RMDir "$INSTDIR\doc"
+  RMDir "$INSTDIR\plugins"
+${UninstallEnd}

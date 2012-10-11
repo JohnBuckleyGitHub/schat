@@ -22,6 +22,7 @@
 !define History
 !define Profile
 !define Popup
+!define Proxy
 !define Emoticons
 !define SendFile
 !define SpellChecker
