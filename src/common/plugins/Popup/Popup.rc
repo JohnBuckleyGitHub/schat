@@ -43,7 +43,7 @@ VS_VERSION_INFO VERSIONINFO
       BEGIN
         VALUE "CompanyName",      SCHAT_ORGANIZATION
         VALUE "FileDescription",  "Adds support for popup notifications"
-        VALUE "FileVersion",      "0.1.0"
+        VALUE "FileVersion",      "0.1.1"
         VALUE "LegalCopyright",   SCHAT_COPYRIGHT
         VALUE "OriginalFilename", "Popup.dll"
         VALUE "ProductName",      SCHAT_NAME
