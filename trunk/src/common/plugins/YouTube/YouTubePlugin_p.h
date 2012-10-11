@@ -29,8 +29,6 @@ class YouTubePluginImpl : public ChatPlugin
 
 public:
   YouTubePluginImpl(QObject *parent);
-
-private:
 };
 
 #endif /* YOUTUBEPLUGIN_P_H_ */
