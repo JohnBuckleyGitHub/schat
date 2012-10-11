@@ -48,13 +48,13 @@ QStringList Storage::m_features;
 Storage *Storage::m_self = 0;
 
 
-Storage::Storage(QObject *parent)
+Storage::Storage(const QString &app, QObject *parent)
   : QObject(parent)
 {
   m_self = this;
   qsrand(QTime(0,0,0).msecsTo(QTime::currentTime()) ^ reinterpret_cast<quintptr>(this));
 
-  Path::init();
+  Path::init(app);
   Normalize::init();
 
   new DataBase(this);

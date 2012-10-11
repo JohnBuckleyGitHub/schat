@@ -15,18 +15,30 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-CONFIG   += ordered
-TEMPLATE = subdirs
-SUBDIRS  = \
-    schatd2/schatd.pro \
-    tufao \
-    rest \
-    schatd2 \
-    authd \
-    client \
-    schat2/schat2-core.pro \
-    schat2 \
+SCHAT_RESOURCES   = 0
+SCHAT_RC_FILE     = 1
+SCHAT_SINGLEAPP   = 0
 
-win32:SUBDIRS += schatd2/schatd-srv.pro
+QT = core network sql
+TEMPLATE = app
+INSTALLS += target
 
-include(common/plugins.pri)
+HEADERS = \
+    NodeInit.h \
+    qtservice/qtservice.h \
+    qtservice/qtservice_p.h \
+    ServiceApp.h \
+
+SOURCES = \
+    NodeInit.cpp \
+    qtservice/qtservice.cpp \
+    qtservice/qtservice_win.cpp \
+    schatd2-srv.cpp \
+    ServiceApp.cpp \
+
+DEFINES += SCHAT_DAEMON
+SCHAT_DAEMON_LIB = 1
+
+include(../common/config.pri)
+include(../common/common.pri)
+
