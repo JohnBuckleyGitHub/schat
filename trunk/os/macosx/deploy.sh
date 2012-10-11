@@ -16,7 +16,7 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-VERSION="1.99.43"
+VERSION="1.99.44"
 TARGET="SimpleChat2"
 
 set -e
