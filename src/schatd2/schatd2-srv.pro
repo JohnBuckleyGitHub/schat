@@ -21,6 +21,8 @@ SCHAT_SINGLEAPP   = 0
 
 QT = core network sql
 TEMPLATE = app
+
+target.path += ../../os/win32/schatd2/
 INSTALLS += target
 
 HEADERS = \
