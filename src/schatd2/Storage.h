@@ -35,7 +35,7 @@ class SCHAT_EXPORT Storage : public QObject
   Q_OBJECT
 
 public:
-  Storage(QObject *parent = 0);
+  Storage(const QString &app, QObject *parent = 0);
   ~Storage();
   inline static QByteArray privateId()     { return m_self->m_privateId; }
   inline static QByteArray serverId()      { return m_self->m_id; }

@@ -16,36 +16,10 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NODEINIT_H_
-#define NODEINIT_H_
+#include "ServiceApp.h"
 
-#include <QObject>
-
-class Core;
-class NodePlugins;
-class NodePool;
-class Storage;
-
-/*!
- * Загрузчик сервера.
- */
-class NodeInit : public QObject
+int main(int argc, char *argv[])
 {
-  Q_OBJECT
-
-public:
-  NodeInit(const QString &app = QString(), QObject *parent = 0);
-  static void version();
-  void quit();
-
-public slots:
-  void start();
-
-private:
-  Core *m_core;           ///< Указатель на объект Core.
-  NodePlugins *m_plugins; ///< Загрузчик плагинов.
-  NodePool *m_pool;       ///< Пул обслуживающий подключения.
-  Storage *m_storage;     ///< Хранилище данных.
-};
-
-#endif /* NODEINIT_H_ */
+  ServiceApp service(argc, argv);
+  return service.exec();
+}

@@ -30,10 +30,10 @@ bool Path::m_portable = false;
 QString Path::m_app;
 QString Path::m_appDirPath;
 
-void Path::init()
+void Path::init(const QString &app)
 {
   m_appDirPath = QCoreApplication::applicationDirPath();
-  m_app = QFileInfo(QCoreApplication::applicationFilePath()).baseName();
+  m_app = app.isEmpty() ? QFileInfo(QCoreApplication::applicationFilePath()).baseName() : app;
 
   QSettings s(m_appDirPath + LC('/') + m_app + LS(".init"), QSettings::IniFormat);
   s.setIniCodec("UTF-8");

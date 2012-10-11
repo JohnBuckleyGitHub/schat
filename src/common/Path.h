@@ -36,7 +36,7 @@ public:
     SystemScope
   };
 
-  static void init();
+  static void init(const QString &app = QString());
   inline static bool isPortable()    { return m_portable; }
   inline static QString app()        { return m_app; }
   inline static QString appDirPath() { return m_appDirPath; }
