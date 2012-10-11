@@ -41,6 +41,7 @@ public:
     out["Site"]     = "http://wiki.schat.me/Plugin/Proxy";
     out["Desc"]     = "Adds support for connections via HTTP and SOCKS5 proxy";
     out["Desc/ru"]  = "Добавляет поддержку подключения через HTTP и SOCKS5 прокси";
+    out["Enabled"]  = false;
 
     return out;
   }
