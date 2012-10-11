@@ -15,21 +15,22 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS += \
-    common/plugins/GenericNode \
-    common/plugins/Messages \
-    common/plugins/RestApi \
-    common/plugins/GeoIP \
-    common/plugins/Cache \
-    common/plugins/History \
-    common/plugins/Profile \
-    common/plugins/Popup \
-    common/plugins/Emoticons \
-    common/plugins/Idle \
-    common/plugins/SendFile \
-    common/plugins/SpellChecker \
-    common/plugins/Proxy \
-    common/plugins/RawFeeds \
-    common/plugins/YouTube \
+SCHAT_CLIENT_LIB = 1
+SCHAT_CORE_LIB = 1
+QT = core gui network
+OTHER_FILES += Proxy.json
 
-win32:SUBDIRS += common/plugins/Update
+HEADERS  = \
+   ProxyPlugin.h \
+   ProxyPlugin_p.h \
+
+SOURCES  = \
+   ProxyPlugin.cpp \
+
+#RESOURCES += Proxy.qrc
+
+#TRANSLATIONS += res/translations/proxy_en.ts
+#TRANSLATIONS += res/translations/proxy_ru.ts
+#CODECFORTR = UTF-8
+
+include(../plugins.pri)
