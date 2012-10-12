@@ -29,10 +29,10 @@ SOURCES  = \
    ProxyPlugin.cpp \
    ProxySettings.cpp \
 
-#RESOURCES += Proxy.qrc
+RESOURCES += Proxy.qrc
 
-#TRANSLATIONS += res/translations/proxy_en.ts
-#TRANSLATIONS += res/translations/proxy_ru.ts
-#CODECFORTR = UTF-8
+TRANSLATIONS += res/translations/proxy_en.ts
+TRANSLATIONS += res/translations/proxy_ru.ts
+CODECFORTR = UTF-8
 
 include(../plugins.pri)

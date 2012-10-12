@@ -22,10 +22,18 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QLineEdit>
+#include <QNetworkProxy>
 #include <QPushButton>
 #include <QSpinBox>
+#include <QTimer>
 
+#include "ChatCore.h"
+#include "ChatSettings.h"
+#include "client/ChatClient.h"
+#include "client/SimpleClient.h"
+#include "net/SimpleID.h"
 #include "ProxySettings.h"
+#include "sglobal.h"
 
 ProxySettings::ProxySettings(QWidget *parent)
   : QWidget(parent)
@@ -51,6 +59,7 @@ ProxySettings::ProxySettings(QWidget *parent)
   m_typeBox->addItem("SOCKS5");
 
   m_portBox->setRange(1, 65536);
+  m_passwordEdit->setEchoMode(QLineEdit::Password);
 
   QHBoxLayout *authLay = new QHBoxLayout();
   authLay->addWidget(m_nameEdit);
@@ -72,6 +81,39 @@ ProxySettings::ProxySettings(QWidget *parent)
   mainLay->setColumnStretch(2, 1);
 
   retranslateUi();
+
+  load();
+  setVisibleAll(m_enable->isChecked());
+  addressChanged(m_addressEdit->text());
+
+  connect(m_enable, SIGNAL(clicked(bool)),SLOT(enable(bool)));
+  connect(m_apply, SIGNAL(clicked(bool)),SLOT(save()));
+  connect(m_typeBox, SIGNAL(currentIndexChanged(QString)),SLOT(reload(QString)));
+  connect(m_addressEdit, SIGNAL(textChanged(QString)),SLOT(addressChanged(QString)));
+}
+
+
+void ProxySettings::setProxy()
+{
+  ChatSettings *settings = ChatCore::settings();
+  const QString type = settings->value(LS("Proxy/Type")).toString();
+
+  QNetworkProxy proxy;
+  if (type == LS("http"))
+    proxy.setType(QNetworkProxy::HttpProxy);
+  else if (type == LS("socks5"))
+    proxy.setType(QNetworkProxy::Socks5Proxy);
+  else
+    proxy.setType(QNetworkProxy::NoProxy);
+
+  if (proxy.type() != QNetworkProxy::NoProxy) {
+    proxy.setHostName(settings->value(LS("Proxy/")  + type + LS(".host")).toString());
+    proxy.setPort(settings->value(LS("Proxy/")      + type + LS(".port")).toInt());
+    proxy.setUser(settings->value(LS("Proxy/")      + type + LS(".name")).toString());
+    proxy.setPassword(SimpleID::fromBase32(settings->value(LS("Proxy/") + type + LS(".password")).toString().toLatin1()));
+  }
+
+  QNetworkProxy::setApplicationProxy(proxy);
 }
 
 
@@ -81,6 +123,73 @@ void ProxySettings::changeEvent(QEvent *event)
     retranslateUi();
 
   QWidget::changeEvent(event);
+}
+
+
+void ProxySettings::addressChanged(const QString &text)
+{
+  m_apply->setEnabled(!text.isEmpty());
+}
+
+
+void ProxySettings::enable(bool enable)
+{
+  setVisibleAll(enable);
+
+  if (!enable)
+    QTimer::singleShot(0, this, SLOT(save()));
+}
+
+
+/*!
+ * Обновление отображаемых данных в зависимости от типа прокси.
+ */
+void ProxySettings::reload(const QString &type)
+{
+  QString t = type.toLower();
+  ChatSettings *settings = ChatCore::settings();
+  m_addressEdit->setText(settings->value(LS("Proxy/")  + t + LS(".host")).toString());
+  m_portBox->setValue(settings->value(LS("Proxy/")     + t + LS(".port")).toInt());
+  m_nameEdit->setText(settings->value(LS("Proxy/")     + t + LS(".name")).toString());
+  m_passwordEdit->setText(SimpleID::fromBase32(settings->value(LS("Proxy/") + t + LS(".password")).toString().toLatin1()));
+}
+
+
+void ProxySettings::save()
+{
+  ChatSettings *settings = ChatCore::settings();
+  settings->setValue(LS("Proxy/Type"), m_enable->isChecked() ? m_typeBox->currentText().toLower() : LS("none"));
+
+  const QString prefix = LS("Proxy/") + m_typeBox->currentText().toLower() + LS(".");
+  settings->setValue(prefix + LS("host"), m_addressEdit->text());
+  settings->setValue(prefix + LS("port"), m_portBox->value());
+  settings->setValue(prefix + LS("name"), m_nameEdit->text());
+  settings->setValue(prefix + LS("password"), QString(SimpleID::toBase32(m_passwordEdit->text().toUtf8())));
+
+  setProxy();
+
+  if (ChatClient::state() != ChatClient::Offline) {
+    ChatClient::io()->leave();
+    ChatClient::open();
+  }
+}
+
+
+/*!
+ * Загрузка конфигурации.
+ */
+void ProxySettings::load()
+{
+  const QString type = ChatCore::settings()->value(LS("Proxy/Type")).toString();
+  if (type == LS("http")) {
+    m_enable->setChecked(true);
+  }
+  else if (type == LS("socks5")) {
+    m_enable->setChecked(true);
+    m_typeBox->setCurrentIndex(1);
+  }
+
+  reload(m_typeBox->currentText());
 }
 
 
@@ -96,4 +205,20 @@ void ProxySettings::retranslateUi()
 
   m_nameEdit->setPlaceholderText(tr("Optional"));
   m_passwordEdit->setPlaceholderText(tr("Optional"));
+}
+
+
+void ProxySettings::setVisibleAll(bool visible)
+{
+  m_typeLabel->setVisible(visible);
+  m_typeBox->setVisible(visible);
+  m_addressLabel->setVisible(visible);
+  m_addressEdit->setVisible(visible);
+  m_portLabel->setVisible(visible);
+  m_portBox->setVisible(visible);
+  m_nameLabel->setVisible(visible);
+  m_nameEdit->setVisible(visible);
+  m_passwordLabel->setVisible(visible);
+  m_passwordEdit->setVisible(visible);
+  m_apply->setVisible(visible);
 }
