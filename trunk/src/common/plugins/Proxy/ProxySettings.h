@@ -34,12 +34,21 @@ class ProxySettings : public QWidget
 
 public:
   ProxySettings(QWidget *parent = 0);
+  static void setProxy();
 
 protected:
   void changeEvent(QEvent *event);
 
+private slots:
+  void addressChanged(const QString &text);
+  void enable(bool enable);
+  void reload(const QString &type);
+  void save();
+
 private:
+  void load();
   void retranslateUi();
+  void setVisibleAll(bool visible);
 
   QCheckBox *m_enable;       ///< Настройка "Proxy/Type".
   QComboBox *m_typeBox;      ///< Тип прокси сервера.

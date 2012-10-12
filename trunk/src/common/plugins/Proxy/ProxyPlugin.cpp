@@ -19,15 +19,36 @@
 #include <QVBoxLayout>
 #include <QtPlugin>
 
+#include "ChatCore.h"
 #include "ProxyPlugin.h"
 #include "ProxyPlugin_p.h"
 #include "ProxySettings.h"
 #include "sglobal.h"
+#include "Translation.h"
 #include "ui/tabs/SettingsTabHook.h"
+#include "ChatSettings.h"
 
 ProxyPluginImpl::ProxyPluginImpl(QObject *parent)
   : ChatPlugin(parent)
 {
+  ChatSettings *settings = ChatCore::settings();
+  const QString prefix = LS("Proxy/");
+
+  settings->setLocalDefault(prefix + LS("Type"),            LS("none"));
+  settings->setLocalDefault(prefix + LS("http.host"),       QString());
+  settings->setLocalDefault(prefix + LS("http.port"),       3128);
+  settings->setLocalDefault(prefix + LS("http.name"),       QString());
+  settings->setLocalDefault(prefix + LS("http.password"),   QString());
+  settings->setLocalDefault(prefix + LS("socks5.host"),     QString());
+  settings->setLocalDefault(prefix + LS("socks5.port"),     1080);
+  settings->setLocalDefault(prefix + LS("socks5.name"),     QString());
+  settings->setLocalDefault(prefix + LS("socks5.password"), QString());
+
+  ChatCore::translation()->addOther(LS("proxy"));
+
+  if (settings->value(prefix + LS("Type")) != LS("none"))
+    ProxySettings::setProxy();
+
   connect(SettingsTabHook::i(), SIGNAL(added(QString,SettingsPage*)), SLOT(added(QString,SettingsPage*)));
 }
 
