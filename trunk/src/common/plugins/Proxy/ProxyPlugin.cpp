@@ -16,14 +16,28 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QVBoxLayout>
 #include <QtPlugin>
 
 #include "ProxyPlugin.h"
 #include "ProxyPlugin_p.h"
+#include "ProxySettings.h"
+#include "sglobal.h"
+#include "ui/tabs/SettingsTabHook.h"
 
 ProxyPluginImpl::ProxyPluginImpl(QObject *parent)
   : ChatPlugin(parent)
 {
+  connect(SettingsTabHook::i(), SIGNAL(added(QString,SettingsPage*)), SLOT(added(QString,SettingsPage*)));
+}
+
+
+void ProxyPluginImpl::added(const QString &id, SettingsPage *page)
+{
+  if (id != LS("network"))
+    return;
+
+  page->mainLayout()->addWidget(new ProxySettings(page));
 }
 
 

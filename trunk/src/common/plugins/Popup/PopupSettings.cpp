@@ -17,8 +17,9 @@
  */
 
 #include <QCheckBox>
-#include <QLabel>
+#include <QEvent>
 #include <QGridLayout>
+#include <QLabel>
 #include <QSpinBox>
 
 #include "ChatCore.h"
@@ -57,6 +58,15 @@ PopupSettings::PopupSettings(QWidget *parent)
 
   connect(m_enable, SIGNAL(clicked(bool)),SLOT(enable(bool)));
   connect(m_timeBox, SIGNAL(valueChanged(int)),SLOT(timeChanged(int)));
+}
+
+
+void PopupSettings::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+
+  QWidget::changeEvent(event);
 }
 
 

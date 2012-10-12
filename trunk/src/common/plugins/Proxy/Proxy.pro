@@ -23,9 +23,11 @@ OTHER_FILES += Proxy.json
 HEADERS  = \
    ProxyPlugin.h \
    ProxyPlugin_p.h \
+   ProxySettings.h \
 
 SOURCES  = \
    ProxyPlugin.cpp \
+   ProxySettings.cpp \
 
 #RESOURCES += Proxy.qrc
 
