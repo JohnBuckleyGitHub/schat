@@ -32,6 +32,9 @@ class PopupSettings : public QWidget
 public:
   PopupSettings(QWidget *parent = 0);
 
+protected:
+  void changeEvent(QEvent *event);
+
 private slots:
   void enable(bool enable);
   void settingsChanged(const QString &key, const QVariant &value);

@@ -21,12 +21,17 @@
 
 #include "plugins/ChatPlugin.h"
 
+class SettingsPage;
+
 class ProxyPluginImpl : public ChatPlugin
 {
   Q_OBJECT
 
 public:
   ProxyPluginImpl(QObject *parent);
+
+private slots:
+  void added(const QString &id, SettingsPage *page);
 };
 
 #endif /* PROXYPLUGIN_P_H_ */
