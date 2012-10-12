@@ -41,6 +41,7 @@ protected:
 
 private slots:
   void addressChanged(const QString &text);
+  void apply();
   void enable(bool enable);
   void reload(const QString &type);
   void save();

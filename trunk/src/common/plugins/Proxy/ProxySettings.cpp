@@ -87,7 +87,7 @@ ProxySettings::ProxySettings(QWidget *parent)
   addressChanged(m_addressEdit->text());
 
   connect(m_enable, SIGNAL(clicked(bool)),SLOT(enable(bool)));
-  connect(m_apply, SIGNAL(clicked(bool)),SLOT(save()));
+  connect(m_apply, SIGNAL(clicked(bool)),SLOT(apply()));
   connect(m_typeBox, SIGNAL(currentIndexChanged(QString)),SLOT(reload(QString)));
   connect(m_addressEdit, SIGNAL(textChanged(QString)),SLOT(addressChanged(QString)));
 }
@@ -132,12 +132,30 @@ void ProxySettings::addressChanged(const QString &text)
 }
 
 
+void ProxySettings::apply()
+{
+  save();
+
+  if (ChatClient::state() != ChatClient::Offline) {
+    ChatClient::io()->leave();
+    ChatClient::open();
+  }
+}
+
+
 void ProxySettings::enable(bool enable)
 {
   setVisibleAll(enable);
+  if (enable)
+    return;
 
-  if (!enable)
-    QTimer::singleShot(0, this, SLOT(save()));
+  QNetworkProxy::ProxyType type = QNetworkProxy::applicationProxy().type();
+  save();
+
+  if (type != QNetworkProxy::NoProxy && ChatClient::state() != ChatClient::Offline) {
+    ChatClient::io()->leave();
+    ChatClient::open();
+  }
 }
 
 
@@ -167,11 +185,6 @@ void ProxySettings::save()
   settings->setValue(prefix + LS("password"), QString(SimpleID::toBase32(m_passwordEdit->text().toUtf8())));
 
   setProxy();
-
-  if (ChatClient::state() != ChatClient::Offline) {
-    ChatClient::io()->leave();
-    ChatClient::open();
-  }
 }
 
 
@@ -203,8 +216,10 @@ void ProxySettings::retranslateUi()
   m_passwordLabel->setText(tr("Password:"));
   m_apply->setText(tr("Apply"));
 
+# if QT_VERSION >= 0x040700
   m_nameEdit->setPlaceholderText(tr("Optional"));
   m_passwordEdit->setPlaceholderText(tr("Optional"));
+# endif
 }
 
 
