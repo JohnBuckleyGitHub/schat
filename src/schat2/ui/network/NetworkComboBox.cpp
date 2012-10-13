@@ -20,6 +20,7 @@
 
 #include "ChatCore.h"
 #include "ChatNotify.h"
+#include "ChatSettings.h"
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "net/SimpleID.h"
@@ -54,7 +55,7 @@ void NetworkComboBox::load()
 
   if (count() == 1) {
     ChatCore::networks()->setSelected(m_tmpId);
-    setItemText(0, LS("schat://schat.me"));
+    setItemText(0, ChatCore::settings()->value(LS("DefaultServer")).toString());
     setEditable(true);
   }
 
@@ -67,11 +68,11 @@ void NetworkComboBox::open()
 {
   Network item = ChatCore::networks()->item(ChatCore::networks()->selected());
   if (item->id() == m_tmpId) {
-    item->setUrl(currentText());
+    item->setUrl(currentUrl());
     setItemText(currentIndex(), item->url());
   }
   else if (!m_editing.isEmpty() && item->id() == m_editing) {
-    item->setUrl(currentText());
+    item->setUrl(currentUrl());
     setItemText(currentIndex(), item->name());
     m_editing.clear();
     setEditable(false);
@@ -203,6 +204,16 @@ QIcon NetworkComboBox::icon(const QString &provider)
     icon = SCHAT_ICON(Globe);
 
   return icon;
+}
+
+
+QString NetworkComboBox::currentUrl() const
+{
+  QString url = currentText();
+  if (!url.startsWith(LS("schat://")))
+    url.prepend(LS("schat://"));
+
+  return url;
 }
 
 
