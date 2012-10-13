@@ -106,16 +106,17 @@ void Cache::ready()
  */
 void Cache::load(ClientChannel channel)
 {
-  QByteArray id = channel->id();
-  if (id.isEmpty())
-    id = ChatClient::serverId();
+  const QByteArray id = channel->id();
+  if (channel->id().isEmpty())
+    channel->setId(ChatClient::serverId());
 
-  ClientChannel exist = CacheDB::channel(id, false);
+  ClientChannel exist = CacheDB::channel(channel->id(), false);
   if (!exist)
     return;
 
   channel->setData(exist->data());
   FeedStorage::load(channel.data());
+  channel->resetId();
 }
 
 

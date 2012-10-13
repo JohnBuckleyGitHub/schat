@@ -134,6 +134,7 @@ public:
   bool setId(const QByteArray &id);
   bool setName(const QString &name);
   inline virtual void setKey(qint64 key)       { m_key = key; }
+  inline void resetId()                        { m_id = QByteArray(); }
   inline void setData(const QVariantMap &data) { m_data = data; }
   inline void setSynced(bool synced)           { m_synced = synced; }
   void setAccount(Account *account = 0);
