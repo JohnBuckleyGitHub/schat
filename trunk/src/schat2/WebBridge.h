@@ -42,6 +42,7 @@ public:
   Q_INVOKABLE QString channel(const QString &id) const;
   Q_INVOKABLE QString day(const QString &day) const;
   Q_INVOKABLE QString randomId() const;
+  Q_INVOKABLE QString serverId() const;
   Q_INVOKABLE QString serverPeer() const;
   Q_INVOKABLE QString status(const QString &id) const;
   Q_INVOKABLE QString translate(const QString &key) const;

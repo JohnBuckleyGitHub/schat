@@ -790,7 +790,7 @@ function htmlspecialchars (string, quote_style, charset, double_encode) {
 })(jQuery);
 
 
-if (typeof ChatView === "undefined") {
+if (typeof ChatView === 'undefined') {
   SimpleChat = {
     channel: function(id)          { return '{}'; },
     translate: function(key)       { return key; },
@@ -803,7 +803,8 @@ if (typeof ChatView === "undefined") {
     get: function(id, name, json)  {},
     isOnline: function()           { return true; },
     serverPeer: function()         { return ''; },
-    traffic: function()            { return {tx:0, rx:0}; }
+    traffic: function()            { return {tx:0, rx:0}; },
+    serverId: function()           { return ''; }
   };
 
   ChatView = {

@@ -988,6 +988,11 @@
         <source>Receved:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="84"/>
+        <source>Server version:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>WelcomeTab</name>
