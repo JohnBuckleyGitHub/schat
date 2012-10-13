@@ -336,6 +336,7 @@ SimpleSocket::SimpleSocket(QObject *parent)
   connect(this, SIGNAL(readyRead()), SLOT(readyRead()));
 
   #if !defined(SCHAT_NO_SSL)
+  setProtocol(QSsl::TlsV1);
   d->sslAvailable = QSslSocket::supportsSsl();
   connect(this, SIGNAL(sslErrors(QList<QSslError>)), SLOT(sslErrors(QList<QSslError>)));
   connect(this, SIGNAL(encrypted()), SLOT(encrypted()));
@@ -360,6 +361,7 @@ SimpleSocket::SimpleSocket(SimpleSocketPrivate &dd, QObject *parent)
 
   #if !defined(SCHAT_NO_SSL)
   d->sslAvailable = QSslSocket::supportsSsl();
+  setProtocol(QSsl::TlsV1);
   connect(this, SIGNAL(sslErrors(QList<QSslError>)), SLOT(sslErrors(QList<QSslError>)));
   connect(this, SIGNAL(encrypted()), SLOT(encrypted()));
   #endif

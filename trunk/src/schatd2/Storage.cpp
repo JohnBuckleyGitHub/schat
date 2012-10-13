@@ -291,6 +291,7 @@ void Storage::setDefaultSslConf()
     SCHAT_LOG_WARN("Could not open Private Key file" << file.fileName() << ":" << file.errorString())
   }
 
+  conf.setProtocol(QSsl::TlsV1);
   QSslConfiguration::setDefaultConfiguration(conf);
 # endif
 }

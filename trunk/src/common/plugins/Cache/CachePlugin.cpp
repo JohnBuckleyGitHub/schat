@@ -116,7 +116,9 @@ void Cache::load(ClientChannel channel)
 
   channel->setData(exist->data());
   FeedStorage::load(channel.data());
-  channel->resetId();
+
+  if (id.isEmpty())
+    channel->resetId();
 }
 
 
