@@ -61,7 +61,6 @@ a:active, a:hover {
   background-repeat: no-repeat;
   display: -webkit-box;
   min-height: 32px;
-  -webkit-filter: grayscale(1);
 }
 
 .plugin-details {

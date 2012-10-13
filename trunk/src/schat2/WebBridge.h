@@ -48,6 +48,7 @@ public:
   Q_INVOKABLE QStringList fields() const;
   Q_INVOKABLE QVariant feed(const QString &id, const QString &name, int options = 0) const;
   Q_INVOKABLE QVariant feed(const QString &name, int options = 0) const;
+  Q_INVOKABLE QVariantMap traffic() const;
   Q_INVOKABLE void get(const QString &id, const QString &name, const QVariantMap &json = QVariantMap());
   Q_INVOKABLE void request(const QString &command, const QString &name, const QVariantMap &json = QVariantMap());
   Q_INVOKABLE void setTabPage(const QString &id, int page);
