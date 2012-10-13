@@ -239,6 +239,7 @@ var ServerInfo = {
    * Подключение клиента к серверу.
    */
   online: function() {
+    Settings.id = SimpleChat.serverId();
     $('#server-peer').text(SimpleChat.serverPeer());
 
     if (Pages.current === 1)
@@ -247,6 +248,9 @@ var ServerInfo = {
     Utils.TR('activity');
     Utils.TR('activity_sent');
     Utils.TR('activity_receved');
+    Utils.TR('server_version');
+
+    ServerInfo.server(SimpleChat.feed(Settings.id, 'server', 4));
   },
 
 
@@ -298,15 +302,40 @@ var ServerInfo = {
    */
   adjustWidth: function() {
     Utils.adjustWidth($('#server-activity .field-row-label'));
+    Utils.adjustWidth($('#server-feed .field-row-label'));
+  },
+
+
+  /*
+   * Чтение фидов.
+   */
+  feed: function(json) {
+    if (json === false || json.status !== 200 || json.name !== 'server')
+      return;
+
+    ServerInfo.server(json.data);
+  },
+
+
+  /*
+   * Чтение фида 'server'.
+   */
+  server: function(json) {
+    if (json === false)
+      return;
+
+    $('#server-version').text(json.version);
   }
 };
 
 Pages.onInfo.push(ServerInfo.setInterval);
 Pages.onInfo.push(ServerInfo.adjustWidth);
 Pages.onMessages.push(ServerInfo.clearInterval);
-SimpleChat.retranslated.connect(ServerInfo.adjustWidth);
 
 if (typeof SimpleChat !== 'undefined') {
   SimpleChat.offline.connect(ServerInfo.offline);
   SimpleChat.online.connect(ServerInfo.online);
+  SimpleChat.retranslated.connect(ServerInfo.adjustWidth);
+
+  ChatView.feed.connect(ServerInfo.feed);
 }

@@ -81,6 +81,7 @@ protected:
     else if (key == LS("activity"))          return tr("Activity");
     else if (key == LS("activity_sent"))     return tr("Sent:");
     else if (key == LS("activity_receved"))  return tr("Receved:");
+    else if (key == LS("server_version"))    return tr("Server version:");
     return QString();
   }
 };
@@ -156,6 +157,12 @@ QString WebBridge::day(const QString &day) const
 QString WebBridge::randomId() const
 {
   return SimpleID::encode(ChatCore::randomId());
+}
+
+
+QString WebBridge::serverId() const
+{
+  return SimpleID::encode(ChatClient::serverId());
 }
 
 
@@ -265,9 +272,10 @@ void WebBridge::setTabPage(const QString &id, int page)
  * \param channel Канал владелец фида.
  * \param name    Имя фида.
  * \param options - 0 Если фид не найден в кэше он будет запрошен с сервера, иначе будет использоваться кэшированная копия.
- *                - 1 Запросить фид сервера, с проверкой на модификацию фида, если фид не изменился его тело не будет передано и клиент будет использовать кэш.
+ *                - 1 Запросить фид c сервера, с проверкой на модификацию фида, если фид не изменился его тело не будет передано и клиент будет использовать кэш.
  *                - 2 Форсированная загрузка фида.
  *                - 3 Отключить взаимодействие с сервером, если фид не найден в кэше вернуть false.
+ *                - 4 Также как и 1, но тело фида будет сразу возвращено если оно есть в кеше.
  *
  * \return JSON тело фида или false, если фид не доступен локально.
  */
@@ -288,6 +296,11 @@ QVariant WebBridge::feed(ClientChannel channel, const QString &name, int options
     ClientFeeds::request(channel, LS("get"), name);
   else if (options == 2)
     ClientFeeds::request(channel->id(), LS("get"), name);
+  else if (options == 4) {
+    QVariant result = feed(channel, name, 3);
+    feed(channel, name, 1);
+    return result;
+  }
 
   return false;
 }
