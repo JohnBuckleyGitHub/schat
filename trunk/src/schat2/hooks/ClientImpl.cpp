@@ -18,6 +18,7 @@
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
+#include "ChatUrls.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
@@ -37,7 +38,8 @@ ClientImpl::ClientImpl(QObject *parent)
 void ClientImpl::setup()
 {
   if (ChatCore::settings()->value(LS("AutoJoin")).toBool()) {
-    ChatClient::channels()->join(LS("Main"));
+    const QStringList path = ChatUrls::path(ChatClient::io()->url());
+    ChatClient::channels()->join(path.isEmpty() ? LS("Main") : path.at(0));
   }
 }
 

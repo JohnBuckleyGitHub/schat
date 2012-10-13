@@ -114,6 +114,9 @@ QStringList ChatUrls::path(const QUrl &url)
   if (path.startsWith(LC('/')))
     path.remove(0, 1);
 
+  if (path.isEmpty())
+    return QStringList();
+
   return path.split(LC('/'), QString::SkipEmptyParts);
 }
 
