@@ -18,6 +18,7 @@
 
 #include <QCoreApplication>
 #include <QDate>
+#include <QHostAddress>
 #include <QLocale>
 
 #include "ChatCore.h"
@@ -26,6 +27,7 @@
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/ClientFeeds.h"
+#include "client/SimpleClient.h"
 #include "JSON.h"
 #include "net/SimpleID.h"
 #include "Profile.h"
@@ -151,6 +153,27 @@ QString WebBridge::day(const QString &day) const
 QString WebBridge::randomId() const
 {
   return SimpleID::encode(ChatCore::randomId());
+}
+
+
+/*!
+ * Информация о реальном адресе сервера.
+ *
+ * - Если используется стандартный порт и реальный адрес сервера совпадает с именем сервера возвращается пустая строка.
+ * - Если используется не стандартный порт возвращается адрес сервера и порт, в противном случае только адрес.
+ */
+QString WebBridge::serverPeer() const
+{
+  QString addr = ChatClient::io()->peerAddress().toString();
+  qint16 port = ChatClient::io()->peerPort();
+
+  if (port == 7667 && addr == ChatClient::serverName())
+    return QString();
+
+  if (port != 7667)
+    addr += LC(':') + QString::number(port);
+
+  return addr;
 }
 
 
