@@ -22,7 +22,16 @@
       <div class="tab-pane" id="info">
         <button id="page-switcher-start" class="page-switcher">‹</button>
         <div id="info-content">
-          <div id="page-header"><span id="channel-name"></span></div>
+          <div id="page-header" style="display:-webkit-box;">
+            <div id="server-info">
+              <span id="channel-name"></span> <span id="server-peer"></span>
+            </div>
+            <div id="server-activity">
+              <h3 data-tr="activity">Activity</h3>
+              <div class="field-row"><span class="field-row-label" data-tr="activity_sent">Sent:</span><span id="sent" class="field-row-value">0</span></div>
+              <div class="field-row"><span class="field-row-label" data-tr="activity_receved">Receved:</span><span id="receved" class="field-row-value">0</span></div>
+            </div>
+          </div>
 
           <div id="hosts-content">
             <h3><i class="icon-computer"></i> <span data-tr="my_computers">My Computers</span></h3>

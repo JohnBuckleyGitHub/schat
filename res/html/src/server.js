@@ -230,3 +230,83 @@ if (typeof Auth === "undefined") {
 else {
   Auth.providersReady.connect(AuthDialog.providers);
 }
+
+
+var ServerInfo = {
+  interval: null,
+
+  /*
+   * Подключение клиента к серверу.
+   */
+  online: function() {
+    $('#server-peer').text(SimpleChat.serverPeer());
+
+    if (Pages.current === 1)
+      ServerInfo.setInterval();
+
+    Utils.TR('activity');
+    Utils.TR('activity_sent');
+    Utils.TR('activity_receved');
+  },
+
+
+  /*
+   * Отключение клиента от сервера.
+   */
+  offline: function() {
+    $('#server-peer').text('');
+
+    ServerInfo.clearInterval();
+  },
+
+
+  /*
+   * Обновление информации о полученном и переданном трафике.
+   */
+  updateActivity: function()
+  {
+    var data = SimpleChat.traffic();
+    $('#sent').html(SimpleChat.bytesToHuman(data.tx));
+    $('#receved').html(SimpleChat.bytesToHuman(data.rx));
+  },
+
+
+  /*
+   * Запуск периодического обновления информации о трафике.
+   */
+  setInterval: function() {
+    ServerInfo.updateActivity();
+
+    if (ServerInfo.interval === null)
+      ServerInfo.interval = window.setInterval(ServerInfo.updateActivity, 1000);
+  },
+
+
+  /*
+   * Остановка обновления информации о трафике.
+   */
+  clearInterval: function() {
+    if (ServerInfo.interval !== null) {
+      window.clearInterval(ServerInfo.interval);
+      ServerInfo.interval = null;
+    }
+  },
+
+
+  /*
+   * Выравнивание ширины элементов.
+   */
+  adjustWidth: function() {
+    Utils.adjustWidth($('#server-activity .field-row-label'));
+  }
+};
+
+Pages.onInfo.push(ServerInfo.setInterval);
+Pages.onInfo.push(ServerInfo.adjustWidth);
+Pages.onMessages.push(ServerInfo.clearInterval);
+SimpleChat.retranslated.connect(ServerInfo.adjustWidth);
+
+if (typeof SimpleChat !== 'undefined') {
+  SimpleChat.offline.connect(ServerInfo.offline);
+  SimpleChat.online.connect(ServerInfo.online);
+}

@@ -78,6 +78,9 @@ protected:
     else if (key == LS("status_Offline"))    return tr("Offline");
     else if (key == LS("thanks"))            return tr("Thanks");
     else if (key == LS("loading"))           return tr("Loading...");
+    else if (key == LS("activity"))          return tr("Activity");
+    else if (key == LS("activity_sent"))     return tr("Sent:");
+    else if (key == LS("activity_receved"))  return tr("Receved:");
     return QString();
   }
 };
@@ -221,6 +224,16 @@ QVariant WebBridge::feed(const QString &id, const QString &name, int options) co
 QVariant WebBridge::feed(const QString &name, int options) const
 {
   return feed(ChatClient::channel(), name, options);
+}
+
+
+QVariantMap WebBridge::traffic() const
+{
+  QVariantMap out;
+  out[LS("tx")] = ChatClient::io()->tx();
+  out[LS("rx")] = ChatClient::io()->rx();
+
+  return out;
 }
 
 

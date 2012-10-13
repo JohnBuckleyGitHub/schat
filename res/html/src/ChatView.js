@@ -801,7 +801,9 @@ if (typeof ChatView === "undefined") {
     status: function(id)           { return 'Offline'; },
     day: function(day)             { return day; },
     get: function(id, name, json)  {},
-    isOnline: function()           { return true; }
+    isOnline: function()           { return true; },
+    serverPeer: function()         { return ''; },
+    traffic: function()            { return {tx:0, rx:0}; }
   };
 
   ChatView = {
