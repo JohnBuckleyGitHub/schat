@@ -45,6 +45,7 @@ private slots:
 
 private:
   QIcon icon(const QString &provider);
+  QString currentUrl() const;
   void updateIndex();
 
   NetworkWidget *m_network; ///< Виджет редактирования сети.

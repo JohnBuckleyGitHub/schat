@@ -29,6 +29,7 @@ ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
 {
   setLocalDefault(LS("AutoConnect"),           true);
   setLocalDefault(LS("AutoJoin"),              true);
+  setLocalDefault(LS("DefaultServer"),         LS("schat://schat.me"));
   setLocalDefault(LS("Labs/CookieAuth"),       true);
   setLocalDefault(LS("Labs/DeveloperExtras"),  false);
   setLocalDefault(LS("Labs/DisableUI"),        false);
