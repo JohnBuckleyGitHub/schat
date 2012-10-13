@@ -101,6 +101,8 @@ void ServerTab::alert(const Alert &alert)
     ServiceMessage message(alert.data().value(LS("popup")).toMap().value(LS("text")).toString());
     message.data()[LS("Type")]  = LS("info");
     message.data()[LS("Extra")] = LS("red-text");
+
+    m_chatView->add(message);
   }
 }
 

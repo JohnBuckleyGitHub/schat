@@ -35,6 +35,7 @@
 #include "Path.h"
 #include "sglobal.h"
 #include "ui/TabWidget.h"
+#include "WebBridge.h"
 
 ChatAlerts *ChatAlerts::m_self = 0;
 int ChatAlerts::m_alerts = 0;
@@ -328,9 +329,14 @@ void ChatAlerts::online()
 {
   Alert alert(LS("online"), ChatClient::io()->date());
 
+  QString text = tr("Successfully connected to <b>%1</b>").arg(Qt::escape(ChatClient::serverName()));
+  QString peer = WebBridge::i()->serverPeer();
+  if (!peer.isEmpty())
+    text += LS(" (") + peer + LS(")");
+
   QVariantMap popup;
   popup[LS("title")] = QString(LS("<b>%1</b>")).arg(tr("Online"));
-  popup[LS("text")]  = tr("Successfully connected to <b>%1</b>").arg(Qt::escape(ChatClient::serverName()));
+  popup[LS("text")]  = text;
   alert.data()[LS("popup")] = popup;
 
   start(alert);
