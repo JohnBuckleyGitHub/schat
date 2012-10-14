@@ -695,9 +695,11 @@ void SimpleSocket::sslErrors(const QList<QSslError> &errors)
 
   QList<QSslError::SslError> noCriticalErrors;
   noCriticalErrors.append(QSslError::NoError);
-  noCriticalErrors.append(QSslError::SelfSignedCertificate);
+  noCriticalErrors.append(QSslError::SelfSignedCertificate);        // The passed certificate is self signed and the same certificate cannot be found in the list of trusted certificates.
+  noCriticalErrors.append(QSslError::SelfSignedCertificateInChain); // The certificate chain could be built up using the untrusted certificates but the root could not be found locally.
+  noCriticalErrors.append(QSslError::CertificateExpired);           // The certificate has expired: that is the notAfter date is before the current time.
+  noCriticalErrors.append(QSslError::CertificateNotYetValid);       // The certificate is not yet valid: the notBefore date is after the current time.
   noCriticalErrors.append(QSslError::HostNameMismatch);
-  noCriticalErrors.append(QSslError::CertificateExpired);
 
   for (int i = 0; i < errors.size(); ++i) {
     if (!noCriticalErrors.contains(errors.at(i).error()))
