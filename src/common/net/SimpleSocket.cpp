@@ -697,6 +697,7 @@ void SimpleSocket::sslErrors(const QList<QSslError> &errors)
   noCriticalErrors.append(QSslError::NoError);
   noCriticalErrors.append(QSslError::SelfSignedCertificate);
   noCriticalErrors.append(QSslError::HostNameMismatch);
+  noCriticalErrors.append(QSslError::CertificateExpired);
 
   for (int i = 0; i < errors.size(); ++i) {
     if (!noCriticalErrors.contains(errors.at(i).error()))

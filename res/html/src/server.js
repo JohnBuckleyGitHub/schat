@@ -249,6 +249,26 @@ var ServerInfo = {
     Utils.TR('activity_sent');
     Utils.TR('activity_receved');
     Utils.TR('server_version');
+    Utils.TR('encryption');
+
+    var data = SimpleChat.encryption();
+    var encryption = $('#server-encryption');
+
+    if (data !== false) {
+      encryption.removeAttr('data-tr');
+
+      var protocol = '';
+      if (data.protocol == 2)
+        protocol = 'TLS v1';
+      else if (data.protocol == 0)
+        protocol = 'SSL v3';
+
+      encryption.html(protocol + ' <a href="' + data.url + '">' + data.CN + '</a> <span id="encryption-cipher">' + data.cipher + '</span>');
+    }
+    else {
+      encryption.attr('data-tr', 'no-encryption');
+      encryption.text(Utils.tr('no-encryption'));
+    }
 
     ServerInfo.server(SimpleChat.feed(Settings.id, 'server', 4));
   },
