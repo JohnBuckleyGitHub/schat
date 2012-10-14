@@ -20,6 +20,8 @@
 #include <QDate>
 #include <QHostAddress>
 #include <QLocale>
+#include <QSslCipher>
+#include <QSslConfiguration>
 
 #include "ChatCore.h"
 #include "ChatNotify.h"
@@ -30,6 +32,7 @@
 #include "client/SimpleClient.h"
 #include "JSON.h"
 #include "net/SimpleID.h"
+#include "NetworkManager.h"
 #include "Profile.h"
 #include "sglobal.h"
 #include "Tr.h"
@@ -82,6 +85,8 @@ protected:
     else if (key == LS("activity_sent"))     return tr("Sent:");
     else if (key == LS("activity_receved"))  return tr("Receved:");
     else if (key == LS("server_version"))    return tr("Server version:");
+    else if (key == LS("encryption"))        return tr("Encryption:");
+    else if (key == LS("no-encryption"))     return tr("no");
     return QString();
   }
 };
@@ -209,6 +214,26 @@ QString WebBridge::translate(const QString &key) const
 QStringList WebBridge::fields() const
 {
   return Profile::fields();
+}
+
+
+QVariant WebBridge::encryption() const
+{
+  SimpleClient *io = ChatClient::io();
+  if (!io->isEncrypted())
+    return false;
+
+  QVariantMap data;
+  data[LS("protocol")] = io->sslConfiguration().protocol();
+
+  QString cn = io->peerCertificate().subjectInfo(QSslCertificate::CommonName);
+  data[LS("CN")] = cn;
+
+  QSslCipher cipher = io->sessionCipher();
+  data[LS("cipher")] = cipher.name() + LC('/') + cipher.authenticationMethod();
+
+  data[LS("url")] = QString(QUrl::fromLocalFile(ChatCore::networks()->root(SimpleID::encode(ChatClient::serverId())) + LS("/peer.crt")).toEncoded());
+  return data;
 }
 
 

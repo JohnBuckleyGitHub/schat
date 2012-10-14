@@ -47,6 +47,7 @@ public:
   Q_INVOKABLE QString status(const QString &id) const;
   Q_INVOKABLE QString translate(const QString &key) const;
   Q_INVOKABLE QStringList fields() const;
+  Q_INVOKABLE QVariant encryption() const;
   Q_INVOKABLE QVariant feed(const QString &id, const QString &name, int options = 0) const;
   Q_INVOKABLE QVariant feed(const QString &name, int options = 0) const;
   Q_INVOKABLE QVariantMap traffic() const;

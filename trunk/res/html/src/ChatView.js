@@ -804,7 +804,8 @@ if (typeof ChatView === 'undefined') {
     isOnline: function()           { return true; },
     serverPeer: function()         { return ''; },
     traffic: function()            { return {tx:0, rx:0}; },
-    serverId: function()           { return ''; }
+    serverId: function()           { return ''; },
+    encryption: function()         { return false; }
   };
 
   ChatView = {
