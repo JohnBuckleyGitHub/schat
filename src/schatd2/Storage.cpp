@@ -263,32 +263,27 @@ void Storage::setDefaultSslConf()
   if (!QSslSocket::supportsSsl())
     return;
 
-  QString crtFile = Path::file(etcPath(), m_settings->value(LS("Certificate")).toString());
-  if (crtFile.isEmpty())
-    return;
-
-  QString keyFile = Path::file(etcPath(), m_settings->value(LS("PrivateKey")).toString());
-  if (crtFile.isEmpty())
+  QList<QSslCertificate> certificates = QSslCertificate::fromPath(Path::file(etcPath(), m_settings->value(LS("Certificate")).toString()));
+  if (certificates.isEmpty())
     return;
 
   QSslConfiguration conf = QSslConfiguration::defaultConfiguration();
 
-  QFile file(crtFile);
-  if (file.open(QIODevice::ReadOnly)) {
-    conf.setLocalCertificate(QSslCertificate(&file));
-    file.close();
-  }
-  else {
-    SCHAT_LOG_WARN("Could not open Certificate file" << file.fileName() << ":" << file.errorString())
+  QFile key(Path::file(etcPath(), m_settings->value(LS("PrivateKey")).toString()));
+  if (key.exists() && key.open(QFile::ReadOnly)) {
+    conf.setPrivateKey(QSslKey(&key, QSsl::Rsa));
+    key.close();
   }
 
-  file.setFileName(keyFile);
-  if (file.open(QIODevice::ReadOnly)) {
-    conf.setPrivateKey(QSslKey(&file, QSsl::Rsa));
-    file.close();
-  }
-  else {
-    SCHAT_LOG_WARN("Could not open Private Key file" << file.fileName() << ":" << file.errorString())
+  conf.setLocalCertificate(certificates.takeFirst());
+
+  if (!certificates.isEmpty()) {
+    QList<QSslCertificate> ca = conf.caCertificates();
+    foreach (const QSslCertificate &cert, certificates) {
+      ca.append(cert);
+    }
+
+    conf.setCaCertificates(ca);
   }
 
   conf.setProtocol(QSsl::TlsV1);
