@@ -219,6 +219,7 @@ QStringList WebBridge::fields() const
 
 QVariant WebBridge::encryption() const
 {
+# if !defined(SCHAT_NO_SSL)
   SimpleClient *io = ChatClient::io();
   if (!io->isEncrypted())
     return false;
@@ -234,6 +235,9 @@ QVariant WebBridge::encryption() const
 
   data[LS("url")] = QString(QUrl::fromLocalFile(ChatCore::networks()->root(SimpleID::encode(ChatClient::serverId())) + LS("/peer.crt")).toEncoded());
   return data;
+# else
+  return false;
+# endif
 }
 
 

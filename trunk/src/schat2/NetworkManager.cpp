@@ -392,6 +392,7 @@ void NetworkManager::write()
   m_items[m_selected] = item;
   const QString dir = root(m_selected);
 
+# if !defined(SCHAT_NO_SSL)
   QList<QSslCertificate> chain = ChatClient::io()->peerCertificateChain();
   if (chain.size()) {
     QFile file(dir + LS("/peer.crt"));
@@ -401,6 +402,7 @@ void NetworkManager::write()
       }
     }
   }
+# endif
 
   ChatNotify::start(Notify::NetworkChanged, m_selected);
 }
