@@ -379,12 +379,8 @@ void TabWidget::notify(const Notify &notify)
     m_settingsTab->openUrl(notify.data().toUrl());
     addChatTab(m_settingsTab);
   }
-  else if (type == Notify::CopyRequest) {
-    ChannelBaseTab *tab = qobject_cast<ChannelBaseTab *>(currentWidget());
-    if (!tab)
-      return;
-
-    tab->chatView()->copy();
+  else if (type == Notify::CopyRequest && currentIndex() != -1) {
+    widget(currentIndex())->copy();
   }
 }
 

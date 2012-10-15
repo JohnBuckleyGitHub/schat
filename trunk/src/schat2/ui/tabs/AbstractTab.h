@@ -49,6 +49,7 @@ public:
   inline const QString& type() const  { return m_type; }
   inline Options options() const      { return m_options; }
   inline QAction *action() const      { return m_action; }
+  inline virtual void copy()          {}
   virtual bool bindMenu(QMenu *menu)  { Q_UNUSED(menu) return false; }
   virtual void setOnline(bool online = true);
   void setIcon(const QIcon &icon);

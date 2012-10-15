@@ -34,6 +34,7 @@ public:
   ServerTab(TabWidget *parent);
   bool bindMenu(QMenu *menu);
   inline ChatView *chatView() { return m_chatView; }
+  void copy();
 
 protected:
   void changeEvent(QEvent *event);

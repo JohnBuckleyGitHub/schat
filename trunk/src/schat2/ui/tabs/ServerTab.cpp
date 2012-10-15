@@ -77,6 +77,12 @@ bool ServerTab::bindMenu(QMenu *menu)
 }
 
 
+void ServerTab::copy()
+{
+  m_chatView->copy();
+}
+
+
 void ServerTab::changeEvent(QEvent *event)
 {
   AbstractTab::changeEvent(event);
