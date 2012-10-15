@@ -31,9 +31,10 @@ class SCHAT_CORE_EXPORT ChatSettings : public Settings
   Q_OBJECT
 
 public:
-  ChatSettings(const QString &fileName, QObject *parent = 0);
+  ChatSettings(const QString &fileName, const QString &defaultFile, QObject *parent = 0);
   QVariant setDefaultAndRead(const QString &key, const QVariant &value);
   void init();
+  void setDefault(const QString &key, const QVariant &value);
   void setLocalDefault(const QString &key, const QVariant &value);
   void setValue(const QString &key, const QVariant &value, bool notify = true, bool local = false);
 
@@ -46,7 +47,8 @@ private:
   void set(const FeedNotify &notify);
   void set(const QString &key, const QVariant &value);
 
-  QStringList m_local; ///< Список ключей локальных настроек.
+  QSettings *m_settings; ///< Альтернативные настройки по умолчанию.
+  QStringList m_local;   ///< Список ключей локальных настроек.
 };
 
 #endif /* CHATSETTINGS_H_ */
