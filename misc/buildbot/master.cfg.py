@@ -16,7 +16,7 @@ from buildbot.steps.master import MasterShellCommand
 import schat_passwords
 import os
 
-SCHAT_VERSION        = "1.99.44"
+SCHAT_VERSION        = "1.99.45"
 SCHAT_UPLOAD_BASE    = "/var/www/download.schat.me/htdocs/schat2/snapshots/" + SCHAT_VERSION
 
 authz = web.authz.Authz(
