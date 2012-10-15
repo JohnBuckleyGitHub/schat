@@ -217,11 +217,14 @@ void SpellChecker::suggestions(const QString &word, const QStringList &words)
   if (!m_menuAction || m_menuAction->data() != word)
     return;
 
-  foreach(const QString &word, words) {
-    m_menu->addAction(word, this, SLOT(repairWord()));
-  }
+  if (!words.isEmpty()) {
+    foreach(const QString &word, words)
+      m_menu->addAction(word, this, SLOT(repairWord()));
 
-  m_menuAction->setEnabled(true);
+    m_menuAction->setEnabled(true);
+  }
+  else
+    m_menu->setTitle(tr("No suggestions"));
 }
 
 

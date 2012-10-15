@@ -205,9 +205,7 @@ HunspellSuggestions::HunspellSuggestions(const HunspellChecker *hunspell, const 
 
 void HunspellSuggestions::run()
 {
-  QStringList words = m_hunspell->suggestions(m_word);
-  if (!words.isEmpty())
-    emit ready(m_word, words);
+  emit ready(m_word, m_hunspell->suggestions(m_word));
 }
 
 
