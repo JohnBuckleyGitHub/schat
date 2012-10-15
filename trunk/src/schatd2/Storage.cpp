@@ -243,7 +243,10 @@ int Storage::start()
   m_log->open(logPath + LC('/') + Path::app() + LS(".log"), static_cast<NodeLog::Level>(m_settings->value(LS("LogLevel")).toInt()));
 
   setDefaultSslConf();
+
+# if defined(Q_OS_UNIX)
   setMaxOpenFiles(m_settings->value(LS("MaxOpenFiles")).toInt());
+# endif
 
   m_privateId = m_settings->value(LS("PrivateId")).toString().toUtf8();
   if (m_privateId == SimpleID::encode(SimpleID::uniqueId())) {
@@ -294,14 +297,18 @@ void Storage::setDefaultSslConf()
 
 void Storage::setMaxOpenFiles(int max)
 {
-  if (max <= 0)
-    return;
-
 # if defined(Q_OS_UNIX)
   struct rlimit limit;
-  limit.rlim_cur = max;
-  limit.rlim_max = max;
 
-  qDebug() << setrlimit(RLIMIT_NOFILE, &limit);
+  if (max > 0) {
+    limit.rlim_cur = max;
+    limit.rlim_max = max;
+
+    setrlimit(RLIMIT_NOFILE, &limit);
+  }
+
+  if (getrlimit(RLIMIT_NOFILE, &limit) == 0) {
+    SCHAT_LOG_INFO("Max open files limit:" << limit.rlim_cur << limit.rlim_max);
+  }
 # endif
 }
