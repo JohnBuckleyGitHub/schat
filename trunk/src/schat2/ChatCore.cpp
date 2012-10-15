@@ -73,7 +73,7 @@ ChatCore::ChatCore(QObject *parent)
   m_pool->setMaxThreadCount(1);
 
   new ChatUrls(this);
-  m_settings = new ChatSettings(Path::config(), this);
+  m_settings = new ChatSettings(Path::config(), Path::data(Path::SystemScope) + LS("/default.conf"), this);
 
 # if !defined(SCHAT_NO_EXTENSIONS)
   m_extensions = new Extensions(this);

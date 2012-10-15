@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QFile>
+
 #include "Channel.h"
 #include "ChatSettings.h"
 #include "client/ChatClient.h"
@@ -24,9 +26,15 @@
 #include "sglobal.h"
 #include "ChatNotify.h"
 
-ChatSettings::ChatSettings(const QString &fileName, QObject *parent)
+ChatSettings::ChatSettings(const QString &fileName, const QString &defaultFile, QObject *parent)
   : Settings(fileName, parent)
+  , m_settings(0)
 {
+  if (QFile::exists(defaultFile)) {
+    m_settings = new QSettings(defaultFile, QSettings::IniFormat, this);
+    m_settings->setIniCodec("UTF-8");
+  }
+
   setLocalDefault(LS("AutoConnect"),           true);
   setLocalDefault(LS("AutoJoin"),              true);
   setLocalDefault(LS("DefaultServer"),         LS("schat://schat.me"));
@@ -59,6 +67,15 @@ void ChatSettings::init()
 {
   connect(ChatClient::i(), SIGNAL(ready()), SLOT(ready()));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+}
+
+
+void ChatSettings::setDefault(const QString &key, const QVariant &value)
+{
+  if (m_settings)
+    Settings::setDefault(key, m_settings->value(key, value));
+  else
+    Settings::setDefault(key, value);
 }
 
 
