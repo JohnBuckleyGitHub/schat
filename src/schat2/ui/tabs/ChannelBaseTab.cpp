@@ -91,6 +91,12 @@ void ChannelBaseTab::add(const Message &message)
 }
 
 
+void ChannelBaseTab::copy()
+{
+  m_chatView->copy();
+}
+
+
 void ChannelBaseTab::setOnline(bool online)
 {
   if (online) {

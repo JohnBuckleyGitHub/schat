@@ -45,6 +45,7 @@ public:
   bool bindMenu(QMenu *menu);
   int alerts() const;
   void add(const Message &message);
+  void copy();
   void setOnline(bool online = true);
   void stopAlert();
 
