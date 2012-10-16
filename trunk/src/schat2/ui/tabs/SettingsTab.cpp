@@ -29,8 +29,8 @@
 #include "ui/tabs/SettingsTab.h"
 #include "ui/tabs/SettingsTabHook.h"
 
-SettingsTab::SettingsTab(TabWidget *parent)
-  : AbstractTab(QByteArray(), LS("settings"), parent)
+SettingsTab::SettingsTab(const QUrl &url, TabWidget *parent)
+  : AbstractTab("settings", LS("settings"), parent)
 {
   m_contents = new QListWidget(this);
   m_contents->setSpacing(1);
@@ -56,6 +56,8 @@ SettingsTab::SettingsTab(TabWidget *parent)
   setText(tr("Preferences"));
 
   connect(m_contents, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this, SLOT(pageChanged(QListWidgetItem *, QListWidgetItem*)));
+
+  openUrl(url);
 }
 
 

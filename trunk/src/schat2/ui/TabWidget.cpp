@@ -166,6 +166,14 @@ int TabWidget::showPage(const QByteArray &id)
 }
 
 
+void TabWidget::closePage(const QByteArray &id)
+{
+  AbstractTab *tab = m_pages.value(id);
+  if (tab)
+    closeTab(indexOf(tab));;
+}
+
+
 /*!
  * Создание или повторная инициализация вкладки канала.
  *
@@ -203,6 +211,9 @@ ChannelBaseTab *TabWidget::channelTab(const QByteArray &id, bool create, bool sh
       tab->setOnline();
       connect(tab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
     }
+
+    closePage("progress");
+    closePage("welcome");
   }
 
   if (show && tab)
@@ -426,11 +437,13 @@ void TabWidget::notify(const Notify &notify)
     showPage(new AboutTab(this));
   }
   else if (type == Notify::OpenSettings) {
-    if (!m_settingsTab)
-      m_settingsTab = new SettingsTab(this);
-
-    m_settingsTab->openUrl(notify.data().toUrl());
-    addChatTab(m_settingsTab);
+    if (m_pages.contains("settings")) {
+      SettingsTab *settings = static_cast<SettingsTab*>(page("settings"));
+      settings->openUrl(notify.data().toUrl());
+      showPage("settings");
+    }
+    else
+      showPage(new SettingsTab(notify.data().toUrl(), this));
   }
   else if (type == Notify::CopyRequest && currentIndex() != -1) {
     widget(currentIndex())->copy();
@@ -459,21 +472,16 @@ void TabWidget::addChannel(const QByteArray &id)
  */
 void TabWidget::clientStateChanged(int state, int previousState)
 {
-  if (state == ChatClient::Online && m_welcomeTab) {
-    closeTab(indexOf(m_welcomeTab));
-  }
-
-  if (previousState == ChatClient::Connecting && m_progressTab) {
-    closeTab(indexOf(m_progressTab));
-  }
-
   if (state == ChatClient::Error) {
     QVariantMap error = ChatClient::io()->json().value(LS("error")).toMap();
     int status = error.value(LS("status")).toInt();
 
-    if (status == Notice::Unauthorized && !m_welcomeTab)
+    if (status == Notice::Unauthorized && !page("welcome"))
       ChatUrls::open(QUrl(LS("chat://settings/network")));
   }
+
+  if ((state == ChatClient::Error || state == ChatClient::Offline) && previousState == ChatClient::Connecting)
+    closePage("progress");
 }
 
 
@@ -535,9 +543,6 @@ void TabWidget::createToolBars()
 }
 
 
-/*!
- * \todo Не отображать вкладку уведомлений после подключения к новому серверу.
- */
 void TabWidget::lastTab()
 {
   if (count() == 0)
@@ -556,12 +561,8 @@ void TabWidget::retranslateUi()
  */
 void TabWidget::showWelcome()
 {
-  if (ChatCore::networks()->isAutoConnect()) {
-    m_progressTab = new ProgressTab(this);
-    addChatTab(m_progressTab);
-  }
-  else {
-    m_welcomeTab = new WelcomeTab(this);
-    addChatTab(m_welcomeTab);
-  }
+  if (ChatCore::networks()->isAutoConnect())
+    showPage(new ProgressTab(this));
+  else
+    showPage(new WelcomeTab(this));
 }
