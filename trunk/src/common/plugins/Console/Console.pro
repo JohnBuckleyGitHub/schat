@@ -33,10 +33,10 @@ SOURCES  = \
    ui/ConsoleTab.cpp \
    ui/ConsoleView.cpp \
 
-#RESOURCES += Console.qrc
+RESOURCES += Console.qrc
 
-#TRANSLATIONS += res/translations/update_en.ts
-#TRANSLATIONS += res/translations/update_ru.ts
-#CODECFORTR = UTF-8
+TRANSLATIONS += res/translations/console_en.ts
+TRANSLATIONS += res/translations/console_ru.ts
+CODECFORTR = UTF-8
 
 include(../plugins.pri)

@@ -17,18 +17,37 @@
  */
 
 #include <QVBoxLayout>
+#include <QFile>
+#include <QApplication>
 
-#include "ui/ConsoleTab.h"
 #include "sglobal.h"
+#include "ui/ChatIcons.h"
+#include "ui/ConsoleTab.h"
 #include "ui/ConsoleView.h"
 
 ConsoleTab::ConsoleTab(TabWidget *parent)
   : AbstractTab("console", LS("console"), parent)
 {
+  QString url = QApplication::applicationDirPath() + "/styles/Console/index.html";
+  if (QFile::exists(url))
+    url = QUrl::fromLocalFile(url).toString();
+  else
+    url = "qrc:/html/Console/index.html";
+
   m_view = new ConsoleView(this);
+  m_view->setUrl(url);
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_view);
   mainLay->setMargin(0);
   mainLay->setSpacing(0);
+
+  setIcon(SCHAT_ICON(Globe));
+  retranslateUi();
+}
+
+
+void ConsoleTab::retranslateUi()
+{
+  setText(tr("Console"));
 }

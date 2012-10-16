@@ -606,12 +606,12 @@
 <context>
     <name>ServerTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="118"/>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="124"/>
         <source>Server %1 requires authorization</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="186"/>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="192"/>
         <source>Network</source>
         <translation type="unfinished"></translation>
     </message>
@@ -659,7 +659,7 @@
     <name>SettingsTab</name>
     <message>
         <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="56"/>
-        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="125"/>
+        <location filename="../../src/schat2/ui/tabs/SettingsTab.cpp" line="127"/>
         <source>Preferences</source>
         <translation type="unfinished"></translation>
     </message>
@@ -742,7 +742,7 @@
 <context>
     <name>TabWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="303"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="370"/>
         <source>Close Tab</source>
         <translation type="unfinished"></translation>
     </message>
