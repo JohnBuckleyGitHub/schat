@@ -29,6 +29,7 @@ SUBDIRS += \
     common/plugins/SendFile \
     common/plugins/SpellChecker \
     common/plugins/Proxy \
+    common/plugins/Console \
     common/plugins/RawFeeds \
     common/plugins/YouTube \
 

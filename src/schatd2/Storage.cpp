@@ -310,5 +310,7 @@ void Storage::setMaxOpenFiles(int max)
   if (getrlimit(RLIMIT_NOFILE, &limit) == 0) {
     SCHAT_LOG_INFO("Max open files limit:" << limit.rlim_cur << limit.rlim_max);
   }
+# else
+  Q_UNUSED(max)
 # endif
 }
