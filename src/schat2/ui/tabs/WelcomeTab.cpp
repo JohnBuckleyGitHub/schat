@@ -35,7 +35,7 @@
 #include "ui/tabs/WelcomeTab.h"
 
 WelcomeTab::WelcomeTab(TabWidget *parent)
-  : AbstractTab(QByteArray(), LS("welcome"), parent)
+  : AbstractTab("welcome", LS("welcome"), parent)
   , m_languageBox(0)
   , m_languageLabel(0)
 {

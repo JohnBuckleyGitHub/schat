@@ -19,9 +19,8 @@
 #ifndef TABWIDGET_H_
 #define TABWIDGET_H_
 
-#include <QHash>
+#include <QMap>
 #include <QTabWidget>
-#include <QPointer>
 
 #include "Channel.h"
 #include "schat.h"
@@ -64,6 +63,7 @@ public:
   int showPage(AbstractTab *tab, bool current = true);
   int showPage(const QByteArray &id);
   static AbstractTab *page(const QByteArray &id) { return m_self->m_pages.value(id); }
+  void closePage(const QByteArray &id);
 
   ChannelBaseTab *channelTab(const QByteArray &id, bool create = true, bool show = true);
   static bool isActive(const QByteArray &id);
@@ -105,9 +105,6 @@ private:
   MainToolBar *m_mainToolBar;                   ///< Правая панель инструментов.
   QMap<QByteArray, AbstractTab*> m_pages;       ///< Вкладки не связанные с каналами.
   QMap<QByteArray, ChannelBaseTab*> m_channels; ///< Таблица каналов.
-  QPointer<ProgressTab> m_progressTab;          ///< Вкладка идицирующая подключение к серверу.
-  QPointer<SettingsTab> m_settingsTab;          ///< Настройка.
-  QPointer<WelcomeTab> m_welcomeTab;            ///< Вкладка приветствия.
   ServerTab *m_serverTab;                       ///< Вкладка сервера.
   static TabWidget *m_self;                     ///< Указатель на себя.
   TabBar *m_tabBar;                             ///< Заголовок виджета.

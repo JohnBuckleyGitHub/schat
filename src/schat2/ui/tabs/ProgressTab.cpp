@@ -26,7 +26,7 @@
 #include "ui/tabs/ProgressTab.h"
 
 ProgressTab::ProgressTab(TabWidget *parent)
-  : AbstractTab(QByteArray(), LS("progress"), parent)
+  : AbstractTab("progress", LS("progress"), parent)
 {
   QFrame *frame = new QFrame(this);
 # if defined(Q_OS_WIN32)

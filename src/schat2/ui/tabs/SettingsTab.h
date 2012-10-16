@@ -33,7 +33,7 @@ class SettingsTab : public AbstractTab
   Q_OBJECT
 
 public:
-  SettingsTab(TabWidget *parent);
+  SettingsTab(const QUrl &url, TabWidget *parent);
   void addPage(SettingsPage *page);
   void openUrl(const QUrl &url);
 
