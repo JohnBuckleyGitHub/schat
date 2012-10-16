@@ -16,30 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "client/ChatClient.h"
-#include "client/ClientMessages.h"
-#include "ConsoleCmd.h"
-#include "ConsolePlugin_p.h"
-#include "sglobal.h"
-#include "client/ClientCmd.h"
+#ifndef CONSOLEVIEW_H_
+#define CONSOLEVIEW_H_
 
-ConsoleCmd::ConsoleCmd(ConsolePluginImpl *plugin)
-  : Messages(plugin)
-  , m_plugin(plugin)
+#include <QWebView>
+
+class ConsoleView : public QWebView
 {
-  ChatClient::messages()->add(this);
-}
+  Q_OBJECT
 
+public:
+  ConsoleView(QWidget *parent = 0);
+};
 
-bool ConsoleCmd::command(const QByteArray &dest, const ClientCmd &cmd)
-{
-  Q_UNUSED(dest)
-
-  QString command = cmd.command().toLower();
-  if (command == LS("console")) {
-    m_plugin->show();
-    return true;
-  }
-
-  return false;
-}
+#endif /* CONSOLEVIEW_H_ */

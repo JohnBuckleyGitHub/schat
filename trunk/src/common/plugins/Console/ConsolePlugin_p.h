@@ -27,6 +27,7 @@ class ConsolePluginImpl : public ChatPlugin
 
 public:
   ConsolePluginImpl(QObject *parent);
+  void show();
 };
 
 #endif /* CONSOLEPLUGIN_P_H_ */

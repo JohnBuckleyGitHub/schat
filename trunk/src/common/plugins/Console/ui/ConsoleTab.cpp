@@ -16,30 +16,19 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "client/ChatClient.h"
-#include "client/ClientMessages.h"
-#include "ConsoleCmd.h"
-#include "ConsolePlugin_p.h"
+#include <QVBoxLayout>
+
+#include "ui/ConsoleTab.h"
 #include "sglobal.h"
-#include "client/ClientCmd.h"
+#include "ui/ConsoleView.h"
 
-ConsoleCmd::ConsoleCmd(ConsolePluginImpl *plugin)
-  : Messages(plugin)
-  , m_plugin(plugin)
+ConsoleTab::ConsoleTab(TabWidget *parent)
+  : AbstractTab("console", LS("console"), parent)
 {
-  ChatClient::messages()->add(this);
-}
+  m_view = new ConsoleView(this);
 
-
-bool ConsoleCmd::command(const QByteArray &dest, const ClientCmd &cmd)
-{
-  Q_UNUSED(dest)
-
-  QString command = cmd.command().toLower();
-  if (command == LS("console")) {
-    m_plugin->show();
-    return true;
-  }
-
-  return false;
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->addWidget(m_view);
+  mainLay->setMargin(0);
+  mainLay->setSpacing(0);
 }

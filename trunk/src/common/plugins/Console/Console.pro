@@ -24,10 +24,14 @@ HEADERS  = \
    ConsoleCmd.h \
    ConsolePlugin.h \
    ConsolePlugin_p.h \
+   ui/ConsoleTab.h \
+   ui/ConsoleView.h \
 
 SOURCES  = \
    ConsoleCmd.cpp \
    ConsolePlugin.cpp \
+   ui/ConsoleTab.cpp \
+   ui/ConsoleView.cpp \
 
 #RESOURCES += Console.qrc
 
