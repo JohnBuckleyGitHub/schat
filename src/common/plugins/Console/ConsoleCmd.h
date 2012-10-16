@@ -16,27 +16,23 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#ifndef CONSOLECMD_H_
+#define CONSOLECMD_H_
 
-#include "ConsoleCmd.h"
-#include "ConsolePlugin.h"
-#include "ConsolePlugin_p.h"
+#include "client/ClientHooks.h"
 
-ConsolePluginImpl::ConsolePluginImpl(QObject *parent)
-  : ChatPlugin(parent)
+class ConsolePluginImpl;
+
+class ConsoleCmd : public Hooks::Messages
 {
-  new ConsoleCmd(this);
-}
+  Q_OBJECT
 
+public:
+  ConsoleCmd(ConsolePluginImpl *plugin);
+  bool command(const QByteArray &dest, const ClientCmd &cmd);
 
-ChatPlugin *ConsolePlugin::create()
-{
-  m_plugin = new ConsolePluginImpl(this);
-  return m_plugin;
-}
+private:
+  ConsolePluginImpl *m_plugin; ///< Указатель на плагин.
+};
 
-
-#if QT_VERSION < 0x050000
-  Q_EXPORT_PLUGIN2(Console, ConsolePlugin);
-#endif
-
+#endif /* CONSOLECMD_H_ */
