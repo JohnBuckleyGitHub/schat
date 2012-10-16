@@ -18,9 +18,12 @@
 
 #include <QtPlugin>
 
+#include "ChatCore.h"
 #include "ConsoleCmd.h"
 #include "ConsolePlugin.h"
 #include "ConsolePlugin_p.h"
+#include "sglobal.h"
+#include "Translation.h"
 #include "ui/ConsoleTab.h"
 #include "ui/TabWidget.h"
 
@@ -28,6 +31,8 @@ ConsolePluginImpl::ConsolePluginImpl(QObject *parent)
   : ChatPlugin(parent)
 {
   new ConsoleCmd(this);
+
+  ChatCore::translation()->addOther(LS("console"));
 }
 
 

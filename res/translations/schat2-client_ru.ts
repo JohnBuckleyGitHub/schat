@@ -201,7 +201,7 @@
 <context>
     <name>SimpleSocket</name>
     <message>
-        <location filename="../../src/common/net/SimpleSocket.cpp" line="209"/>
+        <location filename="../../src/common/net/SimpleSocket.cpp" line="207"/>
         <source>Time out</source>
         <translation>Время вышло</translation>
     </message>

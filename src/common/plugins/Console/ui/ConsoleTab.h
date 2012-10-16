@@ -31,6 +31,8 @@ public:
   ConsoleTab(TabWidget *parent);
 
 private:
+  void retranslateUi();
+
   ConsoleView *m_view;
 };
 
