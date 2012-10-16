@@ -23,8 +23,8 @@
 #include <QTabWidget>
 #include <QPointer>
 
-#include "schat.h"
 #include "Channel.h"
+#include "schat.h"
 
 class AboutTab;
 class AbstractMessage;
@@ -57,9 +57,13 @@ public:
 
   AbstractTab *widget(int index) const;
   ClientChannel channel(const QByteArray &id) const;
-  inline ServerTab *serverTab() const { return m_serverTab; }
-  inline TabBar *tabBar() const       { return m_tabBar; }
-  static TabWidget *i()               { return m_self; }
+  inline ServerTab *serverTab() const            { return m_serverTab; }
+  inline TabBar *tabBar() const                  { return m_tabBar; }
+  static TabWidget *i()                          { return m_self; }
+
+  int showPage(AbstractTab *tab, bool current = true);
+  int showPage(const QByteArray &id);
+  static AbstractTab *page(const QByteArray &id) { return m_self->m_pages.value(id); }
 
   ChannelBaseTab *channelTab(const QByteArray &id, bool create = true, bool show = true);
   static bool isActive(const QByteArray &id);
@@ -97,18 +101,18 @@ private:
   void retranslateUi();
   void showWelcome();
 
-  AuthIcon *m_authIcon;                      ///< Иконка провайдеров авторизации.
-  MainToolBar *m_mainToolBar;                ///< Правая панель инструментов.
-  QHash<QByteArray, ChannelBaseTab*> m_channels; ///< Таблица каналов.
-  QPointer<AboutTab> m_aboutTab;             ///< О Simple Chat.
-  QPointer<ProgressTab> m_progressTab;       ///< Вкладка идицирующая подключение к серверу.
-  QPointer<SettingsTab> m_settingsTab;       ///< Настройка.
-  QPointer<WelcomeTab> m_welcomeTab;         ///< Вкладка приветствия.
-  ServerTab *m_serverTab;                    ///< Вкладка сервера.
-  static TabWidget *m_self;                  ///< Указатель на себя.
-  TabBar *m_tabBar;                          ///< Заголовок виджета.
-  TabsToolBar *m_tabsToolBar;                ///< Левая панель инструментов.
-  TrayIcon *m_tray;                          ///< Иконка в трее.
+  AuthIcon *m_authIcon;                         ///< Иконка провайдеров авторизации.
+  MainToolBar *m_mainToolBar;                   ///< Правая панель инструментов.
+  QMap<QByteArray, AbstractTab*> m_pages;       ///< Вкладки не связанные с каналами.
+  QMap<QByteArray, ChannelBaseTab*> m_channels; ///< Таблица каналов.
+  QPointer<ProgressTab> m_progressTab;          ///< Вкладка идицирующая подключение к серверу.
+  QPointer<SettingsTab> m_settingsTab;          ///< Настройка.
+  QPointer<WelcomeTab> m_welcomeTab;            ///< Вкладка приветствия.
+  ServerTab *m_serverTab;                       ///< Вкладка сервера.
+  static TabWidget *m_self;                     ///< Указатель на себя.
+  TabBar *m_tabBar;                             ///< Заголовок виджета.
+  TabsToolBar *m_tabsToolBar;                   ///< Левая панель инструментов.
+  TrayIcon *m_tray;                             ///< Иконка в трее.
 };
 
 #endif /* TABWIDGET_H_ */
