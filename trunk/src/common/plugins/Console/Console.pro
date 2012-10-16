@@ -15,21 +15,22 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-CONFIG   += ordered
-TEMPLATE = subdirs
-SUBDIRS  = \
-    client \
-    schat2/schat2-core.pro \
-    schat2 \
-    common/plugins/Cache \
-    common/plugins/History \
-    common/plugins/Profile \
-    common/plugins/Popup \
-    common/plugins/Emoticons \
-    common/plugins/Idle \
-    common/plugins/SendFile \
-    common/plugins/SpellChecker \
-    common/plugins/Proxy \
-    common/plugins/Console \
-    common/plugins/RawFeeds \
-    common/plugins/YouTube \
+SCHAT_CLIENT_LIB = 1
+SCHAT_CORE_LIB = 1
+QT = core gui network webkit
+OTHER_FILES += Console.json
+
+HEADERS  = \
+   ConsolePlugin.h \
+   ConsolePlugin_p.h \
+
+SOURCES  = \
+   ConsolePlugin.cpp \
+
+#RESOURCES += Console.qrc
+
+#TRANSLATIONS += res/translations/update_en.ts
+#TRANSLATIONS += res/translations/update_ru.ts
+#CODECFORTR = UTF-8
+
+include(../plugins.pri)
