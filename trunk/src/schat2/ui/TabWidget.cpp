@@ -121,6 +121,52 @@ ClientChannel TabWidget::channel(const QByteArray &id) const
 
 
 /*!
+ * Добавление новой страницы.
+ *
+ * \param tab     Новая вкладка.
+ * \param current \b true если необходимо установить вкладку в качестве текущей.
+ *
+ * \return Индекс вкладки или -1 в случае ошибки.
+ */
+int TabWidget::showPage(AbstractTab *tab, bool current)
+{
+  if (!tab)
+    return -1;
+
+  const QByteArray &id = tab->id();
+  if (id.isEmpty() || m_pages.contains(id)) {
+    QTimer::singleShot(0, tab, SLOT(deleteLater()));
+    return -1;
+  }
+
+  m_pages[id] = tab;
+  int index = addTab(tab, tab->text());
+  tab->setOnline();
+
+  ChatNotify::start(Notify::PageOpen, id);
+
+  if (current)
+    setCurrentIndex(index);
+
+  return index;
+}
+
+
+int TabWidget::showPage(const QByteArray &id)
+{
+  AbstractTab *tab = m_pages.value(id);
+  if (!tab)
+    return -1;
+
+  int index = indexOf(tab);
+  if (index != -1)
+    setCurrentIndex(index);
+
+  return index;
+}
+
+
+/*!
  * Создание или повторная инициализация вкладки канала.
  *
  * \param id     Идентификатор канала.
@@ -245,17 +291,27 @@ void TabWidget::closeTab(int index)
     return;
 
   AbstractTab *tab = widget(index);
+  if (!tab)
+    return;
+
+  const QByteArray &id = tab->id();
 
   // Закрытие канала.
-  if (m_channels.contains(tab->id())) {
-    ChatNotify::start(Notify::ChannelTabClosed, tab->id());
-    m_channels.remove(tab->id());
+  if (m_channels.contains(id)) {
+    ChatNotify::start(Notify::ChannelTabClosed, id);
+    m_channels.remove(id);
   }
 
   removeTab(index);
 
-  if (tab->isDeleteOnClose())
+  if (tab->isDeleteOnClose()) {
+    if (m_pages.contains(id)) {
+      ChatNotify::start(Notify::PageClosed, id);
+      m_pages.remove(id);
+    }
+
     QTimer::singleShot(0, tab, SLOT(deleteLater()));
+  }
   else
     tab->setOnline(false);
 
@@ -366,11 +422,8 @@ void TabWidget::notify(const Notify &notify)
     else
       tab->chatView()->evaluateJavaScript(LS("Pages.setPage(0);"));
   }
-  else if (type == Notify::OpenAbout) {
-    if (!m_aboutTab)
-      m_aboutTab = new AboutTab(this);
-
-    addChatTab(m_aboutTab);
+  else if (type == Notify::OpenAbout && showPage("about") == -1) {
+    showPage(new AboutTab(this));
   }
   else if (type == Notify::OpenSettings) {
     if (!m_settingsTab)

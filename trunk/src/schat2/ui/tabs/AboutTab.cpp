@@ -57,7 +57,7 @@ protected:
 
 
 AboutTab::AboutTab(TabWidget *parent)
-  : AbstractTab(QByteArray(), LS("about"), parent)
+  : AbstractTab("about", LS("about"), parent)
 {
   m_tr = new AboutTr();
 
