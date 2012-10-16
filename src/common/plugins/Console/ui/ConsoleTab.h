@@ -16,30 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "client/ChatClient.h"
-#include "client/ClientMessages.h"
-#include "ConsoleCmd.h"
-#include "ConsolePlugin_p.h"
-#include "sglobal.h"
-#include "client/ClientCmd.h"
+#ifndef CONSOLETAB_H_
+#define CONSOLETAB_H_
 
-ConsoleCmd::ConsoleCmd(ConsolePluginImpl *plugin)
-  : Messages(plugin)
-  , m_plugin(plugin)
+#include "ui/tabs/AbstractTab.h"
+
+class ConsoleView;
+
+class ConsoleTab : public AbstractTab
 {
-  ChatClient::messages()->add(this);
-}
+  Q_OBJECT
 
+public:
+  ConsoleTab(TabWidget *parent);
 
-bool ConsoleCmd::command(const QByteArray &dest, const ClientCmd &cmd)
-{
-  Q_UNUSED(dest)
+private:
+  ConsoleView *m_view;
+};
 
-  QString command = cmd.command().toLower();
-  if (command == LS("console")) {
-    m_plugin->show();
-    return true;
-  }
-
-  return false;
-}
+#endif /* CONSOLETAB_H_ */

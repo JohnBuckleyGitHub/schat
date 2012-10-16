@@ -21,11 +21,21 @@
 #include "ConsoleCmd.h"
 #include "ConsolePlugin.h"
 #include "ConsolePlugin_p.h"
+#include "ui/ConsoleTab.h"
+#include "ui/TabWidget.h"
 
 ConsolePluginImpl::ConsolePluginImpl(QObject *parent)
   : ChatPlugin(parent)
 {
   new ConsoleCmd(this);
+}
+
+
+void ConsolePluginImpl::show()
+{
+  TabWidget *tabs = TabWidget::i();
+  if (tabs->showPage("console") == -1)
+    tabs->showPage(new ConsoleTab(tabs));
 }
 
 
