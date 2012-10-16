@@ -45,6 +45,7 @@ ${mod} SendFile
 ${mod} SpellChecker
 ${mod} Idle
 ${mod} Update
+${mod} Console
 ${mod} YouTube
 ${mod} RawFeeds
 !ifdef SCHAT_SECTIONS

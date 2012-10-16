@@ -76,6 +76,9 @@
         <Component Id="ChangeLog.Proxy.html" Guid="{39BFD195-48B8-47FE-B712-6C78BC2FA64F}">
           <File Id="ChangeLog.Proxy.html" KeyPath="yes" Source="..\schat2\doc\ChangeLog.Proxy.html" />
         </Component>
+        <Component Id="ChangeLog.Console.html" Guid="{A6FC2CA2-E8B4-44F5-9110-E41BB6C92284}">
+          <File Id="ChangeLog.Console.html" KeyPath="yes" Source="..\schat2\doc\ChangeLog.Console.html" />
+        </Component>
         <Component Id="ChangeLog.RawFeeds.html" Guid="{DA7A5152-3984-4286-A1FE-67C0DDE385E9}">
           <File Id="ChangeLog.RawFeeds.html" KeyPath="yes" Source="..\schat2\doc\ChangeLog.RawFeeds.html" />
         </Component>
@@ -117,6 +120,9 @@
         </Component>
         <Component Id="Proxy.dll" Guid="{76BCBEC3-C6B0-4877-A7C4-F141E9F33AF1}">
           <File Id="Proxy.dll" KeyPath="yes" Source="..\schat2\plugins\Proxy.dll" />
+        </Component>
+        <Component Id="Console.dll" Guid="{31A6BF43-2764-4D29-8F46-3324821F73D9}">
+          <File Id="Console.dll" KeyPath="yes" Source="..\schat2\plugins\Console.dll" />
         </Component>
         <Component Id="RawFeeds.dll" Guid="{031C61D4-E1C8-46F5-80A6-E6D0646B61D4}">
           <File Id="RawFeeds.dll" KeyPath="yes" Source="..\schat2\plugins\RawFeeds.dll" />
@@ -282,6 +288,10 @@
       <ComponentRef Id="ru_RU.aff" />
       <ComponentRef Id="en_US.dic" />
       <ComponentRef Id="ru_RU.dic" />
+    </ComponentGroup>
+    <ComponentGroup Id="Console">
+      <ComponentRef Id="Console.dll" />
+      <ComponentRef Id="ChangeLog.Console.html" />
     </ComponentGroup>
     <ComponentGroup Id="YouTube">
       <ComponentRef Id="YouTube.dll" />

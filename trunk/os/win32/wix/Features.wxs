@@ -31,6 +31,9 @@
       <Feature Id="Proxy" Title="Proxy" Description="Adds support for connections via HTTP and SOCKS5 proxy" Level="1" AllowAdvertise="no">
         <ComponentGroupRef Id="Proxy" />
       </Feature>
+      <Feature Id="Console" Title="Console" Description="Server Management console" Level="1" AllowAdvertise="no">
+        <ComponentGroupRef Id="Console" />
+      </Feature>
       <Feature Id="RawFeeds" Title="Raw Feeds" Description="Debug plugin to access the raw data feeds" Level="1" AllowAdvertise="no">
         <ComponentGroupRef Id="RawFeeds" />
       </Feature>
