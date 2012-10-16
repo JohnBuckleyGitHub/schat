@@ -21,10 +21,12 @@ QT = core gui network webkit
 OTHER_FILES += Console.json
 
 HEADERS  = \
+   ConsoleCmd.h \
    ConsolePlugin.h \
    ConsolePlugin_p.h \
 
 SOURCES  = \
+   ConsoleCmd.cpp \
    ConsolePlugin.cpp \
 
 #RESOURCES += Console.qrc
