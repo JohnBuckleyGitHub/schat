@@ -805,7 +805,8 @@ if (typeof SimpleChat === 'undefined') {
     serverPeer: function()         { return ''; },
     traffic: function()            { return {tx:0, rx:0}; },
     serverId: function()           { return ''; },
-    encryption: function()         { return false; }
+    encryption: function()         { return false; },
+    statusText: function(status)   { return ''; }
   };
 }
 else {

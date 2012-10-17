@@ -20,10 +20,14 @@ QT = core network
 OTHER_FILES += NodeConsole.json
 
 HEADERS  = \
+   feeds/NodeConsoleFeed.h \
+   NodeConsoleCh.h \
    NodeConsolePlugin.h \
    NodeConsolePlugin_p.h \
 
 SOURCES  = \
+   feeds/NodeConsoleFeed.cpp \
+   NodeConsoleCh.cpp \
    NodeConsolePlugin.cpp \
 
 include(../plugins.pri)

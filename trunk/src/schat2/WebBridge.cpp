@@ -205,6 +205,12 @@ QString WebBridge::status(const QString &id) const
 }
 
 
+QString WebBridge::statusText(int status) const
+{
+  return Notice::status(status);
+}
+
+
 QString WebBridge::translate(const QString &key) const
 {
   return Tr::value(key);
