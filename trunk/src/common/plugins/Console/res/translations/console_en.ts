@@ -5,8 +5,16 @@
 <context>
     <name>ConsoleTab</name>
     <message>
-        <location filename="../../ui/ConsoleTab.cpp" line="50"/>
+        <location filename="../../ui/ConsoleTab.cpp" line="53"/>
         <source>Console</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ConsoleTr</name>
+    <message>
+        <location filename="../../ui/ConsoleView.cpp" line="39"/>
+        <source>This server does not support remote management.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
