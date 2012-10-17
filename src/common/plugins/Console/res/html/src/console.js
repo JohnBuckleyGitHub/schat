@@ -40,9 +40,14 @@ Console.feed = {
  * Чтение ответа на "get" запрос "console/try".
  */
 Console.feed.get.tryAccess = function(json) {
-  if (json.status = 403) {
-    Loader.spinner.remove('loading/try');
-    $('#page').html('<div class="alert alert-error" data-tr="console_bad_server">' + Utils.tr('console_bad_server') + '</div>');
+  Loader.spinner.remove('loading/try');
+  var page = $('#page');
+
+  if (json.status == 403) {
+    page.html('<div class="alert alert-error" data-tr="console_bad_server">' + Utils.tr('console_bad_server') + '</div>');
+  }
+  else {
+    page.html('<div class="alert alert-error"><strong>' + json.status + '</strong> ' + SimpleChat.statusText(json.status) + '</div>');
   }
 };
 

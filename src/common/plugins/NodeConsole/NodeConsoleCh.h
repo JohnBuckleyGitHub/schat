@@ -16,29 +16,18 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#ifndef NODECONSOLECH_H_
+#define NODECONSOLECH_H_
 
-#include "feeds/FeedStorage.h"
-#include "feeds/NodeConsoleFeed.h"
-#include "NodeConsoleCh.h"
-#include "NodeConsolePlugin.h"
-#include "NodeConsolePlugin_p.h"
+#include "ChHook.h"
 
-NodeConsoleImpl::NodeConsoleImpl(QObject *parent)
-  : NodePlugin(parent)
+class NodeConsoleCh : public ChHook
 {
-  new NodeConsoleCh(this);
+  Q_OBJECT
 
-  FeedStorage::add(new NodeConsoleFeed());
-}
+public:
+  NodeConsoleCh(QObject *parent = 0);
+  void server(ChatChannel channel, bool created);
+};
 
-
-NodePlugin *NodeConsolePlugin::create()
-{
-  m_plugin = new NodeConsoleImpl(this);
-  return m_plugin;
-}
-
-#if QT_VERSION < 0x050000
-  Q_EXPORT_PLUGIN2(NodeConsole, NodeConsolePlugin);
-#endif
+#endif /* NODECONSOLECH_H_ */

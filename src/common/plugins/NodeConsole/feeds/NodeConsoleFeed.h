@@ -16,29 +16,25 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#ifndef NODECONSOLEFEED_H_
+#define NODECONSOLEFEED_H_
 
-#include "feeds/FeedStorage.h"
-#include "feeds/NodeConsoleFeed.h"
-#include "NodeConsoleCh.h"
-#include "NodeConsolePlugin.h"
-#include "NodeConsolePlugin_p.h"
+#include "feeds/Feed.h"
 
-NodeConsoleImpl::NodeConsoleImpl(QObject *parent)
-  : NodePlugin(parent)
+class NodeConsoleFeed : public Feed
 {
-  new NodeConsoleCh(this);
+public:
+  NodeConsoleFeed(const QString &name, const QVariantMap &data);
+  NodeConsoleFeed(const QString &name = QLatin1String("console"), qint64 date = 0);
+  Feed* create(const QString &name);
+  Feed* load(const QString &name, const QVariantMap &data);
 
-  FeedStorage::add(new NodeConsoleFeed());
-}
+  FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0);
+  QVariantMap feed(Channel *channel = 0);
 
+private:
+  bool master(Channel *user);
+  FeedReply tryAccess(const QVariantMap &json, Channel *user);
+};
 
-NodePlugin *NodeConsolePlugin::create()
-{
-  m_plugin = new NodeConsoleImpl(this);
-  return m_plugin;
-}
-
-#if QT_VERSION < 0x050000
-  Q_EXPORT_PLUGIN2(NodeConsole, NodeConsolePlugin);
-#endif
+#endif /* NODECONSOLEFEED_H_ */
