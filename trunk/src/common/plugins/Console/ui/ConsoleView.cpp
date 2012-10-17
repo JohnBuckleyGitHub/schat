@@ -16,10 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QWebFrame>
+
+#include "sglobal.h"
 #include "ui/ConsoleView.h"
+#include "WebBridge.h"
 
 ConsoleView::ConsoleView(QWidget *parent)
   : QWebView(parent)
 {
   setAcceptDrops(false);
+
+  connect(page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), SLOT(populateJavaScriptWindowObject()));
+}
+
+
+void ConsoleView::populateJavaScriptWindowObject()
+{
+  page()->mainFrame()->addToJavaScriptWindowObject(LS("SimpleChat"), WebBridge::i());
 }

@@ -24,6 +24,7 @@
 #include "ui/ChatIcons.h"
 #include "ui/ConsoleTab.h"
 #include "ui/ConsoleView.h"
+#include "WebBridge.h"
 
 ConsoleTab::ConsoleTab(TabWidget *parent)
   : AbstractTab("console", LS("console"), parent)

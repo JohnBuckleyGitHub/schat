@@ -790,7 +790,7 @@ function htmlspecialchars (string, quote_style, charset, double_encode) {
 })(jQuery);
 
 
-if (typeof ChatView === 'undefined') {
+if (typeof SimpleChat === 'undefined') {
   SimpleChat = {
     channel: function(id)          { return '{}'; },
     translate: function(key)       { return key; },
@@ -807,7 +807,14 @@ if (typeof ChatView === 'undefined') {
     serverId: function()           { return ''; },
     encryption: function()         { return false; }
   };
+}
+else {
+  SimpleChat.retranslated.connect(Utils.retranslate);
+  SimpleChat.renamed.connect(Messages.rename);
+  SimpleChat.recolored.connect(Messages.recolor);
+}
 
+if (typeof ChatView === 'undefined') {
   ChatView = {
     jsfiles: function() { return []; },
     loadFinished: function() {},
@@ -819,7 +826,4 @@ if (typeof ChatView === 'undefined') {
 else {
   ChatView.reload.connect(Messages.reload);
   ChatView.message.connect(Messages.addMessage);
-  SimpleChat.retranslated.connect(Utils.retranslate);
-  SimpleChat.renamed.connect(Messages.rename);
-  SimpleChat.recolored.connect(Messages.recolor);
 }

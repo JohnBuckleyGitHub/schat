@@ -27,6 +27,9 @@ class ConsoleView : public QWebView
 
 public:
   ConsoleView(QWidget *parent = 0);
+
+private slots:
+  void populateJavaScriptWindowObject();
 };
 
 #endif /* CONSOLEVIEW_H_ */
