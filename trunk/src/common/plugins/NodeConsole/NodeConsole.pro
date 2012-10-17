@@ -15,16 +15,15 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-CONFIG   += ordered
-TEMPLATE = subdirs
-SUBDIRS  = \
-    schatd2/schatd.pro \
-    tufao \
-    schatd2 \
-    rest \
-    authd \
-    common/plugins/GenericNode \
-    common/plugins/Messages \
-    common/plugins/NodeConsole \
-    common/plugins/RestApi \
-    common/plugins/GeoIP \
+SCHAT_DAEMON_LIB = 1
+QT = core network
+OTHER_FILES += NodeConsole.json
+
+HEADERS  = \
+   NodeConsolePlugin.h \
+   NodeConsolePlugin_p.h \
+
+SOURCES  = \
+   NodeConsolePlugin.cpp \
+
+include(../plugins.pri)
