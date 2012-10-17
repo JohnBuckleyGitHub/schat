@@ -18,6 +18,7 @@
 SUBDIRS += \
     common/plugins/GenericNode \
     common/plugins/Messages \
+    common/plugins/NodeConsole \
     common/plugins/RestApi \
     common/plugins/GeoIP \
     common/plugins/Cache \
