@@ -20,6 +20,10 @@
 #define CONSOLEVIEW_H_
 
 #include <QWebView>
+#include <QVariant>
+
+class ConsoleTr;
+class Notify;
 
 class ConsoleView : public QWebView
 {
@@ -27,9 +31,17 @@ class ConsoleView : public QWebView
 
 public:
   ConsoleView(QWidget *parent = 0);
+  ~ConsoleView();
+
+signals:
+  void feed(const QVariantMap &data);
 
 private slots:
+  void notify(const Notify &notify);
   void populateJavaScriptWindowObject();
+
+private:
+  ConsoleTr *m_tr; ///< Перевод.
 };
 
 #endif /* CONSOLEVIEW_H_ */
