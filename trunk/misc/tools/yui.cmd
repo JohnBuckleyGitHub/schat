@@ -32,6 +32,7 @@ java -jar yuicompressor.jar ..\..\src\common\plugins\History\res\src\History.css
 
 java -jar yuicompressor.jar ..\..\src\common\plugins\Console\res\html\src\console.js -o ..\..\src\common\plugins\Console\res\js\console.min.js
 java -jar yuicompressor.jar ..\..\src\common\plugins\Console\res\html\src\console-login.js -o ..\..\src\common\plugins\Console\res\js\console-login.min.js
+java -jar yuicompressor.jar ..\..\src\common\plugins\Console\res\html\src\console-password.js -o ..\..\src\common\plugins\Console\res\js\console-password.min.js
 java -jar yuicompressor.jar ..\..\src\common\plugins\Console\res\html\src\console.css -o ..\..\src\common\plugins\Console\res\css\console.min.css
 java -jar yuicompressor.jar ..\..\src\common\plugins\Console\res\html\src\bootstrap.css -o ..\..\src\common\plugins\Console\res\css\bootstrap.min.css
 pause

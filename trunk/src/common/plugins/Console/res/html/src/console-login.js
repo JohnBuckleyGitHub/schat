@@ -5,11 +5,15 @@ Console.feed.get.login = function(json) {
   if (Console.current != 'login')
     return;
 
-
   $('#login-spinner').hide();
   clearTimeout(Console.login.timeout);
 
-  if (json.status == 402)
+  if (json.status == 200) {
+    if ($('#password').val() == 'admin') {
+      Console.password.load();
+    }
+  }
+  else if (json.status == 402)
     Console.login.setError('console_incorect_password');
   else
     Console.login.setError(json.status);
@@ -22,11 +26,22 @@ Console.feed.get.login = function(json) {
 Console.login = {
   timeout: null, // Таймаут отображения спиннера.
 
+  /*
+   * Загрузка шаблона страницы.
+   */
+  load: function() {
+    $.ajax({
+      url: 'login.html',
+      isLocal: true,
+      success: Console.login.loaded
+    });
+  },
+
 
   /*
    * Обработка успешной загрузки формы.
    */
-  load: function(data) {
+  loaded: function(data) {
     $('#page').html(data);
 
     Console.current = 'login';

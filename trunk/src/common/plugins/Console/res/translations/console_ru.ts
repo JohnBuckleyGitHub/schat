@@ -13,29 +13,54 @@
 <context>
     <name>ConsoleTr</name>
     <message>
-        <location filename="../../ui/ConsoleView.cpp" line="39"/>
+        <location filename="../../ui/ConsoleView.cpp" line="40"/>
         <source>This server does not support remote management.</source>
         <translation>Этот сервер не поддерживает удаленное управление.</translation>
     </message>
     <message>
-        <location filename="../../ui/ConsoleView.cpp" line="40"/>
+        <location filename="../../ui/ConsoleView.cpp" line="41"/>
         <source>Password:</source>
         <translation>Пароль:</translation>
     </message>
     <message>
-        <location filename="../../ui/ConsoleView.cpp" line="41"/>
+        <location filename="../../ui/ConsoleView.cpp" line="42"/>
         <source>Login</source>
         <translation>Вход</translation>
     </message>
     <message>
-        <location filename="../../ui/ConsoleView.cpp" line="42"/>
+        <location filename="../../ui/ConsoleView.cpp" line="43"/>
         <source>Password cannot be empty</source>
         <translation>Пароль не может быть пустым</translation>
     </message>
     <message>
-        <location filename="../../ui/ConsoleView.cpp" line="43"/>
+        <location filename="../../ui/ConsoleView.cpp" line="44"/>
         <source>You entered an incorrect password</source>
         <translation>Вы ввели неправильный пароль</translation>
+    </message>
+    <message>
+        <location filename="../../ui/ConsoleView.cpp" line="45"/>
+        <source>Change password</source>
+        <translation>Изменить пароль</translation>
+    </message>
+    <message>
+        <location filename="../../ui/ConsoleView.cpp" line="46"/>
+        <source>New password:</source>
+        <translation>Новый пароль:</translation>
+    </message>
+    <message>
+        <location filename="../../ui/ConsoleView.cpp" line="47"/>
+        <source>Confirm new password:</source>
+        <translation>Повторите пароль:</translation>
+    </message>
+    <message>
+        <location filename="../../ui/ConsoleView.cpp" line="48"/>
+        <source>Save</source>
+        <translation>Сохранить</translation>
+    </message>
+    <message>
+        <location filename="../../ui/ConsoleView.cpp" line="49"/>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
     </message>
 </context>
 </TS>

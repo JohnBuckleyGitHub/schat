@@ -37,11 +37,16 @@ public:
 protected:
   QString valueImpl(const QString &key) const
   {
-    if (key == LS("bad_server"))             return tr("This server does not support remote management.");
-    else if (key == LS("password"))          return tr("Password:");
-    else if (key == LS("login"))             return tr("Login");
-    else if (key == LS("empty_password"))    return tr("Password cannot be empty");
-    else if (key == LS("incorect_password")) return tr("You entered an incorrect password");
+    if (key == LS("bad_server"))                return tr("This server does not support remote management.");
+    else if (key == LS("password"))             return tr("Password:");
+    else if (key == LS("login"))                return tr("Login");
+    else if (key == LS("empty_password"))       return tr("Password cannot be empty");
+    else if (key == LS("incorect_password"))    return tr("You entered an incorrect password");
+    else if (key == LS("change_password"))      return tr("Change password");
+    else if (key == LS("new_password"))         return tr("New password:");
+    else if (key == LS("confirm_new_password")) return tr("Confirm new password:");
+    else if (key == LS("save"))                 return tr("Save");
+    else if (key == LS("cancel"))               return tr("Cancel");
     return QString();
   }
 };
