@@ -21,6 +21,7 @@
 
 #include "ChatNotify.h"
 #include "client/ChatClient.h"
+#include "net/SimpleID.h"
 #include "sglobal.h"
 #include "Tr.h"
 #include "ui/ConsoleView.h"
@@ -36,7 +37,11 @@ public:
 protected:
   QString valueImpl(const QString &key) const
   {
-    if (key == LS("bad_server")) return tr("This server does not support remote management.");
+    if (key == LS("bad_server"))             return tr("This server does not support remote management.");
+    else if (key == LS("password"))          return tr("Password:");
+    else if (key == LS("login"))             return tr("Login");
+    else if (key == LS("empty_password"))    return tr("Password cannot be empty");
+    else if (key == LS("incorect_password")) return tr("You entered an incorrect password");
     return QString();
   }
 };
@@ -56,6 +61,12 @@ ConsoleView::ConsoleView(QWidget *parent)
 ConsoleView::~ConsoleView()
 {
   delete m_tr;
+}
+
+
+QString ConsoleView::toPassword(const QString &password) const
+{
+  return SimpleID::encode(SimpleID::make(password.toUtf8(), SimpleID::PasswordId));
 }
 
 

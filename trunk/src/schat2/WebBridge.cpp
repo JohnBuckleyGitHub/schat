@@ -211,6 +211,12 @@ QString WebBridge::statusText(int status) const
 }
 
 
+QString WebBridge::toBase32(const QString &text)
+{
+  return SimpleID::toBase32(text.toUtf8());
+}
+
+
 QString WebBridge::translate(const QString &key) const
 {
   return Tr::value(key);

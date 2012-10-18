@@ -32,6 +32,7 @@ class ConsoleView : public QWebView
 public:
   ConsoleView(QWidget *parent = 0);
   ~ConsoleView();
+  Q_INVOKABLE QString toPassword(const QString &password) const;
 
 signals:
   void feed(const QVariantMap &data);
