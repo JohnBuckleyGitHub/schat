@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ class Groups
 {
 public:
   Groups() {}
+  inline bool contains(const QString &name)  { return m_groups.contains(name); }
   inline const QStringList& all() const      { return m_groups; }
   inline Groups &add(const QString &name)    { if (!m_groups.contains(name) && !name.contains(",")) m_groups.append(name); return *this; }
   inline QString toString() const            { return m_groups.join(","); }

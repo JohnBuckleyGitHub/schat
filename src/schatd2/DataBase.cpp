@@ -39,7 +39,6 @@
 #include "Storage.h"
 #include "tools/Ver.h"
 
-bool DataBase::noMaster = false;
 DataBase *DataBase::m_self = 0;
 
 AddHostTask::AddHostTask(Host *host)
@@ -246,8 +245,6 @@ int DataBase::start()
     "  data       BLOB,"
     "  date       INTEGER DEFAULT ( 0 )"
     ");"));
-
-    noMaster = true;
   }
 
   query.exec(LS(
