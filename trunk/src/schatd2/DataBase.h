@@ -66,8 +66,6 @@ public:
   static QVariant value(const QString &key, const QVariant &defaultValue = QVariant());
   static void setValue(const QString &key, const QVariant &value);
 
-  static bool noMaster; /// \b true если отсутвует Master пользователь, значение устанавливается в \b true если таблицы channels не существовало и она была создана.
-
 private slots:
   void startTasks();
 

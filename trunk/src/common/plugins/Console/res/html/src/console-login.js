@@ -7,8 +7,7 @@ Console.feed.get.login = function(json) {
 
 
   $('#login-spinner').hide();
-  if (Console.login.timeout !== null)
-    clearTimeout(Console.login.timeout);
+  clearTimeout(Console.login.timeout);
 
   if (json.status == 402)
     Console.login.setError('console_incorect_password');
@@ -80,6 +79,6 @@ Console.login = {
     $('#password-group').removeClass('error');
     var error = $('#error');
     error.removeAttr('data-tr');
-    error.fadeOut('fast');
+    error.hide();
   }
 };

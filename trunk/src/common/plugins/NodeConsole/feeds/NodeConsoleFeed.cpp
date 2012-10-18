@@ -21,19 +21,21 @@
 #include "DateTime.h"
 #include "feeds/NodeConsoleFeed.h"
 #include "net/packets/Notice.h"
+#include "net/SimpleID.h"
 #include "sglobal.h"
+#include "Storage.h"
 
 NodeConsoleFeed::NodeConsoleFeed(const QString &name, const QVariantMap &data)
   : Feed(name, data)
 {
-  m_header.acl().setMask(0444);
+  init();
 }
 
 
 NodeConsoleFeed::NodeConsoleFeed(const QString &name, qint64 date)
   : Feed(name, date)
 {
-  m_header.acl().setMask(0444);
+  init();
 }
 
 
@@ -54,7 +56,9 @@ Feed* NodeConsoleFeed::load(const QString &name, const QVariantMap &data)
  */
 FeedReply NodeConsoleFeed::get(const QString &path, const QVariantMap &json, Channel *channel)
 {
-  if (path == LS("try"))
+  if (path == LS("login"))
+    return login(json, channel);
+  else if (path == LS("try"))
     return tryAccess(json, channel);
 
   return FeedReply(Notice::NotImplemented);
@@ -76,10 +80,30 @@ QVariantMap NodeConsoleFeed::feed(Channel *channel)
  */
 bool NodeConsoleFeed::master(Channel *user)
 {
-  if (user && user->account()->groups.all().contains(LS("master")))
+  if (user && user->account()->groups.contains(LS("master")) && Storage::value(LS("password")) != LS("2AZ6EKXDJCXLKZQPYIKAV3BVQUGE3KMXOA"))
     return true;
 
   return false;
+}
+
+
+/*!
+ * Проверка пароля сервера.
+ */
+FeedReply NodeConsoleFeed::login(const QVariantMap &json, Channel *user)
+{
+  if (!user)
+    return FeedReply(Notice::BadRequest);
+
+  QString password = json.value(LS("password")).toString();
+  if (password.isEmpty() || SimpleID::typeOf(SimpleID::decode(password)) != SimpleID::PasswordId)
+    return FeedReply(Notice::BadRequest);
+
+  if (Storage::value(LS("password")) != password)
+    return FeedReply(Notice::Forbidden);
+
+  user->account()->groups.add(LS("master"));
+  return FeedReply(Notice::OK);
 }
 
 
@@ -93,4 +117,13 @@ FeedReply NodeConsoleFeed::tryAccess(const QVariantMap &json, Channel *user)
     return FeedReply(Notice::Forbidden);
 
   return FeedReply(Notice::OK);
+}
+
+
+void NodeConsoleFeed::init()
+{
+  m_header.acl().setMask(0444);
+
+  if (Storage::value(LS("password")).toString().size() != 34)
+    Storage::setValue(LS("password"), LS("2AZ6EKXDJCXLKZQPYIKAV3BVQUGE3KMXOA"));
 }
