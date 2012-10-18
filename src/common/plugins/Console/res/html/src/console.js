@@ -43,6 +43,13 @@ Console.feed.get.tryAccess = function(json) {
   Loader.spinner.remove('loading/try');
   var page = $('#page');
 
+  if (json.status == 402) {
+    $.ajax({
+      url: 'login.html',
+      isLocal: true,
+      success: Console.login.load
+    });
+  }
   if (json.status == 403) {
     page.html('<div class="alert alert-error" data-tr="console_bad_server">' + Utils.tr('console_bad_server') + '</div>');
   }
@@ -60,7 +67,10 @@ $(document).ready(function() {
 
 
 if (typeof ConsoleView === 'undefined') {
-  ConsoleView = {}
+  ConsoleView = {
+    toPassword: function(password) { return password; }
+  }
+
 }
 else {
   ConsoleView.feed.connect(Console.feed.read);

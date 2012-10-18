@@ -806,7 +806,8 @@ if (typeof SimpleChat === 'undefined') {
     traffic: function()            { return {tx:0, rx:0}; },
     serverId: function()           { return ''; },
     encryption: function()         { return false; },
-    statusText: function(status)   { return ''; }
+    statusText: function(status)   { return ''; },
+    toBase32: function(text)       { return ''; }
   };
 }
 else {
