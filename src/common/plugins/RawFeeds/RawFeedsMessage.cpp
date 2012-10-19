@@ -52,9 +52,8 @@ RawFeedsMessage::RawFeedsMessage(const FeedNotice &packet)
     title = packet.text();
     feed(title, packet.raw().size());
   }
-  else if (title == LS("get")) {
-    title = LS("get ") + packet.text();
-  }
+  else if (title == LS("get") || title == LS("put") || title == LS("post") || title == LS("delete"))
+    title = title + LC(' ') + packet.text();
 
   m_data[LS("Title")] = title;
 }
