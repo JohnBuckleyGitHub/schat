@@ -60,12 +60,14 @@ bool NodeFeeds::read(PacketReader *reader)
   QString cmd = m_packet->command();
   int status = Notice::NotImplemented;
 
-  if (cmd == LS("add") || cmd == LS("new"))
+  if (cmd == LS("get"))
+    status = get();
+  else if (cmd == LS("put") || cmd == "post" || cmd == "delete")
+    status = query(cmd);
+  else if (cmd == LS("add") || cmd == LS("new"))
     status = add();
   else if (cmd == LS("clear"))
     status = clear();
-  else if (cmd == LS("get"))
-    status = get();
   else if (cmd == LS("headers"))
     status = headers();
   else if (cmd == LS("query"))
@@ -279,6 +281,31 @@ int NodeFeeds::query()
   }
 
   return reply.status;
+}
+
+
+int NodeFeeds::query(const QString &verb)
+{
+  SCHAT_CHECK_ACL(Acl::Write)
+
+  FeedReply reply(Notice::InternalError);
+  if (verb == LS("put"))
+    reply = result.feed->put(result.path, m_packet->json(), m_user.data());
+
+  if (reply.date)
+    FeedStorage::save(result.feed, reply.date);
+
+  FeedPacket packet(new FeedNotice(m_packet->dest(), m_packet->sender(), verb));
+  packet->setDirection(FeedNotice::Server2Client);
+  packet->setText(m_packet->text());
+  packet->setData(reply.json);
+  packet->setDate(result.feed->head().date());
+
+  if (reply.status != Notice::OK)
+    return reply.status;
+
+  Core::send(packet);
+  return Notice::OK;
 }
 
 

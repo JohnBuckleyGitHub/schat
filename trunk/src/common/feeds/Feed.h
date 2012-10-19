@@ -24,6 +24,9 @@
 
 #include "feeds/FeedHeader.h"
 
+/*!
+ * \deprecated
+ */
 class FeedQueryReply
 {
 public:
@@ -73,6 +76,12 @@ public:
 class SCHAT_EXPORT Feed
 {
 public:
+  /// Опции модификации тела фида.
+  enum Options {
+    NoOptions = 0, ///< Нет специальных опций.
+    Echo      = 1, ///< Необходимо отослать обратно установленное значение.
+  };
+
   Feed(const QString &name, const QVariantMap &data);
   Feed(const QString &name = QString(), qint64 date = 0);
   virtual ~Feed() {}
@@ -82,6 +91,7 @@ public:
   virtual Feed* load(const QString &name, const QVariantMap &data);
   virtual FeedQueryReply query(const QVariantMap &json, Channel *channel = 0);
   virtual FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0);
+  virtual FeedReply put(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0);
   virtual int clear(Channel *channel = 0);
   virtual int update(const QVariantMap &json, Channel *channel = 0);
   virtual QVariantMap feed(Channel *channel = 0);

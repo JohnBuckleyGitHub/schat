@@ -106,10 +106,49 @@ FeedQueryReply Feed::query(const QVariantMap &json, Channel *channel)
  */
 FeedReply Feed::get(const QString &path, const QVariantMap &json, Channel *channel)
 {
-  Q_UNUSED(path)
   Q_UNUSED(json)
-  Q_UNUSED(channel);
-  return FeedReply(Notice::NotImplemented);
+  Q_UNUSED(channel)
+
+  if (path.isEmpty())
+    return Notice::BadRequest;
+
+  if (!m_data.contains(path))
+    return Notice::NotFound;
+
+  FeedReply reply(Notice::OK);
+  reply.json[LS("value")] = m_data.value(path);
+  reply.date = head().date();
+  return reply;
+}
+
+
+/*!
+ * Обработка \b put запроса к фиду.
+ */
+FeedReply Feed::put(const QString &path, const QVariantMap &json, Channel *channel)
+{
+  Q_UNUSED(channel)
+
+  if (path.isEmpty() || !json.contains(LS("value")))
+    return Notice::BadRequest;
+
+  if (!m_data.contains(path))
+    return Notice::NotFound;
+
+  const QVariant& value = json[LS("value")];
+
+  if (m_data.value(path) != value) {
+    m_data[path] = value;
+    FeedReply reply(Notice::OK);
+    reply.date = DateTime::utc();
+
+    if (json.value(LS("options")).toInt() & Echo)
+      reply.json[LS("value")] = value;
+
+    return reply;
+  }
+
+  return Notice::NotModified;
 }
 
 
@@ -141,8 +180,7 @@ int Feed::update(const QVariantMap &json, Channel *channel)
  */
 QVariantMap Feed::feed(Channel *channel)
 {
-  if (!Acl::canRead(this, channel))
-    return QVariantMap();
+  Q_UNUSED(channel)
 
   return m_data;
 }

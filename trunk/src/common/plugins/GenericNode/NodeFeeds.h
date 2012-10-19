@@ -51,6 +51,7 @@ private:
   int get(FeedPtr feed, const QString &request);
   int headers();
   int query();
+  int query(const QString &verb);
   int remove();
   int revert();
   int update();
