@@ -98,6 +98,26 @@ FeedQueryReply Feed::query(const QVariantMap &json, Channel *channel)
 
 
 /*!
+ * Обработка \b delete запроса к фиду.
+ */
+FeedReply Feed::del(const QString &path, Channel *channel)
+{
+  Q_UNUSED(channel)
+
+  if (path.isEmpty())
+    return Notice::BadRequest;
+
+  if (!m_data.contains(path))
+    return Notice::NotFound;
+
+  m_data.remove(path);
+  FeedReply reply(Notice::OK);
+  reply.date = DateTime::utc();
+  return reply;
+}
+
+
+/*!
  * Обработка \b get запроса к фиду.
  *
  * \param path Путь запроса.
@@ -119,6 +139,32 @@ FeedReply Feed::get(const QString &path, const QVariantMap &json, Channel *chann
   reply.json[LS("value")] = m_data.value(path);
   reply.date = head().date();
   return reply;
+}
+
+
+/*!
+ * Обработка \b post запроса к фиду.
+ */
+FeedReply Feed::post(const QString &path, const QVariantMap &json, Channel *channel)
+{
+  Q_UNUSED(channel)
+
+  if (path.isEmpty() || !json.contains(LS("value")))
+    return Notice::BadRequest;
+
+  const QVariant& value = json[LS("value")];
+  if (!m_data.contains(path) || m_data.value(path) != value) {
+    m_data[path] = value;
+    FeedReply reply(Notice::OK);
+    reply.date = DateTime::utc();
+
+    if (json.value(LS("options")).toInt() & Echo)
+      reply.json[LS("value")] = value;
+
+    return reply;
+  }
+
+  return Notice::NotModified;
 }
 
 

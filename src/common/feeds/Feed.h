@@ -80,6 +80,8 @@ public:
   enum Options {
     NoOptions = 0, ///< Нет специальных опций.
     Echo      = 1, ///< Необходимо отослать обратно установленное значение.
+    Share     = 2, ///< Необходимо отослать ответ всем подключениям этого клиента.
+    Broadcast = 4  ///< Отослать информацию о том что канал изменился всем подписчикам.
   };
 
   Feed(const QString &name, const QVariantMap &data);
@@ -90,8 +92,10 @@ public:
   virtual Feed* create(const QString &name);
   virtual Feed* load(const QString &name, const QVariantMap &data);
   virtual FeedQueryReply query(const QVariantMap &json, Channel *channel = 0);
+  virtual FeedReply del(const QString &path, Channel *channel = 0);
   virtual FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0);
-  virtual FeedReply put(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0);
+  virtual FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0);
+  virtual FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0);
   virtual int clear(Channel *channel = 0);
   virtual int update(const QVariantMap &json, Channel *channel = 0);
   virtual QVariantMap feed(Channel *channel = 0);
