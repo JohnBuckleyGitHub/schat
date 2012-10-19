@@ -33,6 +33,18 @@ protected:
   bool read(PacketReader *reader);
 
 private:
+  class CheckResult
+  {
+  public:
+    CheckResult(const QString &text);
+
+    FeedPtr feed; ///< Фид.
+    int status;   ///< Статус.
+    QString name; ///< Имя фида.
+    QString path; ///< Путь запроса.
+  };
+
+private:
   int add();
   int clear();
   int get();
@@ -43,15 +55,13 @@ private:
   int revert();
   int update();
 
-  int check(int acl);
-  QPair<QString, QString> split(const QString &text) const;
+  CheckResult check(int acl);
   void broadcast(FeedPtr feed, bool echo = true);
   void reply(int status);
 
-
-  FeedNotice *m_packet;
-  ChatChannel m_channel;
-  ChatChannel m_user;
+  ChatChannel m_channel; ///< Канал фида.
+  ChatChannel m_user;    ///< Отправитель пакета.
+  FeedNotice *m_packet;  ///< Текущий пакет.
 };
 
 #endif /* NODEFEEDS_H_ */

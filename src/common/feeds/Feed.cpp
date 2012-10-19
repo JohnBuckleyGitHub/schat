@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include "DateTime.h"
 #include "feeds/Feed.h"
 #include "net/packets/Notice.h"
@@ -33,6 +35,7 @@ Feed::Feed(const QString &name, const QVariantMap &data)
   m_header.setName(name);
   m_header.setData(data.value(LS("head")).toMap());
   m_data = data;
+  m_data.remove(LS("head"));
 }
 
 
@@ -110,6 +113,9 @@ FeedReply Feed::get(const QString &path, const QVariantMap &json, Channel *chann
 }
 
 
+/*!
+ * \deprecated
+ */
 int Feed::clear(Channel *channel)
 {
   Q_UNUSED(channel)
@@ -128,13 +134,16 @@ int Feed::update(const QVariantMap &json, Channel *channel)
 }
 
 
+/*!
+ * Получение тела фида.
+ *
+ * \param channel пользователь запросивший фид.
+ */
 QVariantMap Feed::feed(Channel *channel)
 {
-  QVariantMap header = m_header.get(channel);
-  if (header.isEmpty())
+  if (!Acl::canRead(this, channel))
     return QVariantMap();
 
-  merge(LS("head"), m_data, header);
   return m_data;
 }
 

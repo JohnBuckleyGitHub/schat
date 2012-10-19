@@ -52,16 +52,10 @@ Feed* NodeUserFeed::load(const QString &name, const QVariantMap &data)
 
 QVariantMap NodeUserFeed::feed(Channel *channel)
 {
-  if (head().channel()->type() != SimpleID::UserId)
-    return QVariantMap();
-
-  QVariantMap header = head().get(channel);
-  if (header.isEmpty())
+  if (head().channel()->type() != SimpleID::UserId || !Acl::canRead(this, channel))
     return QVariantMap();
 
   QVariantMap out;
-  out[LS("head")] = header;
-
   QVariantMap connections;
 
   ServerChannel *ch = static_cast<ServerChannel *>(head().channel());

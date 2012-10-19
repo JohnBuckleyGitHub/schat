@@ -53,16 +53,11 @@ Feed* NodeProfileFeed::load(const QString &name, const QVariantMap &data)
 
 QVariantMap NodeProfileFeed::feed(Channel *channel)
 {
-  if (head().channel()->type() != SimpleID::UserId)
-    return QVariantMap();
-
-  QVariantMap header = head().get(channel);
-  if (header.isEmpty())
+  if (head().channel()->type() != SimpleID::UserId || !Acl::canRead(this, channel))
     return QVariantMap();
 
   User *user = static_cast<ServerChannel *>(head().channel())->user();
   QVariantMap out = user->toMap();
-  out[LS("head")] = header;
 
   Account *account = head().channel()->account();
   if (!account->provider.isEmpty())

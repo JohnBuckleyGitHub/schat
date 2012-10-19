@@ -37,7 +37,7 @@ public:
     QVariantMap out = CoreApi::header();
     out["Id"]       = "GenericNode";
     out["Name"]     = "Generic Node";
-    out["Version"]  = "0.5.0";
+    out["Version"]  = "0.6.0";
     out["Type"]     = "server";
     out["Site"]     = "http://wiki.schat.me/Plugin/GenericNode";
     out["Desc"]     = "Standard core of server";
