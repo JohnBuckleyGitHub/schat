@@ -58,7 +58,7 @@ void ClientFeedsImpl::readFeedImpl(const FeedNotice &packet)
   if (!m_channel)
     return;
 
-  QString cmd = packet.command();
+  const QString& cmd = packet.command();
   if (cmd.isEmpty())
     return;
 
@@ -70,9 +70,7 @@ void ClientFeedsImpl::readFeedImpl(const FeedNotice &packet)
     get();
   else if (cmd == LS("headers"))
     headers();
-  else if (cmd == LS("query"))
-    query();
-  else if (cmd == LS("reply"))
+  else if (cmd == LS("put") || cmd == LS("post") || cmd == LS("delete"))
     reply();
 }
 
@@ -145,30 +143,12 @@ void ClientFeedsImpl::headers()
 }
 
 
-void ClientFeedsImpl::query()
-{
-  QString name = m_packet->text();
-  if (name.isEmpty())
-    return;
-
-  if (m_packet->status() == Notice::OK)
-    return;
-
-  ChatNotify::start(FeedNotify(Notify::QueryError, m_channel->id(), name, m_packet->json(), m_packet->status()));
-}
-
-
 void ClientFeedsImpl::reply()
 {
-  QString name = m_packet->text();
-  if (name.isEmpty())
+  if (m_packet->text().isEmpty())
     return;
 
-  FeedNotify notify(Notify::FeedReply, m_channel->id(), name, m_packet->json());
-  if (notify.action() == LS("x-set"))
-    set(notify);
-
-  ChatNotify::start(notify);
+  ChatNotify::start(new FeedNotify(m_channel->id(), m_packet));
 }
 
 

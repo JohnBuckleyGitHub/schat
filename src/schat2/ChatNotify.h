@@ -52,7 +52,6 @@ public:
     ServerRenamed    = 0x5352, ///< "SR" Сервер сменил имя.
     FeedData         = 0x4644, ///< "FD" Полученные данные фида.
     FeedReply        = 0x4652, ///< "FR" Успешный ответ на запрос к фиду.
-    QueryError       = 0x5145, ///< "QE" Ошибка запроса к фиду.
     ClearChat        = 0x4343, ///< "CC" Очистка текущего разговора.
     ClearCache       = 0x4363, ///< "Cc" Очистка кешей.
     Language         = 0x4C61, ///< "La" Изменение языка.
@@ -93,17 +92,20 @@ public:
   bool match(const QByteArray &id, const QString &name, const QString &action = QString()) const;
   bool match(const QString &name, const QString &action = QString()) const;
   inline const QByteArray& channel() const { return m_channel; }
-  inline const QString command() const     { return m_command; }
+  inline const QString& command() const    { return m_command; }
+  inline const QString& feed() const       { return m_feed; }
   inline const QString& name() const       { return m_name; }
+  inline const QString& path() const       { return m_path; }
   inline const QVariantMap& json() const   { return m_json; }
   inline int status() const                { return m_status; }
-  QString action() const;
 
 private:
   int m_status;         ///< Статус.
   QByteArray m_channel; ///< Идентификатор канала.
   QString m_command;    ///< Команда.
-  QString m_name;       ///< Имя фида.
+  QString m_feed;       ///< Имя фида.
+  QString m_name;       ///< Имя фида с опциональным путём запроса.
+  QString m_path;       ///< Путь запроса.
   QVariantMap m_json;   ///< JSON данные.
 };
 

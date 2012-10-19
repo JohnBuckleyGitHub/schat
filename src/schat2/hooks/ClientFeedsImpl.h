@@ -39,7 +39,6 @@ private:
   void get();
   void get(const QByteArray &id, const QStringList &feeds);
   void headers();
-  void query();
   void reply();
   void set(const FeedNotify &notify);
 
