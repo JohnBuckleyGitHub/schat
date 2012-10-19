@@ -284,6 +284,9 @@ int NodeFeeds::query()
 }
 
 
+/*!
+ * Обработка \b put, \b post или \b delete запросов.
+ */
 int NodeFeeds::query(const QString &verb)
 {
   SCHAT_CHECK_ACL(Acl::Write)
@@ -291,6 +294,13 @@ int NodeFeeds::query(const QString &verb)
   FeedReply reply(Notice::InternalError);
   if (verb == LS("put"))
     reply = result.feed->put(result.path, m_packet->json(), m_user.data());
+  else if (verb == LS("post"))
+    reply = result.feed->post(result.path, m_packet->json(), m_user.data());
+  else if (verb == LS("delete"))
+    reply = result.feed->del(result.path, m_user.data());
+
+  if (reply.status != Notice::OK)
+    return reply.status;
 
   if (reply.date)
     FeedStorage::save(result.feed, reply.date);
@@ -301,10 +311,15 @@ int NodeFeeds::query(const QString &verb)
   packet->setData(reply.json);
   packet->setDate(result.feed->head().date());
 
-  if (reply.status != Notice::OK)
-    return reply.status;
+  int options = m_packet->json().value(LS("options")).toInt();
+  if (options & Feed::Share)
+    m_core->send(m_user->sockets(), packet);
+  else
+    Core::send(packet);
 
-  Core::send(packet);
+  if (reply.date && options & Feed::Broadcast)
+    broadcast(result.feed, true);
+
   return Notice::OK;
 }
 
