@@ -44,7 +44,6 @@ private slots:
 
 private:
   void set();
-  void set(const FeedNotify &notify);
   void set(const QString &key, const QVariant &value);
 
   QSettings *m_settings; ///< Альтернативные настройки по умолчанию.

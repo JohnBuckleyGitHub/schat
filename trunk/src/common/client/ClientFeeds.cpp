@@ -47,6 +47,24 @@ bool ClientFeeds::headers(const QByteArray &id)
 }
 
 
+bool ClientFeeds::post(const QByteArray &id, const QString &name, const QVariant &value, int options)
+{
+  QVariantMap json;
+  json[LS("value")]   = value;
+  json[LS("options")] = options;
+  return request(id, LS("post"), name, json);
+}
+
+
+bool ClientFeeds::put(const QByteArray &id, const QString &name, const QVariant &value, int options)
+{
+  QVariantMap json;
+  json[LS("value")]   = value;
+  json[LS("options")] = options;
+  return request(id, LS("put"), name, json);
+}
+
+
 bool ClientFeeds::query(const QString &name, const QString &action, const QVariantMap &json)
 {
   return query(ChatClient::id(), name, action, json);
@@ -100,10 +118,7 @@ bool ClientFeeds::request(ClientChannel channel, const QString &command, const Q
  */
 bool ClientFeeds::request(const QByteArray &id, const QString &command, const QString &name, const QVariantMap &json)
 {
-  if (!Channel::isCompatibleId(id))
-    return false;
-
-  if (command.isEmpty() || name.isEmpty())
+  if (!Channel::isCompatibleId(id) || command.isEmpty() || name.isEmpty())
     return false;
 
   return ChatClient::io()->send(FeedNotice::request(ChatClient::id(), id, command, name, json));

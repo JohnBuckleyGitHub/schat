@@ -39,6 +39,8 @@ public:
   ClientFeeds(QObject *parent = 0);
   inline Hooks::Feeds *hooks() const { return m_hooks; }
   static bool headers(const QByteArray &id);
+  static bool post(const QByteArray &id, const QString &name, const QVariant &value, int options = 0);
+  static bool put(const QByteArray &id, const QString &name, const QVariant &value, int options = 0);
   static bool query(const QByteArray &id, const QString &name, const QString &action, const QVariantMap &json = QVariantMap());
   static bool query(const QString &name, const QString &action, const QVariantMap &json = QVariantMap());
   static bool request(ClientChannel channel, const QString &command, const QString &name, const QVariantMap &json = QVariantMap());
