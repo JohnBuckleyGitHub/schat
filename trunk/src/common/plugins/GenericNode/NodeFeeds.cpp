@@ -29,6 +29,11 @@
 #include "Sockets.h"
 #include "Storage.h"
 
+#define SCHAT_CHECK_ACL(x) CheckResult result = check(x);   \
+                           if (result.status != Notice::OK) \
+                             return result.status;          \
+
+
 NodeFeeds::NodeFeeds(Core *core)
   : NodeNoticeReader(Notice::FeedType, core)
   , m_packet(0)
@@ -65,7 +70,7 @@ bool NodeFeeds::read(PacketReader *reader)
     status = headers();
   else if (cmd == LS("query"))
     status = query();
-  else if (cmd == LS("remove") || cmd == LS("delete") || cmd == LS("del"))
+  else if (cmd == LS("remove"))
     status = remove();
   else if (cmd == LS("revert"))
     status = revert();
@@ -77,6 +82,19 @@ bool NodeFeeds::read(PacketReader *reader)
 
   reply(status);
   return false;
+}
+
+
+NodeFeeds::CheckResult::CheckResult(const QString &text)
+  : status(Notice::OK)
+{
+  if (!text.isEmpty()) {
+    QPair<QString, QString> split = FeedNotice::split(text);
+    name = split.first;
+    path = split.second;
+  }
+  else
+    status = Notice::BadRequest;
 }
 
 
@@ -128,23 +146,22 @@ int NodeFeeds::add()
  *
  * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
  * /feed clear \<имя фида\>.
+ *
+ * \deprecated
  */
 int NodeFeeds::clear()
 {
-  int status = check(Acl::Write);
+  SCHAT_CHECK_ACL(Acl::Write)
+
+  int status = result.feed->clear(m_user.data());
   if (status != Notice::OK)
     return status;
 
-  FeedPtr feed = m_channel->feeds().all().value(m_packet->text());
-  status = feed->clear(m_user.data());
-  if (status != Notice::OK)
-    return status;
-
-  status = FeedStorage::save(feed);
+  status = FeedStorage::save(result.feed);
   if (status == Notice::OK) {
     reply(status);
     get();
-    broadcast(feed);
+    broadcast(result.feed);
   }
 
   return status;
@@ -152,37 +169,23 @@ int NodeFeeds::clear()
 
 
 /*!
- * Получение тела фида или обработка GET запроса к данным фида.
+ * Получение тела фида или обработка \b get запроса к данным фида.
  */
 int NodeFeeds::get()
 {
-  const QString &text = m_packet->text();
-  if (text.isEmpty())
-    return Notice::BadRequest;
+  SCHAT_CHECK_ACL(Acl::Read)
 
-  QPair<QString, QString> request = split(text);
-  FeedPtr feed = m_channel->feed(request.first, false);
-  if (!feed)
-    return Notice::NotFound;
+  if (!result.path.isEmpty())
+    return get(result.feed, result.path);
 
-  if (!Acl::canRead(feed.data(), m_user.data()))
-    return Notice::Forbidden;
-
-  if (!request.second.isEmpty())
-    return get(feed, request.second);
-
-  QVariantMap json = feed->feed(m_user.data());
-  if (json.isEmpty())
-    return Notice::Forbidden;
-
-  if (m_packet->date() == feed->head().date())
+  if (m_packet->date() == result.feed->head().date())
     return Notice::NotModified;
 
   FeedPacket packet(new FeedNotice(m_packet->dest(), m_packet->sender(), LS("feed")));
   packet->setDirection(FeedNotice::Server2Client);
-  packet->setText(request.first);
-  packet->setData(Feed::merge(request.first, json));
-  packet->setDate(feed->head().date());
+  packet->setText(result.name);
+  packet->setData(Feed::merge(result.name, result.feed->feed(m_user.data())));
+  packet->setDate(result.feed->head().date());
 
   Core::send(packet);
   return Notice::OK;
@@ -232,14 +235,14 @@ int NodeFeeds::headers()
  *
  * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
  * /feed query \<имя фида\> \<опциональные JSON данные запроса\>.
+ *
+ * \deprecated
  */
 int NodeFeeds::query()
 {
-  int status = check(Acl::Read);
-  if (status != Notice::OK)
-    return status;
+  SCHAT_CHECK_ACL(Acl::Read)
 
-  FeedPtr feed = m_channel->feed(m_packet->text(), false);
+  FeedPtr feed = result.feed;
   FeedQueryReply reply = feed->query(m_packet->json(), m_user.data());
   if (reply.modified) {
     FeedStorage::save(feed, reply.date);
@@ -288,18 +291,15 @@ int NodeFeeds::query()
  */
 int NodeFeeds::remove()
 {
-  int status = check(Acl::Edit);
-  if (status != Notice::OK)
-    return status;
+  SCHAT_CHECK_ACL(Acl::Edit)
 
-  if (m_packet->text() == "acl")
+  if (m_packet->text() == LS("acl"))
     return Notice::BadRequest;
 
-  FeedPtr feed = m_channel->feed(m_packet->text(), false);
-  FeedStorage::remove(feed);
+  FeedStorage::remove(result.feed);
   m_channel->feeds().remove(m_packet->text());
-  reply(status);
-  return status;
+  reply(Notice::OK);
+  return Notice::OK;
 }
 
 
@@ -309,15 +309,15 @@ int NodeFeeds::remove()
  *
  * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
  * /feed revert \<имя фида\> \<опциональный номер ревизии\>.
+ *
+ * \deprecated
  */
 int NodeFeeds::revert()
 {
-  int status = check(Acl::Edit);
-  if (status != Notice::OK)
-    return status;
+  SCHAT_CHECK_ACL(Acl::Edit)
 
-  FeedPtr feed = m_channel->feed(m_packet->text(), false);
-  status = FeedStorage::revert(feed, m_packet->json());
+  int status = Notice::OK;
+  status = FeedStorage::revert(result.feed, m_packet->json());
   if (status == Notice::OK) {
     reply(status);
     get();
@@ -333,26 +333,25 @@ int NodeFeeds::revert()
  *
  * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
  * /feed update \<имя фида\> \<JSON данные\>.
+ *
+ * \deprecated
  */
 int NodeFeeds::update()
 {
-  int status = check(Acl::Write);
-  if (status != Notice::OK)
-    return status;
+  SCHAT_CHECK_ACL(Acl::Write)
 
   if (m_packet->raw().isEmpty())
     return Notice::BadRequest;
 
-  FeedPtr feed = m_channel->feed(m_packet->text(), false);
-  status = feed->update(m_packet->json(), m_user.data());
+  int status = result.feed->update(m_packet->json(), m_user.data());
   if (status != Notice::OK)
     return status;
 
-  status = FeedStorage::save(feed);
+  status = FeedStorage::save(result.feed);
   if (status == Notice::OK) {
     reply(status);
     get();
-    broadcast(feed);
+    broadcast(result.feed);
   }
 
   return status;
@@ -362,41 +361,19 @@ int NodeFeeds::update()
 /*!
  * Базовая проверка корректности запроса к фиду и проверка прав доступа.
  */
-int NodeFeeds::check(int acl)
+NodeFeeds::CheckResult NodeFeeds::check(int acl)
 {
-  const QString &name = m_packet->text();
-  if (name.isEmpty())
-    return Notice::BadRequest;
+  CheckResult result(m_packet->text());
+  if (result.status != Notice::OK)
+    return result;
 
-  FeedPtr feed = m_channel->feed(name, false);
-  if (!feed)
-    return Notice::NotFound;
+  result.feed = m_channel->feed(result.name, false);
+  if (!result.feed)
+    result.status = Notice::NotFound;
+  else if (!result.feed->head().acl().can(m_user.data(), static_cast<Acl::ResultAcl>(acl)))
+    result.status = Notice::Forbidden;
 
-  if (!feed->head().acl().can(m_user.data(), static_cast<Acl::ResultAcl>(acl)))
-    return Notice::Forbidden;
-
-  return Notice::OK;
-}
-
-
-/*!
- * Разделение строки на имя фида и запрос.
- *
- * Например, строка "server/uptime" будет разбита на "server" и "uptime".
- * Запрос может быть пустым, если нужно получить тело фида.
- */
-QPair<QString, QString> NodeFeeds::split(const QString &text) const
-{
-  QPair<QString, QString> pair;
-  int index = text.indexOf(LC('/'));
-  if (index != -1) {
-    pair.first  = text.mid(0, index);
-    pair.second = text.mid(index + 1);
-  }
-  else
-    pair.first = text;
-
-  return pair;
+  return result;
 }
 
 

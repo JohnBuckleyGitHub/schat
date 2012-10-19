@@ -110,6 +110,12 @@ FeedPacket FeedNotice::request(const QByteArray &user, const QByteArray &channel
 }
 
 
+/*!
+ * Разделение строки на имя фида и запрос.
+ *
+ * Например, строка "server/uptime" будет разбита на "server" и "uptime".
+ * Запрос может быть пустым, если нужно получить тело фида.
+ */
 QPair<QString, QString> FeedNotice::split(const QString &text)
 {
   QPair<QString, QString> pair;

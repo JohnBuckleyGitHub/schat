@@ -66,16 +66,6 @@ FeedReply NodeConsoleFeed::get(const QString &path, const QVariantMap &json, Cha
 
 
 /*!
- * Этот фид не имеет тела.
- */
-QVariantMap NodeConsoleFeed::feed(Channel *channel)
-{
-  Q_UNUSED(channel)
-  return QVariantMap();
-}
-
-
-/*!
  * \return \b true если пользователь входит в группу \b master.
  */
 bool NodeConsoleFeed::master(Channel *user)

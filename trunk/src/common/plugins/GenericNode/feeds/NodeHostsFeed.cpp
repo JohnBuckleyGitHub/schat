@@ -82,15 +82,10 @@ FeedQueryReply NodeHostsFeed::query(const QVariantMap &json, Channel *channel)
  */
 QVariantMap NodeHostsFeed::feed(Channel *channel)
 {
-  if (head().channel()->type() != SimpleID::UserId)
-    return QVariantMap();
-
-  QVariantMap header = head().get(channel);
-  if (header.isEmpty())
+  if (head().channel()->type() != SimpleID::UserId || !Acl::canRead(this, channel))
     return QVariantMap();
 
   QVariantMap out;
-  out[LS("head")] = header;
 
   ServerChannel *user = static_cast<ServerChannel *>(head().channel());
   const QHash<QByteArray, HostInfo> &hosts = user->hosts()->all();
