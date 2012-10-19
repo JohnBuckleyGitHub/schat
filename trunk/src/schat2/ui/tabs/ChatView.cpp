@@ -288,7 +288,7 @@ void ChatView::notify(const Notify &notify)
     if (m_id == notify.data().toByteArray())
       clearPage();
   }
-  else if (type == Notify::FeedData || type == Notify::FeedReply || type == Notify::QueryError) {
+  else if (type == Notify::FeedData || type == Notify::FeedReply) {
     const FeedNotify &n = static_cast<const FeedNotify &>(notify);
     if (n.channel() != id() && n.channel() != ChatClient::id())
       return;

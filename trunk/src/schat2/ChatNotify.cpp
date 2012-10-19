@@ -33,6 +33,9 @@ FeedNotify::FeedNotify(const QByteArray &channel, const FeedNotice *packet)
   , m_name(packet->text())
   , m_json(packet->json())
 {
+  QPair<QString, QString> request = FeedNotice::split(packet->text());
+  m_feed = request.first;
+  m_path = request.second;
 }
 
 
@@ -40,12 +43,16 @@ FeedNotify::FeedNotify(int type, const QByteArray &channel, const QString &name,
   : Notify(type)
   , m_status(status)
   , m_channel(channel)
+  , m_feed(name)
   , m_name(name)
   , m_json(json)
 {
 }
 
 
+/*!
+ * \bug проверка на action больше не работает.
+ */
 bool FeedNotify::match(const QByteArray &id, const QString &name, const QString &action) const
 {
   if (m_channel != id)
@@ -55,6 +62,9 @@ bool FeedNotify::match(const QByteArray &id, const QString &name, const QString 
 }
 
 
+/*!
+ * \bug проверка на action больше не работает.
+ */
 bool FeedNotify::match(const QString &name, const QString &action) const
 {
   if (m_name != name)
@@ -63,19 +73,7 @@ bool FeedNotify::match(const QString &name, const QString &action) const
   if (action.isEmpty())
     return true;
 
-  if (this->action() != action)
-    return false;
-
   return true;
-}
-
-
-/*!
- * \deprecated Использование "action" устарело.
- */
-QString FeedNotify::action() const
-{
-  return m_json.value(LS("action")).toString();
 }
 
 

@@ -380,18 +380,17 @@ QVariantMap WebBridge::feed(const FeedNotify &notify)
     out[LS("data")] = feed->data();
     out[LS("type")] = LS("body");
   }
-  else
+  else {
     out[LS("data")] = notify.json();
-
-  if (type == Notify::FeedReply)
     out[LS("type")] = LS("reply");
-  else if (type == Notify::QueryError)
-    out[LS("type")] = LS("error");
+  }
 
   out[LS("status")] = notify.status();
   out[LS("name")]   = notify.name();
   out[LS("own")]    = notify.channel() == ChatClient::id();
   out[LS("cmd")]    = notify.command();
+  out[LS("feed")]   = notify.feed();
+  out[LS("path")]   = notify.path();
   out[LS("id")]     = QString(SimpleID::encode(notify.channel()));
   return out;
 }

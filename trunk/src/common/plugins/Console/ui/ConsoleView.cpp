@@ -78,7 +78,7 @@ QString ConsoleView::toPassword(const QString &password) const
 void ConsoleView::notify(const Notify &notify)
 {
   int type = notify.type();
-  if (type == Notify::FeedData || type == Notify::FeedReply || type == Notify::QueryError) {
+  if (type == Notify::FeedData || type == Notify::FeedReply) {
     const FeedNotify &n = static_cast<const FeedNotify &>(notify);
     if (n.channel() != ChatClient::serverId())
       return;
