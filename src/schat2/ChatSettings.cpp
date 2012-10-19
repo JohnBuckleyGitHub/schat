@@ -106,18 +106,8 @@ void ChatSettings::notify(const Notify &notify)
 {
   if (notify.type() == Notify::FeedData) {
     const FeedNotify &n = static_cast<const FeedNotify &>(notify);
-    if (n.name() != LS("settings"))
-      return;
-
-    if (n.channel() != ChatClient::id())
-      return;
-
-    set();
-  }
-  else if (notify.type() == Notify::FeedReply) {
-    const FeedNotify &n = static_cast<const FeedNotify &>(notify);
-    if (n.match(ChatClient::id(), LS("settings"), LS("x-set")))
-      set(n);
+    if (n.name() == LS("settings") && n.channel() == ChatClient::id())
+      set();
   }
 }
 
@@ -159,25 +149,10 @@ void ChatSettings::set()
 }
 
 
-void ChatSettings::set(const FeedNotify &notify)
-{
-  QStringList keys = notify.json().keys();
-  keys.removeAll(LS("action"));
-  keys.removeAll(LS("date"));
-  keys.removeAll(LS("size"));
-  if (keys.isEmpty())
-    return;
-
-  foreach (QString key, keys) {
-    if (!m_local.contains(key))
-      Settings::setValue(key, notify.json().value(key));
-  }
-}
-
-
 void ChatSettings::set(const QString &key, const QVariant &value)
 {
-  QVariantMap query;
-  query[key] = value;
-  ChatClient::feeds()->query(LS("settings"), LS("x-set"), query);
+  if (key.isEmpty())
+    return;
+
+  ClientFeeds::post(ChatClient::id(), LS("settings/") + key, value, Feed::Echo | Feed::Share);
 }

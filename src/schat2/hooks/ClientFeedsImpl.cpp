@@ -148,39 +148,22 @@ void ClientFeedsImpl::reply()
   if (m_packet->text().isEmpty())
     return;
 
-  ChatNotify::start(new FeedNotify(m_channel->id(), m_packet));
-}
+  FeedNotify *notify = new FeedNotify(m_channel->id(), m_packet);
+  ChatNotify::start(notify);
 
-
-void ClientFeedsImpl::set(const FeedNotify &notify)
-{
-  const QVariantMap &json = notify.json();
-  QStringList keys = json.keys();
-
-  keys.removeAll(LS("action"));
-  keys.removeAll(LS("date"));
-  keys.removeAll(LS("size"));
-  if (keys.isEmpty())
+  if (m_packet->status() != 200 || !m_packet->json().contains(LS("value")))
     return;
 
-  qint64 date = json.value(LS("date")).toLongLong();
-  if (date == 0)
-    return;
-
-  int size = json.value(LS("size")).toInt();
-  if (size == 0)
-    return;
-
-  FeedPtr feed = ChatClient::channel()->feed(notify.name(), false);
+  FeedPtr feed = ChatClient::channel()->feed(notify->feed(), false);
   if (!feed)
     return;
 
-  feed->head().data()[LS("date")] = date;
-  feed->head().data()[LS("size")] = size;
-
-  foreach (QString key, keys) {
-    feed->data()[key] = notify.json().value(key);
-  }
+  feed->head().setDate(m_packet->date());
+  if (notify->command() == LS("delete"))
+    feed->data().remove(notify->path());
+  else
+    feed->data()[notify->path()] = m_packet->json().value(LS("value"));
 
   FeedStorage::save(feed);
+  ChatNotify::start(new FeedNotify(Notify::FeedData, m_channel->id(), notify->feed()));
 }
