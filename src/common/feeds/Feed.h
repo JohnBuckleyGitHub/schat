@@ -96,8 +96,6 @@ public:
   virtual FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0);
   virtual FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0);
   virtual FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0);
-  virtual int clear(Channel *channel = 0);
-  virtual int update(const QVariantMap &json, Channel *channel = 0);
   virtual QVariantMap feed(Channel *channel = 0);
   virtual QVariantMap save();
 
@@ -113,8 +111,6 @@ public:
   static void merge(QVariantMap &out, const QVariantMap &in);
 
 protected:
-  virtual FeedQueryReply set(const QVariantMap &json, Channel *channel);
-
   FeedHeader m_header;  ///< Заголовок фида.
   QVariantMap m_data;   ///< JSON данные фида.
 

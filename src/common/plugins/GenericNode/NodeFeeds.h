@@ -46,13 +46,13 @@ private:
 
 private:
   FeedReply add();
+  FeedReply del(const CheckResult &result);
   FeedReply post(CheckResult &result);
   int get();
   int get(FeedPtr feed, const QString &request);
   int headers();
   int query();
   int query(const QString &verb);
-  int remove();
 
   CheckResult check(int acl);
   void broadcast(FeedPtr feed, bool echo = true);
