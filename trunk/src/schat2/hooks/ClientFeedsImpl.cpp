@@ -38,10 +38,7 @@ void ClientFeedsImpl::addImpl(ClientChannel channel, const ChannelInfo & /*info*
 {
   SCHAT_DEBUG_STREAM("ClientFeedsImpl::addImpl()" << channel->name() << json.keys())
 
-  if (json.isEmpty())
-    return;
-
-  if (!json.contains(LS("f")))
+  if (json.isEmpty() || !json.contains(LS("f")))
     return;
 
   QVariantMap data = json.value(LS("f")).toMap();
@@ -68,8 +65,6 @@ void ClientFeedsImpl::readFeedImpl(const FeedNotice &packet)
     feed();
   else if (cmd == LS("get"))
     get();
-  else if (cmd == LS("headers"))
-    headers();
   else if (cmd == LS("put") || cmd == LS("post") || cmd == LS("delete"))
     reply();
 }
@@ -100,6 +95,9 @@ void ClientFeedsImpl::feed()
 void ClientFeedsImpl::get()
 {
   QPair<QString, QString> request = FeedNotice::split(m_packet->text());
+  if (request.first == LS("*")) {
+    headers();
+  }
   if (request.second.isEmpty()) {
     if (m_packet->status() == Notice::NotModified && m_channel->feed(request.first, false))
       ChatNotify::start(new FeedNotify(Notify::FeedData, m_channel->id(), request.first));

@@ -64,8 +64,6 @@ bool NodeFeeds::read(PacketReader *reader)
     status = get();
   else if (cmd == LS("put") || cmd == "post" || cmd == "delete")
     status = query(cmd);
-  else if (cmd == LS("headers"))
-    status = headers();
   else if (cmd == LS("query"))
     status = query();
 
@@ -167,17 +165,18 @@ int NodeFeeds::get()
 {
   SCHAT_CHECK_ACL(Acl::Read)
 
+  if (result.name == LS("*"))
+    return headers();
+
   if (!result.path.isEmpty())
     return get(result.feed, result.path);
 
   if (m_packet->date() == result.feed->head().date())
     return Notice::NotModified;
 
-  FeedPacket packet(new FeedNotice(m_packet->dest(), m_packet->sender(), LS("feed")));
-  packet->setDirection(FeedNotice::Server2Client);
-  packet->setText(result.name);
-  packet->setData(Feed::merge(result.name, result.feed->feed(m_user.data())));
+  FeedPacket packet = FeedNotice::reply(*m_packet, Feed::merge(result.name, result.feed->feed(m_user.data())));
   packet->setDate(result.feed->head().date());
+  packet->setCommand(LS("feed"));
 
   Core::send(packet);
   return Notice::OK;
@@ -193,11 +192,7 @@ int NodeFeeds::get(FeedPtr feed, const QString &request)
   if (reply.status != Notice::OK)
     return reply.status;
 
-  FeedPacket packet(new FeedNotice(m_packet->dest(), m_packet->sender(), LS("get")));
-  packet->setDirection(FeedNotice::Server2Client);
-  packet->setText(m_packet->text());
-  packet->setData(reply.json);
-
+  FeedPacket packet = FeedNotice::reply(*m_packet, reply.json);
   if (reply.date)
     packet->setDate(reply.date);
 
@@ -217,7 +212,11 @@ int NodeFeeds::get(FeedPtr feed, const QString &request)
  */
 int NodeFeeds::headers()
 {
-  m_core->send(m_user->sockets(), FeedNotice::reply(*m_packet, m_channel->feeds().headers(m_user.data())));
+  if (m_packet->json().value(LS("compact"), true).toBool())
+    m_core->send(m_user->sockets(), FeedNotice::reply(*m_packet, m_channel->feeds().f(m_user.data())));
+  else
+    m_core->send(m_user->sockets(), FeedNotice::reply(*m_packet, m_channel->feeds().headers(m_user.data())));
+
   return Notice::OK;
 }
 
@@ -295,10 +294,7 @@ int NodeFeeds::query(const QString &verb)
   if (reply.date)
     FeedStorage::save(result.feed, reply.date);
 
-  FeedPacket packet(new FeedNotice(m_packet->dest(), m_packet->sender(), verb));
-  packet->setDirection(FeedNotice::Server2Client);
-  packet->setText(m_packet->text());
-  packet->setData(reply.json);
+  FeedPacket packet = FeedNotice::reply(*m_packet, reply.json);
   packet->setDate(result.feed->head().date());
 
   int options = m_packet->json().value(LS("options")).toInt();
@@ -325,7 +321,11 @@ NodeFeeds::CheckResult NodeFeeds::check(int acl)
 
   result.feed = m_channel->feed(result.name, false);
   if (!result.feed) {
-    if (m_packet->command() == LS("post") && result.path.isEmpty()) {
+    if (m_packet->command() == LS("get") && result.name == LS("*")) {
+      if (!m_channel->canRead(m_user))
+        result.status = Notice::Forbidden;
+    }
+    else if (m_packet->command() == LS("post") && result.path.isEmpty()) {
       if (!m_channel->canEdit(m_user))
         result.status = Notice::Forbidden;
     }
