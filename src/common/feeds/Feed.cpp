@@ -218,8 +218,9 @@ QVariantMap Feed::feed(Channel *channel)
  */
 QVariantMap Feed::save()
 {
-  merge(LS("head"), m_data, m_header.save());
-  return m_data;
+  QVariantMap data = m_data;
+  data[LS("head")] = m_header.save();
+  return data;
 }
 
 

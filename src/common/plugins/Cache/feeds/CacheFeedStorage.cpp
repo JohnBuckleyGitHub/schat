@@ -67,3 +67,28 @@ void CacheFeedStorage::loadImpl(Channel *channel)
     ChatNotify::start(new FeedNotify(Notify::FeedData, channel->id(), name));
   }
 }
+
+
+void CacheFeedStorage::removeImpl(FeedPtr feed)
+{
+  qint64 channel = CacheDB::key(feed->head().channel()->id());
+  if (channel <= 0)
+    return;
+
+  QSqlQuery query(QSqlDatabase::database(CacheDB::id()));
+  query.prepare(LS("SELECT id FROM feeds WHERE channel = :channel AND name = :name LIMIT 1;"));
+  query.bindValue(LS(":channel"), channel);
+  query.bindValue(LS(":name"), feed->head().name());
+  query.exec();
+
+  if (!query.first())
+    return;
+
+  qint64 key = query.value(0).toLongLong();
+  if (key <= 0)
+    return;
+
+  query.prepare(LS("DELETE FROM feeds WHERE id = :id;"));
+  query.bindValue(LS(":id"), key);
+  query.exec();
+}
