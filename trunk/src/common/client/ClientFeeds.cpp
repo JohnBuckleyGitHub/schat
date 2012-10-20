@@ -33,20 +33,6 @@ ClientFeeds::ClientFeeds(QObject *parent)
 }
 
 
-/*!
- * Запрос заголовков фидов.
- *
- * \param id Идентификатор канала, к которому предназначен запрос.
- */
-bool ClientFeeds::headers(const QByteArray &id)
-{
-  if (!Channel::isCompatibleId(id))
-    return false;
-
-  return ChatClient::io()->send(FeedNotice::headers(ChatClient::id(), id));
-}
-
-
 bool ClientFeeds::post(const QByteArray &id, const QString &name, const QVariant &value, int options)
 {
   QVariantMap json;
