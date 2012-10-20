@@ -90,8 +90,6 @@ FeedQueryReply Feed::query(const QVariantMap &json, Channel *channel)
 
   if (action == LS("x-mask"))
     return mask(json, channel);
-  else if (action == LS("x-set"))
-    return set(json, channel);
 
   return FeedQueryReply(Notice::NotImplemented);
 }
@@ -107,13 +105,19 @@ FeedReply Feed::del(const QString &path, Channel *channel)
   if (path.isEmpty())
     return Notice::BadRequest;
 
+  if (path == LS("*")) {
+    if (m_data.isEmpty())
+      return Notice::NotModified;
+
+    m_data.clear();
+    return FeedReply(Notice::OK, DateTime::utc());
+  }
+
   if (!m_data.contains(path))
     return Notice::NotFound;
 
   m_data.remove(path);
-  FeedReply reply(Notice::OK);
-  reply.date = DateTime::utc();
-  return reply;
+  return FeedReply(Notice::OK, DateTime::utc());
 }
 
 
@@ -135,10 +139,7 @@ FeedReply Feed::get(const QString &path, const QVariantMap &json, Channel *chann
   if (!m_data.contains(path))
     return Notice::NotFound;
 
-  FeedReply reply(Notice::OK);
-  reply.json[LS("value")] = m_data.value(path);
-  reply.date = head().date();
-  return reply;
+  return FeedReply(Notice::OK, head().date());
 }
 
 
@@ -149,10 +150,11 @@ FeedReply Feed::post(const QString &path, const QVariantMap &json, Channel *chan
 {
   Q_UNUSED(channel)
 
-  if (path.isEmpty() || !json.contains(LS("value")))
+  if (path.isEmpty() || path.contains(LC('*')) || !json.contains(LS("value")))
     return Notice::BadRequest;
 
   const QVariant& value = json[LS("value")];
+
   if (!m_data.contains(path) || m_data.value(path) != value) {
     m_data[path] = value;
     FeedReply reply(Notice::OK);
@@ -195,27 +197,6 @@ FeedReply Feed::put(const QString &path, const QVariantMap &json, Channel *chann
   }
 
   return Notice::NotModified;
-}
-
-
-/*!
- * \deprecated
- */
-int Feed::clear(Channel *channel)
-{
-  Q_UNUSED(channel)
-
-  m_data.clear();
-  return Notice::OK;
-}
-
-
-int Feed::update(const QVariantMap &json, Channel *channel)
-{
-  Q_UNUSED(channel)
-
-  merge(m_data, json);
-  return Notice::OK;
 }
 
 
@@ -278,37 +259,6 @@ void Feed::merge(QVariantMap &out, const QVariantMap &in)
     i.next();
     out[i.key()] = i.value();
   }
-}
-
-
-FeedQueryReply Feed::set(const QVariantMap &json, Channel *channel)
-{
-  if (!Acl::canWrite(this, channel))
-    return FeedQueryReply(Notice::Forbidden);
-
-  QStringList keys = json.keys();
-  keys.removeAll(LS("action"));
-  if (keys.isEmpty())
-    return FeedQueryReply(Notice::BadRequest);
-
-  int modified = 0;
-  FeedQueryReply reply(Notice::OK);
-  reply.incremental = true;
-  reply.json[LS("action")] = LS("x-set");
-
-  foreach (QString key, keys) {
-    QVariant value = json.value(key);
-    if (m_data.value(key) != value) {
-      modified++;
-      m_data[key] = value;
-      reply.json[key] = value;
-    }
-  }
-
-  if (modified)
-    reply.modified = true;
-
-  return reply;
 }
 
 

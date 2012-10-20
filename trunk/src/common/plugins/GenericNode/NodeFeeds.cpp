@@ -68,8 +68,6 @@ bool NodeFeeds::read(PacketReader *reader)
     status = headers();
   else if (cmd == LS("query"))
     status = query();
-  else if (cmd == LS("remove"))
-    status = remove();
 
   if (status == Notice::OK)
     return false;
@@ -125,6 +123,24 @@ FeedReply NodeFeeds::add()
 }
 
 
+FeedReply NodeFeeds::del(const CheckResult &result)
+{
+  if (result.path.isEmpty()) {
+    if (!m_channel->canEdit(m_user))
+      return Notice::Forbidden;
+
+    if (result.name == LS("acl"))
+      return Notice::BadRequest;
+
+    FeedStorage::remove(result.feed);
+    m_channel->feeds().remove(m_packet->text());
+    return Notice::OK;
+  }
+
+  return result.feed->del(result.path, m_user.data());
+}
+
+
 FeedReply NodeFeeds::post(CheckResult &result)
 {
   if (result.path.isEmpty()) {
@@ -139,8 +155,8 @@ FeedReply NodeFeeds::post(CheckResult &result)
   }
   else if (result.feed)
     return result.feed->post(result.path, m_packet->json(), m_user.data());
-  else
-    return Notice::NotFound;
+
+  return Notice::NotFound;
 }
 
 
@@ -268,11 +284,10 @@ int NodeFeeds::query(const QString &verb)
   FeedReply reply(Notice::InternalError);
   if (verb == LS("put"))
     reply = result.feed->put(result.path, m_packet->json(), m_user.data());
-  else if (verb == LS("post")) {
+  else if (verb == LS("post"))
     reply = post(result);
-  }
   else if (verb == LS("delete"))
-    reply = result.feed->del(result.path, m_user.data());
+    reply = del(result);
 
   if (reply.status != Notice::OK)
     return reply.status;
@@ -295,27 +310,6 @@ int NodeFeeds::query(const QString &verb)
   if (reply.date && options & Feed::Broadcast)
     broadcast(result.feed, true);
 
-  return Notice::OK;
-}
-
-
-/*!
- * Обработка запроса пользователя на удаление фида.
- * Для удаления фида необходимы права на редактирование.
- *
- * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
- * /feed remove \<имя фида\>.
- */
-int NodeFeeds::remove()
-{
-  SCHAT_CHECK_ACL(Acl::Edit)
-
-  if (m_packet->text() == LS("acl"))
-    return Notice::BadRequest;
-
-  FeedStorage::remove(result.feed);
-  m_channel->feeds().remove(m_packet->text());
-  reply(Notice::OK);
   return Notice::OK;
 }
 
