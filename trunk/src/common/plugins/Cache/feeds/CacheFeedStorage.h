@@ -29,6 +29,7 @@ public:
   CacheFeedStorage(QObject *parent = 0);
   int saveImpl(FeedPtr feed, qint64 date);
   void loadImpl(Channel *channel);
+  void removeImpl(FeedPtr feed);
 };
 
 #endif /* CACHEFEEDSTORAGE_H_ */

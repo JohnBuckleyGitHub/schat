@@ -121,6 +121,7 @@ public:
   , m_name(feed->head().name())
   , m_body(feed->save())
   {
+    m_body.remove(LS("head"));
   }
 
 
@@ -135,7 +136,6 @@ public:
     query.bindValue(LS(":channel"), channel);
     query.bindValue(LS(":name"), m_name);
     query.exec();
-
 
     qint64 key = -1;
     if (query.first())

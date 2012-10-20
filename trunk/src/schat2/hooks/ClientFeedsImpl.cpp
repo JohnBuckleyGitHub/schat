@@ -151,19 +151,33 @@ void ClientFeedsImpl::reply()
   FeedNotify *notify = new FeedNotify(m_channel->id(), m_packet);
   ChatNotify::start(notify);
 
-  if (m_packet->status() != 200 || !m_packet->json().contains(LS("value")))
+  if (m_packet->status() != 200)
     return;
 
   FeedPtr feed = ChatClient::channel()->feed(notify->feed(), false);
   if (!feed)
     return;
 
-  feed->head().setDate(m_packet->date());
-  if (notify->command() == LS("delete"))
-    feed->data().remove(notify->path());
-  else
-    feed->data()[notify->path()] = m_packet->json().value(LS("value"));
+  if (notify->command() == LS("delete")) {
+    if (notify->path().isEmpty()) {
+      FeedStorage::remove(feed);
+      m_channel->feeds().remove(notify->feed());
+      return;
+    }
 
+    if (notify->path() == LS("*"))
+      feed->data().clear();
+    else
+      feed->data().remove(notify->path());
+  }
+  else {
+    if (!m_packet->json().contains(LS("value")))
+      return;
+
+    feed->data()[notify->path()] = m_packet->json().value(LS("value"));
+  }
+
+  feed->head().setDate(m_packet->date());
   FeedStorage::save(feed);
   ChatNotify::start(new FeedNotify(Notify::FeedData, m_channel->id(), notify->feed()));
 }
