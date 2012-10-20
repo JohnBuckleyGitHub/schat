@@ -48,8 +48,11 @@ bool RawFeedsCmd::command(const QByteArray &dest, const ClientCmd &cmd)
     m_plugin->setEnabled(true);
 
     ClientCmd body(cmd.body());
-    if (!body.isValid())
-      ChatClient::feeds()->headers(dest);
+    if (!body.isValid() && Channel::isCompatibleId(dest)) {
+      QVariantMap json;
+      json[LS("compact")] = false;
+      ClientFeeds::request(dest, LS("get"), LS("*"), json);
+    }
     else if (body.command() == LS("local"))
       localFeeds(dest);
     else if (body.command() == LS("off"))

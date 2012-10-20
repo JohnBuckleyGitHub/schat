@@ -42,19 +42,6 @@ FeedNotice::FeedNotice(quint16 type, PacketReader *reader)
 
 
 /*!
- * Запрос клиентом заголовков фидов.
- *
- * \param user    Идентификатор пользователя.
- * \param channel Идентификатор канала.
- */
-FeedPacket FeedNotice::headers(const QByteArray &user, const QByteArray &channel)
-{
-  FeedPacket packet(new FeedNotice(user, channel, "headers"));
-  return packet;
-}
-
-
-/*!
  * \deprecated
  */
 FeedPacket FeedNotice::reply(const FeedNotice &source, const FeedQueryReply &reply)

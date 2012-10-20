@@ -44,8 +44,9 @@ RawFeedsMessage::RawFeedsMessage(const FeedNotice &packet)
   m_data[LS("Status")] = status;
 
   QString title = packet.command();
-  if (title == LS("headers")) {
-    title = "Feeds";
+  if (title == LS("get") && packet.text() == LS("*")) {
+    title = LS("Feeds");
+    m_data[LS("Command")] = LS("headers");
     headers(packet.json().value(LS("feeds")).toMap());
   }
   else if (title == LS("feed")) {
