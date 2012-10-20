@@ -45,16 +45,14 @@ private:
   };
 
 private:
-  int add();
-  int clear();
+  FeedReply add();
+  FeedReply post(CheckResult &result);
   int get();
   int get(FeedPtr feed, const QString &request);
   int headers();
   int query();
   int query(const QString &verb);
   int remove();
-  int revert();
-  int update();
 
   CheckResult check(int acl);
   void broadcast(FeedPtr feed, bool echo = true);

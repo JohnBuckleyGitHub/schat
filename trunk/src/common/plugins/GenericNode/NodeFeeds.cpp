@@ -64,20 +64,12 @@ bool NodeFeeds::read(PacketReader *reader)
     status = get();
   else if (cmd == LS("put") || cmd == "post" || cmd == "delete")
     status = query(cmd);
-  else if (cmd == LS("add") || cmd == LS("new"))
-    status = add();
-  else if (cmd == LS("clear"))
-    status = clear();
   else if (cmd == LS("headers"))
     status = headers();
   else if (cmd == LS("query"))
     status = query();
   else if (cmd == LS("remove"))
     status = remove();
-  else if (cmd == LS("revert"))
-    status = revert();
-  else if (cmd == LS("update"))
-    status = update();
 
   if (status == Notice::OK)
     return false;
@@ -95,7 +87,8 @@ NodeFeeds::CheckResult::CheckResult(const QString &text)
     name = split.first;
     path = split.second;
   }
-  else
+
+  if (name.isEmpty())
     status = Notice::BadRequest;
 }
 
@@ -103,70 +96,51 @@ NodeFeeds::CheckResult::CheckResult(const QString &text)
 /*!
  * Обработка запроса пользователя на создание нового фида.
  *
- * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
- * /feed add \<имя фида\> \<опциональные JSON данные фида\>.
+ * Эта функция вызывается \b post запросом содержащим только имя фида.
  */
-int NodeFeeds::add()
+FeedReply NodeFeeds::add()
 {
-  QString name = m_packet->text();
-  if (name.isEmpty())
+  FeedReply reply(Notice::OK);
+  const QString &name = m_packet->text();
+  if (name.contains(LC('*')) || name.contains(LC('/')))
     return Notice::BadRequest;
 
-  if (!m_channel->canEdit(m_user))
-    return Notice::Forbidden;
+  FeedPtr feed        = m_channel->feed(name, false);
+  if (!feed) {
+    feed = m_channel->feed(name, true, false);
+    if (!feed)
+      return Notice::InternalError;
 
-  FeedPtr feed = m_channel->feed(name, false);
-  if (feed) {
+    feed->head().acl().add(m_user->id());
+    reply.status = FeedStorage::save(feed);
+  }
+  else
     FeedStorage::clone(feed);
-    reply(Notice::OK);
-    return Notice::OK;
-  }
 
+  reply.status = FeedStorage::save(feed);
+  if (reply.status == Notice::OK)
+    reply.date = feed->head().date();
 
-  feed = m_channel->feed(name, true, false);
-  if (!feed)
-    return Notice::InternalError;
-
-  if (!m_packet->raw().isEmpty()) {
-    int status = feed->update(m_packet->json(), m_user.data());
-    if (status != Notice::OK)
-      return status;
-  }
-
-  feed->head().acl().add(m_user->id());
-
-  int status = FeedStorage::save(feed);
-  if (status == Notice::OK)
-    reply(status);
-
-  return status;
+  return reply;
 }
 
 
-/*!
- * Обработка запроса пользователя на очистку данных фида.
- *
- * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
- * /feed clear \<имя фида\>.
- *
- * \deprecated
- */
-int NodeFeeds::clear()
+FeedReply NodeFeeds::post(CheckResult &result)
 {
-  SCHAT_CHECK_ACL(Acl::Write)
+  if (result.path.isEmpty()) {
+    FeedReply reply = add();
+    if (reply.status == Notice::OK) {
+      result.feed = m_channel->feed(result.name, false);
+      if (!result.feed)
+        return Notice::InternalError;
+    }
 
-  int status = result.feed->clear(m_user.data());
-  if (status != Notice::OK)
-    return status;
-
-  status = FeedStorage::save(result.feed);
-  if (status == Notice::OK) {
-    reply(status);
-    get();
-    broadcast(result.feed);
+    return reply;
   }
-
-  return status;
+  else if (result.feed)
+    return result.feed->post(result.path, m_packet->json(), m_user.data());
+  else
+    return Notice::NotFound;
 }
 
 
@@ -294,8 +268,9 @@ int NodeFeeds::query(const QString &verb)
   FeedReply reply(Notice::InternalError);
   if (verb == LS("put"))
     reply = result.feed->put(result.path, m_packet->json(), m_user.data());
-  else if (verb == LS("post"))
-    reply = result.feed->post(result.path, m_packet->json(), m_user.data());
+  else if (verb == LS("post")) {
+    reply = post(result);
+  }
   else if (verb == LS("delete"))
     reply = result.feed->del(result.path, m_user.data());
 
@@ -346,61 +321,6 @@ int NodeFeeds::remove()
 
 
 /*!
- * Обработка запроса пользователя на откат фида.
- * Откат фида возможен, только если у пользователя есть права на редактирование фида.
- *
- * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
- * /feed revert \<имя фида\> \<опциональный номер ревизии\>.
- *
- * \deprecated
- */
-int NodeFeeds::revert()
-{
-  SCHAT_CHECK_ACL(Acl::Edit)
-
-  int status = Notice::OK;
-  status = FeedStorage::revert(result.feed, m_packet->json());
-  if (status == Notice::OK) {
-    reply(status);
-    get();
-    broadcast(m_channel->feed(m_packet->text(), false));
-  }
-
-  return status;
-}
-
-
-/*!
- * Обработка запроса пользователя на обновление данных фида.
- *
- * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
- * /feed update \<имя фида\> \<JSON данные\>.
- *
- * \deprecated
- */
-int NodeFeeds::update()
-{
-  SCHAT_CHECK_ACL(Acl::Write)
-
-  if (m_packet->raw().isEmpty())
-    return Notice::BadRequest;
-
-  int status = result.feed->update(m_packet->json(), m_user.data());
-  if (status != Notice::OK)
-    return status;
-
-  status = FeedStorage::save(result.feed);
-  if (status == Notice::OK) {
-    reply(status);
-    get();
-    broadcast(result.feed);
-  }
-
-  return status;
-}
-
-
-/*!
  * Базовая проверка корректности запроса к фиду и проверка прав доступа.
  */
 NodeFeeds::CheckResult NodeFeeds::check(int acl)
@@ -410,8 +330,14 @@ NodeFeeds::CheckResult NodeFeeds::check(int acl)
     return result;
 
   result.feed = m_channel->feed(result.name, false);
-  if (!result.feed)
-    result.status = Notice::NotFound;
+  if (!result.feed) {
+    if (m_packet->command() == LS("post") && result.path.isEmpty()) {
+      if (!m_channel->canEdit(m_user))
+        result.status = Notice::Forbidden;
+    }
+    else
+      result.status = Notice::NotFound;
+  }
   else if (!result.feed->head().acl().can(m_user.data(), static_cast<Acl::ResultAcl>(acl)))
     result.status = Notice::Forbidden;
 
