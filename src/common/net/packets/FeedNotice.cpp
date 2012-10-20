@@ -54,6 +54,9 @@ FeedPacket FeedNotice::headers(const QByteArray &user, const QByteArray &channel
 }
 
 
+/*!
+ * \deprecated
+ */
 FeedPacket FeedNotice::reply(const FeedNotice &source, const FeedQueryReply &reply)
 {
   FeedPacket packet(new FeedNotice(source.dest(), source.sender(), "reply"));
