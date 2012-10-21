@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include "DateTime.h"
 #include "feeds/Feed.h"
 #include "net/packets/Notice.h"
@@ -94,6 +92,17 @@ FeedReply Feed::del(const QString &path, Channel *channel)
     return FeedReply(Notice::OK, DateTime::utc());
   }
 
+  if (path.startsWith(LS("head/"))) {
+    if (!Acl::canEdit(this, channel))
+      return Notice::Forbidden;
+
+    int status = head().del(path.mid(5));
+    if (status == Notice::OK)
+      return FeedReply(status, DateTime::utc());
+
+    return status;
+  }
+
   if (!m_data.contains(path))
     return Notice::NotFound;
 
@@ -138,6 +147,17 @@ FeedReply Feed::post(const QString &path, const QVariantMap &json, Channel *chan
 
   const QVariant& value = json[LS("value")];
 
+  if (path.startsWith(LS("head/"))) {
+    if (!Acl::canEdit(this, channel))
+      return Notice::Forbidden;
+
+    int status = head().post(path.mid(5), value);
+    if (status == Notice::OK)
+      return FeedReply(status, DateTime::utc());
+
+    return status;
+  }
+
   if (!m_data.contains(path) || m_data.value(path) != value) {
     m_data[path] = value;
     return FeedReply(Notice::OK, DateTime::utc());
@@ -163,16 +183,14 @@ FeedReply Feed::put(const QString &path, const QVariantMap &json, Channel *chann
     if (!Acl::canEdit(this, channel))
       return Notice::Forbidden;
 
-    if (path == LS("head/mask")) {
-      int mask = value.toInt();
-      if (mask < 0 || mask > 511)
-        return Notice::BadRequest;
+    int status = head().put(path.mid(5), value);
+    if (status == Notice::OK)
+      return FeedReply(status, DateTime::utc());
 
-      head().acl().setMask(mask);
-      return FeedReply(Notice::OK, DateTime::utc());
-    }
+    return status;
   }
-  else if (!m_data.contains(path))
+
+  if (!m_data.contains(path))
     return Notice::NotFound;
 
   if (m_data.value(path) != value) {
