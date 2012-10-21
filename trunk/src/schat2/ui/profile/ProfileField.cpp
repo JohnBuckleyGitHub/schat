@@ -96,11 +96,7 @@ bool ProfileField::apply(const QVariant &value)
   if (feed->data().value(m_field) == value)
     return false;
 
-  QVariantMap query;
-  query[m_field] = value;
-  /// \bug Установка полей профиля больше не работает.
-//  return ChatClient::feeds()->query(LS("profile"), LS("x-set"), query);
-  return false;
+  return ClientFeeds::post(ChatClient::id(), LS("profile/") + m_field, value, Feed::Echo | Feed::Share | Feed::Broadcast);
 }
 
 

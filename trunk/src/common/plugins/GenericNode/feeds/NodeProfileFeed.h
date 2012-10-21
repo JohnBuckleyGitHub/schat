@@ -29,10 +29,9 @@ public:
   Feed* create(const QString &name);
   Feed* load(const QString &name, const QVariantMap &data);
 
+  FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0);
+  FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0);
   QVariantMap feed(Channel *channel = 0) const;
-
-protected:
-//  FeedQueryReply set(const QVariantMap &json, Channel *channel);
 };
 
 #endif /* NODEPROFILEFEED_H_ */
