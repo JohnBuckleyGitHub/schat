@@ -24,7 +24,6 @@
 
 Acl::Acl(int mask)
   : m_mask(mask)
-  , m_math(0)
 {
 }
 
@@ -33,6 +32,25 @@ bool Acl::can(Channel *channel, ResultAcl acl) const
 {
   int r = match(channel);
   return r & acl;
+}
+
+
+/*!
+ * Получение данных о правах доступа.
+ */
+bool Acl::get(QVariantMap &data, Channel *channel) const
+{
+  int acl = match(channel);
+
+  if (!(acl & Read))
+    return false;
+
+  if (acl & Edit)
+    save(data);
+
+  data[LS("math")] = acl;
+  data[LS("mask")] = m_mask;
+  return true;
 }
 
 
@@ -68,48 +86,6 @@ int Acl::match(Channel *channel) const
 }
 
 
-/*!
- * Получение данных о правах доступа.
- */
-QVariantMap Acl::get(Channel *channel)
-{
-  int acl = match(channel);
-
-  if (!(acl & Read))
-    return QVariantMap();
-
-  QVariantMap json;
-  if (acl & Edit)
-    json = save();
-
-  json[LS("math")] = acl;
-  json[LS("mask")] = m_mask;
-  return json;
-}
-
-
-/*!
- * Сохранение информации о правах доступа.
- */
-QVariantMap Acl::save()
-{
-  QVariantMap json;
-
-  QVariantList owners;
-  foreach (QByteArray owner, m_owners) {
-    owners.append(SimpleID::encode(owner));
-  }
-
-  json[LS("mask")]   = m_mask;
-  json[LS("owners")] = owners;
-
-  if (m_math)
-    json[LS("math")] = m_math;
-
-  return json;
-}
-
-
 bool Acl::canEdit(Feed *feed, Channel *channel)
 {
   return feed->head().acl().can(channel, Edit);
@@ -130,10 +106,7 @@ bool Acl::canWrite(Feed *feed, Channel *channel)
 
 void Acl::add(const QByteArray &owner)
 {
-  if (SimpleID::typeOf(owner) != SimpleID::UserId)
-    return;
-
-  if (m_owners.contains(owner))
+  if (SimpleID::typeOf(owner) != SimpleID::UserId || m_owners.contains(owner))
     return;
 
   m_owners.append(owner);
@@ -143,10 +116,24 @@ void Acl::add(const QByteArray &owner)
 void Acl::load(const QVariantMap &json)
 {
   m_mask = json.value(LS("mask")).toInt();
-  m_math = json.value(LS("math")).toInt();
 
   QVariantList owners = json.value("owners").toList();
   foreach (QVariant owner, owners) {
     add(SimpleID::decode(owner.toByteArray()));
   }
+}
+
+
+/*!
+ * Сохранение информации о правах доступа.
+ */
+void Acl::save(QVariantMap &data) const
+{
+  QVariantList owners;
+  foreach (QByteArray owner, m_owners) {
+    owners.append(SimpleID::encode(owner));
+  }
+
+  data[LS("mask")]   = m_mask;
+  data[LS("owners")] = owners;
 }

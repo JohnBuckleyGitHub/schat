@@ -131,12 +131,14 @@ FeedReply Feed::del(const QString &path, Channel *channel)
 FeedReply Feed::get(const QString &path, const QVariantMap &json, Channel *channel)
 {
   Q_UNUSED(json)
-  Q_UNUSED(channel)
 
   if (path.isEmpty())
     return Notice::BadRequest;
 
-  if (!m_data.contains(path))
+  else if (path == LS("head"))
+    return FeedReply(Notice::OK, head().get(channel), head().date());
+
+  else if (!m_data.contains(path))
     return Notice::NotFound;
 
   return FeedReply(Notice::OK, head().date());

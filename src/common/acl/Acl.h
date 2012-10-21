@@ -54,6 +54,7 @@ public:
   Acl(int acl = 0766);
 
   bool can(Channel *channel, ResultAcl acl) const;
+  bool get(QVariantMap &data, Channel *channel) const;
   inline const Groups& groups() const            { return m_groups; }
   inline const QList<QByteArray>& owners() const { return m_owners; }
   inline Groups& groups()                        { return m_groups; }
@@ -61,19 +62,17 @@ public:
   inline void remove(const QByteArray &owner)    { m_owners.removeAll(owner); }
   inline void setMask(int mask)                  { m_mask = mask; }
   int match(Channel *channel) const;
-  QVariantMap get(Channel *channel);
-  QVariantMap save();
   static bool canEdit(Feed *feed, Channel *channel = 0);
   static bool canRead(Feed *feed, Channel *channel = 0);
   static bool canWrite(Feed *feed, Channel *channel = 0);
   void add(const QByteArray &owner);
   void load(const QVariantMap &json);
+  void save(QVariantMap &data) const;
 
 private:
   Groups m_groups;                 ///< Группы.
   int m_mask;                      ///< Общая маска прав доступа Acl:CommonAcl.
-  int m_math;                      ///< Права доступа для конкретного пользователя.
-  QHash<QByteArray, int> m_others; ///< Специальные права доступа для выбранных пользователей.
+  QMap<QByteArray, int> m_others;  ///< Специальные права доступа для выбранных пользователей.
   QList<QByteArray> m_owners;      ///< Идентификаторы владельцев.
 };
 
