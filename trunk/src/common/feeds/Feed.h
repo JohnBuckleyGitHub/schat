@@ -24,31 +24,6 @@
 
 #include "feeds/FeedHeader.h"
 
-/*!
- * \deprecated
- */
-class FeedQueryReply
-{
-public:
-  FeedQueryReply(int status, const QVariantMap &json = QVariantMap())
-  : incremental(false)
-  , modified(false)
-  , single(false)
-  , status(status)
-  , date(0)
-  , json(json)
-  {}
-
-  bool incremental;          ///< \b true если в результате запроса отправитель сможет воссоздать у себя полное тело фида без получения всего тела.
-  bool modified;             ///< \b true если тело фида изменилось.
-  bool single;               ///< \b true если ответ должен получить только пользователь создавший запрос.
-  int status;                ///< Статус операции.
-  qint64 date;               ///< Дата модификации, если 0 будет определена автоматически.
-  QList<QByteArray> packets; ///< Дополнительные пакеты с ответом на запрос.
-  QVariantMap json;          ///< JSON ответ на запрос.
-};
-
-
 class FeedReply
 {
 public:
@@ -92,11 +67,11 @@ public:
   virtual Feed* create(const QString &name);
   virtual Feed* load(const QString &name, const QVariantMap &data);
   virtual FeedReply del(const QString &path, Channel *channel = 0);
-  virtual FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0);
+  virtual FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0) const;
   virtual FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0);
   virtual FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0);
-  virtual QVariantMap feed(Channel *channel = 0);
-  virtual QVariantMap save();
+  virtual QVariantMap feed(Channel *channel = 0) const;
+  virtual QVariantMap save() const;
 
   virtual void setChannel(Channel *channel);
 

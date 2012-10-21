@@ -64,7 +64,7 @@ Feed* NodeServerFeed::load(const QString &name, const QVariantMap &data)
  * Поддерживаемые запросы:
  * - \b uptime информация о дате запуска сервера и количестве секунд с момента запуска.
  */
-FeedReply NodeServerFeed::get(const QString &path, const QVariantMap &json, Channel *channel)
+FeedReply NodeServerFeed::get(const QString &path, const QVariantMap &json, Channel *channel) const
 {
   Q_UNUSED(json)
   Q_UNUSED(channel)
@@ -76,14 +76,14 @@ FeedReply NodeServerFeed::get(const QString &path, const QVariantMap &json, Chan
     return reply;
   }
 
-  return FeedReply(Notice::NotImplemented);
+  return FeedReply(Notice::NotFound);
 }
 
 
 /*!
  * Получение тела фида.
  */
-QVariantMap NodeServerFeed::feed(Channel *channel)
+QVariantMap NodeServerFeed::feed(Channel *channel) const
 {
   Channel *server = head().channel();
   if (server->type() != SimpleID::ServerId || !Acl::canRead(this, channel))

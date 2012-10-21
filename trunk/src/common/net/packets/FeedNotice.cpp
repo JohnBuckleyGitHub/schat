@@ -41,20 +41,6 @@ FeedNotice::FeedNotice(quint16 type, PacketReader *reader)
 }
 
 
-/*!
- * \deprecated
- */
-FeedPacket FeedNotice::reply(const FeedNotice &source, const FeedQueryReply &reply)
-{
-  FeedPacket packet(new FeedNotice(source.dest(), source.sender(), "reply"));
-  packet->setDirection(Server2Client);
-  packet->setText(source.text());
-  packet->setStatus(reply.status);
-  packet->setData(reply.json);
-  return packet;
-}
-
-
 FeedPacket FeedNotice::reply(const FeedNotice &source, const QVariantMap &json)
 {
   FeedPacket packet(new FeedNotice(source.dest(), source.sender(), source.command()));

@@ -29,10 +29,10 @@ public:
   Feed* create(const QString &name);
   Feed* load(const QString &name, const QVariantMap &data);
 
-  QVariantMap feed(Channel *channel = 0);
-
-private:
-  FeedQueryReply unlink(const QVariantMap &json, Channel *channel);
+  FeedReply del(const QString &path, Channel *channel = 0);
+  FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0);
+  FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0);
+  QVariantMap feed(Channel *channel = 0) const;
 };
 
 #endif /* NODEHOSTSFEED_H_ */

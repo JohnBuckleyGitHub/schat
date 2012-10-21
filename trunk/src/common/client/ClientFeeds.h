@@ -38,6 +38,7 @@ class SCHAT_EXPORT ClientFeeds : public QObject
 public:
   ClientFeeds(QObject *parent = 0);
   inline Hooks::Feeds *hooks() const { return m_hooks; }
+  static bool del(const QByteArray &id, const QString &name, int options = 0);
   static bool post(const QByteArray &id, const QString &name, const QVariant &value = QVariant(), int options = 0);
   static bool put(const QByteArray &id, const QString &name, const QVariant &value = QVariant(), int options = 0);
   static bool request(ClientChannel channel, const QString &command, const QString &name, const QVariantMap &json = QVariantMap());

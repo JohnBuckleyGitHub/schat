@@ -55,34 +55,46 @@ Feed* NodeHostsFeed::load(const QString &name, const QVariantMap &data)
 }
 
 
-/*!
- * Обработка запросов.
- *
- * \bug unlink больше не работает
- */
-//FeedQueryReply NodeHostsFeed::query(const QVariantMap &json, Channel *channel)
-//{
-//  if (head().channel()->type() != SimpleID::UserId)
-//    return FeedQueryReply(Notice::InternalError);
-//
-//  QString action = json.value(LS("action")).toString();
-//  if (action.isEmpty())
-//    return FeedQueryReply(Notice::BadRequest);
-//
-//  if (action.startsWith(LS("x-")))
-//    return Feed::query(json, channel);
-//
-//  if (action == LS("unlink"))
-//    return unlink(json, channel);
-//
-//  return FeedQueryReply(Notice::ServiceUnavailable);
-//}
+FeedReply NodeHostsFeed::del(const QString &path, Channel *channel)
+{
+  Q_UNUSED(channel)
+
+  QByteArray id = SimpleID::decode(path);
+  if (SimpleID::typeOf(id) != SimpleID::HostId)
+    return Notice::BadRequest;
+
+  ServerChannel *user = static_cast<ServerChannel *>(head().channel());
+  if (!user->hosts()->all().contains(id))
+    return Notice::NotFound;
+
+  user->hosts()->unlink(id);
+
+  return FeedReply(Notice::OK, DateTime::utc());
+}
+
+
+FeedReply NodeHostsFeed::post(const QString &path, const QVariantMap &json, Channel *channel)
+{
+  Q_UNUSED(path)
+  Q_UNUSED(json)
+  Q_UNUSED(channel)
+  return Notice::Forbidden;
+}
+
+
+FeedReply NodeHostsFeed::put(const QString &path, const QVariantMap &json, Channel *channel)
+{
+  Q_UNUSED(path)
+  Q_UNUSED(json)
+  Q_UNUSED(channel)
+  return Notice::Forbidden;
+}
 
 
 /*!
  * Получение тела фида.
  */
-QVariantMap NodeHostsFeed::feed(Channel *channel)
+QVariantMap NodeHostsFeed::feed(Channel *channel) const
 {
   if (head().channel()->type() != SimpleID::UserId || !Acl::canRead(this, channel))
     return QVariantMap();
@@ -108,29 +120,4 @@ QVariantMap NodeHostsFeed::feed(Channel *channel)
   }
 
   return out;
-}
-
-
-/*!
- * Обработка запроса \b unlink.
- */
-FeedQueryReply NodeHostsFeed::unlink(const QVariantMap &json, Channel *channel)
-{
-  if (!channel || head().channel()->id() != channel->id())
-    return FeedQueryReply(Notice::Forbidden);
-
-  QByteArray id = SimpleID::decode(json.value(LS("id")).toString());
-  if (SimpleID::typeOf(id) != SimpleID::HostId)
-    return FeedQueryReply(Notice::BadRequest);
-
-  ServerChannel *user = static_cast<ServerChannel *>(head().channel());
-  if (!user->hosts()->all().contains(id))
-    return FeedQueryReply(Notice::NotFound);
-
-  user->hosts()->unlink(id);
-
-  FeedQueryReply reply = FeedQueryReply(Notice::OK);
-  reply.json[LS("action")] = LS("unlink");
-  reply.modified = true;
-  return reply;
 }

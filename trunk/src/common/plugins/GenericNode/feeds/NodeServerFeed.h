@@ -29,17 +29,18 @@ public:
   Feed* create(const QString &name);
   Feed* load(const QString &name, const QVariantMap &data);
 
-  FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0);
-  QVariantMap feed(Channel *channel = 0);
+  FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0) const;
+  QVariantMap feed(Channel *channel = 0) const;
 
 private:
   QVariantMap auth() const;
   QVariantMap users() const;
   void init();
 
-  qint64 m_date;        ///< Дата последнего обновления фида, используется для кеширования.
-  qint64 m_startupTime; ///< Время запуска сервера.
-  QVariantMap m_body;   ///< Кешированное тело фила.
+  mutable qint64 m_date;        ///< Дата последнего обновления фида, используется для кеширования.
+  mutable QVariantMap m_body;   ///< Кешированное тело фила.
+  qint64 m_startupTime;         ///< Время запуска сервера.
+
 };
 
 #endif /* NODESERVERFEED_H_ */

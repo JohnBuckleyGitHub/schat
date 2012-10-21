@@ -109,7 +109,7 @@ FeedReply Feed::del(const QString &path, Channel *channel)
  * \param json Опциональные JSON данные запроса.
  * \param channel Пользователь совершивший запрос, если такой есть, функция не проверяет правда доступа.
  */
-FeedReply Feed::get(const QString &path, const QVariantMap &json, Channel *channel)
+FeedReply Feed::get(const QString &path, const QVariantMap &json, Channel *channel) const
 {
   Q_UNUSED(json)
 
@@ -200,7 +200,7 @@ FeedReply Feed::put(const QString &path, const QVariantMap &json, Channel *chann
  *
  * \param channel пользователь запросивший фид.
  */
-QVariantMap Feed::feed(Channel *channel)
+QVariantMap Feed::feed(Channel *channel) const
 {
   Q_UNUSED(channel)
 
@@ -211,7 +211,7 @@ QVariantMap Feed::feed(Channel *channel)
 /*!
  * Получение полных JSON данных фида для сохранения в хранилище.
  */
-QVariantMap Feed::save()
+QVariantMap Feed::save() const
 {
   QVariantMap data = m_data;
   data[LS("head")] = m_header.save();

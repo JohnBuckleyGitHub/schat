@@ -51,7 +51,7 @@ Feed* NodeProfileFeed::load(const QString &name, const QVariantMap &data)
 }
 
 
-QVariantMap NodeProfileFeed::feed(Channel *channel)
+QVariantMap NodeProfileFeed::feed(Channel *channel) const
 {
   if (head().channel()->type() != SimpleID::UserId || !Acl::canRead(this, channel))
     return QVariantMap();
@@ -69,37 +69,39 @@ QVariantMap NodeProfileFeed::feed(Channel *channel)
 
 /*!
  * Альтернативная обработка запроса "x-set", для непосредственной модификации объекта User.
+ *
+ * \bug Исправить это.
  */
-FeedQueryReply NodeProfileFeed::set(const QVariantMap &json, Channel *channel)
-{
-  if (head().channel()->type() != SimpleID::UserId)
-    return FeedQueryReply(Notice::InternalError);
-
-  if (!Acl::canWrite(this, channel))
-    return FeedQueryReply(Notice::Forbidden);
-
-  QStringList keys = json.keys();
-  keys.removeAll(LS("action"));
-  if (keys.isEmpty())
-    return FeedQueryReply(Notice::BadRequest);
-
-  User *user = static_cast<ServerChannel *>(head().channel())->user();
-
-  FeedQueryReply reply(Notice::OK);
-  reply.incremental = true;
-  reply.json[LS("action")] = LS("x-set");
-
-  foreach (QString key, keys) {
-    QVariant value = json.value(key);
-    if (user->set(key, value))
-      reply.json[key] = value;
-  }
-
-  if (!user->saved) {
-    reply.date = user->date;
-    reply.modified = true;
-    DataBase::add(user);
-  }
-
-  return reply;
-}
+//FeedQueryReply NodeProfileFeed::set(const QVariantMap &json, Channel *channel)
+//{
+//  if (head().channel()->type() != SimpleID::UserId)
+//    return FeedQueryReply(Notice::InternalError);
+//
+//  if (!Acl::canWrite(this, channel))
+//    return FeedQueryReply(Notice::Forbidden);
+//
+//  QStringList keys = json.keys();
+//  keys.removeAll(LS("action"));
+//  if (keys.isEmpty())
+//    return FeedQueryReply(Notice::BadRequest);
+//
+//  User *user = static_cast<ServerChannel *>(head().channel())->user();
+//
+//  FeedQueryReply reply(Notice::OK);
+//  reply.incremental = true;
+//  reply.json[LS("action")] = LS("x-set");
+//
+//  foreach (QString key, keys) {
+//    QVariant value = json.value(key);
+//    if (user->set(key, value))
+//      reply.json[key] = value;
+//  }
+//
+//  if (!user->saved) {
+//    reply.date = user->date;
+//    reply.modified = true;
+//    DataBase::add(user);
+//  }
+//
+//  return reply;
+//}

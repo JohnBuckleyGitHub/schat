@@ -25,7 +25,7 @@ class SCHAT_EXPORT NodeAclFeed : public Feed
 {
 public:
   NodeAclFeed(const QString &name, const QVariantMap &data);
-  NodeAclFeed(const QString &name = "acl", qint64 date = 0);
+  NodeAclFeed(const QString &name = QLatin1String("acl"), qint64 date = 0);
   Feed* create(const QString &name);
   Feed* load(const QString &name, const QVariantMap &data);
 };

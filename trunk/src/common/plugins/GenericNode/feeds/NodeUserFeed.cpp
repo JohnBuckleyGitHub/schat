@@ -50,7 +50,7 @@ Feed* NodeUserFeed::load(const QString &name, const QVariantMap &data)
 }
 
 
-QVariantMap NodeUserFeed::feed(Channel *channel)
+QVariantMap NodeUserFeed::feed(Channel *channel) const
 {
   if (head().channel()->type() != SimpleID::UserId || !Acl::canRead(this, channel))
     return QVariantMap();

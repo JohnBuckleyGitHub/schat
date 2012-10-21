@@ -25,7 +25,7 @@ class SCHAT_EXPORT NodeTopicFeed : public Feed
 {
 public:
   NodeTopicFeed(const QString &name, const QVariantMap &data);
-  NodeTopicFeed(const QString &name = "topic", qint64 date = 0);
+  NodeTopicFeed(const QString &name = QLatin1String("topic"), qint64 date = 0);
   Feed* create(const QString &name);
   Feed* load(const QString &name, const QVariantMap &data);
 };

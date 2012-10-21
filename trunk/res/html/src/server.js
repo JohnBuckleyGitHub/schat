@@ -28,16 +28,7 @@ var Hosts = {
   // Базовый слот обрабатывающий новые данные фидов.
   feed: function(json)
   {
-    if (Pages.current != 1)
-      return;
-
-    if (!json.hasOwnProperty("type"))
-      return;
-
-    if (json.own !== true)
-      return;
-
-    if (json.name !== "hosts")
+    if (Pages.current != 1 || !json.hasOwnProperty('type') || json.own !== true || json.feed !== 'hosts')
       return;
 
     try {
@@ -76,7 +67,7 @@ var Hosts = {
   // Чтение тела фида hosts.
   read: function(json)
   {
-    if (json === false || !json.hasOwnProperty('head'))
+    if (json === false)
       return;
 
     $('.host-row').hide();
@@ -112,11 +103,7 @@ var Hosts = {
 
   unlink: function()
   {
-    var query = {};
-    query.action = "unlink";
-    query.id = $(this).attr("data-id");
-
-    SimpleChat.request("query", "hosts", query);
+    SimpleChat.request(SimpleChat.id(), 'delete', 'hosts/' + $(this).attr('data-id'), {'options':2});
     return false;
   },
 
