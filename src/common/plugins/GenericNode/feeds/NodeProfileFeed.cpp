@@ -51,6 +51,34 @@ Feed* NodeProfileFeed::load(const QString &name, const QVariantMap &data)
 }
 
 
+FeedReply NodeProfileFeed::post(const QString &path, const QVariantMap &json, Channel *channel)
+{
+  Q_UNUSED(channel);
+
+  if (path.isEmpty() || path.contains(LC('*')) || !json.contains(LS("value")))
+    return Notice::BadRequest;
+
+  const QVariant& value = json[LS("value")];
+  User *user = static_cast<ServerChannel *>(head().channel())->user();
+
+  if (user->set(path, value)) {
+    DataBase::add(user);
+    return FeedReply(Notice::OK, DateTime::utc());
+  }
+
+  return Notice::NotModified;
+}
+
+
+FeedReply NodeProfileFeed::put(const QString &path, const QVariantMap &json, Channel *channel)
+{
+  Q_UNUSED(path)
+  Q_UNUSED(json)
+  Q_UNUSED(channel)
+  return Notice::Forbidden;
+}
+
+
 QVariantMap NodeProfileFeed::feed(Channel *channel) const
 {
   if (head().channel()->type() != SimpleID::UserId || !Acl::canRead(this, channel))
@@ -65,43 +93,3 @@ QVariantMap NodeProfileFeed::feed(Channel *channel) const
 
   return out;
 }
-
-
-/*!
- * Альтернативная обработка запроса "x-set", для непосредственной модификации объекта User.
- *
- * \bug Исправить это.
- */
-//FeedQueryReply NodeProfileFeed::set(const QVariantMap &json, Channel *channel)
-//{
-//  if (head().channel()->type() != SimpleID::UserId)
-//    return FeedQueryReply(Notice::InternalError);
-//
-//  if (!Acl::canWrite(this, channel))
-//    return FeedQueryReply(Notice::Forbidden);
-//
-//  QStringList keys = json.keys();
-//  keys.removeAll(LS("action"));
-//  if (keys.isEmpty())
-//    return FeedQueryReply(Notice::BadRequest);
-//
-//  User *user = static_cast<ServerChannel *>(head().channel())->user();
-//
-//  FeedQueryReply reply(Notice::OK);
-//  reply.incremental = true;
-//  reply.json[LS("action")] = LS("x-set");
-//
-//  foreach (QString key, keys) {
-//    QVariant value = json.value(key);
-//    if (user->set(key, value))
-//      reply.json[key] = value;
-//  }
-//
-//  if (!user->saved) {
-//    reply.date = user->date;
-//    reply.modified = true;
-//    DataBase::add(user);
-//  }
-//
-//  return reply;
-//}

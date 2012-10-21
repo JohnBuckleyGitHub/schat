@@ -240,10 +240,13 @@ int NodeFeeds::query(const QString &verb)
   if (reply.date)
     FeedStorage::save(result.feed, reply.date);
 
+  int options = m_packet->json().value(LS("options")).toInt();
+  if (options & Feed::Echo)
+    reply.json[LS("value")] = m_packet->json().value(LS("value"));
+
   FeedPacket packet = FeedNotice::reply(*m_packet, reply.json);
   packet->setDate(result.feed->head().date());
 
-  int options = m_packet->json().value(LS("options")).toInt();
   if (options & Feed::Share)
     m_core->send(m_user->sockets(), packet);
   else

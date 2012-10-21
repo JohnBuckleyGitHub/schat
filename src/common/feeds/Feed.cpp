@@ -140,13 +140,7 @@ FeedReply Feed::post(const QString &path, const QVariantMap &json, Channel *chan
 
   if (!m_data.contains(path) || m_data.value(path) != value) {
     m_data[path] = value;
-    FeedReply reply(Notice::OK);
-    reply.date = DateTime::utc();
-
-    if (json.value(LS("options")).toInt() & Echo)
-      reply.json[LS("value")] = value;
-
-    return reply;
+    return FeedReply(Notice::OK, DateTime::utc());
   }
 
   return Notice::NotModified;
@@ -183,12 +177,7 @@ FeedReply Feed::put(const QString &path, const QVariantMap &json, Channel *chann
 
   if (m_data.value(path) != value) {
     m_data[path] = value;
-    FeedReply reply(Notice::OK, DateTime::utc());
-
-    if (json.value(LS("options")).toInt() & Echo)
-      reply.json[LS("value")] = value;
-
-    return reply;
+    return FeedReply(Notice::OK, DateTime::utc());
   }
 
   return Notice::NotModified;
