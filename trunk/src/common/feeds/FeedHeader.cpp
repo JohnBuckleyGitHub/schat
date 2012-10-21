@@ -55,21 +55,21 @@ QVariantMap FeedHeader::f(Channel *channel) const
 }
 
 
-QVariantMap FeedHeader::get(Channel *channel)
+QVariantMap FeedHeader::get(Channel *channel) const
 {
-  QVariantMap acl = m_acl.get(channel);
-  if (acl.isEmpty())
-    return acl;
+  QVariantMap data = m_data;
+  if (!m_acl.get(data, channel))
+    return QVariantMap();
 
-  m_data[LS("acl")] = acl;
-  return m_data;
+  return data;
 }
 
 
-QVariantMap FeedHeader::save()
+QVariantMap FeedHeader::save() const
 {
-  m_data[LS("acl")] = m_acl.save();
-  return m_data;
+  QVariantMap data = m_data;
+  m_acl.save(data);
+  return data;
 }
 
 
@@ -78,9 +78,15 @@ QVariantMap FeedHeader::save()
  */
 void FeedHeader::setData(const QVariantMap &data)
 {
-  m_acl.load(data.value(LS("acl")).toMap());
   m_data = data;
-  m_data.remove(LS("acl"));
+
+  if (data.contains(LS("acl"))) {
+    m_acl.load(data.value(LS("acl")).toMap());
+    m_data.remove(LS("acl"));
+  }
+  else
+    m_acl.load(m_data);
+
   setRev(rev());
 }
 

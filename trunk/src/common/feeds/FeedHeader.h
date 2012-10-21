@@ -43,8 +43,8 @@ public:
   inline QVariantMap& data()               { return m_data; }
 
   QVariantMap f(Channel *channel = 0) const;
-  QVariantMap get(Channel *channel);
-  QVariantMap save();
+  QVariantMap get(Channel *channel) const;
+  QVariantMap save() const;
 
   inline void setChannel(Channel *channel) { m_channel = channel; }
   inline void setKey(qint64 key)           { m_key = key; }
