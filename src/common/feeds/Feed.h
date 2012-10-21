@@ -91,7 +91,6 @@ public:
   virtual bool isValid() const;
   virtual Feed* create(const QString &name);
   virtual Feed* load(const QString &name, const QVariantMap &data);
-  virtual FeedQueryReply query(const QVariantMap &json, Channel *channel = 0);
   virtual FeedReply del(const QString &path, Channel *channel = 0);
   virtual FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0);
   virtual FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0);
@@ -113,9 +112,6 @@ public:
 protected:
   FeedHeader m_header;  ///< Заголовок фида.
   QVariantMap m_data;   ///< JSON данные фида.
-
-private:
-  FeedQueryReply mask(const QVariantMap &json, Channel *channel);
 };
 
 typedef QSharedPointer<Feed> FeedPtr;

@@ -57,24 +57,26 @@ Feed* NodeHostsFeed::load(const QString &name, const QVariantMap &data)
 
 /*!
  * Обработка запросов.
+ *
+ * \bug unlink больше не работает
  */
-FeedQueryReply NodeHostsFeed::query(const QVariantMap &json, Channel *channel)
-{
-  if (head().channel()->type() != SimpleID::UserId)
-    return FeedQueryReply(Notice::InternalError);
-
-  QString action = json.value(LS("action")).toString();
-  if (action.isEmpty())
-    return FeedQueryReply(Notice::BadRequest);
-
-  if (action.startsWith(LS("x-")))
-    return Feed::query(json, channel);
-
-  if (action == LS("unlink"))
-    return unlink(json, channel);
-
-  return FeedQueryReply(Notice::ServiceUnavailable);
-}
+//FeedQueryReply NodeHostsFeed::query(const QVariantMap &json, Channel *channel)
+//{
+//  if (head().channel()->type() != SimpleID::UserId)
+//    return FeedQueryReply(Notice::InternalError);
+//
+//  QString action = json.value(LS("action")).toString();
+//  if (action.isEmpty())
+//    return FeedQueryReply(Notice::BadRequest);
+//
+//  if (action.startsWith(LS("x-")))
+//    return Feed::query(json, channel);
+//
+//  if (action == LS("unlink"))
+//    return unlink(json, channel);
+//
+//  return FeedQueryReply(Notice::ServiceUnavailable);
+//}
 
 
 /*!

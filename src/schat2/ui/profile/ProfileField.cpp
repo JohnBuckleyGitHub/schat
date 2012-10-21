@@ -98,7 +98,9 @@ bool ProfileField::apply(const QVariant &value)
 
   QVariantMap query;
   query[m_field] = value;
-  return ChatClient::feeds()->query(LS("profile"), LS("x-set"), query);
+  /// \bug Установка полей профиля больше не работает.
+//  return ChatClient::feeds()->query(LS("profile"), LS("x-set"), query);
+  return false;
 }
 
 

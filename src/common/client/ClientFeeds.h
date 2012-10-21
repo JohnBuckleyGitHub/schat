@@ -40,8 +40,6 @@ public:
   inline Hooks::Feeds *hooks() const { return m_hooks; }
   static bool post(const QByteArray &id, const QString &name, const QVariant &value = QVariant(), int options = 0);
   static bool put(const QByteArray &id, const QString &name, const QVariant &value = QVariant(), int options = 0);
-  static bool query(const QByteArray &id, const QString &name, const QString &action, const QVariantMap &json = QVariantMap());
-  static bool query(const QString &name, const QString &action, const QVariantMap &json = QVariantMap());
   static bool request(ClientChannel channel, const QString &command, const QString &name, const QVariantMap &json = QVariantMap());
   static bool request(const QByteArray &id, const QString &command, const QString &name, const QVariantMap &json = QVariantMap());
   static bool revert(const QByteArray &id, const QString &name, qint64 rev);

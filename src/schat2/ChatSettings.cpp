@@ -112,20 +112,13 @@ void ChatSettings::notify(const Notify &notify)
 }
 
 
-/*!
- * \deprecated Необходимо использовать PUT запрос.
- */
 void ChatSettings::ready()
 {
   FeedPtr feed = ChatClient::channel()->feed(LS("settings"), false);
   if (!feed) {
-    QVariantMap query;
-    query[LS("action")] = LS("x-mask");
-    query[LS("mask")] = 0700;
-
     ChatClient::io()->lock();
     ClientFeeds::post(ChatClient::id(), LS("settings"));
-    ClientFeeds::request(ChatClient::id(), LS("query"), LS("settings"), query);
+    ClientFeeds::put(ChatClient::id(), LS("settings/head/mask"), 0700);
     ChatClient::io()->unlock();
   }
 }
