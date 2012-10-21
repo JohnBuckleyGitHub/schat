@@ -58,6 +58,17 @@ int FeedHeader::del(const QString &path)
     m_acl.remove(id);
     return Notice::OK;
   }
+  else if (path.startsWith(LS("group/"))) {
+    QString group = path.mid(6);
+    if (group.isEmpty())
+      return Notice::BadRequest;
+
+    if (!m_acl.groups().contains(group))
+      return Notice::NotFound;
+
+    m_acl.groups().remove(group);
+    return Notice::OK;
+  }
 
   return Notice::NotFound;
 }
@@ -74,6 +85,17 @@ int FeedHeader::post(const QString &path, const QVariant &value)
       return Notice::NotModified;
 
     m_acl.add(id);
+    return Notice::OK;
+  }
+  else if (path == LS("group")) {
+    QString group = value.toString();
+    if (group.isEmpty())
+      return Notice::BadRequest;
+
+    if (m_acl.groups().contains(group))
+      return Notice::NotModified;
+
+    m_acl.groups() += group;
     return Notice::OK;
   }
 

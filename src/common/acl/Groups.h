@@ -24,16 +24,18 @@
 class Groups
 {
 public:
-  Groups() {}
+  inline Groups() {}
   inline bool contains(const QString &name)  { return m_groups.contains(name); }
   inline const QStringList& all() const      { return m_groups; }
-  inline Groups &add(const QString &name)    { if (!m_groups.contains(name) && !name.contains(",")) m_groups.append(name); return *this; }
-  inline QString toString() const            { return m_groups.join(","); }
+  inline Groups &add(const QString &name)    { if (!m_groups.contains(name) && !name.contains(QLatin1String(","))) m_groups.append(name); return *this; }
+  inline QString toString() const            { return m_groups.join(QLatin1String(",")); }
   inline void remove(const QString &name)    { m_groups.removeAll(name); }
-  inline void set(const QString &groups)     { m_groups = groups.split(",", QString::SkipEmptyParts); }
+  inline void set(const QString &groups)     { m_groups = groups.split(QLatin1String(","), QString::SkipEmptyParts); }
   inline void set(const QStringList &groups) { m_groups = groups; }
 
-  inline Groups &operator+=(const QString &name) { return add(name); }
+  inline Groups &operator+=(const QString &name)        { return add(name); }
+  inline Groups &operator=(const QString &groups)       { set(groups); return *this; }
+  inline Groups &operator=(const QStringList &groups)   { set(groups); return *this; }
 
 private:
   QStringList m_groups; ///< Список групп.
