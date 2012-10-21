@@ -117,10 +117,11 @@ void Acl::load(const QVariantMap &json)
 {
   m_mask = json.value(LS("mask")).toInt();
 
-  QVariantList owners = json.value(LS("owners")).toList();
-  foreach (QVariant owner, owners) {
+  const QVariantList owners = json.value(LS("owners")).toList();
+  foreach (const QVariant &owner, owners)
     add(SimpleID::decode(owner.toByteArray()));
-  }
+
+  m_groups = json.value(LS("groups")).toString();
 }
 
 
@@ -130,10 +131,10 @@ void Acl::load(const QVariantMap &json)
 void Acl::save(QVariantMap &data) const
 {
   QVariantList owners;
-  foreach (QByteArray owner, m_owners) {
+  foreach (const QByteArray &owner, m_owners)
     owners.append(SimpleID::encode(owner));
-  }
 
   data[LS("mask")]   = m_mask;
   data[LS("owners")] = owners;
+  data[LS("groups")] = m_groups.toString();
 }
