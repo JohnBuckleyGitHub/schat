@@ -18,6 +18,7 @@
 
 #include "DateTime.h"
 #include "feeds/FeedHeader.h"
+#include "net/packets/Notice.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
 
@@ -41,6 +42,57 @@ bool FeedHeader::isValid() const
     return false;
 
   return true;
+}
+
+
+int FeedHeader::del(const QString &path)
+{
+  if (path.startsWith(LS("owner/"))) {
+    QByteArray id = SimpleID::decode(path.mid(6));
+    if (SimpleID::typeOf(id) != SimpleID::UserId)
+      return Notice::BadRequest;
+
+    if (!m_acl.owners().contains(id))
+      return Notice::NotFound;
+
+    m_acl.remove(id);
+    return Notice::OK;
+  }
+
+  return Notice::NotFound;
+}
+
+
+int FeedHeader::post(const QString &path, const QVariant &value)
+{
+  if (path == LS("owner")) {
+    QByteArray id = SimpleID::decode(value.toString());
+    if (SimpleID::typeOf(id) != SimpleID::UserId)
+      return Notice::BadRequest;
+
+    if (m_acl.owners().contains(id))
+      return Notice::NotModified;
+
+    m_acl.add(id);
+    return Notice::OK;
+  }
+
+  return Notice::BadRequest;
+}
+
+
+int FeedHeader::put(const QString &path, const QVariant &value)
+{
+  if (path == LS("mask")) {
+    int mask = value.toInt();
+    if (mask < 0 || mask > 511)
+      return Notice::BadRequest;
+
+    m_acl.setMask(mask);
+    return Notice::OK;
+  }
+
+  return Notice::NotFound;
 }
 
 
