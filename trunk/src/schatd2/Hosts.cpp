@@ -196,10 +196,7 @@ FeedPtr Hosts::feed(const QString &name, int mask) const
   feed = m_channel->feed(name, true, false);
   feed->head().acl().add(m_channel->id());
 
-  QVariantMap query;
-  query[LS("action")] = LS("x-mask");
-  query[LS("mask")]   = mask;
-  feed->query(query, m_channel);
+  feed->head().acl().setMask(mask);
   return feed;
 }
 

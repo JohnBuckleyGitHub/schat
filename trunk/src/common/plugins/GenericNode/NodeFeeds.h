@@ -51,7 +51,6 @@ private:
   int get();
   int get(FeedPtr feed, const QString &request);
   int headers();
-  int query();
   int query(const QString &verb);
 
   CheckResult check(int acl);

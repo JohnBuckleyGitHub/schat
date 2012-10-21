@@ -51,23 +51,6 @@ bool ClientFeeds::put(const QByteArray &id, const QString &name, const QVariant 
 }
 
 
-bool ClientFeeds::query(const QString &name, const QString &action, const QVariantMap &json)
-{
-  return query(ChatClient::id(), name, action, json);
-}
-
-
-/*!
- * \deprecated query запрос должен быть заменён на get, post или put запрос.
- */
-bool ClientFeeds::query(const QByteArray &id, const QString &name, const QString &action, const QVariantMap &json)
-{
-  QVariantMap data = json;
-  data[LS("action")] = action;
-  return request(id, LS("query"), name, data);
-}
-
-
 /*!
  * Запрос к фиду.
  *

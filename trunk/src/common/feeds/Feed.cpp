@@ -76,25 +76,6 @@ Feed* Feed::load(const QString &name, const QVariantMap &data)
 }
 
 
-FeedQueryReply Feed::query(const QVariantMap &json, Channel *channel)
-{
-  if (!channel)
-    return FeedQueryReply(Notice::BadRequest);
-
-  QString action = json.value(LS("action")).toString();
-  if (action.isEmpty())
-    return FeedQueryReply(Notice::BadRequest);
-
-  if (!action.startsWith(LS("x-")))
-    return FeedQueryReply(Notice::ServiceUnavailable);
-
-  if (action == LS("x-mask"))
-    return mask(json, channel);
-
-  return FeedQueryReply(Notice::NotImplemented);
-}
-
-
 /*!
  * Обработка \b delete запроса к фиду.
  */
@@ -182,15 +163,27 @@ FeedReply Feed::put(const QString &path, const QVariantMap &json, Channel *chann
   if (path.isEmpty() || !json.contains(LS("value")))
     return Notice::BadRequest;
 
-  if (!m_data.contains(path))
-    return Notice::NotFound;
-
   const QVariant& value = json[LS("value")];
+
+  if (path.startsWith(LS("head/"))) {
+    if (!Acl::canEdit(this, channel))
+      return Notice::Forbidden;
+
+    if (path == LS("head/mask")) {
+      int mask = value.toInt();
+      if (mask < 0 || mask > 511)
+        return Notice::BadRequest;
+
+      head().acl().setMask(mask);
+      return FeedReply(Notice::OK, DateTime::utc());
+    }
+  }
+  else if (!m_data.contains(path))
+    return Notice::NotFound;
 
   if (m_data.value(path) != value) {
     m_data[path] = value;
-    FeedReply reply(Notice::OK);
-    reply.date = DateTime::utc();
+    FeedReply reply(Notice::OK, DateTime::utc());
 
     if (json.value(LS("options")).toInt() & Echo)
       reply.json[LS("value")] = value;
@@ -262,27 +255,4 @@ void Feed::merge(QVariantMap &out, const QVariantMap &in)
     i.next();
     out[i.key()] = i.value();
   }
-}
-
-
-/*!
- * Установка маски прав доступа к фиду.
- * Эта операция требует прав на редактирование.
- * Новая маска содержится в поле \b mask запроса \p json.
- *
- * \param json    Тело запроса.
- * \param channel Канал для проверки прав доступа.
- */
-FeedQueryReply Feed::mask(const QVariantMap &json, Channel *channel)
-{
-  if (!Acl::canEdit(this, channel))
-    return FeedQueryReply(Notice::Forbidden);
-
-  if (!json.contains(LS("mask")))
-    return FeedQueryReply(Notice::BadRequest);
-
-  head().acl().setMask(json.value(LS("mask")).toInt());
-  FeedQueryReply reply(Notice::OK);
-  reply.modified = true;
-  return reply;
 }

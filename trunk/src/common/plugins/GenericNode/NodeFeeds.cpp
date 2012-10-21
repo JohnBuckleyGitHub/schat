@@ -64,8 +64,6 @@ bool NodeFeeds::read(PacketReader *reader)
     status = get();
   else if (cmd == LS("put") || cmd == "post" || cmd == "delete")
     status = query(cmd);
-  else if (cmd == LS("query"))
-    status = query();
 
   if (status == Notice::OK)
     return false;
@@ -218,58 +216,6 @@ int NodeFeeds::headers()
     m_core->send(m_user->sockets(), FeedNotice::reply(*m_packet, m_channel->feeds().headers(m_user.data())));
 
   return Notice::OK;
-}
-
-
-/*!
- * Обработка запроса пользователя к данным фида.
- *
- * В случае использования плагина "Raw Feeds" эта функция вызывается командой:
- * /feed query \<имя фида\> \<опциональные JSON данные запроса\>.
- *
- * \deprecated
- */
-int NodeFeeds::query()
-{
-  SCHAT_CHECK_ACL(Acl::Read)
-
-  FeedPtr feed = result.feed;
-  FeedQueryReply reply = feed->query(m_packet->json(), m_user.data());
-  if (reply.modified) {
-    FeedStorage::save(feed, reply.date);
-    reply.json[LS("date")] = feed->head().date();
-    reply.json[LS("size")] = feed->head().data().value(LS("size"));
-  }
-
-  if (reply.status == Notice::OK) {
-    if (!reply.single)
-      m_core->send(m_user->sockets(), FeedNotice::reply(*m_packet, reply));
-    else
-      Core::send(FeedNotice::reply(*m_packet, reply));
-
-    if (!reply.packets.isEmpty())
-      Core::send(reply.packets);
-  }
-
-  if (reply.modified) {
-    if (!reply.incremental)
-      get();
-
-    broadcast(m_channel->feed(m_packet->text(), false), !reply.incremental);
-  }
-
-  // В случае если статус ответа не равен Notice::OK и запрос содержал поле \b action добавляем это поле в ответ.
-  if (reply.status != Notice::OK && m_packet->json().contains(LS("action"))) {
-    FeedPacket packet = FeedNotice::reply(*m_packet, reply.status);
-    QVariantMap data;
-    data[LS("action")] = m_packet->json().value(LS("action"));
-    packet->setData(data);
-
-    m_core->send(m_user->sockets(), packet);
-    return Notice::OK;
-  }
-
-  return reply.status;
 }
 
 
