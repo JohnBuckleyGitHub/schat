@@ -56,7 +56,7 @@ const QHash<QByteArray, HostInfo>& Hosts::all()
  */
 FeedPtr Hosts::feed() const
 {
-  return feed(LS("hosts"), 0400);
+  return feed(LS("hosts"), 0600);
 }
 
 
@@ -190,11 +190,10 @@ QByteArray Hosts::toHostId(const QByteArray &uniqueId, const QByteArray &channel
 FeedPtr Hosts::feed(const QString &name, int mask) const
 {
   FeedPtr feed = m_channel->feed(name, false);
-  if (feed)
-    return feed;
-
-  feed = m_channel->feed(name, true, false);
-  feed->head().acl().add(m_channel->id());
+  if (!feed) {
+    feed = m_channel->feed(name, true, false);
+    feed->head().acl().add(m_channel->id());
+  }
 
   feed->head().acl().setMask(mask);
   return feed;

@@ -29,7 +29,7 @@ public:
   Feed* create(const QString &name);
   Feed* load(const QString &name, const QVariantMap &data);
 
-  QVariantMap feed(Channel *channel = 0);
+  QVariantMap feed(Channel *channel = 0) const;
 };
 
 #endif /* NODEUSERFEED_H_ */

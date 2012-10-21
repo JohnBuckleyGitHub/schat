@@ -86,19 +86,19 @@ int Acl::match(Channel *channel) const
 }
 
 
-bool Acl::canEdit(Feed *feed, Channel *channel)
+bool Acl::canEdit(const Feed *feed, Channel *channel)
 {
   return feed->head().acl().can(channel, Edit);
 }
 
 
-bool Acl::canRead(Feed *feed, Channel *channel)
+bool Acl::canRead(const Feed *feed, Channel *channel)
 {
   return feed->head().acl().can(channel, Read);
 }
 
 
-bool Acl::canWrite(Feed *feed, Channel *channel)
+bool Acl::canWrite(const Feed *feed, Channel *channel)
 {
   return feed->head().acl().can(channel, Write);
 }
@@ -117,7 +117,7 @@ void Acl::load(const QVariantMap &json)
 {
   m_mask = json.value(LS("mask")).toInt();
 
-  QVariantList owners = json.value("owners").toList();
+  QVariantList owners = json.value(LS("owners")).toList();
   foreach (QVariant owner, owners) {
     add(SimpleID::decode(owner.toByteArray()));
   }

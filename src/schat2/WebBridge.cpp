@@ -159,6 +159,12 @@ QString WebBridge::day(const QString &day) const
 }
 
 
+QString WebBridge::id() const
+{
+  return SimpleID::encode(ChatClient::id());
+}
+
+
 QString WebBridge::randomId() const
 {
   return SimpleID::encode(ChatCore::randomId());
@@ -291,9 +297,9 @@ void WebBridge::get(const QString &id, const QString &name, const QVariantMap &j
 }
 
 
-void WebBridge::request(const QString &command, const QString &name, const QVariantMap &json)
+void WebBridge::request(const QString &id, const QString &command, const QString &name, const QVariantMap &json)
 {
-  ClientFeeds::request(ChatClient::channel(), command, name, json);
+  ClientFeeds::request(SimpleID::decode(id.toLatin1()), command, name, json);
 }
 
 

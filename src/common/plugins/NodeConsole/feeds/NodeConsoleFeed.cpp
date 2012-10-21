@@ -54,7 +54,7 @@ Feed* NodeConsoleFeed::load(const QString &name, const QVariantMap &data)
 /*!
  * Обработка \b get запросов.
  */
-FeedReply NodeConsoleFeed::get(const QString &path, const QVariantMap &json, Channel *channel)
+FeedReply NodeConsoleFeed::get(const QString &path, const QVariantMap &json, Channel *channel) const
 {
   if (path == LS("login"))
     return login(json, channel);
@@ -68,7 +68,7 @@ FeedReply NodeConsoleFeed::get(const QString &path, const QVariantMap &json, Cha
 /*!
  * \return \b true если пользователь входит в группу \b master.
  */
-bool NodeConsoleFeed::master(Channel *user)
+bool NodeConsoleFeed::master(Channel *user) const
 {
   if (user && user->account()->groups.contains(LS("master")) && Storage::value(LS("password")) != LS("2AZ6EKXDJCXLKZQPYIKAV3BVQUGE3KMXOA"))
     return true;
@@ -80,7 +80,7 @@ bool NodeConsoleFeed::master(Channel *user)
 /*!
  * Проверка пароля сервера.
  */
-FeedReply NodeConsoleFeed::login(const QVariantMap &json, Channel *user)
+FeedReply NodeConsoleFeed::login(const QVariantMap &json, Channel *user) const
 {
   if (!user)
     return FeedReply(Notice::BadRequest);
@@ -100,7 +100,7 @@ FeedReply NodeConsoleFeed::login(const QVariantMap &json, Channel *user)
 /*!
  * Проверка привилегий пользователя, только пользователь в группе \b master имеет права доступа к фиду.
  */
-FeedReply NodeConsoleFeed::tryAccess(const QVariantMap &json, Channel *user)
+FeedReply NodeConsoleFeed::tryAccess(const QVariantMap &json, Channel *user) const
 {
   Q_UNUSED(json)
   if (!master(user))

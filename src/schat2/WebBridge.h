@@ -41,6 +41,7 @@ public:
   Q_INVOKABLE QString bytesToHuman(qint64 size, bool html = true) const;
   Q_INVOKABLE QString channel(const QString &id) const;
   Q_INVOKABLE QString day(const QString &day) const;
+  Q_INVOKABLE QString id() const;
   Q_INVOKABLE QString randomId() const;
   Q_INVOKABLE QString serverId() const;
   Q_INVOKABLE QString serverPeer() const;
@@ -54,7 +55,7 @@ public:
   Q_INVOKABLE QVariant feed(const QString &name, int options = 0) const;
   Q_INVOKABLE QVariantMap traffic() const;
   Q_INVOKABLE void get(const QString &id, const QString &name, const QVariantMap &json = QVariantMap());
-  Q_INVOKABLE void request(const QString &command, const QString &name, const QVariantMap &json = QVariantMap());
+  Q_INVOKABLE void request(const QString &id, const QString &command, const QString &name, const QVariantMap &json = QVariantMap());
   Q_INVOKABLE void setTabPage(const QString &id, int page);
 
   static QVariant feed(ClientChannel channel, const QString &name, int options = 0);

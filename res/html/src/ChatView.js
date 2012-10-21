@@ -792,22 +792,24 @@ function htmlspecialchars (string, quote_style, charset, double_encode) {
 
 if (typeof SimpleChat === 'undefined') {
   SimpleChat = {
-    channel: function(id)          { return '{}'; },
-    translate: function(key)       { return key; },
-    setTabPage: function(id, page) {},
-    feed: function(id, name)       { return {}; },
-    randomId: function()           { return ''; },
-    bytesToHuman: function(size)   { return '0 bytes'; },
-    status: function(id)           { return 'Offline'; },
-    day: function(day)             { return day; },
-    get: function(id, name, json)  {},
-    isOnline: function()           { return true; },
-    serverPeer: function()         { return ''; },
-    traffic: function()            { return {tx:0, rx:0}; },
-    serverId: function()           { return ''; },
-    encryption: function()         { return false; },
-    statusText: function(status)   { return ''; },
-    toBase32: function(text)       { return ''; }
+    channel: function(id)                  { return '{}'; },
+    translate: function(key)               { return key; },
+    setTabPage: function(id, page)         {},
+    feed: function(id, name)               { return {}; },
+    randomId: function()                   { return ''; },
+    bytesToHuman: function(size)           { return '0 bytes'; },
+    status: function(id)                   { return 'Offline'; },
+    day: function(day)                     { return day; },
+    get: function(id, name, json)          {},
+    isOnline: function()                   { return true; },
+    serverPeer: function()                 { return ''; },
+    traffic: function()                    { return {tx:0, rx:0}; },
+    serverId: function()                   { return ''; },
+    encryption: function()                 { return false; },
+    statusText: function(status)           { return ''; },
+    toBase32: function(text)               { return ''; },
+    request: function(id, cmd, name, json) {},
+    id: function()                         { return ''; }
   };
 }
 else {

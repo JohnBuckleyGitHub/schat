@@ -22,7 +22,6 @@
 #include "net/packets/Notice.h"
 
 class FeedNotice;
-class FeedQueryReply;
 
 typedef QSharedPointer<FeedNotice> FeedPacket;
 
@@ -33,7 +32,6 @@ public:
   FeedNotice(const QByteArray &sender, const QByteArray &dest, const QString &command, const QByteArray &id = QByteArray());
   FeedNotice(quint16 type, PacketReader *reader);
 
-  static FeedPacket reply(const FeedNotice &source, const FeedQueryReply &reply);
   static FeedPacket reply(const FeedNotice &source, const QVariantMap &json);
   static FeedPacket reply(const FeedNotice &source, int status);
   static FeedPacket request(const QByteArray &user, const QByteArray &channel, const QString &command, const QString &name, const QVariantMap &json = QVariantMap());

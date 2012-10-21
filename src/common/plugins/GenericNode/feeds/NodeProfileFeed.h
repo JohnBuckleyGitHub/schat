@@ -29,10 +29,10 @@ public:
   Feed* create(const QString &name);
   Feed* load(const QString &name, const QVariantMap &data);
 
-  QVariantMap feed(Channel *channel = 0);
+  QVariantMap feed(Channel *channel = 0) const;
 
 protected:
-  FeedQueryReply set(const QVariantMap &json, Channel *channel);
+//  FeedQueryReply set(const QVariantMap &json, Channel *channel);
 };
 
 #endif /* NODEPROFILEFEED_H_ */

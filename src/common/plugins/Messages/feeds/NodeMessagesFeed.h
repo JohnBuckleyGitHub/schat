@@ -30,13 +30,13 @@ public:
   Feed* create(const QString &name);
   Feed* load(const QString &name, const QVariantMap &data);
 
-  FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0);
+  FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0) const;
 
 private:
-  FeedReply fetch(const QVariantMap &json, Channel *user);
-  FeedReply last(const QVariantMap &json, Channel *user);
-  FeedReply offline(Channel *user);
-  FeedReply since(const QVariantMap &json, Channel *user);
+  FeedReply fetch(const QVariantMap &json, Channel *user) const;
+  FeedReply last(const QVariantMap &json, Channel *user) const;
+  FeedReply offline(Channel *user) const;
+  FeedReply since(const QVariantMap &json, Channel *user) const;
   void toPackets(QList<QByteArray> &out, const QList<MessageRecord> &records) const;
 };
 

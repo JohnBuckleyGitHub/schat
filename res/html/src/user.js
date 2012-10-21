@@ -32,7 +32,7 @@ var Profile = {
     if (!json.hasOwnProperty('type'))
       return;
 
-    if (json.name !== 'profile')
+    if (json.feed !== 'profile')
       return;
 
     if (json.id !== Settings.id)
@@ -168,7 +168,7 @@ var Connections = {
     if (!json.hasOwnProperty('type'))
       return;
 
-    if (json.name !== 'user')
+    if (json.feed !== 'user')
       return;
 
     if (json.id !== Settings.id)

@@ -62,9 +62,9 @@ public:
   inline void remove(const QByteArray &owner)    { m_owners.removeAll(owner); }
   inline void setMask(int mask)                  { m_mask = mask; }
   int match(Channel *channel) const;
-  static bool canEdit(Feed *feed, Channel *channel = 0);
-  static bool canRead(Feed *feed, Channel *channel = 0);
-  static bool canWrite(Feed *feed, Channel *channel = 0);
+  static bool canEdit(const Feed *feed, Channel *channel = 0);
+  static bool canRead(const Feed *feed, Channel *channel = 0);
+  static bool canWrite(const Feed *feed, Channel *channel = 0);
   void add(const QByteArray &owner);
   void load(const QVariantMap &json);
   void save(QVariantMap &data) const;

@@ -29,12 +29,12 @@ public:
   Feed* create(const QString &name);
   Feed* load(const QString &name, const QVariantMap &data);
 
-  FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0);
+  FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0) const;
 
 private:
-  bool master(Channel *user);
-  FeedReply login(const QVariantMap &json, Channel *user);
-  FeedReply tryAccess(const QVariantMap &json, Channel *user);
+  bool master(Channel *user) const;
+  FeedReply login(const QVariantMap &json, Channel *user) const;
+  FeedReply tryAccess(const QVariantMap &json, Channel *user) const;
   void init();
 };
 

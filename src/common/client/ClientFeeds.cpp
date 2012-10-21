@@ -33,6 +33,14 @@ ClientFeeds::ClientFeeds(QObject *parent)
 }
 
 
+bool ClientFeeds::del(const QByteArray &id, const QString &name, int options)
+{
+  QVariantMap json;
+  json[LS("options")] = options;
+  return request(id, LS("delete"), name, json);
+}
+
+
 bool ClientFeeds::post(const QByteArray &id, const QString &name, const QVariant &value, int options)
 {
   QVariantMap json;

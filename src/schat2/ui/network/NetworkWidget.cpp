@@ -285,10 +285,6 @@ void NetworkWidget::signOut()
   if (ChatClient::state() != ChatClient::Online)
     return;
 
-  QVariantMap json;
-  json[LS("id")] = SimpleID::encode(ChatClient::io()->json().value(LS("hostId")).toByteArray());
-
-  /// \bug unlink больше не работает
-//  ChatClient::feeds()->query(LS("hosts"), LS("unlink"), json);
+  ClientFeeds::del(ChatClient::id(), LS("hosts/") + SimpleID::encode(ChatClient::io()->json().value(LS("hostId")).toByteArray()), 2);
   ChatClient::io()->setAuthType(AuthRequest::Discovery);
 }
