@@ -268,11 +268,15 @@ NodeFeeds::CheckResult NodeFeeds::check(int acl)
   if (result.status != Notice::OK)
     return result;
 
+  if (!m_channel->canRead(m_user)) {
+    result.status = Notice::Forbidden;
+    return result;
+  }
+
   result.feed = m_channel->feed(result.name, false);
   if (!result.feed) {
     if (m_packet->command() == LS("get") && result.name == LS("*")) {
-      if (!m_channel->canRead(m_user))
-        result.status = Notice::Forbidden;
+      result.status = Notice::OK;
     }
     else if (m_packet->command() == LS("post") && result.path.isEmpty()) {
       if (!m_channel->canEdit(m_user))

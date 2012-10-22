@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include "DateTime.h"
 #include "feeds/FeedHeader.h"
 #include "net/packets/Notice.h"
@@ -69,6 +71,17 @@ int FeedHeader::del(const QString &path)
     m_acl.groups().remove(group);
     return Notice::OK;
   }
+  else if (path.startsWith(LS("other/"))) {
+    QByteArray id = SimpleID::decode(path.mid(6));
+    if (SimpleID::typeOf(id) != SimpleID::UserId)
+      return Notice::BadRequest;
+
+    if (!m_acl.others().contains(id))
+      return Notice::NotFound;
+
+    m_acl.removeOther(id);
+    return Notice::OK;
+  }
 
   return Notice::NotFound;
 }
@@ -96,6 +109,12 @@ int FeedHeader::post(const QString &path, const QVariant &value)
       return Notice::NotModified;
 
     m_acl.groups() += group;
+    return Notice::OK;
+  }
+  else if (path.startsWith(LS("other/"))) {
+    if (!m_acl.add(SimpleID::decode(path.mid(6)), value.toInt()))
+      return Notice::BadRequest;
+
     return Notice::OK;
   }
 
@@ -159,9 +178,10 @@ void FeedHeader::setData(const QVariantMap &data)
     m_data.remove(LS("acl"));
   }
   else
-    m_acl.load(m_data);
+    m_acl.load(data);
 
-  setRev(rev());
+  setRev(data.value(LS("rev")).toLongLong());
+  m_data[LS("date")] = data.value(LS("date")).toLongLong();
 }
 
 

@@ -12,8 +12,6 @@ Console.feed = {
    * Чтение новых данных.
    */
   read: function(json) {
-    console.log(json);
-
     if (json.type == 'reply') {
       var path = json.name.split('/');
       if (path.length < 2 || path[0] != 'console')
