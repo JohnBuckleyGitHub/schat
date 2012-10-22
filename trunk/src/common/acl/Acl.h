@@ -53,14 +53,17 @@ public:
 
   Acl(int acl = 0766);
 
+  bool add(const QByteArray &other, int acl);
   bool can(Channel *channel, ResultAcl acl) const;
   bool get(QVariantMap &data, Channel *channel) const;
-  inline const Groups& groups() const            { return m_groups; }
-  inline const QList<QByteArray>& owners() const { return m_owners; }
-  inline Groups& groups()                        { return m_groups; }
-  inline int mask() const                        { return m_mask; }
-  inline void remove(const QByteArray &owner)    { m_owners.removeAll(owner); }
-  inline void setMask(int mask)                  { m_mask = mask; }
+  inline const Groups& groups() const                { return m_groups; }
+  inline const QList<QByteArray> &owners() const     { return m_owners; }
+  inline const QMap<QByteArray, int> &others() const { return m_others; }
+  inline Groups &groups()                            { return m_groups; }
+  inline int mask() const                            { return m_mask; }
+  inline void remove(const QByteArray &owner)        { m_owners.removeAll(owner); }
+  inline void removeOther(const QByteArray &other)   { m_others.remove(other); }
+  inline void setMask(int mask)                      { m_mask = mask; }
   int match(Channel *channel) const;
   static bool canEdit(const Feed *feed, Channel *channel = 0);
   static bool canRead(const Feed *feed, Channel *channel = 0);

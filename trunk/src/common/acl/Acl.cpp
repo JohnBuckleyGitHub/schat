@@ -28,6 +28,16 @@ Acl::Acl(int mask)
 }
 
 
+bool Acl::add(const QByteArray &other, int acl)
+{
+  if (SimpleID::typeOf(other) != SimpleID::UserId || acl < 0 || acl > 7)
+    return false;
+
+  m_others[other] = acl;
+  return true;
+}
+
+
 bool Acl::can(Channel *channel, ResultAcl acl) const
 {
   int r = match(channel);
@@ -77,7 +87,7 @@ int Acl::match(Channel *channel) const
   if (m_owners.contains(channel->id()))
     return (m_mask >> 6);
 
-  foreach (QString group, m_groups.all()) {
+  foreach (const QString &group, m_groups.all()) {
     if (channel->account()->groups.contains(group))
       return ((m_mask & ~0700) >> 3);
   }
@@ -121,6 +131,13 @@ void Acl::load(const QVariantMap &json)
   foreach (const QVariant &owner, owners)
     add(SimpleID::decode(owner.toByteArray()));
 
+  const QVariantMap others = json.value(LS("others")).toMap();
+  QMapIterator<QString, QVariant> i(others);
+  while (i.hasNext()) {
+    i.next();
+    add(SimpleID::decode(i.key()), i.value().toInt());
+  }
+
   m_groups = json.value(LS("groups")).toString();
 }
 
@@ -134,7 +151,15 @@ void Acl::save(QVariantMap &data) const
   foreach (const QByteArray &owner, m_owners)
     owners.append(SimpleID::encode(owner));
 
+  QVariantMap others;
+  QMapIterator<QByteArray, int> i(m_others);
+  while (i.hasNext()) {
+    i.next();
+    others[SimpleID::encode(i.key())] = i.value();
+  }
+
   data[LS("mask")]   = m_mask;
   data[LS("owners")] = owners;
+  data[LS("others")] = others;
   data[LS("groups")] = m_groups.toString();
 }
