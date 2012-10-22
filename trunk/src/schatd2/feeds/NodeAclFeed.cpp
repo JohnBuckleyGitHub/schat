@@ -18,18 +18,19 @@
 
 #include "DateTime.h"
 #include "feeds/NodeAclFeed.h"
+#include "net/packets/Notice.h"
+#include "sglobal.h"
 
 NodeAclFeed::NodeAclFeed(const QString &name, const QVariantMap &data)
   : Feed(name, data)
 {
-  m_header.acl().setMask(0744);
 }
 
 
 NodeAclFeed::NodeAclFeed(const QString &name, qint64 date)
   : Feed(name, date)
 {
-  m_header.acl().setMask(0744);
+  m_header.acl().setMask(0766);
 }
 
 
@@ -42,4 +43,31 @@ Feed* NodeAclFeed::create(const QString &name)
 Feed* NodeAclFeed::load(const QString &name, const QVariantMap &data)
 {
   return new NodeAclFeed(name, data);
+}
+
+
+FeedReply NodeAclFeed::del(const QString &path, Channel *channel)
+{
+  if (path.startsWith(LS("head/")))
+    return Feed::del(path, channel);
+
+  return Notice::Forbidden;
+}
+
+
+FeedReply NodeAclFeed::post(const QString &path, const QVariantMap &json, Channel *channel)
+{
+  if (path.startsWith(LS("head/")))
+    return Feed::post(path, json, channel);
+
+  return Notice::Forbidden;
+}
+
+
+FeedReply NodeAclFeed::put(const QString &path, const QVariantMap &json, Channel *channel)
+{
+  if (path.startsWith(LS("head/")))
+    return Feed::put(path, json, channel);
+
+  return Notice::Forbidden;
 }

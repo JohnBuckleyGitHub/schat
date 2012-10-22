@@ -28,6 +28,10 @@ public:
   NodeAclFeed(const QString &name = QLatin1String("acl"), qint64 date = 0);
   Feed* create(const QString &name);
   Feed* load(const QString &name, const QVariantMap &data);
+
+  FeedReply del(const QString &path, Channel *channel = 0);
+  FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0);
+  FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0);
 };
 
 #endif /* NODEACLFEED_H_ */
