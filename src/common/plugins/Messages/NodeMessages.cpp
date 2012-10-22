@@ -54,6 +54,10 @@ bool NodeMessages::read(PacketReader *reader)
     reject(Notice::BadRequest);
     return false;
   }
+  else if (!m_dest->canWrite(m_sender)) {
+    reject(Notice::Forbidden);
+    return false;
+  }
 
   if (packet.direction() == Notice::Internal) {
     Core::i()->route(m_dest);

@@ -75,6 +75,7 @@ private:
   static qint64 accountKey(const QByteArray &cookie);
   static qint64 channelKey(const QByteArray &id, int type = SimpleID::ChannelId);
   static qint64 V2();
+  static qint64 V3();
   static void update(ChatChannel channel);
   static void version();
 

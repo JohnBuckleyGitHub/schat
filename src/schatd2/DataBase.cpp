@@ -778,6 +778,40 @@ qint64 DataBase::V2()
 
 
 /*!
+ * Обновление схемы базы данных до версии 3.
+ */
+qint64 DataBase::V3()
+{
+  QSqlQuery query;
+  query.prepare(LS("SELECT id, json FROM feeds WHERE name = :name;"));
+  query.bindValue(LS(":name"), LS("acl"));
+  query.exec();
+
+  QMap<qint64, QByteArray> feeds;
+  while (query.next())
+    feeds[query.value(0).toLongLong()] = query.value(1).toByteArray().replace("\"mask\":484", "\"mask\":502");
+
+  query.exec(LS("BEGIN TRANSACTION;"));
+  if (!feeds.isEmpty()) {
+    query.prepare(LS("UPDATE feeds SET json = :json WHERE id = :id;"));
+
+    QMapIterator<qint64, QByteArray> i(feeds);
+    while (i.hasNext()) {
+      i.next();
+      query.bindValue(LS(":json"), i.value());
+      query.bindValue(LS(":id"),   i.key());
+      query.exec();
+    }
+  }
+
+  query.exec(LS("PRAGMA user_version = 3"));
+  query.exec(LS("COMMIT;"));
+
+  return 3;
+}
+
+
+/*!
  * Обновление информации об канале.
  * Если канал также содержит пользовательский аккаунт, то он также будет обновлён.
  */
@@ -825,11 +859,12 @@ void DataBase::version()
 
   qint64 version = query.value(0).toLongLong();
   if (!version) {
-    query.exec(LS("PRAGMA user_version = 2;"));
-    version = 2;
+    query.exec(LS("PRAGMA user_version = 3;"));
+    version = 3;
   }
 
   query.finish();
 
   if (version == 1) version = V2();
+  if (version == 2) version = V3();
 }
