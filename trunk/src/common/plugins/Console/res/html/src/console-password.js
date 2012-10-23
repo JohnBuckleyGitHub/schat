@@ -31,6 +31,11 @@ Console.password = {
 
     $('#save').on('click.password', function(event) {
       event.preventDefault();
+
+      SimpleChat.request(SimpleChat.serverId(), 'put', 'storage/password', {'value':ConsoleView.toPassword($('#new-password').val())});
+
+      Loader.spinner.add('loading/try');
+      SimpleChat.get(SimpleChat.serverId(), 'console/try');
     });
 
     $('#cancel').on('click.password', function(event) {

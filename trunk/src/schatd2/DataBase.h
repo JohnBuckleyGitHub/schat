@@ -63,6 +63,7 @@ public:
   static void add(User *user);
   static User user(qint64 channel);
 
+  static bool contains(const QString &key);
   static QVariant value(const QString &key, const QVariant &defaultValue = QVariant());
   static void setValue(const QString &key, const QVariant &value);
 

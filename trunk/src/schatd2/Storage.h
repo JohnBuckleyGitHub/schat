@@ -46,10 +46,12 @@ public:
   static QString serverName();
   static QString sharePath();
   static QString varPath();
-  static QVariant value(const QString &key, const QVariant &defaultValue = QVariant());
   static void addFeature(const QString &name);
-  static void setValue(const QString &key, const QVariant &value);
-  void add(StorageHook *hook);
+
+  static bool contains(const QString &key);
+  static int setValue(const QString &key, const QVariant &value);
+  static QVariant value(const QString &key, const QVariant &defaultValue = QVariant());
+  static void add(StorageHook *hook);
 
   int load();
   int start();

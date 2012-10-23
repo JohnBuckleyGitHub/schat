@@ -578,6 +578,17 @@ User DataBase::user(qint64 channel)
 }
 
 
+bool DataBase::contains(const QString &key)
+{
+  QSqlQuery query;
+  query.prepare(LS("SELECT f FROM storage WHERE k = :k LIMIT 1;"));
+  query.bindValue(LS(":k"), key);
+  query.exec();
+
+  return query.first();
+}
+
+
 QVariant DataBase::value(const QString &key, const QVariant &defaultValue)
 {
   QSqlQuery query;
