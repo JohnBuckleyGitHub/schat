@@ -790,6 +790,8 @@ qint64 DataBase::V2()
 
 /*!
  * Обновление схемы базы данных до версии 3.
+ *
+ * Права доступа к фидам \b acl принудительно изменяются с 744 на 766.
  */
 qint64 DataBase::V3()
 {
@@ -800,7 +802,7 @@ qint64 DataBase::V3()
 
   QMap<qint64, QByteArray> feeds;
   while (query.next())
-    feeds[query.value(0).toLongLong()] = query.value(1).toByteArray().replace("\"mask\":484", "\"mask\":502");
+    feeds[query.value(0).toLongLong()] = query.value(1).toByteArray().replace("\"mask\":484", "\"mask\":502").replace("\"mask\": 484", "\"mask\":502");
 
   query.exec(LS("BEGIN TRANSACTION;"));
   if (!feeds.isEmpty()) {
