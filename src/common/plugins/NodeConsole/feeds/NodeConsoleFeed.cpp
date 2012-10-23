@@ -28,14 +28,14 @@
 NodeConsoleFeed::NodeConsoleFeed(const QString &name, const QVariantMap &data)
   : Feed(name, data)
 {
-  init();
+  m_header.acl().setMask(0444);
 }
 
 
 NodeConsoleFeed::NodeConsoleFeed(const QString &name, qint64 date)
   : Feed(name, date)
 {
-  init();
+  m_header.acl().setMask(0444);
 }
 
 
@@ -61,7 +61,7 @@ FeedReply NodeConsoleFeed::get(const QString &path, const QVariantMap &json, Cha
   else if (path == LS("try"))
     return tryAccess(json, channel);
 
-  return FeedReply(Notice::NotImplemented);
+  return FeedReply(Notice::NotFound);
 }
 
 
@@ -107,13 +107,4 @@ FeedReply NodeConsoleFeed::tryAccess(const QVariantMap &json, Channel *user) con
     return FeedReply(Notice::Forbidden);
 
   return FeedReply(Notice::OK);
-}
-
-
-void NodeConsoleFeed::init()
-{
-  m_header.acl().setMask(0444);
-
-  if (Storage::value(LS("password")).toString().size() != 34)
-    Storage::setValue(LS("password"), LS("2AZ6EKXDJCXLKZQPYIKAV3BVQUGE3KMXOA"));
 }

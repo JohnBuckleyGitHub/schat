@@ -21,13 +21,17 @@ OTHER_FILES += NodeConsole.json
 
 HEADERS  = \
    feeds/NodeConsoleFeed.h \
+   feeds/NodeStorageFeed.h \
    NodeConsoleCh.h \
    NodeConsolePlugin.h \
    NodeConsolePlugin_p.h \
+   PasswordHook.h \
 
 SOURCES  = \
    feeds/NodeConsoleFeed.cpp \
+   feeds/NodeStorageFeed.cpp \
    NodeConsoleCh.cpp \
    NodeConsolePlugin.cpp \
+   PasswordHook.cpp \
 
 include(../plugins.pri)

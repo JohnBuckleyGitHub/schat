@@ -35,7 +35,6 @@ private:
   bool master(Channel *user) const;
   FeedReply login(const QVariantMap &json, Channel *user) const;
   FeedReply tryAccess(const QVariantMap &json, Channel *user) const;
-  void init();
 };
 
 #endif /* NODECONSOLEFEED_H_ */

@@ -16,18 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "NodeConsoleCh.h"
-#include "sglobal.h"
+#ifndef NODESTORAGEFEED_H_
+#define NODESTORAGEFEED_H_
 
-NodeConsoleCh::NodeConsoleCh(QObject *parent)
-  : ChHook(parent)
+#include "feeds/Feed.h"
+
+class NodeStorageFeed : public Feed
 {
-}
+public:
+  NodeStorageFeed(const QString &name, const QVariantMap &data);
+  NodeStorageFeed(const QString &name = QLatin1String("storage"), qint64 date = 0);
+  Feed* create(const QString &name);
+  Feed* load(const QString &name, const QVariantMap &data);
 
+  FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0) const;
+  FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0);
+  FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0);
+};
 
-void NodeConsoleCh::server(ChatChannel channel, bool created)
-{
-  Q_UNUSED(created)
-  channel->feed(LS("console"));
-  channel->feed(LS("storage"));
-}
+#endif /* NODESTORAGEFEED_H_ */

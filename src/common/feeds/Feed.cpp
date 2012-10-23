@@ -131,7 +131,10 @@ FeedReply Feed::get(const QString &path, const QVariantMap &json, Channel *chann
   else if (!m_data.contains(path))
     return Notice::NotFound;
 
-  return FeedReply(Notice::OK, head().date());
+  QVariantMap data;
+  data[LS("value")] = m_data.value(path);
+
+  return FeedReply(Notice::OK, data, head().date());
 }
 
 

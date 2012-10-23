@@ -16,18 +16,18 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "NodeConsoleCh.h"
-#include "sglobal.h"
+#ifndef PASSWORDHOOK_H_
+#define PASSWORDHOOK_H_
 
-NodeConsoleCh::NodeConsoleCh(QObject *parent)
-  : ChHook(parent)
+#include "StorageHook.h"
+
+class PasswordHook : public StorageHook
 {
-}
+public:
+  PasswordHook();
+  bool setValue(const QString &key, const QVariant &value);
+  QStringList keys() const;
+  QVariant value(const QString &key, const QVariant &defaultValue = QVariant()) const;
+};
 
-
-void NodeConsoleCh::server(ChatChannel channel, bool created)
-{
-  Q_UNUSED(created)
-  channel->feed(LS("console"));
-  channel->feed(LS("storage"));
-}
+#endif /* PASSWORDHOOK_H_ */

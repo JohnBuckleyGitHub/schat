@@ -134,6 +134,51 @@ QString Storage::varPath()
 }
 
 
+void Storage::addFeature(const QString &name)
+{
+  if (!m_features.contains(name))
+    m_features.append(name);
+}
+
+
+bool Storage::contains(const QString &key)
+{
+  if (m_self->m_cache.contains(key) || m_self->m_keys.contains(key) || DataBase::contains(key))
+    return true;
+
+  return false;
+}
+
+/*!
+ * Запись данных в хранилище.
+ *
+ * \param key   Ключ в хранилище.
+ * \param value Данные для записи в хранилище.
+ */
+int Storage::setValue(const QString &key, const QVariant &value)
+{
+  if (m_self->m_cache.value(key) == value)
+    return Notice::NotModified;
+
+  bool cache = true;
+  StorageHook *hook = m_self->m_keys.value(key);
+  if (hook) {
+    if (!hook->setValue(key, value))
+      return Notice::Forbidden;
+
+    cache = hook->cache();
+  }
+  else
+    DataBase::setValue(key, value);
+
+  if (cache) {
+    m_self->m_cache[key] = value;
+    emit m_self->valueChanged(key, value);
+  }
+
+  return Notice::OK;
+}
+
 
 /*!
  * Получение данных из хранилища.
@@ -164,42 +209,6 @@ QVariant Storage::value(const QString &key, const QVariant &defaultValue)
 }
 
 
-void Storage::addFeature(const QString &name)
-{
-  if (!m_features.contains(name))
-    m_features.append(name);
-}
-
-
-/*!
- * Запись данных в хранилище.
- *
- * \param key   Ключ в хранилище.
- * \param value Данные для записи в хранилище.
- */
-void Storage::setValue(const QString &key, const QVariant &value)
-{
-  if (m_self->m_cache.value(key) == value)
-    return;
-
-  bool cache = true;
-  StorageHook *hook = m_self->m_keys.value(key);
-  if (hook) {
-    if (!hook->setValue(key, value))
-      return;
-
-    cache = hook->cache();
-  }
-  else
-    DataBase::setValue(key, value);
-
-  if (cache) {
-    m_self->m_cache[key] = value;
-    emit m_self->valueChanged(key, value);
-  }
-}
-
-
 /*!
  * Добавление хука.
  */
@@ -214,9 +223,9 @@ void Storage::add(StorageHook *hook)
     return;
   }
 
-  m_hooks.append(hook);
+  m_self->m_hooks.append(hook);
   foreach (const QString &key, keys) {
-    m_keys[key] = hook;
+    m_self->m_keys[key] = hook;
   }
 }
 
