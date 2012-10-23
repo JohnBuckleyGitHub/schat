@@ -1,13 +1,31 @@
 /*
+ * Чтение ответа на "put" запрос "storage/password".
+ */
+Console.feed.storage.put.password = function(json) {
+  console.log(json);
+
+  $('#password-spinner').hide();
+  clearTimeout(Console.password.timeout);
+
+  if (json.status == 200) {
+    Loader.spinner.add('loading/try');
+    SimpleChat.get(SimpleChat.serverId(), 'console/try');
+  }
+  else
+    Console.password.setError(json.status);
+};
+
+
+/*
  * Форма изменения пароля.
  */
 Console.password = {
+  timeout: null, // Таймаут отображения спиннера.
 
   /*
    * Загрузка шаблона страницы.
    */
   load: function() {
-    console.log('load');
     $.ajax({
       url: 'password.html',
       isLocal: true,
@@ -32,10 +50,14 @@ Console.password = {
     $('#save').on('click.password', function(event) {
       event.preventDefault();
 
-      SimpleChat.request(SimpleChat.serverId(), 'put', 'storage/password', {'value':ConsoleView.toPassword($('#new-password').val())});
+      var error = Console.password.verify();
+      if (error !== '') {
+        Console.password.setError(error);
+        return;
+      }
 
-      Loader.spinner.add('loading/try');
-      SimpleChat.get(SimpleChat.serverId(), 'console/try');
+      Console.password.timeout = setTimeout(function() { $('#password-spinner').css('display', 'inline-block'); }, 400);
+      SimpleChat.request(SimpleChat.serverId(), 'put', 'storage/password', {'value':ConsoleView.toPassword($('#new-password').val())});
     });
 
     $('#cancel').on('click.password', function(event) {
@@ -44,6 +66,48 @@ Console.password = {
       Loader.spinner.add('loading/try');
       SimpleChat.get(SimpleChat.serverId(), 'console/try');
     });
+  },
+
+
+  /*
+   * Проверка введённых данных.
+   */
+  verify: function() {
+    var password = $('#new-password').val();
+    if (password !== $('#confirm-new-password').val())
+      return 'console_password_mismatch';
+
+    var size = password.length;
+    if (size == 0)
+      return 'console_empty_password';
+
+    if (size < 8)
+      return 'console_password_short';
+
+    return '';
+  },
+
+
+  /*
+   * Установка ошибки.
+   *
+   * \param err числовой код ошибки или строка для динамического перевода.
+   */
+  setError: function(err) {
+    $('#new-password-group').addClass('error');
+    $('#confirm-new-password-group').addClass('error');
+    var error = $('#error');
+
+    if (typeof err === 'number') {
+      error.removeAttr('data-tr');
+      error.html('<strong>' + err + '</strong> ' + SimpleChat.statusText(err));
+    }
+    else {
+      error.attr('data-tr', err);
+      error.html(Utils.tr(err));
+    }
+
+    error.fadeIn('fast');
   },
 
 

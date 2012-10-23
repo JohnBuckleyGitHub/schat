@@ -62,5 +62,15 @@
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../../ui/ConsoleView.cpp" line="50"/>
+        <source>The passwords you entered don&apos;t match</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/ConsoleView.cpp" line="51"/>
+        <source>Password is too short</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

@@ -13,31 +13,45 @@ Console.feed = {
    */
   read: function(json) {
     if (json.type == 'reply') {
-      var path = json.name.split('/');
-      if (path.length < 2 || path[0] != 'console')
+      if (!json.path.length)
         return;
 
-      var key = path[1];
-      if (key == 'try')
-        key = 'tryAccess';
+      var path = json.path;
+      if (path == 'try')
+        path = 'tryAccess';
 
-      if (json.cmd == 'get' && Console.feed.get.hasOwnProperty(key))
-        Console.feed.get[key](json);
+      try {
+        Console.feed[json.feed][json.cmd][path](json);
+      }
+      catch (e) {}
     }
   },
 
 
   /*
-   * Чтение ответов на "get" запросы.
+   * Чтение ответов на "get", "put", "post" и "delete" запросы.
    */
-  get: {}
+  console: {
+    get: {},
+    put: {},
+    post: {},
+    del: {}
+  },
+
+
+  storage: {
+    get: {},
+    put: {},
+    post: {},
+    del: {}
+  }
 };
 
 
 /*
  * Чтение ответа на "get" запрос "console/try".
  */
-Console.feed.get.tryAccess = function(json) {
+Console.feed.console.get.tryAccess = function(json) {
   Loader.spinner.remove('loading/try');
   var page = $('#page');
 
