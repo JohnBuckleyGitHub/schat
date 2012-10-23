@@ -47,6 +47,8 @@ protected:
     else if (key == LS("confirm_new_password")) return tr("Confirm new password:");
     else if (key == LS("save"))                 return tr("Save");
     else if (key == LS("cancel"))               return tr("Cancel");
+    else if (key == LS("password_mismatch"))    return tr("The passwords you entered don't match");
+    else if (key == LS("password_short"))       return tr("Password is too short");
     return QString();
   }
 };

@@ -17,7 +17,9 @@
  */
 
 #include "Account.h"
+#include "Ch.h"
 #include "Channel.h"
+#include "DataBase.h"
 #include "DateTime.h"
 #include "feeds/NodeConsoleFeed.h"
 #include "net/packets/Notice.h"
@@ -56,10 +58,16 @@ Feed* NodeConsoleFeed::load(const QString &name, const QVariantMap &data)
  */
 FeedReply NodeConsoleFeed::get(const QString &path, const QVariantMap &json, Channel *channel) const
 {
+  if (path.isEmpty())
+    return Notice::BadRequest;
+
+  if (path == LS("head"))
+    return FeedReply(Notice::OK, head().get(channel), head().date());
+
   if (path == LS("login"))
     return login(json, channel);
   else if (path == LS("try"))
-    return tryAccess(json, channel);
+    return tryAccess(channel);
 
   return FeedReply(Notice::NotFound);
 }
@@ -93,6 +101,9 @@ FeedReply NodeConsoleFeed::login(const QVariantMap &json, Channel *user) const
     return FeedReply(Notice::Forbidden);
 
   user->account()->groups.add(LS("master"));
+  user->account()->setDate(DateTime::utc());
+  DataBase::add(Ch::channel(user->id(), SimpleID::typeOf(user->id()), false));
+
   return FeedReply(Notice::OK);
 }
 
@@ -100,9 +111,8 @@ FeedReply NodeConsoleFeed::login(const QVariantMap &json, Channel *user) const
 /*!
  * Проверка привилегий пользователя, только пользователь в группе \b master имеет права доступа к фиду.
  */
-FeedReply NodeConsoleFeed::tryAccess(const QVariantMap &json, Channel *user) const
+FeedReply NodeConsoleFeed::tryAccess(Channel *user) const
 {
-  Q_UNUSED(json)
   if (!master(user))
     return FeedReply(Notice::Forbidden);
 

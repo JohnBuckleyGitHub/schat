@@ -1,7 +1,7 @@
 /*
  * Чтение ответа на "get" запрос "console/login".
  */
-Console.feed.get.login = function(json) {
+Console.feed.console.get.login = function(json) {
   if (Console.current != 'login')
     return;
 
