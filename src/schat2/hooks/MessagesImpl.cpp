@@ -59,7 +59,7 @@ int MessagesImpl::read(MessagePacket packet)
   if (referring(message))
     message.data()[LS("Status")] = LS("referring");
 
-  TabWidget::add(message);
+  TabWidget::add(message, !(packet->sender() == ChatClient::id() && m_undelivered.contains(packet->internalId())));
 
   if (packet->status() == Notice::Found || packet->status() == Notice::Read)
     return 1;

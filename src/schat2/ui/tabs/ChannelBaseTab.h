@@ -56,7 +56,6 @@ private slots:
   void hidden();
   void notify(const Notify &notify);
   void offline();
-  void part(const QByteArray &channel, const QByteArray &user);
 
 protected:
   ClientChannel c();
