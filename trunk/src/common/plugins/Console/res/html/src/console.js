@@ -55,10 +55,13 @@ Console.feed.console.get.tryAccess = function(json) {
   Loader.spinner.remove('loading/try');
   var page = $('#page');
 
-  if (json.status == 402) {
+  if (json.status == 200) {
+    Console.home.load();
+  }
+  else if (json.status == 402) {
     Console.login.load();
   }
-  if (json.status == 403) {
+  else if (json.status == 403) {
     page.html('<div class="alert alert-error" data-tr="console_bad_server">' + Utils.tr('console_bad_server') + '</div>');
   }
   else {

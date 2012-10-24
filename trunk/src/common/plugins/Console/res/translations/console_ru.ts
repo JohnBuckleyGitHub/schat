@@ -72,5 +72,15 @@
         <source>Password is too short</source>
         <translation>Пароль слишком короткий</translation>
     </message>
+    <message>
+        <location filename="../../ui/ConsoleView.cpp" line="52"/>
+        <source>Home</source>
+        <translation>Главная</translation>
+    </message>
+    <message>
+        <location filename="../../ui/ConsoleView.cpp" line="53"/>
+        <source>Logout</source>
+        <translation>Выйти</translation>
+    </message>
 </context>
 </TS>

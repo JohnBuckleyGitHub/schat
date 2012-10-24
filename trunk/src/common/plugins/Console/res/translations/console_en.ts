@@ -72,5 +72,15 @@
         <source>Password is too short</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../../ui/ConsoleView.cpp" line="52"/>
+        <source>Home</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/ConsoleView.cpp" line="53"/>
+        <source>Logout</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

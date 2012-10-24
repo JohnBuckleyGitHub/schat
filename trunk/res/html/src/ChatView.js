@@ -176,10 +176,9 @@ var Pages = {
 
 
 Pages.onInfo.push(function() {
-  try {
-    $("#channel-name").html(Messages.nameTemplate(JSON.parse(SimpleChat.channel(Settings.id))));
-  }
-  catch (e) {}
+  var channel = SimpleChat.channel(Settings.getId());
+  if (channel !== null)
+    $('#channel-name').html(Messages.nameTemplate(channel));
 });
 
 
