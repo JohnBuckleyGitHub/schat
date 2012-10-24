@@ -94,10 +94,12 @@ var Hosts = {
     if (SimpleChat.isOnline())
       Loader.spinner.add('loading/hosts');
 
-    $("#info-content > h1").html(Messages.nameTemplate(JSON.parse(SimpleChat.channel(Settings.id))));
-    Utils.TR("my_computers");
+    var channel = SimpleChat.channel(Settings.getId());
+    if (channel !== null)
+      $('#info-content > h1').html(Messages.nameTemplate(channel));
 
-    Hosts.read(SimpleChat.feed("hosts", 1));
+    Utils.TR('my_computers');
+    Hosts.read(SimpleChat.feed('hosts', 1));
   },
 
 

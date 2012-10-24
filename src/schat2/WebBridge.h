@@ -39,7 +39,6 @@ public:
 
   Q_INVOKABLE bool isOnline() const;
   Q_INVOKABLE QString bytesToHuman(qint64 size, bool html = true) const;
-  Q_INVOKABLE QString channel(const QString &id) const;
   Q_INVOKABLE QString day(const QString &day) const;
   Q_INVOKABLE QString id() const;
   Q_INVOKABLE QString randomId() const;
@@ -50,6 +49,7 @@ public:
   Q_INVOKABLE QString toBase32(const QString &text);
   Q_INVOKABLE QString translate(const QString &key) const;
   Q_INVOKABLE QStringList fields() const;
+  Q_INVOKABLE QVariant channel(const QString &id) const;
   Q_INVOKABLE QVariant encryption() const;
   Q_INVOKABLE QVariant feed(const QString &id, const QString &name, int options = 0) const;
   Q_INVOKABLE QVariant feed(const QString &name, int options = 0) const;

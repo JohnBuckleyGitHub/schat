@@ -49,6 +49,8 @@ protected:
     else if (key == LS("cancel"))               return tr("Cancel");
     else if (key == LS("password_mismatch"))    return tr("The passwords you entered don't match");
     else if (key == LS("password_short"))       return tr("Password is too short");
+    else if (key == LS("home"))                 return tr("Home");
+    else if (key == LS("logout"))               return tr("Logout");
     return QString();
   }
 };

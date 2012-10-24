@@ -146,9 +146,13 @@ QString WebBridge::bytesToHuman(qint64 size, bool html) const
 }
 
 
-QString WebBridge::channel(const QString &id) const
+QVariant WebBridge::channel(const QString &id) const
 {
-  return JSON::generate(channel(SimpleID::decode(id.toLatin1())));
+  QVariantMap data = channel(SimpleID::decode(id.toLatin1()));
+  if (data.isEmpty())
+    return false;
+
+  return data;
 }
 
 

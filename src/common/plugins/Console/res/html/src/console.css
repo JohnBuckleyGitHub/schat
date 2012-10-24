@@ -61,6 +61,23 @@ form, .control-group {
   padding: 2px 12px;
 }
 
+.navbar-static-top .navbar-inner {
+  padding: 0;
+}
+
+.navbar .brand {
+  margin: 0;
+  padding: 2px 0 0 8px;
+}
+
+.navbar .nav > li > a {
+  padding: 8px 10px;
+}
+
+.navbar .nav {
+  padding-left: 16px;
+}
+
 .icon-spinner {
   display: none;
 }
