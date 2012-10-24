@@ -25,6 +25,7 @@
 #include "ChatUrls.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
+#include "debugstream.h"
 #include "hooks/ChannelMenu.h"
 #include "JSON.h"
 #include "messages/ServiceMessage.h"
@@ -57,7 +58,6 @@ ChannelBaseTab::ChannelBaseTab(ClientChannel channel, const QString &type, TabWi
   setIcon(channelIcon());
 
   connect(ChatClient::channels(), SIGNAL(channel(const ChannelInfo &)), SLOT(channel(const ChannelInfo &)));
-  connect(ChatClient::channels(), SIGNAL(part(const QByteArray &, const QByteArray &)), SLOT(part(const QByteArray &, const QByteArray &)));
   connect(ChatClient::i(), SIGNAL(offline()), SLOT(offline()));
   connect(ChatAlerts::i(), SIGNAL(countChanged(int,int,QByteArray)), SLOT(countChanged(int,int,QByteArray)));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
@@ -68,6 +68,8 @@ ChannelBaseTab::ChannelBaseTab(ClientChannel channel, const QString &type, TabWi
 
 ChannelBaseTab::~ChannelBaseTab()
 {
+  SCHAT_DEBUG_STREAM(this << "~ChannelBaseTab()" << text())
+
   ChatClient::channels()->part(id());
 }
 
@@ -176,22 +178,6 @@ void ChannelBaseTab::offline()
 {
   setOnline(false);
   add(ServiceMessage::quit(ChatClient::id()));
-}
-
-
-void ChannelBaseTab::part(const QByteArray &channel, const QByteArray &user)
-{
-  if (id() != channel)
-    return;
-
-  if (ChatClient::id() != user)
-    return;
-
-  int index = m_tabs->indexOf(this);
-  if (index == -1)
-    return;
-
-  m_tabs->closeTab(index);
 }
 
 
