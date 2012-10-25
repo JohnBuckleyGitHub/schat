@@ -96,10 +96,10 @@ FeedReply NodeFeeds::add()
 {
   FeedReply reply(Notice::OK);
   const QString &name = m_packet->text();
-  if (name.contains(LC('*')) || name.contains(LC('/')))
+  if (name.contains(LC('*')) || name.contains(LC('/')) || name.contains(LC(' ')))
     return Notice::BadRequest;
 
-  FeedPtr feed        = m_channel->feed(name, false);
+  FeedPtr feed = m_channel->feed(name, false);
   if (!feed) {
     feed = m_channel->feed(name, true, false);
     if (!feed)
