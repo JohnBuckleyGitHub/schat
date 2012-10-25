@@ -53,6 +53,44 @@ Feed* NodeConsoleFeed::load(const QString &name, const QVariantMap &data)
 }
 
 
+FeedReply NodeConsoleFeed::del(const QString &path, Channel *channel)
+{
+  if (path.isEmpty() || !channel)
+    return Notice::BadRequest;
+
+  if (path == LS("me")) {
+    if (!master(channel))
+      return Notice::NotModified;
+
+    channel->account()->groups.remove(LS("master"));
+    channel->account()->setDate(DateTime::utc());
+    DataBase::add(Ch::channel(channel->id(), SimpleID::typeOf(channel->id()), false));
+
+    return FeedReply(Notice::OK, DateTime::utc());
+  }
+  else if (path.size() == 34) {
+    QByteArray id = SimpleID::decode(path);
+    if (SimpleID::typeOf(id) != SimpleID::UserId)
+      return Notice::BadRequest;
+
+    ChatChannel user = Ch::channel(id, SimpleID::UserId);
+    if (!user)
+      return Notice::BadRequest;
+
+    if (!user->account()->groups.contains(LS("master")))
+      return Notice::NotModified;
+
+    user->account()->groups.remove(LS("master"));
+    user->account()->setDate(DateTime::utc());
+    DataBase::add(user);
+
+    return FeedReply(Notice::OK, DateTime::utc());
+  }
+
+  return Notice::NotFound;
+}
+
+
 /*!
  * Обработка \b get запросов.
  */
@@ -69,7 +107,7 @@ FeedReply NodeConsoleFeed::get(const QString &path, const QVariantMap &json, Cha
   else if (path == LS("try"))
     return tryAccess(channel);
 
-  return FeedReply(Notice::NotFound);
+  return Notice::NotFound;
 }
 
 
@@ -91,20 +129,20 @@ bool NodeConsoleFeed::master(Channel *user) const
 FeedReply NodeConsoleFeed::login(const QVariantMap &json, Channel *user) const
 {
   if (!user)
-    return FeedReply(Notice::BadRequest);
+    return Notice::BadRequest;
 
   QString password = json.value(LS("password")).toString();
   if (password.isEmpty() || SimpleID::typeOf(SimpleID::decode(password)) != SimpleID::PasswordId)
-    return FeedReply(Notice::BadRequest);
+    return Notice::BadRequest;
 
   if (Storage::value(LS("password")) != password)
-    return FeedReply(Notice::Forbidden);
+    return Notice::Forbidden;
 
   user->account()->groups.add(LS("master"));
   user->account()->setDate(DateTime::utc());
   DataBase::add(Ch::channel(user->id(), SimpleID::typeOf(user->id()), false));
 
-  return FeedReply(Notice::OK);
+  return FeedReply(Notice::OK, DateTime::utc());
 }
 
 
@@ -114,7 +152,7 @@ FeedReply NodeConsoleFeed::login(const QVariantMap &json, Channel *user) const
 FeedReply NodeConsoleFeed::tryAccess(Channel *user) const
 {
   if (!master(user))
-    return FeedReply(Notice::Forbidden);
+    return Notice::Forbidden;
 
-  return FeedReply(Notice::OK);
+  return FeedReply(Notice::OK, DateTime::utc());
 }

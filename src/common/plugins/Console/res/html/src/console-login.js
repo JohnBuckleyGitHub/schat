@@ -9,9 +9,10 @@ Console.feed.console.get.login = function(json) {
   clearTimeout(Console.login.timeout);
 
   if (json.status == 200) {
-    if ($('#password').val() == 'admin') {
+    if ($('#password').val() == 'admin')
       Console.password.load();
-    }
+    else
+      Console.home.load();
   }
   else if (json.status == 402)
     Console.login.setError('console_incorect_password');
