@@ -8,7 +8,7 @@ Console.home = {
       url: 'home.html',
       isLocal: true,
       dataType: 'html',
-      success: this.loaded
+      success: Console.home.loaded
     });
   },
 
@@ -23,10 +23,29 @@ Console.home = {
     Utils.retranslate();
 
     var channel = SimpleChat.channel(SimpleChat.serverId());
-    if (channel !== null) {
+    if (channel !== null)
       $('#server-name').html(channel.Name);
-      console.log(channel);
-    }
-//      $('#server-name').html(Messages.nameTemplate(channel));
+
+    $('#nav-logout').on('click.home', function(event) {
+      event.preventDefault();
+
+      Loader.spinner.add('loading/logout');
+      SimpleChat.request(SimpleChat.serverId(), 'delete', 'console/me');
+    });
   }
+};
+
+
+/*
+ * Чтение ответа на "delete" запрос "console/me".
+ */
+Console.feed.console.del.me = function(json) {
+  console.log(json);
+
+  if (json.status == 200) {
+    Loader.spinner.add('loading/try');
+    SimpleChat.get(SimpleChat.serverId(), 'console/try');
+  }
+
+  Loader.spinner.remove('loading/logout');
 };

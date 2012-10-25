@@ -20,8 +20,12 @@ Console.feed = {
       if (path == 'try')
         path = 'tryAccess';
 
+      var cmd = json.cmd;
+      if (cmd == 'delete')
+        cmd = 'del';
+
       try {
-        Console.feed[json.feed][json.cmd][path](json);
+        Console.feed[json.feed][cmd][path](json);
       }
       catch (e) {}
     }
