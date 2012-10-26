@@ -19,6 +19,7 @@
 #include <QAbstractTextDocumentLayout>
 #include <QAction>
 #include <QApplication>
+#include <QClipboard>
 #include <QFile>
 #include <QKeyEvent>
 #include <QMenu>
@@ -215,6 +216,11 @@ void InputWidget::keyPressEvent(QKeyEvent *event)
 
   if (event->matches(QKeySequence::Paste)) {
     paste();
+    return;
+  }
+
+  if (modifiers == (Qt::ShiftModifier | Qt::ControlModifier) && key == Qt::Key_V) {
+    insertPlainText(QApplication::clipboard()->text());
     return;
   }
 

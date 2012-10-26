@@ -6,7 +6,7 @@ cd plugins
 for %%I in (*.dll) do SignTool.exe sign /f %SCHAT_SIGN_FILE% /p %SCHAT_SIGN_PASSWORD% /t http://timestamp.comodoca.com/authenticode %%~fI
 
 cd ../..
-nmake install
+nmake install /NOLOGO
 if ERRORLEVEL 1 exit 1
 
 cd os/win32
