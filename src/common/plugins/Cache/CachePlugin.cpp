@@ -113,8 +113,12 @@ void Cache::load(ClientChannel channel)
     channel->setId(ChatClient::serverId());
 
   ClientChannel exist = CacheDB::channel(channel->id(), false);
-  if (!exist)
+  if (!exist) {
+    if (id.isEmpty())
+      channel->resetId();
+
     return;
+  }
 
   channel->setData(exist->data());
   FeedStorage::load(channel.data());
