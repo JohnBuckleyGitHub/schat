@@ -203,9 +203,11 @@ void ClientChannels::notice(int type)
 
   m_packet = &packet;
   QString cmd = m_packet->command();
-  SCHAT_DEBUG_STREAM(this << "notice()" << cmd << m_packet->text() << m_packet->status() << Notice::status(m_packet->status()));
-  SCHAT_DEBUG_STREAM("JSON SIZE:" << m_packet->raw().size() << "bytes");
-  SCHAT_DEBUG_STREAM("JSON DATA:" << m_packet->raw());
+  SCHAT_DEBUG_STREAM(this << "notice()" << cmd << m_packet->text() << m_packet->status() << Notice::status(m_packet->status()) << SimpleID::encode(m_packet->channelId()));
+# if defined(SCHAT_DEBUG)
+  qDebug() << "             JSON SIZE:" << m_packet->raw().size() << "bytes";
+  qDebug() << "             JSON DATA:" << m_packet->raw();
+# endif
 
   if (cmd == LS("channel"))
     channel();

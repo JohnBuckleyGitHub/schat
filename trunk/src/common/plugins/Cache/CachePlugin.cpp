@@ -35,6 +35,7 @@
 #include "NetworkManager.h"
 #include "Path.h"
 #include "sglobal.h"
+#include "TalksCache.h"
 
 Cache::Cache(QObject *parent)
   : ChatPlugin(parent)
@@ -42,6 +43,7 @@ Cache::Cache(QObject *parent)
   new CacheDB(this);
   new Hooks::CacheChannels(this);
   new CacheFeedStorage(this);
+  new TalksCache(this);
   open();
 
   connect(ChatClient::i(), SIGNAL(online()), SLOT(open()));

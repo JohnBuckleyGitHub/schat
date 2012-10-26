@@ -26,12 +26,14 @@ HEADERS  = \
    CachePlugin.h \
    CachePlugin_p.h \
    feeds/CacheFeedStorage.h \
+   TalksCache.h \
 
 SOURCES  = \
    CacheChannels.cpp \
    CacheDB.cpp \
    CachePlugin.cpp \
    feeds/CacheFeedStorage.cpp \
+   TalksCache.cpp \
 
 RESOURCES += Cache.qrc
 

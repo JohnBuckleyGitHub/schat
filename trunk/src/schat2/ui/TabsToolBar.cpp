@@ -41,11 +41,8 @@ TabsToolBar::TabsToolBar(QWidget *parent)
   m_button->setToolTip(tr("Menu"));
   m_button->setMenu(m_menu);
 
-  m_channels = new QMenu(tr("Channels"), this);
-  m_channels->setIcon(SCHAT_ICON(Channel));
-
   m_talks = new QMenu(tr("Talks"), this);
-  m_talks->setIcon(SCHAT_ICON(Users));
+  m_talks->setIcon(SCHAT_ICON(Channel));
 
   addWidget(m_button);
 
@@ -66,7 +63,6 @@ void TabsToolBar::changeEvent(QEvent *event)
 void TabsToolBar::hideMenu()
 {
   m_menu->clear();
-  m_channels->clear();
   m_talks->clear();
 }
 
@@ -81,17 +77,10 @@ void TabsToolBar::showMenu()
 
   for (int i = 0; i < tabs->count(); ++i) {
     AbstractTab *tab = tabs->widget(i);
-    if (tab->type() == LS("channel"))
-      channels.append(tab->action());
-    else if (tab->type() == LS("talk"))
+    if (tab->type() == LS("channel") || tab->type() == LS("talk"))
       talks.append(tab->action());
 
     tab->action()->setChecked(currentTab == tab);
-  }
-
-  if (!channels.isEmpty()) {
-    m_channels->addActions(channels);
-    m_menu->addMenu(m_channels);
   }
 
   if (!talks.isEmpty()) {
@@ -108,6 +97,5 @@ void TabsToolBar::showMenu()
 void TabsToolBar::retranslateUi()
 {
   m_button->setToolTip(tr("Menu"));
-  m_channels->setTitle(tr("Channels"));
   m_talks->setTitle(tr("Talks"));
 }
