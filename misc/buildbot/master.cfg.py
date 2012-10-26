@@ -122,7 +122,7 @@ def MakeWinBuilder():
     haltOnFailure = True,
   ))
   f.addStep(Compile(
-    command       = ['jom', '-j8'],
+    command       = ['jom', '-j3', '/NOLOGO'],
     haltOnFailure = True,
   ))
   f.addStep(ShellCommand(
