@@ -143,9 +143,14 @@ void TalksCache::triggered(QAction *action)
   if (action == m_clear) {
     m_channels.clear();
     m_settings->setValue(LS("RecentTalks"), QStringList());
+    return;
   }
-  else
-    TabWidget::i()->channelTab(action->data().toByteArray());
+
+  QByteArray id = action->data().toByteArray();
+  TabWidget::i()->channelTab(id);
+
+  if (SimpleID::typeOf(id) == SimpleID::ChannelId)
+    ChatClient::channels()->join(id);
 }
 
 

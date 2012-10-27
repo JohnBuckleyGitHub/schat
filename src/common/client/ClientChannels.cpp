@@ -230,9 +230,16 @@ void ClientChannels::notice(int type)
 
 void ClientChannels::restore()
 {
-  foreach (QByteArray id, m_joined) {
+  QList<QByteArray> channels = m_channels.keys();
+  m_client->lock();
+
+  foreach (const QByteArray &id, m_joined) {
+    channels.removeAll(id);
     join(id);
   }
+
+  info(channels);
+  m_client->unlock();
 }
 
 
