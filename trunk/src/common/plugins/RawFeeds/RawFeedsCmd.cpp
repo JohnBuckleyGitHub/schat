@@ -68,12 +68,7 @@ bool RawFeedsCmd::command(const QByteArray &dest, const ClientCmd &cmd)
     if (!body.isValid())
       return true;
 
-    if (body.command() == LS("revert")) {
-      revert(dest, body);
-    }
-    else
-      request(dest, body);
-
+    request(dest, body);
     return true;
   }
 
@@ -120,17 +115,6 @@ void RawFeedsCmd::request(const QByteArray &dest, const ClientCmd &cmd)
 
   QVariantMap json = JSON::parse(body.body().toUtf8()).toMap();
   ClientFeeds::request(ChatClient::channels()->get(dest), cmd.command(), body.command(), json);
-}
-
-
-void RawFeedsCmd::revert(const QByteArray &dest, const ClientCmd &cmd)
-{
-  ClientCmd body(cmd.body());
-  if (body.command().isEmpty())
-    return;
-
-  qint64 rev = body.body().toLongLong();
-  ClientFeeds::revert(dest, body.command(), rev);
 }
 
 } // namespace Hooks

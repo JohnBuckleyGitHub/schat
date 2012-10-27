@@ -43,7 +43,6 @@ public:
   static bool put(const QByteArray &id, const QString &name, const QVariant &value = QVariant(), int options = 0);
   static bool request(ClientChannel channel, const QString &command, const QString &name, const QVariantMap &json = QVariantMap());
   static bool request(const QByteArray &id, const QString &command, const QString &name, const QVariantMap &json = QVariantMap());
-  static bool revert(const QByteArray &id, const QString &name, qint64 rev);
 
 private slots:
   void notice(int type);
