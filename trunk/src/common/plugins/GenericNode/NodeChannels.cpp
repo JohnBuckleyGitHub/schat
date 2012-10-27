@@ -19,12 +19,12 @@
 #include "Ch.h"
 #include "cores/Core.h"
 #include "DataBase.h"
-#include "debugstream.h"
 #include "events.h"
 #include "net/PacketReader.h"
 #include "net/packets/ChannelNotice.h"
 #include "net/packets/Notice.h"
 #include "NodeChannels.h"
+#include "NodeLog.h"
 #include "Normalize.h"
 #include "sglobal.h"
 #include "Sockets.h"
@@ -50,9 +50,9 @@ bool NodeChannels::read(PacketReader *reader)
   m_packet = &packet;
 
   QString cmd = m_packet->command();
-  qDebug() << "NodeChannels::read" << Core::socket() << cmd << m_packet->text();
+  int status  = Notice::NotImplemented;
 
-  int status = Notice::NotImplemented;
+  SCHAT_LOG_DEBUG_STR("[GenericNode/Channels] read channel request, socket:" + QByteArray::number(Core::socket()) + ", cmd:" + cmd.toUtf8() + ", text:" + m_packet->text().toUtf8() + ", user:" + m_user->name().toUtf8() + ", id:" + SimpleID::encode(m_user->id()))
 
   if (cmd == LS("info"))
     return info();
@@ -122,11 +122,18 @@ bool NodeChannels::info()
   if (m_packet->channels().isEmpty())
     return false;
 
+  SCHAT_LOG_DEBUG_STR("[GenericNode/Channels] info, count:" + QByteArray::number(m_packet->channels().size()))
+
   QList<QByteArray> packets;
   foreach (QByteArray id, m_packet->channels()) {
     ChatChannel channel = Ch::channel(id, SimpleID::typeOf(id));
-    if (channel)
+    if (channel) {
+      SCHAT_LOG_DEBUG_STR("[GenericNode/Channels] info, id:" + SimpleID::encode(channel->id()) + ", name:" + channel->name().toUtf8())
+
+      channel->channels() += m_user->id();
+      m_user->channels()  += channel->id();
       packets += ChannelNotice::channel(channel, m_user, LS("info"))->data(Core::stream());
+    }
   }
 
   if (packets.isEmpty())
@@ -156,7 +163,8 @@ bool NodeChannels::join()
   if (!channel)
     return false;
 
-  qDebug() << "                               " << channel->name() << SimpleID::encode(channel->id());
+  SCHAT_LOG_DEBUG_STR("[GenericNode/Channels] join, id:" + SimpleID::encode(channel->id()) + ", name:" + channel->name().toUtf8())
+
   bool notify = !channel->channels().all().contains(m_user->id());
   channel->channels() += m_user->id();
   m_user->channels()  += channel->id();

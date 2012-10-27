@@ -100,6 +100,11 @@ bool ClientChannels::join(const QByteArray &id)
   if (!Channel::isCompatibleId(id))
     return false;
 
+  if (m_client->clientState() != SimpleClient::ClientOnline) {
+    m_joined.append(id);
+    return false;
+  }
+
   return m_client->send(ChannelNotice::request(ChatClient::id(), id, LS("join")));
 }
 
@@ -238,6 +243,7 @@ void ClientChannels::restore()
     join(id);
   }
 
+  channels.removeAll(m_client->channelId());
   info(channels);
   m_client->unlock();
 }
