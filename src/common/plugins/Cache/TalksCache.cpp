@@ -17,11 +17,13 @@
  */
 
 #include "ChatCore.h"
+#include "ChatNotify.h"
 #include "ChatSettings.h"
+#include "client/ChatClient.h"
+#include "client/ClientChannels.h"
+#include "net/SimpleID.h"
 #include "sglobal.h"
 #include "TalksCache.h"
-#include "ChatNotify.h"
-#include "net/SimpleID.h"
 
 TalksCache::TalksCache(QObject *parent)
   : QObject(parent)
@@ -31,6 +33,8 @@ TalksCache::TalksCache(QObject *parent)
   m_settings->setDefault(LS("MaxRecentTalks"), 20);
 
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+  connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
+  connect(m_settings, SIGNAL(synced()), SLOT(synced()));
 }
 
 
@@ -44,4 +48,50 @@ void TalksCache::notify(const Notify &notify)
 
     m_settings->setValue(LS("RecentTalks"), recent);
   }
+}
+
+
+void TalksCache::settingsChanged(const QString &key, const QVariant &value)
+{
+  Q_UNUSED(value)
+
+  if (key == LS("RecentTalks") || key == LS("MaxRecentTalks"))
+    m_channels = channels();
+}
+
+
+void TalksCache::synced()
+{
+  m_channels = channels();
+  ClientChannels *channels = ChatClient::channels();
+  QList<QByteArray> unsynced;
+
+  foreach (const QByteArray &id, m_channels) {
+    ClientChannel channel = channels->get(id);
+    if (!channel || !channel->isSynced())
+      unsynced.append(id);
+  }
+
+  channels->info(unsynced);
+}
+
+
+/*!
+ * Получение списка каналов.
+ */
+QList<QByteArray> TalksCache::channels() const
+{
+  QStringList recents = m_settings->value(LS("RecentTalks")).toStringList().mid(0, m_settings->value(LS("MaxRecentTalks")).toInt());
+  int type = 0;
+  QList<QByteArray> list;
+
+  foreach (const QString &text, recents) {
+    QByteArray id = SimpleID::decode(text);
+    type = SimpleID::typeOf(id);
+
+    if (type == SimpleID::ChannelId || type == SimpleID::UserId)
+      list.append(id);
+  }
+
+  return list;
 }

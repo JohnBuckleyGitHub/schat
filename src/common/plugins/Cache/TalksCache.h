@@ -33,9 +33,14 @@ public:
 
 private slots:
   void notify(const Notify &notify);
+  void settingsChanged(const QString &key, const QVariant &value);
+  void synced();
 
 private:
-  ChatSettings *m_settings; ///< Настройки.
+  QList<QByteArray> channels() const;
+
+  ChatSettings *m_settings;     ///< Настройки.
+  QList<QByteArray> m_channels; ///< Каналы недавних разговоров.
 };
 
 #endif /* TALKSCACHE_H_ */

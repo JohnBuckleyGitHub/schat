@@ -38,14 +38,19 @@ public:
   void setLocalDefault(const QString &key, const QVariant &value);
   void setValue(const QString &key, const QVariant &value, bool notify = true, bool local = false);
 
+signals:
+  void synced();
+
 private slots:
   void notify(const Notify &notify);
+  void offline();
   void ready();
 
 private:
   void set();
   void set(const QString &key, const QVariant &value);
 
+  bool m_synced;         ///< \b true если настройки сихронизированы с сервером.
   QSettings *m_settings; ///< Альтернативные настройки по умолчанию.
   QStringList m_local;   ///< Список ключей локальных настроек.
 };

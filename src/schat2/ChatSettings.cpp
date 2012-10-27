@@ -28,6 +28,7 @@
 
 ChatSettings::ChatSettings(const QString &fileName, const QString &defaultFile, QObject *parent)
   : Settings(fileName, parent)
+  , m_synced(false)
   , m_settings(0)
 {
   if (QFile::exists(defaultFile)) {
@@ -66,6 +67,7 @@ QVariant ChatSettings::setDefaultAndRead(const QString &key, const QVariant &val
 void ChatSettings::init()
 {
   connect(ChatClient::i(), SIGNAL(ready()), SLOT(ready()));
+  connect(ChatClient::i(), SIGNAL(offline()), SLOT(offline()));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 }
 
@@ -112,6 +114,12 @@ void ChatSettings::notify(const Notify &notify)
 }
 
 
+void ChatSettings::offline()
+{
+  m_synced = false;
+}
+
+
 void ChatSettings::ready()
 {
   FeedPtr feed = ChatClient::channel()->feed(LS("settings"), false);
@@ -119,6 +127,7 @@ void ChatSettings::ready()
     ChatClient::io()->lock();
     ClientFeeds::post(ChatClient::id(), LS("settings"));
     ClientFeeds::put(ChatClient::id(), LS("settings/head/mask"), 0700);
+    ClientFeeds::request(ChatClient::id(), LS("get"), LS("settings"));
     ChatClient::io()->unlock();
   }
 }
@@ -138,6 +147,11 @@ void ChatSettings::set()
   foreach (QString key, keys) {
     if (!m_local.contains(key))
       Settings::setValue(key, feed->data().value(key));
+  }
+
+  if (ChatClient::state() == ChatClient::Online && !m_synced) {
+    m_synced = true;
+    emit synced();
   }
 }
 

@@ -102,16 +102,6 @@ bool ClientFeeds::request(const QByteArray &id, const QString &command, const QS
 }
 
 
-bool ClientFeeds::revert(const QByteArray &id, const QString &name, qint64 rev)
-{
-  QVariantMap json;
-  if (rev > 0)
-    json[LS("rev")] = rev;
-
-  return request(id, LS("revert"), name, json);
-}
-
-
 void ClientFeeds::notice(int type)
 {
   if (type != Notice::FeedType)
