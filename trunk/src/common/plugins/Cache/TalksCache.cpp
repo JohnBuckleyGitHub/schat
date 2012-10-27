@@ -16,6 +16,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QTimer>
+#include <QMenu>
+
 #include "ChatCore.h"
 #include "ChatNotify.h"
 #include "ChatSettings.h"
@@ -24,10 +27,14 @@
 #include "net/SimpleID.h"
 #include "sglobal.h"
 #include "TalksCache.h"
+#include "ui/ChatIcons.h"
+#include "ui/TabsToolBar.h"
+#include "ui/TabWidget.h"
 
 TalksCache::TalksCache(QObject *parent)
   : QObject(parent)
   , m_settings(ChatCore::settings())
+  , m_menu(0)
 {
   m_settings->setDefault(LS("RecentTalks"),    QStringList());
   m_settings->setDefault(LS("MaxRecentTalks"), 20);
@@ -35,6 +42,8 @@ TalksCache::TalksCache(QObject *parent)
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
   connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
   connect(m_settings, SIGNAL(synced()), SLOT(synced()));
+
+  QTimer::singleShot(0, this, SLOT(start()));
 }
 
 
@@ -60,6 +69,52 @@ void TalksCache::settingsChanged(const QString &key, const QVariant &value)
 }
 
 
+/*!
+ * Формирование меню со списком недавних разговоров.
+ */
+void TalksCache::showMenu(QMenu *menu, QAction *separator)
+{
+  if (m_channels.isEmpty())
+    return;
+
+  m_menu->clear();
+
+  ClientChannels *channels = ChatClient::channels();
+  TabWidget *tabs = TabWidget::i();
+
+  for (int i = 0; i < m_channels.size(); ++i) {
+    ClientChannel channel = channels->get(m_channels.at(i));
+    if (!channel)
+      continue;
+
+    if (tabs->channelTab(channel->id(), false, false))
+      continue;
+
+    QAction *action = m_menu->addAction(ChatIcons::icon(channel), channel->name());
+    action->setData(channel->id());
+  }
+
+  if (m_menu->isEmpty())
+    return;
+
+  menu->insertMenu(separator, m_menu);
+}
+
+
+void TalksCache::start()
+{
+  if (!TabWidget::i())
+    return;
+
+  TabsToolBar *toolBar = TabWidget::i()->toolBar();
+  m_menu = new QMenu(tr("Recent"), toolBar);
+  m_menu->setIcon(QIcon(LS(":/images/Cache/clock.png")));
+
+  connect(m_menu, SIGNAL(triggered(QAction*)), SLOT(triggered(QAction*)));
+  connect(toolBar, SIGNAL(showMenu(QMenu*,QAction*)), SLOT(showMenu(QMenu*,QAction*)));
+}
+
+
 void TalksCache::synced()
 {
   m_channels = channels();
@@ -73,6 +128,12 @@ void TalksCache::synced()
   }
 
   channels->info(unsynced);
+}
+
+
+void TalksCache::triggered(QAction *action)
+{
+  TabWidget::i()->channelTab(action->data().toByteArray());
 }
 
 

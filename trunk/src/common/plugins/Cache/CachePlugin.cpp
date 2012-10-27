@@ -36,6 +36,7 @@
 #include "Path.h"
 #include "sglobal.h"
 #include "TalksCache.h"
+#include "Translation.h"
 
 Cache::Cache(QObject *parent)
   : ChatPlugin(parent)
@@ -50,6 +51,7 @@ Cache::Cache(QObject *parent)
   connect(ChatClient::i(), SIGNAL(ready()), SLOT(ready()));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 
+  ChatCore::translation()->addOther(LS("cache"));
   loadCache();
 }
 

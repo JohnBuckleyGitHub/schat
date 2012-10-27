@@ -69,9 +69,7 @@ void TabsToolBar::hideMenu()
 
 void TabsToolBar::showMenu()
 {
-  QList<QAction *> channels;
   QList<QAction *> talks;
-
   TabWidget *tabs = TabWidget::i();
   AbstractTab *currentTab = tabs->widget(tabs->currentIndex());
 
@@ -88,9 +86,11 @@ void TabsToolBar::showMenu()
     m_menu->addMenu(m_talks);
   }
 
-  m_menu->addSeparator();
+  QAction *separator = m_menu->addSeparator();
   m_menu->addAction(tabs->serverTab()->action());
   tabs->serverTab()->action()->setChecked(currentTab == tabs->serverTab());
+
+  emit showMenu(m_menu, separator);
 }
 
 

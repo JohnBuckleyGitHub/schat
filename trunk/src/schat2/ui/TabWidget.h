@@ -58,6 +58,7 @@ public:
   ClientChannel channel(const QByteArray &id) const;
   inline ServerTab *serverTab() const            { return m_serverTab; }
   inline TabBar *tabBar() const                  { return m_tabBar; }
+  inline TabsToolBar *toolBar() const            { return m_tabsToolBar; }
   static TabWidget *i()                          { return m_self; }
 
   int showPage(AbstractTab *tab, bool current = true);

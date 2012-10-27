@@ -23,6 +23,8 @@
 
 class ChatSettings;
 class Notify;
+class QAction;
+class QMenu;
 
 class TalksCache : public QObject
 {
@@ -34,13 +36,17 @@ public:
 private slots:
   void notify(const Notify &notify);
   void settingsChanged(const QString &key, const QVariant &value);
+  void showMenu(QMenu *menu, QAction *separator);
+  void start();
   void synced();
+  void triggered(QAction *action);
 
 private:
   QList<QByteArray> channels() const;
 
   ChatSettings *m_settings;     ///< Настройки.
   QList<QByteArray> m_channels; ///< Каналы недавних разговоров.
+  QMenu *m_menu;                ///< Меню недавних разговоров.
 };
 
 #endif /* TALKSCACHE_H_ */

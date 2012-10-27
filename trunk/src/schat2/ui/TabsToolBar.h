@@ -21,15 +21,21 @@
 
 #include <QToolBar>
 
+#include "schat.h"
+
 class QMenu;
 class QToolButton;
 
-class TabsToolBar : public QToolBar
+class SCHAT_CORE_EXPORT TabsToolBar : public QToolBar
 {
   Q_OBJECT
 
 public:
   TabsToolBar(QWidget *parent = 0);
+  inline QMenu *menu() { return m_menu; }
+
+signals:
+  void showMenu(QMenu *menu, QAction *separator);
 
 protected:
   void changeEvent(QEvent *event);
