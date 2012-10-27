@@ -34,6 +34,7 @@
 TalksCache::TalksCache(QObject *parent)
   : QObject(parent)
   , m_settings(ChatCore::settings())
+  , m_clear(0)
   , m_menu(0)
 {
   m_settings->setDefault(LS("RecentTalks"),    QStringList());
@@ -50,12 +51,14 @@ TalksCache::TalksCache(QObject *parent)
 void TalksCache::notify(const Notify &notify)
 {
   if (notify.type() == Notify::ChannelTabClosed) {
-    QString id         = SimpleID::encode(notify.data().toByteArray());
-    QStringList recent = m_settings->value(LS("RecentTalks")).toStringList().mid(0, m_settings->value(LS("MaxRecentTalks")).toInt());
-    recent.removeAll(id);
-    recent.prepend(id);
-
-    m_settings->setValue(LS("RecentTalks"), recent);
+    QByteArray id = notify.data().toByteArray();
+    m_channels.removeAll(id);
+    m_channels.prepend(id);
+    m_settings->setValue(LS("RecentTalks"), save());
+  }
+  else if (notify.type() == Notify::Language && m_menu) {
+    m_menu->setTitle(tr("Recent"));
+    m_clear->setText(tr("Clear"));
   }
 }
 
@@ -63,7 +66,6 @@ void TalksCache::notify(const Notify &notify)
 void TalksCache::settingsChanged(const QString &key, const QVariant &value)
 {
   Q_UNUSED(value)
-
   if (key == LS("RecentTalks") || key == LS("MaxRecentTalks"))
     m_channels = channels();
 }
@@ -97,6 +99,8 @@ void TalksCache::showMenu(QMenu *menu, QAction *separator)
   if (m_menu->isEmpty())
     return;
 
+  m_menu->addSeparator();
+  m_menu->addAction(m_clear);
   menu->insertMenu(separator, m_menu);
 }
 
@@ -109,6 +113,9 @@ void TalksCache::start()
   TabsToolBar *toolBar = TabWidget::i()->toolBar();
   m_menu = new QMenu(tr("Recent"), toolBar);
   m_menu->setIcon(QIcon(LS(":/images/Cache/clock.png")));
+  m_clear = new QAction(this);
+  m_clear->setText(tr("Clear"));
+  m_clear->setIcon(SCHAT_ICON(EditClear));
 
   connect(m_menu, SIGNAL(triggered(QAction*)), SLOT(triggered(QAction*)));
   connect(toolBar, SIGNAL(showMenu(QMenu*,QAction*)), SLOT(showMenu(QMenu*,QAction*)));
@@ -133,7 +140,12 @@ void TalksCache::synced()
 
 void TalksCache::triggered(QAction *action)
 {
-  TabWidget::i()->channelTab(action->data().toByteArray());
+  if (action == m_clear) {
+    m_channels.clear();
+    m_settings->setValue(LS("RecentTalks"), QStringList());
+  }
+  else
+    TabWidget::i()->channelTab(action->data().toByteArray());
 }
 
 
@@ -150,9 +162,22 @@ QList<QByteArray> TalksCache::channels() const
     QByteArray id = SimpleID::decode(text);
     type = SimpleID::typeOf(id);
 
-    if (type == SimpleID::ChannelId || type == SimpleID::UserId)
+    if ((type == SimpleID::ChannelId || type == SimpleID::UserId) && !list.contains(id))
       list.append(id);
   }
 
   return list;
+}
+
+
+/*!
+ * Сохранение списка каналов.
+ */
+QStringList TalksCache::save() const
+{
+  QStringList recent;
+  foreach (const QByteArray &id, m_channels)
+    recent.append(SimpleID::encode(id));
+
+  return recent;
 }

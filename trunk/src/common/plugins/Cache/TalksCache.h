@@ -43,8 +43,10 @@ private slots:
 
 private:
   QList<QByteArray> channels() const;
+  QStringList save() const;
 
   ChatSettings *m_settings;     ///< Настройки.
+  QAction *m_clear;             ///< Очистка списка последних разговоров.
   QList<QByteArray> m_channels; ///< Каналы недавних разговоров.
   QMenu *m_menu;                ///< Меню недавних разговоров.
 };
