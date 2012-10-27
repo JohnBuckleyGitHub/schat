@@ -37,4 +37,8 @@ SOURCES  = \
 
 RESOURCES += Cache.qrc
 
+TRANSLATIONS += res/translations/cache_en.ts
+TRANSLATIONS += res/translations/cache_ru.ts
+CODECFORTR = UTF-8
+
 include(../plugins.pri)
