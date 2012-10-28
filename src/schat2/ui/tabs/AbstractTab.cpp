@@ -19,6 +19,7 @@
 #include <QAction>
 #include <QEvent>
 
+#include "ui/TabBar.h"
 #include "ui/tabs/AbstractTab.h"
 #include "ui/TabWidget.h"
 
@@ -34,16 +35,6 @@ AbstractTab::AbstractTab(const QByteArray &id, const QString &type, TabWidget *p
   m_action->setCheckable(true);
 
   connect(m_action, SIGNAL(triggered(bool)), SIGNAL(actionTriggered(bool)));
-}
-
-
-void AbstractTab::pin()
-{
-  m_options |= Pinned;
-
-  int index = m_tabs->indexOf(this);
-  if (index != -1)
-    m_tabs->setTabText(index, QString());
 }
 
 
@@ -67,13 +58,41 @@ void AbstractTab::setOnline(bool online)
 }
 
 
-void AbstractTab::unpin()
+/*!
+ * Закрепление вкладки.
+ */
+void AbstractTab::pin()
 {
-  m_options ^= Pinned;
+  m_options |= Pinned;
 
   int index = m_tabs->indexOf(this);
-  if (index != -1)
-    m_tabs->setTabText(index, m_text);
+  if (index == -1)
+    return;
+
+  m_tabs->setTabText(index, QString());
+  m_tabs->tabBar()->setTabButton(index, m_tabs->tabBar()->closeButtonPosition(), 0);
+
+  if (m_tabs->count() == 1)
+    return;
+
+  int pos = index;
+  for (int i = 0; i < m_tabs->count(); ++i) {
+    if (!(m_tabs->widget(i)->options() & Pinned)) {
+      pos = i;
+      break;
+    }
+  }
+
+  if (index == pos || pos > index)
+    return;
+
+  m_tabs->tabBar()->moveTab(index, pos);
+}
+
+
+void AbstractTab::setCloseButton(QWidget *button)
+{
+  m_closeButton = button;
 }
 
 
@@ -100,8 +119,27 @@ void AbstractTab::setText(const QString &text)
   m_action->setText(text);
 
   int index = m_tabs->indexOf(this);
-  if (index != -1)
-    m_tabs->setTabText(index, text);
+  if (index == -1)
+    return;
+
+  m_tabs->setTabText(index, text);
+  m_tabs->setTabToolTip(index, m_text);
+}
+
+
+void AbstractTab::unpin()
+{
+  if (m_options & Pinned)
+    m_options ^= Pinned;
+
+  int index = m_tabs->indexOf(this);
+  if (index == -1)
+    return;
+
+  m_tabs->setTabText(index, m_text);
+
+  if (m_tabs->count() > 1)
+    m_tabs->tabBar()->setTabButton(index, m_tabs->tabBar()->closeButtonPosition(), m_closeButton);
 }
 
 

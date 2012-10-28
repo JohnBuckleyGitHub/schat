@@ -421,6 +421,33 @@ void TabWidget::mouseReleaseEvent(QMouseEvent *event)
 }
 
 
+/*!
+ * Обработка вставки вкладки.
+ */
+void TabWidget::tabInserted(int index)
+{
+  widget(index)->setCloseButton(m_tabBar->tabButton(index, m_tabBar->closeButtonPosition()));
+  QTabWidget::tabInserted(index);
+
+  if (count() == 2) {
+    AbstractTab *tab = widget(index == 0 ? 1 : 0);
+    if (!(tab->options() & AbstractTab::Pinned))
+      widget(index == 0 ? 1 : 0)->unpin();
+  }
+  else if (count() == 1)
+    m_tabBar->setTabButton(index, m_tabBar->closeButtonPosition(), 0);
+}
+
+
+void TabWidget::tabRemoved(int index)
+{
+  QTabWidget::tabRemoved(index);
+
+  if (count() == 1)
+    m_tabBar->setTabButton(0, m_tabBar->closeButtonPosition(), 0);
+}
+
+
 void TabWidget::currentChanged(int index)
 {
   AbstractTab *tab = widget(index);

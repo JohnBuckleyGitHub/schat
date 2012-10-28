@@ -53,11 +53,12 @@ public:
   inline QAction *action() const      { return m_action; }
   inline virtual void copy()          {}
   virtual bool bindMenu(QMenu *menu)  { Q_UNUSED(menu) return false; }
-  virtual void pin();
   virtual void setOnline(bool online = true);
-  virtual void unpin();
+  void pin();
+  void setCloseButton(QWidget *button);
   void setIcon(const QIcon &icon);
   void setText(const QString &text);
+  void unpin();
 
 signals:
   void actionTriggered(bool checked = false);
@@ -67,12 +68,13 @@ protected:
   virtual void retranslateUi();
   void changeEvent(QEvent *event);
 
-  bool m_online;        ///< true если вкладка "В сети".
-  Options m_options;    ///< Опции вкладки.
-  QAction *m_action;    ///< Действие используемое для открытие вкладки.
-  QIcon m_icon;         ///< Нормальная иконка вкладки.
-  QString m_text;       ///< Заголовок вкладки.
-  TabWidget *m_tabs;    ///< Указатель на виджет вкладок.
+  bool m_online;          ///< true если вкладка "В сети".
+  Options m_options;      ///< Опции вкладки.
+  QAction *m_action;      ///< Действие используемое для открытие вкладки.
+  QIcon m_icon;           ///< Нормальная иконка вкладки.
+  QString m_text;         ///< Заголовок вкладки.
+  QWidget *m_closeButton; ///< Кнопка закрытия.
+  TabWidget *m_tabs;      ///< Указатель на виджет вкладок.
 
 private:
   QByteArray m_id;

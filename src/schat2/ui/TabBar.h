@@ -28,10 +28,7 @@ class TabBar : public QTabBar
 
 public:
   TabBar(QWidget *parent = 0);
-
-protected:
-  void tabInserted(int index);
-  void tabRemoved(int index);
+  ButtonPosition closeButtonPosition() const;
 };
 
 #endif /* TABBAR_H_ */
