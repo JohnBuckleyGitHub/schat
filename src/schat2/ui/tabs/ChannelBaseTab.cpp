@@ -45,6 +45,7 @@ ChannelBaseTab::ChannelBaseTab(ClientChannel channel, const QString &type, TabWi
   , m_channel(channel)
 {
   m_options |= CanSendMessage;
+  m_options |= CanBePinned;
 
   QString file = QApplication::applicationDirPath() + "/styles/test/html/" + page();
   if (QFile::exists(file))

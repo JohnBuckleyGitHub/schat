@@ -315,7 +315,7 @@ void TabWidget::closeTab(int index)
 
   removeTab(index);
 
-  if (tab->isDeleteOnClose()) {
+  if (!(tab->options() & AbstractTab::NoDelete)) {
     if (m_pages.contains(id)) {
       ChatNotify::start(Notify::PageClosed, id);
       m_pages.remove(id);
