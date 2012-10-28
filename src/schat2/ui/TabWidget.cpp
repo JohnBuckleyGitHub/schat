@@ -354,7 +354,7 @@ void TabWidget::changeEvent(QEvent *event)
  */
 void TabWidget::contextMenuEvent(QContextMenuEvent *event)
 {
-  int index = m_tabBar->tabAt(event->pos());
+  int index = tabAt(event->pos());
   if (index == -1) {
     QTabWidget::contextMenuEvent(event);
     return;
@@ -398,7 +398,7 @@ void TabWidget::keyPressEvent(QKeyEvent *event)
  */
 void TabWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-  int index = m_tabBar->tabAt(event->pos());
+  int index = tabAt(event->pos());
   if (index != -1 && tabsClosable() && event->button() == Qt::MidButton)
     closeTab(index);
   else
@@ -504,6 +504,12 @@ int TabWidget::addChatTab(AbstractTab *tab)
 
   setCurrentIndex(index);
   return index;
+}
+
+
+int TabWidget::tabAt(const QPoint &pos) const
+{
+  return m_tabBar->tabAt(QPoint(pos.x() - m_tabsToolBar->width(), pos.y()));
 }
 
 
