@@ -39,7 +39,11 @@ AbstractTab::AbstractTab(const QByteArray &id, const QString &type, TabWidget *p
 
 void AbstractTab::pin()
 {
-  setText(QString());
+  m_options |= Pinned;
+
+  int index = m_tabs->indexOf(this);
+  if (index != -1)
+    m_tabs->setTabText(index, QString());
 }
 
 
@@ -60,6 +64,16 @@ void AbstractTab::setOnline(bool online)
     m_tabs->setTabIcon(index, offline);
     m_action->setIcon(offline);
   }
+}
+
+
+void AbstractTab::unpin()
+{
+  m_options ^= Pinned;
+
+  int index = m_tabs->indexOf(this);
+  if (index != -1)
+    m_tabs->setTabText(index, m_text);
 }
 
 

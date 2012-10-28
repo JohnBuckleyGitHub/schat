@@ -361,20 +361,35 @@ void TabWidget::contextMenuEvent(QContextMenuEvent *event)
   }
 
   QMenu menu(this);
-  QAction *closeAction = 0;
+  QAction *pin     = 0;
+  QAction *close   = 0;
+  AbstractTab *tab = widget(index);
 
-  if (widget(index)->bindMenu(&menu))
+  if (tab->bindMenu(&menu))
     menu.addSeparator();
 
+  if (tab->options() & AbstractTab::CanBePinned) {
+    pin = menu.addAction(SCHAT_ICON(Pin), tr("Pin tab"));
+    pin->setCheckable(true);
+    pin->setChecked(tab->options() & AbstractTab::Pinned);
+  }
+
   if (tabsClosable())
-    closeAction = menu.addAction(SCHAT_ICON(Remove), tr("Close Tab"));
+    close = menu.addAction(SCHAT_ICON(Remove), tr("Close tab"));
 
   if (!menu.actions().isEmpty()) {
     QAction *action = menu.exec(event->globalPos());
     if (action == 0)
       return;
 
-    if (action == closeAction)
+
+    if (action == pin) {
+      if (tab->options() & AbstractTab::Pinned)
+        tab->unpin();
+      else
+        tab->pin();
+    }
+    if (action == close)
       closeTab(index);
   }
 }
