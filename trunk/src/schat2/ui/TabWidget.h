@@ -96,6 +96,7 @@ private slots:
 
 private:
   int addChatTab(AbstractTab *tab);
+  int tabAt(const QPoint &pos) const;
   void addImpl(const Message &message, bool create = true);
   void createToolBars();
   void lastTab();
