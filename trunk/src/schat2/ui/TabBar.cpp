@@ -55,15 +55,7 @@ TabBar::TabBar(QWidget *parent)
 }
 
 
-void TabBar::tabInserted(int index)
+TabBar::ButtonPosition TabBar::closeButtonPosition() const
 {
-  QTabBar::tabInserted(index);
-  setTabsClosable(count() > 1);
-}
-
-
-void TabBar::tabRemoved(int index)
-{
-  QTabBar::tabRemoved(index);
-  setTabsClosable(count() > 1);
+  return static_cast<TabBar::ButtonPosition>(style()->styleHint(QStyle::SH_TabBar_CloseButtonPosition));
 }

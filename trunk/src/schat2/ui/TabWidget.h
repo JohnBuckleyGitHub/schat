@@ -84,6 +84,8 @@ protected:
   void contextMenuEvent(QContextMenuEvent *event);
   void keyPressEvent(QKeyEvent *event);
   void mouseReleaseEvent(QMouseEvent *event);
+  void tabInserted(int index);
+  void tabRemoved(int index);
 
 private slots:
   void currentChanged(int index);
