@@ -42,7 +42,7 @@ ServerTab::ServerTab(TabWidget *parent)
   : AbstractTab(QByteArray(), LS("server"), parent)
 {
   m_options |= CanSendMessage;
-  m_deleteOnClose = false;
+  m_options |= NoDelete;
 
   QString file = QApplication::applicationDirPath() + "/styles/test/html/Server.html";
   if (QFile::exists(file))

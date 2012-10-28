@@ -36,12 +36,14 @@ public:
   enum Option {
     NoOptions      = 0, ///< Нет опций.
     CanSendMessage = 1, ///< Вкладка поддерживает отправку сообщений.
+    NoDelete       = 2, ///< Не удалять вкладку при закрытии.
+    CanBePinned    = 4, ///< Вкладка может быть закреплена.
+    Pinned         = 8  ///< Вкладка закреплена.
   };
 
   Q_DECLARE_FLAGS(Options, Option)
 
   AbstractTab(const QByteArray &id, const QString &type, TabWidget *parent);
-  inline bool isDeleteOnClose() const { return m_deleteOnClose; }
   inline bool isOnline() const        { return m_online; }
   inline const QByteArray& id() const { return m_id; }
   inline const QIcon& icon() const    { return m_icon; }
@@ -51,6 +53,7 @@ public:
   inline QAction *action() const      { return m_action; }
   inline virtual void copy()          {}
   virtual bool bindMenu(QMenu *menu)  { Q_UNUSED(menu) return false; }
+  virtual void pin();
   virtual void setOnline(bool online = true);
   void setIcon(const QIcon &icon);
   void setText(const QString &text);
@@ -63,7 +66,6 @@ protected:
   virtual void retranslateUi();
   void changeEvent(QEvent *event);
 
-  bool m_deleteOnClose; ///< true если вкладку нужно удалить после закрытия.
   bool m_online;        ///< true если вкладка "В сети".
   Options m_options;    ///< Опции вкладки.
   QAction *m_action;    ///< Действие используемое для открытие вкладки.

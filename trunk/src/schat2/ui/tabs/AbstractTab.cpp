@@ -24,7 +24,6 @@
 
 AbstractTab::AbstractTab(const QByteArray &id, const QString &type, TabWidget *parent)
   : QWidget(parent)
-  , m_deleteOnClose(true)
   , m_online(false)
   , m_options(NoOptions)
   , m_tabs(parent)
@@ -35,6 +34,12 @@ AbstractTab::AbstractTab(const QByteArray &id, const QString &type, TabWidget *p
   m_action->setCheckable(true);
 
   connect(m_action, SIGNAL(triggered(bool)), SIGNAL(actionTriggered(bool)));
+}
+
+
+void AbstractTab::pin()
+{
+  setText(QString());
 }
 
 
