@@ -188,4 +188,5 @@ void ChatIcons::init()
   m_icons[Reload]         = LS("reload");
   m_icons[Plugin]         = LS("plugin");
   m_icons[Bell]           = LS("bell");
+  m_icons[Pin]           = LS("pin");
 }

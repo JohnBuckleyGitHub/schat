@@ -55,6 +55,7 @@ public:
   virtual bool bindMenu(QMenu *menu)  { Q_UNUSED(menu) return false; }
   virtual void pin();
   virtual void setOnline(bool online = true);
+  virtual void unpin();
   void setIcon(const QIcon &icon);
   void setText(const QString &text);
 

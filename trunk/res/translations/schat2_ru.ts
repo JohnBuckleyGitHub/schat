@@ -733,9 +733,14 @@
 <context>
     <name>TabWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="370"/>
-        <source>Close Tab</source>
-        <translation>Закрыть</translation>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="372"/>
+        <source>Pin tab</source>
+        <translation>Закрепить</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="378"/>
+        <source>Close tab</source>
+        <translation type="unfinished">Закрыть</translation>
     </message>
 </context>
 <context>

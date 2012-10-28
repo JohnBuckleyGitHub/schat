@@ -81,7 +81,8 @@ public:
     Computer           = 0x4370, ///< "Cp"
     Reload             = 0x526C, ///< "Rl"
     Plugin             = 0x506C, ///< "Pl"
-    Bell               = 0x4265  ///< "Be"
+    Bell               = 0x4265, ///< "Be"
+    Pin                = 0x5069  ///< "Pi"
   };
 
   /// Опции получения иконки канала.

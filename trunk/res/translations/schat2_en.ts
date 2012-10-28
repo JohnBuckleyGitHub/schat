@@ -742,8 +742,13 @@
 <context>
     <name>TabWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="370"/>
-        <source>Close Tab</source>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="372"/>
+        <source>Pin tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="378"/>
+        <source>Close tab</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
