@@ -87,6 +87,8 @@ void AbstractTab::pin()
     return;
 
   m_tabs->tabBar()->moveTab(index, pos);
+  m_tabs->setCurrentIndex(index);
+  m_tabs->setCurrentIndex(pos);
 }
 
 
@@ -122,7 +124,7 @@ void AbstractTab::setText(const QString &text)
   if (index == -1)
     return;
 
-  m_tabs->setTabText(index, text);
+  m_tabs->setTabText(index, m_options & Pinned ? QString() : text);
   m_tabs->setTabToolTip(index, m_text);
 }
 

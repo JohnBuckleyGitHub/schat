@@ -374,7 +374,7 @@ void TabWidget::contextMenuEvent(QContextMenuEvent *event)
     pin->setChecked(tab->options() & AbstractTab::Pinned);
   }
 
-  if (tabsClosable())
+  if (count() > 1)
     close = menu.addAction(SCHAT_ICON(Remove), tr("Close tab"));
 
   if (!menu.actions().isEmpty()) {
@@ -399,7 +399,7 @@ void TabWidget::keyPressEvent(QKeyEvent *event)
 {
   if (event->modifiers() == Qt::ControlModifier) {
     if (event->key() == Qt::Key_W) {
-      if (currentIndex() != -1 && tabsClosable())
+      if (currentIndex() != -1 && count() > 1)
         closeTab(currentIndex());
     }
   }
@@ -414,7 +414,7 @@ void TabWidget::keyPressEvent(QKeyEvent *event)
 void TabWidget::mouseReleaseEvent(QMouseEvent *event)
 {
   int index = tabAt(event->pos());
-  if (index != -1 && tabsClosable() && event->button() == Qt::MidButton)
+  if (index != -1 && count() > 1 && event->button() == Qt::MidButton)
     closeTab(index);
   else
     QTabWidget::mouseReleaseEvent(event);
