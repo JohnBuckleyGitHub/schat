@@ -106,6 +106,8 @@
   <file>html/Plugins.html</file>
   <file>html/Server.html</file>
   <file>html/User.html</file>
+  <file>images/close.png</file>
+  <file>images/close-hover.png</file>
   <file>images/color.png</file>
   <file>images/color-map.png</file>
   <file>images/find_next.png</file>
