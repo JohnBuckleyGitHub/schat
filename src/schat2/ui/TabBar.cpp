@@ -18,6 +18,7 @@
 
 #include <QProxyStyle>
 
+#include "sglobal.h"
 #include "ui/TabBar.h"
 
 class TabStyle : public QProxyStyle
@@ -36,6 +37,8 @@ public:
 #   if defined(Q_OS_WIN32)
     else if (metric == PM_TabBarTabVSpace)
       return result + 2;
+    else if (metric == PM_TabCloseIndicatorWidth || metric == PM_TabCloseIndicatorHeight)
+      return 14;
 #   endif
 
     return result;
@@ -52,6 +55,10 @@ TabBar::TabBar(QWidget *parent)
   setElideMode(Qt::ElideMiddle);
 
   setStyle(new TabStyle());
+
+# if defined(Q_OS_WIN32)
+  setStyleSheet(LS("QTabBar::close-button { image: url(:/images/close.png) } QTabBar::close-button:hover { image: url(:/images/close-hover.png) }"));
+# endif
 }
 
 
