@@ -86,9 +86,13 @@ void AbstractTab::pin()
   if (index == pos || pos > index)
     return;
 
+  bool show = m_tabs->currentIndex() == index;
   m_tabs->tabBar()->moveTab(index, pos);
-  m_tabs->setCurrentIndex(index);
-  m_tabs->setCurrentIndex(pos);
+
+  if (show) {
+    m_tabs->setCurrentIndex(index);
+    m_tabs->setCurrentIndex(pos);
+  }
 }
 
 
