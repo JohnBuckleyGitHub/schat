@@ -255,6 +255,7 @@ void ClientChannels::setup()
   m_synced.clear();
   m_unsynced.clear();
   m_joined.clear();
+  m_mainId.clear();
 }
 
 
@@ -301,6 +302,9 @@ ClientChannel ClientChannels::add()
 void ClientChannels::channel()
 {
   ClientChannel channel = add();
+  if (channel->type() == SimpleID::ChannelId && m_mainId.isEmpty())
+    m_mainId = channel->id();
+
   if (!m_joined.contains(channel->id()))
     m_joined += channel->id();
 
@@ -352,7 +356,7 @@ void ClientChannels::quit()
   user->setSynced(false);
   emit quit(user->id());
 
-  QHashIterator<QByteArray, ClientChannel> i(m_channels);
+  QMapIterator<QByteArray, ClientChannel> i(m_channels);
   while (i.hasNext()) {
     i.next();
     i.value()->channels().remove(user->id());

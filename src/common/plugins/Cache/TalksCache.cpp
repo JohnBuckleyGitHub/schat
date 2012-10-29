@@ -149,9 +149,7 @@ void TalksCache::triggered(QAction *action)
   }
 
   QByteArray id = action->data().toByteArray();
-  TabWidget::i()->channelTab(id);
-
-  if (SimpleID::typeOf(id) == SimpleID::ChannelId)
+  if (TabWidget::i()->channelTab(id) && SimpleID::typeOf(id) == SimpleID::ChannelId)
     ChatClient::channels()->join(id);
 }
 

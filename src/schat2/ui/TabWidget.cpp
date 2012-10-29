@@ -210,6 +210,9 @@ ChannelBaseTab *TabWidget::channelTab(const QByteArray &id, bool create, bool sh
       addTab(tab, channel->name());
       tab->setOnline();
       connect(tab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
+
+      if (channel->type() == SimpleID::ChannelId && channel->id() == ChatClient::channels()->mainId())
+        tab->pin();
     }
 
     closePage("progress");
@@ -382,12 +385,15 @@ void TabWidget::contextMenuEvent(QContextMenuEvent *event)
     if (action == 0)
       return;
 
-
     if (action == pin) {
-      if (tab->options() & AbstractTab::Pinned)
+      if (tab->options() & AbstractTab::Pinned) {
         tab->unpin();
-      else
+        emit unpinned(tab);
+      }
+      else {
         tab->pin();
+        emit pinned(tab);
+      }
     }
     if (action == close)
       closeTab(index);

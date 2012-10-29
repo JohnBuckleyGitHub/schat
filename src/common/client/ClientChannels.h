@@ -63,8 +63,9 @@ class SCHAT_EXPORT ClientChannels : public QObject
 
 public:
   ClientChannels(QObject *parent = 0);
-  inline Hooks::Channels *hooks() const { return m_hooks; }
-  inline const QHash<QByteArray, ClientChannel>& channels() const { return m_channels; }
+  inline const QByteArray& mainId() const                         { return m_mainId; }
+  inline const QMap<QByteArray, ClientChannel>& channels() const  { return m_channels; }
+  inline Hooks::Channels *hooks() const                           { return m_hooks; }
 
   bool info(const QList<QByteArray> &channels);
   bool join(const QByteArray &id);
@@ -102,10 +103,11 @@ private:
 
   ChannelNotice *m_packet;                     ///< Текущий прочитанный пакет.
   Hooks::Channels *m_hooks;                    ///< Хуки.
-  QHash<QByteArray, ClientChannel> m_channels; ///< Таблица каналов.
+  QByteArray m_mainId;                         ///< Идентификатор главного канала.
   QList<QByteArray> m_joined;                  ///< Список каналов в которых находится клиент.
   QList<QByteArray> m_synced;                  ///< Список синхронизированных каналов.
   QList<QByteArray> m_unsynced;                ///< Список не синхронизированных каналов.
+  QMap<QByteArray, ClientChannel> m_channels;  ///< Таблица каналов.
   SimpleClient *m_client;                      ///< Клиент чата.
 };
 

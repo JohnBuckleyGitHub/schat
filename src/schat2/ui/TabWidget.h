@@ -74,6 +74,8 @@ public:
 
 signals:
   void pageChanged(AbstractTab *tab);
+  void pinned(AbstractTab *tab);
+  void unpinned(AbstractTab *tab);
 
 public slots:
   void closeTab(int index);

@@ -35,6 +35,7 @@
 #include "NetworkManager.h"
 #include "Path.h"
 #include "sglobal.h"
+#include "StateCache.h"
 #include "TalksCache.h"
 #include "Translation.h"
 
@@ -45,6 +46,7 @@ Cache::Cache(QObject *parent)
   new Hooks::CacheChannels(this);
   new CacheFeedStorage(this);
   new TalksCache(this);
+  new StateCache(this);
   open();
 
   connect(ChatClient::i(), SIGNAL(online()), SLOT(open()));
