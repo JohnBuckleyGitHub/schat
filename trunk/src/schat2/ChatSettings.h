@@ -32,6 +32,7 @@ class SCHAT_CORE_EXPORT ChatSettings : public Settings
 
 public:
   ChatSettings(const QString &fileName, const QString &defaultFile, QObject *parent = 0);
+  inline bool isSynced() const { return m_synced; }
   QVariant setDefaultAndRead(const QString &key, const QVariant &value);
   void init();
   void setDefault(const QString &key, const QVariant &value);

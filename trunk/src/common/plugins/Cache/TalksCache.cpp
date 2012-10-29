@@ -50,13 +50,15 @@ TalksCache::TalksCache(QObject *parent)
 
 void TalksCache::notify(const Notify &notify)
 {
-  if (notify.type() == Notify::ChannelTabClosed) {
+  int type = notify.type();
+
+  if ((type == Notify::ChannelTabCreated || type == Notify::ChannelTabClosed) && m_settings->isSynced()) {
     QByteArray id = notify.data().toByteArray();
     m_channels.removeAll(id);
     m_channels.prepend(id);
     m_settings->setValue(LS("RecentTalks"), save());
   }
-  else if (notify.type() == Notify::Language && m_menu) {
+  else if (type == Notify::Language && m_menu) {
     m_menu->setTitle(tr("Recent"));
     m_clear->setText(tr("Clear"));
   }
