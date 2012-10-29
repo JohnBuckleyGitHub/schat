@@ -64,6 +64,8 @@ ChannelBaseTab::ChannelBaseTab(ClientChannel channel, const QString &type, TabWi
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
   connect(m_findWidget, SIGNAL(find(QString,bool)), SLOT(find(QString,bool)));
   connect(m_findWidget, SIGNAL(hidden()), SLOT(hidden()));
+
+  ChatNotify::start(Notify::ChannelTabCreated, id(), true);
 }
 
 
