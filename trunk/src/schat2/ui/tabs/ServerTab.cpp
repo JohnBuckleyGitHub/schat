@@ -43,6 +43,7 @@ ServerTab::ServerTab(TabWidget *parent)
 {
   m_options |= CanSendMessage;
   m_options |= NoDelete;
+  m_options |= CanBePinned;
 
   QString file = QApplication::applicationDirPath() + "/styles/test/html/Server.html";
   if (QFile::exists(file))
