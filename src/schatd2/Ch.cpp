@@ -25,6 +25,7 @@
 #include "feeds/FeedStorage.h"
 #include "net/packets/auth.h"
 #include "net/packets/Notice.h"
+#include "NodeLog.h"
 #include "Normalize.h"
 #include "Settings.h"
 #include "sglobal.h"
@@ -146,6 +147,11 @@ ChatChannel Ch::channel(const QByteArray &id, int type, bool db)
  */
 ChatChannel Ch::channel(const QString &name, ChatChannel user)
 {
+  if (!Channel::isValidName(name)) {
+    SCHAT_LOG_ERROR("Bad channel name:" << name)
+    return ChatChannel();
+  }
+
   ChatChannel channel = m_self->channelImpl(name, user);
   m_self->sync(channel, user);
 

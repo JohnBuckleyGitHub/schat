@@ -52,7 +52,12 @@ bool NodeChannels::read(PacketReader *reader)
   QString cmd = m_packet->command();
   int status  = Notice::NotImplemented;
 
-  SCHAT_LOG_DEBUG_STR("[GenericNode/Channels] read channel request, socket:" + QByteArray::number(Core::socket()) + ", cmd:" + cmd.toUtf8() + ", text:" + m_packet->text().toUtf8() + ", user:" + m_user->name().toUtf8() + ", id:" + SimpleID::encode(m_user->id()))
+  SCHAT_LOG_DEBUG_STR("[GenericNode/Channels] read channel request, socket:" + QByteArray::number(Core::socket()) +
+      ", id:" + SimpleID::encode(m_user->id()) +
+      ", channelId:" + SimpleID::encode(m_packet->channelId()) +
+      ", cmd:" + cmd.toUtf8() +
+      ", text:" + m_packet->text().toUtf8() +
+      ", user:" + m_user->name().toUtf8())
 
   if (cmd == LS("info"))
     return info();
