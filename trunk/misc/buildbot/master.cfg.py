@@ -2,11 +2,13 @@
 # ex: set syntax=python:
 
 from buildbot.buildslave import BuildSlave
-from buildbot.changes.svnpoller import SVNPoller, split_file_alwaystrunk
+from buildbot.changes.svnpoller import SVNPoller, split_file_branches
 from buildbot.config import BuilderConfig
 from buildbot.process.factory import BuildFactory
 from buildbot.process.properties import WithProperties, Property
 from buildbot.schedulers.forcesched import ForceScheduler
+from buildbot.schedulers.basic import SingleBranchScheduler
+from buildbot.changes.filter import ChangeFilter
 from buildbot.status import html, web
 from buildbot.steps.shell import Compile, ShellCommand
 from buildbot.steps.source.svn import SVN
@@ -47,8 +49,8 @@ c = BuildmasterConfig = {
   ],
   'change_source': [
     SVNPoller(
-      svnurl="http://schat.googlecode.com/svn/trunk/",
-      split_file=split_file_alwaystrunk,
+      svnurl="http://schat.googlecode.com/svn",
+      split_file=split_file_branches,
       pollinterval = 60,
     ),
   ],
@@ -76,6 +78,12 @@ c['schedulers'] = [
     name="force",
     builderNames=["lucid", "lucid64", "win32", "macosx", "source", "precise", "precise64", "update", "release"]
   ),
+  SingleBranchScheduler(
+    name="trunk",
+    change_filter=ChangeFilter(branch = None),
+    treeStableTimer=60,
+    builderNames=["lucid", "lucid64", "win32", "macosx", "source", "precise", "precise64"]
+  )
 ]
 
 
