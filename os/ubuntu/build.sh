@@ -1,7 +1,7 @@
 #!/bin/bash
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2011 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2012 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -18,19 +18,8 @@
 
 set -e
 
-function build() {
-  local target=$1
-  mkdir debian
-  cp -fr ../os/ubuntu/$target/* debian
-  cp -f $target.pro src.pro
-  cat debian/changelog.in | sed "s/##RDATE##/`date -R`/g" | sed "s/##DIST##/`lsb_release -cs`/g" > debian/changelog
-  dpkg-buildpackage -us -uc
-  rm -Rf debian
-}
-
-cd ../../src
-
-build "schatd2"
-build "schat2"
-
-cp -f ../*.deb ../os/ubuntu/deb
+cat debian/changelog.in | sed "s/##RDATE##/`date -R`/g" | sed "s/##DIST##/`lsb_release -cs`/g" | sed "s/##SCHAT_VERSION##/$SCHAT_VERSION/g" > debian/changelog
+cp -fr debian ../../
+cd ../..
+cp -f ../*.deb os/ubuntu/deb
+rm ../schat*.deb ../schat2*.changes ../schat2*.dsc ../schat2*.tar.gz
