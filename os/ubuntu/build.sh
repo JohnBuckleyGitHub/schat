@@ -21,5 +21,6 @@ set -e
 cat debian/changelog.in | sed "s/##RDATE##/`date -R`/g" | sed "s/##DIST##/`lsb_release -cs`/g" | sed "s/##SCHAT_VERSION##/$SCHAT_VERSION/g" > debian/changelog
 cp -fr debian ../../
 cd ../..
+dpkg-buildpackage -us -uc
 cp -f ../*.deb os/ubuntu/deb
 rm ../schat*.deb ../schat2*.changes ../schat2*.dsc ../schat2*.tar.gz
