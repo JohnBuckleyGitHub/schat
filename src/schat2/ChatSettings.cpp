@@ -141,12 +141,20 @@ void ChatSettings::set()
 
   QStringList keys = feed->data().keys();
   keys.removeAll(LS("head"));
-  if (keys.isEmpty())
-    return;
 
-  foreach (QString key, keys) {
-    if (!m_local.contains(key))
-      Settings::setValue(key, feed->data().value(key));
+  if (!m_synced) {
+    QMapIterator<QString, QVariant> i(m_default);
+    while (i.hasNext()) {
+      i.next();
+      if (!m_local.contains(i.key()))
+        Settings::setValue(i.key(), keys.contains(i.key()) ? feed->data().value(i.key()) : i.value());
+    }
+  }
+  else {
+    foreach (const QString &key, keys) {
+      if (!m_local.contains(key))
+        Settings::setValue(key, feed->data().value(key));
+    }
   }
 
   if (ChatClient::state() == ChatClient::Online && !m_synced) {
