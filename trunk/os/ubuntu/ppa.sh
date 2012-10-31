@@ -51,6 +51,7 @@ cd $PPA_SOURCE
 mkdir debian/source
 echo > debian/source/format "3.0 (quilt)"
 rm debian/changelog.in
+rm debian/changelog.ppa
 
 upload "quantal"
 upload "precise"
