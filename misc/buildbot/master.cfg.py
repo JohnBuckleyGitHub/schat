@@ -99,6 +99,7 @@ def MakeDebBuilder():
     name          = 'deb',
     command       = ['bash', 'build.sh'],
     workdir       = 'build/os/ubuntu',
+    env           = { 'SCHAT_VERSION': SCHAT_VERSION },
     haltOnFailure = True,
   ))
   f.addStep(FileUpload(
@@ -139,6 +140,7 @@ def MakeWinBuilder():
     workdir       = 'build/os/win32',
     env           = { 'SCHAT_SIGN_FILE': schat_passwords.SIGN_FILE, 'SCHAT_SIGN_PASSWORD': schat_passwords.SIGN_PASSWORD, 'SCHAT_VERSION': SCHAT_VERSION, 'SCHAT_REVISION': Property('got_revision') },
     haltOnFailure = True,
+    logEnviron    = False,
   ))
   f.addStep(FileUpload(
     mode       = 0644,
