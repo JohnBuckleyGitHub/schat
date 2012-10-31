@@ -84,7 +84,7 @@ void EmoticonsFilter::parse(QList<HtmlToken> &tokens, const QString &text, int p
     return;
   }
 
-  if (text.at(pos) == LC(' ') && pos < text.size())
+  if (pos < text.size() - 1 && text.at(pos) == LC(' '))
     pos++;
 
   // Возможно в этой позиции находится начало смайла.

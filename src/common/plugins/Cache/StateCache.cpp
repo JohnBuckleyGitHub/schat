@@ -135,7 +135,7 @@ void StateCache::join(const QByteArray &id)
     return;
   }
 
-  ChannelBaseTab *tab = TabWidget::i()->channelTab(id, true, false);
+  ChannelBaseTab *tab = tabs->channelTab(id, true, false);
   if (tab)
     tab->pin();
 
