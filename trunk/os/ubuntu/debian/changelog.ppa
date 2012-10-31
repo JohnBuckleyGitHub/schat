@@ -1,4 +1,4 @@
-schatd2 (1.99.46-1~##DIST##) unstable; urgency=low
+schat2 (##SCHAT_VERSION##~##DIST##) ##DIST##; urgency=low
 
   * Initial release.
 
