@@ -27,6 +27,7 @@
 #include "StateCache.h"
 #include "ui/tabs/AbstractTab.h"
 #include "ui/tabs/ChannelBaseTab.h"
+#include "ui/tabs/ServerTab.h"
 #include "ui/TabWidget.h"
 
 StateCache::StateCache(QObject *parent)
@@ -120,6 +121,20 @@ QString StateCache::encode(const QByteArray &id) const
 
 void StateCache::join(const QByteArray &id)
 {
+  TabWidget *tabs = TabWidget::i();
+
+  if (SimpleID::typeOf(id) == SimpleID::ServerId) {
+    ServerTab *serverTab = tabs->serverTab();
+    if (tabs->indexOf(serverTab) == -1) {
+      tabs->addTab(serverTab, QString());
+      serverTab->setOnline();
+      serverTab->setText(ChatClient::serverName());
+    }
+
+    serverTab->pin();
+    return;
+  }
+
   ChannelBaseTab *tab = TabWidget::i()->channelTab(id, true, false);
   if (tab)
     tab->pin();
