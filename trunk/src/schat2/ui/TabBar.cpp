@@ -52,7 +52,7 @@ TabBar::TabBar(QWidget *parent)
   setMovable(true);
   setTabsClosable(true);
   setUsesScrollButtons(true);
-  setElideMode(Qt::ElideMiddle);
+  setElideMode(Qt::ElideRight);
 
   setStyle(new TabStyle());
 
