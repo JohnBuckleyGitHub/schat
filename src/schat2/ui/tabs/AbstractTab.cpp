@@ -69,7 +69,6 @@ void AbstractTab::pin()
   if (index == -1)
     return;
 
-  m_tabs->setTabText(index, QString());
   m_tabs->tabBar()->setTabButton(index, m_tabs->tabBar()->closeButtonPosition(), 0);
 
   if (m_tabs->count() == 1)
@@ -128,7 +127,7 @@ void AbstractTab::setText(const QString &text)
   if (index == -1)
     return;
 
-  m_tabs->setTabText(index, m_options & Pinned ? QString() : text);
+  m_tabs->setTabText(index, text);
   m_tabs->setTabToolTip(index, m_text);
 }
 
