@@ -120,8 +120,17 @@ void StateCache::tabIndexChanged(int index)
     return;
 
   AbstractTab *tab = TabWidget::i()->widget(index);
-  if (tab && Channel::isCompatibleId(tab->id()) && tab->options() & AbstractTab::Pinned)
-    m_settings->setValue(m_prefix + LS("LastTalk"), QString(SimpleID::encode(tab->id())));
+  if (!tab || !Channel::isCompatibleId(tab->id()))
+    return;
+
+  QString id = SimpleID::encode(tab->id());
+  if (ChatClient::channels()->mainId() == tab->id() && !m_tabs.contains(id)) {
+    m_tabs.append(id);
+    m_settings->setValue(m_key, m_tabs);
+  }
+
+  if (tab->options() & AbstractTab::Pinned)
+    m_settings->setValue(m_prefix + LS("LastTalk"), QString(id));
 }
 
 
