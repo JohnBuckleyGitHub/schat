@@ -25,6 +25,7 @@
 #include "ChatUrls.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
+#include "client/SimpleClient.h"
 #include "debugstream.h"
 #include "hooks/ChannelMenu.h"
 #include "JSON.h"
@@ -58,7 +59,10 @@ ChannelBaseTab::ChannelBaseTab(ClientChannel channel, const QString &type, TabWi
   m_findWidget->setVisible(false);
   setIcon(channelIcon());
 
+  m_serverId = ChatClient::serverId();
+
   connect(ChatClient::channels(), SIGNAL(channel(const ChannelInfo &)), SLOT(channel(const ChannelInfo &)));
+  connect(ChatClient::io(), SIGNAL(setup()), SLOT(setup()));
   connect(ChatClient::i(), SIGNAL(offline()), SLOT(offline()));
   connect(ChatAlerts::i(), SIGNAL(countChanged(int,int,QByteArray)), SLOT(countChanged(int,int,QByteArray)));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
@@ -181,6 +185,13 @@ void ChannelBaseTab::offline()
 {
   setOnline(false);
   add(ServiceMessage::quit(ChatClient::id()));
+}
+
+
+void ChannelBaseTab::setup()
+{
+  if (m_serverId != ChatClient::serverId())
+    m_tabs->closeTab(m_tabs->indexOf(this));
 }
 
 

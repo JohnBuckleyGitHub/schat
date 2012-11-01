@@ -56,6 +56,7 @@ private slots:
   void hidden();
   void notify(const Notify &notify);
   void offline();
+  void setup();
 
 protected:
   ClientChannel c();
@@ -66,6 +67,7 @@ protected:
   bool m_joined;            ///< \b true если пользователь уже вошёл в канал.
   ChatView *m_chatView;     ///< Виджет отображающий текст чата.
   FindWidget *m_findWidget; ///< Виджета поиска текста в окне чата.
+  QByteArray m_serverId;    ///< Идентификатор сервера.
 
 private:
   ClientChannel m_channel; ///< Канал.
