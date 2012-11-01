@@ -34,18 +34,22 @@ public:
 
 private slots:
   void pinned(AbstractTab *tab);
+  void ready();
   void settingsChanged(const QString &key, const QVariant &value);
   void start();
   void synced();
+  void tabIndexChanged(int index);
   void unpinned(AbstractTab *tab);
 
 private:
   QByteArray decode(const QString &id) const;
   QString encode(const QByteArray &id) const;
   void join(const QByteArray &id);
+  void restoreLastTalk();
 
   ChatSettings *m_settings; ///< Настройки.
   const QString m_key;      ///< Ключ настроек.
+  QString m_prefix;         ///< Префикс специфичных для данного сервера локальных настроек.
   QStringList m_tabs;       ///< Список закреплённых вкладок.
 };
 

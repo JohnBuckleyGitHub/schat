@@ -18,6 +18,7 @@
 
 #include "BenchmarkClient.h"
 #include "client/SimpleClient.h"
+#include "net/packets/auth.h"
 #include "net/packets/ChannelNotice.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
@@ -27,7 +28,7 @@ BenchmarkClient::BenchmarkClient(const QString &nick, QObject *parent)
 {
   m_client = new SimpleClient(this);
   m_client->setNick(nick);
-  m_client->setCookieAuth(false);
+  m_client->setAuthType(AuthRequest::Anonymous);
   m_client->setUniqueId(SimpleID::randomId(SimpleID::UniqueUserId));
 
   connect(m_client, SIGNAL(setup()), SLOT(setup()));
@@ -39,7 +40,7 @@ BenchmarkClient::BenchmarkClient(const QVariantMap &auth, QObject *parent)
 {
   m_client = new SimpleClient(this);
   m_client->setNick(auth.value("nick").toString());
-  m_client->setCookieAuth(true);
+  m_client->setAuthType(AuthRequest::Cookie);
   m_client->setUniqueId(SimpleID::decode(auth.value("uniqueId").toByteArray()));
 
   m_cookie = SimpleID::decode(auth.value("cookie").toByteArray());
