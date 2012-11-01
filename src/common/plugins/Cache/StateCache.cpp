@@ -36,8 +36,10 @@ StateCache::StateCache(QObject *parent)
   , m_key(LS("PinnedTabs"))
 {
   m_settings->setDefault(m_key, QStringList());
+
   connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
   connect(m_settings, SIGNAL(synced()), SLOT(synced()));
+  connect(ChatClient::i(), SIGNAL(ready()), SLOT(ready()));
 
   QTimer::singleShot(0, this, SIGNAL(start()));
 }
@@ -50,6 +52,16 @@ void StateCache::pinned(AbstractTab *tab)
     m_tabs.append(id);
     m_settings->setValue(m_key, m_tabs);
   }
+}
+
+
+/*!
+ * Обработка подключения клиента к серверу.
+ */
+void StateCache::ready()
+{
+  m_prefix = SimpleID::encode(ChatClient::serverId()) + LC('/');
+  m_settings->setLocalDefault(m_prefix + LS("LastTalk"), QString());
 }
 
 
@@ -66,10 +78,16 @@ void StateCache::start()
   if (tabs) {
     connect(tabs, SIGNAL(pinned(AbstractTab*)), SLOT(pinned(AbstractTab*)));
     connect(tabs, SIGNAL(unpinned(AbstractTab*)), SLOT(unpinned(AbstractTab*)));
+    connect(tabs, SIGNAL(currentChanged(int)), SLOT(tabIndexChanged(int)));
   }
 }
 
 
+/*!
+ * Обработка успешной синхронизации настроек с сервером.
+ *
+ * Открываются и закрепляются все ранее закреплённые разговоры.
+ */
 void StateCache::synced()
 {
   m_tabs = m_settings->value(m_key).toStringList();
@@ -88,6 +106,22 @@ void StateCache::synced()
         join(id);
     }
   }
+
+  restoreLastTalk();
+}
+
+
+/*!
+ * Обработка изменения текущей активной вкладки.
+ */
+void StateCache::tabIndexChanged(int index)
+{
+  if (index == -1 || !m_settings->isSynced())
+    return;
+
+  AbstractTab *tab = TabWidget::i()->widget(index);
+  if (tab && Channel::isCompatibleId(tab->id()) && tab->options() & AbstractTab::Pinned)
+    m_settings->setValue(m_prefix + LS("LastTalk"), QString(SimpleID::encode(tab->id())));
 }
 
 
@@ -141,4 +175,20 @@ void StateCache::join(const QByteArray &id)
 
   if (!tab || SimpleID::typeOf(id) == SimpleID::ChannelId)
     ChatClient::channels()->join(id);
+}
+
+
+/*!
+ * Установка последнего разговора в качестве текущей вкладки.
+ *
+ * Функция вызывается после синхронизации настроек с сервером и открытия закреплённых вкладок,
+ * если разговор не был кэширован, ничего не происходит.
+ */
+void StateCache::restoreLastTalk()
+{
+  QByteArray id = SimpleID::decode(m_settings->value(m_prefix + LS("LastTalk")).toString());
+  if (!Channel::isCompatibleId(id))
+    return;
+
+  TabWidget::i()->channelTab(id, false, true);
 }
