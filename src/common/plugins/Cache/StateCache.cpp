@@ -25,6 +25,7 @@
 #include "net/SimpleID.h"
 #include "sglobal.h"
 #include "StateCache.h"
+#include "ui/TabBar.h"
 #include "ui/tabs/AbstractTab.h"
 #include "ui/tabs/ChannelBaseTab.h"
 #include "ui/tabs/ServerTab.h"
@@ -50,7 +51,7 @@ void StateCache::pinned(AbstractTab *tab)
   QString id = encode(tab->id());
   if (!m_tabs.contains(id)) {
     m_tabs.append(id);
-    m_settings->setValue(m_key, m_tabs);
+    save();
   }
 }
 
@@ -62,6 +63,33 @@ void StateCache::ready()
 {
   m_prefix = SimpleID::encode(ChatClient::serverId()) + LC('/');
   m_settings->setLocalDefault(m_prefix + LS("LastTalk"), QString());
+}
+
+
+/*!
+ * Сохранение списка закреплённых вкладок и их порядка.
+ */
+void StateCache::save()
+{
+  if (!m_settings->isSynced())
+    return;
+
+  TabWidget *tabs = TabWidget::i();
+
+  for (int i = tabs->count() - 1; i >= 0; --i) {
+    AbstractTab *tab = tabs->widget(i);
+    if (tab->options() & AbstractTab::Pinned) {
+      QString id = encode(tab->id());
+      m_tabs.removeAll(id);
+      m_tabs.prepend(id);
+    }
+  }
+
+  QString mainId = SimpleID::encode(ChatClient::channels()->mainId());
+  m_tabs.removeAll(mainId);
+  m_tabs.prepend(mainId);
+
+  m_settings->setValue(m_key, m_tabs);
 }
 
 
@@ -79,6 +107,7 @@ void StateCache::start()
     connect(tabs, SIGNAL(pinned(AbstractTab*)), SLOT(pinned(AbstractTab*)));
     connect(tabs, SIGNAL(unpinned(AbstractTab*)), SLOT(unpinned(AbstractTab*)));
     connect(tabs, SIGNAL(currentChanged(int)), SLOT(tabIndexChanged(int)));
+    connect(tabs->tabBar(), SIGNAL(tabMoved(int,int)), SLOT(save()));
   }
 }
 
@@ -98,13 +127,8 @@ void StateCache::synced()
 
   foreach (const QString &text, m_tabs) {
     QByteArray id = decode(text);
-    if (Channel::isCompatibleId(id)) {
-      ChannelBaseTab *tab = tabs->channelTab(id, false, false);
-      if (tab && !(tab->options() & AbstractTab::Pinned))
-        tab->pin();
-      else if (!tab)
-        join(id);
-    }
+    if (Channel::isCompatibleId(id))
+      join(id);
   }
 
   restoreLastTalk();
@@ -126,7 +150,7 @@ void StateCache::tabIndexChanged(int index)
   QString id = SimpleID::encode(tab->id());
   if (ChatClient::channels()->mainId() == tab->id() && !m_tabs.contains(id)) {
     m_tabs.append(id);
-    m_settings->setValue(m_key, m_tabs);
+    save();
   }
 
   if (tab->options() & AbstractTab::Pinned)
@@ -139,7 +163,7 @@ void StateCache::unpinned(AbstractTab *tab)
   QString id = encode(tab->id());
   if (m_tabs.contains(id)) {
     m_tabs.removeAll(id);
-    m_settings->setValue(m_key, m_tabs);
+    save();
   }
 }
 
@@ -179,7 +203,7 @@ void StateCache::join(const QByteArray &id)
   }
 
   ChannelBaseTab *tab = tabs->channelTab(id, true, false);
-  if (tab)
+  if (tab && !(tab->options() & AbstractTab::Pinned))
     tab->pin();
 
   if (!tab || SimpleID::typeOf(id) == SimpleID::ChannelId)
