@@ -109,7 +109,7 @@ void ChatSettings::notify(const Notify &notify)
   if (notify.type() == Notify::FeedData) {
     const FeedNotify &n = static_cast<const FeedNotify &>(notify);
     if (n.name() == LS("settings") && n.channel() == ChatClient::id())
-      set();
+      set(n.status() == Notice::Found);
   }
 }
 
@@ -133,7 +133,12 @@ void ChatSettings::ready()
 }
 
 
-void ChatSettings::set()
+/*!
+ * Синхронизация настроек с сервером.
+ *
+ * \param offline \b true если используется кэшированная версия фида.
+ */
+void ChatSettings::set(bool offline)
 {
   FeedPtr feed = ChatClient::channel()->feed(LS("settings"), false);
   if (!feed)
@@ -157,7 +162,7 @@ void ChatSettings::set()
     }
   }
 
-  if (ChatClient::state() == ChatClient::Online && !m_synced) {
+  if (!offline && ChatClient::state() == ChatClient::Online && !m_synced) {
     m_synced = true;
     emit synced();
   }
