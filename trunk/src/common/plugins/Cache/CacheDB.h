@@ -52,6 +52,7 @@ private slots:
 
 private:
   static ClientChannel channel(qint64 id, bool feeds = true);
+  static qint64 V2();
   static void create();
   static void version();
 
