@@ -64,7 +64,7 @@ void CacheFeedStorage::loadImpl(Channel *channel)
     Feed *feed = FeedStorage::load(name, JSON::parse(query.value(1).toByteArray()).toMap());
     channel->feeds().add(feed, false);
 
-    ChatNotify::start(new FeedNotify(Notify::FeedData, channel->id(), name));
+    ChatNotify::start(new FeedNotify(Notify::FeedData, channel->id(), name, QVariantMap(), Notice::Found));
   }
 }
 

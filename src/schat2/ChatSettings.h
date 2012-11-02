@@ -48,7 +48,7 @@ private slots:
   void ready();
 
 private:
-  void set();
+  void set(bool offline);
   void set(const QString &key, const QVariant &value);
 
   bool m_synced;         ///< \b true если настройки сихронизированы с сервером.
