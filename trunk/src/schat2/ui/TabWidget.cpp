@@ -387,16 +387,17 @@ void TabWidget::contextMenuEvent(QContextMenuEvent *event)
 
     if (action == pin) {
       if (tab->options() & AbstractTab::Pinned) {
-        tab->unpin();
-        emit unpinned(tab);
+        unpin(tab);
       }
       else {
         tab->pin();
         emit pinned(tab);
       }
     }
-    if (action == close)
+    if (action == close) {
+      unpin(tab);
       closeTab(index);
+    }
   }
 }
 
@@ -405,8 +406,11 @@ void TabWidget::keyPressEvent(QKeyEvent *event)
 {
   if (event->modifiers() == Qt::ControlModifier) {
     if (event->key() == Qt::Key_W) {
-      if (currentIndex() != -1 && count() > 1)
-        closeTab(currentIndex());
+      int index = currentIndex();
+      if (index != -1 && count() > 1) {
+        unpin(widget(index));
+        closeTab(index);
+      }
     }
   }
 
@@ -420,8 +424,10 @@ void TabWidget::keyPressEvent(QKeyEvent *event)
 void TabWidget::mouseReleaseEvent(QMouseEvent *event)
 {
   int index = tabAt(event->pos());
-  if (index != -1 && count() > 1 && event->button() == Qt::MidButton)
+  if (index != -1 && count() > 1 && event->button() == Qt::MidButton) {
+    unpin(widget(index));
     closeTab(index);
+  }
   else
     QTabWidget::mouseReleaseEvent(event);
 }
@@ -619,4 +625,14 @@ void TabWidget::showWelcome()
     showPage(new ProgressTab(this));
   else
     showPage(new WelcomeTab(this));
+}
+
+
+/*!
+ * Открепление вкладки, вызванное пользователем явно или при закрытии закреплённой вкладки.
+ */
+void TabWidget::unpin(AbstractTab *tab)
+{
+  tab->unpin();
+  emit unpinned(tab);
 }

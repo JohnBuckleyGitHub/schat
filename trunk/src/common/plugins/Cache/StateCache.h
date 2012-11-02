@@ -25,6 +25,9 @@
 class AbstractTab;
 class ChatSettings;
 
+/*!
+ * Обеспечивает восстановление закреплённых вкладок после перезапуска клиента.
+ */
 class StateCache : public QObject
 {
   Q_OBJECT
@@ -35,6 +38,7 @@ public:
 private slots:
   void pinned(AbstractTab *tab);
   void ready();
+  void save();
   void settingsChanged(const QString &key, const QVariant &value);
   void start();
   void synced();

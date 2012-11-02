@@ -106,6 +106,7 @@ private:
   void lastTab();
   void retranslateUi();
   void showWelcome();
+  void unpin(AbstractTab *tab);
 
   AuthIcon *m_authIcon;                         ///< Иконка провайдеров авторизации.
   MainToolBar *m_mainToolBar;                   ///< Правая панель инструментов.
