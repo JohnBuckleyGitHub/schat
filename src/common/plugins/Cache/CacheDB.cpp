@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QThreadPool>
@@ -328,6 +326,19 @@ ClientChannel CacheDB::channel(qint64 id, bool feeds)
 }
 
 
+/*!
+ * Обновление схемы базы данных до версии 2.
+ */
+qint64 CacheDB::V2()
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.exec(LS("DELETE FROM feeds;"));
+  query.exec(LS("PRAGMA user_version = 2"));
+
+  return 2;
+}
+
+
 void CacheDB::create()
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
@@ -371,7 +382,11 @@ void CacheDB::version()
 
   qint64 version = query.value(0).toLongLong();
   if (!version) {
-    query.exec(LS("PRAGMA user_version = 1"));
-    version = 1;
+    query.exec(LS("PRAGMA user_version = 2"));
+    version = 2;
   }
+
+  query.finish();
+
+  if (version == 1) version = V2();
 }
