@@ -196,8 +196,12 @@ ChannelBaseTab *TabWidget::channelTab(const QByteArray &id, bool create, bool sh
   }
 
   ClientChannel channel = ChatClient::channels()->get(id);
-  if (!channel)
+  if (!channel) {
+    if (!m_prefetch.contains(id))
+      m_prefetch.append(id);
+
     return 0;
+  }
 
   if (create) {
     if (channel->type() == SimpleID::UserId)
@@ -516,8 +520,12 @@ void TabWidget::openTab()
 
 void TabWidget::addChannel(const QByteArray &id)
 {
-  if (SimpleID::typeOf(id) == SimpleID::ChannelId)
-    channelTab(id, true, !m_channels.contains(id));
+  int type = SimpleID::typeOf(id);
+
+  if (type == SimpleID::ChannelId || m_prefetch.contains(id)) {
+    m_prefetch.removeAll(id);
+    channelTab(id, true, type == SimpleID::ChannelId ? !m_channels.contains(id) : false);
+  }
 }
 
 
