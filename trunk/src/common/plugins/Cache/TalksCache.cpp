@@ -136,7 +136,7 @@ void TalksCache::synced()
       unsynced.append(id);
   }
 
-  channels->info(unsynced);
+  channels->sync(unsynced);
 }
 
 
