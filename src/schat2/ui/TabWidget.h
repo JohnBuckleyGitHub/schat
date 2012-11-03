@@ -110,6 +110,7 @@ private:
 
   AuthIcon *m_authIcon;                         ///< Иконка провайдеров авторизации.
   MainToolBar *m_mainToolBar;                   ///< Правая панель инструментов.
+  QList<QByteArray> m_prefetch;                 ///< Список каналов для которых было запрошено создание вкладки, но они не были созданы.
   QMap<QByteArray, AbstractTab*> m_pages;       ///< Вкладки не связанные с каналами.
   QMap<QByteArray, ChannelBaseTab*> m_channels; ///< Таблица каналов.
   ServerTab *m_serverTab;                       ///< Вкладка сервера.
