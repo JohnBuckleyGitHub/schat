@@ -88,7 +88,7 @@ c['schedulers'] = [
 
 
 svn_co = [
-  SVN(mode='full', method='clobber', repourl='http://schat.googlecode.com/svn/trunk/'),
+  SVN(mode='full', method='clobber', repourl='https://schat.googlecode.com/svn/trunk/'),
 ]
 
 
