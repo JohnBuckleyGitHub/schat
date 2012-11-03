@@ -73,6 +73,7 @@ public:
   bool name(const QByteArray &id, const QString &name);
   bool nick(const QString &nick);
   bool part(const QByteArray &id);
+  bool sync(const QList<QByteArray> &channels);
   bool update();
   ClientChannel get(const QByteArray &id);
 

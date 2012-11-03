@@ -159,6 +159,18 @@ bool ClientChannels::part(const QByteArray &id)
 }
 
 
+bool ClientChannels::sync(const QList<QByteArray> &channels)
+{
+  QList<QByteArray> ids;
+  foreach (const QByteArray &id, channels) {
+    if (!m_unsynced.contains(id) && !ids.contains(id))
+      ids.append(id);
+  }
+
+  return info(ids);
+}
+
+
 bool ClientChannels::update()
 {
   return m_client->send(ChannelNotice::update(ChatClient::channel()));
