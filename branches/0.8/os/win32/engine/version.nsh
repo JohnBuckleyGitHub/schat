@@ -1,0 +1,1 @@
+${def} SCHAT_VERSION "0.8.5.2277"

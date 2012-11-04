@@ -28,7 +28,7 @@ ${Section}
   File "${SCHAT_QT_BINDIR}\QtNetwork4.dll"
   File "${SCHAT_QT_BINDIR}\QtWebKit4.dll"
   File "${SCHAT_QT_BINDIR}\libpng15.dll"
-  File "${SCHAT_QT_BINDIR}\zlib1.dll"
+  File "${SCHAT_QT_BINDIR}\zlib.dll"
 
   !if ${SCHAT_VC90} == 1
     File "${VC90_REDIST_DIR}\msvcp90.dll"
