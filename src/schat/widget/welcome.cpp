@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
 #include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QPushButton>
-//#include <QDebug>
 
 #include "languagebox.h"
 #include "profilewidget.h"
@@ -90,6 +89,8 @@ void WelcomeWidget::keyPressEvent(QKeyEvent *event)
 
 void WelcomeWidget::languageChanged(const QString &text)
 {
+  Q_UNUSED(text)
+
   if (m_language->save()) {
     SimpleSettings->setString("Translation", SimpleChatApp::instance()->translation()->name());
   }
