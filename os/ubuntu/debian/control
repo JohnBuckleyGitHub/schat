@@ -1,0 +1,19 @@
+Source: schat
+Section: net
+Priority: extra
+Maintainer: Alexander Sedov <impomezia@gmail.com>
+Build-Depends: debhelper (>= 7), libqtwebkit-dev | libqt4-dev, qt4-qmake
+Standards-Version: 3.8.3
+Homepage: https://schat.me
+
+Package: schat
+Architecture: any 
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: IMPOMEZIA Simple Chat Client
+ Simple and powerful cross-platform chat client for local networks and the Internet.
+
+Package: schatd
+Architecture: any 
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: IMPOMEZIA Simple Chat Daemon
+ Simple and powerful cross-platform chat server for local networks and the Internet.
