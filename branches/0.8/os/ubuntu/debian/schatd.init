@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id$
+# $Id: schatd.init 1425 2011-01-31 20:17:59Z IMPOMEZIA $
 # IMPOMEZIA Simple Chat
 # Copyright (c) 2008-2011 IMPOMEZIA <schat@impomezia.com>
 #

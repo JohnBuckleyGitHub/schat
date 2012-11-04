@@ -2,7 +2,7 @@ This work was packaged for Debian by:
 
     Alexander Sedov <impomezia@gmail.com>
 
-It was downloaded from <http://impomezia.com>
+It was downloaded from <https://schat.me>
 
 Upstream Author(s):
 
@@ -10,7 +10,7 @@ Upstream Author(s):
 
 Copyright:
 
-    Copyright (C) 2008-2010 Alexander Sedov <impomezia@gmail.com>
+    Copyright (C) 2008-2012 Alexander Sedov <impomezia@gmail.com>
 
 License:
 
@@ -29,7 +29,7 @@ License:
 
 The Debian packaging is:
 
-    Copyright (C) 2010 Alexander Sedov <impomezia@gmail.com>
+    Copyright (C) 2012 Alexander Sedov <impomezia@gmail.com>
 
 and is licensed under the GPL version 3, 
 see `/usr/share/common-licenses/GPL-3'.
