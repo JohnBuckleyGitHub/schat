@@ -1,0 +1,6 @@
+schat (##SCHAT_VERSION##~##DIST##) ##DIST##; urgency=low
+
+  * Initial release.
+
+ -- Alexander Sedov <impomezia@gmail.com>  ##RDATE##
+
