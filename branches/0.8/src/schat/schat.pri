@@ -192,22 +192,17 @@ CODECFORTR = UTF-8
 unix {
   target.path += $$SCHAT_PREFIX/bin
 
-  doc.files = ../../data/doc/ChangeLog.html 
-  doc.path = $$SCHAT_PREFIX/share/doc/schat/html
+  doc.files = ../../data/doc/ChangeLog.html
 
-  emoticons_kolobok.files = ../../data/emoticons/Kolobok/icondef.xml
+  emoticons_kolobok.files += ../../data/emoticons/Kolobok/icondef.xml
   emoticons_kolobok.files += ../../data/emoticons/Kolobok/*.gif
-  emoticons_kolobok.path = $$SCHAT_PREFIX/share/schat/emoticons/Kolobok
 
-  emoticons_simple.files = $$quote(../../data/emoticons/Simple Smileys/emoticons.xml)
+  emoticons_simple.files += $$quote(../../data/emoticons/Simple Smileys/emoticons.xml)
   emoticons_simple.files += $$quote(../../data/emoticons/Simple Smileys/*.png)
-  emoticons_simple.path = $$quote($$SCHAT_PREFIX/share/schat/emoticons/Simple Smileys)
 
   networks.files = ../../data/networks/*.xml
-  networks.path = $$SCHAT_PREFIX/share/schat/networks
 
   sounds.files = ../../data/sounds/*.wav
-  sounds.path = $$SCHAT_PREFIX/share/schat/sounds
 
   translations.files = ../../data/translations/schat_en.qm
   translations.files += ../../data/translations/schat_ru.qm
@@ -217,15 +212,32 @@ unix {
   translations.files += ../../data/translations/en.png
   translations.files += ../../data/translations/ru.png
   translations.files += ../../data/translations/uk.png
-  translations.path = $$SCHAT_PREFIX/share/schat/translations
 
-  pixmaps.files = ../../data/images/schat.png
-  pixmaps.path = $$SCHAT_PREFIX/share/pixmaps
+  macx {
+    doc.path = ../../out/release/SimpleChat.app/Contents/Resources/doc
+    emoticons_kolobok.path = ../../out/release/SimpleChat.app/Contents/Resources/emoticons/Kolobok
+    emoticons_simple.path = $$quote(../../out/release/SimpleChat.app/Contents/Resources/emoticons/Simple Smileys)
+    networks.path = ../../out/release/SimpleChat.app/Contents/Resources/networks
+    sounds.path = ../../out/release/SimpleChat.app/Contents/Resources/sounds
+    translations.path = ../../out/release/SimpleChat.app/Contents/Resources/translations
 
-  applications.files = ../../os/ubuntu/schat.desktop
-  applications.path = $$SCHAT_PREFIX/share/applications
+    INSTALLS += doc emoticons_kolobok emoticons_simple networks sounds translations
+  } else {
+    doc.path = $$SCHAT_PREFIX/share/doc/schat/html
+    emoticons_kolobok.path = $$SCHAT_PREFIX/share/schat/emoticons/Kolobok
+    emoticons_simple.path = $$quote($$SCHAT_PREFIX/share/schat/emoticons/Simple Smileys)
+    networks.path = $$SCHAT_PREFIX/share/schat/networks
+    sounds.path = $$SCHAT_PREFIX/share/schat/sounds
+    translations.path = $$SCHAT_PREFIX/share/schat/translations
 
-  INSTALLS += target doc emoticons_kolobok emoticons_simple networks sounds translations pixmaps applications
+    pixmaps.files = ../../data/images/schat.png
+    pixmaps.path = $$SCHAT_PREFIX/share/pixmaps
+
+    applications.files = ../../os/ubuntu/schat.desktop
+    applications.path = $$SCHAT_PREFIX/share/applications
+
+    INSTALLS += target doc emoticons_kolobok emoticons_simple networks sounds translations pixmaps applications
+  }
 }
 
 include(../common/common.pri)
