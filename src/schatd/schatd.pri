@@ -72,7 +72,7 @@ TRANSLATIONS += ../../data/translations/schatd_ru.ts
 TRANSLATIONS += ../../data/translations/schatd_uk.ts
 CODECFORTR = UTF-8
 
-unix {
+unix:!macx {
   etc.files = ../../data/normalize.xml
   etc.files += ../../data/motd.html
   etc.files += ../../data/schatd.conf.example
