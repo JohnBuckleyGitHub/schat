@@ -3,7 +3,7 @@
 <plist version="0.9">
 <dict>
 	<key>CFBundleIconFile</key>
-	<string>@ICON@</string>
+	<string>schat.icns</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleGetInfoString</key>
@@ -11,8 +11,10 @@
 	<key>CFBundleSignature</key>
 	<string>@TYPEINFO@</string>
 	<key>CFBundleExecutable</key>
-	<string>@EXECUTABLE@</string>
+	<string>SimpleChat</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.impomezia.simple</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright © 2008-2012, IMPOMEZIA.</string>
 </dict>
 </plist>

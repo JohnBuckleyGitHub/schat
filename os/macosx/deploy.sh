@@ -16,40 +16,23 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-VERSION="0.8.4.2277"
+VERSION="0.8.5"
 TARGET="SimpleChat"
+
+set -e
 
 cd ../..
 qmake -r
-make -j3
+make -j9
+make install
 cd out/release
+
 macdeployqt $TARGET.app
-macdeployqt schatd-ui.app
-macdeployqt schatd.app
-cp schatd-ui.app/Contents/MacOS/schatd-ui $TARGET.app/Contents/MacOS/
-cp schatd.app/Contents/MacOS/schatd $TARGET.app/Contents/MacOS/
 
-cp -fR ../../data/doc $TARGET.app/Contents/Resources/doc
-cp -fR ../../data/emoticons $TARGET.app/Contents/Resources/emoticons
-cp -fR ../../data/networks $TARGET.app/Contents/Resources/networks
-cp -fR ../../data/sounds $TARGET.app/Contents/Resources/sounds
-mkdir $TARGET.app/Contents/Resources/translations
-cp -fr ../../data/translations/*.png $TARGET.app/Contents/Resources/translations/
-cp -fr ../../data/translations/*.qm $TARGET.app/Contents/Resources/translations/
-find $TARGET.app/Contents/Resources -name .svn -exec rm -rf {} \; > /dev/null 2>&1
+DMG="dmg/$TARGET-$VERSION.dmg"
 
-DIR="bundle"
-mkdir $DIR
-cp -fr $TARGET.app $DIR
-ln -s /Applications $DIR/Applications
-rm -fr $DIR/.fseventsd
-mkdir $DIR/.background
-cp ../../os/macosx/mac.png $DIR/.background/
-cp ../../os/macosx/DS_Store $DIR/.DS_Store
-
-hdiutil create -ov -srcfolder $DIR -format UDBZ -volname "$TARGET $VERSION" "$TARGET-$VERSION.dmg"
-hdiutil internet-enable -yes "$TARGET-$VERSION.dmg"
-
-cp "$TARGET-$VERSION.dmg" ../../os/macosx/dmg
-
+cd ../../os/macosx
+test -f $DMG && rm $DMG
+./create-dmg/create-dmg --window-size 500 300 --volicon schat.icns --icon-size 96 --volname "Simple Chat" --background background.png --icon "Applications" 380 205 --icon "SimpleChat" 110 205 $DMG ../../out/release/SimpleChat.app
+hdiutil internet-enable -yes $DMG 
 
