@@ -1,10 +1,16 @@
 schat (##SCHAT_VERSION##~##DIST##) ##DIST##; urgency=low
 
-  * Fixed compilation error.
+  * Fixed icon.
 
  -- Alexander Sedov <impomezia@gmail.com>  ##RDATE##
+ 
+schat (0.8.5.3264-1~ppa1~##DIST##) ##DIST##; urgency=low
 
-schat (0.8.5-1~ppa0~precise) ##DIST##; urgency=low
+  * Fixed compilation error.
+
+ -- Alexander Sedov <impomezia@gmail.com>  Sun, 04 Nov 2012 21:51:23 +0100
+
+schat (0.8.5-1~ppa0~##DIST##) ##DIST##; urgency=low
 
   * Initial release.
 
