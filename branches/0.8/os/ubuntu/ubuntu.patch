@@ -1,7 +1,7 @@
 Index: src/common/abstractsettings.cpp
 ===================================================================
---- src/common/abstractsettings.cpp	(revision 1414)
-+++ src/common/abstractsettings.cpp	(working copy)
+--- a/src/common/abstractsettings.cpp	(revision 1414)
++++ b/src/common/abstractsettings.cpp	(working copy)
 @@ -66,14 +66,7 @@
   */
  bool AbstractSettings::isUnixLike()
@@ -19,8 +19,8 @@ Index: src/common/abstractsettings.cpp
  
 Index: src/common/abstractsettings.h
 ===================================================================
---- src/common/abstractsettings.h	(revision 1414)
-+++ src/common/abstractsettings.h	(working copy)
+--- a/src/common/abstractsettings.h	(revision 1414)
++++ b/src/common/abstractsettings.h	(working copy)
 @@ -25,8 +25,8 @@
    #define SCHAT_UNIX_DOC(x)    QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../Resources/" + x)
  #else
@@ -34,8 +34,8 @@ Index: src/common/abstractsettings.h
  #include <QMap>
 Index: src/schatd/schatd.pro
 ===================================================================
---- src/schatd/schatd.pro	(revision 1424)
-+++ src/schatd/schatd.pro	(working copy)
+--- a/src/schatd/schatd.pro	(revision 1424)
++++ b/src/schatd/schatd.pro	(working copy)
 @@ -21,7 +21,7 @@
  SCHAT_RC_FILE     = 1
  SCHAT_LOCAL_IPC   = 1

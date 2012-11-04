@@ -285,20 +285,20 @@ void Settings::read()
   setBool("Sound/MuteInDnD",            true);
   setString("Sound/Message",            "Received.wav");
   setString("Sound/PrivateMessage",     "Received.wav");
+
   QStringList nameFilter;
   nameFilter << "*.wav";
-  #if defined(Q_WS_X11)
-    nameFilter << "*.au";
-  #elif defined(Q_WS_MAC)
-    /// \todo Необходимо уточнить список поддерживаемых форматов под Mac OS X.
-    nameFilter << "*.aiff" << "*.snd" << "*.mp3" << "*.m4a" << "*.m4b" << "*.m4p";
-  #endif
+# if defined(Q_OS_LINUX)
+  nameFilter << "*.au";
+# elif defined(Q_OS_MAC)
+  nameFilter << "*.aiff" << "*.snd" << "*.mp3" << "*.m4a" << "*.m4b" << "*.m4p";
+# endif
   setList("Sound/NameFilter", nameFilter);
 
-  #ifdef Q_WS_X11
-    setBool("Sound/UseExternalCmd",     !QSound::isAvailable());
-    setString("Sound/ExternalCmd",      "aplay -q -N %1");
-  #endif
+# if defined(Q_OS_LINUX)
+  setBool("Sound/UseExternalCmd",     true);
+  setString("Sound/ExternalCmd",      "aplay -q -N %1");
+# endif
 
   setInt("Profile/MaxRecentItems",   16);
   setList("Profile/RecentNicks",     QStringList());

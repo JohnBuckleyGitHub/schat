@@ -3,7 +3,7 @@ Section: net
 Priority: extra
 Maintainer: Alexander Sedov <impomezia@gmail.com>
 Build-Depends: debhelper (>= 7), libqtwebkit-dev | libqt4-dev, qt4-qmake
-Standards-Version: 3.8.3
+Standards-Version: 3.9.3
 Homepage: https://schat.me
 
 Package: schat

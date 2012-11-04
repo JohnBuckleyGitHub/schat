@@ -21,7 +21,7 @@ set -e
 cat debian/changelog.in | sed "s/##RDATE##/`date -R`/g" | sed "s/##DIST##/`lsb_release -cs`/g" > debian/changelog
 cp -fr debian ../../
 cd ../..
-patch -p0 -N -i os/ubuntu/ubuntu.patch
+patch -p1 -N -i os/ubuntu/ubuntu.patch
 
 dpkg-buildpackage -us -uc
 cp -f ../*.deb os/ubuntu/deb
