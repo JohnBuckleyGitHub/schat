@@ -276,4 +276,6 @@ unix {
   }
 }
 
+win32:LIBS += -luser32
+
 include(../common/common.pri)
