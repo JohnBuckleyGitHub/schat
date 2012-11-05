@@ -179,7 +179,7 @@ bool SChatWindowPrivate::startNotice(int index, const QString &key)
   if (index == -1)
     return false;
 
-  bool notice = (tabs->currentIndex() != index || !q->isActiveWindow());
+  bool notice = (tabs->currentIndex() != index || !q->isActiveChatWindow());
   if ((notice || pref->getBool("Sound/AlwaysPlay")) && !soundAction->isMute())
     tray->playSound(key, true);
 
@@ -777,6 +777,27 @@ SChatWindow::~SChatWindow()
 }
 
 
+bool SChatWindow::isActiveChatWindow()
+{
+  if (isMinimized() || isHidden())
+    return false;
+
+# if defined(Q_OS_WIN32)
+  if (isActiveWindow()) {
+    HWND active = GetForegroundWindow();
+    if (active == (HWND) window()->internalWinId() || ::IsChild(active, (HWND) window()->internalWinId()))
+      return true;
+    else
+      return false;
+  }
+  else
+    return false;
+# else
+  return isActiveWindow();
+# endif
+}
+
+
 void SChatWindow::showChat()
 {
   d->showChat();
@@ -1057,7 +1078,7 @@ void SChatWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
         return;
       }
 
-      if (isActiveWindow() || qAbs(d->activationChanged.msecsTo(QTime::currentTime())) < QApplication::doubleClickInterval())
+      if (isActiveChatWindow() || qAbs(d->activationChanged.msecsTo(QTime::currentTime())) < QApplication::doubleClickInterval())
         d->hideChat();
       else
         d->showChat();
