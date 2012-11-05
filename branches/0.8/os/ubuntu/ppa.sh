@@ -18,7 +18,7 @@
 
 set -e
 
-PPA_LEVEL=3
+PPA_LEVEL=4
 
 PPA_VERSION=$SCHAT_VERSION-1~ppa$PPA_LEVEL
 RDATE=`date -R`
@@ -29,7 +29,7 @@ function upload() {
   local DIST=$1
   cat ../../$WORKDIR/os/ubuntu/debian/changelog.ppa | sed "s/##RDATE##/$RDATE/g" | sed "s/##DIST##/$DIST/g" | sed "s/##SCHAT_VERSION##/$PPA_VERSION/g" > debian/changelog
   debuild -S -sa
-  dput ppa:impomezia/development ../$PPA_SOURCE~${DIST}_source.changes
+  dput ppa:impomezia/stable ../$PPA_SOURCE~${DIST}_source.changes
 }
 
 cd ../../
