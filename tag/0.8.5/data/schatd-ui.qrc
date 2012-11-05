@@ -1,0 +1,21 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+  <file alias="images/dialog-ok.png">images/dialog-ok-apply.png</file>
+  <file>images/daemonsettings.png</file>
+  <file>images/dialog-cancel.png</file>
+  <file>images/exit.png</file>
+  <file>images/led/greenled.png</file>
+  <file>images/led/redled.png</file>
+  <file>images/led/yellowled.png</file>
+  <file>images/network.png</file>
+  <file>images/play.png</file>
+  <file>images/restart.png</file>
+  <file>images/schat16-gray.png</file>
+  <file>images/schat16-green.png</file>
+  <file>images/schat16-yellow.png</file>
+  <file>images/shutdown.png</file>
+  <file>images/stop.png</file>
+  <file>images/undo.png</file>
+  <file>images/windows-service.png</file>
+</qresource>
+</RCC>

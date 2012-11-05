@@ -1,0 +1,47 @@
+Index: src/common/abstractsettings.cpp
+===================================================================
+--- a/src/common/abstractsettings.cpp	(revision 1414)
++++ b/src/common/abstractsettings.cpp	(working copy)
+@@ -66,14 +66,7 @@
+  */
+ bool AbstractSettings::isUnixLike()
+ {
+-  #if defined(Q_OS_MAC)
+   return true;
+-  #else
+-  if (QDir(QCoreApplication::applicationDirPath()).dirName() == "bin")
+-    return true;
+-  #endif
+-
+-  return false;
+ }
+ 
+ 
+Index: src/common/abstractsettings.h
+===================================================================
+--- a/src/common/abstractsettings.h	(revision 1414)
++++ b/src/common/abstractsettings.h	(working copy)
+@@ -25,8 +25,8 @@
+   #define SCHAT_UNIX_DOC(x)    QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../Resources/" + x)
+ #else
+   #define SCHAT_UNIX_CONFIG(x) QDir::cleanPath(QDir::homePath() + "/.config/schat/" + x)
+-  #define SCHAT_UNIX_SHARE(x)  QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../share/schat/" + x)
+-  #define SCHAT_UNIX_DOC(x)    QDir::cleanPath(QCoreApplication::applicationDirPath() + "/../share/doc/schat/" + x)
++  #define SCHAT_UNIX_SHARE(x)  QDir::cleanPath(QString("/usr/share/schat/") + x)
++  #define SCHAT_UNIX_DOC(x)    QDir::cleanPath(QString("/usr/share/doc/schat/") + x)
+ #endif
+ 
+ #include <QMap>
+Index: src/schatd/schatd.pro
+===================================================================
+--- a/src/schatd/schatd.pro	(revision 1424)
++++ b/src/schatd/schatd.pro	(working copy)
+@@ -21,7 +21,7 @@
+ SCHAT_RC_FILE     = 1
+ SCHAT_LOCAL_IPC   = 1
+ SCHAT_SINGLEAPP   = 0
+-SCHAT_OS          = auto
++SCHAT_OS          = ubuntu
+ 
+ include(schatd.pri)
+ 

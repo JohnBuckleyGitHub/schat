@@ -1,0 +1,17 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = "configure" ]; then
+  if ! getent passwd | grep -q "^schatd:"; then
+    adduser --system --disabled-login --no-create-home --home /var/run/schatd --group schatd || true
+  fi
+  chown schatd:schatd /var/run/schatd
+  chown schatd:schatd /var/log/schatd
+  chown schatd:schatd /var/lib/schatd
+fi
+
+killall /usr/sbin/schatd || true
+
+#DEBHELPER#
+
+exit 0

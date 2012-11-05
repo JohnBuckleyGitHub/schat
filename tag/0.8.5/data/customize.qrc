@@ -1,0 +1,16 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+  <file>doc/members.html</file>
+  <file>images/gplv3-88x31.png</file>
+  <file>images/impomezia.png</file>
+  <file>images/impomezia48.png</file>
+  <file>images/qt-logo.png</file>
+  <file>images/schat.png</file>
+  <file>images/schat-ny.png</file>
+  <file>images/undo.png</file>
+  <file>images/watermark.png</file>
+  <file>translations/customize_en.qm</file>
+  <file>translations/customize_ru.qm</file>
+  <file>translations/qt_ru.qm</file>
+</qresource>
+</RCC>

@@ -1,0 +1,16 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = "purge" ]; then
+    deluser --quiet --system schatd || true
+    delgroup --quiet --system schatd || true
+    
+    f=/var/run/schatd
+    if [ -d "$f" ]; then
+        rmdir "$f" || { chown root:root "$f" && chmod 00700 "$f"; }
+    fi
+fi
+
+#DEBHELPER#
+
+exit 0

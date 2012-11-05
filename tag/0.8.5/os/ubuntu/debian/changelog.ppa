@@ -1,0 +1,23 @@
+schat (##SCHAT_VERSION##~##DIST##) ##DIST##; urgency=low
+
+  * Stable release 0.8.5.
+
+ -- Alexander Sedov <impomezia@gmail.com>  ##RDATE##
+ 
+schat (0.8.5.3266-1~ppa3~##DIST##) ##DIST##; urgency=low
+
+  * Fixed icon.
+
+ -- Alexander Sedov <impomezia@gmail.com>  Sun, 04 Nov 2012 23:20:50 +0100
+ 
+schat (0.8.5.3264-1~ppa1~##DIST##) ##DIST##; urgency=low
+
+  * Fixed compilation error.
+
+ -- Alexander Sedov <impomezia@gmail.com>  Sun, 04 Nov 2012 21:51:23 +0100
+
+schat (0.8.5-1~ppa0~##DIST##) ##DIST##; urgency=low
+
+  * Initial release.
+
+ -- Alexander Sedov <impomezia@gmail.com>  Sun, 04 Nov 2012 20:57:00 +0100

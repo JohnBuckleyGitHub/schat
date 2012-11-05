@@ -1,0 +1,104 @@
+* {
+  word-wrap:break-word;
+  word-break:break-word;
+}
+body {
+  margin:0;
+  padding:0;
+  color:#002b3c;
+}
+a {
+  text-decoration:none;
+} 
+a:link, a:visited {
+  color:#815d53;
+}
+a:active {
+  color:#858e93;
+}
+a span[style] { /* Fix Qt rich text */
+  text-decoration:none !important;
+  color:#815d53 !important;
+}
+::-webkit-scrollbar {
+	width: 6px;
+	height: 6px;
+	background-color:#fff;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: rgba(0, 0, 0, 0.2);
+	border-radius:3px;
+}
+
+::-webkit-scrollbar-track {
+	border-radius:3px;
+}
+.ts {
+  color:#90a4b3;
+  font-size:x-small;
+  border-right:#bdc9d1 solid 1px;
+}
+.smb, .ocb, .icb, .oab, .iab {
+  margin:1px;
+  padding:0 1px;
+  /*-webkit-border-radius:4px;*/
+}
+.oncb, .incb {
+    margin-left:44px;
+}
+.oab, .iab {
+  color:#be00c4;
+  border:1px solid #ffefff;
+  background:url(Images/ActionBg.png) top repeat-x #fffbff;
+}
+.oab .sender a, .iab .sender a {
+  color:#be00c4;
+  font-weight:bold;
+}
+.smb {
+  color:#8797a3;
+  border:1px solid #f5f8ff;
+  background:url(Images/StatusBg.png) top repeat-x #fbfcff;
+}
+.sb {
+  color:#002b3c;
+  background-color:#f5f8ff;
+  border:#dce2e6 solid 1px;
+  margin:1px 8px;
+  padding:1px 4px;
+}
+.ocb {
+  border:1px solid #eeffeb;
+  background:url(Images/OutgoingBg.png) top repeat-x #fcfffb;
+}
+.oncb {
+  border-top:1px solid #eeffeb;
+}
+.icb {
+  border:1px solid #f3f5ff;
+  background:url(Images/IncomingBg.png) top repeat-x #fbfcff;
+}
+.incb {
+  border-top:1px solid #f3f5ff;
+}
+.ocb .sender a, .ocb .sender, .icb .sender a, .icb .sender {
+  color:#185074;
+  font-weight:bold;
+}
+.oldClientProtocol, .oldServerProtocol, .badNickName, .AccessDenied, .disconnect {
+  color:#da251d;
+}
+.smb .ready {
+  color:#6bb521;
+}
+.info, .changedNick, .changedNick a {
+  color:#5096cf;
+}
+.changedNick a {
+  font-weight:bold;
+}
+.newUser a, .userLeft a, .away a {
+  color:#8797a3;
+  font-weight:bold;
+}
