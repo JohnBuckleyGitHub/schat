@@ -64,7 +64,7 @@
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.environment</key>
-					<value>QMAKESPEC=win32-g++|LC_MESSAGES=C|PATH=C:\\Qt\\4.8.0\\bin;${env_var:PATH};C:\\qt\\4.7.3\\bin|</value>
+					<value>QMAKESPEC=win32-g++|LC_MESSAGES=C|PATH=C:\\Qt\\4.8.2\\bin;${env_var:PATH};C:\\qt\\4.7.3\\bin|</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.stopOnError</key>
