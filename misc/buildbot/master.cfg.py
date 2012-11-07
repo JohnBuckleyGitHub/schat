@@ -2,7 +2,7 @@
 # ex: set syntax=python:
 
 from buildbot.buildslave import BuildSlave
-from buildbot.changes.svnpoller import SVNPoller, split_file_branches
+from buildbot.changes.svnpoller import SVNPoller, split_file_branches 
 from buildbot.config import BuilderConfig
 from buildbot.process.factory import BuildFactory
 from buildbot.process.properties import WithProperties, Property
@@ -19,7 +19,10 @@ import schat_passwords
 import os
 
 SCHAT_VERSION        = "1.99.47"
-SCHAT_UPLOAD_BASE    = "/var/www/download.schat.me/htdocs/schat2/snapshots/" + SCHAT_VERSION
+SCHAT_VERSION_LEGACY = "0.8.5"
+
+SCHAT_UPLOAD_BASE        = "/var/www/download.schat.me/htdocs/schat2/snapshots/" + SCHAT_VERSION
+SCHAT_UPLOAD_BASE_LEGACY = "/var/www/download.schat.me/htdocs/schat/snapshots/" + SCHAT_VERSION_LEGACY
 
 authz = web.authz.Authz(
   auth=web.auth.BasicAuth(schat_passwords.WEB_USERS),
@@ -49,7 +52,7 @@ c = BuildmasterConfig = {
   ],
   'change_source': [
     SVNPoller(
-      svnurl="http://schat.googlecode.com/svn",
+      svnurl="https://schat.googlecode.com/svn",
       split_file=split_file_branches,
       pollinterval = 60,
     ),
@@ -69,26 +72,31 @@ c = BuildmasterConfig = {
 
 c['properties'] = {
   'version': SCHAT_VERSION,
-  'suffix':  '-dev'
+  'version_legacy': SCHAT_VERSION_LEGACY,
+  'suffix':  '-dev',
 }
 
 
 c['schedulers'] = [
   ForceScheduler(
-    name="force",
-    builderNames=["lucid", "lucid64", "win32", "macosx", "source", "precise", "precise64", "update", "release"]
+    name='force',
+    builderNames=['lucid', 'lucid64', 'win32', 'win32-legacy', 'macosx', 'macosx-legacy', 'source', 'precise', 'precise64', 'release']
   ),
   SingleBranchScheduler(
-    name="trunk",
-    change_filter=ChangeFilter(branch = None),
+    name='trunk',
+    change_filter=ChangeFilter(branch=None),
     treeStableTimer=60,
-    builderNames=["lucid", "lucid64", "win32", "macosx", "source", "precise", "precise64"]
+    builderNames=['lucid', 'lucid64', 'win32', 'source', 'precise', 'precise64']
   )
 ]
 
 
 svn_co = [
   SVN(mode='full', method='clobber', repourl='https://schat.googlecode.com/svn/trunk/'),
+]
+
+svn_co_legacy = [
+  SVN(mode='full', method='clobber', repourl='https://schat.googlecode.com/svn/branches/0.8/'),
 ]
 
 
@@ -160,6 +168,56 @@ def MakeWinBuilder():
   return f
 
 
+def MakeWinLegacyBuilder():
+  f = BuildFactory()
+  f.addSteps(svn_co_legacy)
+  f.addStep(ShellCommand(
+    name          = 'revision',
+    command       = ['cmd', '/c', 'revision.cmd'],
+    workdir       = "build/os/win32",
+    env           = { 'SCHAT_VERSION': SCHAT_VERSION_LEGACY, 'SCHAT_REVISION': Property('got_revision') },
+    haltOnFailure = True,
+  ))
+  f.addStep(ShellCommand(
+    name          = 'qmake',
+    command       = ['qmake', '-r'],
+    haltOnFailure = True,
+  ))
+  f.addStep(Compile(
+    command       = ['jom', '-j3', '/NOLOGO'],
+    haltOnFailure = True,
+  ))
+  f.addStep(ShellCommand(
+    name          = 'nsis',
+    command       = ['cmd', '/c', 'nsis.cmd'],
+    workdir       = 'build/os/win32',
+    env           = { 'SCHAT_SIGN_FILE': schat_passwords.SIGN_FILE, 'SCHAT_SIGN_PASSWORD': schat_passwords.SIGN_PASSWORD, 'SCHAT_VERSION': SCHAT_VERSION_LEGACY, 'SCHAT_REVISION': Property('got_revision') },
+    haltOnFailure = True,
+    logEnviron    = False,
+  ))
+  f.addStep(FileUpload(
+    mode       = 0644,
+    slavesrc   = WithProperties('os/win32/out/schat-%(version_legacy)s.%(got_revision)s.exe'),
+    masterdest = UploadFileNameLegacy('schat-%(version_legacy)s.%(got_revision)s.exe'),
+  ))
+  f.addStep(FileUpload(
+    mode       = 0644,
+    slavesrc   = WithProperties('os/win32/out/schat-core-%(version_legacy)s.%(got_revision)s.exe'),
+    masterdest = UploadFileNameLegacy('schat-core-%(version_legacy)s.%(got_revision)s.exe'),
+  ))
+  f.addStep(FileUpload(
+    mode       = 0644,
+    slavesrc   = WithProperties('os/win32/out/schat-customize-%(version_legacy)s.%(got_revision)s.exe'),
+    masterdest = UploadFileNameLegacy('schat-customize-%(version_legacy)s.%(got_revision)s.exe'),
+  ))
+  f.addStep(FileUpload(
+    mode       = 0644,
+    slavesrc   = WithProperties('os/win32/out/schat-runtime-%(version_legacy)s.%(got_revision)s.exe'),
+    masterdest = UploadFileNameLegacy('schat-runtime-%(version_legacy)s.%(got_revision)s.exe'),
+  ))
+  return f
+
+
 def MakeMacBuilder():
   f = BuildFactory()
   f.addSteps(svn_co)
@@ -173,6 +231,23 @@ def MakeMacBuilder():
     mode       = 0644,
     slavesrc   = WithProperties('os/macosx/dmg/SimpleChat2-%(version)s.dmg'),
     masterdest = UploadFileName('SimpleChat2-%(version)s%(suffix)s.dmg'),
+  ))
+  return f;
+
+
+def MakeMacLegacyBuilder():
+  f = BuildFactory()
+  f.addSteps(svn_co_legacy)
+  f.addStep(ShellCommand(
+    name          = 'dmg',
+    command       = ['bash', 'deploy.sh'],
+    workdir       = 'build/os/macosx',
+    haltOnFailure = True,
+  ))
+  f.addStep(FileUpload(
+    mode       = 0644,
+    slavesrc   = WithProperties('os/macosx/dmg/SimpleChat-%(version_legacy)s.dmg'),
+    masterdest = UploadFileNameLegacy('SimpleChat-%(version_legacy)s.dmg'),
   ))
   return f;
   
@@ -247,6 +322,10 @@ def UploadFileName(file):
   return WithProperties(SCHAT_UPLOAD_BASE + '/r%(got_revision)s/' + file)
 
 
+def UploadFileNameLegacy(file):
+  return WithProperties(SCHAT_UPLOAD_BASE_LEGACY + '/r%(got_revision)s/' + file)
+
+
 c['builders'] = [
   BuilderConfig(name="lucid",
     slavenames=["lucid"],
@@ -280,17 +359,21 @@ c['builders'] = [
     slavenames=["win32"],
     factory=MakeWinBuilder()
   ),
+  BuilderConfig(name="win32-legacy",
+    slavenames=["win32"],
+    factory=MakeWinLegacyBuilder()
+  ),
   BuilderConfig(name="macosx",
     slavenames=["macosx"],
     factory=MakeMacBuilder()
   ),
+  BuilderConfig(name="macosx-legacy",
+    slavenames=["macosx"],
+    factory=MakeMacLegacyBuilder()
+  ),
   BuilderConfig(name="source",
     slavenames=["master"],
     factory=MakeSrcBuilder()
-  ),
-  BuilderConfig(name="update",
-    slavenames=["master"],
-    factory=MakeDevelBuilder()
   ),
   BuilderConfig(name="release",
     slavenames=["master"],
