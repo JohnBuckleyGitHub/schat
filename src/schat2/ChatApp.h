@@ -19,18 +19,24 @@
 #ifndef CHATAPP_H_
 #define CHATAPP_H_
 
-#include <QApplication>
+#ifdef SCHAT_NO_SINGLEAPP
+# define QtSingleApplication QApplication
+# include <QApplication>
+#else
+# include "qtsingleapplication/qtsingleapplication.h"
+#endif
 
 class ChatCore;
 class ChatWindow;
 
-class ChatApp : public QApplication
+class ChatApp : public QtSingleApplication
 {
   Q_OBJECT
 
 public:
   ChatApp(int &argc, char **argv);
   ~ChatApp();
+  bool isRunning();
   void start();
   void stop();
 
@@ -39,6 +45,7 @@ public:
 # endif
 
 private slots:
+  void handleMessage(const QString& message);
   void restart();
 
 private:

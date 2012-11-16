@@ -93,6 +93,18 @@ ChatWindow::~ChatWindow()
 }
 
 
+/*!
+ * Закрытие чата.
+ */
+void ChatWindow::closeChat()
+{
+  ChatClient::io()->leave();
+  hideChat();
+
+  QApplication::quit();
+}
+
+
 void ChatWindow::showChat()
 {
   SCHAT_DEBUG_STREAM(this << "showChat()")
@@ -179,18 +191,6 @@ bool ChatWindow::winEvent(MSG *message, long *result)
   return QMainWindow::winEvent(message, result);
 }
 #endif
-
-
-/*!
- * Закрытие чата.
- */
-void ChatWindow::closeChat()
-{
-  ChatClient::io()->leave();
-  hideChat();
-
-  QApplication::quit();
-}
 
 
 void ChatWindow::notify(const Notify &notify)

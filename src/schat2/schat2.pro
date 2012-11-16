@@ -148,3 +148,10 @@ win32 {
 include(../common/config.pri)
 include(../common/common.pri)
 
+contains( SCHAT_SINGLE_APP, 1 ) {
+    HEADERS += qtsingleapplication/qtsingleapplication.h qtsingleapplication/qtlocalpeer.h
+    SOURCES += qtsingleapplication/qtsingleapplication.cpp qtsingleapplication/qtlocalpeer.cpp
+}
+else {
+    DEFINES += SCHAT_NO_SINGLEAPP
+}

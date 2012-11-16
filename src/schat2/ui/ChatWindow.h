@@ -38,10 +38,13 @@ class ChatWindow : public QMainWindow
 public:
   ChatWindow(QWidget *parent = 0);
   ~ChatWindow();
-  void showChat();
 
 signals:
   void restartRequest();
+
+public slots:
+  void closeChat();
+  void showChat();
 
 protected:
   void changeEvent(QEvent *event);
@@ -55,7 +58,6 @@ protected:
   #endif
 
 private slots:
-  void closeChat();
   void notify(const Notify &notify);
   void pageChanged(AbstractTab *tab);
   void settingsChanged(const QString &key, const QVariant &value);
