@@ -17,6 +17,7 @@
  */
 
 #include <QTextCodec>
+#include <QTimer>
 
 #if defined(Q_OS_WIN)
 # include <QFileInfo>
@@ -32,7 +33,7 @@
 #include "version.h"
 
 ChatApp::ChatApp(int &argc, char **argv)
-  : QApplication(argc, argv)
+  : QtSingleApplication(argc, argv)
   , m_core(0)
   , m_window(0)
 {
@@ -55,6 +56,10 @@ ChatApp::ChatApp(int &argc, char **argv)
   QPalette palette = this->palette();
   palette.setColor(QPalette::Inactive, QPalette::Highlight, palette.color(QPalette::Highlight));
   setPalette(palette);
+
+# if !defined(SCHAT_NO_SINGLEAPP)
+  connect(this, SIGNAL(messageReceived(QString)), SLOT(handleMessage(QString)));
+# endif
 }
 
 
@@ -62,6 +67,29 @@ ChatApp::~ChatApp()
 {
   if (m_window)
     delete m_window;
+}
+
+
+bool ChatApp::isRunning()
+{
+# if defined(SCHAT_NO_SINGLEAPP)
+  return false;
+# else
+  QStringList args = arguments();
+  args.removeFirst();
+
+  if (args.isEmpty())
+    return sendMessage(QString());
+
+  const QString message = args.join(LS(", "));
+
+  if (args.contains(LS("-exit"))) {
+    sendMessage(message);
+    return true;
+  }
+
+  return sendMessage(message);
+# endif
 }
 
 
@@ -131,6 +159,23 @@ bool ChatApp::selfUpdate()
   return true;
 }
 #endif
+
+
+void ChatApp::handleMessage(const QString& message)
+{
+# if !defined(SCHAT_NO_SINGLEAPP)
+  QStringList args = message.split(LS(", "));
+  if (!m_window)
+    return;
+
+  if (args.contains(LS("-exit"))) {
+    m_window->closeChat();
+    return;
+  }
+
+  QTimer::singleShot(0, m_window, SLOT(showChat()));
+# endif
+}
 
 
 void ChatApp::restart()
