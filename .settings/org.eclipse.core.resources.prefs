@@ -1,4 +1,4 @@
-#Tue Oct 16 19:29:55 ICT 2012
+#Sat Nov 17 22:22:34 MSK 2012
 eclipse.preferences.version=1
 encoding//os/win32/engine/core.nsh=WINDOWS-1251
 encoding//os/win32/engine/default.nsh=WINDOWS-1251
@@ -6,6 +6,7 @@ encoding//os/win32/engine/page-options.nsh=WINDOWS-1251
 encoding//os/win32/engine/schat.nsh=WINDOWS-1251
 encoding//os/win32/engine/sections.nsh=WINDOWS-1251
 encoding//os/win32/engine/sections/Cache.nsh=WINDOWS-1251
+encoding//os/win32/engine/sections/Channels.nsh=WINDOWS-1251
 encoding//os/win32/engine/sections/Console.nsh=WINDOWS-1251
 encoding//os/win32/engine/sections/Core.nsh=WINDOWS-1251
 encoding//os/win32/engine/sections/Emoticons.nsh=WINDOWS-1251

@@ -46,6 +46,7 @@ ${mod} SpellChecker
 ${mod} Idle
 ${mod} Update
 ${mod} Console
+${mod} Channels
 ${mod} YouTube
 ${mod} RawFeeds
 !ifdef SCHAT_SECTIONS

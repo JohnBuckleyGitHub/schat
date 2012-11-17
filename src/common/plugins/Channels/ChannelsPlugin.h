@@ -16,32 +16,31 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CONSOLEPLUGIN_H_
-#define CONSOLEPLUGIN_H_
+#ifndef CHANNELSPLUGIN_H_
+#define CHANNELSPLUGIN_H_
 
 #include "ChatApi.h"
 #include "CoreApi.h"
 
-class ConsolePlugin : public QObject, CoreApi, ChatApi
+class ChannelsPlugin : public QObject, CoreApi, ChatApi
 {
   Q_OBJECT
   Q_INTERFACES(CoreApi ChatApi)
 
 # if QT_VERSION >= 0x050000
-  Q_PLUGIN_METADATA(IID "me.schat.client.ConsolePlugin" FILE "Console.json")
+  Q_PLUGIN_METADATA(IID "me.schat.client.ChannelsPlugin" FILE "Channels.json")
 # endif
 
 public:
   QVariantMap header() const
   {
     QVariantMap out = CoreApi::header();
-    out["Id"]       = "Console";
-    out["Name"]     = "Console";
+    out["Id"]       = "Channels";
+    out["Name"]     = "Channels";
     out["Version"]  = "0.1.0";
-    out["Site"]     = "http://wiki.schat.me/Plugin/Console";
-    out["Desc"]     = "Server Management console";
-    out["Desc/ru"]  = "Консоль управления сервером";
-    out["Enabled"]  = false;
+    out["Site"]     = "http://wiki.schat.me/Plugin/Channels";
+    out["Desc"]     = "Advanced channels support";
+    out["Desc/ru"]  = "Расширенная поддержка каналов";
 
     return out;
   }
@@ -49,4 +48,4 @@ public:
   ChatPlugin *create();
 };
 
-#endif /* CONSOLEPLUGIN_H_ */
+#endif /* CHANNELSPLUGIN_H_ */

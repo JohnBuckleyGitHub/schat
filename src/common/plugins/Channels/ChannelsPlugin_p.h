@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright Â© 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,21 +16,18 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-!define Core
-!define Qt
-!define Cache
-!define History
-!define Profile
-!define Popup
-!define Proxy
-!define Emoticons
-!define SendFile
-!define SpellChecker
-!define RawFeeds
-!define YouTube
-!define Update
-!define Console
-!define Channels
-!define Idle
+#ifndef CHANNELSPLUGIN_P_H_
+#define CHANNELSPLUGIN_P_H_
 
-!include "engine\core.nsh"
+#include "plugins/ChatPlugin.h"
+
+class ChannelsPluginImpl : public ChatPlugin
+{
+  Q_OBJECT
+
+public:
+  ChannelsPluginImpl(QObject *parent);
+  void show();
+};
+
+#endif /* CHANNELSPLUGIN_P_H_ */
