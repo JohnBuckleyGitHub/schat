@@ -15,24 +15,22 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS += \
-    common/plugins/GenericNode \
-    common/plugins/Messages \
-    common/plugins/NodeConsole \
-    common/plugins/RestApi \
-    common/plugins/GeoIP \
-    common/plugins/Cache \
-    common/plugins/History \
-    common/plugins/Profile \
-    common/plugins/Channels \
-    common/plugins/Popup \
-    common/plugins/Emoticons \
-    common/plugins/Idle \
-    common/plugins/SendFile \
-    common/plugins/SpellChecker \
-    common/plugins/Proxy \
-    common/plugins/Console \
-    common/plugins/RawFeeds \
-    common/plugins/YouTube \
+SCHAT_CLIENT_LIB = 1
+SCHAT_CORE_LIB = 1
+QT = core gui
+OTHER_FILES += Channels.json
 
-win32:SUBDIRS += common/plugins/Update
+HEADERS  = \
+   ChannelsPlugin.h \
+   ChannelsPlugin_p.h \
+
+SOURCES  = \
+   ChannelsPlugin.cpp \
+
+#RESOURCES += Channels.qrc
+
+#TRANSLATIONS += res/translations/channels_en.ts
+#TRANSLATIONS += res/translations/channels_ru.ts
+#CODECFORTR = UTF-8
+
+include(../plugins.pri)

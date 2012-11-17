@@ -34,6 +34,9 @@
       <Feature Id="Console" Title="Console" Description="Server Management console" Level="1" AllowAdvertise="no">
         <ComponentGroupRef Id="Console" />
       </Feature>
+      <Feature Id="Channels" Title="Channels" Description="Advanced channels support" Level="1" AllowAdvertise="no">
+        <ComponentGroupRef Id="Channels" />
+      </Feature>
       <Feature Id="RawFeeds" Title="Raw Feeds" Description="Debug plugin to access the raw data feeds" Level="1" AllowAdvertise="no">
         <ComponentGroupRef Id="RawFeeds" />
       </Feature>
