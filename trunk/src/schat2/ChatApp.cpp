@@ -88,6 +88,9 @@ bool ChatApp::isRunning()
     return true;
   }
 
+  if (args.contains(LS("-exec")))
+    return false;
+
   return sendMessage(message);
 # endif
 }
