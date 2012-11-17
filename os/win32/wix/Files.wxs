@@ -79,6 +79,9 @@
         <Component Id="ChangeLog.Console.html" Guid="{A6FC2CA2-E8B4-44F5-9110-E41BB6C92284}">
           <File Id="ChangeLog.Console.html" KeyPath="yes" Source="..\schat2\doc\ChangeLog.Console.html" />
         </Component>
+        <Component Id="ChangeLog.Channels.html" Guid="{8FBF8272-9BDA-460c-B689-CF556E664E2F}">
+          <File Id="ChangeLog.Channels.html" KeyPath="yes" Source="..\schat2\doc\ChangeLog.Channels.html" />
+        </Component>
         <Component Id="ChangeLog.RawFeeds.html" Guid="{DA7A5152-3984-4286-A1FE-67C0DDE385E9}">
           <File Id="ChangeLog.RawFeeds.html" KeyPath="yes" Source="..\schat2\doc\ChangeLog.RawFeeds.html" />
         </Component>
@@ -123,6 +126,9 @@
         </Component>
         <Component Id="Console.dll" Guid="{31A6BF43-2764-4D29-8F46-3324821F73D9}">
           <File Id="Console.dll" KeyPath="yes" Source="..\schat2\plugins\Console.dll" />
+        </Component>
+        <Component Id="Channels.dll" Guid="{D649410B-F311-485e-A15B-DC4B6EBE576C}">
+          <File Id="Channels.dll" KeyPath="yes" Source="..\schat2\plugins\Channels.dll" />
         </Component>
         <Component Id="RawFeeds.dll" Guid="{031C61D4-E1C8-46F5-80A6-E6D0646B61D4}">
           <File Id="RawFeeds.dll" KeyPath="yes" Source="..\schat2\plugins\RawFeeds.dll" />
@@ -292,6 +298,10 @@
     <ComponentGroup Id="Console">
       <ComponentRef Id="Console.dll" />
       <ComponentRef Id="ChangeLog.Console.html" />
+    </ComponentGroup>
+    <ComponentGroup Id="Channels">
+      <ComponentRef Id="Channels.dll" />
+      <ComponentRef Id="ChangeLog.Channels.html" />
     </ComponentGroup>
     <ComponentGroup Id="YouTube">
       <ComponentRef Id="YouTube.dll" />
