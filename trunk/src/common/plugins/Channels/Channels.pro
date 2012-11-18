@@ -21,10 +21,12 @@ QT = core gui
 OTHER_FILES += Channels.json
 
 HEADERS  = \
+   ChannelsCmd.h \
    ChannelsPlugin.h \
    ChannelsPlugin_p.h \
 
 SOURCES  = \
+   ChannelsCmd.cpp \
    ChannelsPlugin.cpp \
 
 #RESOURCES += Channels.qrc

@@ -16,26 +16,18 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#ifndef CHANNELSCMD_H_
+#define CHANNELSCMD_H_
 
-#include "ChannelsCmd.h"
-#include "ChannelsPlugin.h"
-#include "ChannelsPlugin_p.h"
+#include "client/ClientHooks.h"
 
-ChannelsPluginImpl::ChannelsPluginImpl(QObject *parent)
-  : ChatPlugin(parent)
+class ChannelsCmd : public Hooks::Messages
 {
-  new ChannelsCmd(this);
-}
+  Q_OBJECT
 
+public:
+  ChannelsCmd(QObject *parent = 0);
+  bool command(const QByteArray &dest, const ClientCmd &cmd);
+};
 
-ChatPlugin *ChannelsPlugin::create()
-{
-  m_plugin = new ChannelsPluginImpl(this);
-  return m_plugin;
-}
-
-
-#if QT_VERSION < 0x050000
-  Q_EXPORT_PLUGIN2(Channels, ChannelsPlugin);
-#endif
+#endif /* CHANNELSCMD_H_ */
