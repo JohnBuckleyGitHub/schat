@@ -19,6 +19,7 @@
 #include "alerts/MessageAlert.h"
 #include "ChatAlerts.h"
 #include "client/ChatClient.h"
+#include "client/ClientChannels.h"
 #include "client/ClientMessages.h"
 #include "client/SimpleClient.h"
 #include "hooks/MessagesImpl.h"
@@ -54,6 +55,12 @@ int MessagesImpl::read(MessagePacket packet)
   QString command = packet->command();
   if (command != LS("m") && command != LS("me") && command != LS("say"))
     return 0;
+
+  if (SimpleID::typeOf(packet->dest()) == SimpleID::ChannelId) {
+    FeedPtr feed = ChatClient::channel()->feed(LS("acl"), false);
+    if (feed && !Acl::canWrite(feed.data(), ChatClient::channels()->get(packet->sender()).data()))
+      return 0;
+  }
 
   ChannelMessage message(packet);
   if (referring(message))
