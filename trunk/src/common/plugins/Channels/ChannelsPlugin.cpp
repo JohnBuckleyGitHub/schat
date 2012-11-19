@@ -21,11 +21,38 @@
 #include "ChannelsCmd.h"
 #include "ChannelsPlugin.h"
 #include "ChannelsPlugin_p.h"
+#include "client/ChatClient.h"
+#include "client/ClientChannels.h"
+#include "client/ClientFeeds.h"
+#include "net/SimpleID.h"
+#include "sglobal.h"
 
 ChannelsPluginImpl::ChannelsPluginImpl(QObject *parent)
   : ChatPlugin(parent)
 {
   new ChannelsCmd(this);
+
+  connect(ChatClient::i(), SIGNAL(ready()), SLOT(ready()));
+  connect(ChatClient::channels(), SIGNAL(channel(QByteArray)), SLOT(channel(QByteArray)));
+}
+
+
+void ChannelsPluginImpl::channel(const QByteArray &id)
+{
+  if (SimpleID::typeOf(id) != SimpleID::ChannelId)
+    return;
+
+  FeedPtr feed = ChatClient::channels()->get(id)->feed(LS("acl"), false);
+  if (!feed)
+    ClientFeeds::request(id, LS("get"), LS("acl/head"));
+}
+
+
+void ChannelsPluginImpl::ready()
+{
+  FeedPtr feed = ChatClient::channel()->feed(LS("acl"), false);
+  if (!feed)
+    ClientFeeds::request(ChatClient::id(), LS("get"), LS("acl/head"));
 }
 
 

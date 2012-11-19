@@ -27,7 +27,10 @@ class ChannelsPluginImpl : public ChatPlugin
 
 public:
   ChannelsPluginImpl(QObject *parent);
-  void show();
+
+private slots:
+  void channel(const QByteArray &id);
+  void ready();
 };
 
 #endif /* CHANNELSPLUGIN_P_H_ */
