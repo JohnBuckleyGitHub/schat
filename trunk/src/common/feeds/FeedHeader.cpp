@@ -16,8 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include "DateTime.h"
 #include "feeds/FeedHeader.h"
 #include "net/packets/Notice.h"

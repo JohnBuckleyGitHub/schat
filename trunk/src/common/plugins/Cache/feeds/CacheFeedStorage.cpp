@@ -60,7 +60,7 @@ void CacheFeedStorage::loadImpl(Channel *channel)
   query.exec();
 
   while (query.next()) {
-    QString name = query.value(0).toString();
+    const QString name = query.value(0).toString();
     Feed *feed = FeedStorage::load(name, JSON::parse(query.value(1).toByteArray()).toMap());
     channel->feeds().add(feed, false);
 

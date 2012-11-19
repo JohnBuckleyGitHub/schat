@@ -38,13 +38,13 @@ bool ChannelsCmd::command(const QByteArray &dest, const ClientCmd &cmd)
   QString command = cmd.command().toLower();
   if (command == LS("ignore")) {
     if (SimpleID::typeOf(dest) == SimpleID::UserId)
-      ClientFeeds::post(ChatClient::id(), LS("acl/head/other/") + SimpleID::encode(dest), Acl::Read, Feed::Share);
+      ClientFeeds::post(ChatClient::id(), LS("acl/head/other/") + SimpleID::encode(dest), Acl::Read, Feed::Share | Feed::Broadcast);
 
     return true;
   }
   else if (command == LS("unignore")) {
     if (SimpleID::typeOf(dest) == SimpleID::UserId)
-      ClientFeeds::del(ChatClient::id(), LS("acl/head/other/") + SimpleID::encode(dest), Feed::Share);
+      ClientFeeds::del(ChatClient::id(), LS("acl/head/other/") + SimpleID::encode(dest), Feed::Share | Feed::Broadcast);
 
     return true;
   }
