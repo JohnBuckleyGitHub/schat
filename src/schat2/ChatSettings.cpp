@@ -124,10 +124,12 @@ void ChatSettings::ready()
 {
   FeedPtr feed = ChatClient::channel()->feed(LS("settings"), false);
   if (!feed) {
+    QByteArray id = ChatClient::id();
+
     ChatClient::io()->lock();
-    ClientFeeds::post(ChatClient::id(), LS("settings"));
-    ClientFeeds::put(ChatClient::id(), LS("settings/head/mask"), 0700);
-    ClientFeeds::request(ChatClient::id(), LS("get"), LS("settings"));
+    ClientFeeds::post(id, LS("settings"));
+    ClientFeeds::put(id, LS("settings/head/mask"), 0700);
+    ClientFeeds::request(id, LS("get"), LS("settings"));
     ChatClient::io()->unlock();
   }
 }
