@@ -79,31 +79,54 @@ void ClientFeedsImpl::feed()
   if (name.isEmpty())
     return;
 
-  FeedPtr feed = FeedPtr(FeedStorage::load(name, m_packet->json().value(name).toMap()));
+  QVariantMap data;
+  FeedPtr feed = m_channel->feed(name, false, false);
+  if (feed)
+    data = feed->head().data();
+
+  feed = FeedPtr(FeedStorage::load(name, m_packet->json().value(name).toMap()));
   if (!feed)
     return;
 
   FeedHeader &head = feed->head();
-  if (!head.date())
-    head.setDate(m_packet->date());
+  head.setData(data);
+  head.setDate(m_packet->date());
 
   m_channel->feeds().add(feed);
   ChatNotify::start(new FeedNotify(Notify::FeedData, m_channel->id(), name));
+
+  if (data.size() > 2 && data.value(LS("date")) != head.date())
+    ClientFeeds::request(m_channel, LS("get"), name + LS("/head"));
 }
 
 
+/*!
+ * Обработка получения ответа на get запрос.
+ */
 void ClientFeedsImpl::get()
 {
   QPair<QString, QString> request = FeedNotice::split(m_packet->text());
   if (request.first == LS("*")) {
     headers();
   }
-  if (request.second.isEmpty()) {
+  else if (request.second.isEmpty()) {
     if (m_packet->status() == Notice::NotModified && m_channel->feed(request.first, false))
       ChatNotify::start(new FeedNotify(Notify::FeedData, m_channel->id(), request.first));
   }
-  else
+  else {
+    if (request.second == LS("head")) {
+      FeedPtr feed = m_channel->feed(request.first, false, false);
+      if (!feed)
+        feed = FeedPtr(FeedStorage::load(request.first, QVariantMap()));
+
+      if (feed) {
+        feed->head().setData(m_packet->json());
+        m_channel->feeds().add(feed);
+      }
+    }
+
     ChatNotify::start(new FeedNotify(m_channel->id(), m_packet));
+  }
 }
 
 
@@ -118,7 +141,7 @@ void ClientFeedsImpl::get(const QByteArray &id, const QStringList &feeds)
   if (feeds.isEmpty())
     return;
 
-  foreach (QString name, feeds) {
+  foreach (const QString &name, feeds) {
     ClientFeeds::request(id, LS("get"), name);
   }
 }
@@ -149,7 +172,7 @@ void ClientFeedsImpl::reply()
   FeedNotify *notify = new FeedNotify(m_channel->id(), m_packet);
   ChatNotify::start(notify);
 
-  if (m_packet->status() != 200)
+  if (m_packet->status() != 200 || notify->path().startsWith("head/"))
     return;
 
   FeedPtr feed = ChatClient::channel()->feed(notify->feed(), false);

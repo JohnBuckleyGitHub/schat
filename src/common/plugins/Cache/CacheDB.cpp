@@ -112,14 +112,15 @@ class AddFeedTask : public QRunnable
   QVariantMap m_body; ///< Тело фида.
 
 public:
-  AddFeedTask(FeedPtr feed)
+  AddFeedTask(FeedPtr feed, const FeedHeader &head)
   : QRunnable()
-  , m_id(feed->head().channel()->id())
-  , m_date(feed->head().date())
-  , m_name(feed->head().name())
+  , m_id(head.channel()->id())
+  , m_date(head.date())
+  , m_name(head.name())
   , m_body(feed->save())
   {
-    m_body.remove(LS("head"));
+    if (head.data().size() == 2)
+      m_body.remove(LS("head"));
   }
 
 
@@ -243,7 +244,7 @@ void CacheDB::add(ClientChannel channel)
 
 void CacheDB::add(FeedPtr feed)
 {
-  AddFeedTask *task = new AddFeedTask(feed);
+  AddFeedTask *task = new AddFeedTask(feed, feed->head());
   m_self->m_tasks.append(task);
   if (m_self->m_tasks.size() == 1)
     QTimer::singleShot(0, m_self, SLOT(start()));

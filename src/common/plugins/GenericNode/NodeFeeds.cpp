@@ -303,7 +303,8 @@ void NodeFeeds::broadcast(FeedPtr feed, bool echo)
 
   FeedPacket packet = FeedNotice::reply(*m_packet, json);
   packet->setDest(m_channel->id());
-  packet->setCommand(LS("headers"));
+  packet->setCommand(LS("get"));
+  packet->setText(LS("*"));
   m_core->send(Sockets::all(m_channel, m_user, echo), packet);
 }
 
