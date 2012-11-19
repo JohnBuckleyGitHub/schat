@@ -81,10 +81,12 @@ int Acl::match(Channel *channel) const
   if (channel->account()->groups.contains(LS("master")))
     return Read | Write | Edit;
 
-  if (m_others.contains(channel->id()))
-    return m_others.value(channel->id());
+  const QByteArray &id = channel->id();
 
-  if (m_owners.contains(channel->id()))
+  if (m_others.contains(id))
+    return m_others.value(id);
+
+  if (m_owners.contains(id))
     return (m_mask >> 6);
 
   foreach (const QString &group, m_groups.all()) {
@@ -126,6 +128,8 @@ void Acl::add(const QByteArray &owner)
 void Acl::load(const QVariantMap &json)
 {
   m_mask = json.value(LS("mask")).toInt();
+  m_others.clear();
+  m_others.clear();
 
   const QVariantList owners = json.value(LS("owners")).toList();
   foreach (const QVariant &owner, owners)
