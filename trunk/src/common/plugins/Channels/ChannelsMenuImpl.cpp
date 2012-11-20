@@ -19,7 +19,10 @@
 #include <QMenu>
 
 #include "ChannelsMenuImpl.h"
+#include "ChannelsPlugin_p.h"
+#include "client/ChatClient.h"
 #include "net/SimpleID.h"
+#include "ui/ChatIcons.h"
 
 ChannelsMenuImpl::ChannelsMenuImpl(QObject *parent)
   : ChannelMenu(parent)
@@ -29,19 +32,40 @@ ChannelsMenuImpl::ChannelsMenuImpl(QObject *parent)
 }
 
 
+bool ChannelsMenuImpl::triggerImpl(QAction *action)
+{
+  if (action == m_ignore) {
+    QByteArray id = action->data().toByteArray();
+
+    if (action->isChecked())
+      ChannelsPluginImpl::ignore(id);
+    else
+      ChannelsPluginImpl::unignore(id);
+
+    return true;
+  }
+
+  return false;
+}
+
+
 void ChannelsMenuImpl::bindImpl(QMenu *menu, ClientChannel channel, Hooks::Scope scope)
 {
-  if (channel->type() != SimpleID::UserId)
+  Q_UNUSED(scope)
+
+  if (channel->type() != SimpleID::UserId || channel->id() == ChatClient::id())
     return;
 
   menu->addSeparator();
-  m_ignore = new QAction(tr("Ignore"), this);
+  m_ignore = menu->addAction(SCHAT_ICON(Prohibition), tr("Ignore"));
   m_ignore->setCheckable(true);
+  m_ignore->setChecked(ChannelsPluginImpl::ignored(channel));
+  m_ignore->setData(channel->id());
   menu->addAction(m_ignore);
 }
 
 
 void ChannelsMenuImpl::cleanupImpl()
 {
-  if (m_ignore) delete m_ignore; m_ignore = 0;
+  m_ignore = 0;
 }

@@ -43,6 +43,46 @@ ChannelsPluginImpl::ChannelsPluginImpl(QObject *parent)
 }
 
 
+/*!
+ * \return \b true если сообщения пользователя игнорируются.
+ */
+bool ChannelsPluginImpl::ignored(ClientChannel user)
+{
+  if (!user || user->type() != SimpleID::UserId)
+    return false;
+
+  FeedPtr feed = ChatClient::channel()->feed(LS("acl"), false);
+  if (!feed)
+    return false;
+
+  return !Acl::canWrite(feed.data(), user.data());
+}
+
+
+/*!
+ * Игнорирование пользователя.
+ */
+void ChannelsPluginImpl::ignore(const QByteArray &id)
+{
+  if (SimpleID::typeOf(id) != SimpleID::UserId)
+    return;
+
+  ClientFeeds::post(ChatClient::id(), LS("acl/head/other/") + SimpleID::encode(id), Acl::Read, Feed::Share | Feed::Broadcast);
+}
+
+
+/*!
+ * Отмена игнорирования пользователя.
+ */
+void ChannelsPluginImpl::unignore(const QByteArray &id)
+{
+  if (SimpleID::typeOf(id) != SimpleID::UserId)
+    return;
+
+  ClientFeeds::del(ChatClient::id(), LS("acl/head/other/") + SimpleID::encode(id), Feed::Share | Feed::Broadcast);
+}
+
+
 void ChannelsPluginImpl::channel(const QByteArray &id)
 {
   if (SimpleID::typeOf(id) != SimpleID::ChannelId)

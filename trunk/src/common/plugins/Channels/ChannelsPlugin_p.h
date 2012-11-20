@@ -19,6 +19,7 @@
 #ifndef CHANNELSPLUGIN_P_H_
 #define CHANNELSPLUGIN_P_H_
 
+#include "Channel.h"
 #include "plugins/ChatPlugin.h"
 
 class ChannelsPluginImpl : public ChatPlugin
@@ -27,6 +28,9 @@ class ChannelsPluginImpl : public ChatPlugin
 
 public:
   ChannelsPluginImpl(QObject *parent);
+  static bool ignored(ClientChannel user);
+  static void ignore(const QByteArray &id);
+  static void unignore(const QByteArray &id);
 
 private slots:
   void channel(const QByteArray &id);
