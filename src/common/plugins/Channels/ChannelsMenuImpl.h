@@ -16,25 +16,24 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SERVERMENUIMPL_H_
-#define SERVERMENUIMPL_H_
+#ifndef CHANNELSMENUIMPL_H_
+#define CHANNELSMENUIMPL_H_
 
 #include "hooks/ChannelMenu.h"
 
-class ServerMenuImpl : public Hooks::ChannelMenu
+class ChannelsMenuImpl : public Hooks::ChannelMenu
 {
   Q_OBJECT
 
 public:
-  ServerMenuImpl(QObject *parent = 0);
+  ChannelsMenuImpl(QObject *parent = 0);
 
 protected:
   void bindImpl(QMenu *menu, ClientChannel channel, Hooks::Scope scope);
   void cleanupImpl();
 
 private:
-  QAction *m_alerts;
-  QAction *m_info;
+  QAction *m_ignore;
 };
 
-#endif /* SERVERMENUIMPL_H_ */
+#endif /* CHANNELSMENUIMPL_H_ */

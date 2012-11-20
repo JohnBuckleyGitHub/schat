@@ -29,7 +29,7 @@ public:
   UserMenuImpl(QObject *parent = 0);
 
 protected:
-  void bindImpl(QMenu *menu, ClientChannel channel);
+  void bindImpl(QMenu *menu, ClientChannel channel, Hooks::Scope scope);
   void cleanupImpl();
 
 private:

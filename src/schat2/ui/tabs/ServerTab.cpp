@@ -73,7 +73,7 @@ ServerTab::ServerTab(TabWidget *parent)
 
 bool ServerTab::bindMenu(QMenu *menu)
 {
-  Hooks::ChannelMenu::bind(menu, ChatClient::server());
+  Hooks::ChannelMenu::bind(menu, ChatClient::server(), Hooks::TabScope);
   return true;
 }
 

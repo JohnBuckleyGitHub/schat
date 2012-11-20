@@ -97,12 +97,12 @@
 <context>
     <name>ChannelMenuImpl</name>
     <message>
-        <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="51"/>
+        <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="48"/>
         <source>Talk...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="57"/>
+        <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="54"/>
         <source>Information...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -593,12 +593,12 @@
 <context>
     <name>ServerMenuImpl</name>
     <message>
-        <location filename="../../src/schat2/hooks/ServerMenuImpl.cpp" line="46"/>
+        <location filename="../../src/schat2/hooks/ServerMenuImpl.cpp" line="48"/>
         <source>Notifications...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/hooks/ServerMenuImpl.cpp" line="52"/>
+        <location filename="../../src/schat2/hooks/ServerMenuImpl.cpp" line="54"/>
         <source>Information...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -606,12 +606,12 @@
 <context>
     <name>ServerTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="124"/>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="125"/>
         <source>Server %1 requires authorization</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="192"/>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="193"/>
         <source>Network</source>
         <translation type="unfinished"></translation>
     </message>
@@ -742,12 +742,12 @@
 <context>
     <name>TabWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="372"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="379"/>
         <source>Pin tab</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="378"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="385"/>
         <source>Close tab</source>
         <translation type="unfinished"></translation>
     </message>
@@ -805,17 +805,17 @@
 <context>
     <name>UserMenuImpl</name>
     <message>
-        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="47"/>
+        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="49"/>
         <source>Talk...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="58"/>
+        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="60"/>
         <source>Insert Nick</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="53"/>
+        <location filename="../../src/schat2/hooks/UserMenuImpl.cpp" line="55"/>
         <source>Profile...</source>
         <translation type="unfinished"></translation>
     </message>

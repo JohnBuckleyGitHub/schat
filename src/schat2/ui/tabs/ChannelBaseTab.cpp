@@ -83,7 +83,7 @@ ChannelBaseTab::~ChannelBaseTab()
 
 bool ChannelBaseTab::bindMenu(QMenu *menu)
 {
-  Hooks::ChannelMenu::bind(menu, c());
+  Hooks::ChannelMenu::bind(menu, c(), Hooks::TabScope);
   return true;
 }
 

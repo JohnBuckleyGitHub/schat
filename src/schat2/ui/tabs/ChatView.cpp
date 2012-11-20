@@ -217,10 +217,10 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
 
   menu.addSeparator();
 
-  if (url.scheme() == "chat" && url.host() == LS("channel"))
-    Hooks::ChannelMenu::bind(&menu, url);
+  if (url.scheme() == LS("chat") && url.host() == LS("channel"))
+    Hooks::ChannelMenu::bind(&menu, ChatUrls::channel(url), Hooks::ChatViewScope);
   else
-    Hooks::ChannelMenu::bind(&menu, m_id);
+    Hooks::ChannelMenu::bind(&menu, ChatClient::channels()->get(m_id), Hooks::ChatViewScope);
 
   QMenu display(tr("Display"), this);
   display.setIcon(SCHAT_ICON(Gear));

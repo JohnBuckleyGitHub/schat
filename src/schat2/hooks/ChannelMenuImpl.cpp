@@ -29,20 +29,17 @@ ChannelMenuImpl::ChannelMenuImpl(QObject *parent)
   : ChannelMenu(parent)
   , m_info(0)
   , m_talk(0)
-  , m_topic(0)
 {
   add(this);
 }
 
 
-void ChannelMenuImpl::bindImpl(QMenu *menu, ClientChannel channel)
+void ChannelMenuImpl::bindImpl(QMenu *menu, ClientChannel channel, Hooks::Scope scope)
 {
+  Q_UNUSED(scope)
+
   if (channel->type() != SimpleID::ChannelId)
     return;
-
-//  m_topic = new QAction(SCHAT_ICON(TopicEdit), tr("Edit topic..."), this);
-//  m_topic->setData(ChatUrls::toUrl(channel, LS("edit/topic")));
-//  menu->addAction(m_topic);
 
   bool active = ChatCore::currentId() == channel->id();
   int page = channel->data().value(LS("page")).toInt();
@@ -65,5 +62,4 @@ void ChannelMenuImpl::cleanupImpl()
 {
   if (m_info) delete m_info; m_info = 0;
   if (m_talk) delete m_talk; m_talk = 0;
-  if (m_topic) delete m_topic; m_topic = 0;
 }

@@ -45,15 +45,17 @@ ChannelMenu::~ChannelMenu()
 }
 
 
-void ChannelMenu::bind(QMenu *menu, const QByteArray &id)
+void ChannelMenu::bind(QMenu *menu, ClientChannel channel, Scope scope)
 {
-  bind(menu, ChatClient::channels()->get(id));
-}
+  if (!channel || m_self->m_hooks.isEmpty())
+    return;
 
+  connect(menu, SIGNAL(triggered(QAction*)), m_self, SLOT(triggered(QAction*)));
+  connect(menu, SIGNAL(destroyed(QObject*)), m_self, SLOT(cleanup()));
 
-void ChannelMenu::bind(QMenu *menu, const QUrl &url)
-{
-  bind(menu, ChatUrls::channel(url));
+  foreach (ChannelMenu *hook, m_self->m_hooks) {
+    hook->bindImpl(menu, channel, scope);
+  }
 }
 
 
@@ -95,20 +97,11 @@ bool ChannelMenu::triggerImpl(QAction *action)
 /*
  * Создание меню.
  */
-void ChannelMenu::bindImpl(QMenu *menu, ClientChannel channel)
+void ChannelMenu::bindImpl(QMenu *menu, ClientChannel channel, Scope scope)
 {
-  if (m_hooks.isEmpty())
-    return;
-
-  if (!channel)
-    return;
-
-  connect(menu, SIGNAL(triggered(QAction *)), SLOT(triggered(QAction *)));
-  connect(menu, SIGNAL(destroyed(QObject *)), SLOT(cleanup()));
-
-  foreach (ChannelMenu *hook, m_hooks) {
-    hook->bindImpl(menu, channel);
-  }
+  Q_UNUSED(menu)
+  Q_UNUSED(channel)
+  Q_UNUSED(scope)
 }
 
 

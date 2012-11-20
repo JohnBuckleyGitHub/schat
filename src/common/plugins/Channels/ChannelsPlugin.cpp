@@ -19,21 +19,27 @@
 #include <QtPlugin>
 
 #include "ChannelsCmd.h"
+#include "ChannelsMenuImpl.h"
 #include "ChannelsPlugin.h"
 #include "ChannelsPlugin_p.h"
+#include "ChatCore.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/ClientFeeds.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
+#include "Translation.h"
 
 ChannelsPluginImpl::ChannelsPluginImpl(QObject *parent)
   : ChatPlugin(parent)
 {
   new ChannelsCmd(this);
+  new ChannelsMenuImpl(this);
 
   connect(ChatClient::i(), SIGNAL(ready()), SLOT(ready()));
   connect(ChatClient::channels(), SIGNAL(channel(QByteArray)), SLOT(channel(QByteArray)));
+
+  ChatCore::translation()->addOther(LS("channels"));
 }
 
 

@@ -1,4 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
+  <file alias="translations/channels_ru.qm">res/translations/channels_ru.qm</file>
 </qresource>
 </RCC>
