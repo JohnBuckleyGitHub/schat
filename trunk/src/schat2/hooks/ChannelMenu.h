@@ -25,6 +25,15 @@
 namespace Hooks
 {
 
+/// Место из которого вызывается меню.
+enum Scope {
+  UnknownScope,   ///< Неизвестное место.
+  StatusBarScope, ///< Статус бар.
+  TabScope,       ///< Заголовок вкладки.
+  UserViewScope,  ///< Список пользователей.
+  ChatViewScope   ///< Текст чата.
+};
+
 class SCHAT_CORE_EXPORT ChannelMenu : public QObject
 {
   Q_OBJECT
@@ -33,10 +42,8 @@ public:
   ChannelMenu(QObject *parent = 0);
   ~ChannelMenu();
   inline static void add(ChannelMenu *hook)                   { if (!m_self->m_hooks.contains(hook)) m_self->m_hooks.append(hook); }
-  inline static void bind(QMenu *menu, ClientChannel channel) { m_self->bindImpl(menu, channel); }
   inline static void remove(ChannelMenu *hook)                { m_self->m_hooks.removeAll(hook); }
-  static void bind(QMenu *menu, const QByteArray &id);
-  static void bind(QMenu *menu, const QUrl &url);
+  static void bind(QMenu *menu, ClientChannel channel, Scope scope);
 
 protected slots:
   void cleanup();
@@ -44,11 +51,13 @@ protected slots:
 
 protected:
   virtual bool triggerImpl(QAction *action);
-  virtual void bindImpl(QMenu *menu, ClientChannel channel);
+  virtual void bindImpl(QMenu *menu, ClientChannel channel, Scope scope);
   virtual void cleanupImpl();
 
-  QList<ChannelMenu*> m_hooks; ///< Хуки.
   static ChannelMenu *m_self;  ///< Указатель на себя.
+
+private:
+  QList<ChannelMenu*> m_hooks; ///< Хуки.
 };
 
 } // namespace Hooks

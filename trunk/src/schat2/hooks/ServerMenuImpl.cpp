@@ -34,8 +34,10 @@ ServerMenuImpl::ServerMenuImpl(QObject *parent)
 }
 
 
-void ServerMenuImpl::bindImpl(QMenu *menu, ClientChannel channel)
+void ServerMenuImpl::bindImpl(QMenu *menu, ClientChannel channel, Hooks::Scope scope)
 {
+  Q_UNUSED(scope)
+
   if (channel->type() != SimpleID::ServerId)
     return;
 

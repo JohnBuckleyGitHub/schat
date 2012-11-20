@@ -35,8 +35,10 @@ UserMenuImpl::UserMenuImpl(QObject *parent)
 }
 
 
-void UserMenuImpl::bindImpl(QMenu *menu, ClientChannel channel)
+void UserMenuImpl::bindImpl(QMenu *menu, ClientChannel channel, Hooks::Scope scope)
 {
+  Q_UNUSED(scope)
+
   if (channel->type() != SimpleID::UserId)
     return;
 

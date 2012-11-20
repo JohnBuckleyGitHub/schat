@@ -16,25 +16,32 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SERVERMENUIMPL_H_
-#define SERVERMENUIMPL_H_
+#include <QMenu>
 
-#include "hooks/ChannelMenu.h"
+#include "ChannelsMenuImpl.h"
+#include "net/SimpleID.h"
 
-class ServerMenuImpl : public Hooks::ChannelMenu
+ChannelsMenuImpl::ChannelsMenuImpl(QObject *parent)
+  : ChannelMenu(parent)
+  , m_ignore(0)
 {
-  Q_OBJECT
+  add(this);
+}
 
-public:
-  ServerMenuImpl(QObject *parent = 0);
 
-protected:
-  void bindImpl(QMenu *menu, ClientChannel channel, Hooks::Scope scope);
-  void cleanupImpl();
+void ChannelsMenuImpl::bindImpl(QMenu *menu, ClientChannel channel, Hooks::Scope scope)
+{
+  if (channel->type() != SimpleID::UserId)
+    return;
 
-private:
-  QAction *m_alerts;
-  QAction *m_info;
-};
+  menu->addSeparator();
+  m_ignore = new QAction(tr("Ignore"), this);
+  m_ignore->setCheckable(true);
+  menu->addAction(m_ignore);
+}
 
-#endif /* SERVERMENUIMPL_H_ */
+
+void ChannelsMenuImpl::cleanupImpl()
+{
+  if (m_ignore) delete m_ignore; m_ignore = 0;
+}

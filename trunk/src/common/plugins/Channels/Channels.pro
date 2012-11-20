@@ -22,17 +22,19 @@ OTHER_FILES += Channels.json
 
 HEADERS  = \
    ChannelsCmd.h \
+   ChannelsMenuImpl.h \
    ChannelsPlugin.h \
    ChannelsPlugin_p.h \
 
 SOURCES  = \
    ChannelsCmd.cpp \
+   ChannelsMenuImpl.cpp \
    ChannelsPlugin.cpp \
 
-#RESOURCES += Channels.qrc
+RESOURCES += Channels.qrc
 
-#TRANSLATIONS += res/translations/channels_en.ts
-#TRANSLATIONS += res/translations/channels_ru.ts
-#CODECFORTR = UTF-8
+TRANSLATIONS += res/translations/channels_en.ts
+TRANSLATIONS += res/translations/channels_ru.ts
+CODECFORTR = UTF-8
 
 include(../plugins.pri)
