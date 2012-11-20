@@ -82,7 +82,8 @@ public:
     Reload             = 0x526C, ///< "Rl"
     Plugin             = 0x506C, ///< "Pl"
     Bell               = 0x4265, ///< "Be"
-    Pin                = 0x5069  ///< "Pi"
+    Pin                = 0x5069, ///< "Pi"
+    Prohibition        = 0x5068  ///< "Ph"
   };
 
   /// Опции получения иконки канала.

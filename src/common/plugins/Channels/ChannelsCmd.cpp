@@ -17,11 +17,10 @@
  */
 
 #include "ChannelsCmd.h"
+#include "ChannelsPlugin_p.h"
 #include "client/ChatClient.h"
 #include "client/ClientCmd.h"
-#include "client/ClientFeeds.h"
 #include "client/ClientMessages.h"
-#include "net/SimpleID.h"
 #include "sglobal.h"
 
 ChannelsCmd::ChannelsCmd(QObject *parent)
@@ -37,15 +36,11 @@ bool ChannelsCmd::command(const QByteArray &dest, const ClientCmd &cmd)
 
   QString command = cmd.command().toLower();
   if (command == LS("ignore")) {
-    if (SimpleID::typeOf(dest) == SimpleID::UserId)
-      ClientFeeds::post(ChatClient::id(), LS("acl/head/other/") + SimpleID::encode(dest), Acl::Read, Feed::Share | Feed::Broadcast);
-
+    ChannelsPluginImpl::ignore(dest);
     return true;
   }
   else if (command == LS("unignore")) {
-    if (SimpleID::typeOf(dest) == SimpleID::UserId)
-      ClientFeeds::del(ChatClient::id(), LS("acl/head/other/") + SimpleID::encode(dest), Feed::Share | Feed::Broadcast);
-
+    ChannelsPluginImpl::unignore(dest);
     return true;
   }
 
