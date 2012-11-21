@@ -78,7 +78,7 @@ int Acl::match(Channel *channel) const
   if (channel->type() == SimpleID::ServerId)
     return Read | Write | Edit;
 
-  if (channel->account()->groups.contains(LS("master")))
+  if (channel->account() && channel->account()->groups.contains(LS("master")))
     return Read | Write | Edit;
 
   const QByteArray &id = channel->id();
@@ -90,7 +90,7 @@ int Acl::match(Channel *channel) const
     return (m_mask >> 6);
 
   foreach (const QString &group, m_groups.all()) {
-    if (channel->account()->groups.contains(group))
+    if (channel->account() && channel->account()->groups.contains(group))
       return ((m_mask & ~0700) >> 3);
   }
 
