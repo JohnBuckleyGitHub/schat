@@ -75,12 +75,18 @@ QVariantList PluginsView::list() const
   QVariantList plugins;
   foreach (PluginItem *item, ChatCore::plugins()->list()) {
     QVariantMap data;
+    const QVariantMap &header = item->header();
+
     data[LS("id")]      = item->id();
     data[LS("icon")]    = LS("qrc") + item->icon();
-    data[LS("title")]   = item->header().value(LS("Name"));
-    data[LS("version")] = item->header().value(LS("Version"));
-    data[LS("desc")]    = desc(item->header());
-    data[LS("enabled")] = ChatCore::settings()->value(LS("Plugins/") + item->id()).toBool();
+    data[LS("title")]   = header.value(LS("Name"));
+    data[LS("version")] = header.value(LS("Version"));
+    data[LS("desc")]    = desc(header);
+
+    bool enabled = ChatCore::settings()->value(LS("Plugins/") + item->id()).toBool();
+    data[LS("enabled")]      = enabled;
+    data[LS("configurable")] = enabled && header.value(LS("Configurable")).toBool();
+
     plugins.append(data);
   }
 

@@ -17,8 +17,7 @@
  */
 
 var Plugins = {
-  add: function(data)
-  {
+  add: function(data) {
     var html = '<div class="plugin-wrapper" id="' + data.id + '">' +
                   '<div class="plugin" style="background-image:url(' + data.icon + ');">' +
                     '<div class="plugin-details">' +
@@ -39,6 +38,7 @@ var Plugins = {
                           '</span>' +
                         '</label>' +
                       '</div>' +
+                      (data.configurable === true ? '<div class="settings"><a class="settings-link" href="#" data-tr="settings">' + Plugins.tr('settings') + '</a></div>' : '') +
                     '</div>' +
                   '</div>' +
                 '</div>';
@@ -60,48 +60,53 @@ var Plugins = {
   },
 
 
-  enable: function(id, enable)
-  {
+  enable: function(id, enable) {
+    var checkbox    = $('#' + id + ' input:checkbox');
+    var enabledText = $('#' + id + ' .enabled-text');
+    var enableText  = $('#' + id + ' .enable-text');
+
     if (enable) {
-      $('#' + id + ' input:checkbox').attr('checked', 'checked');
+      checkbox.attr('checked', 'checked');
       $('#' + id).addClass('plugin-enabled');
-      $('#' + id + ' .enabled-text').show();
-      $('#' + id + ' .enable-text').hide();
+      enabledText.show();
+      enableText.hide();
     }
     else {
-      $('#' + id + ' input:checkbox').removeAttr('checked');
+      checkbox.removeAttr('checked');
       $('#' + id).removeClass('plugin-enabled');
-      $('#' + id + ' .enabled-text').hide();
-      $('#' + id + ' .enable-text').show();
+      enabledText.hide();
+      enableText.show();
     }
 
     var state = PluginsView.state(id);
-    if (state == 0) {
+    if (state == 0)
       Plugins.setRestartText(id, '', false);
-    }
-    else {
+    else
       Plugins.setRestartText(id, state == 1 ? 'will_be_enabled' : 'will_be_disabled', true);
-    }
   },
 
 
   setRestartText: function(id, tr, show) {
-    if (show) {
-      $('#' + id + ' .plugin-description').hide();
-      $('#' + id + ' .restart-controls').show();
+    var description = $('#' + id + ' .plugin-description');
+    var text        = $('#' + id + ' .restart-text');
+    var controls    = $('#' + id + ' .restart-controls');
 
-      $('#' + id + ' .restart-text').attr('data-tr', tr);
-      $('#' + id + ' .restart-text').html(Plugins.tr(tr));
+    if (show) {
+      description.hide();
+      controls.show();
+
+      text.attr('data-tr', tr);
+      text.html(Plugins.tr(tr));
     }
     else {
-      $('#' + id + ' .plugin-description').show();
-      $('#' + id + ' .restart-controls').hide();
+      description.show();
+      controls.hide();
     }
   },
 
 
   retranslate: function() {
-    $("[data-tr]").each(function() {
+    $('[data-tr]').each(function() {
       Plugins.TR($(this).attr("data-tr"));
     });
   },

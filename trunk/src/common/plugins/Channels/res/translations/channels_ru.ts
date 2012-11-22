@@ -5,7 +5,7 @@
 <context>
     <name>ChannelsMenuImpl</name>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="38"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="60"/>
         <source>Ignore</source>
         <translation>Игнорировать</translation>
     </message>

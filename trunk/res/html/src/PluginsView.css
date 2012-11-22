@@ -100,3 +100,7 @@ a:active, a:hover {
 [data-tr=will_be_enabled] {
   color: #468847;
 }
+
+.settings {
+  padding-left: 18px;
+}
