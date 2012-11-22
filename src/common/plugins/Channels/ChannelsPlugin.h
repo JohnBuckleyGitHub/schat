@@ -34,13 +34,14 @@ class ChannelsPlugin : public QObject, CoreApi, ChatApi
 public:
   QVariantMap header() const
   {
-    QVariantMap out = CoreApi::header();
-    out["Id"]       = "Channels";
-    out["Name"]     = "Channels";
-    out["Version"]  = "0.1.0";
-    out["Site"]     = "http://wiki.schat.me/Plugin/Channels";
-    out["Desc"]     = "Advanced channels support";
-    out["Desc/ru"]  = "Расширенная поддержка каналов";
+    QVariantMap out     = CoreApi::header();
+    out["Id"]           = "Channels";
+    out["Name"]         = "Channels";
+    out["Version"]      = "0.1.0";
+    out["Site"]         = "http://wiki.schat.me/Plugin/Channels";
+    out["Desc"]         = "Advanced channels support";
+    out["Desc/ru"]      = "Расширенная поддержка каналов";
+    out["Configurable"] = true;
 
     return out;
   }
