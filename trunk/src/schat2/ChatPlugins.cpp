@@ -37,13 +37,13 @@ ChatPlugins::ChatPlugins(QObject *parent)
 void ChatPlugins::init()
 {
   for (int i = 0; i < m_sorted.size(); ++i) {
-    ChatApi *api = qobject_cast<ChatApi *>(m_plugins.value(m_sorted.at(i))->plugin());
+    PluginItem *item = m_plugins.value(m_sorted.at(i));
+    ChatApi *api = qobject_cast<ChatApi *>(item->plugin());
 
     if (!api)
       continue;
 
-    PluginItem *item = m_plugins.value(m_sorted.at(i));
-    QString key = LS("Plugins/") + item->id();
+    const QString key = LS("Plugins/") + item->id();
     ChatCore::settings()->setLocalDefault(key, item->header().value(LS("Enabled")));
     if (ChatCore::settings()->value(key) == false)
       continue;

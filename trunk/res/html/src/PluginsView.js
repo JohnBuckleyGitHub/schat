@@ -57,6 +57,10 @@ var Plugins = {
     $('#' + id + ' .restart-link').click(function() {
       PluginsView.restart();
     });
+
+    $('#' + id + ' .settings-link').on('click', function() {
+      PluginsView.configure(id);
+    });
   },
 
 
@@ -127,12 +131,13 @@ $(document).ready(function() {
   }
 });
 
-if (typeof PluginsView === "undefined") {
+if (typeof PluginsView === 'undefined') {
   PluginsView = {
-    list: function() { return []; },
+    list: function()             { return []; },
     enable: function(id, enable) {},
-    state: function(id) { return 0; },
-    restart: function() {}
+    state: function(id)          { return 0; },
+    restart: function()          {},
+    configure: function(id)      {}
   };
 }
 else {

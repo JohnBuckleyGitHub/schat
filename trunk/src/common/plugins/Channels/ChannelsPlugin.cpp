@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QLabel>
 #include <QtPlugin>
 
 #include "ChannelsCmd.h"
@@ -106,6 +107,12 @@ ChatPlugin *ChannelsPlugin::create()
 {
   m_plugin = new ChannelsPluginImpl(this);
   return m_plugin;
+}
+
+
+QWidget *ChannelsPlugin::settings(QWidget *parent)
+{
+  return new QLabel("TEST", parent);
 }
 
 

@@ -22,6 +22,9 @@
 #include <QVariant>
 #include <QWebView>
 
+/*!
+ * Виджет просмотра списка плагинов.
+ */
 class PluginsView : public QWebView
 {
   Q_OBJECT
@@ -30,8 +33,12 @@ public:
   PluginsView(QWidget *parent = 0);
   Q_INVOKABLE int state(const QString &id);
   Q_INVOKABLE QVariantList list() const;
+  Q_INVOKABLE void configure(const QString &id);
   Q_INVOKABLE void enable(const QString &id, bool enable);
   Q_INVOKABLE void restart();
+
+signals:
+  void settings(const QString &id);
 
 private slots:
   void boot();
