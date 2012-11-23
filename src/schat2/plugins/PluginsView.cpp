@@ -94,6 +94,12 @@ QVariantList PluginsView::list() const
 }
 
 
+void PluginsView::configure(const QString &id)
+{
+  emit settings(id);
+}
+
+
 void PluginsView::enable(const QString &id, bool enable)
 {
   ChatCore::settings()->setValue(LS("Plugins/") + id, enable);

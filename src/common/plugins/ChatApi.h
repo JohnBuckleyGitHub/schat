@@ -28,13 +28,14 @@ class ChatApi
 {
 public:
   virtual ~ChatApi() {}
+  inline ChatPlugin *plugin() const    { return m_plugin; }
   virtual ChatPlugin *create() = 0;
-  inline ChatPlugin *plugin() const { return m_plugin; }
+  virtual QWidget *settings(QWidget *) { return 0; };
 
 protected:
   ChatPlugin *m_plugin;
 };
 
-Q_DECLARE_INTERFACE(ChatApi, "me.schat.ChatApi/1.1");
+Q_DECLARE_INTERFACE(ChatApi, "me.schat.ChatApi/1.2");
 
 #endif /* CHATAPI_H_ */

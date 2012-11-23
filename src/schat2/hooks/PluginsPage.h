@@ -24,6 +24,9 @@
 class PluginsView;
 class QLabel;
 
+/*!
+ * Страница настройки плагинов.
+ */
 class PluginsPage : public SettingsPage
 {
   Q_OBJECT
@@ -32,9 +35,15 @@ public:
   PluginsPage(QWidget *parent = 0);
   void retranslateUi();
 
+private slots:
+  void settings(const QString &id);
+
 private:
-  PluginsView *m_view;
-  QLabel *m_label;
+  PluginsView *m_view;  ///< Виджет просмотра списка плагинов.
+  QLabel *m_label;      ///< Надпись сверху.
+  QLabel *m_pluginName; ///< Имя настраиваемого плагина.
+  QString m_plugin;     ///< Имя плагина для которого открыт диалог настроек.
+  QWidget *m_widget;    ///< Виджет настройки плагина.
 };
 
 

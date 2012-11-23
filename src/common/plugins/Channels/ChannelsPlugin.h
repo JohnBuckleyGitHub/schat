@@ -47,6 +47,7 @@ public:
   }
 
   ChatPlugin *create();
+  QWidget *settings(QWidget *parent);
 };
 
 #endif /* CHANNELSPLUGIN_H_ */
