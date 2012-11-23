@@ -452,7 +452,7 @@
 <context>
     <name>PluginsPage</name>
     <message>
-        <location filename="../../src/schat2/hooks/PluginsPage.cpp" line="49"/>
+        <location filename="../../src/schat2/hooks/PluginsPage.cpp" line="58"/>
         <source>Plugins</source>
         <translation type="unfinished"></translation>
     </message>

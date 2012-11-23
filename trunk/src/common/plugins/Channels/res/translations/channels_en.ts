@@ -10,4 +10,12 @@
         <translation type="unfinished"></translation>
     </message>
 </context>
+<context>
+    <name>ChannelsSettings</name>
+    <message>
+        <location filename="../../ChannelsSettings.cpp" line="50"/>
+        <source>Enable ignoring users via context menu</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 </TS>
