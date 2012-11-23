@@ -20,8 +20,11 @@
 
 #include "ChannelsMenuImpl.h"
 #include "ChannelsPlugin_p.h"
+#include "ChatCore.h"
+#include "ChatSettings.h"
 #include "client/ChatClient.h"
 #include "net/SimpleID.h"
+#include "sglobal.h"
 #include "ui/ChatIcons.h"
 
 ChannelsMenuImpl::ChannelsMenuImpl(QObject *parent)
@@ -57,11 +60,13 @@ void ChannelsMenuImpl::bindImpl(QMenu *menu, ClientChannel channel, Hooks::Scope
     return;
 
   menu->addSeparator();
-  m_ignore = menu->addAction(SCHAT_ICON(Prohibition), tr("Ignore"));
-  m_ignore->setCheckable(true);
-  m_ignore->setChecked(ChannelsPluginImpl::ignored(channel));
-  m_ignore->setData(channel->id());
-  menu->addAction(m_ignore);
+
+  if (ChatCore::settings()->value(LS("Channels/Ignoring")).toBool()) {
+    m_ignore = menu->addAction(SCHAT_ICON(Prohibition), tr("Ignore"));
+    m_ignore->setCheckable(true);
+    m_ignore->setChecked(ChannelsPluginImpl::ignored(channel));
+    m_ignore->setData(channel->id());
+  }
 }
 
 

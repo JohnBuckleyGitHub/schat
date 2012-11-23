@@ -25,11 +25,13 @@ HEADERS  = \
    ChannelsMenuImpl.h \
    ChannelsPlugin.h \
    ChannelsPlugin_p.h \
+   ChannelsSettings.h \
 
 SOURCES  = \
    ChannelsCmd.cpp \
    ChannelsMenuImpl.cpp \
    ChannelsPlugin.cpp \
+   ChannelsSettings.cpp \
 
 RESOURCES += Channels.qrc
 

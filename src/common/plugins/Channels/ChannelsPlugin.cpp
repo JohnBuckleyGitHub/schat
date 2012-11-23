@@ -16,13 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QLabel>
 #include <QtPlugin>
 
 #include "ChannelsCmd.h"
 #include "ChannelsMenuImpl.h"
 #include "ChannelsPlugin.h"
 #include "ChannelsPlugin_p.h"
+#include "ChannelsSettings.h"
 #include "ChatCore.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
@@ -30,6 +30,7 @@
 #include "net/SimpleID.h"
 #include "sglobal.h"
 #include "Translation.h"
+#include "ChatSettings.h"
 
 ChannelsPluginImpl::ChannelsPluginImpl(QObject *parent)
   : ChatPlugin(parent)
@@ -41,6 +42,7 @@ ChannelsPluginImpl::ChannelsPluginImpl(QObject *parent)
   connect(ChatClient::channels(), SIGNAL(channel(QByteArray)), SLOT(channel(QByteArray)));
 
   ChatCore::translation()->addOther(LS("channels"));
+  ChatCore::settings()->setDefault(LS("Channels/Ignoring"), false);
 }
 
 
@@ -112,7 +114,7 @@ ChatPlugin *ChannelsPlugin::create()
 
 QWidget *ChannelsPlugin::settings(QWidget *parent)
 {
-  return new QLabel("TEST", parent);
+  return new ChannelsSettings(parent);
 }
 
 

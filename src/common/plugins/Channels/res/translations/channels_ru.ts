@@ -10,4 +10,12 @@
         <translation>Игнорировать</translation>
     </message>
 </context>
+<context>
+    <name>ChannelsSettings</name>
+    <message>
+        <location filename="../../ChannelsSettings.cpp" line="50"/>
+        <source>Enable ignoring users via context menu</source>
+        <translation>Игнорирование пользователей через контекстное меню</translation>
+    </message>
+</context>
 </TS>
