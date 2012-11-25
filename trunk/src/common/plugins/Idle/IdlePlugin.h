@@ -35,17 +35,19 @@ public:
   QVariantMap header() const
   {
     QVariantMap out = CoreApi::header();
-    out["Id"]       = "Idle";
-    out["Name"]     = "Idle";
-    out["Version"]  = "0.2.3";
-    out["Site"]     = "http://wiki.schat.me/Plugin/Idle";
-    out["Desc"]     = "Detect idle time to automatically set Away status";
-    out["Desc/ru"]  = "Обнаружение времени простоя для автоматической установки статуса Отсутствую";
+    out["Id"]           = "Idle";
+    out["Name"]         = "Idle";
+    out["Version"]      = "0.2.4";
+    out["Site"]         = "http://wiki.schat.me/Plugin/Idle";
+    out["Desc"]         = "Detect idle time to automatically set Away status";
+    out["Desc/ru"]      = "Обнаружение времени простоя для автоматической установки статуса Отсутствую";
+    out["Configurable"] = true;
 
     return out;
   }
 
   ChatPlugin *create();
+  QWidget *settings(QWidget *parent);
 };
 
 #endif /* IDLEPLUGIN_H_ */

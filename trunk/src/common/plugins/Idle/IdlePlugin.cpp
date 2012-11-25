@@ -25,13 +25,16 @@
 #include "Idle.h"
 #include "IdlePlugin.h"
 #include "IdlePlugin_p.h"
+#include "IdleSettings.h"
 #include "sglobal.h"
+#include "Translation.h"
 
 IdlePluginImpl::IdlePluginImpl(QObject *parent)
   : ChatPlugin(parent)
   , m_autoAway(0)
 {
   ChatCore::settings()->setDefault(LS("AutoAway"), 600);
+  ChatCore::translation()->addOther(LS("idle"));
 
   m_idle = new Idle(this);
 
@@ -99,6 +102,12 @@ ChatPlugin *IdlePlugin::create()
 {
   m_plugin = new IdlePluginImpl(this);
   return m_plugin;
+}
+
+
+QWidget *IdlePlugin::settings(QWidget *parent)
+{
+  return new IdleSettings(parent);
 }
 
 #if QT_VERSION < 0x050000
