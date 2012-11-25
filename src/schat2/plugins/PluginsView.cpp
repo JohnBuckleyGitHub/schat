@@ -25,6 +25,7 @@
 #include "ChatNotify.h"
 #include "ChatPlugins.h"
 #include "ChatSettings.h"
+#include "plugins/ChatApi.h"
 #include "plugins/PluginsView.h"
 #include "sglobal.h"
 #include "Translation.h"
@@ -73,6 +74,7 @@ int PluginsView::state(const QString &id)
 QVariantList PluginsView::list() const
 {
   QVariantList plugins;
+
   foreach (PluginItem *item, ChatCore::plugins()->list()) {
     QVariantMap data;
     const QVariantMap &header = item->header();
@@ -83,7 +85,8 @@ QVariantList PluginsView::list() const
     data[LS("version")] = header.value(LS("Version"));
     data[LS("desc")]    = desc(header);
 
-    bool enabled = ChatCore::settings()->value(LS("Plugins/") + item->id()).toBool();
+    bool enabled = item->isLoaded();
+
     data[LS("enabled")]      = enabled;
     data[LS("configurable")] = enabled && header.value(LS("Configurable")).toBool();
 

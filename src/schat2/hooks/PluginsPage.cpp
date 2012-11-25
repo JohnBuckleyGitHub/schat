@@ -78,7 +78,6 @@ void PluginsPage::settings(const QString &id)
     }
 
     m_plugin.clear();
-    return;
   }
 
   PluginItem *plugin = ChatCore::plugins()->plugin(id);

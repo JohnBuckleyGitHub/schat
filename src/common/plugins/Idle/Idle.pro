@@ -24,10 +24,12 @@ HEADERS  = \
    Idle.h \
    IdlePlugin.h \
    IdlePlugin_p.h \
+   IdleSettings.h \
 
 SOURCES  = \
    Idle.cpp \
    IdlePlugin.cpp \
+   IdleSettings.cpp \
 
 RESOURCES += Idle.qrc
 
@@ -52,5 +54,9 @@ unix {
 } else {
   SOURCES += idle_stub.cpp
 }
+
+TRANSLATIONS += res/translations/idle_en.ts
+TRANSLATIONS += res/translations/idle_ru.ts
+CODECFORTR = UTF-8
 
 include(../plugins.pri)
