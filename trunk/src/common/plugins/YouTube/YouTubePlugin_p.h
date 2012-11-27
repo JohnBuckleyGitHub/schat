@@ -29,6 +29,12 @@ class YouTubePluginImpl : public ChatPlugin
 
 public:
   YouTubePluginImpl(QObject *parent);
+
+private slots:
+  void settingsChanged(const QString &key, const QVariant &value);
+
+private:
+  const QString m_key;
 };
 
 #endif /* YOUTUBEPLUGIN_P_H_ */
