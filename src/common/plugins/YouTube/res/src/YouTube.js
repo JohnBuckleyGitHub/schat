@@ -105,9 +105,8 @@ var YouTube = {
     if (navigator.plugins && navigator.plugins.length > 0) {
       var type = 'application/x-shockwave-flash';
       var mimeTypes = navigator.mimeTypes;
-      if (mimeTypes && mimeTypes[type] && mimeTypes[type].enabledPlugin && mimeTypes[type].enabledPlugin.description) {
+      if (mimeTypes && mimeTypes[type] && mimeTypes[type].enabledPlugin && mimeTypes[type].enabledPlugin.description && SimpleChat.value('YouTube/EmbedVideo') == 'true')
         return true;
-      }
     }
 
     return false;

@@ -19,7 +19,10 @@
 #include <QtPlugin>
 #include <QWebSettings>
 
+#include "ChatCore.h"
+#include "ChatSettings.h"
 #include "sglobal.h"
+#include "Translation.h"
 #include "YouTubeChatView.h"
 #include "YouTubeFilter.h"
 #include "YouTubePlugin.h"
@@ -27,11 +30,25 @@
 
 YouTubePluginImpl::YouTubePluginImpl(QObject *parent)
   : ChatPlugin(parent)
+  , m_key(LS("YouTube/EmbedVideo"))
 {
-  QWebSettings::globalSettings()->setAttribute(QWebSettings::PluginsEnabled, true);
+  ChatSettings *settings = ChatCore::settings();
+  settings->setDefault(m_key, true);
+  if (settings->value(m_key).toBool())
+    QWebSettings::globalSettings()->setAttribute(QWebSettings::PluginsEnabled, true);
 
+  ChatCore::translation()->addOther(LS("youtube"));
   TokenFilter::add(LS("channel"), new YouTubeFilter());
   new YouTubeChatView(this);
+
+  connect(settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
+}
+
+
+void YouTubePluginImpl::settingsChanged(const QString &key, const QVariant &value)
+{
+  if (key == m_key && value == true)
+    QWebSettings::globalSettings()->setAttribute(QWebSettings::PluginsEnabled, true);
 }
 
 

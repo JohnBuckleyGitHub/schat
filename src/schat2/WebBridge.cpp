@@ -25,6 +25,7 @@
 
 #include "ChatCore.h"
 #include "ChatNotify.h"
+#include "ChatSettings.h"
 #include "ChatUrls.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
@@ -283,6 +284,12 @@ QVariant WebBridge::feed(const QString &id, const QString &name, int options) co
 QVariant WebBridge::feed(const QString &name, int options) const
 {
   return feed(ChatClient::channel(), name, options);
+}
+
+
+QVariant WebBridge::value(const QString &key) const
+{
+  return ChatCore::settings()->value(key);
 }
 
 
