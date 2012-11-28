@@ -1,12 +1,7 @@
 schat2 (##SCHAT_VERSION##~##DIST##) ##DIST##; urgency=low
 
-  * Stable release 1.99.46.
+  * ##SCHAT_VERSION##.
 
  -- Alexander Sedov <impomezia@gmail.com>  ##RDATE##
 
-schat2 (1.99.46-1~ppa1~quantal) quantal; urgency=low
-
-  * Initial release.
-
- -- Alexander Sedov <impomezia@gmail.com>  Wed, 31 Oct 2012 03:59:34 +0700
 
