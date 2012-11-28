@@ -121,6 +121,10 @@ var Plugins = {
 
   TR: function(key) {
     $("[data-tr='" + key + "']").html(Plugins.tr(key));
+  },
+
+  scrollTo: function(id) {
+    document.getElementById(id).scrollIntoView();
   }
 };
 
@@ -142,4 +146,5 @@ if (typeof PluginsView === 'undefined') {
 }
 else {
   SimpleChat.retranslated.connect(Plugins.retranslate);
+  PluginsView.scrollTo.connect(Plugins.scrollTo);
 }

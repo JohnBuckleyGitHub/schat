@@ -97,6 +97,7 @@ void PluginsPage::settings(const QString &id)
   m_pluginName->show();
   m_mainLayout->insertSpacing(2, 10);
   m_mainLayout->insertWidget(4, m_widget);
+  m_view->scroll(id);
 }
 
 

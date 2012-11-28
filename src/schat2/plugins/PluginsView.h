@@ -36,8 +36,10 @@ public:
   Q_INVOKABLE void configure(const QString &id);
   Q_INVOKABLE void enable(const QString &id, bool enable);
   Q_INVOKABLE void restart();
+  void scroll(const QString &id);
 
 signals:
+  void scrollTo(const QString &id);
   void settings(const QString &id);
 
 private slots:

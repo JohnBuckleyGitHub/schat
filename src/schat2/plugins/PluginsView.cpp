@@ -115,6 +115,12 @@ void PluginsView::restart()
 }
 
 
+void PluginsView::scroll(const QString &id)
+{
+  emit scrollTo(id);
+}
+
+
 void PluginsView::boot()
 {
   QString file = QApplication::applicationDirPath() + LS("/styles/test/html/Plugins.html");
