@@ -80,7 +80,7 @@ c['properties'] = {
 c['schedulers'] = [
   ForceScheduler(
     name='force',
-    builderNames=['lucid', 'lucid64', 'win32', 'win32-legacy', 'macosx', 'macosx-legacy', 'source', 'precise', 'precise64', 'release']
+    builderNames=['lucid', 'lucid64', 'win32', 'win32-legacy', 'macosx', 'macosx-legacy', 'source', 'ppa', 'ppa-dev', 'precise', 'precise64', 'release']
   ),
   SingleBranchScheduler(
     name='trunk',
@@ -123,13 +123,30 @@ def MakeDebBuilder():
   return f
 
 
+def MakePpaBuilder():
+  f = BuildFactory()
+  f.addSteps(svn_co)
+  f.addStep(ShellCommand(
+    name          = 'ppa',
+    command       = ['bash', 'ppa.sh'],
+    workdir       = 'build/os/ubuntu',
+    env           = {
+      'SCHAT_VERSION':   SCHAT_VERSION,
+      'SCHAT_REVISION':  Property('got_revision'),
+      'SCHAT_PPA':       Property('ppa'),
+    },
+    haltOnFailure = True,
+  ))
+  return f
+
+
 def MakeWinBuilder():
   f = BuildFactory()
   f.addSteps(svn_co)
   f.addStep(ShellCommand(
     name          = 'revision',
     command       = ['cmd', '/c', 'revision.cmd'],
-    workdir       = "build/os/win32",
+    workdir       = 'build/os/win32',
     env           = { 'SCHAT_REVISION': Property('got_revision') },
     haltOnFailure = True,
   ))
@@ -174,7 +191,7 @@ def MakeWinLegacyBuilder():
   f.addStep(ShellCommand(
     name          = 'revision',
     command       = ['cmd', '/c', 'revision.cmd'],
-    workdir       = "build/os/win32",
+    workdir       = 'build/os/win32',
     env           = { 'SCHAT_VERSION': SCHAT_VERSION_LEGACY, 'SCHAT_REVISION': Property('got_revision') },
     haltOnFailure = True,
   ))
@@ -232,7 +249,7 @@ def MakeMacBuilder():
     slavesrc   = WithProperties('os/macosx/dmg/SimpleChat2-%(version)s.dmg'),
     masterdest = UploadFileName('SimpleChat2-%(version)s%(suffix)s.dmg'),
   ))
-  return f;
+  return f
 
 
 def MakeMacLegacyBuilder():
@@ -249,7 +266,7 @@ def MakeMacLegacyBuilder():
     slavesrc   = WithProperties('os/macosx/dmg/SimpleChat-%(version_legacy)s.dmg'),
     masterdest = UploadFileNameLegacy('SimpleChat-%(version_legacy)s.dmg'),
   ))
-  return f;
+  return f
   
 
 def MakeSrcBuilder():
@@ -266,7 +283,7 @@ def MakeSrcBuilder():
     slavesrc   = WithProperties('schat2-src-%(version)s%(suffix)s.tar.bz2'),
     masterdest = UploadFileName('schat2-src-%(version)s%(suffix)s.tar.bz2'),
   ))
-  return f;
+  return f
 
 
 def MakeDevelBuilder():
@@ -282,7 +299,7 @@ def MakeDevelBuilder():
       '--os',       Property('os', default = 'win32'),
     ]
   ))
-  return f;
+  return f
 
 
 def MakeReleaseBuilder():
@@ -315,7 +332,7 @@ def MakeReleaseBuilder():
       '--version',  SCHAT_VERSION,
     ]
   ))
-  return f;
+  return f
 
 
 def UploadFileName(file):
@@ -327,56 +344,74 @@ def UploadFileNameLegacy(file):
 
 
 c['builders'] = [
-  BuilderConfig(name="lucid",
-    slavenames=["lucid"],
-    factory=MakeDebBuilder(),
-    properties={
-      'codename': "lucid",
-      'arch': "i386",
-  }),
-  BuilderConfig(name="lucid64",
-    slavenames=["lucid64"],
-    factory=MakeDebBuilder(),
-    properties={
-      'codename': "lucid",
-      'arch': "amd64",
-  }),
-  BuilderConfig(name="precise",
-    slavenames=["precise"],
-    factory=MakeDebBuilder(),
-    properties={
-      'codename': "precise",
-      'arch': "i386",
-  }),
-  BuilderConfig(name="precise64",
-    slavenames=["precise64"],
-    factory=MakeDebBuilder(),
-    properties={
-      'codename': "precise",
-      'arch': "amd64",
-  }),
-  BuilderConfig(name="win32",
-    slavenames=["win32"],
-    factory=MakeWinBuilder()
+  BuilderConfig(name = 'lucid',
+    slavenames = ['lucid'],
+    factory    = MakeDebBuilder(),
+    properties = {
+      'codename': 'lucid',
+      'arch': 'i386',
+    },
   ),
-  BuilderConfig(name="win32-legacy",
-    slavenames=["win32"],
-    factory=MakeWinLegacyBuilder()
+  BuilderConfig(name = 'lucid64',
+    slavenames = ['lucid64'],
+    factory    = MakeDebBuilder(),
+    properties = {
+      'codename': 'lucid',
+      'arch': 'amd64',
+    },
   ),
-  BuilderConfig(name="macosx",
-    slavenames=["macosx"],
-    factory=MakeMacBuilder()
+  BuilderConfig(name = 'precise',
+    slavenames = ['precise'],
+    factory    = MakeDebBuilder(),
+    properties = {
+      'codename': 'precise',
+      'arch': 'i386',
+    },
   ),
-  BuilderConfig(name="macosx-legacy",
-    slavenames=["macosx"],
-    factory=MakeMacLegacyBuilder()
+  BuilderConfig(name = 'precise64',
+    slavenames = ['precise64'],
+    factory    = MakeDebBuilder(),
+    properties = {
+      'codename': 'precise',
+      'arch': 'amd64',
+    },
   ),
-  BuilderConfig(name="source",
-    slavenames=["master"],
-    factory=MakeSrcBuilder()
+  BuilderConfig(name = 'win32',
+    slavenames = ['win32'],
+    factory    = MakeWinBuilder(),
   ),
-  BuilderConfig(name="release",
-    slavenames=["master"],
-    factory=MakeReleaseBuilder()
+  BuilderConfig(name = 'win32-legacy',
+    slavenames = ['win32'],
+    factory    = MakeWinLegacyBuilder(),
+  ),
+  BuilderConfig(name = 'macosx',
+    slavenames = ['macosx'],
+    factory    = MakeMacBuilder(),
+  ),
+  BuilderConfig(name = 'macosx-legacy',
+    slavenames = ['macosx'],
+    factory    = MakeMacLegacyBuilder(),
+  ),
+  BuilderConfig(name = 'source',
+    slavenames = ['master'],
+    factory    = MakeSrcBuilder(),
+  ),
+  BuilderConfig(name = 'release',
+    slavenames = ['master'],
+    factory    = MakeReleaseBuilder(),
+  ),
+  BuilderConfig(name = 'ppa',
+    slavenames = ['master'],
+    factory    = MakePpaBuilder(),
+    properties = {
+      'ppa': 'stable'
+    },
+  ),
+  BuilderConfig(name = 'ppa-dev',
+    slavenames = ['master'],
+    factory    = MakePpaBuilder(),
+    properties = {
+      'ppa': 'development'
+    },
   ),
 ]
