@@ -27,13 +27,14 @@
 #include "YouTubeFilter.h"
 #include "YouTubePlugin.h"
 #include "YouTubePlugin_p.h"
+#include "YouTubeSettings.h"
 
 YouTubePluginImpl::YouTubePluginImpl(QObject *parent)
   : ChatPlugin(parent)
   , m_key(LS("YouTube/EmbedVideo"))
 {
   ChatSettings *settings = ChatCore::settings();
-  settings->setDefault(m_key, true);
+  settings->setDefault(m_key, false);
   if (settings->value(m_key).toBool())
     QWebSettings::globalSettings()->setAttribute(QWebSettings::PluginsEnabled, true);
 
@@ -56,6 +57,12 @@ ChatPlugin *YouTubePlugin::create()
 {
   m_plugin = new YouTubePluginImpl(this);
   return m_plugin;
+}
+
+
+QWidget *YouTubePlugin::settings(QWidget *parent)
+{
+  return new YouTubeSettings(parent);
 }
 
 #if QT_VERSION < 0x050000

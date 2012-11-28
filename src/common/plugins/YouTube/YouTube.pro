@@ -21,17 +21,23 @@ QT = core gui webkit
 OTHER_FILES += YouTube.json
 
 HEADERS  = \
+   YouTubeChatView.h \
    YouTubeFilter.h \
    YouTubePlugin.h \
    YouTubePlugin_p.h \
-   YouTubeChatView.h \
+   YouTubeSettings.h \
 
 SOURCES  = \
+   YouTubeChatView.cpp \
    YouTubeFilter.cpp \
    YouTubePlugin.cpp \
-   YouTubeChatView.cpp \
+   YouTubeSettings.cpp \
 
 RESOURCES += \
     YouTube.qrc
+
+TRANSLATIONS += res/translations/youtube_en.ts
+TRANSLATIONS += res/translations/youtube_ru.ts
+CODECFORTR = UTF-8
 
 include(../plugins.pri)

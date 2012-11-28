@@ -4,5 +4,6 @@
   <file alias="images/YouTube/icon.png">res/images/YouTube_icon.png</file>
   <file alias="images/YouTube/YouTube.png">res/images/YouTube.png</file>
   <file alias="js/YouTube/YouTube.js">res/js/YouTube.min.js</file>
+  <file alias="translations/youtube_ru.qm">res/translations/youtube_ru.qm</file>
 </qresource>
 </RCC>
