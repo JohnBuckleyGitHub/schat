@@ -18,7 +18,7 @@ from buildbot.steps.master import MasterShellCommand
 import schat_passwords
 import os
 
-SCHAT_VERSION        = "1.99.47"
+SCHAT_VERSION        = "1.99.48"
 SCHAT_VERSION_LEGACY = "0.8.5"
 
 SCHAT_UPLOAD_BASE        = "/var/www/download.schat.me/htdocs/schat2/snapshots/" + SCHAT_VERSION
