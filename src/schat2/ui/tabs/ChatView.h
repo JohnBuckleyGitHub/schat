@@ -97,4 +97,16 @@ private:
   QStringList m_jsfiles;                               ///< Дополнительные динамически загружаемые JavaScript скрипты.
 };
 
+
+class WebPage : public QWebPage
+{
+  Q_OBJECT
+
+public:
+  WebPage(QObject* parent = 0);
+
+public slots:
+  bool shouldInterruptJavaScript();
+};
+
 #endif /* CHATVIEW_H_ */
