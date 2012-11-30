@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+
 #include <QAction>
 #include <QContextMenuEvent>
 #include <QEvent>
@@ -47,6 +49,8 @@ ChatView::ChatView(const QByteArray &id, const QString &url, QWidget *parent)
   , m_id(id)
   , m_lastMessage(0)
 {
+  setPage(new WebPage(this));
+
   setAcceptDrops(false);
   page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
 
@@ -423,4 +427,17 @@ void ChatView::retranslateUi()
   m_clear->setText(tr("Clear"));
   m_reload->setText(tr("Reload"));
   m_selectAll->setText(tr("Select All"));
+}
+
+
+WebPage::WebPage(QObject* parent)
+  : QWebPage(parent)
+{
+}
+
+
+bool WebPage::shouldInterruptJavaScript()
+{
+  qDebug() << "WebPage::shouldInterruptJavaScript()";
+  return false;
 }
