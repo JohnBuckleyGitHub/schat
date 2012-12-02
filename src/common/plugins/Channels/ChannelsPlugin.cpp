@@ -47,22 +47,6 @@ ChannelsPluginImpl::ChannelsPluginImpl(QObject *parent)
 
 
 /*!
- * \return \b true если сообщения пользователя игнорируются.
- */
-bool ChannelsPluginImpl::ignored(ClientChannel user)
-{
-  if (!user || user->type() != SimpleID::UserId)
-    return false;
-
-  FeedPtr feed = ChatClient::channel()->feed(LS("acl"), false);
-  if (!feed)
-    return false;
-
-  return !Acl::canWrite(feed.data(), user.data());
-}
-
-
-/*!
  * Игнорирование пользователя.
  */
 void ChannelsPluginImpl::ignore(const QByteArray &id)

@@ -38,7 +38,7 @@
 ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   : ChannelBaseTab(channel, LS("channel"), parent)
 {
-  m_userView = new UserView(this);
+  m_userView = new UserView(channel, this);
 
   m_leftLayout = new QVBoxLayout(this);
   m_leftLayout->addWidget(m_findWidget);
