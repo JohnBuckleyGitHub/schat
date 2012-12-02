@@ -56,11 +56,8 @@ int MessagesImpl::read(MessagePacket packet)
   if (command != LS("m") && command != LS("me") && command != LS("say"))
     return 0;
 
-  if (SimpleID::typeOf(packet->dest()) == SimpleID::ChannelId) {
-    FeedPtr feed = ChatClient::channel()->feed(LS("acl"), false);
-    if (feed && !Acl::canWrite(feed.data(), ChatClient::channels()->get(packet->sender()).data()))
-      return 0;
-  }
+  if (SimpleID::typeOf(packet->dest()) == SimpleID::ChannelId && ignored(ChatClient::channels()->get(packet->sender())))
+    return 0;
 
   ChannelMessage message(packet);
   if (referring(message))
@@ -78,6 +75,22 @@ int MessagesImpl::read(MessagePacket packet)
 
   m_undelivered.remove(packet->internalId());
   return 1;
+}
+
+
+/*!
+ * \return \b true если сообщения пользователя игнорируются.
+ */
+bool MessagesImpl::ignored(ClientChannel user)
+{
+  if (!user || user->type() != SimpleID::UserId)
+    return false;
+
+  FeedPtr feed = ChatClient::channel()->feed(LS("acl"), false);
+  if (!feed)
+    return false;
+
+  return !Acl::canWrite(feed.data(), user.data());
 }
 
 

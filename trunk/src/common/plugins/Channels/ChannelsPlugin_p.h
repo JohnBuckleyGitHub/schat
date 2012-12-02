@@ -28,7 +28,6 @@ class ChannelsPluginImpl : public ChatPlugin
 
 public:
   ChannelsPluginImpl(QObject *parent);
-  static bool ignored(ClientChannel user);
   static void ignore(const QByteArray &id);
   static void unignore(const QByteArray &id);
 

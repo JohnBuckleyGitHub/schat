@@ -34,6 +34,7 @@ class SCHAT_CORE_EXPORT MessagesImpl : public Messages
 public:
   MessagesImpl(QObject *parent = 0);
   int read(MessagePacket packet);
+  static bool ignored(ClientChannel user);
   void error(MessagePacket packet);
   void sent(MessagePacket packet);
   void unhandled(MessagePacket packet);

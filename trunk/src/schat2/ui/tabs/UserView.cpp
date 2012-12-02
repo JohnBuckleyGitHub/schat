@@ -28,68 +28,94 @@
 #include "client/SimpleClient.h"
 #include "debugstream.h"
 #include "hooks/ChannelMenu.h"
+#include "hooks/MessagesImpl.h"
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
 #include "ui/tabs/UserView.h"
 
-UserItem::UserItem(ClientChannel channel)
-  : QStandardItem(ChatIcons::icon(channel), channel->name())
+UserItem::UserItem(ClientChannel user, ClientChannel channel)
+  : QStandardItem()
   , m_self(false)
   , m_channel(channel)
+  , m_user(user)
 {
-  if (ChatClient::channel()->id() == channel->id())
-    m_self = true;
+  m_self = ChatClient::id() == user->id();
 
-  if (m_channel->status().value() != Status::Online)
-    setColor();
-
-  setSortData();
+  reload();
 }
 
 
+UserItem::~UserItem()
+{
+  qDebug() << this << "~" << text();
+}
+
+
+/*!
+ * Обновление информации.
+ */
 bool UserItem::reload()
 {
-  setText(m_channel->name());
-  setColor();
-  setSortData();
-  setIcon(ChatIcons::icon(m_channel));
+  setText(m_user->name());
+  setForeground(colorize());
+  setData(prefix() + m_user->name().toLower());
+  setIcon(ChatIcons::icon(m_user));
+
+  FeedPtr feed = m_channel->feed(LS("acl"), false);
+  if (feed) {
+    QFont font = this->font();
+    int acl    = feed->head().acl().match(m_user.data());
+
+    font.setBold(acl & Acl::Edit);
+    font.setItalic(!(acl & Acl::Write) || Hooks::MessagesImpl::ignored(m_user));
+    setFont(font);
+  }
+
   return true;
 }
 
 
-void UserItem::setColor()
+/*!
+ * Возвращает необходимый цвет текста.
+ */
+QBrush UserItem::colorize() const
 {
-  switch (m_channel->status().value()) {
+  switch (m_user->status().value()) {
     case Status::Away:
     case Status::AutoAway:
     case Status::DnD:
-      setForeground(QBrush(QColor(0x90a4b3)));
+      return QColor(0x90a4b3);
       break;
 
     default:
-      setForeground(QPalette().brush(QPalette::WindowText));
+      return QPalette().brush(QPalette::WindowText);
       break;
   }
 }
 
 
-void UserItem::setSortData()
+/*!
+ * Префикс для сортировки.
+ */
+QString UserItem::prefix() const
 {
-  QString prefix = LS("6");
   if (m_self)
-    prefix = LS("!");
-  else if (m_channel->status().value() == Status::FreeForChat)
-    prefix = LS("4");
-  else if (m_channel->gender().value() == Gender::Bot)
-    prefix = LS("2");
+    return LS("!");
 
-  setData(prefix + m_channel->name().toLower());
+  else if (m_user->status().value() == Status::FreeForChat)
+    return LS("5");
+
+  else if (m_user->gender().value() == Gender::Bot)
+    return LS("3");
+
+  return LS("7");
 }
 
 
-UserView::UserView(QWidget *parent)
+UserView::UserView(ClientChannel channel, QWidget *parent)
   : QListView(parent)
   , m_sortable(true)
+  , m_channel(channel)
 {
   setModel(&m_model);
   setFocusPolicy(Qt::TabFocus);
@@ -120,18 +146,18 @@ UserView::UserView(QWidget *parent)
  *
  * \param channel Указатель на канал.
  */
-bool UserView::add(ClientChannel channel)
+bool UserView::add(ClientChannel user)
 {
-  if (!channel)
+  if (!user)
     return false;
 
-  if (m_channels.contains(channel->id()))
-    return reload(channel);
+  if (m_channels.contains(user->id()))
+    return reload(user);
 
-  UserItem *item = new UserItem(channel);
+  UserItem *item = new UserItem(user, m_channel);
 
   m_model.appendRow(item);
-  m_channels[channel->id()] = item;
+  m_channels[user->id()] = item;
 
   if (m_sortable)
     sort();
@@ -211,7 +237,7 @@ void UserView::contextMenuEvent(QContextMenuEvent *event)
 
   UserItem *item = static_cast<UserItem *>(m_model.itemFromIndex(index));
   QMenu menu(this);
-  Hooks::ChannelMenu::bind(&menu, item->channel(), Hooks::UserViewScope);
+  Hooks::ChannelMenu::bind(&menu, item->user(), Hooks::UserViewScope);
   menu.exec(event->globalPos());
 }
 
@@ -222,7 +248,7 @@ void UserView::mouseReleaseEvent(QMouseEvent *event)
 
   if (index.isValid() && event->modifiers() == Qt::ControlModifier && event->button() == Qt::LeftButton) {
     UserItem *item = static_cast<UserItem *>(m_model.itemFromIndex(index));
-    ChatUrls::open(ChatUrls::toUrl(item->channel(), LS("insert")));
+    ChatUrls::open(ChatUrls::toUrl(item->user(), LS("insert")));
   }
   else if (event->button() == Qt::LeftButton && !index.isValid()) {
     setCurrentIndex(QModelIndex());
@@ -238,6 +264,6 @@ void UserView::mouseReleaseEvent(QMouseEvent *event)
  */
 void UserView::addTab(const QModelIndex &index)
 {
-  QUrl url = ChatUrls::toUrl(static_cast<UserItem *>(m_model.itemFromIndex(index))->channel(), "open");
+  QUrl url = ChatUrls::toUrl(static_cast<UserItem *>(m_model.itemFromIndex(index))->user(), LS("open"));
   ChatUrls::open(url);
 }

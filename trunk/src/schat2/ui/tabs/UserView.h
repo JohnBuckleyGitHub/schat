@@ -32,16 +32,18 @@ class ChannelInfo;
 class UserItem : public QStandardItem
 {
 public:
-  UserItem(ClientChannel channel);
-  inline ClientChannel channel() { return m_channel; }
+  UserItem(ClientChannel user, ClientChannel channel);
+  ~UserItem();
+  inline ClientChannel user() { return m_user; }
   bool reload();
 
 private:
-  void setColor();
-  void setSortData();
+  QBrush colorize() const;
+  QString prefix() const;
 
-  bool m_self;             ///< true это данные текущего пользователя.
-  ClientChannel m_channel; ///< Канал-пользователь.
+  bool m_self;             ///< \b true если это собственный итем пользователя.
+  ClientChannel m_channel; ///< Канал.
+  ClientChannel m_user;    ///< Пользователь.
 };
 
 
@@ -53,9 +55,9 @@ class UserView : public QListView
   Q_OBJECT
 
 public:
-  UserView(QWidget *parent = 0);
-  bool add(ClientChannel channel);
-  bool reload(ClientChannel channel);
+  UserView(ClientChannel channel, QWidget *parent = 0);
+  bool add(ClientChannel user);
+  bool reload(ClientChannel user);
   bool remove(const QByteArray &id);
   inline bool contains(const QByteArray &id) const { return m_channels.contains(id); }
   inline bool isSortable() const                   { return m_sortable; }
@@ -75,6 +77,7 @@ private slots:
 
 private:
   bool m_sortable;                         ///< true если список пользователей нужно сортировать при добавлении пользователя.
+  ClientChannel m_channel;                 ///< Канал.
   QHash<QByteArray, UserItem*> m_channels; ///< Таблица для ускоренного поиска пользователей.
   QStandardItemModel m_model;              ///< Модель для отображения списка пользователей.
 };
