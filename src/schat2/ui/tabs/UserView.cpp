@@ -282,20 +282,17 @@ void UserView::addTab(const QModelIndex &index)
 
 void UserView::notify(const Notify &notify)
 {
-  if (notify.type() == Notify::FeedData || notify.type() == Notify::FeedReply) {
+  if (notify.type() == Notify::FeedReply) {
     const FeedNotify &n = static_cast<const FeedNotify &>(notify);
     if (n.feed() != LS("acl") || (n.channel() != m_channel->id() && n.channel() != ChatClient::id()))
       return;
 
-    if (!n.path().isEmpty() && n.path() != LS("head"))
+    if (n.path() != LS("head"))
       return;
 
-    if (n.feed() == LS("acl") && (n.channel() == ChatClient::id() || (n.channel() == m_channel->id() && n.path() == LS("head")))) {
+    foreach (UserItem *item, m_channels)
+      item->reload();
 
-      foreach (UserItem *item, m_channels)
-        item->reload();
-
-      sort();
-    }
+    sort();
   }
 }
