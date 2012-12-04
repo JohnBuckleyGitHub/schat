@@ -25,6 +25,7 @@
 #include "Channel.h"
 
 class ChannelInfo;
+class Notify;
 
 /*!
  * Итем в списке пользователей.
@@ -33,14 +34,15 @@ class UserItem : public QStandardItem
 {
 public:
   UserItem(ClientChannel user, ClientChannel channel);
-  ~UserItem();
   inline ClientChannel user() { return m_user; }
   bool reload();
 
 private:
-  QBrush colorize() const;
-  QString prefix() const;
+  int weight() const;
+  QBrush color() const;
 
+  bool m_bold;             ///< Жирный шрифт.
+  bool m_italic;           ///< Курсивный шрифт.
   bool m_self;             ///< \b true если это собственный итем пользователя.
   ClientChannel m_channel; ///< Канал.
   ClientChannel m_user;    ///< Пользователь.
@@ -60,7 +62,7 @@ public:
   bool reload(ClientChannel user);
   bool remove(const QByteArray &id);
   inline bool contains(const QByteArray &id) const { return m_channels.contains(id); }
-  inline bool isSortable() const                   { return m_sortable; }
+  inline bool sortable() const                     { return m_sortable; }
   inline void setSortable(bool sortable)           { m_sortable = sortable; }
   void clear();
   void sort();
@@ -74,12 +76,13 @@ protected:
 
 private slots:
   void addTab(const QModelIndex &index);
+  void notify(const Notify &notify);
 
 private:
-  bool m_sortable;                         ///< true если список пользователей нужно сортировать при добавлении пользователя.
-  ClientChannel m_channel;                 ///< Канал.
-  QHash<QByteArray, UserItem*> m_channels; ///< Таблица для ускоренного поиска пользователей.
-  QStandardItemModel m_model;              ///< Модель для отображения списка пользователей.
+  bool m_sortable;                        ///< true если список пользователей нужно сортировать при добавлении пользователя.
+  ClientChannel m_channel;                ///< Канал.
+  QMap<QByteArray, UserItem*> m_channels; ///< Таблица для ускоренного поиска пользователей.
+  QStandardItemModel m_model;             ///< Модель для отображения списка пользователей.
 };
 
 #endif /* USERVIEW_H_ */

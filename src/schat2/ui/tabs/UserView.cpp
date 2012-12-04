@@ -21,6 +21,7 @@
 #include <QUrl>
 
 #include "ChatCore.h"
+#include "ChatNotify.h"
 #include "ChatUrls.h"
 #include "client/ChatClient.h"
 #include "client/ChatClient.h"
@@ -35,6 +36,8 @@
 
 UserItem::UserItem(ClientChannel user, ClientChannel channel)
   : QStandardItem()
+  , m_bold(false)
+  , m_italic(false)
   , m_self(false)
   , m_channel(channel)
   , m_user(user)
@@ -45,20 +48,12 @@ UserItem::UserItem(ClientChannel user, ClientChannel channel)
 }
 
 
-UserItem::~UserItem()
-{
-  qDebug() << this << "~" << text();
-}
-
-
 /*!
  * Обновление информации.
  */
 bool UserItem::reload()
 {
   setText(m_user->name());
-  setForeground(colorize());
-  setData(prefix() + m_user->name().toLower());
   setIcon(ChatIcons::icon(m_user));
 
   FeedPtr feed = m_channel->feed(LS("acl"), false);
@@ -66,20 +61,53 @@ bool UserItem::reload()
     QFont font = this->font();
     int acl    = feed->head().acl().match(m_user.data());
 
-    font.setBold(acl & Acl::Edit);
-    font.setItalic(!(acl & Acl::Write) || Hooks::MessagesImpl::ignored(m_user));
+    m_bold = acl & Acl::Edit;
+    m_italic = !(acl & Acl::Write) || Hooks::MessagesImpl::ignored(m_user);
+
+    font.setBold(m_bold);
+    font.setItalic(m_italic);
     setFont(font);
   }
+
+  setForeground(color());
+  setData(QString::number(weight()) + m_user->name().toLower());
 
   return true;
 }
 
 
 /*!
+ * Вес для сортировки.
+ */
+int UserItem::weight() const
+{
+  if (m_self)
+    return 0;
+
+  else if (m_bold)
+    return 2;
+
+  else if (m_italic)
+    return 9;
+
+  else if (m_user->gender().value() == Gender::Bot)
+    return 4;
+
+  else if (m_user->status().value() == Status::FreeForChat)
+    return 5;
+
+  return 7;
+}
+
+
+/*!
  * Возвращает необходимый цвет текста.
  */
-QBrush UserItem::colorize() const
+QBrush UserItem::color() const
 {
+  if (m_italic)
+    return QColor(0x90a4b3);
+
   switch (m_user->status().value()) {
     case Status::Away:
     case Status::AutoAway:
@@ -91,24 +119,6 @@ QBrush UserItem::colorize() const
       return QPalette().brush(QPalette::WindowText);
       break;
   }
-}
-
-
-/*!
- * Префикс для сортировки.
- */
-QString UserItem::prefix() const
-{
-  if (m_self)
-    return LS("!");
-
-  else if (m_user->status().value() == Status::FreeForChat)
-    return LS("5");
-
-  else if (m_user->gender().value() == Gender::Bot)
-    return LS("3");
-
-  return LS("7");
 }
 
 
@@ -138,6 +148,7 @@ UserView::UserView(ClientChannel channel, QWidget *parent)
 
   connect(this, SIGNAL(doubleClicked(const QModelIndex &)), SLOT(addTab(const QModelIndex &)));
   connect(ChatClient::channels(), SIGNAL(channel(const ChannelInfo &)), SLOT(channel(const ChannelInfo &)));
+  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 }
 
 
@@ -266,4 +277,25 @@ void UserView::addTab(const QModelIndex &index)
 {
   QUrl url = ChatUrls::toUrl(static_cast<UserItem *>(m_model.itemFromIndex(index))->user(), LS("open"));
   ChatUrls::open(url);
+}
+
+
+void UserView::notify(const Notify &notify)
+{
+  if (notify.type() == Notify::FeedData || notify.type() == Notify::FeedReply) {
+    const FeedNotify &n = static_cast<const FeedNotify &>(notify);
+    if (n.feed() != LS("acl") || (n.channel() != m_channel->id() && n.channel() != ChatClient::id()))
+      return;
+
+    if (!n.path().isEmpty() && n.path() != LS("head"))
+      return;
+
+    if (n.feed() == LS("acl") && (n.channel() == ChatClient::id() || (n.channel() == m_channel->id() && n.path() == LS("head")))) {
+
+      foreach (UserItem *item, m_channels)
+        item->reload();
+
+      sort();
+    }
+  }
 }
