@@ -77,6 +77,7 @@ ChannelBaseTab::~ChannelBaseTab()
 {
   SCHAT_DEBUG_STREAM(this << "~ChannelBaseTab()" << text())
 
+  ChatAlerts::remove(id());
   ChatClient::channels()->part(id());
 }
 

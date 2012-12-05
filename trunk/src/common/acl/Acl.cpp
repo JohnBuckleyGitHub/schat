@@ -129,7 +129,7 @@ void Acl::load(const QVariantMap &json)
 {
   m_mask = json.value(LS("mask")).toInt();
   m_others.clear();
-  m_others.clear();
+  m_owners.clear();
 
   const QVariantList owners = json.value(LS("owners")).toList();
   foreach (const QVariant &owner, owners)
