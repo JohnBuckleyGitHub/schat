@@ -58,8 +58,8 @@ bool Acl::get(QVariantMap &data, Channel *channel) const
   if (acl & Edit)
     save(data);
 
-  data[LS("math")] = acl;
-  data[LS("mask")] = m_mask;
+  data[LS("match")] = acl;
+  data[LS("mask")]  = m_mask;
   return true;
 }
 

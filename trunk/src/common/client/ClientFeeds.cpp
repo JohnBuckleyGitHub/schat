@@ -102,6 +102,21 @@ bool ClientFeeds::request(const QByteArray &id, const QString &command, const QS
 }
 
 
+/*!
+ * Проверка прав доступа.
+ *
+ * \return -1 если произошла ошибка или права доступа.
+ */
+int ClientFeeds::match(ClientChannel channel, ClientChannel user)
+{
+  FeedPtr feed = channel->feed(LS("acl"), false);
+  if (!feed)
+    return -1;
+
+  return feed->head().acl().match(user.data());
+}
+
+
 void ClientFeeds::notice(int type)
 {
   if (type != Notice::FeedType)
