@@ -26,6 +26,7 @@
 #include "client/ChatClient.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
+#include "client/ClientFeeds.h"
 #include "client/SimpleClient.h"
 #include "debugstream.h"
 #include "hooks/ChannelMenu.h"
@@ -56,10 +57,9 @@ bool UserItem::reload()
   setText(m_user->name());
   setIcon(ChatIcons::icon(m_user));
 
-  FeedPtr feed = m_channel->feed(LS("acl"), false);
-  if (feed) {
+  int acl = ClientFeeds::match(m_channel, m_user);
+  if (acl != -1) {
     QFont font = this->font();
-    int acl    = feed->head().acl().match(m_user.data());
 
     m_bold = acl & Acl::Edit;
     m_italic = !(acl & Acl::Write) || Hooks::MessagesImpl::ignored(m_user);

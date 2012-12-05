@@ -231,7 +231,8 @@ void Hosts::updateUser(const QByteArray &publicId, quint64 socket)
   if (headers.isEmpty())
     return;
 
-  FeedNotice packet(m_channel->id(), m_channel->id(), LS("headers"));
+  FeedNotice packet(m_channel->id(), m_channel->id(), LS("get"));
+  packet.setText(LS("*"));
   packet.setData(headers);
   Core::i()->send(sockets, packet.data(Core::stream()));
 }
