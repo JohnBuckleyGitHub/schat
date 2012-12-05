@@ -19,7 +19,12 @@
 #include <QApplication>
 #include <QtPlugin>
 
+#include "Account.h"
 #include "ChatCore.h"
+#include "ChatNotify.h"
+#include "client/ChatClient.h"
+#include "client/ClientChannels.h"
+#include "client/ClientFeeds.h"
 #include "CountryField.h"
 #include "Profile.h"
 #include "ProfileChatView.h"
@@ -462,6 +467,9 @@ ProfilePluginImpl::ProfilePluginImpl(QObject *parent)
   ProfileFieldFactory::add(new CountryFieldCreator());
 
   ChatCore::translation()->addOther(LS("profile"));
+
+  connect(ChatNotify::i(), SIGNAL(notify(Notify)), SLOT(notify(Notify)));
+  connect(ChatClient::i(), SIGNAL(ready()), SLOT(ready()));
 }
 
 
@@ -469,6 +477,40 @@ ProfilePluginImpl::~ProfilePluginImpl()
 {
   delete m_tr;
   delete m_country;
+}
+
+
+/*!
+ * Обновление информации об группах пользователя.
+ */
+void ProfilePluginImpl::notify(const Notify &notify)
+{
+  if (notify.type() == Notify::FeedData) {
+    const FeedNotify &n = static_cast<const FeedNotify &>(notify);
+    if (n.feed() != LS("user"))
+      return;
+
+    ClientChannel user = ChatClient::channels()->get(n.channel());
+    if (!user)
+      return;
+
+    if (!user->account())
+      user->setAccount(new Account());
+
+    FeedPtr feed = user->feed(LS("user"), false);
+    if (!feed)
+      return;
+
+    user->account()->groups = feed->data().value(LS("groups")).toString();
+  }
+}
+
+
+void ProfilePluginImpl::ready()
+{
+  FeedPtr feed = ChatClient::channel()->feed(LS("user"), false);
+  if (!feed)
+    ClientFeeds::request(ChatClient::id(), LS("get"), LS("user"));
 }
 
 
