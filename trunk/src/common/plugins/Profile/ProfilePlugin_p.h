@@ -22,6 +22,7 @@
 #include "plugins/ChatPlugin.h"
 
 class CountryTr;
+class Notify;
 class ProfilePluginTr;
 
 class ProfilePluginImpl : public ChatPlugin
@@ -31,6 +32,10 @@ class ProfilePluginImpl : public ChatPlugin
 public:
   ProfilePluginImpl(QObject *parent);
   ~ProfilePluginImpl();
+
+private slots:
+  void notify(const Notify &notify);
+  void ready();
 
 private:
   CountryTr *m_country;
