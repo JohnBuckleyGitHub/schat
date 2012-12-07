@@ -23,6 +23,8 @@
 #include "ChatCore.h"
 #include "ChatSettings.h"
 #include "client/ChatClient.h"
+#include "client/ClientChannels.h"
+#include "client/ClientFeeds.h"
 #include "hooks/MessagesImpl.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
@@ -31,6 +33,8 @@
 ChannelsMenuImpl::ChannelsMenuImpl(QObject *parent)
   : ChannelMenu(parent)
   , m_ignore(0)
+  , m_ro(0)
+  , m_permissions(0)
 {
   add(this);
 }
@@ -48,6 +52,12 @@ bool ChannelsMenuImpl::triggerImpl(QAction *action)
 
     return true;
   }
+  else if (action == m_ro) {
+    if (action->isChecked())
+      ClientFeeds::post(ChatCore::currentId(), LS("acl/head/other/") + SimpleID::encode(action->data().toByteArray()), Acl::Read, Feed::Share | Feed::Broadcast);
+    else
+      ClientFeeds::del(ChatCore::currentId(), LS("acl/head/other/") + SimpleID::encode(action->data().toByteArray()), Feed::Share | Feed::Broadcast);
+  }
 
   return false;
 }
@@ -55,14 +65,18 @@ bool ChannelsMenuImpl::triggerImpl(QAction *action)
 
 void ChannelsMenuImpl::bindImpl(QMenu *menu, ClientChannel channel, Hooks::Scope scope)
 {
-  Q_UNUSED(scope)
-
-  if (channel->type() != SimpleID::UserId || channel->id() == ChatClient::id())
+  if (channel->type() != SimpleID::UserId)
     return;
 
-  menu->addSeparator();
+  m_self = channel->id() == ChatClient::id();
 
-  if (ChatCore::settings()->value(LS("Channels/Ignoring")).toBool()) {
+  if (scope == Hooks::UserViewScope || scope == Hooks::ChatViewScope)
+    permissions(menu, channel, scope);
+
+  if (ChatCore::settings()->value(LS("Channels/Ignoring")).toBool() && !m_self) {
+    if (!m_permissions)
+      menu->addSeparator();
+
     m_ignore = menu->addAction(SCHAT_ICON(Prohibition), tr("Ignore"));
     m_ignore->setCheckable(true);
     m_ignore->setChecked(Hooks::MessagesImpl::ignored(channel));
@@ -74,4 +88,27 @@ void ChannelsMenuImpl::bindImpl(QMenu *menu, ClientChannel channel, Hooks::Scope
 void ChannelsMenuImpl::cleanupImpl()
 {
   m_ignore = 0;
+  m_permissions = 0;
+  m_ro = 0;
+}
+
+
+void ChannelsMenuImpl::permissions(QMenu *menu, ClientChannel user, Hooks::Scope scope)
+{
+  ClientChannel channel = ChatClient::channels()->get(ChatCore::currentId());
+  if (!channel)
+    return;
+
+  int acl = ClientFeeds::match(channel, ChatClient::channel());
+  if (acl == -1 || !(acl & Acl::Edit))
+    return;
+
+  menu->addSeparator();
+  m_permissions = menu->addMenu(SCHAT_ICON(Key), tr("Permissions"));
+
+  acl = ClientFeeds::match(channel, user);
+  m_ro = m_permissions->addAction(tr("Read only"));
+  m_ro->setCheckable(true);
+  m_ro->setChecked(acl == Acl::Read);
+  m_ro->setData(user->id());
 }

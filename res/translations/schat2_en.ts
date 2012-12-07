@@ -110,22 +110,22 @@
 <context>
     <name>ChatAlerts</name>
     <message>
-        <location filename="../../src/schat2/ChatAlerts.cpp" line="320"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="324"/>
         <source>Offline</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ChatAlerts.cpp" line="321"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="325"/>
         <source>Connection lost</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ChatAlerts.cpp" line="338"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="342"/>
         <source>Online</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ChatAlerts.cpp" line="332"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="336"/>
         <source>Successfully connected to &lt;b&gt;%1&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -133,44 +133,44 @@
 <context>
     <name>ChatView</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="225"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="229"/>
         <source>Display</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="399"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="423"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="403"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="427"/>
         <source>Clear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="400"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="424"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="404"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="428"/>
         <source>Reload</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="405"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="409"/>
         <source>Seconds</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="408"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="412"/>
         <source>Service messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="421"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="425"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="422"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="426"/>
         <source>Copy Link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="425"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="429"/>
         <source>Select All</source>
         <translation type="unfinished"></translation>
     </message>
