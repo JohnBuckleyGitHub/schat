@@ -34,7 +34,12 @@ protected:
   void cleanupImpl();
 
 private:
-  QAction *m_ignore;
+  void permissions(QMenu *menu, ClientChannel user, Hooks::Scope scope);
+
+  bool m_self;          ///< \b true если пользователь совершает действия над собой.
+  QAction *m_ignore;    ///< Действие для игнорирования пользователя.
+  QAction *m_ro;        ///< Права только для чтения.
+  QMenu *m_permissions; ///< Меню управления правами пользователя в канале.
 };
 
 #endif /* CHANNELSMENUIMPL_H_ */

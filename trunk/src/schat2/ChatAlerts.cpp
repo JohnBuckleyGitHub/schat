@@ -136,6 +136,10 @@ ChatAlerts::ChatAlerts(QObject *parent)
 ChatAlerts::~ChatAlerts()
 {
   qDeleteAll(m_types);
+
+  m_alerts = 0;
+  m_channels.clear();
+  m_count.clear();
 }
 
 
