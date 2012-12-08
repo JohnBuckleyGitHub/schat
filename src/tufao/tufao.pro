@@ -22,6 +22,7 @@ DEFINES += TUFAO_LIBRARY
 win32:RC_FILE = tufao.rc
 
 DEPENDPATH += ../3rdparty/Tufao
+VPATH += ../3rdparty/Tufao
 INCLUDEPATH += ../3rdparty/Tufao
 
 unix:!macx{

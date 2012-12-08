@@ -251,8 +251,15 @@ QVariant WebBridge::encryption() const
   QVariantMap data;
   data[LS("protocol")] = io->sslConfiguration().protocol();
 
+# if QT_VERSION >= 0x050000
+  QString cn;
+  QStringList cns = io->peerCertificate().subjectInfo(QSslCertificate::CommonName);
+  if (!cns.isEmpty())
+    cn = cns.first();
+# else
   QString cn = io->peerCertificate().subjectInfo(QSslCertificate::CommonName);
   data[LS("CN")] = cn;
+# endif
 
   QSslCipher cipher = io->sessionCipher();
   data[LS("cipher")] = cipher.name() + LC('/') + cipher.authenticationMethod();

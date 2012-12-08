@@ -20,6 +20,8 @@ SCHAT_CORE_LIB = 1
 QT = core gui network
 OTHER_FILES += Proxy.json
 
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
 HEADERS  = \
    ProxyPlugin.h \
    ProxyPlugin_p.h \

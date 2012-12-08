@@ -335,12 +335,17 @@ SimpleSocket::SimpleSocket(QObject *parent)
   connect(this, SIGNAL(error(QAbstractSocket::SocketError)), SLOT(error(QAbstractSocket::SocketError)));
   connect(this, SIGNAL(readyRead()), SLOT(readyRead()));
 
-  #if !defined(SCHAT_NO_SSL)
+# if !defined(SCHAT_NO_SSL)
+# if QT_VERSION >= 0x050000
+  setProtocol(QSsl::TlsV1_0);
+# else
   setProtocol(QSsl::TlsV1);
+# endif
+
   d->sslAvailable = QSslSocket::supportsSsl();
   connect(this, SIGNAL(sslErrors(QList<QSslError>)), SLOT(sslErrors(QList<QSslError>)));
   connect(this, SIGNAL(encrypted()), SLOT(encrypted()));
-  #endif
+# endif
 }
 
 
@@ -359,12 +364,17 @@ SimpleSocket::SimpleSocket(SimpleSocketPrivate &dd, QObject *parent)
   connect(this, SIGNAL(error(QAbstractSocket::SocketError)), SLOT(error(QAbstractSocket::SocketError)));
   connect(this, SIGNAL(readyRead()), SLOT(readyRead()));
 
-  #if !defined(SCHAT_NO_SSL)
-  d->sslAvailable = QSslSocket::supportsSsl();
+# if !defined(SCHAT_NO_SSL)
+# if QT_VERSION >= 0x050000
+  setProtocol(QSsl::TlsV1_0);
+# else
   setProtocol(QSsl::TlsV1);
+# endif
+
+  d->sslAvailable = QSslSocket::supportsSsl();
   connect(this, SIGNAL(sslErrors(QList<QSslError>)), SLOT(sslErrors(QList<QSslError>)));
   connect(this, SIGNAL(encrypted()), SLOT(encrypted()));
-  #endif
+# endif
 }
 
 

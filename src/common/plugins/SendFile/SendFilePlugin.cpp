@@ -473,7 +473,11 @@ QString SendFilePluginImpl::getDir(const QString &key)
 {
   QDir dir(SCHAT_OPTION(key).toString());
   if (dir.path() == LS(".") || !dir.exists())
+#   if QT_VERSION >= 0x050000
+    dir.setPath(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
+#   else
     dir.setPath(QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation));
+#   endif
 
   return dir.absolutePath();
 }
@@ -647,11 +651,19 @@ void SendFilePluginImpl::incomingFile(const MessagePacket &packet)
   AlertType *type = ChatAlerts::type(LS("file"));
   if (type && type->popup()) {
     QVariantMap popup;
+#   if QT_VERSION >= 0x050000
+    popup[LS("text")] = tr("Incoming file: %1").arg(LS("<b>") + transaction->fileName().toHtmlEscaped() + LS("</b>"));
+#   else
     popup[LS("text")] = tr("Incoming file: %1").arg(LS("<b>") + Qt::escape(transaction->fileName()) + LS("</b>"));
+#   endif
 
     ClientChannel user = ChatClient::channels()->get(packet->sender());
     if (user)
-      popup[LS("title")] = QString(LS("<b>%1</b>")).arg(Qt::escape(user->name()));;
+#     if QT_VERSION >= 0x050000
+      popup[LS("title")] = QString(LS("<b>%1</b>")).arg(user->name().toHtmlEscaped());
+#     else
+      popup[LS("title")] = QString(LS("<b>%1</b>")).arg(Qt::escape(user->name()));
+#     endif
 
     alert.data()[LS("popup")] = popup;
   }

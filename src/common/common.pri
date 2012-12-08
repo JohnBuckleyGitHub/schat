@@ -20,6 +20,11 @@ DEPENDPATH += \
     ../common \
     ../3rdparty \
 
+VPATH += \
+    . \
+    ../common \
+    ../3rdparty \
+
 INCLUDEPATH += \
     . \
     ../common \

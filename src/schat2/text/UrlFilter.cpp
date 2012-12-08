@@ -57,7 +57,11 @@ bool UrlFilter::filter(QList<HtmlToken> &tokens, const QVariantHash &/*options*/
       }
     }
     else if (token.type == HtmlToken::Text && !name.isEmpty()) {
+#     if QT_VERSION >= 0x050000
+      tokens[i].text = name.toHtmlEscaped();
+#     else
       tokens[i].text = Qt::escape(name);
+#     endif
       name.clear();
     }
   }

@@ -21,10 +21,16 @@
 #include <QFile>
 #include <QLibraryInfo>
 #include <QVBoxLayout>
-#include <qwebkitversion.h>
+
 #include <QWebView>
 #include <QApplication>
 #include <QWebFrame>
+
+# if QT_VERSION >= 0x050000
+# include <QWebPage>
+#else
+# include <qwebkitversion.h>
+#endif
 
 #include "ChatCore.h"
 #include "ChatSettings.h"

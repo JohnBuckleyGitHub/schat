@@ -20,6 +20,8 @@ SCHAT_CORE_LIB = 1
 QT = core gui network webkit
 OTHER_FILES += Profile.json
 
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webkitwidgets
+
 HEADERS  = \
    CountryField.h \
    ProfileChatView.h \

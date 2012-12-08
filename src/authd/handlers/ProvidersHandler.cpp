@@ -19,6 +19,10 @@
 #include <QStringList>
 #include <QUrl>
 
+#if QT_VERSION >= 0x050000
+# include <QUrlQuery>
+#endif
+
 #include "AuthCore.h"
 #include "handlers/ProvidersHandler.h"
 #include "JSON.h"
@@ -36,12 +40,16 @@ bool ProvidersHandler::serve(const QUrl &url, const QString &path, Tufao::HttpSe
 
     QByteArray body;
     QVariantMap list;
-    const QHash<QString, OAuthData *> &providers = AuthCore::i()->providers();
+    const QMap<QString, OAuthData *> &providers = AuthCore::i()->providers();
 
-    QHashIterator<QString, OAuthData *> i(providers);
+    QMapIterator<QString, OAuthData *> i(providers);
     while (i.hasNext()) {
       i.next();
+#     if QT_VERSION >= 0x050000
+      list[i.key()] = i.value()->toJSON(QUrlQuery(url).queryItemValue(LS("state")).toLatin1());
+#     else
       list[i.key()] = i.value()->toJSON(url.queryItemValue(LS("state")).toLatin1());
+#     endif
     }
 
     if (m_order.isEmpty()) {

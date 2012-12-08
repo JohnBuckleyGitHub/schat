@@ -18,6 +18,10 @@
 
 #include <QNetworkReply>
 
+#if QT_VERSION >= 0x050000
+# include <QUrlQuery>
+#endif
+
 #include "AuthCore.h"
 #include "AuthState.h"
 #include "JSON.h"
@@ -28,7 +32,11 @@
 #include "sglobal.h"
 
 LiveAuth::LiveAuth(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
+# if QT_VERSION >= 0x050000
+  : OAuthHandler(LS("live"), QUrlQuery(url).queryItemValue(LS("state")).toLatin1(), url, path, request, response, parent)
+# else
   : OAuthHandler(LS("live"), url.queryItemValue(LS("state")).toLatin1(), url, path, request, response, parent)
+# endif
 {
 }
 

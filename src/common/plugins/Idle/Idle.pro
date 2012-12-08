@@ -20,6 +20,8 @@ SCHAT_CORE_LIB = 1
 QT = core gui
 OTHER_FILES += Idle.json
 
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
 HEADERS  = \
    Idle.h \
    IdlePlugin.h \

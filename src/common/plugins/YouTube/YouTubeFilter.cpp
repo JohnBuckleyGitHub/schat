@@ -18,6 +18,10 @@
 
 #include <QUrl>
 
+#if QT_VERSION >= 0x050000
+# include <QUrlQuery>
+#endif
+
 #include "net/SimpleID.h"
 #include "sglobal.h"
 #include "YouTubeFilter.h"
@@ -42,7 +46,11 @@ bool YouTubeFilter::filter(QList<HtmlToken> &tokens, const QVariantHash &/*optio
       if (!m_hosts.contains(url.host()))
         continue;
 
+#     if QT_VERSION >= 0x050000
+      QString vid = QUrlQuery(url).queryItemValue(LS("v"));
+#     else
       QString vid = url.queryItemValue(LS("v"));
+#     endif
       if (vid.size() != 11)
         continue;
 

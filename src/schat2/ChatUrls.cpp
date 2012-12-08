@@ -24,6 +24,10 @@
 # include <qt_windows.h>
 #endif
 
+#if QT_VERSION >= 0x050000
+# include <QUrlQuery>
+#endif
+
 #include "ChatNotify.h"
 #include "ChatUrls.h"
 #include "client/ChatClient.h"
@@ -80,8 +84,13 @@ ClientChannel ChatUrls::channel(const QUrl &url)
   if (channel)
     return channel;
 
+# if QT_VERSION >= 0x050000
+  channel = ClientChannel(new Channel(id, SimpleID::fromBase32(QUrlQuery(url).queryItemValue(LS("name")).toLatin1())));
+  channel->gender().setRaw(QUrlQuery(url).queryItemValue(LS("gender")).toInt());
+# else
   channel = ClientChannel(new Channel(id, SimpleID::fromBase32(url.queryItemValue(LS("name")).toLatin1())));
   channel->gender().setRaw(url.queryItemValue(LS("gender")).toInt());
+# endif
   if (!channel->isValid())
     return ClientChannel();
 
@@ -151,7 +160,13 @@ QUrl ChatUrls::toUrl(ClientChannel channel, const QString &action)
   queries.append(QPair<QString, QString>(LS("name"),   SimpleID::toBase32(channel->name().toUtf8())));
   queries.append(QPair<QString, QString>(LS("gender"), QString::number(channel->gender().raw())));
 
+# if QT_VERSION >= 0x050000
+  QUrlQuery query;
+  query.setQueryItems(queries);
+  out.setQuery(query);
+# else
   out.setQueryItems(queries);
+# endif
 
   return out;
 }
@@ -220,7 +235,11 @@ void ChatUrls::openChannelUrl(const QUrl &url)
     ChatNotify::start(Notify::InsertText, QChar(QChar::Nbsp) + QString(LS("<a class=\"nick color-%1\" href=\"%2\">%3</a>"))
         .arg(Gender::colorToString(channel->gender().color()))
         .arg(url.toString())
+#       if QT_VERSION >= 0x050000
+        .arg(QString(channel->name()) + QChar(QChar::Nbsp)).toHtmlEscaped());
+#       else
         .arg(Qt::escape(channel->name())) + QChar(QChar::Nbsp));
+#       endif
   }
   else if (action == LS("edit")) {
     if (actions.size() == 1)

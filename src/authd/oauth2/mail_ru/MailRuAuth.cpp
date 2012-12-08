@@ -21,6 +21,10 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 
+#if QT_VERSION >= 0x050000
+# include <QUrlQuery>
+#endif
+
 #include "AuthCore.h"
 #include "AuthState.h"
 #include "JSON.h"
@@ -31,7 +35,11 @@
 #include "sglobal.h"
 
 MailRuAuth::MailRuAuth(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
+# if QT_VERSION >= 0x050000
+  : OAuthHandler(LS("mail_ru"), QUrlQuery(url).queryItemValue(LS("state")).toLatin1(), url, path, request, response, parent)
+# else
   : OAuthHandler(LS("mail_ru"), url.queryItemValue(LS("state")).toLatin1(), url, path, request, response, parent)
+# endif
 {
 }
 
