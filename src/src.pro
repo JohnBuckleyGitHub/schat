@@ -27,6 +27,6 @@ SUBDIRS  = \
     schat2/schat2-core.pro \
     schat2 \
 
-win32:SUBDIRS += schatd2/schatd2-srv.pro
+lessThan(QT_MAJOR_VERSION, 5):win32:SUBDIRS += schatd2/schatd2-srv.pro
 
 include(common/plugins.pri)
