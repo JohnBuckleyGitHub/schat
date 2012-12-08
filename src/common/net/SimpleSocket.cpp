@@ -592,6 +592,8 @@ void SimpleSocket::connectToHostImplementation(const QString &hostName, quint16 
 # if QT_VERSION < 0x050000
   QSslSocket::connectToHostImplementation(hostName, port, openMode);
 # else
+  Q_UNUSED(hostName)
+  Q_UNUSED(port)
   Q_UNUSED(openMode)
 # endif
 }
