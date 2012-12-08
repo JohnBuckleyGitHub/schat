@@ -20,6 +20,8 @@ SCHAT_CORE_LIB = 1
 QT = core gui
 OTHER_FILES += Popup.json
 
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
 HEADERS  = \
    PopupManager.h \
    PopupPlugin.h \

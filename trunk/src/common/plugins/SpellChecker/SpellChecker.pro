@@ -21,7 +21,7 @@ QT = core gui
 CONFIG += exceptions
 OTHER_FILES += SpellChecker.json
 
-contains(QT_VERSION, ^5.*):QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 DEPENDPATH += 3rdparty
 INCLUDEPATH += 3rdparty

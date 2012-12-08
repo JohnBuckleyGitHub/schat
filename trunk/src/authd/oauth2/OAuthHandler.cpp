@@ -20,6 +20,10 @@
 #include <QNetworkReply>
 #include <QTimer>
 
+#if QT_VERSION >= 0x050000
+# include <QUrlQuery>
+#endif
+
 #include "AuthCore.h"
 #include "AuthHandler.h"
 #include "AuthState.h"
@@ -49,7 +53,11 @@ OAuthHandler::OAuthHandler(const QString &provider, const QByteArray &state, con
   }
 
   setState(state);
+# if QT_VERSION >= 0x050000
+  if (QUrlQuery(url).hasQueryItem(LS("error")) || !QUrlQuery(url).hasQueryItem(LS("code"))) {
+# else
   if (url.hasQueryItem(LS("error")) || !url.hasQueryItem(LS("code"))) {
+# endif
     serveError();
     return;
   }
@@ -57,7 +65,11 @@ OAuthHandler::OAuthHandler(const QString &provider, const QByteArray &state, con
   serveOk();
 
   m_manager = new QNetworkAccessManager(this);
+# if QT_VERSION >= 0x050000
+  m_code = QUrlQuery(url).queryItemValue(LS("code")).toUtf8();
+# else
   m_code = url.queryItemValue(LS("code")).toUtf8();
+# endif
   log(NodeLog::InfoLevel, "Start receiving token, code:" + m_code);
 
   QTimer::singleShot(0, this, SLOT(getToken()));

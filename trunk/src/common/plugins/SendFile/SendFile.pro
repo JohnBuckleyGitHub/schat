@@ -20,6 +20,8 @@ SCHAT_CORE_LIB = 1
 QT = core network gui webkit sql
 OTHER_FILES += SendFile.json
 
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webkitwidgets
+
 HEADERS  = \
    SendFileAction.h \
    SendFileDB.h \

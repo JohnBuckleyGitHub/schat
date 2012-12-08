@@ -25,7 +25,12 @@
 #include <QProgressBar>
 #include <QTimer>
 #include <QtPlugin>
-#include <qwebkitversion.h>
+
+#if QT_VERSION >= 0x050000
+# include <QWebPage>
+#else
+# include <qwebkitversion.h>
+#endif
 
 #include "ChatCore.h"
 #include "ChatNotify.h"

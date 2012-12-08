@@ -43,7 +43,11 @@ EmoticonData::EmoticonData(const QString &file, const QString &id, const QVarian
   m_hidden = data.value(LS("hidden"), false).toBool();
 
   for (int i = 3; i < icon.size(); ++i) {
+#   if QT_VERSION >= 0x050000
+    QString text = icon.at(i).toString().toHtmlEscaped();
+#   else
     QString text = Qt::escape(icon.at(i).toString());
+#   endif
     if (text.isEmpty())
       continue;
 

@@ -71,7 +71,7 @@ void ChannelsMenuImpl::bindImpl(QMenu *menu, ClientChannel channel, Hooks::Scope
   m_self = channel->id() == ChatClient::id();
 
   if (scope == Hooks::UserViewScope || scope == Hooks::ChatViewScope)
-    permissions(menu, channel, scope);
+    permissions(menu, channel);
 
   if (ChatCore::settings()->value(LS("Channels/Ignoring")).toBool() && !m_self) {
     if (!m_permissions)
@@ -93,7 +93,7 @@ void ChannelsMenuImpl::cleanupImpl()
 }
 
 
-void ChannelsMenuImpl::permissions(QMenu *menu, ClientChannel user, Hooks::Scope scope)
+void ChannelsMenuImpl::permissions(QMenu *menu, ClientChannel user)
 {
   ClientChannel channel = ChatClient::channels()->get(ChatCore::currentId());
   if (!channel)

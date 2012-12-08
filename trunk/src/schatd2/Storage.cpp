@@ -298,7 +298,12 @@ void Storage::setDefaultSslConf()
     conf.setCaCertificates(ca);
   }
 
+# if QT_VERSION >= 0x050000
+  conf.setProtocol(QSsl::TlsV1_0);
+# else
   conf.setProtocol(QSsl::TlsV1);
+# endif
+
   QSslConfiguration::setDefaultConfiguration(conf);
 # endif
 }

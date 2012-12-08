@@ -122,7 +122,11 @@ void ServerTab::clientStateChanged(int state)
   if (state == ChatClient::WaitAuth) {
     m_auth->start(ChatClient::io()->json().value(LS("authServer")).toString());
 
+#   if QT_VERSION >= 0x050000
+    ServiceMessage message(tr("Server %1 requires authorization").arg(LS("<b>") + ChatClient::serverName().toHtmlEscaped() + LS("</b>")));
+#   else
     ServiceMessage message(tr("Server %1 requires authorization").arg(LS("<b>") + Qt::escape(ChatClient::serverName()) + LS("</b>")));
+#   endif
     message.data()[LS("Type")]  = LS("info");
     message.data()[LS("Extra")] = LS("orange-text");
     chatView()->add(message);

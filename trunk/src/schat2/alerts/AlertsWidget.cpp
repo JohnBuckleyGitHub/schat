@@ -90,7 +90,12 @@ void AlertsWidget::changeEvent(QEvent *event)
 
 void AlertsWidget::add()
 {
+#if QT_VERSION >= 0x050000
+  QStringList files = QFileDialog::getOpenFileNames(this, tr("Open"), QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation), LS("*.wav"));
+#else
   QStringList files = QFileDialog::getOpenFileNames(this, tr("Open"), QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation), LS("*.wav"));
+#endif
+
   if (files.isEmpty())
     return;
 

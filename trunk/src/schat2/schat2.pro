@@ -28,6 +28,8 @@ macx {
 QT = core gui network webkit
 TEMPLATE = app
 
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
 HEADERS = \
     ChatApp.h \
     debugstream.h \

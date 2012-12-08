@@ -25,6 +25,8 @@ TARGET = schat
 DEFINES += SCHAT_CORE_LIBRARY
 win32:RC_FILE = schat2-core.rc
 
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets multimedia webkitwidgets
+
 HEADERS = \
     actions/MenuBuilder.h \
     alerts/AlertsWidget.h \

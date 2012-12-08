@@ -20,6 +20,8 @@ SCHAT_CORE_LIB = 1
 QT = core gui network sql webkit
 OTHER_FILES += History.json
 
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webkitwidgets
+
 HEADERS  = \
    HistoryButton.h \
    HistoryChatView.h \
