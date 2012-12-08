@@ -119,23 +119,58 @@ win32 {
 
   qt.files += $$[QT_INSTALL_PREFIX]/bin/libeay32.dll
   qt.files += $$[QT_INSTALL_PREFIX]/bin/ssleay32.dll
-  qt.files += $$[QT_INSTALL_PREFIX]/bin/libpng15.dll
-  qt.files += $$[QT_INSTALL_PREFIX]/bin/zlib.dll
   qt.files += $$[QT_INSTALL_PREFIX]/bin/msvcp100.dll
-  qt.files += $$[QT_INSTALL_PREFIX]/bin/msvcr100.dll 
-  qt.files += $$[QT_INSTALL_PREFIX]/bin/QtCore4.dll
-  qt.files += $$[QT_INSTALL_PREFIX]/bin/QtGui4.dll
-  qt.files += $$[QT_INSTALL_PREFIX]/bin/QtNetwork4.dll
-  qt.files += $$[QT_INSTALL_PREFIX]/bin/QtSql4.dll
-  qt.files += $$[QT_INSTALL_PREFIX]/bin/QtWebKit4.dll
+  qt.files += $$[QT_INSTALL_PREFIX]/bin/msvcr100.dll
+
+  greaterThan(QT_MAJOR_VERSION, 4) {
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/Qt5Core.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/Qt5Gui.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/Qt5Widgets.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/Qt5Network.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/Qt5Sql.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/Qt5WebKit.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/Qt5WebKitWidgets.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/Qt5Multimedia.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/Qt5MultimediaWidgets.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/Qt5OpenGL.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/Qt5PrintSupport.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/Qt5Quick.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/Qt5Qml.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/Qt5V8.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/D3DCompiler_43.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/libEGL.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/libGLESv2.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/icudt49.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/icuin49.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/icuuc49.dll
+  } else {
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/libpng15.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/zlib.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/QtCore4.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/QtGui4.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/QtNetwork4.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/QtSql4.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/QtWebKit4.dll
+  }
+
   qt.path += ../../os/win32/schat2/
 
-  imageformats.files += $$[QT_INSTALL_PREFIX]/plugins/imageformats/qgif4.dll
-  imageformats.files += $$[QT_INSTALL_PREFIX]/plugins/imageformats/qico4.dll
-  imageformats.files += $$[QT_INSTALL_PREFIX]/plugins/imageformats/qjpeg4.dll
+  greaterThan(QT_MAJOR_VERSION, 4) {
+    imageformats.files += $$[QT_INSTALL_PREFIX]/plugins/imageformats/qgif.dll
+    imageformats.files += $$[QT_INSTALL_PREFIX]/plugins/imageformats/qico.dll
+    imageformats.files += $$[QT_INSTALL_PREFIX]/plugins/imageformats/qjpeg.dll
+  } else {
+    imageformats.files += $$[QT_INSTALL_PREFIX]/plugins/imageformats/qgif4.dll
+    imageformats.files += $$[QT_INSTALL_PREFIX]/plugins/imageformats/qico4.dll
+    imageformats.files += $$[QT_INSTALL_PREFIX]/plugins/imageformats/qjpeg4.dll
+  }
   imageformats.path += ../../os/win32/schat2/plugins/qt/imageformats
   
-  sqldrivers.files += $$[QT_INSTALL_PREFIX]/plugins/sqldrivers/qsqlite4.dll
+  greaterThan(QT_MAJOR_VERSION, 4) {
+    sqldrivers.files += $$[QT_INSTALL_PREFIX]/plugins/sqldrivers/qsqlite.dll
+  } else {
+    sqldrivers.files += $$[QT_INSTALL_PREFIX]/plugins/sqldrivers/qsqlite4.dll
+  }
   sqldrivers.path += ../../os/win32/schat2/plugins/qt/sqldrivers
 
   doc.files += ../../res/doc/ChangeLog.html
@@ -145,6 +180,12 @@ win32 {
 
   target.path += ../../os/win32/schat2/
   INSTALLS += target translations qt imageformats sqldrivers doc sounds
+
+  greaterThan(QT_MAJOR_VERSION, 4) {
+    platforms.files += $$[QT_INSTALL_PREFIX]/plugins/platforms/windows.dll
+    platforms.path += ../../os/win32/schat2/platforms
+    INSTALLS += platforms
+  }
 }
 
 include(../common/config.pri)
