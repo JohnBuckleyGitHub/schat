@@ -49,12 +49,22 @@ unix:!macx {
 win32 {
   qt.files += $$[QT_INSTALL_PREFIX]/bin/libeay32.dll
   qt.files += $$[QT_INSTALL_PREFIX]/bin/ssleay32.dll
-  qt.files += $$[QT_INSTALL_PREFIX]/bin/zlib.dll
   qt.files += $$[QT_INSTALL_PREFIX]/bin/msvcp100.dll
   qt.files += $$[QT_INSTALL_PREFIX]/bin/msvcr100.dll 
-  qt.files += $$[QT_INSTALL_PREFIX]/bin/QtCore4.dll
-  qt.files += $$[QT_INSTALL_PREFIX]/bin/QtNetwork4.dll
-  qt.files += $$[QT_INSTALL_PREFIX]/bin/QtSql4.dll
+
+  greaterThan(QT_MAJOR_VERSION, 4) {
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/Qt5Core.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/Qt5Network.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/Qt5Sql.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/icudt49.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/icuin49.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/icuuc49.dll
+  } else {
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/zlib.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/QtCore4.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/QtNetwork4.dll
+    qt.files += $$[QT_INSTALL_PREFIX]/bin/QtSql4.dll
+  }
   qt.path += ../../os/win32/schatd2/
 
   sqldrivers.files += $$[QT_INSTALL_PREFIX]/plugins/sqldrivers/qsqlite4.dll
