@@ -220,7 +220,7 @@ contains( SCHAT_EXTENSIONS, 1 ) {
     else:               LIBS += -lzlib
   }
   else {
-    INCLUDEPATH += $$[QT_INSTALL_PREFIX]/src/3rdparty/zlib
+    INCLUDEPATH += ../3rdparty/zlib
   }
 }
 else {
