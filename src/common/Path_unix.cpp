@@ -26,14 +26,14 @@
 QString Path::data(Scope scope)
 {
   if (m_portable)
-    return m_appDirPath;
+    return appDirPath();
 
   if (scope == UserScope) {
     QSettings s(QSettings::IniFormat, QSettings::UserScope, QCoreApplication::organizationName(), QCoreApplication::applicationName());
-    return QFileInfo(s.fileName()).absolutePath() + LC('/') + m_app;
+    return QFileInfo(s.fileName()).absolutePath() + LC('/') + app();
   }
 
-  return LS("/usr/share/") + m_app;
+  return LS("/usr/share/") + app();
 }
 
 

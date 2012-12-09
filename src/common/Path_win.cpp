@@ -27,10 +27,10 @@ QString Path::data(Scope scope)
 {
   if (scope == UserScope && !m_portable) {
     QSettings s(QSettings::IniFormat, QSettings::UserScope, QCoreApplication::organizationName(), QCoreApplication::applicationName());
-    return QFileInfo(s.fileName()).absolutePath() + LC('/') + m_app;
+    return QFileInfo(s.fileName()).absolutePath() + LC('/') + app();
   }
 
-  return m_appDirPath;
+  return appDirPath();
 }
 
 

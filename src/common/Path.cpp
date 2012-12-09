@@ -35,16 +35,34 @@ void Path::init(const QString &app)
   m_appDirPath = QCoreApplication::applicationDirPath();
   m_app = app.isEmpty() ? QFileInfo(QCoreApplication::applicationFilePath()).baseName() : app;
 
-  QSettings s(m_appDirPath + LC('/') + m_app + LS(".init"), QSettings::IniFormat);
+  QSettings s(appDirPath() + LC('/') + Path::app() + LS(".init"), QSettings::IniFormat);
   s.setIniCodec("UTF-8");
   m_portable = s.value(LS("Portable"), false).toBool();
 
   QDir().mkpath(data());
   QDir().mkpath(cache());
 
-  foreach (QString path, plugins()) {
+  foreach (const QString &path, plugins()) {
     QCoreApplication::addLibraryPath(path);
   }
+}
+
+
+QString Path::app()
+{
+  if (m_app.isEmpty())
+    m_app = QFileInfo(QCoreApplication::applicationFilePath()).baseName();
+
+  return m_app;
+}
+
+
+QString Path::appDirPath()
+{
+  if (m_appDirPath.isEmpty())
+    m_appDirPath = QCoreApplication::applicationDirPath();
+
+  return m_appDirPath;
 }
 
 
