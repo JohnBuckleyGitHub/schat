@@ -220,6 +220,7 @@ contains( SCHAT_EXTENSIONS, 1 ) {
     else:               LIBS += -lzlib
   }
   else {
+    greaterThan(QT_MAJOR_VERSION, 4): DEFINES += Z_PREFIX
     INCLUDEPATH += ../3rdparty/zlib
   }
 }

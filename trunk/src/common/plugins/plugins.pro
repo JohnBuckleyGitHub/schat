@@ -15,24 +15,27 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS += \
-    common/plugins/GenericNode \
-    common/plugins/Messages \
-    common/plugins/NodeConsole \
-    common/plugins/RestApi \
-    common/plugins/GeoIP \
-    common/plugins/Cache \
-    common/plugins/History \
-    common/plugins/Profile \
-    common/plugins/Channels \
-    common/plugins/Popup \
-    common/plugins/Emoticons \
-    common/plugins/Idle \
-    common/plugins/SendFile \
-    common/plugins/SpellChecker \
-    common/plugins/Proxy \
-    common/plugins/Console \
-    common/plugins/RawFeeds \
-    common/plugins/YouTube \
+CONFIG   += ordered
+TEMPLATE = subdirs
 
-win32:SUBDIRS += common/plugins/Update
+SUBDIRS += \
+    GenericNode \
+    Messages \
+    NodeConsole \
+    RestApi \
+    GeoIP \
+    Cache \
+    History \
+    Profile \
+    Channels \
+    Popup \
+    Emoticons \
+    Idle \
+    SendFile \
+    SpellChecker \
+    Proxy \
+    Console \
+    RawFeeds \
+    YouTube \
+
+win32:SUBDIRS += Update
