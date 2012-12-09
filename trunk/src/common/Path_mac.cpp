@@ -25,17 +25,17 @@
 QString Path::data(Scope scope)
 {
   if (scope == UserScope && !m_portable)
-    return QDir::homePath() + LS("/Library/Application Support/IMPOMEZIA/") + m_app;
+    return QDir::homePath() + LS("/Library/Application Support/IMPOMEZIA/") + app();
 
-  return QDir::cleanPath(m_appDirPath + LS("/../Resources"));
+  return QDir::cleanPath(appDirPath() + LS("/../Resources"));
 }
 
 
 QStringList Path::plugins()
 {
   QStringList out;
-  out.append(QDir::cleanPath(m_appDirPath + LS("/../PlugIns")) + LS("/qt"));
-  out.append(QDir::cleanPath(m_appDirPath + LS("/../PlugIns")));
+  out.append(QDir::cleanPath(appDirPath() + LS("/../PlugIns")) + LS("/qt"));
+  out.append(QDir::cleanPath(appDirPath() + LS("/../PlugIns")));
 
   if (!isPortable())
     out.append(data() + LS("/plugins"));
