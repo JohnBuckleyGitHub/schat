@@ -110,7 +110,7 @@ QString AboutTab::path(const QString &type) const
 /*!
  * Получение версии из JavaScript.
  */
-QString AboutTab::version(const QString &type) const
+QVariant AboutTab::version(const QString &type) const
 {
   if (type == LS("app"))
     return SCHAT_VERSION;
@@ -121,10 +121,12 @@ QString AboutTab::version(const QString &type) const
   else if (type == LS("WebKit"))
     return qWebKitVersion();
 
+# if QT_VERSION >= 0x040700
   else if (type == LS("QtWebKit"))
     return QTWEBKIT_VERSION_STR;
+# endif
 
-  return QString();
+  return QVariant();
 }
 
 

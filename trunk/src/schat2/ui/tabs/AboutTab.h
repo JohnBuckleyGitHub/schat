@@ -19,6 +19,8 @@
 #ifndef ABOUTTAB_H_
 #define ABOUTTAB_H_
 
+#include <QVariant>
+
 #include "ui/tabs/AbstractTab.h"
 
 class AboutTr;
@@ -34,7 +36,7 @@ public:
   ~AboutTab();
 
   Q_INVOKABLE QString path(const QString &type) const;
-  Q_INVOKABLE QString version(const QString &type) const;
+  Q_INVOKABLE QVariant version(const QString &type) const;
 
 private slots:
   void linkClicked(const QUrl &url);
