@@ -49,9 +49,13 @@ var AboutUtils = {
   },
 
   version: function(text) {
+    var ver = About.version(text);
+    if (ver === null)
+      return '';
+
     return '<div class="field-row">' +
            '  <span class="field-row-label">' + text + '</span>' +
-           '  <span class="field-row-value">' + About.version(text) + '</span>' +
+           '  <span class="field-row-value">' + ver + '</span>' +
            '</div>';
   },
 
