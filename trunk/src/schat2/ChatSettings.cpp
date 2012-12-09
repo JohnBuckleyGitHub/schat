@@ -123,15 +123,17 @@ void ChatSettings::offline()
 void ChatSettings::ready()
 {
   FeedPtr feed = ChatClient::channel()->feed(LS("settings"), false);
-  if (!feed) {
-    QByteArray id = ChatClient::id();
 
+  if (!feed) {
+    const QByteArray id = ChatClient::id();
     ChatClient::io()->lock();
     ClientFeeds::post(id, LS("settings"));
     ClientFeeds::put(id, LS("settings/head/mask"), 0700);
     ClientFeeds::request(id, LS("get"), LS("settings"));
     ChatClient::io()->unlock();
   }
+  else if (!m_synced)
+    ClientFeeds::request(ChatClient::channel(), LS("get"), LS("settings"));
 }
 
 
