@@ -115,11 +115,14 @@ QString AboutTab::version(const QString &type) const
   if (type == LS("app"))
     return SCHAT_VERSION;
 
-  if (type == LS("qt"))
+  else if (type == LS("Qt"))
     return qVersion() + (QSysInfo::WordSize == 32 ? tr(" (32 bit)") : tr(" (64 bit)"));
 
-  if (type == LS("webkit"))
+  else if (type == LS("WebKit"))
     return qWebKitVersion();
+
+  else if (type == LS("QtWebKit"))
+    return QTWEBKIT_VERSION_STR;
 
   return QString();
 }

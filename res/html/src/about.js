@@ -37,12 +37,40 @@ var AboutUtils = {
       body.show();
       $(this).removeClass('toggle-expand');
       $(this).addClass('toggle');
+
+      if (body.attr('id') == 'other-body')
+        AboutUtils.adjustWidth($('#other-body .field-row-label'));
     }
     else {
       body.hide();
       $(this).removeClass('toggle');
       $(this).addClass('toggle-expand');
     }
+  },
+
+  version: function(text) {
+    return '<div class="field-row">' +
+           '  <span class="field-row-label">' + text + '</span>' +
+           '  <span class="field-row-value">' + About.version(text) + '</span>' +
+           '</div>';
+  },
+
+  adjustWidth: function(obj) {
+    if (!obj.length || obj.width() < 1 || !obj.is(':visible'))
+      return;
+
+    obj.css('width', '');
+
+    var max = 0;
+    var current = 0;
+
+    obj.each(function() {
+      current = $(this).width();
+      if (current > max)
+        max = current;
+    });
+
+    obj.width(max + 4);
   }
 };
 
@@ -53,9 +81,12 @@ $(document).ready(function() {
 
   AboutUtils.retranslate();
   $('#version').html('<a href="http://wiki.schat.me/Simple_Chat_' + About.version('app') + '">' + About.version('app') + '</a>');
-  $('#qt-version').text(About.version('qt'));
-  $('#webkit-version').text(About.version('webkit'));
   $('#preferences').html(About.path('preferences'));
+
+  var third_parties = $('#other-body');
+  third_parties.append(AboutUtils.version('Qt'));
+  third_parties.append(AboutUtils.version('QtWebKit'));
+  third_parties.append(AboutUtils.version('WebKit'));
 });
 
 if (typeof About === "undefined") {
