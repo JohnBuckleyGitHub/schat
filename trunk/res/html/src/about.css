@@ -108,3 +108,7 @@ a:active, a:hover {
   display:none;
   padding-left:11px;
 }
+
+.field-row-label, .field-row-value {
+  display:inline-block;
+}
