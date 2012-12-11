@@ -37,7 +37,7 @@ public:
     QVariantMap out     = CoreApi::header();
     out["Id"]           = "Channels";
     out["Name"]         = "Channels";
-    out["Version"]      = "0.1.0";
+    out["Version"]      = "0.1.1";
     out["Site"]         = "http://wiki.schat.me/Plugin/Channels";
     out["Desc"]         = "Advanced channels support";
     out["Desc/ru"]      = "Расширенная поддержка каналов";
