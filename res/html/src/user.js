@@ -58,7 +58,10 @@ var Profile = {
     else
       Profile.setAnonymous();
 
-    $("#profile-table *").remove();
+    $('#profile-table *').remove();
+
+    var gender = 'field-gender-' + Profile.gender(SimpleChat.channel(Settings.getId()).Gender);
+    Profile.addRow('gender', '<span data-tr="' + gender + '">' + Utils.tr(gender) + '</span>');
 
     var fields = SimpleChat.fields();
     for (var i = 0; i < fields.length; i++) {
@@ -77,6 +80,29 @@ var Profile = {
 
     Profile.retranslate();
     Loader.spinner.remove('loading/profile');
+  },
+
+
+  /*
+   * Преобразование кода пола в строку.
+   */
+  gender: function(code) {
+    switch (code) {
+      case 0:
+        return 'male';
+
+      case 100:
+        return 'female';
+
+      case 151:
+        return 'ghost';
+
+      case 152:
+        return 'bot';
+
+      default:
+        return 'unknown';
+    }
   },
 
 
@@ -263,8 +289,8 @@ var Connections = {
 
 
 var UserHooks = {
-  process: [],
-  connection: []
+  process: [],   // Хуки построения списка подключений.
+  connection: [] // Хуки отображения модального диалога подключения.
 };
 
 
@@ -278,10 +304,11 @@ Modal.create.connection = function(e)
   if (feed === false || !feed.hasOwnProperty('connections'))
     return;
 
-  var json = feed.connections[id];
+  var json  = feed.connections[id];
+  var modal = $('#modal-body');
 
-  $('#modal-body').append(Utils.row('chat_version', htmlspecialchars(json.version)));
-  $('#modal-body').append(Utils.row('os_name', '<i class="icon-os os-' + Pages.os(json.os) + '"></i> ' + htmlspecialchars(json.osName)));
+  modal.append(Utils.row('chat_version', htmlspecialchars(json.version)));
+  modal.append(Utils.row('os_name', '<i class="icon-os os-' + Pages.os(json.os) + '"></i> ' + htmlspecialchars(json.osName)));
 
   for (var i = 0; i < UserHooks.connection.length; i++) {
     UserHooks.connection[i](json);
@@ -297,10 +324,7 @@ Modal.shown.connection = function()
 Pages.onInfo.push(Profile.reload);
 Pages.onInfo.push(Connections.reload);
 
-if (typeof ChatView === "undefined") {
-
-}
-else {
+if (typeof ChatView !== 'undefined') {
   ChatView.feed.connect(Profile.feed);
   ChatView.reload.connect(Profile.reload);
   SimpleChat.retranslated.connect(Profile.retranslate);

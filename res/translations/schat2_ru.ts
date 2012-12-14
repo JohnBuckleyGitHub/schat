@@ -5,17 +5,17 @@
 <context>
     <name>AboutTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="149"/>
+        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="160"/>
         <source>About</source>
         <translation>О Simple Chat</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="113"/>
+        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="119"/>
         <source> (32 bit)</source>
         <translation> (32 бит)</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="113"/>
+        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="119"/>
         <source> (64 bit)</source>
         <translation> (64 бит)</translation>
     </message>
@@ -23,27 +23,27 @@
 <context>
     <name>AboutTr</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="49"/>
+        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="55"/>
         <source>Paths</source>
         <translation>Пути</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="50"/>
+        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="56"/>
         <source>Third parties</source>
         <translation>Третьи стороны</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="51"/>
+        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="57"/>
         <source>This software is released under the terms of the &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0-standalone.html&quot;&gt;GNU General Public License&lt;/a&gt; version 3.</source>
         <translation>Это программное обеспечение предоставляется на условиях &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0-standalone.html&quot;&gt;GNU General Public License&lt;/a&gt; версии 3.</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="52"/>
+        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="58"/>
         <source>All rights reserved.</source>
         <translation>Все права защищены.</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="53"/>
+        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="59"/>
         <source>Preferences</source>
         <translation>Настройки</translation>
     </message>
@@ -60,36 +60,37 @@
     <name>AlertsWidget</name>
     <message>
         <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="42"/>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="178"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="183"/>
         <source>Play sound</source>
         <translation>Воспроизвести звук</translation>
     </message>
     <message>
         <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="49"/>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="179"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="184"/>
         <source>Play</source>
         <translation>Воспроизвести</translation>
     </message>
     <message>
         <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="50"/>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="180"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="185"/>
         <source>Add sounds</source>
         <translation>Добавить звуки</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="93"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="94"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="96"/>
         <source>Open</source>
         <translation>Открыть</translation>
     </message>
     <message>
         <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="53"/>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="176"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="181"/>
         <source>Show notification in tray</source>
         <translation>Показать уведомление в трее</translation>
     </message>
     <message>
         <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="52"/>
-        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="177"/>
+        <location filename="../../src/schat2/alerts/AlertsWidget.cpp" line="182"/>
         <source>Show popup window</source>
         <translation>Показать всплывающее окно</translation>
     </message>
@@ -120,12 +121,13 @@
         <translation>Соединение потеряно</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ChatAlerts.cpp" line="342"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="346"/>
         <source>Online</source>
         <translation>В сети</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ChatAlerts.cpp" line="336"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="337"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="339"/>
         <source>Successfully connected to &lt;b&gt;%1&lt;/b&gt;</source>
         <translation>Успешно подключены к &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
@@ -477,9 +479,39 @@
 <context>
     <name>ProfileTr</name>
     <message>
-        <location filename="../../src/schat2/Profile.cpp" line="43"/>
+        <location filename="../../src/schat2/Profile.cpp" line="42"/>
         <source>Full name</source>
         <translation>ФИО</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/Profile.cpp" line="43"/>
+        <source>Gender</source>
+        <translation>Пол</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/Profile.cpp" line="44"/>
+        <source>Male</source>
+        <translation>Мужской</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/Profile.cpp" line="45"/>
+        <source>Female</source>
+        <translation>Женский</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/Profile.cpp" line="46"/>
+        <source>Ghost</source>
+        <translation>Приведение</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/Profile.cpp" line="47"/>
+        <source>Bot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/Profile.cpp" line="48"/>
+        <source>Unknown</source>
+        <translation>Неизвестный</translation>
     </message>
 </context>
 <context>
@@ -493,17 +525,17 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="93"/>
+        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="97"/>
         <source>Public message</source>
         <translation>Публичное сообщение</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="95"/>
+        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="99"/>
         <source>Referring to you</source>
         <translation>Обращение к вам</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="97"/>
+        <location filename="../../src/schat2/alerts/MessageAlert.cpp" line="101"/>
         <source>Private message</source>
         <translation>Личное сообщение</translation>
     </message>
@@ -597,12 +629,13 @@
 <context>
     <name>ServerTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="125"/>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="126"/>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="128"/>
         <source>Server %1 requires authorization</source>
         <translation>Сервер %1 требует авторизацию</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="193"/>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="197"/>
         <source>Network</source>
         <translation>Сеть</translation>
     </message>

@@ -384,6 +384,7 @@ QVariantMap WebBridge::channel(const QByteArray &id)
   data[LS("Url")]    = ChatUrls::toUrl(channel, LS("insert")).toString();
   data[LS("Color")]  = channel->gender().toString();
   data[LS("Status")] = channel->status().toString();
+  data[LS("Gender")] = channel->gender().value();
   return data;
 }
 
