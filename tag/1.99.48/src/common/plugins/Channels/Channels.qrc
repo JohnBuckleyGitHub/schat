@@ -1,0 +1,6 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+  <file alias="images/Channels/icon.png">res/images/hypic/forum_32.png</file>
+  <file alias="translations/channels_ru.qm">res/translations/channels_ru.qm</file>
+</qresource>
+</RCC>
