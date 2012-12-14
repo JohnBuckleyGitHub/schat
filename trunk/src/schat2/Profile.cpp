@@ -39,8 +39,13 @@ public:
 protected:
   QString valueImpl(const QString &key) const
   {
-    if (key == LS("name"))
-      return tr("Full name");
+    if (key == LS("name"))                return tr("Full name");
+    else if (key == LS("gender"))         return tr("Gender");
+    else if (key == LS("gender-male"))    return tr("Male");
+    else if (key == LS("gender-female"))  return tr("Female");
+    else if (key == LS("gender-ghost"))   return tr("Ghost");
+    else if (key == LS("gender-bot"))     return tr("Bot");
+    else if (key == LS("gender-unknown")) return tr("Unknown");
 
     return QString();
   }

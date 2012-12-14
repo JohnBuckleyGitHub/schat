@@ -16,36 +16,56 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * Отображение поля "country".
+ *
+ * Код страны преобразуется из кода в название страны и изображение флага.
+ */
 Profile.Field.country = function(key, value) {
   if (value.length != 2)
     return;
 
-  var name = Utils.tr("country-" + value);
-  if (name == "country-" + value)
+  var name = Utils.tr('country-' + value);
+  if (name == 'country-' + value)
     return;
 
   Profile.addRow(key, '<i class="flag-' + value + '"></i> <span data-tr="country-' + value + '">' + name + '</span>');
 };
 
+
+/*
+ * Для отображения поля "city" используется тот же обработчик что и для поля "name".
+ */
 Profile.Field.city = Profile.Field.name;
 
+
+/*
+ * Отображение поля "site".
+ *
+ * Значение поля преобразуется в кликабельную ссылку.
+ */
 Profile.Field.site = function(key, value) {
   var addr = Utils.left(htmlspecialchars(value.replace(/\s+/gi, '')), 254);
   var title = addr;
-  if (addr.indexOf("http://") == 0)
+  if (addr.indexOf('http://') == 0)
     title = addr.slice(7);
-  else if (addr.indexOf("https://") == 0)
+  else if (addr.indexOf('https://') == 0)
     title = addr.slice(8);
   else
-    addr = "http://" + addr;
+    addr = 'http://' + addr;
 
   Profile.addRow(key, '<a href="' + addr + '">' + title + '</a>');
 };
 
 
+/*
+ * Отображение поля "email".
+ *
+ * Значение поля преобразуется в кликабельную ссылку.
+ */
 Profile.Field.email = function(key, value) {
   var addr = Utils.left(htmlspecialchars(value.replace(/\s+/gi, '')), 254);
-  if (addr.indexOf("mailto:") == 0)
+  if (addr.indexOf('mailto:') == 0)
     addr = addr.slice(7);
 
   Profile.addRow(key, '<a href="mailto:' + addr + '">' + addr + '</a>');
@@ -53,9 +73,14 @@ Profile.Field.email = function(key, value) {
 
 
 var ProfilePlugin = {
+  /*
+   * Обработка показа информации о подключении.
+   *
+   * Добавляется отображение гео информации.
+   */
   process: function(key, json) {
-    var id = "#" + key;
-    if (!json.hasOwnProperty("geo") || json.geo.country == "") {
+    var id = '#' + key;
+    if (!json.hasOwnProperty('geo')) {
       $(id + ' [class^="flag-"]').remove();
       return;
     }
@@ -69,15 +94,22 @@ var ProfilePlugin = {
   },
 
 
+  /*
+   * Обработка показа модального окна.
+   *
+   * Добавляется отображение гео информации.
+   */
   connection: function(json) {
-    if (!json.hasOwnProperty('geo') || json.geo.country === '')
+    if (!json.hasOwnProperty('geo'))
       return;
 
     var country = json.geo.country.toLowerCase();
     if (country.length != 2)
       return;
 
-    $('#modal-body').append(Utils.row('field-country', '<i class="flag-' + country + '"></i> '
+    var modal = $('#modal-body');
+
+    modal.append(Utils.row('field-country', '<i class="flag-' + country + '"></i> '
       + '<span data-tr="country-' + country + '">' + Utils.tr('country-' + country) + '</span>'));
 
     if (json.geo.org != '') {
@@ -86,7 +118,7 @@ var ProfilePlugin = {
         if (index == -1)
           return;
 
-      $('#modal-body').append(Utils.row('field-isp', Utils.left(org.slice(index), 100)));
+      modal.append(Utils.row('field-isp', Utils.left(org.slice(index), 100)));
     }
   }
 };
