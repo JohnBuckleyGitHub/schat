@@ -62,11 +62,16 @@ void PlainTextFilter::removeTag(QString &text, const QString &tag)
   int lt = 0;
   int gt = 0;
   forever {
-    lt = text.indexOf(QLatin1String("<") + tag, 0, Qt::CaseInsensitive);
+    lt = text.indexOf(QLatin1String("<") + tag, lt, Qt::CaseInsensitive);
     if (lt == -1)
       break;
 
     gt = text.indexOf(QLatin1String("</") + tag + QLatin1String(">"), lt, Qt::CaseInsensitive);
+    if (gt == -1) {
+      ++lt;
+      continue;
+    }
+
     text.remove(lt, gt - lt + tag.size() + 3);
   }
 }
