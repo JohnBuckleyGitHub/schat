@@ -20,10 +20,12 @@ QT = core network
 OTHER_FILES += NodeChannels.json
 
 HEADERS  = \
+   feeds/NodeInfoFeed.h \
    NodeChannelsPlugin.h \
    NodeChannelsPlugin_p.h \
 
 SOURCES  = \
+   feeds/NodeInfoFeed.cpp \
    NodeChannelsPlugin.cpp \
 
 include(../plugins.pri)
