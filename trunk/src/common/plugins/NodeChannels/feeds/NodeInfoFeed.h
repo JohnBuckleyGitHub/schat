@@ -16,26 +16,18 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#ifndef NODEINFOFEED_H_
+#define NODEINFOFEED_H_
 
-#include "feeds/FeedStorage.h"
-#include "feeds/NodeInfoFeed.h"
-#include "NodeChannelsPlugin.h"
-#include "NodeChannelsPlugin_p.h"
+#include "feeds/Feed.h"
 
-NodeChannelsImpl::NodeChannelsImpl(QObject *parent)
-  : NodePlugin(parent)
+class NodeInfoFeed : public Feed
 {
-  FeedStorage::add(new NodeInfoFeed());
-}
+public:
+  NodeInfoFeed(const QString &name, const QVariantMap &data);
+  NodeInfoFeed(const QString &name = QLatin1String("info"), qint64 date = -1);
+  Feed* create(const QString &name);
+  Feed* load(const QString &name, const QVariantMap &data);
+};
 
-
-NodePlugin *NodeChannelsPlugin::create()
-{
-  m_plugin = new NodeChannelsImpl(this);
-  return m_plugin;
-}
-
-#if QT_VERSION < 0x050000
-  Q_EXPORT_PLUGIN2(NodeChannels, NodeChannelsPlugin);
-#endif
+#endif /* NODEINFOFEED_H_ */
