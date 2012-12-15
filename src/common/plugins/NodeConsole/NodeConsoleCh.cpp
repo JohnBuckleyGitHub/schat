@@ -30,4 +30,5 @@ void NodeConsoleCh::server(ChatChannel channel, bool created)
   Q_UNUSED(created)
   channel->feed(LS("console"));
   channel->feed(LS("storage"));
+  channel->feed(LS("plugins"));
 }

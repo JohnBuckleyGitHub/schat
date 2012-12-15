@@ -16,19 +16,21 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include "cores/Core.h"
 #include "NodePlugins.h"
 #include "plugins/NodeApi.h"
 #include "plugins/NodePlugin.h"
 #include "Settings.h"
 #include "Storage.h"
+#include "sglobal.h"
+
+NodePlugins *NodePlugins::m_self = 0;
 
 NodePlugins::NodePlugins(QObject *parent)
   : Plugins(parent)
 {
-  m_type = "server";
+  m_self = this;
+  m_type = LS("server");
 }
 
 

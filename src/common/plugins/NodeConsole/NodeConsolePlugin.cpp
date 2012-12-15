@@ -20,6 +20,7 @@
 
 #include "feeds/FeedStorage.h"
 #include "feeds/NodeConsoleFeed.h"
+#include "feeds/NodePluginsFeed.h"
 #include "feeds/NodeStorageFeed.h"
 #include "NodeConsoleCh.h"
 #include "NodeConsolePlugin.h"
@@ -34,6 +35,7 @@ NodeConsoleImpl::NodeConsoleImpl(QObject *parent)
 
   FeedStorage::add(new NodeConsoleFeed());
   FeedStorage::add(new NodeStorageFeed());
+  FeedStorage::add(new NodePluginsFeed());
 
   Storage::add(new PasswordHook());
 }
