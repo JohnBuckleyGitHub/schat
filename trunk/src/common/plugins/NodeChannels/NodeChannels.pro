@@ -15,28 +15,15 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-CONFIG   += ordered
-TEMPLATE = subdirs
+SCHAT_DAEMON_LIB = 1
+QT = core network
+OTHER_FILES += NodeChannels.json
 
-SUBDIRS += \
-    GenericNode \
-    Messages \
-    NodeChannels \
-    NodeConsole \
-    RestApi \
-    GeoIP \
-    Cache \
-    History \
-    Profile \
-    Channels \
-    Popup \
-    Emoticons \
-    Idle \
-    SendFile \
-    SpellChecker \
-    Proxy \
-    Console \
-    RawFeeds \
-    YouTube \
+HEADERS  = \
+   NodeChannelsPlugin.h \
+   NodeChannelsPlugin_p.h \
 
-win32:SUBDIRS += Update
+SOURCES  = \
+   NodeChannelsPlugin.cpp \
+
+include(../plugins.pri)
