@@ -16,36 +16,21 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NODECONSOLEPLUGIN_H_
-#define NODECONSOLEPLUGIN_H_
+#ifndef NODEPLUGINSFEED_H_
+#define NODEPLUGINSFEED_H_
 
-#include "CoreApi.h"
-#include "NodeApi.h"
+#include "feeds/Feed.h"
 
-class NodeConsolePlugin : public QObject, CoreApi, NodeApi
+class NodePluginsFeed : public Feed
 {
-  Q_OBJECT
-  Q_INTERFACES(CoreApi NodeApi)
-
-# if QT_VERSION >= 0x050000
-  Q_PLUGIN_METADATA(IID "me.schat.server.NodeConsole" FILE "NodeConsole.json")
-# endif
-
 public:
-  QVariantMap header() const
-  {
-    QVariantMap out = CoreApi::header();
-    out["Id"]       = "NodeConsole";
-    out["Name"]     = "Node Console";
-    out["Version"]  = "0.1.1";
-    out["Type"]     = "server";
-    out["Site"]     = "http://wiki.schat.me/Plugin/NodeConsole";
-    out["Desc"]     = "Node Console";
+  NodePluginsFeed(const QString &name, const QVariantMap &data);
+  NodePluginsFeed(const QString &name = QLatin1String("plugins"), qint64 date = -1);
+  Feed* create(const QString &name);
+  Feed* load(const QString &name, const QVariantMap &data);
 
-    return out;
-  }
-
-  NodePlugin *create();
+private:
+  void init();
 };
 
-#endif /* NODECONSOLEPLUGIN_H_ */
+#endif /* NODEPLUGINSFEED_H_ */

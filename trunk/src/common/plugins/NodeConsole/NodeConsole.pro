@@ -21,6 +21,7 @@ OTHER_FILES += NodeConsole.json
 
 HEADERS  = \
    feeds/NodeConsoleFeed.h \
+   feeds/NodePluginsFeed.h \
    feeds/NodeStorageFeed.h \
    NodeConsoleCh.h \
    NodeConsolePlugin.h \
@@ -29,6 +30,7 @@ HEADERS  = \
 
 SOURCES  = \
    feeds/NodeConsoleFeed.cpp \
+   feeds/NodePluginsFeed.cpp \
    feeds/NodeStorageFeed.cpp \
    NodeConsoleCh.cpp \
    NodeConsolePlugin.cpp \

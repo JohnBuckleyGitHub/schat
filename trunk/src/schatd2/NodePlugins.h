@@ -29,12 +29,14 @@ class SCHAT_EXPORT NodePlugins : public Plugins
 
 public:
   NodePlugins(QObject *parent = 0);
+  inline static NodePlugins *i() { return m_self; }
 
 protected:
   void init();
 
 private:
-  QList<NodePlugin *> m_nodePlugins;
+  QList<NodePlugin *> m_nodePlugins; ///< Список плагинов.
+  static NodePlugins *m_self;        ///< Указатель на себя.
 };
 
 #endif /* NODEPLUGINS_H_ */
