@@ -16,29 +16,19 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#ifndef NODECHANNELSCH_H_
+#define NODECHANNELSCH_H_
 
-#include "feeds/FeedStorage.h"
-#include "feeds/NodeInfoFeed.h"
-#include "NodeChannelsCh.h"
-#include "NodeChannelsPlugin.h"
-#include "NodeChannelsPlugin_p.h"
+#include "ChHook.h"
 
-NodeChannelsImpl::NodeChannelsImpl(QObject *parent)
-  : NodePlugin(parent)
+class NodeChannelsCh : public ChHook
 {
-  new NodeChannelsCh(this);
+  Q_OBJECT
 
-  FeedStorage::add(new NodeInfoFeed());
-}
+public:
+  NodeChannelsCh(QObject *parent = 0);
+  void newChannel(ChatChannel channel, ChatChannel user = ChatChannel());
+  void sync(ChatChannel channel, ChatChannel user = ChatChannel());
+};
 
-
-NodePlugin *NodeChannelsPlugin::create()
-{
-  m_plugin = new NodeChannelsImpl(this);
-  return m_plugin;
-}
-
-#if QT_VERSION < 0x050000
-  Q_EXPORT_PLUGIN2(NodeChannels, NodeChannelsPlugin);
-#endif
+#endif /* NODECHANNELSCH_H_ */
