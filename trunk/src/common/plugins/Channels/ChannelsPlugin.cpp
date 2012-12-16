@@ -24,13 +24,15 @@
 #include "ChannelsPlugin_p.h"
 #include "ChannelsSettings.h"
 #include "ChatCore.h"
+#include "ChatSettings.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/ClientFeeds.h"
+#include "hooks/ChatViewHooks.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
 #include "Translation.h"
-#include "ChatSettings.h"
+#include "ui/tabs/ChatView.h"
 
 ChannelsPluginImpl::ChannelsPluginImpl(QObject *parent)
   : ChatPlugin(parent)
@@ -43,6 +45,9 @@ ChannelsPluginImpl::ChannelsPluginImpl(QObject *parent)
 
   ChatCore::translation()->addOther(LS("channels"));
   ChatCore::settings()->setDefault(LS("Channels/Ignoring"), false);
+
+  connect(ChatViewHooks::i(), SIGNAL(initHook(ChatView*)), SLOT(init(ChatView*)));
+  connect(ChatViewHooks::i(), SIGNAL(loadFinishedHook(ChatView*)), SLOT(loadFinished(ChatView*)));
 }
 
 
@@ -78,6 +83,30 @@ void ChannelsPluginImpl::channel(const QByteArray &id)
   FeedPtr feed = ChatClient::channels()->get(id)->feed(LS("acl"), false);
   if (!feed)
     ClientFeeds::request(id, LS("get"), LS("acl/head"));
+}
+
+
+/*!
+ * Инициализация JavaScript.
+ */
+void ChannelsPluginImpl::init(ChatView *view)
+{
+  if (SimpleID::typeOf(view->id()) != SimpleID::ChannelId)
+    return;
+
+  view->addJS(LS("qrc:/js/Channels/Channels.js"));
+}
+
+
+/*!
+ * Инициализация CSS.
+ */
+void ChannelsPluginImpl::loadFinished(ChatView *view)
+{
+  if (SimpleID::typeOf(view->id()) != SimpleID::ChannelId)
+    return;
+
+  view->addCSS(LS("qrc:/css/Channels/Channels.css"));
 }
 
 
