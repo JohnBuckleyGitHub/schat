@@ -28,6 +28,11 @@ public:
   NodeInfoFeed(const QString &name = QLatin1String("info"), qint64 date = -1);
   Feed* create(const QString &name);
   Feed* load(const QString &name, const QVariantMap &data);
+
+  bool can(Channel *channel, Acl::ResultAcl acl) const;
+  FeedReply del(const QString &path, Channel *channel = 0);
+  FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0);
+  FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0);
 };
 
 #endif /* NODEINFOFEED_H_ */
