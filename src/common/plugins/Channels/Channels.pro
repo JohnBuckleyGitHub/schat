@@ -17,10 +17,10 @@
 
 SCHAT_CLIENT_LIB = 1
 SCHAT_CORE_LIB = 1
-QT = core gui
+QT = core gui webkit
 OTHER_FILES += Channels.json
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webkitwidgets
 
 HEADERS  = \
    ChannelsCmd.h \

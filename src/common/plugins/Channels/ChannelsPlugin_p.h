@@ -22,6 +22,8 @@
 #include "Channel.h"
 #include "plugins/ChatPlugin.h"
 
+class ChatView;
+
 class ChannelsPluginImpl : public ChatPlugin
 {
   Q_OBJECT
@@ -33,6 +35,8 @@ public:
 
 private slots:
   void channel(const QByteArray &id);
+  void init(ChatView *view);
+  void loadFinished(ChatView *view);
   void ready();
 };
 

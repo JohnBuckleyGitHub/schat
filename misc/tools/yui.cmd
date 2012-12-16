@@ -36,4 +36,7 @@ java -jar yuicompressor.jar ..\..\src\common\plugins\Console\res\html\src\consol
 java -jar yuicompressor.jar ..\..\src\common\plugins\Console\res\html\src\console-home.js -o ..\..\src\common\plugins\Console\res\js\console-home.min.js
 java -jar yuicompressor.jar ..\..\src\common\plugins\Console\res\html\src\console.css -o ..\..\src\common\plugins\Console\res\css\console.min.css
 java -jar yuicompressor.jar ..\..\src\common\plugins\Console\res\html\src\bootstrap.css -o ..\..\src\common\plugins\Console\res\css\bootstrap.min.css
+
+java -jar yuicompressor.jar ..\..\src\common\plugins\Channels\res\src\Channels.js -o ..\..\src\common\plugins\Channels\res\js\Channels.min.js
+java -jar yuicompressor.jar ..\..\src\common\plugins\Channels\res\src\Channels.css -o ..\..\src\common\plugins\Channels\res\css\Channels.min.css
 pause
