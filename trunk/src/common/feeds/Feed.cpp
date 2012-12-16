@@ -229,6 +229,12 @@ QVariantMap Feed::save() const
 }
 
 
+bool Feed::can(Channel *channel, Acl::ResultAcl acl) const
+{
+  return m_header.acl().match(channel) & acl;
+}
+
+
 void Feed::setChannel(Channel *channel)
 {
   m_header.setChannel(channel);

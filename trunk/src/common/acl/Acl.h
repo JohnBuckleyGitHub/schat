@@ -54,7 +54,6 @@ public:
   Acl(int acl = 0766);
 
   bool add(const QByteArray &other, int acl);
-  bool can(Channel *channel, ResultAcl acl) const;
   bool get(QVariantMap &data, Channel *channel) const;
   inline const Groups& groups() const                { return m_groups; }
   inline const QList<QByteArray> &owners() const     { return m_owners; }

@@ -73,6 +73,7 @@ public:
   virtual QVariantMap feed(Channel *channel = 0) const;
   virtual QVariantMap save() const;
 
+  virtual bool can(Channel *channel, Acl::ResultAcl acl) const;
   virtual void setChannel(Channel *channel);
 
   inline const FeedHeader& head() const    { return m_header; }

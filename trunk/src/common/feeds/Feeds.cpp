@@ -67,7 +67,7 @@ QVariantMap Feeds::f(Channel *channel) const
   QMapIterator<QString, FeedPtr> i(m_feeds);
   while (i.hasNext()) {
     i.next();
-    if (i.value()->head().acl().can(channel, Acl::Read))
+    if (i.value()->can(channel, Acl::Read))
       json[i.key()] = i.value()->head().date();
   }
 
