@@ -138,7 +138,7 @@ int FeedHeader::put(const QString &path, const QVariant &value)
 QVariantMap FeedHeader::f(Channel *channel) const
 {
   QVariantMap json;
-  if (!acl().can(channel, Acl::Read))
+  if (!(acl().match(channel) & Acl::Read))
     return json;
 
   json[name()] = date();

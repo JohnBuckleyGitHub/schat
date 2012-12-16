@@ -38,13 +38,6 @@ bool Acl::add(const QByteArray &other, int acl)
 }
 
 
-bool Acl::can(Channel *channel, ResultAcl acl) const
-{
-  int r = match(channel);
-  return r & acl;
-}
-
-
 /*!
  * Получение данных о правах доступа.
  */
@@ -100,19 +93,19 @@ int Acl::match(Channel *channel) const
 
 bool Acl::canEdit(const Feed *feed, Channel *channel)
 {
-  return feed->head().acl().can(channel, Edit);
+  return feed->can(channel, Edit);
 }
 
 
 bool Acl::canRead(const Feed *feed, Channel *channel)
 {
-  return feed->head().acl().can(channel, Read);
+  return feed->can(channel, Read);
 }
 
 
 bool Acl::canWrite(const Feed *feed, Channel *channel)
 {
-  return feed->head().acl().can(channel, Write);
+  return feed->can(channel, Write);
 }
 
 

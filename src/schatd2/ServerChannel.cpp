@@ -150,19 +150,19 @@ void ServerChannel::setKey(qint64 key)
 
 bool ServerChannel::canEdit(ChatChannel channel)
 {
-  return feed("acl")->head().acl().can(channel.data(), Acl::Edit);
+  return feed("acl")->can(channel.data(), Acl::Edit);
 }
 
 
 bool ServerChannel::canRead(ChatChannel channel)
 {
-  return feed("acl")->head().acl().can(channel.data(), Acl::Read);
+  return feed("acl")->can(channel.data(), Acl::Read);
 }
 
 
 bool ServerChannel::canWrite(ChatChannel channel)
 {
-  return feed("acl")->head().acl().can(channel.data(), Acl::Write);
+  return feed("acl")->can(channel.data(), Acl::Write);
 }
 
 
