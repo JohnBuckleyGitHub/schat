@@ -64,9 +64,9 @@ private:
   void sync(ChatChannel channel, ChatChannel user = ChatChannel());
 
   int m_peakUsers;                           ///< Максимальное количество пользователей подключеных к серверу, за всё время работы.
-  QHash<QByteArray, ChatChannel> m_channels; ///< Кеш каналов.
   QList<ChHook *> m_hooks;                   ///< Хуки.
   QList<QByteArray> m_users;                 ///< Число пользователей подключенных к серверу.
+  QMap<QByteArray, ChatChannel> m_channels;  ///< Кеш каналов, ключ в таблице идентификатор канала и нормализированный идентификатор имени и cookie для пользовательских каналов.
   static Ch *m_self;                         ///< Указатель на себя.
 };
 

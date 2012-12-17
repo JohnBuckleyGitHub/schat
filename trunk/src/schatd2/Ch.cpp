@@ -79,7 +79,7 @@ bool Ch::gc(ChatChannel channel)
     const QByteArray &id = channel->id();
     if (m_self->m_users.contains(id)) {
       m_self->m_users.removeAll(id);
-      Ch::server()->channels().remove(id);
+      Ch::server()->removeChannel(id);
 
       foreach (ChHook *hook, m_self->m_hooks) {
         hook->updateStatistics();
@@ -410,9 +410,9 @@ void Ch::remove(const QByteArray &id)
 void Ch::setOnline(ChatChannel channel)
 {
   const QByteArray &id = channel->id();
-  Channels &channels = Ch::server()->channels();
+  ChatChannel server = Ch::server();
 
-  if (channels.contains(id))
+  if (server->channels().contains(id))
     return;
 
   if (channel->type() == SimpleID::UserId) {
@@ -420,7 +420,7 @@ void Ch::setOnline(ChatChannel channel)
       return;
 
     m_users.append(id);
-    channels.add(id);
+    server->addChannel(id);
 
     if (m_users.size() >= m_peakUsers) {
       m_peakUsers = m_users.size();
@@ -436,7 +436,7 @@ void Ch::setOnline(ChatChannel channel)
     }
   }
   else
-    channels.add(id);
+    server->addChannel(id);
 }
 
 
