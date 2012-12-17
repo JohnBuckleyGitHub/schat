@@ -21,6 +21,7 @@
 #include "DateTime.h"
 #include "feeds/FeedStorage.h"
 #include "net/SimpleID.h"
+#include "NodeNotify.h"
 #include "Normalize.h"
 #include "ServerChannel.h"
 #include "sglobal.h"
@@ -105,14 +106,25 @@ QString ServerChannel::serverName(const QString &name)
 
 bool ServerChannel::addChannel(const QByteArray &id)
 {
-  return m_channels.add(id);
+  if (m_channels.add(id)) {
+    NodeNotify::start(NotifyItem::ChannelBonding, 1, this->id(), id);
+    return true;
+  }
+
+  return false;
 }
 
 
 bool ServerChannel::removeChannel(const QByteArray &id)
 {
-  m_channels.remove(id);
-  return true;
+  if (m_channels.contains(id)) {
+    m_channels.remove(id);
+
+    NodeNotify::start(NotifyItem::ChannelBonding, 0, this->id(), id);
+    return true;
+  }
+
+  return false;
 }
 
 
