@@ -20,6 +20,7 @@
 
 #include "feeds/FeedStorage.h"
 #include "feeds/NodeInfoFeed.h"
+#include "NodeChannelIndex.h"
 #include "NodeChannelsCh.h"
 #include "NodeChannelsPlugin.h"
 #include "NodeChannelsPlugin_p.h"
@@ -27,6 +28,8 @@
 NodeChannelsImpl::NodeChannelsImpl(QObject *parent)
   : NodePlugin(parent)
 {
+  m_index = new NodeChannelIndex(this);
+
   new NodeChannelsCh(this);
 
   FeedStorage::add(new NodeInfoFeed());
