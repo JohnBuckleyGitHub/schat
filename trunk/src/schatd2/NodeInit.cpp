@@ -24,6 +24,7 @@
 #include "debugstream.h"
 #include "net/NodePool.h"
 #include "NodeInit.h"
+#include "NodeNotify.h"
 #include "NodePlugins.h"
 #include "Settings.h"
 #include "sglobal.h"
@@ -38,6 +39,8 @@ NodeInit::NodeInit(const QString &app, QObject *parent)
   , m_core(0)
   , m_pool(0)
 {
+  new NodeNotify(this);
+
   m_storage = new Storage(app, this);
   m_core = new Core(this);
   m_plugins = new NodePlugins(this);

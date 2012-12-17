@@ -46,6 +46,7 @@ HEADERS = \
     net/TcpServer.h \
     NodeLog.h \
     NodeNoticeReader.h \
+    NodeNotify.h \
     NodePlugins.h \
     Normalize.h \
     plugins/GeoHook.h \
@@ -77,6 +78,7 @@ SOURCES = \
     net/TcpServer.cpp \
     NodeLog.cpp \
     NodeNoticeReader.cpp \
+    NodeNotify.cpp \
     NodePlugins.cpp \
     Normalize.cpp \
     plugins/GeoHook.cpp \
