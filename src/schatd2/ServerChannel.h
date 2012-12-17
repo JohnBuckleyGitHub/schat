@@ -38,11 +38,14 @@ public:
   ~ServerChannel();
   static QString serverName(const QString &name);
 
+  inline const Channels& channels() const      { return m_channels; }
   inline const QByteArray& normalized() const  { return m_normalized; }
   inline Hosts* hosts() const                  { return m_hosts; }
   inline QList<quint64> sockets() const        { if (m_hosts) return m_hosts->sockets(); return QList<quint64>(); }
   inline User* user() const                    { return m_user; }
 
+  bool addChannel(const QByteArray &id);
+  bool removeChannel(const QByteArray &id);
   bool setName(const QString &name);
   void createAccount();
   void setKey(qint64 key);

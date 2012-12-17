@@ -32,7 +32,7 @@ ServerChannel::ServerChannel(ClientChannel channel)
   , m_user(0)
 {
   normalize();
-  channels().set(channel->channels().all());
+  m_channels.set(channel->channels().all());
 
   if (SimpleID::typeOf(id()) == SimpleID::UserId) {
     m_hosts = new Hosts(this);
@@ -100,6 +100,19 @@ QString ServerChannel::serverName(const QString &name)
     return QString();
 
   return tmp;
+}
+
+
+bool ServerChannel::addChannel(const QByteArray &id)
+{
+  return m_channels.add(id);
+}
+
+
+bool ServerChannel::removeChannel(const QByteArray &id)
+{
+  m_channels.remove(id);
+  return true;
 }
 
 

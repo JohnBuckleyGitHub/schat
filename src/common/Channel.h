@@ -157,10 +157,10 @@ public:
 
 protected:
   Account *m_account;              ///< Аккаунт пользователя
+  Channels m_channels;             ///< Список каналов.
 
 private:
   bool m_synced;                   ///< true если канал синхронизирован.
-  Channels m_channels;             ///< Список каналов.
   Feeds m_feeds;                   ///< Таблица фидов.
   Gender m_gender;                 ///< Пол и цвет иконки.
   int m_type;                      ///< Тип канала, соответствует типу идентификатора канала \sa SimpleID::Types.

@@ -111,8 +111,8 @@ void NodeChannels::releaseImpl(ChatChannel user, quint64 socket)
   foreach (QByteArray id, channels) {
     ChatChannel channel = Ch::channel(id);
     if (channel && channel->type() == SimpleID::ChannelId) {
-      channel->channels().remove(user->id());
-      user->channels().remove(channel->id());
+      channel->removeChannel(user->id());
+      user->removeChannel(channel->id());
       Ch::gc(channel);
     }
   }
@@ -135,8 +135,8 @@ bool NodeChannels::info()
     if (channel) {
       SCHAT_LOG_DEBUG_STR("[GenericNode/Channels] info, id:" + SimpleID::encode(channel->id()) + ", name:" + channel->name().toUtf8())
 
-      channel->channels() += m_user->id();
-      m_user->channels()  += channel->id();
+      channel->addChannel(m_user->id());
+      m_user->addChannel(channel->id());
       packets += ChannelNotice::channel(channel, m_user, LS("info"))->data(Core::stream());
     }
   }
@@ -171,8 +171,8 @@ bool NodeChannels::join()
   SCHAT_LOG_DEBUG_STR("[GenericNode/Channels] join, id:" + SimpleID::encode(channel->id()) + ", name:" + channel->name().toUtf8())
 
   bool notify = !channel->channels().all().contains(m_user->id());
-  channel->channels() += m_user->id();
-  m_user->channels()  += channel->id();
+  channel->addChannel(m_user->id());
+  m_user->addChannel(channel->id());
 
   m_core->send(m_user->sockets(), ChannelNotice::channel(channel, m_user));
 
@@ -229,13 +229,13 @@ bool NodeChannels::part()
   if (!channel)
     return false;
 
-  m_user->channels().remove(channel->id());
+  m_user->removeChannel(channel->id());
 
   if (!channel->channels().all().contains(m_user->id()))
     return false;
 
   m_core->send(Sockets::channel(channel), ChannelNotice::request(m_user->id(), channel->id(), LS("-")));
-  channel->channels().remove(m_user->id());
+  channel->removeChannel(m_user->id());
 
   Ch::gc(channel);
 
