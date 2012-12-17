@@ -35,9 +35,8 @@ var Channels = {
    * Чтение фида "info".
    */
   info: function(json, status) {
-    if (json.hasOwnProperty('title')) {
-      $('#channel-title').text(json.title.text);
-    }
+    if (json.hasOwnProperty('title'))
+      $('#channel-title-text').text(json.title.text);
 
     if (status != 300)
       Loader.spinner.remove('loading/info');
@@ -57,7 +56,7 @@ var Channels = {
 };
 
 $(document).ready(function() {
-  $('#page-header').append('<div id="channel-title"></div>')
+  $('#page-header').append('<div id="channel-title"><div id="channel-title-text"></div></div>')
 });
 
 Pages.onInfo.push(Channels.reload);
