@@ -16,22 +16,28 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NODECHANNELSPLUGIN_P_H_
-#define NODECHANNELSPLUGIN_P_H_
+#ifndef NODECHANNELINDEX_H_
+#define NODECHANNELINDEX_H_
 
-#include "plugins/NodePlugin.h"
+#include <QObject>
 
-class NodeChannelIndex;
+#include <ServerChannel.h>
 
-class NodeChannelsImpl : public NodePlugin
+class NotifyItem;
+
+class NodeChannelIndex : public QObject
 {
   Q_OBJECT
 
 public:
-  NodeChannelsImpl(QObject *parent);
+  NodeChannelIndex(QObject *parent = 0);
+
+private slots:
+  void build();
+  void notify(const NotifyItem &notify);
 
 private:
-  NodeChannelIndex *m_index; ///< Индекс каналов.
+  QList<ChatChannel> channels() const;
 };
 
-#endif /* NODECHANNELSPLUGIN_P_H_ */
+#endif /* NODECHANNELINDEX_H_ */
