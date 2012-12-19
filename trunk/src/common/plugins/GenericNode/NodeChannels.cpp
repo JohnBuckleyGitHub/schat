@@ -135,8 +135,11 @@ bool NodeChannels::info()
     if (channel) {
       SCHAT_LOG_DEBUG_STR("[GenericNode/Channels] info, id:" + SimpleID::encode(channel->id()) + ", name:" + channel->name().toUtf8())
 
-      channel->addChannel(m_user->id());
-      m_user->addChannel(channel->id());
+      if (channel->type() == SimpleID::UserId) {
+        channel->addChannel(m_user->id());
+        m_user->addChannel(channel->id());
+      }
+
       packets += ChannelNotice::channel(channel, m_user, LS("info"))->data(Core::stream());
     }
   }

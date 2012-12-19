@@ -25,6 +25,25 @@
 
 class NotifyItem;
 
+/*!
+ * Информация о канале в списке каналов.
+ */
+class ChannelIndexData
+{
+public:
+  ChannelIndexData(ChatChannel channel);
+  bool isValid() const;
+  bool operator<(const ChannelIndexData &other) const;
+
+  int count;     ///< Число пользователей в канале.
+  QString name;  ///< Имя канала.
+  QString title; ///< Заголовок канала.
+};
+
+
+/*!
+ * Формирует сортированный список каналов доступных на сервере.
+ */
 class NodeChannelIndex : public QObject
 {
   Q_OBJECT
@@ -38,6 +57,9 @@ private slots:
 
 private:
   QList<ChatChannel> channels() const;
+
+  qint64 m_date;                  ///< Дата формирования списка.
+  QList<ChannelIndexData> m_list; ///< Список каналов.
 };
 
 #endif /* NODECHANNELINDEX_H_ */
