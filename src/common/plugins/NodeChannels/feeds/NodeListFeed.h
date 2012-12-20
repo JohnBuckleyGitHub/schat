@@ -16,25 +16,21 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NODECHANNELSPLUGIN_P_H_
-#define NODECHANNELSPLUGIN_P_H_
+#ifndef NODELISTFEED_H_
+#define NODELISTFEED_H_
 
-#include "plugins/NodePlugin.h"
+#include "feeds/Feed.h"
 
-class NodeChannelIndex;
-
-class NodeChannelsImpl : public NodePlugin
+class NodeListFeed : public Feed
 {
-  Q_OBJECT
-
 public:
-  NodeChannelsImpl(QObject *parent);
-  inline static NodeChannelIndex *index() { return m_self->m_index; }
-  inline static NodeChannelsImpl *i()     { return m_self; }
+  NodeListFeed(const QString &name, const QVariantMap &data);
+  NodeListFeed(const QString &name = QLatin1String("list"), qint64 date = -1);
+  Feed* create(const QString &name);
+  Feed* load(const QString &name, const QVariantMap &data);
 
 private:
-  NodeChannelIndex *m_index;       ///< Индекс каналов.
-  static NodeChannelsImpl *m_self; ///< Указатель на себя.
+  void init();
 };
 
-#endif /* NODECHANNELSPLUGIN_P_H_ */
+#endif /* NODELISTFEED_H_ */

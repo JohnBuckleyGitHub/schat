@@ -67,7 +67,11 @@ win32 {
   }
   qt.path += ../../os/win32/schatd2/
 
-  sqldrivers.files += $$[QT_INSTALL_PREFIX]/plugins/sqldrivers/qsqlite4.dll
+  greaterThan(QT_MAJOR_VERSION, 4) {
+    sqldrivers.files += $$[QT_INSTALL_PREFIX]/plugins/sqldrivers/qsqlite.dll
+  } else {
+    sqldrivers.files += $$[QT_INSTALL_PREFIX]/plugins/sqldrivers/qsqlite4.dll
+  }
   sqldrivers.path += ../../os/win32/schatd2/plugins/qt/sqldrivers
 
   doc.files += ../../res/doc/ChangeLog.html
@@ -79,6 +83,12 @@ win32 {
 
   target.path += ../../os/win32/schatd2/
   INSTALLS += target qt sqldrivers doc ssl
+
+  greaterThan(QT_MAJOR_VERSION, 4) {
+    platforms.files += $$[QT_INSTALL_PREFIX]/plugins/platforms/qwindows.dll
+    platforms.path += ../../os/win32/schatd2/platforms
+    INSTALLS += platforms
+  }
 }
 
 include(../common/config.pri)

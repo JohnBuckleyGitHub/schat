@@ -182,7 +182,7 @@ win32 {
   INSTALLS += target translations qt imageformats sqldrivers doc sounds
 
   greaterThan(QT_MAJOR_VERSION, 4) {
-    platforms.files += $$[QT_INSTALL_PREFIX]/plugins/platforms/windows.dll
+    platforms.files += $$[QT_INSTALL_PREFIX]/plugins/platforms/qwindows.dll
     platforms.path += ../../os/win32/schat2/platforms
     INSTALLS += platforms
   }

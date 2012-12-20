@@ -16,25 +16,40 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NODECHANNELSPLUGIN_P_H_
-#define NODECHANNELSPLUGIN_P_H_
+#include <QDebug>
 
-#include "plugins/NodePlugin.h"
+#include "DateTime.h"
+#include "feeds/NodeListFeed.h"
+#include "sglobal.h"
 
-class NodeChannelIndex;
-
-class NodeChannelsImpl : public NodePlugin
+NodeListFeed::NodeListFeed(const QString &name, const QVariantMap &data)
+  : Feed(name, data)
 {
-  Q_OBJECT
+  init();
+}
 
-public:
-  NodeChannelsImpl(QObject *parent);
-  inline static NodeChannelIndex *index() { return m_self->m_index; }
-  inline static NodeChannelsImpl *i()     { return m_self; }
 
-private:
-  NodeChannelIndex *m_index;       ///< Индекс каналов.
-  static NodeChannelsImpl *m_self; ///< Указатель на себя.
-};
+NodeListFeed::NodeListFeed(const QString &name, qint64 date)
+  : Feed(name, date)
+{
+  if (date != -1)
+    init();
+}
 
-#endif /* NODECHANNELSPLUGIN_P_H_ */
+
+Feed* NodeListFeed::create(const QString &name)
+{
+  return new NodeListFeed(name, DateTime::utc());
+}
+
+
+Feed* NodeListFeed::load(const QString &name, const QVariantMap &data)
+{
+  return new NodeListFeed(name, data);
+}
+
+
+void NodeListFeed::init()
+{
+  m_header.acl().setMask(0444);
+}

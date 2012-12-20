@@ -33,6 +33,13 @@ void NodeChannelsCh::newChannel(ChatChannel channel, ChatChannel user)
 }
 
 
+void NodeChannelsCh::server(ChatChannel channel, bool created)
+{
+  Q_UNUSED(created)
+  channel->feed(LS("list"));
+}
+
+
 void NodeChannelsCh::sync(ChatChannel channel, ChatChannel user)
 {
   Q_UNUSED(user)
