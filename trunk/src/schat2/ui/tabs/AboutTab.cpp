@@ -121,7 +121,7 @@ QVariant AboutTab::version(const QString &type) const
   else if (type == LS("WebKit"))
     return qWebKitVersion();
 
-# if QT_VERSION >= 0x040700
+# if QT_VERSION >= 0x040700 && QT_VERSION < 0x050000
   else if (type == LS("QtWebKit"))
     return QTWEBKIT_VERSION_STR;
 # endif

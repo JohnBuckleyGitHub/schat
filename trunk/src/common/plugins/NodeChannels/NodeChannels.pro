@@ -21,6 +21,7 @@ OTHER_FILES += NodeChannels.json
 
 HEADERS  = \
    feeds/NodeInfoFeed.h \
+   feeds/NodeListFeed.h \
    NodeChannelIndex.h \
    NodeChannelsCh.h \
    NodeChannelsPlugin.h \
@@ -28,6 +29,7 @@ HEADERS  = \
 
 SOURCES  = \
    feeds/NodeInfoFeed.cpp \
+   feeds/NodeListFeed.cpp \
    NodeChannelIndex.cpp \
    NodeChannelsCh.cpp \
    NodeChannelsPlugin.cpp \
