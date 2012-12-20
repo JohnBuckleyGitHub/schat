@@ -29,6 +29,10 @@ public:
   Feed* create(const QString &name);
   Feed* load(const QString &name, const QVariantMap &data);
 
+  FeedReply del(const QString &path, Channel *channel = 0);
+  FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0);
+  FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0);
+
 private:
   void init();
 };

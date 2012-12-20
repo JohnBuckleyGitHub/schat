@@ -31,6 +31,7 @@ ChannelIndexData::ChannelIndexData(ChatChannel channel)
   if (!feed)
     return;
 
+  id    = channel->id();
   count = channel->channels().size();
   title = feed->data().value(LS("title")).toMap().value(LS("text")).toString();
 }
@@ -77,8 +78,11 @@ void NodeChannelIndex::build()
   }
 
   qSort(m_list);
-
   m_date = DateTime::utc();
+
+  FeedPtr feed = Ch::server()->feed(LS("list"), false);
+  if (feed)
+    feed->put(LS("channels"), QVariantMap(), Ch::server().data());
 }
 
 
