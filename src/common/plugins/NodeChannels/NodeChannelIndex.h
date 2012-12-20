@@ -60,7 +60,9 @@ private slots:
 
 private:
   QList<ChatChannel> channels() const;
+  void reload();
 
+  bool m_updated;                 ///< \b true если обновлён список каналов.
   qint64 m_date;                  ///< Дата формирования списка.
   QList<ChannelIndexData> m_list; ///< Список каналов.
 };

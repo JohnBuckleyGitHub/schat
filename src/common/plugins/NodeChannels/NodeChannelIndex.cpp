@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QTimer>
+
 #include "Ch.h"
 #include "DateTime.h"
 #include "net/SimpleID.h"
@@ -57,6 +59,7 @@ bool ChannelIndexData::operator<(const ChannelIndexData &other) const
 
 NodeChannelIndex::NodeChannelIndex(QObject *parent)
   : QObject(parent)
+  , m_updated(false)
   , m_date(0)
 {
   connect(NodeNotify::i(), SIGNAL(notify(NotifyItem)), SLOT(notify(NotifyItem)));
@@ -78,7 +81,8 @@ void NodeChannelIndex::build()
   }
 
   qSort(m_list);
-  m_date = DateTime::utc();
+  m_date    = DateTime::utc();
+  m_updated = true;
 
   FeedPtr feed = Ch::server()->feed(LS("list"), false);
   if (feed)
@@ -93,7 +97,7 @@ void NodeChannelIndex::notify(const NotifyItem &notify)
 {
   if (notify.type() == NotifyItem::ChannelBonding) {
     if (SimpleID::typeOf(notify.param1().toByteArray()) == SimpleID::ChannelId)
-      build();
+      reload();
   }
 }
 
@@ -115,4 +119,16 @@ QList<ChatChannel> NodeChannelIndex::channels() const
   }
 
   return out;
+}
+
+
+void NodeChannelIndex::reload()
+{
+  if (!m_date) {
+    build();
+  }
+  else if (m_updated) {
+    QTimer::singleShot(0, this, SLOT(build()));
+    m_updated = false;
+  }
 }
