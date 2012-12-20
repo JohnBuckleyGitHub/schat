@@ -118,5 +118,5 @@ FeedReply NodeInfoFeed::put(const QString &path, const QVariantMap &json, Channe
   Q_UNUSED(path)
   Q_UNUSED(json)
   Q_UNUSED(channel)
-  return Notice::BadRequest;
+  return Notice::Forbidden;
 }

@@ -16,10 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
+#include "Ch.h"
 #include "DateTime.h"
 #include "feeds/NodeListFeed.h"
+#include "net/packets/Notice.h"
+#include "net/SimpleID.h"
+#include "NodeChannelIndex.h"
+#include "NodeChannelsPlugin_p.h"
 #include "sglobal.h"
 
 NodeListFeed::NodeListFeed(const QString &name, const QVariantMap &data)
@@ -49,7 +52,63 @@ Feed* NodeListFeed::load(const QString &name, const QVariantMap &data)
 }
 
 
+/*!
+ * Переопределение запроса "delete".
+ */
+FeedReply NodeListFeed::del(const QString &path, Channel *channel)
+{
+  Q_UNUSED(path)
+  Q_UNUSED(channel)
+  return Notice::Forbidden;
+}
+
+
+/*!
+ * Переопределение запроса "post".
+ */
+FeedReply NodeListFeed::post(const QString &path, const QVariantMap &json, Channel *channel)
+{
+  Q_UNUSED(path)
+  Q_UNUSED(json)
+  Q_UNUSED(channel)
+  return Notice::Forbidden;
+}
+
+
+/*!
+ * Переопределение запроса "put".
+ */
+FeedReply NodeListFeed::put(const QString &path, const QVariantMap &json, Channel *channel)
+{
+  Q_UNUSED(path)
+  Q_UNUSED(json)
+  Q_UNUSED(channel)
+
+  if (path == LS("channels") && Ch::server() == channel) {
+    const QList<ChannelIndexData> &list = NodeChannelsImpl::index()->list();
+    QVariantList channels;
+
+    foreach (const ChannelIndexData &data, list) {
+      QVariantList channel;
+      channel += SimpleID::encode(data.id);
+      channel += data.name;
+      channel += data.count;
+      channel += data.title;
+
+      channels.push_back(channel);
+    }
+
+    m_data[LS("channels")] = channels;
+    m_header.setDate(NodeChannelsImpl::index()->date());
+    return Notice::OK;
+  }
+
+  return Notice::Forbidden;
+}
+
+
 void NodeListFeed::init()
 {
   m_header.acl().setMask(0444);
+  m_data[LS("format")] = QVariantList() << LS("id") << LS("name") << LS("count") << LS("title");
 }

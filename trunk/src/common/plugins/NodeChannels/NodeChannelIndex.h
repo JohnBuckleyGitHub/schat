@@ -36,6 +36,7 @@ public:
   bool operator<(const ChannelIndexData &other) const;
 
   int count;     ///< Число пользователей в канале.
+  QByteArray id; ///< Идентификатор канала.
   QString name;  ///< Имя канала.
   QString title; ///< Заголовок канала.
 };
@@ -50,6 +51,8 @@ class NodeChannelIndex : public QObject
 
 public:
   NodeChannelIndex(QObject *parent = 0);
+  inline const QList<ChannelIndexData> &list() const { return m_list; }
+  inline qint64 date() const                         { return m_date; }
 
 private slots:
   void build();
