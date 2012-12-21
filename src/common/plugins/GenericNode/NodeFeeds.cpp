@@ -25,6 +25,7 @@
 #include "net/packets/Notice.h"
 #include "net/SimpleID.h"
 #include "NodeFeeds.h"
+#include "NodeNotify.h"
 #include "sglobal.h"
 #include "Sockets.h"
 #include "Storage.h"
@@ -62,13 +63,12 @@ bool NodeFeeds::read(PacketReader *reader)
 
   if (cmd == LS("get"))
     status = get();
-  else if (cmd == LS("put") || cmd == "post" || cmd == "delete")
+  else if (cmd == LS("put") || cmd == LS("post") || cmd == LS("delete"))
     status = query(cmd);
 
-  if (status == Notice::OK)
-    return false;
+  if (status != Notice::OK)
+    reply(status);
 
-  reply(status);
   return false;
 }
 
@@ -255,6 +255,7 @@ int NodeFeeds::query(const QString &verb)
   if (reply.date && options & Feed::Broadcast)
     broadcast(result.feed, true);
 
+  NodeNotify::start(NotifyItem::FeedModified, 0, m_channel->id(), result.name);
   return Notice::OK;
 }
 

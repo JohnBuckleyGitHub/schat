@@ -31,9 +31,12 @@ class NotifyItem
 public:
   /// Типы уведомлений.
   enum Types {
-    /// "CB" Изменено связывание каналов, подтип: \b 1 канал был добавлен, \b 0 канал был удалён,
-    /// \b param1 идентификатор канала, \b param2 идентификатор добавленного или удалённого канала.
-    ChannelBonding = 0x4342
+    /// "CB" Изменено связывание каналов, \b subType: \b 1 канал был добавлен, \b 0 канал был удалён,
+    /// \b param1: идентификатор канала, \b param2: идентификатор добавленного или удалённого канала.
+    ChannelBonding = 0x4342,
+    /// "FM" Уведомление об изменении фида.
+    /// \b param1: идентификатор канала фида, \b param2: имя фида.
+    FeedModified   = 0x464D
   };
 
   NotifyItem(int type, int subType = 0, const QVariant &param1 = QVariant(), const QVariant &param2 = QVariant())

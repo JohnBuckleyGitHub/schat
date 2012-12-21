@@ -95,9 +95,11 @@ void NodeChannelIndex::build()
  */
 void NodeChannelIndex::notify(const NotifyItem &notify)
 {
-  if (notify.type() == NotifyItem::ChannelBonding) {
-    if (SimpleID::typeOf(notify.param1().toByteArray()) == SimpleID::ChannelId)
-      reload();
+  if (notify.type() == NotifyItem::ChannelBonding && SimpleID::typeOf(notify.param1().toByteArray()) == SimpleID::ChannelId) {
+    reload();
+  }
+  else if (notify.type() == NotifyItem::FeedModified && SimpleID::typeOf(notify.param1().toByteArray()) == SimpleID::ChannelId && notify.param2() == LS("info")) {
+    reload();
   }
 }
 
