@@ -49,7 +49,7 @@ void IdlePluginImpl::idle(int seconds)
 {
   int status = ChatClient::channel()->status().value();
   int diff = seconds - m_autoAway; // Уведомления могут приходить не каждую секунду.
-  if ((diff >= 0 && diff < 5) && status != Status::AutoAway) {
+  if ((diff >= 0 && diff <= 1) && status != Status::AutoAway) {
     away();
   }
   else if (seconds == 0 && status == Status::AutoAway)

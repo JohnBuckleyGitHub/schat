@@ -1,9 +1,9 @@
 @echo off
 cd ../../out
-for %%I in (*.exe *.dll) do SignTool.exe sign /f %SCHAT_SIGN_FILE% /p %SCHAT_SIGN_PASSWORD% /t http://timestamp.comodoca.com/authenticode %%~fI
+for %%I in (*.exe *.dll) do SignTool.exe sign /f %SCHAT_SIGN_FILE% /p %SCHAT_SIGN_PASSWORD% /t http://timestamp.verisign.com/scripts/timstamp.dll %%~fI
 
 cd plugins
-for %%I in (*.dll) do SignTool.exe sign /f %SCHAT_SIGN_FILE% /p %SCHAT_SIGN_PASSWORD% /t http://timestamp.comodoca.com/authenticode %%~fI
+for %%I in (*.dll) do SignTool.exe sign /f %SCHAT_SIGN_FILE% /p %SCHAT_SIGN_PASSWORD% /t http://timestamp.verisign.com/scripts/timstamp.dll %%~fI
 
 cd ../..
 nmake install /NOLOGO
@@ -24,8 +24,8 @@ light -nologo -out ..\out\schat2-%SCHAT_VERSION%.msi -cultures:en-US -ext WixUIE
 if ERRORLEVEL 1 exit 1
 
 cd ..\out
-for %%I in (*.exe) do SignTool.exe sign /f %SCHAT_SIGN_FILE% /p %SCHAT_SIGN_PASSWORD% /t http://timestamp.comodoca.com/authenticode %%~fI
-for %%I in (*.msi) do SignTool.exe sign /f %SCHAT_SIGN_FILE% /p %SCHAT_SIGN_PASSWORD% /t http://timestamp.comodoca.com/authenticode %%~fI
+for %%I in (*.exe) do SignTool.exe sign /f %SCHAT_SIGN_FILE% /p %SCHAT_SIGN_PASSWORD% /t http://timestamp.verisign.com/scripts/timstamp.dll %%~fI
+for %%I in (*.msi) do SignTool.exe sign /f %SCHAT_SIGN_FILE% /p %SCHAT_SIGN_PASSWORD% /t http://timestamp.verisign.com/scripts/timstamp.dll %%~fI
 
 cd ..
 exit 0
