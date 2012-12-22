@@ -38,7 +38,7 @@ SetCompressor /SOLID lzma
 SetCompressorDictSize 10
 
 VIProductVersion "${SCHAT_VERSION}.${SCHAT_REVISION}"
-VIAddVersionKey  "CompanyName"      "IMPOMEZIA"
+VIAddVersionKey  "CompanyName"      "Alexander Sedov"
 VIAddVersionKey  "FileDescription"  "${SCHAT_NAME} Installer"
 VIAddVersionKey  "FileVersion"      "${SCHAT_VERSION}"
 VIAddVersionKey  "LegalCopyright"   "${SCHAT_COPYRIGHT}"
@@ -135,7 +135,7 @@ Section
   WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "DisplayName"     "${SCHAT_NAME}"
   WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "UnInstallString" "$INSTDIR\uninstall.exe"
   WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "DisplayIcon"     "$INSTDIR\schatd2.exe"
-  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "Publisher"       "IMPOMEZIA"
+  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "Publisher"       "Alexander Sedov"
   WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "URLInfoAbout"    "${SCHAT_WEB_SITE}"
   WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "HelpLink"        "${SCHAT_WEB_SITE}"
   WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "URLUpdateInfo"   "${SCHAT_WEB_SITE}"

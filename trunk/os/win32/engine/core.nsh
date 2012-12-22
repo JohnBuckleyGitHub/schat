@@ -40,7 +40,7 @@ SetCompressor /SOLID lzma
 SetCompressorDictSize 10
 
 VIProductVersion "${SCHAT_VERSION}.${SCHAT_REVISION}"
-VIAddVersionKey  "CompanyName"      "IMPOMEZIA"
+VIAddVersionKey  "CompanyName"      "Alexander Sedov"
 VIAddVersionKey  "FileDescription"  "${SCHAT_NAME} Installer"
 VIAddVersionKey  "FileVersion"      "${SCHAT_VERSION}"
 VIAddVersionKey  "LegalCopyright"   "${SCHAT_COPYRIGHT}"
@@ -121,11 +121,15 @@ Section
   WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "DisplayName"     "${SCHAT_NAME}"
   WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "UnInstallString" "$INSTDIR\uninstall.exe"
   WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "DisplayIcon"     "$INSTDIR\schat2.exe"
-  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "Publisher"       "IMPOMEZIA"
+  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "Publisher"       "Alexander Sedov"
   WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "URLInfoAbout"    "${SCHAT_WEB_SITE}"
-  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "HelpLink"        "${SCHAT_WEB_SITE}"
-  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "URLUpdateInfo"   "${SCHAT_WEB_SITE}"
+  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "HelpLink"        "http://wiki.schat.me/"
+  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "URLUpdateInfo"   "https://schat.me/download"
   WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "DisplayVersion"  "${SCHAT_VERSION}"
+  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "InstallLocation" "$INSTDIR"
+  WriteRegStr HKLM "${SCHAT_UNINST_KEY}" "Contact"         "support@impomezia.com"
+  WriteRegDWORD HKLM "${SCHAT_UNINST_KEY}" "VersionMajor"  1
+  WriteRegDWORD HKLM "${SCHAT_UNINST_KEY}" "VersionMinor"  99
 
   ${If} $update == true
     Exec '"$INSTDIR\schat2.exe"'

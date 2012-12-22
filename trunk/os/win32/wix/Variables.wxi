@@ -5,5 +5,5 @@
   <?define ProductCodepage="UTF-8"?>
   <?define UpgradeCode="d8b07eea-7fa8-48a5-b96b-1cb99fc3539b"?>
   <?define ApplicationDescription="Simple Chat is a simple and powerful cross-platform client-server chat for local networks and the Internet."?>
-  <?define Manufacturer="IMPOMEZIA"?>
+  <?define Manufacturer="Alexander Sedov"?>
 </Include>
