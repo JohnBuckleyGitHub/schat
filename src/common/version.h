@@ -24,8 +24,8 @@
 #define SCHAT_VERSION      "1.99.49"
 #define SCHAT_VERSION_RC   1,99,49,SCHAT_REVISION
 #define SCHAT_NAME         "Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
+#define SCHAT_ORGANIZATION "Alexander Sedov"
 #define SCHAT_DOMAIN       "schat.me"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2012 IMPOMEZIA"
+#define SCHAT_COPYRIGHT    "Copyright © 2008-2012 Alexander Sedov"
 
 #endif /*VERSION_H_*/
