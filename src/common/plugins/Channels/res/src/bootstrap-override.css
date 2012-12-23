@@ -82,3 +82,7 @@ form, .control-group {
 .navbar .brand {
   float: none;
 }
+
+.navbar .divider-vertical {
+  height: auto;
+}

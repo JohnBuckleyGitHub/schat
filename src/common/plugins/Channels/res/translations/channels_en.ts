@@ -5,17 +5,17 @@
 <context>
     <name>ChannelsMenuImpl</name>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="76"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="80"/>
         <source>Ignore</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="104"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="107"/>
         <source>Permissions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="107"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="110"/>
         <source>Read only</source>
         <translation type="unfinished"></translation>
     </message>
@@ -25,6 +25,27 @@
     <message>
         <location filename="../../ChannelsSettings.cpp" line="61"/>
         <source>Enable ignoring users via context menu</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ChannelsTr</name>
+    <message>
+        <location filename="../../ui/ChannelsView.cpp" line="39"/>
+        <source>Join</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/ChannelsView.cpp" line="40"/>
+        <source>Channel name</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ListTab</name>
+    <message>
+        <location filename="../../ui/ListTab.cpp" line="51"/>
+        <source>Channels</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
