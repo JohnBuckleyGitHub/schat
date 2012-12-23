@@ -16,29 +16,24 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHANNELSPLUGIN_P_H_
-#define CHANNELSPLUGIN_P_H_
+#ifndef LISTTAB_H_
+#define LISTTAB_H_
 
-#include "Channel.h"
-#include "plugins/ChatPlugin.h"
+#include "ui/tabs/AbstractTab.h"
 
-class ChatView;
+class ChannelsView;
 
-class ChannelsPluginImpl : public ChatPlugin
+class ListTab : public AbstractTab
 {
   Q_OBJECT
 
 public:
-  ChannelsPluginImpl(QObject *parent);
-  static void ignore(const QByteArray &id);
-  static void show();
-  static void unignore(const QByteArray &id);
+  ListTab(TabWidget *parent);
 
-private slots:
-  void channel(const QByteArray &id);
-  void init(ChatView *view);
-  void loadFinished(ChatView *view);
-  void ready();
+private:
+  void retranslateUi();
+
+  ChannelsView *m_view;
 };
 
-#endif /* CHANNELSPLUGIN_P_H_ */
+#endif /* LISTTAB_H_ */

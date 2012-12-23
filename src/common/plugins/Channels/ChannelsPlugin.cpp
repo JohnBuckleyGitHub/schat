@@ -32,7 +32,9 @@
 #include "net/SimpleID.h"
 #include "sglobal.h"
 #include "Translation.h"
+#include "ui/ListTab.h"
 #include "ui/tabs/ChatView.h"
+#include "ui/TabWidget.h"
 
 ChannelsPluginImpl::ChannelsPluginImpl(QObject *parent)
   : ChatPlugin(parent)
@@ -60,6 +62,17 @@ void ChannelsPluginImpl::ignore(const QByteArray &id)
     return;
 
   ClientFeeds::post(ChatClient::id(), LS("acl/head/other/") + SimpleID::encode(id), Acl::Read, Feed::Share | Feed::Broadcast);
+}
+
+
+/*!
+ * Показ списка каналов.
+ */
+void ChannelsPluginImpl::show()
+{
+  TabWidget *tabs = TabWidget::i();
+  if (tabs->showPage("list") == -1)
+    tabs->showPage(new ListTab(tabs));
 }
 
 

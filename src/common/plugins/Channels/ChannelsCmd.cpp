@@ -33,16 +33,19 @@ ChannelsCmd::ChannelsCmd(QObject *parent)
 bool ChannelsCmd::command(const QByteArray &dest, const ClientCmd &cmd)
 {
   Q_UNUSED(dest)
+  const QString command = cmd.command().toLower();
 
-  QString command = cmd.command().toLower();
-  if (command == LS("ignore")) {
+  if (command == LS("ignore"))
     ChannelsPluginImpl::ignore(dest);
-    return true;
-  }
-  else if (command == LS("unignore")) {
-    ChannelsPluginImpl::unignore(dest);
-    return true;
-  }
 
-  return false;
+  else if (command == LS("unignore"))
+    ChannelsPluginImpl::unignore(dest);
+
+  else if (command == LS("list"))
+    ChannelsPluginImpl::show();
+
+  else
+    return false;
+
+  return true;
 }
