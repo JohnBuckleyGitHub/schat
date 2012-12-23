@@ -16,29 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHANNELSPLUGIN_P_H_
-#define CHANNELSPLUGIN_P_H_
+#ifndef CHANNELSVIEW_H_
+#define CHANNELSVIEW_H_
 
-#include "Channel.h"
-#include "plugins/ChatPlugin.h"
+#include <QWebView>
 
-class ChatView;
-
-class ChannelsPluginImpl : public ChatPlugin
+class ChannelsView : public QWebView
 {
   Q_OBJECT
 
 public:
-  ChannelsPluginImpl(QObject *parent);
-  static void ignore(const QByteArray &id);
-  static void show();
-  static void unignore(const QByteArray &id);
-
-private slots:
-  void channel(const QByteArray &id);
-  void init(ChatView *view);
-  void loadFinished(ChatView *view);
-  void ready();
+  ChannelsView(QWidget *parent = 0);
 };
 
-#endif /* CHANNELSPLUGIN_P_H_ */
+#endif /* CHANNELSVIEW_H_ */

@@ -28,12 +28,16 @@ HEADERS  = \
    ChannelsPlugin.h \
    ChannelsPlugin_p.h \
    ChannelsSettings.h \
+   ui/ChannelsView.h \
+   ui/ListTab.h \
 
 SOURCES  = \
    ChannelsCmd.cpp \
    ChannelsMenuImpl.cpp \
    ChannelsPlugin.cpp \
    ChannelsSettings.cpp \
+   ui/ChannelsView.cpp \
+   ui/ListTab.cpp \
 
 RESOURCES += Channels.qrc
 

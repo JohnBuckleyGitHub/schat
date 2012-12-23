@@ -16,29 +16,37 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHANNELSPLUGIN_P_H_
-#define CHANNELSPLUGIN_P_H_
+#include <QApplication>
+#include <QFile>
+#include <QVBoxLayout>
 
-#include "Channel.h"
-#include "plugins/ChatPlugin.h"
+#include "sglobal.h"
+#include "ui/ChannelsView.h"
+#include "ui/ListTab.h"
 
-class ChatView;
-
-class ChannelsPluginImpl : public ChatPlugin
+ListTab::ListTab(TabWidget *parent)
+  : AbstractTab("list", LS("list"), parent)
 {
-  Q_OBJECT
+  QString url = QApplication::applicationDirPath() + LS("/styles/Channels/index.html");
+  if (QFile::exists(url))
+    url = QUrl::fromLocalFile(url).toString();
+  else
+    url = LS("qrc:/html/Channels/index.html");
 
-public:
-  ChannelsPluginImpl(QObject *parent);
-  static void ignore(const QByteArray &id);
-  static void show();
-  static void unignore(const QByteArray &id);
+  m_view = new ChannelsView(this);
+  m_view->setUrl(url);
 
-private slots:
-  void channel(const QByteArray &id);
-  void init(ChatView *view);
-  void loadFinished(ChatView *view);
-  void ready();
-};
+  QVBoxLayout *mainLay = new QVBoxLayout(this);
+  mainLay->addWidget(m_view);
+  mainLay->setMargin(0);
+  mainLay->setSpacing(0);
 
-#endif /* CHANNELSPLUGIN_P_H_ */
+  setIcon(QIcon(LS(":/images/Channels/list.png")));
+  retranslateUi();
+}
+
+
+void ListTab::retranslateUi()
+{
+  setText(tr("Channels"));
+}
