@@ -16,7 +16,16 @@ var ChannelsList = {
     if (channel !== null)
       $('#server-name').html(channel.Name);
 
+    ChannelsList.get();
+  },
+
+
+  /*
+   * Загрузка списка каналов.
+   */
+  get: function() {
     SimpleChat.feed(SimpleChat.serverId(), 'list', 1);
+    Loader.spinner.add('loading/channels');
   }
 };
 
@@ -42,19 +51,20 @@ ChannelsList.feed = {
   list: function(json, status) {
     $('.channel-item').remove();
 
-    if (status != 200)
-      return;
+    if (status == 200) {
+      var channels     = json.channels;
+      var channelsList = $('#channels-list');
 
-    var channels     = json.channels;
-    var channelsList = $('#channels-list');
+      for (var i = 0; i < channels.length; i++) {
+        var channel = channels[i];
+        if (channel.length < 4)
+          continue;
 
-    for (var i = 0; i < channels.length; i++) {
-      var channel = channels[i];
-      if (channel.length < 4)
-        continue;
-
-      channelsList.append(ChannelsList.feed.listItem(channel));
+        channelsList.append(ChannelsList.feed.listItem(channel));
+      }
     }
+
+    Loader.spinner.remove('loading/channels');
   },
 
 
@@ -105,6 +115,14 @@ $(document).ready(function() {
   $('body').on('click.channel', '.nick', function (event) {
     event.preventDefault();
     ChannelsView.join($(this).attr('id'));
+  });
+
+  /*
+   * Обновление списка каналов.
+   */
+  $('#reload').on('click.reload', function(event) {
+    event.preventDefault();
+    ChannelsList.online();
   });
 });
 
