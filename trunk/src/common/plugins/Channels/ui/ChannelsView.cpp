@@ -39,6 +39,7 @@ protected:
   {
     if (key == LS("join"))              return tr("Join");
     else if (key == LS("channel_name")) return tr("Channel name");
+    else if (key == LS("list"))         return tr("Channels");
     return QString();
   }
 };
