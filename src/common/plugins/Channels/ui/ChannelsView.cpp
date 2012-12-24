@@ -22,9 +22,11 @@
 #include "ChatNotify.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
+#include "net/SimpleID.h"
 #include "sglobal.h"
 #include "Tr.h"
 #include "ui/ChannelsView.h"
+#include "ui/TabWidget.h"
 #include "WebBridge.h"
 
 class ChannelsTr : public Tr
@@ -40,6 +42,7 @@ protected:
     if (key == LS("join"))              return tr("Join");
     else if (key == LS("channel_name")) return tr("Channel name");
     else if (key == LS("list"))         return tr("Channels");
+    else if (key == LS("no_title"))     return tr("No title");
     return QString();
   }
 };
@@ -64,7 +67,16 @@ ChannelsView::~ChannelsView()
 
 void ChannelsView::join(const QString &name)
 {
-  ChatClient::channels()->join(name);
+  if (name.size() == 34) {
+    const QByteArray id = SimpleID::decode(name);
+    if (SimpleID::typeOf(id) != SimpleID::ChannelId)
+      return;
+
+    if (!TabWidget::i()->channelTab(id, false, true))
+      ChatClient::channels()->join(id);
+  }
+  else
+    ChatClient::channels()->join(name);
 }
 
 
