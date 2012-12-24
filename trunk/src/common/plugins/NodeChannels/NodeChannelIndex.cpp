@@ -41,10 +41,7 @@ ChannelIndexData::ChannelIndexData(ChatChannel channel)
 
 bool ChannelIndexData::isValid() const
 {
-  if (!count || title.isEmpty())
-    return false;
-
-  return true;
+  return count;
 }
 
 

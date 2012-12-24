@@ -31,18 +31,23 @@
 <context>
     <name>ChannelsTr</name>
     <message>
-        <location filename="../../ui/ChannelsView.cpp" line="40"/>
+        <location filename="../../ui/ChannelsView.cpp" line="42"/>
         <source>Join</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ui/ChannelsView.cpp" line="41"/>
+        <location filename="../../ui/ChannelsView.cpp" line="43"/>
         <source>Channel name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ui/ChannelsView.cpp" line="42"/>
+        <location filename="../../ui/ChannelsView.cpp" line="44"/>
         <source>Channels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ui/ChannelsView.cpp" line="45"/>
+        <source>No title</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
