@@ -15,6 +15,60 @@ var ChannelsList = {
     var channel = SimpleChat.channel(SimpleChat.serverId());
     if (channel !== null)
       $('#server-name').html(channel.Name);
+
+    SimpleChat.feed(SimpleChat.serverId(), 'list', 1);
+  }
+};
+
+
+/*
+ * Чтение данных фидов.
+ */
+ChannelsList.feed = {
+  /*
+   * Чтение новых данных.
+   */
+  read: function(json) {
+    if (json.type == 'body') {
+      if (json.feed == 'list')
+        ChannelsList.feed.list(json.data, json.status);
+    }
+  },
+
+
+  /*
+   * Чтение фида "list".
+   */
+  list: function(json, status) {
+    $('.channel-item').remove();
+
+    if (status != 200)
+      return;
+
+    var channels     = json.channels;
+    var channelsList = $('#channels-list');
+
+    for (var i = 0; i < channels.length; i++) {
+      var channel = channels[i];
+      if (channel.length < 4)
+        continue;
+
+      channelsList.append(ChannelsList.feed.listItem(channel));
+    }
+  },
+
+
+  /*
+   * Формирование HTML кода для канала.
+   */
+  listItem: function(list) {
+    return '<div class="channel-item">' +
+             '<div class="channel-item-header">' +
+               '<a href="#" class="nick color-default" id="' + list[0] + '">' + list[1] + '</a>' +
+               '<span class="badge">' + list[2] + '</span>' +
+             '</div>' +
+             '<div class="channel-item-title">' + list[3] + '</div>' +
+           '</div>'
   }
 };
 
@@ -52,4 +106,7 @@ if (typeof ChannelsView === 'undefined') {
   ChannelsView = {
     join: function(name) {}
   }
+}
+else {
+  ChannelsView.feed.connect(ChannelsList.feed.read);
 }
