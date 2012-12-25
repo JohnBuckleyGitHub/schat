@@ -298,6 +298,15 @@ bool TabWidget::isActiveChatWindow()
 }
 
 
+bool TabWidget::isCurrent(AbstractTab *tab)
+{
+  if (tab && m_self)
+    return m_self->indexOf(tab) == m_self->currentIndex();
+
+  return false;
+}
+
+
 /*!
  * Обработка закрытия вкладки.
  */

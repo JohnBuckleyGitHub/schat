@@ -21,6 +21,14 @@
     </message>
 </context>
 <context>
+    <name>ChannelsPluginImpl</name>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="145"/>
+        <source>Channels</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ChannelsSettings</name>
     <message>
         <location filename="../../ChannelsSettings.cpp" line="61"/>
