@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <link rel="stylesheet" href="qrc:/css/ChatView.css">
+  <link rel="stylesheet" href="qrc:/css/channel.css">
   <script src="qrc:/js/jquery.js"></script>
   <script src="qrc:/js/ChatView.js"></script>
 </head>
@@ -17,7 +18,11 @@
       </div>
       <div class="tab-pane" id="info">
         <button id="page-switcher-start" class="page-switcher" data-toggle="tab" href="#messages">‹</button>
-        <div id="info-content"><div id="page-header"><span id="channel-name"></span></div></div>
+        <div id="info-content">
+          <div id="page-header">
+            <div id="channel-name"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
