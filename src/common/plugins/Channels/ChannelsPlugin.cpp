@@ -139,6 +139,8 @@ void ChannelsPluginImpl::ready()
 
 void ChannelsPluginImpl::showMenu(QMenu *menu, QAction *separator)
 {
+  Q_UNUSED(separator)
+
   m_list->setText(tr("Channels"));
   m_list->setChecked(TabWidget::isCurrent(TabWidget::page("list")));
 
