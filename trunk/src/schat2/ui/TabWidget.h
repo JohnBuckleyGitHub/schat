@@ -69,6 +69,7 @@ public:
   ChannelBaseTab *channelTab(const QByteArray &id, bool create = true, bool show = true);
   static bool isActive(const QByteArray &id);
   static bool isActiveChatWindow();
+  static bool isCurrent(AbstractTab *tab);
   static void add(const Message &message, bool create = true);
   void stopAlert();
 

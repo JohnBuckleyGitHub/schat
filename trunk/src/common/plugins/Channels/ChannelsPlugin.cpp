@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QMenu>
+#include <QTimer>
 #include <QtPlugin>
 
 #include "ChannelsCmd.h"
@@ -34,10 +36,12 @@
 #include "Translation.h"
 #include "ui/ListTab.h"
 #include "ui/tabs/ChatView.h"
+#include "ui/TabsToolBar.h"
 #include "ui/TabWidget.h"
 
 ChannelsPluginImpl::ChannelsPluginImpl(QObject *parent)
   : ChatPlugin(parent)
+  , m_list(0)
 {
   new ChannelsCmd(this);
   new ChannelsMenuImpl(this);
@@ -50,6 +54,8 @@ ChannelsPluginImpl::ChannelsPluginImpl(QObject *parent)
 
   connect(ChatViewHooks::i(), SIGNAL(initHook(ChatView*)), SLOT(init(ChatView*)));
   connect(ChatViewHooks::i(), SIGNAL(loadFinishedHook(ChatView*)), SLOT(loadFinished(ChatView*)));
+
+  QTimer::singleShot(0, this, SLOT(start()));
 }
 
 
@@ -128,6 +134,29 @@ void ChannelsPluginImpl::ready()
   FeedPtr feed = ChatClient::channel()->feed(LS("acl"), false);
   if (!feed)
     ClientFeeds::request(ChatClient::id(), LS("get"), LS("acl/head"));
+}
+
+
+void ChannelsPluginImpl::showMenu(QMenu *menu, QAction *separator)
+{
+  m_list->setText(tr("Channels"));
+  m_list->setChecked(TabWidget::isCurrent(TabWidget::page("list")));
+
+  menu->addAction(m_list);
+}
+
+
+void ChannelsPluginImpl::start()
+{
+  if (!TabWidget::i())
+    return;
+
+  m_list = new QAction(this);
+  m_list->setIcon(QIcon(LS(":/images/Channels/list.png")));
+  m_list->setCheckable(true);
+
+  connect(TabWidget::i()->toolBar(), SIGNAL(showMenu(QMenu*,QAction*)), SLOT(showMenu(QMenu*,QAction*)));
+  connect(m_list, SIGNAL(triggered(bool)), SLOT(list()));
 }
 
 

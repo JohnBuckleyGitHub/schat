@@ -23,6 +23,8 @@
 #include "plugins/ChatPlugin.h"
 
 class ChatView;
+class QAction;
+class QMenu;
 
 class ChannelsPluginImpl : public ChatPlugin
 {
@@ -35,10 +37,16 @@ public:
   static void unignore(const QByteArray &id);
 
 private slots:
+  inline void list() { show(); }
   void channel(const QByteArray &id);
   void init(ChatView *view);
   void loadFinished(ChatView *view);
   void ready();
+  void showMenu(QMenu *menu, QAction *separator);
+  void start();
+
+private:
+  QAction *m_list; ///< Пункт меню для показа списка каналов.
 };
 
 #endif /* CHANNELSPLUGIN_P_H_ */
