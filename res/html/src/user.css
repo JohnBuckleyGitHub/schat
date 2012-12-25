@@ -29,10 +29,6 @@ h3 {
   display: -webkit-box;
 }
 
-#info-content {
-  margin-left: 32px;
-}
-
 #profile-content {
   -webkit-box-flex:2;
 }

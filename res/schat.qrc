@@ -1,6 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
   <file alias="css/about.css">html/css/about.min.css</file>
+  <file alias="css/channel.css">html/css/channel.min.css</file>
   <file alias="css/ChatView.css">html/css/ChatView.min.css</file>
   <file alias="css/input.css">html/css/input.css</file>
   <file alias="css/PluginsView.css">html/css/PluginsView.min.css</file>
