@@ -16,6 +16,15 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#channel {
+  display: -webkit-box;
+}
+
+#channel-name {
+  display: block;
+  -webkit-box-flex: 1;
+}
+
 #page-header {
   min-height: 16px;
   margin-top: 0;

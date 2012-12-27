@@ -56,7 +56,9 @@ var Channels = {
 };
 
 $(document).ready(function() {
-  $('#page-header').append('<div id="channel-title"><div id="channel-title-text"></div></div>')
+  $('#page-header').append('<div id="channel-title"><div id="channel-title-text"></div></div>');
+
+  $('#channel-buttons').append('<div class="dropdown"><a id="channel-settings" data-toggle="dropdown" href="#"></a></div>');
 });
 
 Pages.onInfo.push(Channels.reload);
