@@ -23,7 +23,7 @@
 <context>
     <name>ChannelsPluginImpl</name>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="145"/>
+        <location filename="../../ChannelsPlugin.cpp" line="144"/>
         <source>Channels</source>
         <translation>Каналы</translation>
     </message>
@@ -57,6 +57,11 @@
         <location filename="../../ui/ChannelsView.cpp" line="45"/>
         <source>No title</source>
         <translation>Без заголовка</translation>
+    </message>
+    <message>
+        <location filename="../../ui/ChannelsView.cpp" line="46"/>
+        <source>Channel title</source>
+        <translation>Заголовок канала</translation>
     </message>
 </context>
 <context>

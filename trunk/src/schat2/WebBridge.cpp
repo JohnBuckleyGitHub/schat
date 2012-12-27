@@ -120,6 +120,20 @@ bool WebBridge::isOnline() const
 }
 
 
+int WebBridge::match(const QString &channelId, const QString &userId) const
+{
+  ClientChannel channel = ChatClient::channels()->get(SimpleID::decode(channelId));
+  if (!channel)
+    return -1;
+
+  ClientChannel user = ChatClient::channels()->get(SimpleID::decode(userId));
+  if (!user)
+    return -1;
+
+  return ClientFeeds::match(channel, user);
+}
+
+
 QString WebBridge::bytesToHuman(qint64 size, bool html) const
 {
   QString num;

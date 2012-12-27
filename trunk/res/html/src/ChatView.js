@@ -812,7 +812,8 @@ if (typeof SimpleChat === 'undefined') {
     toBase32: function(text)               { return ''; },
     request: function(id, cmd, name, json) {},
     id: function()                         { return ''; },
-    value: function(key)                   { return null; }
+    value: function(key)                   { return null; },
+    match: function(channelId, userId)     { return -1; }
   };
 }
 else {

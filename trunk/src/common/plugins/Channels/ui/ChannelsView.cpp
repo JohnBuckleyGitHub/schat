@@ -16,7 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QApplication>
 #include <QWebFrame>
 
 #include "ChatNotify.h"
@@ -24,44 +23,17 @@
 #include "client/ClientChannels.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
-#include "Tr.h"
 #include "ui/ChannelsView.h"
 #include "ui/TabWidget.h"
 #include "WebBridge.h"
 
-class ChannelsTr : public Tr
-{
-  Q_DECLARE_TR_FUNCTIONS(ChannelsTr)
-
-public:
-  ChannelsTr() : Tr() { m_prefix = LS("channels_"); }
-
-protected:
-  QString valueImpl(const QString &key) const
-  {
-    if (key == LS("join"))              return tr("Join");
-    else if (key == LS("channel_name")) return tr("Channel name");
-    else if (key == LS("list"))         return tr("Channels");
-    else if (key == LS("no_title"))     return tr("No title");
-    return QString();
-  }
-};
-
-
 ChannelsView::ChannelsView(QWidget *parent)
   : QWebView(parent)
 {
-  m_tr = new ChannelsTr();
   setAcceptDrops(false);
 
   connect(page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), SLOT(populateJavaScriptWindowObject()));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
-}
-
-
-ChannelsView::~ChannelsView()
-{
-  delete m_tr;
 }
 
 

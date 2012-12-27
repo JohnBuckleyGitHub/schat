@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QApplication>
 #include <QMenu>
 #include <QTimer>
 #include <QtPlugin>
@@ -33,16 +34,38 @@
 #include "hooks/ChatViewHooks.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
+#include "Tr.h"
 #include "Translation.h"
 #include "ui/ListTab.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/TabsToolBar.h"
 #include "ui/TabWidget.h"
 
+class ChannelsTr : public Tr
+{
+  Q_DECLARE_TR_FUNCTIONS(ChannelsTr)
+
+public:
+  ChannelsTr() : Tr() { m_prefix = LS("channels_"); }
+
+protected:
+  QString valueImpl(const QString &key) const
+  {
+    if (key == LS("join"))              return tr("Join");
+    else if (key == LS("channel_name")) return tr("Channel name");
+    else if (key == LS("list"))         return tr("Channels");
+    else if (key == LS("no_title"))     return tr("No title");
+    else if (key == LS("title"))        return tr("Channel title");
+    return QString();
+  }
+};
+
+
 ChannelsPluginImpl::ChannelsPluginImpl(QObject *parent)
   : ChatPlugin(parent)
   , m_list(0)
 {
+  m_tr = new ChannelsTr();
   new ChannelsCmd(this);
   new ChannelsMenuImpl(this);
 
@@ -56,6 +79,12 @@ ChannelsPluginImpl::ChannelsPluginImpl(QObject *parent)
   connect(ChatViewHooks::i(), SIGNAL(loadFinishedHook(ChatView*)), SLOT(loadFinished(ChatView*)));
 
   QTimer::singleShot(0, this, SLOT(start()));
+}
+
+
+ChannelsPluginImpl::~ChannelsPluginImpl()
+{
+  delete m_tr;
 }
 
 
@@ -113,6 +142,7 @@ void ChannelsPluginImpl::init(ChatView *view)
   if (SimpleID::typeOf(view->id()) != SimpleID::ChannelId)
     return;
 
+  view->addJS(LS("qrc:/js/Channels/bootstrap-dropdown.js"));
   view->addJS(LS("qrc:/js/Channels/Channels.js"));
 }
 
@@ -125,6 +155,7 @@ void ChannelsPluginImpl::loadFinished(ChatView *view)
   if (SimpleID::typeOf(view->id()) != SimpleID::ChannelId)
     return;
 
+  view->addCSS(LS("qrc:/css/Channels/bootstrap-dropdown.css"));
   view->addCSS(LS("qrc:/css/Channels/Channels.css"));
 }
 
