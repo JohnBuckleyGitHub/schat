@@ -17,6 +17,8 @@
  */
 
 var Channels = {
+  acl: -1, // Права доступа к каналу.
+
   /*
    * Обновление информации.
    */
@@ -52,13 +54,39 @@ var Channels = {
 
     if (json.feed == 'info')
       Channels.info(json.data, json.status);
+    else if (json.feed == 'acl')
+      Channels.online();
+  },
+
+
+  /*
+   * Успешное подключение к серверу.
+   */
+  online: function() {
+    Channels.acl = SimpleChat.match(Settings.getId(), SimpleChat.id());
+    var dropdown = $('#settings-dropdown');
+
+    if (Channels.acl == 7) {
+      if (!dropdown.length)
+        $('#channel-buttons').append('<div id="settings-dropdown" class="dropdown pull-right"><a id="channel-settings" data-toggle="dropdown" href="#"></a>' + Channels.menu() + '</div>');
+    }
+    else
+      dropdown.remove();
+  },
+
+
+  /*
+   * Формирование меню канала.
+   */
+  menu: function() {
+    return '<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">' +
+             '<li><a href="#" data-tr="channels_title">' + Utils.tr('channels_title') + '</a></li>' +
+           '</ul>';
   }
 };
 
 $(document).ready(function() {
   $('#page-header').append('<div id="channel-title"><div id="channel-title-text"></div></div>');
-
-  $('#channel-buttons').append('<div class="dropdown"><a id="channel-settings" data-toggle="dropdown" href="#"></a></div>');
 });
 
 Pages.onInfo.push(Channels.reload);
@@ -66,4 +94,8 @@ Pages.onInfo.push(Channels.reload);
 if (typeof ChatView !== 'undefined') {
   ChatView.reload.connect(Channels.reload);
   ChatView.feed.connect(Channels.feed);
+}
+
+if (typeof SimpleChat !== 'undefined') {
+  SimpleChat.online.connect(Channels.online);
 }

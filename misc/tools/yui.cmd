@@ -37,9 +37,11 @@ java -jar yuicompressor.jar ..\..\src\common\plugins\Console\res\html\src\consol
 java -jar yuicompressor.jar ..\..\src\common\plugins\Console\res\html\src\console-home.js -o ..\..\src\common\plugins\Console\res\js\console-home.min.js
 java -jar yuicompressor.jar ..\..\src\common\plugins\Console\res\html\src\console.css -o ..\..\src\common\plugins\Console\res\css\console.min.css
 
+java -jar yuicompressor.jar ..\..\src\common\plugins\Channels\res\src\bootstrap-dropdown.js -o ..\..\src\common\plugins\Channels\res\js\bootstrap-dropdown.min.js
 java -jar yuicompressor.jar ..\..\src\common\plugins\Channels\res\src\Channels.js -o ..\..\src\common\plugins\Channels\res\js\Channels.min.js
 java -jar yuicompressor.jar ..\..\src\common\plugins\Channels\res\src\ListView.js -o ..\..\src\common\plugins\Channels\res\js\ListView.min.js
 java -jar yuicompressor.jar ..\..\src\common\plugins\Channels\res\src\bootstrap.css -o ..\..\src\common\plugins\Channels\res\css\bootstrap.min.css
+java -jar yuicompressor.jar ..\..\src\common\plugins\Channels\res\src\bootstrap-dropdown.css -o ..\..\src\common\plugins\Channels\res\css\bootstrap-dropdown.min.css
 java -jar yuicompressor.jar ..\..\src\common\plugins\Channels\res\src\bootstrap-override.css -o ..\..\src\common\plugins\Channels\res\css\bootstrap-override.min.css
 java -jar yuicompressor.jar ..\..\src\common\plugins\Channels\res\src\Channels.css -o ..\..\src\common\plugins\Channels\res\css\Channels.min.css
 java -jar yuicompressor.jar ..\..\src\common\plugins\Channels\res\src\ListView.css -o ..\..\src\common\plugins\Channels\res\css\ListView.min.css

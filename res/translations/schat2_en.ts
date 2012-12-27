@@ -775,12 +775,12 @@
 <context>
     <name>TabWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="379"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="388"/>
         <source>Pin tab</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="385"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="394"/>
         <source>Close tab</source>
         <translation type="unfinished"></translation>
     </message>

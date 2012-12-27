@@ -27,3 +27,13 @@
   height: 16px;
   background: url(qrc:/images/Channels/settings.png) no-repeat;
 }
+
+.dropdown-menu {
+  padding: 2px 3px;
+  min-width: 100px;
+}
+
+.dropdown-menu li > a {
+  padding: 3px 10px;
+
+}

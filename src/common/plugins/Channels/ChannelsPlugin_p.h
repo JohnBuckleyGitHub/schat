@@ -22,6 +22,7 @@
 #include "Channel.h"
 #include "plugins/ChatPlugin.h"
 
+class ChannelsTr;
 class ChatView;
 class QAction;
 class QMenu;
@@ -32,6 +33,7 @@ class ChannelsPluginImpl : public ChatPlugin
 
 public:
   ChannelsPluginImpl(QObject *parent);
+  ~ChannelsPluginImpl();
   static void ignore(const QByteArray &id);
   static void show();
   static void unignore(const QByteArray &id);
@@ -46,7 +48,8 @@ private slots:
   void start();
 
 private:
-  QAction *m_list; ///< Пункт меню для показа списка каналов.
+  ChannelsTr *m_tr; ///< Перевод.
+  QAction *m_list;  ///< Пункт меню для показа списка каналов.
 };
 
 #endif /* CHANNELSPLUGIN_P_H_ */

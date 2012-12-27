@@ -22,7 +22,6 @@
 #include <QVariant>
 #include <QWebView>
 
-class ChannelsTr;
 class Notify;
 
 class ChannelsView : public QWebView
@@ -31,7 +30,6 @@ class ChannelsView : public QWebView
 
 public:
   ChannelsView(QWidget *parent = 0);
-  ~ChannelsView();
   Q_INVOKABLE void join(const QString &name);
 
 signals:
@@ -40,9 +38,6 @@ signals:
 private slots:
   void notify(const Notify &notify);
   void populateJavaScriptWindowObject();
-
-private:
-  ChannelsTr *m_tr; ///< Перевод.
 };
 
 #endif /* CHANNELSVIEW_H_ */

@@ -38,6 +38,7 @@ public:
   inline static WebBridge *i() { return m_self; }
 
   Q_INVOKABLE bool isOnline() const;
+  Q_INVOKABLE int match(const QString &channelId, const QString &userId) const;
   Q_INVOKABLE QString bytesToHuman(qint64 size, bool html = true) const;
   Q_INVOKABLE QString day(const QString &day) const;
   Q_INVOKABLE QString id() const;
