@@ -623,10 +623,13 @@ $(document).ready(function() {
     return;
   }
 
+  var body  = $('body');
+  var modal = $('#modal');
+
   /*
    * Создание модального диалога.
    */
-  $('body').on('click.modal', '.modal-toggle', function (event) {
+  body.on('click.modal', '.modal-toggle', function (event) {
     var handler = $(this).attr('data-handler');
     if (handler !== undefined && Modal.create.hasOwnProperty(handler)) {
       Modal.create[handler](event);
@@ -638,7 +641,7 @@ $(document).ready(function() {
   });
 
 
-  $('#modal').on('hidden', function () {
+  modal.on('hidden', function () {
     if (Modal.hidden.hasOwnProperty(Modal.current))
       Modal.hidden[Modal.current]();
 
@@ -646,13 +649,13 @@ $(document).ready(function() {
     $('#modal-body *').remove();
   });
 
-  $('#modal').on('shown', function () {
+  modal.on('shown', function () {
     if (Modal.shown.hasOwnProperty(Modal.current))
       Modal.shown[Modal.current]();
   });
 
 
-  $('body').on('click', '[data-dismiss="alert"]', function(event) {
+  body.on('click', '[data-dismiss="alert"]', function(event) {
     event.preventDefault();
     $(this).parent().remove();
     alignChat();
