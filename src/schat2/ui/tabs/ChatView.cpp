@@ -154,6 +154,19 @@ QString ChatView::getId() const
 }
 
 
+void ChatView::allowFocus(bool allow)
+{
+  if (allow) {
+    setFocusPolicy(Qt::WheelFocus);
+    setFocus();
+  }
+  else {
+    setFocusPolicy(Qt::NoFocus);
+    ChatNotify::start(Notify::SetSendFocus);
+  }
+}
+
+
 /*!
  * Завершение загрузки документа.
  */

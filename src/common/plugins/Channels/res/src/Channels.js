@@ -80,13 +80,68 @@ var Channels = {
    */
   menu: function() {
     return '<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">' +
-             '<li><a href="#" data-tr="channels_title">' + Utils.tr('channels_title') + '</a></li>' +
+             '<li><a href="#" data-tr="channels_title" class="modal-toggle" data-handler="title">' + Utils.tr('channels_title') + '</a></li>' +
            '</ul>';
   }
 };
 
+
+/*
+ * Создание модального окна для изменения заголовка канала.
+ */
+Modal.create.title = function(event)
+{
+  ChatView.allowFocus(true);
+
+  var h3 = $('#modal-header h3');
+  h3.text(event.target.innerText);
+  h3.attr('data-tr', 'channels_title');
+
+  var modal = $('#modal-body');
+  modal.append('<form id="title-form">' +
+                 '<div id="title-group" class="control-group">' +
+                   '<input id="title-edit" type="text" maxlength="512">' +
+                   '<button id="title-ok" type="submit" class="btn" data-tr="ok">' + Utils.tr('ok') + '</button>' +
+                 '</div>' +
+               '</form>');
+
+  $('#title-edit').val($('#channel-title-text').text());
+};
+
+
+/*
+ * Установка фокуса на поле редактирования заголовка канала.
+ */
+Modal.shown.title = function()
+{
+  $('#title-edit').focus();
+};
+
+
+/*
+ * Удаление фокуса при закрытии окна.
+ */
+Modal.hidden.title = function()
+{
+  ChatView.allowFocus(false);
+};
+
+
 $(document).ready(function() {
   $('#page-header').append('<div id="channel-title"><div id="channel-title-text"></div></div>');
+
+  /*
+   * Установка нового заголовка канала.
+   */
+  $('#modal-body').on('click.title', '#title-ok', function (event) {
+    event.preventDefault();
+
+    var text = $('#title-edit').val();
+    $('#modal').modal('hide');
+
+    if ($('#channel-title-text').text() != text)
+      SimpleChat.request(Settings.getId(), 'post', 'info/title', {'value':text, 'options':7});
+  });
 });
 
 Pages.onInfo.push(Channels.reload);
