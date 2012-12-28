@@ -53,6 +53,7 @@ protected:
   QString valueImpl(const QString &key) const
   {
     if (key == LS("my_computers"))           return tr("My Computers");
+    else if (key == LS("ok"))                return tr("OK");
     else if (key == LS("my_computers_desc")) return tr("These are the computers currently linked to your account.");
     else if (key == LS("computer_name"))     return tr("Computer name");
     else if (key == LS("last_activity"))     return tr("Last Activity");

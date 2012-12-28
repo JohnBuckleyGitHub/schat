@@ -630,14 +630,15 @@ $(document).ready(function() {
    * Создание модального диалога.
    */
   body.on('click.modal', '.modal-toggle', function (event) {
+    event.preventDefault();
     var handler = $(this).attr('data-handler');
+
     if (handler !== undefined && Modal.create.hasOwnProperty(handler)) {
       Modal.create[handler](event);
       Modal.current = handler;
     }
 
     $('#modal').modal();
-    event.preventDefault();
   });
 
 
@@ -824,11 +825,12 @@ else {
 
 if (typeof ChatView === 'undefined') {
   ChatView = {
-    jsfiles: function() { return []; },
-    loadFinished: function() {},
-    getId: function() { return ''; },
+    jsfiles: function()            { return []; },
+    loadFinished: function()       {},
+    getId: function()              { return ''; },
     setLastMessage: function(date) {},
-    removeDay: function(day) {}
+    removeDay: function(day)       {},
+    allowFocus: function(allow)    {}
   }
 }
 else {

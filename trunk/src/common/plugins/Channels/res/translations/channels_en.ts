@@ -23,7 +23,7 @@
 <context>
     <name>ChannelsPluginImpl</name>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="144"/>
+        <location filename="../../ChannelsPlugin.cpp" line="175"/>
         <source>Channels</source>
         <translation type="unfinished"></translation>
     </message>
@@ -39,27 +39,27 @@
 <context>
     <name>ChannelsTr</name>
     <message>
-        <location filename="../../ui/ChannelsView.cpp" line="42"/>
+        <location filename="../../ChannelsPlugin.cpp" line="54"/>
         <source>Join</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ui/ChannelsView.cpp" line="43"/>
+        <location filename="../../ChannelsPlugin.cpp" line="55"/>
         <source>Channel name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ui/ChannelsView.cpp" line="44"/>
+        <location filename="../../ChannelsPlugin.cpp" line="56"/>
         <source>Channels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ui/ChannelsView.cpp" line="45"/>
+        <location filename="../../ChannelsPlugin.cpp" line="57"/>
         <source>No title</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ui/ChannelsView.cpp" line="46"/>
+        <location filename="../../ChannelsPlugin.cpp" line="58"/>
         <source>Channel title</source>
         <translation type="unfinished"></translation>
     </message>

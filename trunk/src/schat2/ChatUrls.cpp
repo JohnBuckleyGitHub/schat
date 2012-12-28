@@ -54,11 +54,13 @@ ChatUrls::ChatUrls(QObject *parent)
 
 void ChatUrls::open(const QUrl &url)
 {
-  if (url.scheme() == LS("schat"))
+  const QString scheme = url.scheme();
+
+  if (scheme == LS("schat"))
     m_self->openSChatUrl(url);
-  else if (url.scheme() == LS("chat"))
+  else if (scheme == LS("chat"))
     m_self->openChatUrl(url);
-  else
+  else if (scheme != LS("qrc"))
     QDesktopServices::openUrl(url);
 }
 
