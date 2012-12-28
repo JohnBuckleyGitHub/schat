@@ -51,11 +51,16 @@ public:
 protected:
   QString valueImpl(const QString &key) const
   {
-    if (key == LS("join"))              return tr("Join");
-    else if (key == LS("channel_name")) return tr("Channel name");
-    else if (key == LS("list"))         return tr("Channels");
-    else if (key == LS("no_title"))     return tr("No title");
-    else if (key == LS("title"))        return tr("Channel title");
+    if (key == LS("join"))                return tr("Join");
+    else if (key == LS("channel_name"))   return tr("Channel name");
+    else if (key == LS("list"))           return tr("Channels");
+    else if (key == LS("no_title"))       return tr("No title");
+    else if (key == LS("title"))          return tr("Channel title");
+    else if (key == LS("options"))        return tr("Options");
+    else if (key == LS("visibility"))     return tr("Visibility in the channel list");
+    else if (key == LS("default"))        return tr("Default");
+    else if (key == LS("always_visible")) return tr("Always visible");
+    else if (key == LS("hidden"))         return tr("Hidden");
     return QString();
   }
 };
@@ -165,6 +170,10 @@ void ChannelsPluginImpl::ready()
   FeedPtr feed = ChatClient::channel()->feed(LS("acl"), false);
   if (!feed)
     ClientFeeds::request(ChatClient::id(), LS("get"), LS("acl/head"));
+
+  feed = ChatClient::server()->feed(LS("acl"), false);
+  if (!feed)
+    ClientFeeds::request(ChatClient::serverId(), LS("get"), LS("acl/head"));
 }
 
 

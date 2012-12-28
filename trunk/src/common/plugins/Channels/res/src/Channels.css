@@ -41,6 +41,15 @@ form, .control-group {
   margin-bottom: 0;
 }
 
+label {
+  color: #333;
+  margin-right: 16px;
+}
+
+.row {
+  margin: 0 6px;
+}
+
 input[type="text"] {
   padding: 4px 6px;
   color: #555555;
@@ -67,4 +76,12 @@ input[type="text"]:focus {
 
 #title-edit {
   -webkit-box-flex: 1;
+  margin-right: 0;
+  border-radius: 4px 0 0 4px;
+}
+
+#title-ok {
+  margin-left: 0;
+  border-radius: 0 4px 4px 0;
+  border-left: 0;
 }

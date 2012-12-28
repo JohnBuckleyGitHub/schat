@@ -81,6 +81,7 @@ var Channels = {
   menu: function() {
     return '<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">' +
              '<li><a href="#" data-tr="channels_title" class="modal-toggle" data-handler="title">' + Utils.tr('channels_title') + '</a></li>' +
+             '<li><a href="#" data-tr="channels_options" class="modal-toggle" data-handler="options">' + Utils.tr('channels_options') + '</a></li>' +
            '</ul>';
   }
 };
@@ -97,13 +98,14 @@ Modal.create.title = function(event)
   h3.text(event.target.innerText);
   h3.attr('data-tr', 'channels_title');
 
-  var modal = $('#modal-body');
-  modal.append('<form id="title-form">' +
-                 '<div id="title-group" class="control-group">' +
-                   '<input id="title-edit" type="text" maxlength="512">' +
-                   '<button id="title-ok" type="submit" class="btn" data-tr="ok">' + Utils.tr('ok') + '</button>' +
-                 '</div>' +
-               '</form>');
+  $('#modal-body').append(
+    '<form id="title-form">' +
+     '<div id="title-group" class="control-group">' +
+       '<input id="title-edit" type="text" maxlength="512">' +
+       '<button id="title-ok" type="submit" class="btn" data-tr="ok">' + Utils.tr('ok') + '</button>' +
+     '</div>' +
+    '</form>'
+  );
 
   $('#title-edit').val($('#channel-title-text').text());
 };
@@ -127,13 +129,39 @@ Modal.hidden.title = function()
 };
 
 
+/*
+ * Изменение опций канала.
+ */
+Modal.create.options = function(event)
+{
+  var h3 = $('#modal-header h3');
+  h3.text(event.target.innerText);
+  h3.attr('data-tr', 'channels_options');
+
+  var body = $('#modal-body');
+  body.append(
+    '<form>' +
+      '<div id="visibility-row" class="row">' +
+        '<label for="visibility" data-tr="channels_visibility">' + Utils.tr('channels_visibility') + '</label>' +
+        '<select id="visibility">' +
+          '<option data-tr="channels_default">'        + Utils.tr('channels_default')        + '</option>' +
+          '<option data-tr="channels_always_visible">' + Utils.tr('channels_always_visible') + '</option>' +
+          '<option data-tr="channels_hidden">'         + Utils.tr('channels_hidden')         + '</option>' +
+        '</select>' +
+      '</div>' +
+    '</form>'
+  );
+};
+
+
 $(document).ready(function() {
   $('#page-header').append('<div id="channel-title"><div id="channel-title-text"></div></div>');
+  var modal = $('#modal-body');
 
   /*
    * Установка нового заголовка канала.
    */
-  $('#modal-body').on('click.title', '#title-ok', function (event) {
+  modal.on('click.title', '#title-ok', function (event) {
     event.preventDefault();
 
     var text = $('#title-edit').val();
@@ -141,6 +169,15 @@ $(document).ready(function() {
 
     if ($('#channel-title-text').text() != text)
       SimpleChat.request(Settings.getId(), 'post', 'info/title', {'value':text, 'options':7});
+  });
+
+
+  /*
+   * Обработка изменения видимости канала.
+   */
+  modal.on('change.visibility', '#visibility', function (event) {
+    console.log($('#visibility option:selected'));
+
   });
 });
 

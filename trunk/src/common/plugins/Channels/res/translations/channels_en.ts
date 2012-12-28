@@ -23,7 +23,7 @@
 <context>
     <name>ChannelsPluginImpl</name>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="175"/>
+        <location filename="../../ChannelsPlugin.cpp" line="184"/>
         <source>Channels</source>
         <translation type="unfinished"></translation>
     </message>
@@ -61,6 +61,31 @@
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="58"/>
         <source>Channel title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="59"/>
+        <source>Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="60"/>
+        <source>Visibility in the channel list</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="61"/>
+        <source>Default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="62"/>
+        <source>Always visible</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="63"/>
+        <source>Hidden</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
