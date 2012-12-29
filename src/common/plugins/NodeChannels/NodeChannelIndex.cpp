@@ -26,7 +26,8 @@
 #include "sglobal.h"
 
 ChannelIndexData::ChannelIndexData(ChatChannel channel)
-  : count(0)
+  : permanent(channel->permanent())
+  , count(0)
   , visibility(0)
   , name(channel->name())
 {
@@ -46,6 +47,9 @@ ChannelIndexData::ChannelIndexData(ChatChannel channel)
 
 bool ChannelIndexData::isValid() const
 {
+  if (permanent)
+    return true;
+
   return count;
 }
 
@@ -117,7 +121,7 @@ QList<ChatChannel> NodeChannelIndex::channels() const
   foreach (const QByteArray &id, all) {
     if (SimpleID::typeOf(id) == SimpleID::ChannelId) {
       ChatChannel channel = Ch::channel(id, SimpleID::ChannelId, false);
-      if (channel && channel->channels().size())
+      if (channel)
         out.append(channel);
     }
   }

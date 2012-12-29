@@ -16,13 +16,26 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Ch.h"
 #include "NodeChannelsCh.h"
 #include "sglobal.h"
-#include "Ch.h"
+#include "Storage.h"
 
 NodeChannelsCh::NodeChannelsCh(QObject *parent)
   : ChHook(parent)
 {
+}
+
+
+void NodeChannelsCh::load()
+{
+  QStringList permanent = Storage::value(LS("PermanentChannels")).toStringList();
+
+  foreach (const QString &id, permanent) {
+    ChatChannel channel = Ch::channel(SimpleID::decode(id), SimpleID::ChannelId);
+    if (channel)
+      channel->setPermanent(true);
+  }
 }
 
 

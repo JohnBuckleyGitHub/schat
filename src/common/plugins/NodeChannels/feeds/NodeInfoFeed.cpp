@@ -22,6 +22,7 @@
 #include "net/packets/Notice.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
+#include "Storage.h"
 
 NodeInfoFeed::NodeInfoFeed(const QString &name, const QVariantMap &data)
   : Feed(name, data)
@@ -103,7 +104,7 @@ FeedReply NodeInfoFeed::post(const QString &path, const QVariantMap &json, Chann
     return FeedReply(Notice::OK, date);
   }
   else if (path == LS("visibility")) {
-    m_data[path] = value.toInt();
+    visibility(value.toInt());
     return FeedReply(Notice::OK, date);
   }
 
@@ -122,4 +123,32 @@ FeedReply NodeInfoFeed::put(const QString &path, const QVariantMap &json, Channe
   Q_UNUSED(json)
   Q_UNUSED(channel)
   return Notice::Forbidden;
+}
+
+
+/*!
+ * Обновление настроек видимости канала.
+ *
+ * При необходимости обновляется опция "PermanentChannels" в хранилище, для обновления списка постоянных каналов.
+ */
+void NodeInfoFeed::visibility(int value)
+{
+  const QString key     = LS("PermanentChannels");
+  const QString id      = SimpleID::encode(m_header.channel()->id());
+  QStringList permanent = Storage::value(key).toStringList();
+  bool contains         = permanent.contains(id);
+
+  if (value > 0) {
+    if (!contains) {
+      permanent.append(id);
+      Storage::setValue(key, permanent);
+    }
+  }
+  else if (contains) {
+    permanent.removeAll(id);
+    Storage::setValue(key, permanent);
+  }
+
+  static_cast<ServerChannel *>(m_header.channel())->setPermanent(value > 0);
+  m_data[LS("visibility")] = value;
 }

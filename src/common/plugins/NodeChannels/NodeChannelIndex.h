@@ -35,6 +35,7 @@ public:
   bool isValid() const;
   bool operator<(const ChannelIndexData &other) const;
 
+  bool permanent; ///< \b true если канал постоянный.
   int count;      ///< Число пользователей в канале.
   int visibility; ///< Видимость канала.
   QByteArray id;  ///< Идентификатор канала.

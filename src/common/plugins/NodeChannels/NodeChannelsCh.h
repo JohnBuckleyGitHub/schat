@@ -27,6 +27,7 @@ class NodeChannelsCh : public ChHook
 
 public:
   NodeChannelsCh(QObject *parent = 0);
+  void load();
   void newChannel(ChatChannel channel, ChatChannel user = ChatChannel());
   void server(ChatChannel channel, bool created);
   void sync(ChatChannel channel, ChatChannel user = ChatChannel());
