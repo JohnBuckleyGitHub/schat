@@ -33,6 +33,9 @@ public:
   FeedReply del(const QString &path, Channel *channel = 0);
   FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0);
   FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0);
+
+private:
+  void visibility(int value);
 };
 
 #endif /* NODEINFOFEED_H_ */

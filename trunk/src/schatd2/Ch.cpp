@@ -382,6 +382,9 @@ void Ch::cache(ChatChannel channel)
 void Ch::remove(ChatChannel channel)
 {
   DataBase::add(channel);
+  if (channel->permanent())
+    return;
+
   remove(channel->id());
 
   foreach (ChHook *hook, m_hooks) {
