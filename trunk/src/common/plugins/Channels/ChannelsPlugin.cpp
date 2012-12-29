@@ -61,6 +61,7 @@ protected:
     else if (key == LS("default"))        return tr("Default");
     else if (key == LS("always_visible")) return tr("Always visible");
     else if (key == LS("hidden"))         return tr("Hidden");
+    else if (key == LS("pin"))            return tr("Pin to channel list");
     return QString();
   }
 };

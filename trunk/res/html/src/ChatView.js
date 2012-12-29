@@ -798,7 +798,7 @@ if (typeof SimpleChat === 'undefined') {
     channel: function(id)                  { return '{}'; },
     translate: function(key)               { return key; },
     setTabPage: function(id, page)         {},
-    feed: function(id, name)               { return {}; },
+    feed: function(id, name, options)      { return false; },
     randomId: function()                   { return ''; },
     bytesToHuman: function(size)           { return '0 bytes'; },
     status: function(id)                   { return 'Offline'; },

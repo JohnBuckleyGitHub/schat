@@ -47,7 +47,11 @@ label {
 }
 
 .row {
-  margin: 0 6px;
+  margin: 6px 0;
+}
+
+#visibility-row {
+  margin-top: 0;
 }
 
 input[type="text"] {

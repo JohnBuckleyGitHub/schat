@@ -101,7 +101,7 @@ Modal.create.title = function(event)
   $('#modal-body').append(
     '<form id="title-form">' +
      '<div id="title-group" class="control-group">' +
-       '<input id="title-edit" type="text" maxlength="512">' +
+       '<input id="title-edit" type="text" maxlength="200">' +
        '<button id="title-ok" type="submit" class="btn" data-tr="ok">' + Utils.tr('ok') + '</button>' +
      '</div>' +
     '</form>'
@@ -138,19 +138,33 @@ Modal.create.options = function(event)
   h3.text(event.target.innerText);
   h3.attr('data-tr', 'channels_options');
 
+  var feed = SimpleChat.feed(Settings.getId(), 'info', 4);
+  if (feed !== false)
+    var visibility = feed.visibility || 0;
+
   var body = $('#modal-body');
+  body.append('<form>');
   body.append(
-    '<form>' +
-      '<div id="visibility-row" class="row">' +
-        '<label for="visibility" data-tr="channels_visibility">' + Utils.tr('channels_visibility') + '</label>' +
-        '<select id="visibility">' +
-          '<option data-tr="channels_default">'        + Utils.tr('channels_default')        + '</option>' +
-          '<option data-tr="channels_always_visible">' + Utils.tr('channels_always_visible') + '</option>' +
-          '<option data-tr="channels_hidden">'         + Utils.tr('channels_hidden')         + '</option>' +
-        '</select>' +
-      '</div>' +
-    '</form>'
+    '<div id="visibility-row" class="row">' +
+      '<label for="visibility" data-tr="channels_visibility">' + Utils.tr('channels_visibility') + '</label>' +
+      '<select id="visibility">' +
+        '<option value="0"  data-tr="channels_default">'                                                   + Utils.tr('channels_default')        + '</option>' +
+        '<option value="1"  ' + (visibility > 0 ? 'selected' : '') + ' data-tr="channels_always_visible">' + Utils.tr('channels_always_visible') + '</option>' +
+        '<option value="-1" ' + (visibility < 0 ? 'selected' : '') + ' data-tr="channels_hidden">'         + Utils.tr('channels_hidden')         + '</option>' +
+      '</select>' +
+    '</div>'
   );
+
+  if (SimpleChat.match(SimpleChat.serverId(), SimpleChat.id()) == 7) {
+    body.append(
+      '<div id="pin-row" class="row">' +
+        '<input id="pin" type="checkbox">' +
+        ' <label for="pin" data-tr="channels_pin">' + Utils.tr('channels_pin') + '</label>' +
+      '</div>'
+    );
+  }
+
+  body.append('</form>');
 };
 
 
@@ -176,8 +190,8 @@ $(document).ready(function() {
    * Обработка изменения видимости канала.
    */
   modal.on('change.visibility', '#visibility', function (event) {
-    console.log($('#visibility option:selected'));
-
+    var value = $(this).find('option:selected').attr('value');
+    SimpleChat.request(Settings.getId(), 'post', 'info/visibility', {'value':value, 'options':7});
   });
 });
 
