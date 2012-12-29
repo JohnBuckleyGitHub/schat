@@ -90,17 +90,20 @@ FeedReply NodeInfoFeed::post(const QString &path, const QVariantMap &json, Chann
     return Notice::BadRequest;
 
   const QVariant& value = json[LS("value")];
+  qint64 date = DateTime::utc();
 
   // Установка текстового заголовка канала.
   if (path == LS("title")) {
-    qint64 date = DateTime::utc();
-
     QVariantMap data;
-    data[LS("text")]   = value.toString().left(512);
+    data[LS("text")]   = value.toString().left(200);
     data[LS("author")] = SimpleID::encode(channel->id());
     data[LS("date")]   = date;
 
     m_data[path] = data;
+    return FeedReply(Notice::OK, date);
+  }
+  else if (path == LS("visibility")) {
+    m_data[path] = value.toInt();
     return FeedReply(Notice::OK, date);
   }
 

@@ -23,7 +23,7 @@
 <context>
     <name>ChannelsPluginImpl</name>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="184"/>
+        <location filename="../../ChannelsPlugin.cpp" line="185"/>
         <source>Channels</source>
         <translation type="unfinished"></translation>
     </message>
@@ -86,6 +86,11 @@
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="63"/>
         <source>Hidden</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="64"/>
+        <source>Pin to channel list</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

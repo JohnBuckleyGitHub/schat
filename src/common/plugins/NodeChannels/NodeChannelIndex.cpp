@@ -27,10 +27,15 @@
 
 ChannelIndexData::ChannelIndexData(ChatChannel channel)
   : count(0)
+  , visibility(0)
   , name(channel->name())
 {
   FeedPtr feed = channel->feed(LS("info"), false);
   if (!feed)
+    return;
+
+  visibility = feed->data().value(LS("visibility"), 0).toInt();
+  if (visibility < 0)
     return;
 
   id    = channel->id();

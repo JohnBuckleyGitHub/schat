@@ -35,10 +35,11 @@ public:
   bool isValid() const;
   bool operator<(const ChannelIndexData &other) const;
 
-  int count;     ///< Число пользователей в канале.
-  QByteArray id; ///< Идентификатор канала.
-  QString name;  ///< Имя канала.
-  QString title; ///< Заголовок канала.
+  int count;      ///< Число пользователей в канале.
+  int visibility; ///< Видимость канала.
+  QByteArray id;  ///< Идентификатор канала.
+  QString name;   ///< Имя канала.
+  QString title;  ///< Заголовок канала.
 };
 
 
