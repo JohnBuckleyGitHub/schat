@@ -26,8 +26,8 @@
 #include "sglobal.h"
 
 ChannelIndexData::ChannelIndexData(ChatChannel channel)
-  : permanent(channel->permanent())
-  , count(0)
+  : count(0)
+  , options(NoOptions)
   , visibility(0)
   , name(channel->name())
 {
@@ -39,15 +39,21 @@ ChannelIndexData::ChannelIndexData(ChatChannel channel)
   if (visibility < 0)
     return;
 
+  if (channel->permanent())
+    options |= Permanent;
+
   id    = channel->id();
   count = channel->channels().size();
   title = feed->data().value(LS("title")).toMap().value(LS("text")).toString();
+
+  if (feed->data().value(LS("pinned"), false).toBool())
+    options |= Pinned;
 }
 
 
 bool ChannelIndexData::isValid() const
 {
-  if (permanent)
+  if (options & Permanent)
     return true;
 
   return count;
@@ -56,10 +62,25 @@ bool ChannelIndexData::isValid() const
 
 bool ChannelIndexData::operator<(const ChannelIndexData &other) const
 {
+  if (other.options & Pinned && !(options & Pinned))
+    return false;
+
   if (other.count == count)
     return name.toLower() < other.name.toLower();
 
   return other.count < count;
+}
+
+
+QVariantList ChannelIndexData::toList() const
+{
+  QVariantList list;
+  list += SimpleID::encode(id);
+  list += name;
+  list += count;
+  list += title;
+  list += options;
+  return list;
 }
 
 

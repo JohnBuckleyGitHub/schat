@@ -31,16 +31,24 @@ class NotifyItem;
 class ChannelIndexData
 {
 public:
+  /// Опции.
+  enum Options {
+    NoOptions = 0, ///< Нет опций.
+    Permanent = 1, ///< Постоянный канал.
+    Pinned    = 2  ///< Закреплённый канал.
+  };
+
   ChannelIndexData(ChatChannel channel);
   bool isValid() const;
   bool operator<(const ChannelIndexData &other) const;
+  QVariantList toList() const;
 
-  bool permanent; ///< \b true если канал постоянный.
-  int count;      ///< Число пользователей в канале.
-  int visibility; ///< Видимость канала.
-  QByteArray id;  ///< Идентификатор канала.
-  QString name;   ///< Имя канала.
-  QString title;  ///< Заголовок канала.
+  int count;         ///< Число пользователей в канале.
+  int options;       ///< Опции.
+  int visibility;    ///< Видимость канала.
+  QByteArray id;     ///< Идентификатор канала.
+  QString name;      ///< Имя канала.
+  QString title;     ///< Заголовок канала.
 };
 
 
