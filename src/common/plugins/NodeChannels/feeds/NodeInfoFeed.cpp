@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Ch.h"
 #include "Channel.h"
 #include "DateTime.h"
 #include "feeds/NodeInfoFeed.h"
@@ -105,6 +106,13 @@ FeedReply NodeInfoFeed::post(const QString &path, const QVariantMap &json, Chann
   }
   else if (path == LS("visibility")) {
     visibility(value.toInt());
+    return FeedReply(Notice::OK, date);
+  }
+  else if (path == LS("pinned")) {
+    if (!Ch::server()->feed(LS("acl"))->can(channel, Acl::Edit))
+      return Notice::Forbidden;
+
+    m_data[path] = value.toBool();
     return FeedReply(Notice::OK, date);
   }
 

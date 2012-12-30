@@ -158,8 +158,8 @@ Modal.create.options = function(event)
   if (SimpleChat.match(SimpleChat.serverId(), SimpleChat.id()) == 7) {
     body.append(
       '<div id="pin-row" class="row">' +
-        '<input id="pin" type="checkbox">' +
-        ' <label for="pin" data-tr="channels_pin">' + Utils.tr('channels_pin') + '</label>' +
+        '<input id="pin" type="checkbox" ' + (feed.pinned == true ? 'checked' : '') + '> ' +
+        '<label for="pin" data-tr="channels_pin">' + Utils.tr('channels_pin') + '</label>' +
       '</div>'
     );
   }
@@ -171,6 +171,7 @@ Modal.create.options = function(event)
 $(document).ready(function() {
   $('#page-header').append('<div id="channel-title"><div id="channel-title-text"></div></div>');
   var modal = $('#modal-body');
+
 
   /*
    * Установка нового заголовка канала.
@@ -193,6 +194,17 @@ $(document).ready(function() {
     var value = $(this).find('option:selected').attr('value');
     SimpleChat.request(Settings.getId(), 'post', 'info/visibility', {'value':value, 'options':7});
   });
+
+
+  /*
+   * Обработка изменения закрепления канала.
+   */
+  modal.on('change.pinned', '#pin', function (event) {
+    SimpleChat.request(Settings.getId(), 'post', 'info/pinned', {'value':$(this).is(':checked'), 'options':7});
+  });
+
+
+  Channels.online();
 });
 
 Pages.onInfo.push(Channels.reload);

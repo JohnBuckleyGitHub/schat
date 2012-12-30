@@ -88,15 +88,8 @@ FeedReply NodeListFeed::put(const QString &path, const QVariantMap &json, Channe
     const QList<ChannelIndexData> &list = NodeChannelsImpl::index()->list();
     QVariantList channels;
 
-    foreach (const ChannelIndexData &data, list) {
-      QVariantList channel;
-      channel += SimpleID::encode(data.id);
-      channel += data.name;
-      channel += data.count;
-      channel += data.title;
-
-      channels.push_back(channel);
-    }
+    foreach (const ChannelIndexData &data, list)
+      channels.push_back(data.toList());
 
     m_data[LS("channels")] = channels;
     m_header.setDate(NodeChannelsImpl::index()->date());
@@ -110,5 +103,5 @@ FeedReply NodeListFeed::put(const QString &path, const QVariantMap &json, Channe
 void NodeListFeed::init()
 {
   m_header.acl().setMask(0444);
-  m_data[LS("format")] = QVariantList() << LS("id") << LS("name") << LS("count") << LS("title");
+  m_data[LS("format")] = QVariantList() << LS("id") << LS("name") << LS("count") << LS("title") << LS("options");
 }
