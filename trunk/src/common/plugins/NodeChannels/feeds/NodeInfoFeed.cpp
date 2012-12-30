@@ -61,7 +61,7 @@ bool NodeInfoFeed::can(Channel *channel, Acl::ResultAcl acl) const
   if (!channel && acl != Acl::Read)
     return false;
 
-  FeedPtr feed = channel->feed(LS("acl"), false, false);
+  FeedPtr feed = m_header.channel()->feed(LS("acl"), false, false);
   if (feed)
     return feed->can(channel, acl);
 
