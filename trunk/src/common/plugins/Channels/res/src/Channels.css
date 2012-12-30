@@ -21,6 +21,10 @@
   color: #555;
 }
 
+.hide {
+  display: none;
+}
+
 #channel-settings {
   display: inline-block;
   width: 16px;
@@ -43,7 +47,6 @@ form, .control-group {
 
 label {
   color: #333;
-  margin-right: 16px;
 }
 
 .row {
