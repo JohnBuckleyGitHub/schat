@@ -17,7 +17,11 @@
  */
 
 var Channels = {
-  acl: -1, // Права доступа к каналу.
+  acl: -1,     // Права доступа к каналу.
+  timeout: {
+    visibility: null,
+    pin: null
+  },
 
   /*
    * Обновление информации.
@@ -42,6 +46,27 @@ var Channels = {
 
     if (status != 300)
       Loader.spinner.remove('loading/info');
+
+    Channels.spinner('visibility', status);
+    Channels.spinner('pin', status);
+  },
+
+
+  /*
+   * Завершение показа спиннера если получен фид.
+   */
+  spinner: function(id, status) {
+    if (Channels.timeout[id] === null)
+      return;
+
+    clearInterval(Channels.timeout[id]);
+    $('#' + id + '-spinner').addClass('hide');
+
+    if (status != 200) {
+      var error = $('#' + id + '-error');
+      error.removeClass('hide');
+      error.attr('title', SimpleChat.statusText(status));
+    }
   },
 
 
@@ -146,12 +171,14 @@ Modal.create.options = function(event)
   body.append('<form>');
   body.append(
     '<div id="visibility-row" class="row">' +
-      '<label for="visibility" data-tr="channels_visibility">' + Utils.tr('channels_visibility') + '</label>' +
+      '<label for="visibility" data-tr="channels_visibility">' + Utils.tr('channels_visibility') + '</label> ' +
       '<select id="visibility">' +
         '<option value="0"  data-tr="channels_default">'                                                   + Utils.tr('channels_default')        + '</option>' +
         '<option value="1"  ' + (visibility > 0 ? 'selected' : '') + ' data-tr="channels_always_visible">' + Utils.tr('channels_always_visible') + '</option>' +
         '<option value="-1" ' + (visibility < 0 ? 'selected' : '') + ' data-tr="channels_hidden">'         + Utils.tr('channels_hidden')         + '</option>' +
-      '</select>' +
+      '</select> ' +
+      '<i id="visibility-spinner" class="icon-spinner hide"></i>' +
+      '<i id="visibility-error" class="icon-error hide"></i>' +
     '</div>'
   );
 
@@ -159,12 +186,21 @@ Modal.create.options = function(event)
     body.append(
       '<div id="pin-row" class="row">' +
         '<input id="pin" type="checkbox" ' + (feed.pinned == true ? 'checked' : '') + '> ' +
-        '<label for="pin" data-tr="channels_pin">' + Utils.tr('channels_pin') + '</label>' +
+        '<label for="pin" data-tr="channels_pin">' + Utils.tr('channels_pin') + '</label> ' +
+        '<i id="pin-spinner" class="icon-spinner hide"></i>' +
+        '<i id="pin-error" class="icon-error hide"></i>' +
       '</div>'
     );
   }
 
   body.append('</form>');
+};
+
+
+Modal.hidden.options = function()
+{
+  clearTimeout(Channels.timeout.visibility);
+  clearTimeout(Channels.timeout.pin);
 };
 
 
@@ -193,6 +229,11 @@ $(document).ready(function() {
   modal.on('change.visibility', '#visibility', function (event) {
     var value = $(this).find('option:selected').attr('value');
     SimpleChat.request(Settings.getId(), 'post', 'info/visibility', {'value':value, 'options':7});
+
+    $('#visibility-error').addClass('hide');
+    Channels.timeout.visibility = setTimeout(function() {
+      $('#visibility-spinner').removeClass('hide');
+    }, 400);
   });
 
 
@@ -201,6 +242,11 @@ $(document).ready(function() {
    */
   modal.on('change.pinned', '#pin', function (event) {
     SimpleChat.request(Settings.getId(), 'post', 'info/pinned', {'value':$(this).is(':checked'), 'options':7});
+
+    $('#pin-error').addClass('hide');
+    Channels.timeout.pin = setTimeout(function() {
+      $('#pin-spinner').removeClass('hide');
+    }, 400);
   });
 
 

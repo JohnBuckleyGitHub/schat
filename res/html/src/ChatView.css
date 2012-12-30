@@ -338,57 +338,61 @@ a:active, a:hover {
 }
 
 .icon-spinner {
-  background-image: url("qrc:/images/spinner.gif");
+  background-image: url(qrc:/images/spinner.gif);
 }
 
 .icon-spinner-small {
   width: 14px;
   height: 14px;
-  background-image: url("qrc:/images/spinner-small.gif");
+  background-image: url(qrc:/images/spinner-small.gif);
 }
 
 .icon-unknown {
-  background-image: url("qrc:/webkit/resources/missingImage.png");
+  background-image: url(qrc:/webkit/resources/missingImage.png);
 }
 
 .icon-info {
-  background-image: url("qrc:/images/information.png");
+  background-image: url(qrc:/images/information.png);
+}
+
+.icon-error {
+  background-image: url(qrc:/images/exclamation-red.png);
 }
 
 .icon-computer {
-  background-image: url("qrc:/images/computer.png");
+  background-image: url(qrc:/images/computer.png);
 }
 
 .icon-profile {
-  background-image: url("qrc:/images/profile.png");
+  background-image: url(qrc:/images/profile.png);
 }
 
 .icon-os {
-  background-image: url("qrc:/images/os.png");
+  background-image: url(qrc:/images/os.png);
 }
 
 .icon-status {
-  background-image: url("qrc:/images/status.png");
+  background-image: url(qrc:/images/status.png);
 }
 
 .icon-status-offline {
-  background-image: url("qrc:/images/status-offline.png");
+  background-image: url(qrc:/images/status-offline.png);
 }
 
 .icon-globe {
-  background-image: url("qrc:/images/globe.png");
+  background-image: url(qrc:/images/globe.png);
 }
 
 .icon-plus-small {
   width: 7px;
   height: 7px;
-  background-image: url("qrc:/images/plus-small.png");
+  background-image: url(qrc:/images/plus-small.png);
 }
 
 .icon-minus-small {
   width: 7px;
   height: 7px;
-  background-image: url("qrc:/images/minus-small.png");
+  background-image: url(qrc:/images/minus-small.png);
 }
 
 .os-windows {
