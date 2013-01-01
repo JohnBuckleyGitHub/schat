@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
   !endif
 !macroend
 
-${def} SCHAT_VERSION       "1.99.50"
+${def} SCHAT_VERSION       "1.99.51"
 ${def} SCHAT_QT_VERSION    "4.8.4"
 ${def} SCHAT_NAME          "Simple Chat 2"
 ${def} SCHAT_NAME_SHORT    "Simple Chat 2"
