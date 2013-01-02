@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
  */
 
 #include <QWebFrame>
+#include <QContextMenuEvent>
+#include <QMenu>
 
 #include "ChatNotify.h"
 #include "client/ChatClient.h"
@@ -26,14 +28,17 @@
 #include "ui/ChannelsView.h"
 #include "ui/TabWidget.h"
 #include "WebBridge.h"
+#include "ui/tabs/ChatView.h"
 
 ChannelsView::ChannelsView(QWidget *parent)
-  : QWebView(parent)
+  : WebView(parent)
 {
   setAcceptDrops(false);
 
   connect(page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), SLOT(populateJavaScriptWindowObject()));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+
+  retranslateUi();
 }
 
 
@@ -49,6 +54,36 @@ void ChannelsView::join(const QString &name)
   }
   else
     ChatClient::channels()->join(name);
+}
+
+
+void ChannelsView::contextMenuEvent(QContextMenuEvent *event)
+{
+  QMenu menu(this);
+
+  QWebHitTestResult r = page()->mainFrame()->hitTestContent(event->pos());
+  bool selected = r.isContentSelected();
+  bool editable = r.isContentEditable();
+
+  if (selected) {
+    if (editable)
+      menu.addAction(pageAction(QWebPage::Cut));
+
+    menu.addAction(pageAction(QWebPage::Copy));
+  }
+
+  const QUrl url = r.linkUrl();
+  if (!url.isEmpty() && url.scheme() != LS("chat") && url.scheme() != LS("qrc"))
+    menu.addAction(pageAction(QWebPage::CopyLinkToClipboard));
+
+  if (editable) {
+    if (ChatView::canPaste())
+      menu.addAction(pageAction(QWebPage::Paste));
+  }
+
+  menu.addAction(pageAction(QWebPage::SelectAll));
+
+  menu.exec(event->globalPos());
 }
 
 
