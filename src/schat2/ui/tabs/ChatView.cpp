@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include <QAction>
+#include <QApplication>
+#include <QClipboard>
 #include <QContextMenuEvent>
 #include <QEvent>
 #include <QMenu>
@@ -92,6 +92,16 @@ bool ChatView::find(const QString &text, bool forward)
     found = true;
 
   return found;
+}
+
+
+bool ChatView::canPaste()
+{
+  const QMimeData *md = QApplication::clipboard()->mimeData();
+  if (!md)
+    return false;
+
+  return (md->hasText() && !md->text().isEmpty()) || md->hasHtml() || md->hasFormat(LS("application/x-qrichtext")) || md->hasFormat(LS("application/x-qt-richtext"));
 }
 
 
@@ -224,13 +234,27 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
 {
   QMenu menu(this);
 
-  if (!selectedText().isEmpty())
-    menu.addAction(m_copy);
-
   QWebHitTestResult r = page()->mainFrame()->hitTestContent(event->pos());
+  bool selected = r.isContentSelected();
+  bool editable = r.isContentEditable();
+
+  if (selected) {
+    if (editable)
+      menu.addAction(pageAction(QWebPage::Cut));
+
+    menu.addAction(pageAction(QWebPage::Copy));
+  }
+
   QUrl url = r.linkUrl();
-  if (!url.isEmpty() && url.scheme() != LS("chat"))
-    menu.addAction(m_copyLink);
+  if (!url.isEmpty() && url.scheme() != LS("chat") && url.scheme() != LS("qrc"))
+    menu.addAction(pageAction(QWebPage::CopyLinkToClipboard));
+
+  if (editable) {
+    if (canPaste())
+      menu.addAction(pageAction(QWebPage::Paste));
+
+    menu.addAction(pageAction(QWebPage::SelectAll));
+  }
 
   menu.addSeparator();
 
@@ -259,7 +283,8 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
   else
     menu.addAction(m_clear);
 
-  menu.addAction(m_selectAll);
+  if (!editable)
+    menu.addAction(pageAction(QWebPage::SelectAll));
 
   connect(&menu, SIGNAL(triggered(QAction *)), SLOT(menuTriggered(QAction *)));
 
@@ -407,17 +432,14 @@ void ChatView::clearPage()
 
 void ChatView::createActions()
 {
-  m_copy = pageAction(QWebPage::Copy);
-  m_copy->setIcon(SCHAT_ICON(EditCopy));
-
-  m_copyLink = pageAction(QWebPage::CopyLinkToClipboard);
-  m_copyLink->setIcon(SCHAT_ICON(EditCopy));
+  pageAction(QWebPage::Cut)->setIcon(SCHAT_ICON(EditCut));
+  pageAction(QWebPage::Copy)->setIcon(SCHAT_ICON(EditCopy));
+  pageAction(QWebPage::CopyLinkToClipboard)->setIcon(SCHAT_ICON(EditCopy));
+  pageAction(QWebPage::Paste)->setIcon(SCHAT_ICON(EditPaste));
+  pageAction(QWebPage::SelectAll)->setIcon(SCHAT_ICON(EditSelectAll));
 
   m_clear = new QAction(SCHAT_ICON(EditClear), tr("Clear"), this);
   m_reload = new QAction(SCHAT_ICON(Reload), tr("Reload"), this);
-
-  m_selectAll = pageAction(QWebPage::SelectAll);
-  m_selectAll->setIcon(SCHAT_ICON(EditSelectAll));
 
   m_seconds = new QAction(tr("Seconds"), this);
   m_seconds->setCheckable(true);
@@ -435,11 +457,16 @@ void ChatView::reloadPage()
 
 void ChatView::retranslateUi()
 {
-  m_copy->setText(tr("Copy"));
-  m_copyLink->setText(tr("Copy Link"));
+  pageAction(QWebPage::Cut)->setText(tr("Cut"));
+  pageAction(QWebPage::Copy)->setText(tr("Copy"));
+  pageAction(QWebPage::CopyLinkToClipboard)->setText(tr("Copy Link"));
+  pageAction(QWebPage::Paste)->setText(tr("Paste"));
+  pageAction(QWebPage::SelectAll)->setText(tr("Select All"));
+
   m_clear->setText(tr("Clear"));
   m_reload->setText(tr("Reload"));
-  m_selectAll->setText(tr("Select All"));
+  m_seconds->setText(tr("Seconds"));
+  m_service->setText(tr("Service messages"));
 }
 
 
@@ -451,6 +478,5 @@ WebPage::WebPage(QObject* parent)
 
 bool WebPage::shouldInterruptJavaScript()
 {
-  qDebug() << "WebPage::shouldInterruptJavaScript()";
   return false;
 }

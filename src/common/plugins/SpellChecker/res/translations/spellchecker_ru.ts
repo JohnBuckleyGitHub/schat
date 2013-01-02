@@ -5,17 +5,17 @@
 <context>
     <name>SpellChecker</name>
     <message>
-        <location filename="../../SpellChecker.cpp" line="169"/>
+        <location filename="../../SpellChecker.cpp" line="167"/>
         <source>Add to dictionary</source>
         <translation>Добавить в словарь</translation>
     </message>
     <message>
-        <location filename="../../SpellChecker.cpp" line="230"/>
+        <location filename="../../SpellChecker.cpp" line="227"/>
         <source>No suggestions</source>
         <translation>Нет вариантов</translation>
     </message>
     <message>
-        <location filename="../../SpellChecker.cpp" line="238"/>
+        <location filename="../../SpellChecker.cpp" line="235"/>
         <source>Suggestions</source>
         <translation>Варианты</translation>
     </message>

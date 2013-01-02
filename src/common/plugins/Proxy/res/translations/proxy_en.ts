@@ -5,43 +5,43 @@
 <context>
     <name>ProxySettings</name>
     <message>
-        <location filename="../../ProxySettings.cpp" line="89"/>
+        <location filename="../../ProxySettings.cpp" line="211"/>
         <source>Connect via proxy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ProxySettings.cpp" line="90"/>
+        <location filename="../../ProxySettings.cpp" line="212"/>
         <source>Type:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ProxySettings.cpp" line="91"/>
+        <location filename="../../ProxySettings.cpp" line="213"/>
         <source>Address:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ProxySettings.cpp" line="92"/>
+        <location filename="../../ProxySettings.cpp" line="214"/>
         <source>Port:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ProxySettings.cpp" line="93"/>
+        <location filename="../../ProxySettings.cpp" line="215"/>
         <source>Name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ProxySettings.cpp" line="94"/>
+        <location filename="../../ProxySettings.cpp" line="216"/>
         <source>Password:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ProxySettings.cpp" line="95"/>
+        <location filename="../../ProxySettings.cpp" line="217"/>
         <source>Apply</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ProxySettings.cpp" line="97"/>
-        <location filename="../../ProxySettings.cpp" line="98"/>
+        <location filename="../../ProxySettings.cpp" line="220"/>
+        <location filename="../../ProxySettings.cpp" line="221"/>
         <source>Optional</source>
         <translation type="unfinished"></translation>
     </message>
