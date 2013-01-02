@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,12 +23,13 @@
 #include <QTimer>
 
 #include "cores/Core.h"
+#include "DataBase.h"
 #include "net/packets/MessageNotice.h"
+#include "NodeLog.h"
 #include "NodeMessagesDB.h"
 #include "sglobal.h"
 #include "Storage.h"
 #include "text/PlainTextFilter.h"
-#include "DataBase.h"
 
 bool NodeMessagesDB::m_isOpen = true;
 NodeMessagesDB *NodeMessagesDB::m_self = 0;
@@ -46,8 +47,10 @@ bool NodeMessagesDB::open()
 {
   QSqlDatabase db = QSqlDatabase::addDatabase(LS("QSQLITE"), m_id);
   db.setDatabaseName(Storage::varPath() + LS("/messages.sqlite"));
-  if (!db.open())
+  if (!db.open()) {
+    SCHAT_LOG_FATAL("Could not open DataBase file" << db.databaseName() << ":" << db.lastError());
     return false;
+  }
 
   QSqlQuery query(db);
   query.exec(LS("PRAGMA synchronous = OFF"));
