@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ Storage::Storage(const QString &app, QObject *parent)
   m_settings->setDefault(LS("LogLevel"),      2);
   m_settings->setDefault(LS("MaxOpenFiles"),  0);
   m_settings->setDefault(LS("NickOverride"),  true);
-  m_settings->setDefault(LS("PrivateId"),     QString(SimpleID::encode(SimpleID::uniqueId())));
+  m_settings->setDefault(LS("PrivateId"),     QString());
   m_settings->setDefault(LS("PrivateKey"),    LS("server.key"));
   m_settings->setDefault(LS("Workers"),       0);
 
@@ -257,14 +257,18 @@ int Storage::start()
   setMaxOpenFiles(m_settings->value(LS("MaxOpenFiles")).toInt());
 # endif
 
+  DataBase::start();
+
   m_privateId = m_settings->value(LS("PrivateId")).toString().toUtf8();
-  if (m_privateId == SimpleID::encode(SimpleID::uniqueId())) {
-    SCHAT_LOG_WARN("Сonfiguration option \"PrivateId\" uses a default value, please set your own private ID")
+  if (m_privateId.isEmpty()) {
+    m_privateId = value(LS("PrivateId")).toByteArray();
+
+    if (m_privateId.isEmpty())
+      m_privateId = SimpleID::encode(SimpleID::uniqueId());
   }
 
   m_id = SimpleID::make(m_privateId, SimpleID::ServerId);
-
-  DataBase::start();
+  setValue(LS("PrivateId"), m_privateId);
   return 0;
 }
 
