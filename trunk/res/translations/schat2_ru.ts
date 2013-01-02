@@ -135,44 +135,56 @@
 <context>
     <name>ChatView</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="242"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="268"/>
         <source>Display</source>
         <translation>Отображать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="416"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="440"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="443"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="468"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="417"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="441"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="444"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="469"/>
         <source>Reload</source>
         <translation>Обновить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="422"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="446"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="470"/>
         <source>Seconds</source>
         <translation>Секунды</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="425"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="449"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="471"/>
         <source>Service messages</source>
         <translation>Сервисные сообщения</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="438"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="462"/>
+        <source>Cut</source>
+        <translation>Вырезать</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="463"/>
         <source>Copy</source>
         <translation>Копировать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="439"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="464"/>
         <source>Copy Link</source>
         <translation>Копировать ссылку</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="442"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="465"/>
+        <source>Paste</source>
+        <translation>Вставить</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="466"/>
         <source>Select All</source>
         <translation>Выделить всё</translation>
     </message>

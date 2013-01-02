@@ -5,7 +5,7 @@
 <context>
     <name>YouTubeSettings</name>
     <message>
-        <location filename="../../YouTubeSettings.cpp" line="53"/>
+        <location filename="../../YouTubeSettings.cpp" line="61"/>
         <source>Embed video</source>
         <translation>Встроить видео</translation>
     </message>

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@ public:
 
   bool find(const QString &text, bool forward = true);
   inline const QByteArray& id() const { return m_id; }
+  static bool canPaste();
   void add(const Message &msg);
   void addCSS(const QString &file);
   void copy();
@@ -83,11 +84,8 @@ private:
 
   bool m_loaded;                                       ///< true если документ загружен.
   QAction *m_clear;                                    ///< Очистить.
-  QAction *m_copy;                                     ///< Копировать.
-  QAction *m_copyLink;                                 ///< Копировать ссылку.
   QAction *m_reload;                                   ///< Обновить.
   QAction *m_seconds;                                  ///< Секунды.
-  QAction *m_selectAll;                                ///< Выделить всё.
   QAction *m_service;                                  ///< Сервисные сообщения.
   QByteArray m_id;                                     ///< Идентификатор.
   qint64 m_lastMessage;                                ///< Время последнего сообщения.
