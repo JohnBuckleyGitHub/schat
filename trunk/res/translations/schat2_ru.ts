@@ -135,58 +135,33 @@
 <context>
     <name>ChatView</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="268"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="257"/>
         <source>Display</source>
         <translation>Отображать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="443"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="468"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="290"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="437"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="444"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="469"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="291"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="438"/>
         <source>Reload</source>
         <translation>Обновить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="446"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="470"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="292"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="440"/>
         <source>Seconds</source>
         <translation>Секунды</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="449"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="471"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="293"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="443"/>
         <source>Service messages</source>
         <translation>Сервисные сообщения</translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="462"/>
-        <source>Cut</source>
-        <translation>Вырезать</translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="463"/>
-        <source>Copy</source>
-        <translation>Копировать</translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="464"/>
-        <source>Copy Link</source>
-        <translation>Копировать ссылку</translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="465"/>
-        <source>Paste</source>
-        <translation>Вставить</translation>
-    </message>
-    <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="466"/>
-        <source>Select All</source>
-        <translation>Выделить всё</translation>
     </message>
 </context>
 <context>
@@ -1047,6 +1022,34 @@
         <location filename="../../src/schat2/WebBridge.cpp" line="92"/>
         <source>no</source>
         <translation>отсутствует</translation>
+    </message>
+</context>
+<context>
+    <name>WebView</name>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/WebView.cpp" line="47"/>
+        <source>Cut</source>
+        <translation>Вырезать</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/WebView.cpp" line="48"/>
+        <source>Copy</source>
+        <translation>Копировать</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/WebView.cpp" line="49"/>
+        <source>Copy Link</source>
+        <translation>Копировать ссылку</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/WebView.cpp" line="50"/>
+        <source>Paste</source>
+        <translation>Вставить</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/WebView.cpp" line="51"/>
+        <source>Select All</source>
+        <translation>Выделить всё</translation>
     </message>
 </context>
 <context>

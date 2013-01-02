@@ -44,7 +44,7 @@
 #include "WebBridge.h"
 
 ChatView::ChatView(const QByteArray &id, const QString &url, QWidget *parent)
-  : QWebView(parent)
+  : WebView(parent)
   , m_loaded(false)
   , m_id(id)
   , m_lastMessage(0)
@@ -218,15 +218,6 @@ void ChatView::setLastMessage(qint64 date)
 }
 
 
-void ChatView::changeEvent(QEvent *event)
-{
-  if (event->type() == QEvent::LanguageChange)
-    retranslateUi();
-
-  QWebView::changeEvent(event);
-}
-
-
 /*!
  * Показ контекстного меню.
  */
@@ -289,6 +280,17 @@ void ChatView::contextMenuEvent(QContextMenuEvent *event)
   connect(&menu, SIGNAL(triggered(QAction *)), SLOT(menuTriggered(QAction *)));
 
   menu.exec(event->globalPos());
+}
+
+
+void ChatView::retranslateUi()
+{
+  WebView::retranslateUi();
+
+  m_clear->setText(tr("Clear"));
+  m_reload->setText(tr("Reload"));
+  m_seconds->setText(tr("Seconds"));
+  m_service->setText(tr("Service messages"));
 }
 
 
@@ -432,12 +434,6 @@ void ChatView::clearPage()
 
 void ChatView::createActions()
 {
-  pageAction(QWebPage::Cut)->setIcon(SCHAT_ICON(EditCut));
-  pageAction(QWebPage::Copy)->setIcon(SCHAT_ICON(EditCopy));
-  pageAction(QWebPage::CopyLinkToClipboard)->setIcon(SCHAT_ICON(EditCopy));
-  pageAction(QWebPage::Paste)->setIcon(SCHAT_ICON(EditPaste));
-  pageAction(QWebPage::SelectAll)->setIcon(SCHAT_ICON(EditSelectAll));
-
   m_clear = new QAction(SCHAT_ICON(EditClear), tr("Clear"), this);
   m_reload = new QAction(SCHAT_ICON(Reload), tr("Reload"), this);
 
@@ -452,21 +448,6 @@ void ChatView::createActions()
 void ChatView::reloadPage()
 {
   emit reload();
-}
-
-
-void ChatView::retranslateUi()
-{
-  pageAction(QWebPage::Cut)->setText(tr("Cut"));
-  pageAction(QWebPage::Copy)->setText(tr("Copy"));
-  pageAction(QWebPage::CopyLinkToClipboard)->setText(tr("Copy Link"));
-  pageAction(QWebPage::Paste)->setText(tr("Paste"));
-  pageAction(QWebPage::SelectAll)->setText(tr("Select All"));
-
-  m_clear->setText(tr("Clear"));
-  m_reload->setText(tr("Reload"));
-  m_seconds->setText(tr("Seconds"));
-  m_service->setText(tr("Service messages"));
 }
 
 

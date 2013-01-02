@@ -23,13 +23,13 @@
 #include <QVariant>
 #include <QWebView>
 
-#include "schat.h"
+#include "ui/tabs/WebView.h"
 
 class FeedNotify;
 class Message;
 class Notify;
 
-class SCHAT_CORE_EXPORT ChatView : public QWebView
+class SCHAT_CORE_EXPORT ChatView : public WebView
 {
   Q_OBJECT
 
@@ -62,8 +62,8 @@ signals:
   void reload();
 
 protected:
-  void changeEvent(QEvent *event);
   void contextMenuEvent(QContextMenuEvent *event);
+  void retranslateUi();
   void showEvent(QShowEvent *event);
 
 private slots:
@@ -80,7 +80,6 @@ private:
   void clearPage();
   void createActions();
   void reloadPage();
-  void retranslateUi();
 
   bool m_loaded;                                       ///< true если документ загружен.
   QAction *m_clear;                                    ///< Очистить.

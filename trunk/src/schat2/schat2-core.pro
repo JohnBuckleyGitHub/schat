@@ -108,6 +108,7 @@ HEADERS = \
     ui/tabs/SettingsTab.h \
     ui/tabs/SettingsTabHook.h \
     ui/tabs/UserView.h \
+    ui/tabs/WebView.h \
     ui/tabs/WelcomeTab.h \
     ui/TabsToolBar.h \
     ui/TabWidget.h \
@@ -194,6 +195,7 @@ SOURCES = \
     ui/tabs/SettingsTab.cpp \
     ui/tabs/SettingsTabHook.cpp \
     ui/tabs/UserView.cpp \
+    ui/tabs/WebView.cpp \
     ui/tabs/WelcomeTab.cpp \
     ui/TabsToolBar.cpp \
     ui/TabWidget.cpp \

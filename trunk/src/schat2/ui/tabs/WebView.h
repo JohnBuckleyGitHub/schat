@@ -16,32 +16,24 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHANNELSVIEW_H_
-#define CHANNELSVIEW_H_
+#ifndef WEBVIEW_H_
+#define WEBVIEW_H_
 
-#include <QVariant>
+#include <QWebView>
 
-#include "ui/tabs/WebView.h"
+#include "schat.h"
 
-class Notify;
-
-class ChannelsView : public WebView
+class SCHAT_CORE_EXPORT WebView : public QWebView
 {
   Q_OBJECT
 
 public:
-  ChannelsView(QWidget *parent = 0);
-  Q_INVOKABLE void join(const QString &name);
-
-signals:
-  void feed(const QVariantMap &data);
+  WebView(QWidget *parent = 0);
 
 protected:
-  void contextMenuEvent(QContextMenuEvent *event);
+  void changeEvent(QEvent *event);
 
-private slots:
-  void notify(const Notify &notify);
-  void populateJavaScriptWindowObject();
+  virtual void retranslateUi();
 };
 
-#endif /* CHANNELSVIEW_H_ */
+#endif /* WEBVIEW_H_ */
