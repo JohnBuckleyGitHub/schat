@@ -16,20 +16,32 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QEvent>
+#include <QContextMenuEvent>
 #include <QAction>
+#include <QApplication>
+#include <QClipboard>
+#include <QMenu>
+#include <QWebFrame>
 
 #include "ui/tabs/WebView.h"
 #include "ui/ChatIcons.h"
+#include "sglobal.h"
 
 WebView::WebView(QWidget *parent)
   : QWebView(parent)
 {
-  pageAction(QWebPage::Cut)->setIcon(SCHAT_ICON(EditCut));
-  pageAction(QWebPage::Copy)->setIcon(SCHAT_ICON(EditCopy));
-  pageAction(QWebPage::CopyLinkToClipboard)->setIcon(SCHAT_ICON(EditCopy));
-  pageAction(QWebPage::Paste)->setIcon(SCHAT_ICON(EditPaste));
-  pageAction(QWebPage::SelectAll)->setIcon(SCHAT_ICON(EditSelectAll));
+  setPage(new WebPage(this));
+  setAcceptDrops(false);
+}
+
+
+bool WebView::canPaste()
+{
+  const QMimeData *md = QApplication::clipboard()->mimeData();
+  if (!md)
+    return false;
+
+  return (md->hasText() && !md->text().isEmpty()) || md->hasHtml() || md->hasFormat(LS("application/x-qrichtext")) || md->hasFormat(LS("application/x-qt-richtext"));
 }
 
 
@@ -42,6 +54,62 @@ void WebView::changeEvent(QEvent *event)
 }
 
 
+void WebView::contextMenuEvent(QContextMenuEvent *event)
+{
+  QMenu menu(this);
+  const QWebHitTestResult r = page()->mainFrame()->hitTestContent(event->pos());
+  bool selected = r.isContentSelected();
+  bool editable = r.isContentEditable();
+
+  if (selected) {
+    if (editable)
+      menu.addAction(pageAction(QWebPage::Cut));
+
+    menu.addAction(pageAction(QWebPage::Copy));
+  }
+
+  const QUrl url = r.linkUrl();
+  if (!url.isEmpty() && url.scheme() != LS("chat") && url.scheme() != LS("qrc"))
+    menu.addAction(pageAction(QWebPage::CopyLinkToClipboard));
+
+  if (editable && canPaste())
+    menu.addAction(pageAction(QWebPage::Paste));
+
+  menu.addAction(pageAction(QWebPage::SelectAll));
+  developerMenu(&menu);
+  contextMenu(&menu, r);
+
+  menu.exec(event->globalPos());
+}
+
+
+void WebView::developerMenu(QMenu *menu)
+{
+  if (QWebSettings::globalSettings()->testAttribute(QWebSettings::DeveloperExtrasEnabled)) {
+    menu->addSeparator();
+    menu->addAction(pageAction(QWebPage::Reload));
+    menu->addAction(pageAction(QWebPage::InspectElement));
+  }
+}
+
+
+void WebView::setIcons()
+{
+  pageAction(QWebPage::Cut)->setIcon(SCHAT_ICON(EditCut));
+  pageAction(QWebPage::Copy)->setIcon(SCHAT_ICON(EditCopy));
+  pageAction(QWebPage::CopyLinkToClipboard)->setIcon(SCHAT_ICON(EditCopy));
+  pageAction(QWebPage::Paste)->setIcon(SCHAT_ICON(EditPaste));
+  pageAction(QWebPage::SelectAll)->setIcon(SCHAT_ICON(EditSelectAll));
+}
+
+
+void WebView::contextMenu(QMenu *menu, const QWebHitTestResult &result)
+{
+  Q_UNUSED(menu)
+  Q_UNUSED(result)
+}
+
+
 void WebView::retranslateUi()
 {
   pageAction(QWebPage::Cut)->setText(tr("Cut"));
@@ -50,3 +118,16 @@ void WebView::retranslateUi()
   pageAction(QWebPage::Paste)->setText(tr("Paste"));
   pageAction(QWebPage::SelectAll)->setText(tr("Select All"));
 }
+
+
+WebPage::WebPage(QObject* parent)
+  : QWebPage(parent)
+{
+}
+
+
+bool WebPage::shouldInterruptJavaScript()
+{
+  return false;
+}
+

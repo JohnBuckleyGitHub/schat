@@ -17,8 +17,6 @@
  */
 
 #include <QAction>
-#include <QApplication>
-#include <QClipboard>
 #include <QContextMenuEvent>
 #include <QEvent>
 #include <QMenu>
@@ -51,7 +49,6 @@ ChatView::ChatView(const QByteArray &id, const QString &url, QWidget *parent)
 {
   setPage(new WebPage(this));
 
-  setAcceptDrops(false);
   page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
 
   setUrl(QUrl(url));
@@ -63,6 +60,7 @@ ChatView::ChatView(const QByteArray &id, const QString &url, QWidget *parent)
   connect(this, SIGNAL(linkClicked(const QUrl &)), SLOT(openUrl(const QUrl &)));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 
+  setIcons();
   createActions();
   retranslateUi();
 
@@ -92,16 +90,6 @@ bool ChatView::find(const QString &text, bool forward)
     found = true;
 
   return found;
-}
-
-
-bool ChatView::canPaste()
-{
-  const QMimeData *md = QApplication::clipboard()->mimeData();
-  if (!md)
-    return false;
-
-  return (md->hasText() && !md->text().isEmpty()) || md->hasHtml() || md->hasFormat(LS("application/x-qrichtext")) || md->hasFormat(LS("application/x-qt-richtext"));
 }
 
 
@@ -218,68 +206,40 @@ void ChatView::setLastMessage(qint64 date)
 }
 
 
-/*!
- * Показ контекстного меню.
- */
-void ChatView::contextMenuEvent(QContextMenuEvent *event)
+void ChatView::contextMenu(QMenu *menu, const QWebHitTestResult &result)
 {
-  QMenu menu(this);
+  menu->addSeparator();
 
-  QWebHitTestResult r = page()->mainFrame()->hitTestContent(event->pos());
-  bool selected = r.isContentSelected();
-  bool editable = r.isContentEditable();
-
-  if (selected) {
-    if (editable)
-      menu.addAction(pageAction(QWebPage::Cut));
-
-    menu.addAction(pageAction(QWebPage::Copy));
-  }
-
-  QUrl url = r.linkUrl();
-  if (!url.isEmpty() && url.scheme() != LS("chat") && url.scheme() != LS("qrc"))
-    menu.addAction(pageAction(QWebPage::CopyLinkToClipboard));
-
-  if (editable) {
-    if (canPaste())
-      menu.addAction(pageAction(QWebPage::Paste));
-
-    menu.addAction(pageAction(QWebPage::SelectAll));
-  }
-
-  menu.addSeparator();
-
+  const QUrl url = result.linkUrl();
   if (url.scheme() == LS("chat") && url.host() == LS("channel"))
-    Hooks::ChannelMenu::bind(&menu, ChatUrls::channel(url), Hooks::ChatViewScope);
+    Hooks::ChannelMenu::bind(menu, ChatUrls::channel(url), Hooks::ChatViewScope);
   else
-    Hooks::ChannelMenu::bind(&menu, ChatClient::channels()->get(m_id), Hooks::ChatViewScope);
+    Hooks::ChannelMenu::bind(menu, ChatClient::channels()->get(m_id), Hooks::ChatViewScope);
 
-  QMenu display(tr("Display"), this);
-  display.setIcon(SCHAT_ICON(Gear));
-  menu.addSeparator();
-  menu.addMenu(&display);
-  display.addAction(m_seconds);
-  display.addAction(m_service);
+  menu->addSeparator();
+  QMenu *display = menu->addMenu(SCHAT_ICON(Gear), tr("Display"));
+  display->addAction(m_seconds);
+  display->addAction(m_service);
+  developerMenu(display);
+  display->removeAction(pageAction(QWebPage::Reload));
 
-  if (QWebSettings::globalSettings()->testAttribute(QWebSettings::DeveloperExtrasEnabled)) {
-    display.addSeparator();
-    display.addAction(pageAction(QWebPage::InspectElement));
-  }
-
-  menu.addSeparator();
+  menu->addSeparator();
 
   ClientChannel channel = ChatClient::channels()->get(id());
   if (channel && channel->data().value(LS("page")) == 1)
-    menu.addAction(m_reload);
+    menu->addAction(m_reload);
   else
-    menu.addAction(m_clear);
+    menu->addAction(m_clear);
 
-  if (!editable)
-    menu.addAction(pageAction(QWebPage::SelectAll));
+  if (!result.isContentEditable()) {
+    menu->removeAction(pageAction(QWebPage::SelectAll));
+    menu->addAction(pageAction(QWebPage::SelectAll));
+  }
 
-  connect(&menu, SIGNAL(triggered(QAction *)), SLOT(menuTriggered(QAction *)));
+  menu->removeAction(pageAction(QWebPage::Reload));
+  menu->removeAction(pageAction(QWebPage::InspectElement));
 
-  menu.exec(event->globalPos());
+  connect(menu, SIGNAL(triggered(QAction*)), SLOT(menuTriggered(QAction*)));
 }
 
 
@@ -448,16 +408,4 @@ void ChatView::createActions()
 void ChatView::reloadPage()
 {
   emit reload();
-}
-
-
-WebPage::WebPage(QObject* parent)
-  : QWebPage(parent)
-{
-}
-
-
-bool WebPage::shouldInterruptJavaScript()
-{
-  return false;
 }
