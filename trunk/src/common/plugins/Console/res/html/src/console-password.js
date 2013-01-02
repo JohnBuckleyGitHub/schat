@@ -4,7 +4,7 @@
 Console.feed.storage.put.password = function(json) {
   console.log(json);
 
-  $('#password-spinner').hide();
+  $('#password-spinner').addClass('hide');
   clearTimeout(Console.password.timeout);
 
   if (json.status == 200) {
@@ -56,7 +56,10 @@ Console.password = {
         return;
       }
 
-      Console.password.timeout = setTimeout(function() { $('#password-spinner').css('display', 'inline-block'); }, 400);
+      Console.password.timeout = setTimeout(function() {
+        $('#password-spinner').removeClass('hide');
+      }, 400);
+
       SimpleChat.request(SimpleChat.serverId(), 'put', 'storage/password', {'value':ConsoleView.toPassword($('#new-password').val())});
     });
 

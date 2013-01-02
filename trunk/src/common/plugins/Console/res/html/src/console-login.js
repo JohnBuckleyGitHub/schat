@@ -5,7 +5,7 @@ Console.feed.console.get.login = function(json) {
   if (Console.current != 'login')
     return;
 
-  $('#login-spinner').hide();
+  $('#login-spinner').addClass('hide');
   clearTimeout(Console.login.timeout);
 
   if (json.status == 200) {
@@ -56,7 +56,9 @@ Console.login = {
 
       if (password.val().length) {
         Console.login.removeError();
-        Console.login.timeout = setTimeout(function() { $('#login-spinner').css('display', 'inline-block'); }, 400);
+        Console.login.timeout = setTimeout(function() {
+          $('#login-spinner').removeClass('hide');
+        }, 400);
 
         SimpleChat.get(SimpleChat.serverId(), 'console/login', {password: ConsoleView.toPassword(password.val())});
       }

@@ -1,3 +1,19 @@
+.hide {
+  display: none;
+}
+
+.navbar-inner {
+  display: -webkit-box;
+}
+
+.brand, nav {
+  display: block;
+}
+
+#main-nav {
+  -webkit-box-flex: 1;
+}
+
 .navbar-console {
   overflow: visible;
   color: #777777;
