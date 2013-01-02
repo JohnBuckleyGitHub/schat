@@ -39,7 +39,6 @@ public:
 
   bool find(const QString &text, bool forward = true);
   inline const QByteArray& id() const { return m_id; }
-  static bool canPaste();
   void add(const Message &msg);
   void addCSS(const QString &file);
   void copy();
@@ -62,7 +61,7 @@ signals:
   void reload();
 
 protected:
-  void contextMenuEvent(QContextMenuEvent *event);
+  void contextMenu(QMenu *menu, const QWebHitTestResult &result);
   void retranslateUi();
   void showEvent(QShowEvent *event);
 
@@ -93,18 +92,6 @@ private:
   QQueue<QVariantMap> m_pendingFeeds;                  ///< Очередь данных фидов ожидающих загрузки документа.
   QQueue<QVariantMap> m_pendingMessages;               ///< Очередь сообщений ожидающих загрузки документа.
   QStringList m_jsfiles;                               ///< Дополнительные динамически загружаемые JavaScript скрипты.
-};
-
-
-class WebPage : public QWebPage
-{
-  Q_OBJECT
-
-public:
-  WebPage(QObject* parent = 0);
-
-public slots:
-  bool shouldInterruptJavaScript();
 };
 
 #endif /* CHATVIEW_H_ */

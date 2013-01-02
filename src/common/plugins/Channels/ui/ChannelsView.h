@@ -36,9 +36,6 @@ public:
 signals:
   void feed(const QVariantMap &data);
 
-protected:
-  void contextMenuEvent(QContextMenuEvent *event);
-
 private slots:
   void notify(const Notify &notify);
   void populateJavaScriptWindowObject();

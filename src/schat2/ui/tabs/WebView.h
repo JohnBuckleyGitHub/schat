@@ -29,11 +29,28 @@ class SCHAT_CORE_EXPORT WebView : public QWebView
 
 public:
   WebView(QWidget *parent = 0);
+  static bool canPaste();
 
 protected:
   void changeEvent(QEvent *event);
+  void contextMenuEvent(QContextMenuEvent *event);
+  void developerMenu(QMenu *menu);
+  void setIcons();
 
+  virtual void contextMenu(QMenu *menu, const QWebHitTestResult &result);
   virtual void retranslateUi();
+};
+
+
+class WebPage : public QWebPage
+{
+  Q_OBJECT
+
+public:
+  WebPage(QObject* parent = 0);
+
+public slots:
+  bool shouldInterruptJavaScript();
 };
 
 #endif /* WEBVIEW_H_ */

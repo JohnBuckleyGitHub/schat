@@ -33,11 +33,10 @@
 ChannelsView::ChannelsView(QWidget *parent)
   : WebView(parent)
 {
-  setAcceptDrops(false);
-
   connect(page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), SLOT(populateJavaScriptWindowObject()));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 
+  setIcons();
   retranslateUi();
 }
 
@@ -54,36 +53,6 @@ void ChannelsView::join(const QString &name)
   }
   else
     ChatClient::channels()->join(name);
-}
-
-
-void ChannelsView::contextMenuEvent(QContextMenuEvent *event)
-{
-  QMenu menu(this);
-
-  QWebHitTestResult r = page()->mainFrame()->hitTestContent(event->pos());
-  bool selected = r.isContentSelected();
-  bool editable = r.isContentEditable();
-
-  if (selected) {
-    if (editable)
-      menu.addAction(pageAction(QWebPage::Cut));
-
-    menu.addAction(pageAction(QWebPage::Copy));
-  }
-
-  const QUrl url = r.linkUrl();
-  if (!url.isEmpty() && url.scheme() != LS("chat") && url.scheme() != LS("qrc"))
-    menu.addAction(pageAction(QWebPage::CopyLinkToClipboard));
-
-  if (editable) {
-    if (ChatView::canPaste())
-      menu.addAction(pageAction(QWebPage::Paste));
-  }
-
-  menu.addAction(pageAction(QWebPage::SelectAll));
-
-  menu.exec(event->globalPos());
 }
 
 
