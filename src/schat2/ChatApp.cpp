@@ -39,7 +39,7 @@ ChatApp::ChatApp(int &argc, char **argv)
 {
   setApplicationName(SCHAT_NAME);
   setApplicationVersion(SCHAT_VERSION);
-  setOrganizationName(SCHAT_ORGANIZATION);
+  setOrganizationName(LS("IMPOMEZIA"));
   setOrganizationDomain(SCHAT_DOMAIN);
   setQuitOnLastWindowClosed(false);
 
