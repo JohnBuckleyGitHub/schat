@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@
 #include "Tr.h"
 #include "ui/ChatIcons.h"
 #include "ui/tabs/AboutTab.h"
+#include "ui/tabs/WebView.h"
 #include "version.h"
 #include "WebBridge.h"
 
@@ -67,7 +68,7 @@ AboutTab::AboutTab(TabWidget *parent)
 {
   m_tr = new AboutTr();
 
-  m_view = new QWebView(this);
+  m_view = new WebView(this);
   m_view->setAcceptDrops(false);
   m_view->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
 

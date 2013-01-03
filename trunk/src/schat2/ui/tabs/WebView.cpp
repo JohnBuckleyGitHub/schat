@@ -32,6 +32,8 @@ WebView::WebView(QWidget *parent)
 {
   setPage(new WebPage(this));
   setAcceptDrops(false);
+
+  setIcons();
 }
 
 

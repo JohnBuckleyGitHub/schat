@@ -36,7 +36,6 @@ ChannelsView::ChannelsView(QWidget *parent)
   connect(page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), SLOT(populateJavaScriptWindowObject()));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 
-  setIcons();
   retranslateUi();
 }
 
