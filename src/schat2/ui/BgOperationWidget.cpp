@@ -91,6 +91,16 @@ bool BgOperationWidget::unlock(const QString &key, bool reset)
 }
 
 
+void BgOperationWidget::setText(const QString &text)
+{
+  if (!m_self)
+    return;
+
+  m_self->m_label->setVisible(!text.isEmpty());
+  m_self->m_label->setText(text);
+}
+
+
 void BgOperationWidget::mouseReleaseEvent(QMouseEvent *event)
 {
   if (event->button() == Qt::LeftButton)

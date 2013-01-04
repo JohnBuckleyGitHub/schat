@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 
 #include "plugins/ChatPlugin.h"
 
+class ChatSettings;
 class QCryptographicHash;
 class QNetworkReply;
 
@@ -54,6 +55,7 @@ public:
   UpdatePluginImpl(QObject *parent);
   ~UpdatePluginImpl();
   inline Status status() const { return m_status; }
+  static bool supportDownload();
 
 signals:
   void done(int status);
@@ -74,6 +76,7 @@ private:
   void readJSON();
   void setDone(Status status);
 
+  ChatSettings *m_settings;        ///< Настройки чата.
   const QString m_prefix;          ///< Префикс настроек.
   DownloadState m_state;           ///< Состояние закачки.
   QByteArray m_rawJSON;            ///< Сырые JSON данные.

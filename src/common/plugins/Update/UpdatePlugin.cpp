@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -48,17 +48,18 @@
 
 UpdatePluginImpl::UpdatePluginImpl(QObject *parent)
   : ChatPlugin(parent)
+  , m_settings(ChatCore::settings())
   , m_prefix(LS("Update"))
   , m_state(Idle)
   , m_current(0)
   , m_status(Unknown)
 {
-  ChatCore::settings()->setLocalDefault(m_prefix + LS("/Url"),          LS("http://download.schat.me/schat2/update.json"));
-  ChatCore::settings()->setLocalDefault(m_prefix + LS("/Channel"),      LS("stable"));
-  ChatCore::settings()->setLocalDefault(m_prefix + LS("/AutoDownload"), true);
-  ChatCore::settings()->setLocalDefault(m_prefix + LS("/Ready"),        false);
-  ChatCore::settings()->setLocalDefault(m_prefix + LS("/Version"),      QString());
-  ChatCore::settings()->setLocalDefault(m_prefix + LS("/Revision"),     0);
+  m_settings->setLocalDefault(m_prefix + LS("/Url"),          LS("http://download.schat.me/schat2/update.json"));
+  m_settings->setLocalDefault(m_prefix + LS("/Channel"),      LS("stable"));
+  m_settings->setLocalDefault(m_prefix + LS("/AutoDownload"), true);
+  m_settings->setLocalDefault(m_prefix + LS("/Ready"),        false);
+  m_settings->setLocalDefault(m_prefix + LS("/Version"),      QString());
+  m_settings->setLocalDefault(m_prefix + LS("/Revision"),     0);
 
   ChatCore::translation()->addOther(LS("update"));
 
@@ -70,6 +71,16 @@ UpdatePluginImpl::UpdatePluginImpl(QObject *parent)
 UpdatePluginImpl::~UpdatePluginImpl()
 {
   delete m_sha1;
+}
+
+
+bool UpdatePluginImpl::supportDownload()
+{
+# if defined(Q_OS_WIN)
+  return true;
+# else
+  return false;
+# endif
 }
 
 
@@ -100,7 +111,7 @@ void UpdatePluginImpl::check()
   m_hash.clear();
   m_version.clear();
 
-  m_url = QUrl(ChatCore::settings()->value(m_prefix + LS("/Url")).toString() + LC('?') + QString::number(QDateTime::currentDateTime().toTime_t()));
+  m_url = QUrl(m_settings->value(m_prefix + LS("/Url")).toString() + LC('?') + QString::number(QDateTime::currentDateTime().toTime_t()));
   if (!m_url.isValid())
     return setDone(CheckError);
 
@@ -210,12 +221,15 @@ void UpdatePluginImpl::startDownload()
 }
 
 
+/*!
+ * Проверка корректности скачанного файла обновлений, методом проверки SHA1 хэша.
+ */
 void UpdatePluginImpl::checkUpdate()
 {
   m_file.close();
   if (m_hash == m_sha1->result()) {
-    ChatCore::settings()->setValue(m_prefix + LS("/Version"),  m_version);
-    ChatCore::settings()->setValue(m_prefix + LS("/Revision"), m_revision);
+    m_settings->setValue(m_prefix + LS("/Version"),  m_version);
+    m_settings->setValue(m_prefix + LS("/Revision"), m_revision);
     setDone(UpdateReady);
   }
   else
@@ -233,7 +247,7 @@ void UpdatePluginImpl::readJSON()
   if (data.isEmpty())
     return setDone(CheckError);
 
-  QVariantMap json = data.value(ChatCore::settings()->value(m_prefix + LS("/Channel")).toString()).toMap();
+  QVariantMap json = data.value(m_settings->value(m_prefix + LS("/Channel")).toString()).toMap();
   if (json.isEmpty())
     return setDone(CheckError);
 
@@ -266,7 +280,7 @@ void UpdatePluginImpl::readJSON()
 
   setDone(UpdateAvailable);
 
-  if (ChatCore::settings()->value(m_prefix + LS("/AutoDownload")) == true)
+  if (m_settings->value(m_prefix + LS("/AutoDownload")) == true)
     QTimer::singleShot(0, this, SLOT(download()));
 }
 
@@ -279,7 +293,7 @@ void UpdatePluginImpl::setDone(Status status)
   if (m_file.isOpen())
     m_file.close();
 
-  ChatCore::settings()->setValue(m_prefix + LS("/Ready"), status == UpdateReady);
+  m_settings->setValue(m_prefix + LS("/Ready"), status == UpdateReady);
 
   emit done(status);
 
@@ -289,12 +303,14 @@ void UpdatePluginImpl::setDone(Status status)
   BgOperationWidget::progress()->setVisible(false);
 
   if (status == UpdateReady) {
-    BgOperationWidget::label()->setText(QString(LS("<a href='#' style='text-decoration:none; color:#216ea7;'>%1</a>")).arg(tr("Install Update Now")));
+    BgOperationWidget::setText(QString(LS("<a href='#' style='text-decoration:none; color:#216ea7;'>%1</a>")).arg(tr("Install Update Now")));
     return;
   }
 
-  if (status == DownloadError)
-    BgOperationWidget::label()->setText(tr("Update Error"));
+  if (status == UpdateAvailable)
+    BgOperationWidget::setText(tr("Update Available"));
+  else if (status == DownloadError)
+    BgOperationWidget::setText(tr("Update Error"));
 
   BgOperationWidget::unlock(m_prefix, false);
 }
