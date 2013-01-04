@@ -30,7 +30,11 @@
 #include "sglobal.h"
 
 PopupWindow::PopupWindow(const Alert &alert, int timeout, const QString &css)
+# if defined(Q_OS_MAC)
+  : QFrame(0, Qt::SubWindow | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowStaysOnTopHint)
+# else
   : QFrame(0, Qt::ToolTip | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint)
+# endif
   , m_id(alert.id())
   , m_tab(alert.tab())
 {
