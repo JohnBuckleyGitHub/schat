@@ -38,6 +38,7 @@ public:
   static bool lock(const QString &key);
   static bool lock(const QString &key, const QString &text);
   static bool unlock(const QString &key, bool reset = false);
+  static void setText(const QString &text);
 
 signals:
   void clicked(const QString &key);

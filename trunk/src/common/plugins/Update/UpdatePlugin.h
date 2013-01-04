@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ public:
     QVariantMap out = CoreApi::header();
     out["Id"]       = "Update";
     out["Name"]     = "Update";
-    out["Version"]  = "0.2.1";
+    out["Version"]  = "0.3.0";
     out["Site"]     = "http://wiki.schat.me/Plugin/Update";
     out["Desc"]     = "Automatically downloads and installs updates";
     out["Desc/ru"]  = "Автоматически загружает и устанавливает обновления";
