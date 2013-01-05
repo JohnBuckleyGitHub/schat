@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -37,13 +37,16 @@ ChatPlugins::ChatPlugins(QObject *parent)
 void ChatPlugins::init()
 {
   ChatSettings *settings = ChatCore::settings();
+  QStringList invalid;
 
   for (int i = 0; i < m_sorted.size(); ++i) {
     PluginItem *item = m_plugins.value(m_sorted.at(i));
     ChatApi *api = qobject_cast<ChatApi *>(item->plugin());
 
-    if (!api)
+    if (!api || !api->check()) {
+      invalid.append(item->id());
       continue;
+    }
 
     const QString key = LS("Plugins/") + item->id();
     settings->setLocalDefault(key, item->header().value(LS("Enabled")));
@@ -52,11 +55,20 @@ void ChatPlugins::init()
 
     ChatPlugin *plugin = api->create();
     if (!plugin) {
-      settings->setValue(key, false);
+      invalid.append(item->id());
       continue;
     }
 
     item->setLoaded(true);
     m_chatPlugins.append(plugin);
+  }
+
+  foreach (const QString &id, invalid) {
+    m_sorted.removeAll(id);
+    PluginItem *item = m_plugins.value(id);
+    m_plugins.remove(id);
+
+    if (item)
+      delete item;
   }
 }
