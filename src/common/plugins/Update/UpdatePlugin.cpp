@@ -47,6 +47,48 @@
 #include "UpdateSettings.h"
 #include "version.h"
 
+
+UpdateInfo::UpdateInfo(const QUrl &url)
+  : revision(0)
+  , size(0)
+  , url(url)
+{
+}
+
+
+UpdateInfo::UpdateInfo(const QVariantMap &data)
+  : revision(0)
+  , size(0)
+{
+  if (data.isEmpty())
+    return;
+
+  version  = data.value(LS("version")).toString();
+  revision = data.value(LS("revision")).toInt();
+  url      = data.value(LS("file")).toUrl();
+  size     = data.value(LS("size")).toInt();
+  hash     = QByteArray::fromHex(data.value(LS("hash")).toByteArray());
+}
+
+
+/*!
+ * Проверка корректности данных обновления.
+ */
+bool UpdateInfo::isValid() const
+{
+  if (version.isEmpty() || Ver(version) < LS("1.99.50"))
+    return false;
+
+  if (revision < 3361 || !url.isValid())
+    return false;
+
+  if (UpdatePluginImpl::supportDownload() && (size < 1 || hash.size() != 20))
+    return false;
+
+  return true;
+}
+
+
 UpdatePluginImpl::UpdatePluginImpl(QObject *parent)
   : ChatPlugin(parent)
   , m_settings(ChatCore::settings())
@@ -98,13 +140,9 @@ void UpdatePluginImpl::check()
 
   m_state = DownloadJSON;
   m_rawJSON.clear();
-  m_revision = 0;
-  m_size = 0;
-  m_hash.clear();
-  m_version.clear();
 
-  m_url = QUrl(m_settings->value(m_prefix + LS("/Url")).toString() + LC('?') + QString::number(QDateTime::currentDateTime().toTime_t()));
-  if (!m_url.isValid())
+  m_info = UpdateInfo(m_settings->value(m_prefix + LS("/Url")).toString() + LC('?') + QString::number(QDateTime::currentDateTime().toTime_t()));
+  if (!m_info.url.isValid())
     return setDone(CheckError);
 
   QTimer::singleShot(0, this, SLOT(startDownload()));
@@ -128,12 +166,12 @@ void UpdatePluginImpl::download()
 {
   m_state = DownloadUpdate;
   m_sha1->reset();
-  m_file.setFileName(Path::cache() + LS("/schat2-") + m_version + LS(".") + QString::number(m_revision) + LS(".exe"));
+  m_file.setFileName(Path::cache() + LS("/schat2-") + m_info.version + LS(".") + QString::number(m_info.revision) + LS(".exe"));
   if (!m_file.open(QIODevice::WriteOnly))
     return setDone(DownloadError);
 
   if (BgOperationWidget::lock(m_prefix, tr("Downloading update"))) {
-    BgOperationWidget::progress()->setRange(0, m_size);
+    BgOperationWidget::progress()->setRange(0, m_info.size);
     BgOperationWidget::progress()->setVisible(true);
   }
 
@@ -198,8 +236,8 @@ void UpdatePluginImpl::start()
  */
 void UpdatePluginImpl::startDownload()
 {
-  QNetworkRequest request(m_url);
-  request.setRawHeader("Referer", m_url.toEncoded());
+  QNetworkRequest request(m_info.url);
+  request.setRawHeader("Referer", m_info.url.toEncoded());
   request.setRawHeader("User-Agent", QString(LS("Mozilla/5.0 (%1) Qt/%2 AppleWebKit/%3 Simple Chat/%4"))
       .arg(OsInfo::json().value(LS("os")).toString())
       .arg(qVersion())
@@ -219,9 +257,9 @@ void UpdatePluginImpl::startDownload()
 void UpdatePluginImpl::checkUpdate()
 {
   m_file.close();
-  if (m_hash == m_sha1->result()) {
-    m_settings->setValue(m_prefix + LS("/Version"),  m_version);
-    m_settings->setValue(m_prefix + LS("/Revision"), m_revision);
+  if (m_info.hash == m_sha1->result()) {
+    m_settings->setValue(m_prefix + LS("/Version"),  m_info.version);
+    m_settings->setValue(m_prefix + LS("/Revision"), m_info.revision);
     setDone(UpdateReady);
   }
   else
@@ -243,32 +281,12 @@ void UpdatePluginImpl::readJSON()
   if (json.isEmpty())
     return setDone(CheckError);
 
-  QVariantMap os = json.value(LS(SCHAT_PLATFORM)).toMap();
-  if (os.isEmpty())
+  m_info = UpdateInfo(json.value(LS(SCHAT_PLATFORM)).toMap());
+  if (!m_info.isValid())
     return setDone(CheckError);
 
-  m_version = os.value(LS("version")).toString();
-  if (m_version.isEmpty() || Ver(m_version) < LS("1.99.25"))
-    return setDone(CheckError);
-
-  m_revision = os.value(LS("revision")).toInt();
-  if (m_revision < 1)
-    return setDone(CheckError);
-
-  if (SCHAT_REVISION >= m_revision)
+  if (SCHAT_REVISION >= m_info.revision)
     return setDone(NoUpdates);
-
-  m_url = os.value(LS("file")).toUrl();
-  if (!m_url.isValid())
-    return setDone(CheckError);
-
-  m_size = os.value(LS("size")).toInt();
-  if (m_size < 1)
-    return setDone(CheckError);
-
-  m_hash = QByteArray::fromHex(os.value(LS("hash")).toByteArray());
-  if (m_hash.size() != 20)
-    return setDone(CheckError);
 
   setDone(UpdateAvailable);
 
