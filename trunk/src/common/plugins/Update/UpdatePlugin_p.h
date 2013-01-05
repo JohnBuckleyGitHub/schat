@@ -22,6 +22,7 @@
 #include <QFile>
 #include <QNetworkAccessManager>
 #include <QUrl>
+#include <QVariant>
 
 #include "plugins/ChatPlugin.h"
 
@@ -29,6 +30,29 @@ class ChatSettings;
 class QCryptographicHash;
 class QNetworkReply;
 
+
+/*!
+ * Информация об обновлении.
+ */
+class UpdateInfo
+{
+public:
+  inline UpdateInfo() : revision(0), size(0) {}
+  UpdateInfo(const QUrl &url);
+  UpdateInfo(const QVariantMap &data);
+  bool isValid() const;
+
+  int revision;    ///< SVN ревизия.
+  int size;        ///< Размер обновлений.
+  QByteArray hash; ///< SHA1 контрольная сумма обновлений.
+  QString version; ///< Доступная версия.
+  QUrl url;        ///< Адрес источинка обновлений или адрес загружаемого файла.
+};
+
+
+/*!
+ * Реализация плагина \b Update.
+ */
 class UpdatePluginImpl : public ChatPlugin
 {
   Q_OBJECT
@@ -80,17 +104,11 @@ private:
   DownloadState m_state;           ///< Состояние закачки.
   QByteArray m_rawJSON;            ///< Сырые JSON данные.
   QCryptographicHash *m_sha1;      ///< Класс для проверки SHA1 хеша файла.
+  QFile m_file;                    ///< Файл обновлений.
   QNetworkAccessManager m_manager; ///< Менеджер доступа к сети.
   QNetworkReply *m_current;        ///< Текущий ответ за запрос скачивания файла.
-  QUrl m_url;                      ///< Текущий адрес.
   Status m_status;                 ///< Статус проверки обновлений.
-
-  // Информация об обновлении.
-  int m_revision;                  ///< SVN ревизия.
-  int m_size;                      ///< Размер обновлений.
-  QByteArray m_hash;               ///< SHA1 контрольная сумма обновлений.
-  QFile m_file;                    ///< Файл обновлений.
-  QString m_version;               ///< Доступная версия.
+  UpdateInfo m_info;               ///< Информация об обновлении.
 };
 
 #endif /* UPDATEPLUGIN_P_H_ */
