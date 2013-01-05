@@ -104,6 +104,13 @@ def MakeDebBuilder():
   f = BuildFactory()
   f.addSteps(svn_co)
   f.addStep(ShellCommand(
+    name          = 'revision',
+    command       = ['bash', 'revision.sh'],
+    workdir       = 'build/os/ubuntu',
+    haltOnFailure = True,
+    env           = { 'SCHAT_REVISION': Property('got_revision') },
+  ))
+  f.addStep(ShellCommand(
     name          = 'deb',
     command       = ['bash', 'build.sh'],
     workdir       = 'build/os/ubuntu',
@@ -126,6 +133,13 @@ def MakeDebBuilder():
 def MakePpaBuilder():
   f = BuildFactory()
   f.addSteps(svn_co)
+  f.addStep(ShellCommand(
+    name          = 'revision',
+    command       = ['bash', 'revision.sh'],
+    workdir       = 'build/os/ubuntu',
+    haltOnFailure = True,
+    env           = { 'SCHAT_REVISION': Property('got_revision') },
+  ))
   f.addStep(ShellCommand(
     name          = 'ppa',
     command       = ['bash', 'ppa.sh'],
@@ -238,6 +252,13 @@ def MakeWinLegacyBuilder():
 def MakeMacBuilder():
   f = BuildFactory()
   f.addSteps(svn_co)
+  f.addStep(ShellCommand(
+    name          = 'revision',
+    command       = ['bash', 'revision.sh'],
+    workdir       = 'build/os/macosx',
+    haltOnFailure = True,
+    env           = { 'SCHAT_REVISION': Property('got_revision') },
+  ))
   f.addStep(ShellCommand(
     name          = 'dmg',
     command       = ['bash', 'deploy.sh'],

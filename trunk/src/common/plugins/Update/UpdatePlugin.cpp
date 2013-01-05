@@ -243,7 +243,7 @@ void UpdatePluginImpl::readJSON()
   if (json.isEmpty())
     return setDone(CheckError);
 
-  QVariantMap os = json.value(LS("win32")).toMap();
+  QVariantMap os = json.value(LS(SCHAT_PLATFORM)).toMap();
   if (os.isEmpty())
     return setDone(CheckError);
 
@@ -318,7 +318,7 @@ void UpdatePluginImpl::setDone(Status status)
 
 bool UpdatePlugin::check() const
 {
-  if (!SCHAT_REVISION)
+  if (!SCHAT_REVISION || QString(LS(SCHAT_PLATFORM)).isEmpty())
     return false;
 
   if (UpdatePluginImpl::supportDownload() && Path::app() != LS("schat2"))
