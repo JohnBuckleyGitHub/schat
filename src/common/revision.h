@@ -1,1 +1,2 @@
 #define SCHAT_REVISION 0
+#define SCHAT_PLATFORM ""
