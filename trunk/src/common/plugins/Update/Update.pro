@@ -25,9 +25,11 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webkitwidgets
 HEADERS  = \
    UpdatePlugin.h \
    UpdatePlugin_p.h \
+   UpdateSettings.h \
 
 SOURCES  = \
    UpdatePlugin.cpp \
+   UpdateSettings.cpp \
 
 RESOURCES += Update.qrc
 

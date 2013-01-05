@@ -5,17 +5,17 @@
 <context>
     <name>AboutTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="160"/>
+        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="161"/>
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="119"/>
+        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="120"/>
         <source> (32 bit)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="119"/>
+        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="120"/>
         <source> (64 bit)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -23,27 +23,27 @@
 <context>
     <name>AboutTr</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="55"/>
+        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="56"/>
         <source>Paths</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="56"/>
+        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="57"/>
         <source>Third parties</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="57"/>
+        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="58"/>
         <source>This software is released under the terms of the &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0-standalone.html&quot;&gt;GNU General Public License&lt;/a&gt; version 3.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="58"/>
+        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="59"/>
         <source>All rights reserved.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="59"/>
+        <location filename="../../src/schat2/ui/tabs/AboutTab.cpp" line="60"/>
         <source>Preferences</source>
         <translation type="unfinished"></translation>
     </message>
@@ -135,31 +135,31 @@
 <context>
     <name>ChatView</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="257"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="220"/>
         <source>Display</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="290"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="437"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="250"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="397"/>
         <source>Clear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="291"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="438"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="251"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="398"/>
         <source>Reload</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="292"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="440"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="252"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="400"/>
         <source>Seconds</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="293"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="443"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="253"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="403"/>
         <source>Service messages</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1036,27 +1036,27 @@
 <context>
     <name>WebView</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WebView.cpp" line="47"/>
+        <location filename="../../src/schat2/ui/tabs/WebView.cpp" line="117"/>
         <source>Cut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WebView.cpp" line="48"/>
+        <location filename="../../src/schat2/ui/tabs/WebView.cpp" line="118"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WebView.cpp" line="49"/>
+        <location filename="../../src/schat2/ui/tabs/WebView.cpp" line="119"/>
         <source>Copy Link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WebView.cpp" line="50"/>
+        <location filename="../../src/schat2/ui/tabs/WebView.cpp" line="120"/>
         <source>Paste</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WebView.cpp" line="51"/>
+        <location filename="../../src/schat2/ui/tabs/WebView.cpp" line="121"/>
         <source>Select All</source>
         <translation type="unfinished"></translation>
     </message>

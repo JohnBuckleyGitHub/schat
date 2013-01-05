@@ -35,17 +35,22 @@ public:
   QVariantMap header() const
   {
     QVariantMap out = CoreApi::header();
-    out["Id"]       = "Update";
-    out["Name"]     = "Update";
-    out["Version"]  = "0.3.0";
-    out["Site"]     = "http://wiki.schat.me/Plugin/Update";
-    out["Desc"]     = "Automatically downloads and installs updates";
-    out["Desc/ru"]  = "Автоматически загружает и устанавливает обновления";
+    out["Id"]           = "Update";
+    out["Name"]         = "Update";
+    out["Version"]      = "0.3.0";
+    out["Site"]         = "http://wiki.schat.me/Plugin/Update";
+    out["Desc"]         = "Automatically downloads and installs updates";
+    out["Desc/ru"]      = "Автоматически загружает и устанавливает обновления";
+
+#   if defined(Q_OS_WIN)
+    out["Configurable"] = true;
+#   endif
 
     return out;
   }
 
   ChatPlugin *create();
+  QWidget *settings(QWidget *parent);
 };
 
 #endif /* UPDATEPLUGIN_H_ */
