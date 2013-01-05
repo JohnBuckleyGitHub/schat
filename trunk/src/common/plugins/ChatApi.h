@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ class ChatApi
 public:
   virtual ~ChatApi() {}
   inline ChatPlugin *plugin() const    { return m_plugin; }
+  virtual bool check() const           { return true; }
   virtual ChatPlugin *create() = 0;
   virtual QWidget *settings(QWidget *) { return 0; };
 
@@ -36,6 +37,6 @@ protected:
   ChatPlugin *m_plugin;
 };
 
-Q_DECLARE_INTERFACE(ChatApi, "me.schat.ChatApi/1.2");
+Q_DECLARE_INTERFACE(ChatApi, "me.schat.ChatApi/1.3");
 
 #endif /* CHATAPI_H_ */
