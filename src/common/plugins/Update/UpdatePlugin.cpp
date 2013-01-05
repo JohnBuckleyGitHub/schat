@@ -44,6 +44,7 @@
 #include "ui/BgOperationWidget.h"
 #include "UpdatePlugin.h"
 #include "UpdatePlugin_p.h"
+#include "UpdateSettings.h"
 #include "version.h"
 
 UpdatePluginImpl::UpdatePluginImpl(QObject *parent)
@@ -280,11 +281,16 @@ void UpdatePluginImpl::readJSON()
 
   setDone(UpdateAvailable);
 
-  if (m_settings->value(m_prefix + LS("/AutoDownload")) == true)
+  if (supportDownload() && m_settings->value(m_prefix + LS("/AutoDownload")).toBool() == true)
     QTimer::singleShot(0, this, SLOT(download()));
 }
 
 
+/*!
+ * Обработка завершения операций.
+ *
+ * \param status Статус проверки обновлений.
+ */
 void UpdatePluginImpl::setDone(Status status)
 {
   m_status = status;
@@ -302,15 +308,18 @@ void UpdatePluginImpl::setDone(Status status)
 
   BgOperationWidget::progress()->setVisible(false);
 
-  if (status == UpdateReady) {
-    BgOperationWidget::setText(QString(LS("<a href='#' style='text-decoration:none; color:#216ea7;'>%1</a>")).arg(tr("Install Update Now")));
-    return;
+  if (supportDownload()) {
+    if (status == UpdateReady) {
+      BgOperationWidget::setText(QString(LS("<a href='#' style='text-decoration:none; color:#216ea7;'>%1</a>")).arg(tr("Install Update Now")));
+      return;
+    }
+
+    if (status == DownloadError)
+      BgOperationWidget::setText(tr("Update Error"));
   }
 
   if (status == UpdateAvailable)
-    BgOperationWidget::setText(tr("Update Available"));
-  else if (status == DownloadError)
-    BgOperationWidget::setText(tr("Update Error"));
+    BgOperationWidget::setText(QString(LS("<a href='#' style='text-decoration:none; color:#216ea7;'>%1</a>")).arg(tr("Update Available")));
 
   BgOperationWidget::unlock(m_prefix, false);
 }
@@ -320,6 +329,15 @@ ChatPlugin *UpdatePlugin::create()
 {
   m_plugin = new UpdatePluginImpl(this);
   return m_plugin;
+}
+
+
+QWidget *UpdatePlugin::settings(QWidget *parent)
+{
+  if (UpdatePluginImpl::supportDownload())
+    return new UpdateSettings(parent);
+
+  return 0;
 }
 
 #if QT_VERSION < 0x050000
