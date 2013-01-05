@@ -49,6 +49,7 @@ public:
     return out;
   }
 
+  bool check() const;
   ChatPlugin *create();
   QWidget *settings(QWidget *parent);
 };

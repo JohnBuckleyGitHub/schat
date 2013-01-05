@@ -96,15 +96,6 @@ void UpdatePluginImpl::check()
   if (m_state != Idle)
     return;
 
-  if (!SCHAT_REVISION)
-    return setDone(Unsupported);
-
-  if (!Path::isPortable())
-    return setDone(Unsupported);
-
-  if (Path::app() != LS("schat2"))
-    return setDone(Unsupported);
-
   m_state = DownloadJSON;
   m_rawJSON.clear();
   m_revision = 0;
@@ -322,6 +313,18 @@ void UpdatePluginImpl::setDone(Status status)
     BgOperationWidget::setText(QString(LS("<a href='#' style='text-decoration:none; color:#216ea7;'>%1</a>")).arg(tr("Update Available")));
 
   BgOperationWidget::unlock(m_prefix, false);
+}
+
+
+bool UpdatePlugin::check() const
+{
+  if (!SCHAT_REVISION)
+    return false;
+
+  if (UpdatePluginImpl::supportDownload() && Path::app() != LS("schat2"))
+    return false;
+
+  return true;
 }
 
 
