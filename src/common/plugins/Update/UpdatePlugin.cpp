@@ -20,11 +20,14 @@
 #include <QCryptographicHash>
 #include <QFileInfo>
 #include <QLabel>
+#include <QMouseEvent>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QProgressBar>
 #include <QTimer>
 #include <QtPlugin>
+#include <QMenu>
+#include <QDesktopServices>
 
 #if QT_VERSION >= 0x050000
 # include <QWebPage>
@@ -46,6 +49,9 @@
 #include "UpdatePlugin_p.h"
 #include "UpdateSettings.h"
 #include "version.h"
+#include "ui/ChatIcons.h"
+
+#define SCHAT_UPDATE_LABEL(x) QString(LS("<a href='#' style='text-decoration:none; color:#216ea7;'>%1</a>")).arg(x)
 
 
 UpdateInfo::UpdateInfo(const QUrl &url)
@@ -68,6 +74,10 @@ UpdateInfo::UpdateInfo(const QVariantMap &data)
   url      = data.value(LS("file")).toUrl();
   size     = data.value(LS("size")).toInt();
   hash     = QByteArray::fromHex(data.value(LS("hash")).toByteArray());
+  notes    = data.value(LS("notes")).toUrl();
+
+  if (notes.isEmpty())
+    notes = LS("http://wiki.schat.me/Simple_Chat_") + version;
 }
 
 
@@ -149,13 +159,37 @@ void UpdatePluginImpl::check()
 }
 
 
-void UpdatePluginImpl::clicked(const QString &key)
+void UpdatePluginImpl::clicked(const QString &key, QMouseEvent *event)
 {
-  if (m_prefix != key)
+  if (m_prefix != key || event->button() != Qt::LeftButton)
     return;
 
-  if (m_status == UpdateReady)
+  if (m_status == UpdateReady) {
     QTimer::singleShot(0, this, SLOT(restart()));
+    return;
+  }
+
+  QMenu menu;
+
+  QAction *notes    = menu.addAction(SCHAT_ICON(Globe), tr("Release Notes"));
+  QAction *download = 0;
+
+  if (m_state == Idle)
+    download = menu.addAction(QIcon(LS(":/images/Update/download.png")), tr("Download"));
+
+  QAction *action   = menu.exec(event->globalPos());
+  if (!action)
+    return;
+
+  if (action == notes) {
+    QDesktopServices::openUrl(m_info.notes);
+  }
+  else if (action == download) {
+    if (supportDownload())
+      QTimer::singleShot(0, this, SLOT(download()));
+    else
+      QDesktopServices::openUrl(m_info.url);
+  }
 }
 
 
@@ -170,7 +204,7 @@ void UpdatePluginImpl::download()
   if (!m_file.open(QIODevice::WriteOnly))
     return setDone(DownloadError);
 
-  if (BgOperationWidget::lock(m_prefix, tr("Downloading update"))) {
+  if (BgOperationWidget::lock(m_prefix, SCHAT_UPDATE_LABEL(tr("Downloading update")))) {
     BgOperationWidget::progress()->setRange(0, m_info.size);
     BgOperationWidget::progress()->setVisible(true);
   }
@@ -226,7 +260,7 @@ void UpdatePluginImpl::start()
   if (SCHAT_REVISION)
     QFile::remove(Path::cache() + LS("/schat2-") + QApplication::applicationVersion() + LS(".") + QString::number(SCHAT_REVISION) + LS(".exe"));
 
-  connect(BgOperationWidget::i(), SIGNAL(clicked(QString)), SLOT(clicked(QString)));
+  connect(BgOperationWidget::i(), SIGNAL(clicked(QString, QMouseEvent*)), SLOT(clicked(QString, QMouseEvent*)));
   check();
 }
 
@@ -319,7 +353,7 @@ void UpdatePluginImpl::setDone(Status status)
 
   if (supportDownload()) {
     if (status == UpdateReady) {
-      BgOperationWidget::setText(QString(LS("<a href='#' style='text-decoration:none; color:#216ea7;'>%1</a>")).arg(tr("Install Update Now")));
+      BgOperationWidget::setText(SCHAT_UPDATE_LABEL(tr("Install Update Now")));
       return;
     }
 
@@ -327,8 +361,10 @@ void UpdatePluginImpl::setDone(Status status)
       BgOperationWidget::setText(tr("Update Error"));
   }
 
-  if (status == UpdateAvailable)
-    BgOperationWidget::setText(QString(LS("<a href='#' style='text-decoration:none; color:#216ea7;'>%1</a>")).arg(tr("Update Available")));
+  if (status == UpdateAvailable) {
+    BgOperationWidget::setText(SCHAT_UPDATE_LABEL(tr("Update Available")));
+    return;
+  }
 
   BgOperationWidget::unlock(m_prefix, false);
 }
