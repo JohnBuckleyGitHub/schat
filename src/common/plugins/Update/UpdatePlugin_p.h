@@ -62,9 +62,10 @@ class UpdatePluginImpl : public ChatPlugin
 public:
   /// Состояние закачки.
   enum DownloadState {
-    Idle,          ///< Нет активной закачки.
-    DownloadJSON,  ///< Закачка JSON файла с информацией об обновлении.
-    DownloadUpdate ///< Закачка файла обновления.
+    Idle,           ///< Нет активной закачки.
+    DownloadJSON,   ///< Закачка JSON файла с информацией об обновлении.
+    DownloadUpdate, ///< Закачка файла обновления.
+    Paused          ///< Загрузка остановлена.
   };
 
   /// Статус проверки обновлений.
@@ -89,7 +90,7 @@ private slots:
   void check();
   void clicked(const QString &key, QMouseEvent *event);
   void download();
-  void downloadProgress(qint64 bytesReceived);
+  void downloadProgress();
   void finished();
   void readyRead();
   void restart();

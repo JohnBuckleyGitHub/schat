@@ -5,7 +5,7 @@
 <context>
     <name>UpdatePluginImpl</name>
     <message>
-        <location filename="../../UpdatePlugin.cpp" line="178"/>
+        <location filename="../../UpdatePlugin.cpp" line="176"/>
         <source>Release Notes</source>
         <translation type="unfinished"></translation>
     </message>
@@ -15,22 +15,32 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../UpdatePlugin.cpp" line="211"/>
+        <location filename="../../UpdatePlugin.cpp" line="185"/>
+        <source>Pause</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../UpdatePlugin.cpp" line="188"/>
+        <source>Resume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../UpdatePlugin.cpp" line="225"/>
         <source>Downloading update</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../UpdatePlugin.cpp" line="360"/>
+        <location filename="../../UpdatePlugin.cpp" line="382"/>
         <source>Install Update Now</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../UpdatePlugin.cpp" line="365"/>
+        <location filename="../../UpdatePlugin.cpp" line="387"/>
         <source>Update Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../UpdatePlugin.cpp" line="369"/>
+        <location filename="../../UpdatePlugin.cpp" line="391"/>
         <source>Update Available</source>
         <translation type="unfinished"></translation>
     </message>

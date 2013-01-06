@@ -173,9 +173,17 @@ void UpdatePluginImpl::clicked(const QString &key, QMouseEvent *event)
 
   QAction *notes    = menu.addAction(SCHAT_ICON(Globe), tr("Release Notes"));
   QAction *download = 0;
+  QAction *pause    = 0;
+  QAction *resume   = 0;
 
   if (m_state == Idle)
     download = menu.addAction(QIcon(LS(":/images/Update/download.png")), tr("Download"));
+
+  if (m_state == DownloadUpdate)
+    pause = menu.addAction(QIcon(LS(":/images/Update/pause.png")), tr("Pause"));
+
+  if (m_state == Paused)
+    resume = menu.addAction(QIcon(LS(":/images/Update/resume.png")), tr("Resume"));
 
   QAction *action   = menu.exec(event->globalPos());
   if (!action)
@@ -189,6 +197,14 @@ void UpdatePluginImpl::clicked(const QString &key, QMouseEvent *event)
       QTimer::singleShot(0, this, SLOT(download()));
     else
       QDesktopServices::openUrl(m_info.url);
+  }
+  else if (action == pause) {
+    m_state = Paused;
+    m_current->close();
+  }
+  else if (action == resume) {
+    m_state = DownloadUpdate;
+    QTimer::singleShot(0, this, SLOT(startDownload()));
   }
 }
 
@@ -213,12 +229,12 @@ void UpdatePluginImpl::download()
 }
 
 
-void UpdatePluginImpl::downloadProgress(qint64 bytesReceived)
+void UpdatePluginImpl::downloadProgress()
 {
   if (m_state != DownloadUpdate || !BgOperationWidget::lock(m_prefix))
     return;
 
-  BgOperationWidget::progress()->setValue(bytesReceived);
+  BgOperationWidget::progress()->setValue(m_file.pos());
 }
 
 
@@ -230,7 +246,7 @@ void UpdatePluginImpl::finished()
     else
       checkUpdate();
   }
-  else
+  else if (m_state != Paused)
     setDone(m_state == DownloadJSON ? CheckError : DownloadError);
 
   m_current->deleteLater();
@@ -278,10 +294,14 @@ void UpdatePluginImpl::startDownload()
       .arg(qWebKitVersion())
       .arg(QCoreApplication::applicationVersion()).toLatin1());
 
+  qint64 pos = m_file.pos();
+  if (pos)
+    request.setRawHeader("Range", "bytes=" + QByteArray::number(pos) + "-");
+
   m_current = m_manager.get(request);
   connect(m_current, SIGNAL(finished()), SLOT(finished()));
   connect(m_current, SIGNAL(readyRead()), SLOT(readyRead()));
-  connect(m_current, SIGNAL(downloadProgress(qint64,qint64)), SLOT(downloadProgress(qint64)));
+  connect(m_current, SIGNAL(downloadProgress(qint64,qint64)), SLOT(downloadProgress()));
 }
 
 
