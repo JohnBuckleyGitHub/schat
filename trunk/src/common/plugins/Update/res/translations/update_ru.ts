@@ -5,22 +5,32 @@
 <context>
     <name>UpdatePluginImpl</name>
     <message>
-        <location filename="../../UpdatePlugin.cpp" line="144"/>
+        <location filename="../../UpdatePlugin.cpp" line="178"/>
+        <source>Release Notes</source>
+        <translation>Об обновлении</translation>
+    </message>
+    <message>
+        <location filename="../../UpdatePlugin.cpp" line="182"/>
+        <source>Download</source>
+        <translation>Cкачать</translation>
+    </message>
+    <message>
+        <location filename="../../UpdatePlugin.cpp" line="211"/>
         <source>Downloading update</source>
         <translation>Загрузка обновления</translation>
     </message>
     <message>
-        <location filename="../../UpdatePlugin.cpp" line="313"/>
+        <location filename="../../UpdatePlugin.cpp" line="360"/>
         <source>Install Update Now</source>
         <translation>Установить обновление сейчас</translation>
     </message>
     <message>
-        <location filename="../../UpdatePlugin.cpp" line="318"/>
+        <location filename="../../UpdatePlugin.cpp" line="365"/>
         <source>Update Error</source>
         <translation>Ошибка обновления</translation>
     </message>
     <message>
-        <location filename="../../UpdatePlugin.cpp" line="322"/>
+        <location filename="../../UpdatePlugin.cpp" line="369"/>
         <source>Update Available</source>
         <translation>Доступно обновление</translation>
     </message>

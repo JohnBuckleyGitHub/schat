@@ -28,6 +28,7 @@
 
 class ChatSettings;
 class QCryptographicHash;
+class QMouseEvent;
 class QNetworkReply;
 
 
@@ -46,6 +47,7 @@ public:
   int size;        ///< Размер обновлений.
   QByteArray hash; ///< SHA1 контрольная сумма обновлений.
   QString version; ///< Доступная версия.
+  QUrl notes;      ///< Адрес страницы с информацией о версии.
   QUrl url;        ///< Адрес источинка обновлений или адрес загружаемого файла.
 };
 
@@ -85,7 +87,7 @@ signals:
 
 private slots:
   void check();
-  void clicked(const QString &key);
+  void clicked(const QString &key, QMouseEvent *event);
   void download();
   void downloadProgress(qint64 bytesReceived);
   void finished();
