@@ -27,10 +27,10 @@
 #include "plugins/ChatPlugin.h"
 
 class ChatSettings;
+class QBasicTimer;
 class QCryptographicHash;
 class QMouseEvent;
 class QNetworkReply;
-
 
 /*!
  * Информация об обновлении.
@@ -83,15 +83,22 @@ public:
   inline Status status() const { return m_status; }
   static bool supportDownload();
 
+
 signals:
   void done(int status);
 
-private slots:
+public slots:
   void check();
+
+protected:
+  void timerEvent(QTimerEvent *event);
+
+private slots:
   void clicked(const QString &key, QMouseEvent *event);
   void download();
   void downloadProgress();
   void finished();
+  void online();
   void readyRead();
   void restart();
   void start();
@@ -105,9 +112,11 @@ private:
   ChatSettings *m_settings;        ///< Настройки чата.
   const QString m_prefix;          ///< Префикс настроек.
   DownloadState m_state;           ///< Состояние закачки.
+  QBasicTimer *m_timer;            ///< Таймер периодической проверки.
   QByteArray m_rawJSON;            ///< Сырые JSON данные.
   QCryptographicHash *m_sha1;      ///< Класс для проверки SHA1 хеша файла.
   QFile m_file;                    ///< Файл обновлений.
+  qint64 m_lastCheck;              ///< Время последней успешной проверки обновлений.
   QNetworkAccessManager m_manager; ///< Менеджер доступа к сети.
   QNetworkReply *m_current;        ///< Текущий ответ за запрос скачивания файла.
   Status m_status;                 ///< Статус проверки обновлений.

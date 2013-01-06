@@ -17,17 +17,18 @@
  */
 
 #include <QApplication>
+#include <QBasicTimer>
 #include <QCryptographicHash>
+#include <QDesktopServices>
 #include <QFileInfo>
 #include <QLabel>
+#include <QMenu>
 #include <QMouseEvent>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QProgressBar>
 #include <QTimer>
 #include <QtPlugin>
-#include <QMenu>
-#include <QDesktopServices>
 
 #if QT_VERSION >= 0x050000
 # include <QWebPage>
@@ -38,6 +39,8 @@
 #include "ChatCore.h"
 #include "ChatNotify.h"
 #include "ChatSettings.h"
+#include "client/ChatClient.h"
+#include "DateTime.h"
 #include "JSON.h"
 #include "Path.h"
 #include "sglobal.h"
@@ -45,14 +48,14 @@
 #include "tools/Ver.h"
 #include "Translation.h"
 #include "ui/BgOperationWidget.h"
+#include "ui/ChatIcons.h"
 #include "UpdatePlugin.h"
 #include "UpdatePlugin_p.h"
 #include "UpdateSettings.h"
 #include "version.h"
-#include "ui/ChatIcons.h"
 
 #define SCHAT_UPDATE_LABEL(x) QString(LS("<a href='#' style='text-decoration:none; color:#216ea7;'>%1</a>")).arg(x)
-
+#define SCHAT_UPDATE_INTERVAL 24 * 60 * 60 * 1000
 
 UpdateInfo::UpdateInfo(const QUrl &url)
   : revision(0)
@@ -104,6 +107,7 @@ UpdatePluginImpl::UpdatePluginImpl(QObject *parent)
   , m_settings(ChatCore::settings())
   , m_prefix(LS("Update"))
   , m_state(Idle)
+  , m_lastCheck(0)
   , m_current(0)
   , m_status(Unknown)
 {
@@ -116,6 +120,8 @@ UpdatePluginImpl::UpdatePluginImpl(QObject *parent)
 
   ChatCore::translation()->addOther(LS("update"));
 
+  m_timer = new QBasicTimer();
+  m_timer->start(60 * 60 * 1000, this);
   m_sha1 = new QCryptographicHash(QCryptographicHash::Sha1);
   QTimer::singleShot(0, this, SLOT(start()));
 }
@@ -123,6 +129,10 @@ UpdatePluginImpl::UpdatePluginImpl(QObject *parent)
 
 UpdatePluginImpl::~UpdatePluginImpl()
 {
+  if (m_timer->isActive())
+    m_timer->stop();
+
+  delete m_timer;
   delete m_sha1;
 }
 
@@ -156,6 +166,15 @@ void UpdatePluginImpl::check()
     return setDone(CheckError);
 
   QTimer::singleShot(0, this, SLOT(startDownload()));
+}
+
+
+void UpdatePluginImpl::timerEvent(QTimerEvent *event)
+{
+  if (event->timerId() == m_timer->timerId())
+    online();
+
+  ChatPlugin::timerEvent(event);
 }
 
 
@@ -253,6 +272,16 @@ void UpdatePluginImpl::finished()
 }
 
 
+void UpdatePluginImpl::online()
+{
+  if (m_state != Idle)
+    return;
+
+  if (qAbs(DateTime::utc() - m_lastCheck) > SCHAT_UPDATE_INTERVAL)
+    check();
+}
+
+
 void UpdatePluginImpl::readyRead()
 {
   if (m_state == DownloadUpdate) {
@@ -277,6 +306,7 @@ void UpdatePluginImpl::start()
     QFile::remove(Path::cache() + LS("/schat2-") + QApplication::applicationVersion() + LS(".") + QString::number(SCHAT_REVISION) + LS(".exe"));
 
   connect(BgOperationWidget::i(), SIGNAL(clicked(QString, QMouseEvent*)), SLOT(clicked(QString, QMouseEvent*)));
+  connect(ChatClient::i(), SIGNAL(ready()), SLOT(online()));
   check();
 }
 
@@ -338,6 +368,8 @@ void UpdatePluginImpl::readJSON()
   m_info = UpdateInfo(json.value(LS(SCHAT_PLATFORM)).toMap());
   if (!m_info.isValid())
     return setDone(CheckError);
+
+  m_lastCheck = DateTime::utc();
 
   if (SCHAT_REVISION >= m_info.revision)
     return setDone(NoUpdates);
