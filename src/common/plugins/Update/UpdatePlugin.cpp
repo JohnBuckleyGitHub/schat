@@ -83,9 +83,13 @@ UpdateInfo::UpdateInfo(const QVariantMap &data)
   size     = data.value(LS("size")).toInt();
   hash     = QByteArray::fromHex(data.value(LS("hash")).toByteArray());
   notes    = data.value(LS("notes")).toUrl();
+  page     = data.value(LS("page")).toString();
 
   if (notes.isEmpty())
     notes = LS("http://wiki.schat.me/Simple_Chat_") + version;
+
+  if (page.isEmpty())
+    page = url.toString();
 }
 
 
@@ -223,7 +227,7 @@ void UpdatePluginImpl::clicked(const QString &key, QMouseEvent *event)
       QTimer::singleShot(0, this, SLOT(download()));
     }
     else
-      QDesktopServices::openUrl(m_info.url);
+      QDesktopServices::openUrl(m_info.page);
   }
   else if (action == pause) {
     m_state = Paused;
