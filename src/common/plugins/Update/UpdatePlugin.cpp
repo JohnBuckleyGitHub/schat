@@ -101,10 +101,10 @@ bool UpdateInfo::isValid() const
   if (version.isEmpty() || Ver(version) < LS("1.99.50"))
     return false;
 
-  if (revision < 3361 || !url.isValid())
+  if (revision < 3361)
     return false;
 
-  if (UpdatePluginImpl::supportDownload() && (size < 1 || hash.size() != 20))
+  if (UpdatePluginImpl::supportDownload() && (!url.isValid() || size < 1 || hash.size() != 20))
     return false;
 
   return true;

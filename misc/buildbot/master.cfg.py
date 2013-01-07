@@ -342,7 +342,7 @@ def MakeReleaseBuilder():
       '--channel',  Property('channel', default = 'stable'),
       '--version',  SCHAT_VERSION,
       '--revision', Property('revision'),
-      '--os',       Property('os', default = 'win32'),
+      '--os',       Property('os', default = 'win32,osx,ubuntu'),
     ]
   ))
   f.addStep(MasterShellCommand(
