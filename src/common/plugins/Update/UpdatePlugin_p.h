@@ -27,6 +27,7 @@
 #include "plugins/ChatPlugin.h"
 
 class ChatSettings;
+class Notify;
 class QBasicTimer;
 class QCryptographicHash;
 class QMouseEvent;
@@ -80,9 +81,10 @@ public:
 
   UpdatePluginImpl(QObject *parent);
   ~UpdatePluginImpl();
-  inline Status status() const { return m_status; }
+  inline const UpdateInfo &info() const { return m_info; }
+  inline DownloadState state() const    { return m_state; }
+  inline Status status() const          { return m_status; }
   static bool supportDownload();
-
 
 signals:
   void done(int status);
@@ -98,6 +100,7 @@ private slots:
   void download();
   void downloadProgress();
   void finished();
+  void notify(const Notify &notify);
   void online();
   void readyRead();
   void restart();

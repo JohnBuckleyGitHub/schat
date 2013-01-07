@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2012 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2013 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -26,10 +26,12 @@ HEADERS  = \
    UpdatePlugin.h \
    UpdatePlugin_p.h \
    UpdateSettings.h \
+   UpdateWidget.h \
 
 SOURCES  = \
    UpdatePlugin.cpp \
    UpdateSettings.cpp \
+   UpdateWidget.cpp \
 
 RESOURCES += Update.qrc
 

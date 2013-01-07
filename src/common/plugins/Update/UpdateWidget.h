@@ -16,41 +16,30 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ABOUTTAB_H_
-#define ABOUTTAB_H_
+#ifndef UPDATEWIDGET_H_
+#define UPDATEWIDGET_H_
 
-#include <QVariant>
+#include <QFrame>
 
-#include "ui/tabs/AbstractTab.h"
+class QLabel;
+class Spinner;
+class UpdatePluginImpl;
 
-class AboutTr;
-class QUrl;
-class QVBoxLayout;
-class WebView;
-
-class SCHAT_CORE_EXPORT AboutTab : public AbstractTab
+class UpdateWidget : public QFrame
 {
   Q_OBJECT
 
 public:
-  AboutTab(TabWidget *parent);
-  ~AboutTab();
-  inline QVBoxLayout *layout() const { return m_layout; }
-
-  Q_INVOKABLE QString path(const QString &type) const;
-  Q_INVOKABLE QVariant version(const QString &type) const;
+  UpdateWidget(UpdatePluginImpl *plugin, QWidget *parent = 0);
 
 private slots:
-  void linkClicked(const QUrl &url);
-  void populateJavaScriptWindowObject();
+  void reload();
 
 private:
-  QString fileUrl(const QString &fileName) const;
-  void retranslateUi();
-
-  AboutTr *m_tr;         ///< Класс перевода строк.
-  QVBoxLayout *m_layout; ///< Основной компоновщик.
-  WebView *m_view;       ///< Главный виджет.
+  QLabel *m_icon;             ///< Иконка.
+  QLabel *m_text;             ///< Основной текст.
+  Spinner *m_spinner;         ///< Спиннер.
+  UpdatePluginImpl *m_plugin; ///< Указатель на плагин.
 };
 
-#endif /* ABOUTTAB_H_ */
+#endif /* UPDATEWIDGET_H_ */
