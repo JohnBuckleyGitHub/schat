@@ -29,6 +29,7 @@
 #include <QProgressBar>
 #include <QTimer>
 #include <QtPlugin>
+#include <QVBoxLayout>
 
 #if QT_VERSION >= 0x050000
 # include <QWebPage>
@@ -37,6 +38,7 @@
 #endif
 
 #include "ChatCore.h"
+#include "ChatNotify.h"
 #include "ChatNotify.h"
 #include "ChatSettings.h"
 #include "client/ChatClient.h"
@@ -49,9 +51,12 @@
 #include "Translation.h"
 #include "ui/BgOperationWidget.h"
 #include "ui/ChatIcons.h"
+#include "ui/tabs/AboutTab.h"
+#include "ui/TabWidget.h"
 #include "UpdatePlugin.h"
 #include "UpdatePlugin_p.h"
 #include "UpdateSettings.h"
+#include "UpdateWidget.h"
 #include "version.h"
 
 #define SCHAT_UPDATE_LABEL(x) QString(LS("<a href='#' style='text-decoration:none; color:#216ea7;'>%1</a>")).arg(x)
@@ -212,8 +217,11 @@ void UpdatePluginImpl::clicked(const QString &key, QMouseEvent *event)
     QDesktopServices::openUrl(m_info.notes);
   }
   else if (action == download) {
-    if (supportDownload())
+    if (supportDownload()) {
+      m_state = DownloadUpdate;
+      emit done(m_status);
       QTimer::singleShot(0, this, SLOT(download()));
+    }
     else
       QDesktopServices::openUrl(m_info.url);
   }
@@ -223,6 +231,7 @@ void UpdatePluginImpl::clicked(const QString &key, QMouseEvent *event)
   }
   else if (action == resume) {
     m_state = DownloadUpdate;
+    emit done(m_status);
     QTimer::singleShot(0, this, SLOT(startDownload()));
   }
 }
@@ -272,6 +281,16 @@ void UpdatePluginImpl::finished()
 }
 
 
+void UpdatePluginImpl::notify(const Notify &notify)
+{
+  if (notify.type() == Notify::PageOpen && notify.data() == "about") {
+    AboutTab *tab = qobject_cast<AboutTab*>(TabWidget::page(notify.data().toByteArray()));
+    if (tab)
+      tab->layout()->insertWidget(1, new UpdateWidget(this, tab));
+  }
+}
+
+
 void UpdatePluginImpl::online()
 {
   if (m_state != Idle)
@@ -307,6 +326,7 @@ void UpdatePluginImpl::start()
 
   connect(BgOperationWidget::i(), SIGNAL(clicked(QString, QMouseEvent*)), SLOT(clicked(QString, QMouseEvent*)));
   connect(ChatClient::i(), SIGNAL(ready()), SLOT(online()));
+  connect(ChatNotify::i(), SIGNAL(notify(Notify)), SLOT(notify(Notify)));
   check();
 }
 

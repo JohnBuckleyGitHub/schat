@@ -72,10 +72,10 @@ AboutTab::AboutTab(TabWidget *parent)
   m_view->setAcceptDrops(false);
   m_view->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
 
-  QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(m_view);
-  mainLay->setMargin(0);
-  mainLay->setSpacing(0);
+  m_layout = new QVBoxLayout(this);
+  m_layout->addWidget(m_view);
+  m_layout->setMargin(0);
+  m_layout->setSpacing(0);
 
   connect(m_view, SIGNAL(linkClicked(const QUrl &)), SLOT(linkClicked(const QUrl &)));
 
