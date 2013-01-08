@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -137,9 +137,7 @@ ChatAlerts::~ChatAlerts()
 {
   qDeleteAll(m_types);
 
-  m_alerts = 0;
-  m_channels.clear();
-  m_count.clear();
+  reset();
 }
 
 
@@ -293,8 +291,14 @@ void ChatAlerts::remove(const QByteArray &channelId, const QByteArray &alertId)
   }
   else
     remove(channelId);
+}
 
 
+void ChatAlerts::reset()
+{
+  m_alerts = 0;
+  m_channels.clear();
+  m_count.clear();
 }
 
 
