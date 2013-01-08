@@ -90,6 +90,11 @@ UpdateInfo::UpdateInfo(const QVariantMap &data)
 
   if (page.isEmpty())
     page = url.toString();
+
+# if defined(Q_OS_WIN)
+  if (!UpdatePluginImpl::supportDownload())
+    size = 0;
+# endif
 }
 
 
@@ -149,7 +154,7 @@ UpdatePluginImpl::~UpdatePluginImpl()
 bool UpdatePluginImpl::supportDownload()
 {
 # if defined(Q_OS_WIN)
-  return true;
+  return Path::isPortable();
 # else
   return false;
 # endif

@@ -94,6 +94,9 @@
         <Component Id="ChangeLog.YouTube.html" Guid="{70B9B07A-08D0-4B18-BA3D-B069CF5C8BB4}">
           <File Id="ChangeLog.YouTube.html" KeyPath="yes" Source="..\schat2\doc\ChangeLog.YouTube.html" />
         </Component>
+        <Component Id="ChangeLog.Update.html" Guid="{E7273AE4-BABE-49ba-949E-6BE4EA240084}">
+          <File Id="ChangeLog.Update.html" KeyPath="yes" Source="..\schat2\doc\ChangeLog.Update.html" />
+        </Component>
       </Directory>
       <Directory Id="extensions" Name="extensions">
         <Directory Id="emoticons" Name="emoticons">
@@ -141,6 +144,9 @@
         </Component>
         <Component Id="YouTube.dll" Guid="{47FECF2B-D064-496C-983F-111D0D3B63E6}">
           <File Id="YouTube.dll" KeyPath="yes" Source="..\schat2\plugins\YouTube.dll" />
+        </Component>
+        <Component Id="Update.dll" Guid="{E2D41CB3-647E-4263-B22E-9FE91FC57965}">
+          <File Id="Update.dll" KeyPath="yes" Source="..\schat2\plugins\Update.dll" />
         </Component>
         <Directory Id="qt" Name="qt">
           <Directory Id="imageformats" Name="imageformats">
@@ -306,6 +312,10 @@
     <ComponentGroup Id="YouTube">
       <ComponentRef Id="YouTube.dll" />
       <ComponentRef Id="ChangeLog.YouTube.html" />
+    </ComponentGroup>
+    <ComponentGroup Id="Update">
+      <ComponentRef Id="Update.dll" />
+      <ComponentRef Id="ChangeLog.Update.html" />
     </ComponentGroup>
   </Fragment>
 </Wix>
