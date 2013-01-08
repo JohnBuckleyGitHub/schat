@@ -83,8 +83,10 @@ void UpdateWidget::reload()
       m_icon->hide();
     }
     else {
-      m_text->setText(tr("New version of Simple Chat available. Version <b>%1</b>, size <b>%2</b>.")
-          .arg(m_plugin->info().version, WebBridge::i()->bytesToHuman(m_plugin->info().size, false)));
+      if (!m_plugin->info().size)
+        m_text->setText(tr("New version of Simple Chat available. Version <b>%1</b>, size <b>%2</b>.").arg(m_plugin->info().version, WebBridge::i()->bytesToHuman(m_plugin->info().size, false)));
+      else
+        m_text->setText(tr("New version of Simple Chat available. Version <b>%1</b>.").arg(m_plugin->info().version));
 
       OK_PIXMAP
     }

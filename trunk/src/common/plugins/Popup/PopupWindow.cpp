@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 
 PopupWindow::PopupWindow(const Alert &alert, int timeout, const QString &css)
 # if defined(Q_OS_MAC)
-  : QFrame(0, Qt::SubWindow | Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowStaysOnTopHint)
+  : QFrame(0, Qt::FramelessWindowHint | Qt::WindowSystemMenuHint | Qt::WindowStaysOnTopHint)
 # else
   : QFrame(0, Qt::ToolTip | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint)
 # endif
@@ -40,6 +40,7 @@ PopupWindow::PopupWindow(const Alert &alert, int timeout, const QString &css)
 {
   setObjectName(LS("PopupWindow"));
   setAttribute(Qt::WA_DeleteOnClose, true);
+  setAttribute(Qt::WA_ShowWithoutActivating, true);
   setWindowOpacity(0.9);
 
   m_icon = new QLabel(this);
