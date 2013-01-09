@@ -29,6 +29,7 @@
 #include <unistd.h>
 #endif
 
+
 int main(int argc, char *argv[])
 {
 # if defined(Q_OS_LINUX)
@@ -50,15 +51,13 @@ int main(int argc, char *argv[])
   app.setOrganizationName(LS("IMPOMEZIA"));
   app.setOrganizationDomain(SCHAT_DOMAIN);
 
-  QStringList arguments = app.arguments();
-  if (arguments.contains(LS("--version"))) {
-    NodeInit::version();
+  const QStringList arguments = app.arguments();
+  if (NodeInit::version(arguments))
     return 0;
-  }
 
   NodeInit::version();
 
-  NodeInit *init = new NodeInit();
+  NodeInit *init = new NodeInit(NodeInit::base(arguments));
   int result = app.exec();
   init->quit();
 
