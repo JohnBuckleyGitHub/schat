@@ -17,6 +17,7 @@
  */
 
 #include <QCoreApplication>
+#include <QFile>
 #include <QTextStream>
 #include <QTimer>
 
@@ -26,6 +27,7 @@
 #include "NodeInit.h"
 #include "NodeNotify.h"
 #include "NodePlugins.h"
+#include "Path.h"
 #include "Settings.h"
 #include "sglobal.h"
 #include "Storage.h"
@@ -50,6 +52,12 @@ NodeInit::NodeInit(const QString &app, QObject *parent)
 # endif
 
   QTimer::singleShot(0, this, SLOT(start()));
+
+# if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
+  QFile pid(LS("/var/run/") + Path::app() + LC('/') + Path::app() + LS(".pid"));
+  if (pid.open(QIODevice::WriteOnly))
+    pid.write(QByteArray::number(QCoreApplication::applicationPid()));
+# endif
 }
 
 
