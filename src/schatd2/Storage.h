@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -42,12 +42,8 @@ public:
   inline static Settings *settings()       { return m_self->m_settings; }
   inline static Storage *i()               { return m_self; }
   static bool hasFeature(const QString &name);
-  static QString etcPath();
-  static QString serverName();
-  static QString sharePath();
-  static QString varPath();
+  static QString var();
   static void addFeature(const QString &name);
-
   static bool contains(const QString &key);
   static int setValue(const QString &key, const QVariant &value);
   static QVariant value(const QString &key, const QVariant &defaultValue = QVariant());
@@ -60,6 +56,7 @@ signals:
   void valueChanged(const QString &key, const QVariant &value);
 
 private:
+  QString etc() const;
   void setDefaultSslConf();
   void setMaxOpenFiles(int max);
 
