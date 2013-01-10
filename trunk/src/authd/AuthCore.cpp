@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -53,9 +53,9 @@ AuthCore::AuthCore(QObject *parent)
 
   m_log = new NodeLog();
 
-  m_settings = new Settings(Storage::etcPath() + LC('/') + Path::app() + LS(".conf"), this);
-  m_settings->setDefault(LS("Listen"),   QStringList("http://0.0.0.0:7668"));
-  m_settings->setDefault(LS("Root"),     Storage::sharePath() + LS("/www"));
+  m_settings = new Settings(defaultConf(), this);
+  m_settings->setDefault(LS("Listen"),   QStringList(LS("http://0.0.0.0:7668")));
+  m_settings->setDefault(LS("Root"),     defaultRoot());
   m_settings->setDefault(LS("Order"),    QStringList() << LS("facebook") << LS("vkontakte") << LS("google") << LS("live") << LS("github") << LS("yandex") << LS("odnoklassniki") << LS("mail_ru"));
   m_settings->setDefault(LS("LogLevel"), 2);
   m_settings->setDefault(LS("BaseUrl"),  QString());
@@ -146,6 +146,28 @@ void AuthCore::start()
   }
 
   SCHAT_LOG_INFO("Server successfully started")
+}
+
+
+QString AuthCore::defaultConf() const
+{
+# if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
+  if (!Path::isPortable())
+    return LS("/etc/schatd2/") + Path::app() + LS(".conf");
+# endif
+
+  return Path::data() + LC('/') + Path::app() + LS(".conf");
+}
+
+
+QString AuthCore::defaultRoot() const
+{
+# if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
+  if (!Path::isPortable())
+    return LS("/usr/share/schatd2/www");
+# endif
+
+  return Path::data(Path::SystemScope) + LS("/www");
 }
 
 

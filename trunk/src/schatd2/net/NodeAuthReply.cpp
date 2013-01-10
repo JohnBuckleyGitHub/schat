@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
  */
 
 #include "Account.h"
+#include "Ch.h"
 #include "cores/NodeAuth.h"
 #include "net/NodeAuthReply.h"
 #include "sglobal.h"
@@ -30,7 +31,7 @@ NodeAuthReply::NodeAuthReply(const AuthResult &result, ChatChannel channel)
   status     = result.status;
   id         = result.authId;
   json       = result.json;
-  serverName = Storage::serverName();
+  serverName = Ch::server()->name();
 
   if (Storage::value(LS("AnonymousAuth")).toBool())
     flags = 1;

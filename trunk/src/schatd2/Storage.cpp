@@ -61,7 +61,7 @@ Storage::Storage(const QString &app, QObject *parent)
   new Ch(this);
 
   // Инициализация настроек по умолчанию.
-  m_settings = new Settings(etcPath() + LC('/') + Path::app() + LS(".conf"), this);
+  m_settings = new Settings(etc() + LC('/') + Path::app() + LS(".conf"), this);
   m_settings->setDefault(LS("AnonymousAuth"), true);
   m_settings->setDefault(LS("AuthServer"),    LS("https://auth.schat.me"));
   m_settings->setDefault(LS("Certificate"),   LS("server.crt"));
@@ -93,41 +93,11 @@ bool Storage::hasFeature(const QString &name)
 }
 
 
-QString Storage::etcPath()
+QString Storage::var()
 {
 # if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
   if (!Path::isPortable())
-    return LS("/etc/schatd2");
-# endif
-
-  return Path::data();
-}
-
-
-QString Storage::serverName()
-{
-  qDebug() << "serverName()" << Ch::server()->name();
-
-  return Ch::server()->name();
-}
-
-
-QString Storage::sharePath()
-{
-# if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
-  if (!Path::isPortable())
-    return LS("/usr/share/schatd2");
-# endif
-
-  return Path::data(Path::SystemScope);
-}
-
-
-QString Storage::varPath()
-{
-# if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
-  if (!Path::isPortable())
-    return LS("/var/lib/schatd2");
+    return LS("/var/lib/") + Path::app();
 # endif
 
   return Path::cache();
@@ -273,19 +243,30 @@ int Storage::start()
 }
 
 
+QString Storage::etc() const
+{
+# if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
+  if (!Path::isPortable())
+    return LS("/etc/") + Path::app();
+# endif
+
+  return Path::data();
+}
+
+
 void Storage::setDefaultSslConf()
 {
 # if !defined(SCHAT_NO_SSL)
   if (!QSslSocket::supportsSsl())
     return;
 
-  QList<QSslCertificate> certificates = QSslCertificate::fromPath(Path::file(etcPath(), m_settings->value(LS("Certificate")).toString()));
+  QList<QSslCertificate> certificates = QSslCertificate::fromPath(Path::file(etc(), m_settings->value(LS("Certificate")).toString()));
   if (certificates.isEmpty())
     return;
 
   QSslConfiguration conf = QSslConfiguration::defaultConfiguration();
 
-  QFile key(Path::file(etcPath(), m_settings->value(LS("PrivateKey")).toString()));
+  QFile key(Path::file(etc(), m_settings->value(LS("PrivateKey")).toString()));
   if (key.exists() && key.open(QFile::ReadOnly)) {
     conf.setPrivateKey(QSslKey(&key, QSsl::Rsa));
     key.close();
