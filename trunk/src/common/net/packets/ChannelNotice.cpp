@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,9 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
 #include "DateTime.h"
+#include "net/Channels.h"
 #include "net/PacketReader.h"
 #include "net/packets/ChannelNotice.h"
 #include "net/PacketWriter.h"
@@ -106,7 +105,7 @@ ChannelPacket ChannelNotice::channel(ClientChannel channel, const QByteArray &de
 
 ChannelPacket ChannelNotice::info(ClientChannel channel)
 {
-  ChannelPacket packet(new ChannelNotice(channel->id(), channel->id(), LS("info"), DateTime::utc()));
+  ChannelPacket packet(new ChannelNotice(channel->id(), channel->id(), CHANNELS_INFO_CMD, DateTime::utc()));
   packet->setDirection(Server2Client);
   packet->setText(channel->name());
   packet->m_gender        = channel->gender().raw();
@@ -123,7 +122,7 @@ ChannelPacket ChannelNotice::info(ClientChannel channel)
  */
 ChannelPacket ChannelNotice::info(const QByteArray &user, const QList<QByteArray> &channels)
 {
-  ChannelPacket packet(new ChannelNotice(user, user, LS("info"), DateTime::utc()));
+  ChannelPacket packet(new ChannelNotice(user, user, CHANNELS_INFO_CMD, DateTime::utc()));
   packet->m_channels = channels;
   return packet;
 }

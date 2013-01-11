@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "debugstream.h"
-
 #include "client/SimpleClient.h"
 #include "client/SimpleClient_p.h"
+#include "debugstream.h"
+#include "net/Channels.h"
 #include "net/PacketReader.h"
 #include "net/packets/auth.h"
 #include "net/packets/ChannelNotice.h"
@@ -115,7 +115,7 @@ SimpleClient::~SimpleClient()
 
 void SimpleClient::leave()
 {
-  send(ChannelNotice::request(channelId(), channelId(), LS("quit")));
+  send(ChannelNotice::request(channelId(), channelId(), CHANNELS_QUIT_CMD));
 
   AbstractClient::leave();
 }
