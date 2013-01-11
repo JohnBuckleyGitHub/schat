@@ -298,7 +298,7 @@ qint64 HistoryDB::V3()
   QSqlQuery query(QSqlDatabase::database(m_id));
   query.exec(LS("BEGIN TRANSACTION;"));
 
-  query.prepare(LS("SELECT id, messageId, senderId, destId, text FROM messages"));
+  query.prepare(LS("SELECT id, messageId, senderId, destId FROM messages"));
   query.exec();
 
   QSqlQuery update(QSqlDatabase::database(m_id));

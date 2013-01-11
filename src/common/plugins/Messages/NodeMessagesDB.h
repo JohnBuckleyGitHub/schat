@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ class NodeMessagesDB : public QObject
 
 public:
   NodeMessagesDB(QObject *parent = 0);
+  ~NodeMessagesDB();
   inline static QString id() { return m_id;}
   static bool open();
   static int status(int status);
@@ -51,11 +52,11 @@ private slots:
 
 private:
   static QList<QByteArray> ids(QSqlQuery &query);
-  static void V2();
+  static qint64 V2();
+  static qint64 V3();
   static void version();
 
   QList<QRunnable*> m_tasks;     ///< Задачи для выполнения в отдельном потоке.
-  static bool m_isOpen;          ///< true если база открыта.
   static NodeMessagesDB *m_self; ///< Указатель на себя.
   static QString m_id;           ///< Идентификатор сооединения с базой, это строка всегда равна "messages".
 };
