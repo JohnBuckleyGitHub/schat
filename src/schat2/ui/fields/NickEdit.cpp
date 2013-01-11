@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
+#include "net/Channels.h"
 #include "net/packets/ChannelNotice.h"
 #include "sglobal.h"
 #include "ui/fields/NickEdit.h"
@@ -72,13 +73,13 @@ void NickEdit::notice(const ChannelNotice &notice)
   if (notice.sender() != ChatClient::id())
     return;
 
-  if (notice.command() == LS("info") && notice.status() == Notice::OK) {
+  if (notice.command() == CHANNELS_INFO_CMD && notice.status() == Notice::OK) {
     makeRed(false);
     spinner(false);
     return;
   }
 
-  if (notice.command() == LS("update")) {
+  if (notice.command() == CHANNELS_UPDATE_CMD) {
     if (notice.status() == Notice::ObjectAlreadyExists) {
       makeRed();
       setToolTip(tr("Nickname is already in use"));

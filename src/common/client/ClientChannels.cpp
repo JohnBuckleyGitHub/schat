@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,15 +16,16 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "debugstream.h"
-
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/ClientHooks.h"
 #include "client/SimpleClient.h"
+#include "debugstream.h"
+#include "net/Channels.h"
 #include "net/packets/ChannelNotice.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
+
 
 ClientChannels::ClientChannels(QObject *parent)
   : QObject(parent)
@@ -69,6 +70,8 @@ ClientChannel ClientChannels::get(const QByteArray &id)
 
 /*!
  * Запрос информации о каналах.
+ *
+ * \param channels Список идентификаторов каналов.
  */
 bool ClientChannels::info(const QList<QByteArray> &channels)
 {
@@ -95,6 +98,11 @@ bool ClientChannels::info(const QList<QByteArray> &channels)
 }
 
 
+/*!
+ * Вход в канал по идентификатору.
+ *
+ * \param id Идентификатор канала.
+ */
 bool ClientChannels::join(const QByteArray &id)
 {
   if (!Channel::isCompatibleId(id))
@@ -105,7 +113,7 @@ bool ClientChannels::join(const QByteArray &id)
     return false;
   }
 
-  return m_client->send(ChannelNotice::request(ChatClient::id(), id, LS("join")));
+  return m_client->send(ChannelNotice::request(ChatClient::id(), id, CHANNELS_JOIN_CMD));
 }
 
 
@@ -119,7 +127,7 @@ bool ClientChannels::join(const QString &name)
   if (!Channel::isValidName(name))
     return false;
 
-  return m_client->send(ChannelNotice::request(ChatClient::id(), QByteArray(), LS("join"), name));
+  return m_client->send(ChannelNotice::request(ChatClient::id(), QByteArray(), CHANNELS_JOIN_CMD, name));
 }
 
 
@@ -155,7 +163,7 @@ bool ClientChannels::part(const QByteArray &id)
 
   m_joined.removeAll(id);
 
-  return m_client->send(ChannelNotice::request(ChatClient::id(), id, LS("-")));
+  return m_client->send(ChannelNotice::request(ChatClient::id(), id, CHANNELS_PART_CMD));
 }
 
 
@@ -219,26 +227,26 @@ void ClientChannels::notice(int type)
     return;
 
   m_packet = &packet;
-  QString cmd = m_packet->command();
+  const QString cmd = m_packet->command();
   SCHAT_DEBUG_STREAM(this << "notice()" << cmd << m_packet->text() << m_packet->status() << Notice::status(m_packet->status()) << SimpleID::encode(m_packet->channelId()));
 # if defined(SCHAT_DEBUG)
   qDebug() << "             JSON SIZE:" << m_packet->raw().size() << "bytes";
   qDebug() << "             JSON DATA:" << m_packet->raw();
 # endif
 
-  if (cmd == LS("channel"))
+  if (cmd == CHANNELS_CHANNEL_CMD)
     channel();
 
-  else if (cmd == LS("info"))
+  else if (cmd == CHANNELS_INFO_CMD)
     add();
 
-  else if (cmd == LS("+"))
+  else if (cmd == CHANNELS_JOINED_CMD)
     joined();
 
-  else if (cmd == LS("-"))
+  else if (cmd == CHANNELS_PART_CMD)
     part();
 
-  else if (cmd == LS("quit"))
+  else if (cmd == CHANNELS_QUIT_CMD)
     quit();
 
   emit notice(packet);

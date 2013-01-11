@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include "cores/Core.h"
 #include "DataBase.h"
 #include "events.h"
+#include "net/Channels.h"
 #include "net/PacketReader.h"
 #include "net/packets/ChannelNotice.h"
 #include "net/packets/Notice.h"
@@ -49,7 +50,7 @@ bool NodeChannels::read(PacketReader *reader)
   ChannelNotice packet(m_type, reader);
   m_packet = &packet;
 
-  QString cmd = m_packet->command();
+  const QString cmd = m_packet->command();
   int status  = Notice::NotImplemented;
 
   SCHAT_LOG_DEBUG_STR("[GenericNode/Channels] read channel request, socket:" + QByteArray::number(Core::socket()) +
@@ -59,22 +60,22 @@ bool NodeChannels::read(PacketReader *reader)
       ", text:" + m_packet->text().toUtf8() +
       ", user:" + m_user->name().toUtf8())
 
-  if (cmd == LS("info"))
+  if (cmd == CHANNELS_INFO_CMD)
     return info();
 
-  else if (cmd == LS("join"))
+  else if (cmd == CHANNELS_JOIN_CMD)
     return join();
 
-  else if (cmd == LS("-"))
+  else if (cmd == CHANNELS_PART_CMD)
     return part();
 
-  else if (cmd == LS("quit"))
+  else if (cmd == CHANNELS_QUIT_CMD)
     return quit();
 
-  else if (cmd == LS("update"))
+  else if (cmd == CHANNELS_UPDATE_CMD)
     status = update();
 
-  else if (cmd == LS("name"))
+  else if (cmd == CHANNELS_NAME_CMD)
     status = name();
 
   if (status == Notice::OK)
@@ -140,7 +141,7 @@ bool NodeChannels::info()
         m_user->addChannel(channel->id());
       }
 
-      packets += ChannelNotice::channel(channel, m_user, LS("info"))->data(Core::stream());
+      packets += ChannelNotice::channel(channel, m_user, CHANNELS_INFO_CMD)->data(Core::stream());
     }
   }
 
@@ -181,7 +182,7 @@ bool NodeChannels::join()
 
   /// В случае необходимости всем пользователям в канале будет разослано уведомление в входе нового пользователя.
   if (notify && channel->channels().all().size() > 1 && channel->type() == SimpleID::ChannelId)
-    m_core->send(Sockets::channel(channel), ChannelNotice::channel(m_user, channel->id(), LS("+")));
+    m_core->send(Sockets::channel(channel), ChannelNotice::channel(m_user, channel->id(), CHANNELS_JOINED_CMD));
 
   return false;
 }
@@ -237,7 +238,7 @@ bool NodeChannels::part()
   if (!channel->channels().all().contains(m_user->id()))
     return false;
 
-  m_core->send(Sockets::channel(channel), ChannelNotice::request(m_user->id(), channel->id(), LS("-")));
+  m_core->send(Sockets::channel(channel), ChannelNotice::request(m_user->id(), channel->id(), CHANNELS_PART_CMD));
   channel->removeChannel(m_user->id());
 
   Ch::gc(channel);
