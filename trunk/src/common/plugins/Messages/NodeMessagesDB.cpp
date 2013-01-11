@@ -31,7 +31,6 @@
 #include "Storage.h"
 #include "text/PlainTextFilter.h"
 
-bool NodeMessagesDB::m_isOpen = true;
 NodeMessagesDB *NodeMessagesDB::m_self = 0;
 QString NodeMessagesDB::m_id;
 
@@ -40,6 +39,13 @@ NodeMessagesDB::NodeMessagesDB(QObject *parent)
 {
   m_self = this;
   m_id = LS("messages");
+}
+
+
+NodeMessagesDB::~NodeMessagesDB()
+{
+  m_self = 0;
+  m_id.clear();
 }
 
 
@@ -70,7 +76,6 @@ bool NodeMessagesDB::open()
     ");"));
 
   version();
-  m_isOpen = true;
   return true;
 }
 
@@ -105,7 +110,7 @@ QList<MessageRecord> NodeMessagesDB::get(const QList<QByteArray> &ids, const QBy
 
   for (int i = 0; i < ids.size(); ++i) {
     const QByteArray &id = ids.at(i);
-    query.bindValue(LS(":messageId"), id);
+    query.bindValue(LS(":messageId"), SimpleID::encode(id));
     query.exec();
 
     if (!query.first())
@@ -114,8 +119,8 @@ QList<MessageRecord> NodeMessagesDB::get(const QList<QByteArray> &ids, const QBy
     MessageRecord record;
     record.id        = query.value(0).toLongLong();
     record.messageId = id;
-    record.senderId  = query.value(1).toByteArray();
-    record.destId    = query.value(2).toByteArray();
+    record.senderId  = SimpleID::decode(query.value(1).toByteArray());
+    record.destId    = SimpleID::decode(query.value(2).toByteArray());
     if (!userId.isEmpty() && (record.senderId != userId && record.destId != userId))
       continue;
 
@@ -141,9 +146,9 @@ QList<MessageRecord> NodeMessagesDB::messages(QSqlQuery &query)
   while (query.next()) {
     MessageRecord record;
     record.id        = query.value(0).toLongLong();
-    record.messageId = query.value(1).toByteArray();
-    record.senderId  = query.value(2).toByteArray();
-    record.destId    = query.value(3).toByteArray();
+    record.messageId = SimpleID::decode(query.value(1).toByteArray());
+    record.senderId  = SimpleID::decode(query.value(2).toByteArray());
+    record.destId    = SimpleID::decode(query.value(3).toByteArray());
     record.status    = query.value(4).toLongLong();
     record.date      = query.value(5).toLongLong();
     record.command   = query.value(6).toString();
@@ -160,7 +165,7 @@ QList<MessageRecord> NodeMessagesDB::offline(const QByteArray &user)
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
   query.prepare(LS("SELECT id, messageId, senderId, destId, status, date, command, text, data FROM messages WHERE destId = :destId AND status = 301 ORDER BY id DESC;"));
-  query.bindValue(LS(":destId"), user);
+  query.bindValue(LS(":destId"), SimpleID::encode(user));
   query.exec();
 
   return messages(query);
@@ -168,9 +173,9 @@ QList<MessageRecord> NodeMessagesDB::offline(const QByteArray &user)
 
 
 /*!
- * Получение идентификаторов последних сообщений для обычного канала или собственного канала пользователя.
+ * Получение не кодированных идентификаторов последних сообщений для обычного канала или собственного канала пользователя.
  *
- * \param channel Идентификатор канала.
+ * \param channel Не кодированный идентификатор канала.
  * \param limit   Максимальное количество сообщений.
  * \param before  Дата, для загрузки сообщений старее этой даты.
  */
@@ -188,7 +193,7 @@ QList<QByteArray> NodeMessagesDB::last(const QByteArray &channel, int limit, qin
   else
     query.prepare(LS("SELECT messageId FROM messages WHERE destId = :destId ORDER BY id DESC LIMIT :limit;"));
 
-  query.bindValue(LS(":destId"), channel);
+  query.bindValue(LS(":destId"), SimpleID::encode(channel));
   query.bindValue(LS(":limit"), limit);
   query.exec();
 
@@ -197,10 +202,10 @@ QList<QByteArray> NodeMessagesDB::last(const QByteArray &channel, int limit, qin
 
 
 /*!
- * Получение идентификаторов последних приватных сообщений между двумя пользователями.
+ * Получение не кодированных идентификаторов последних приватных сообщений между двумя пользователями.
  *
- * \param user1  Идентификатор одного пользователя.
- * \param user2  Идентификатор другого пользователя.
+ * \param user1  Не кодированный идентификатор одного пользователя.
+ * \param user2  Не кодированный идентификатор другого пользователя.
  * \param limit  Максимальное количество сообщений.
  * \param before Дата, для загрузки сообщений старее этой даты.
  */
@@ -214,10 +219,13 @@ QList<QByteArray> NodeMessagesDB::last(const QByteArray &user1, const QByteArray
   else
     query.prepare(LS("SELECT messageId FROM messages WHERE (senderId = :id1 AND destId = :id2) OR (senderId = :id3 AND destId = :id4) ORDER BY id DESC LIMIT :limit;"));
 
-  query.bindValue(LS(":id1"), user1);
-  query.bindValue(LS(":id2"), user2);
-  query.bindValue(LS(":id3"), user2);
-  query.bindValue(LS(":id4"), user1);
+  const QByteArray u1 = SimpleID::encode(user1);
+  const QByteArray u2 = SimpleID::encode(user2);
+
+  query.bindValue(LS(":id1"), u1);
+  query.bindValue(LS(":id2"), u2);
+  query.bindValue(LS(":id3"), u2);
+  query.bindValue(LS(":id4"), u1);
   query.bindValue(LS(":limit"), limit);
   query.exec();
 
@@ -233,7 +241,7 @@ QList<QByteArray> NodeMessagesDB::since(const QByteArray &channel, qint64 start,
   QSqlQuery query(QSqlDatabase::database(m_id));
 
   query.prepare(LS("SELECT messageId FROM messages WHERE date > :start AND date < :end AND destId = :destId ORDER BY id DESC;"));
-  query.bindValue(LS(":destId"), channel);
+  query.bindValue(LS(":destId"), SimpleID::encode(channel));
   query.bindValue(LS(":start"),  start);
   query.bindValue(LS(":end"),    end);
   query.exec();
@@ -247,10 +255,13 @@ QList<QByteArray> NodeMessagesDB::since(const QByteArray &user1, const QByteArra
   QSqlQuery query(QSqlDatabase::database(m_id));
   query.prepare(LS("SELECT messageId FROM messages WHERE date > :start AND date < :end AND ((senderId = :id1 AND destId = :id2) OR (senderId = :id3 AND destId = :id4)) ORDER BY id DESC;"));
 
-  query.bindValue(LS(":id1"),   user1);
-  query.bindValue(LS(":id2"),   user2);
-  query.bindValue(LS(":id3"),   user2);
-  query.bindValue(LS(":id4"),   user1);
+  const QByteArray u1 = SimpleID::encode(user1);
+  const QByteArray u2 = SimpleID::encode(user2);
+
+  query.bindValue(LS(":id1"),   u1);
+  query.bindValue(LS(":id2"),   u2);
+  query.bindValue(LS(":id3"),   u2);
+  query.bindValue(LS(":id4"),   u1);
   query.bindValue(LS(":start"), start);
   query.bindValue(LS(":end"),   end);
   query.exec();
@@ -314,13 +325,15 @@ void NodeMessagesDB::version()
 
   qint64 version = query.value(0).toLongLong();
   if (!version) {
-    query.exec(LS("PRAGMA user_version = 2"));
-    version = 2;
+    query.exec(LS("PRAGMA user_version = 3"));
+    version = 3;
     return;
   }
 
-  if (version == 1)
-    V2();
+  query.finish();
+
+  if (version == 1) version = V2();
+  if (version == 2) version = V3();
 }
 
 
@@ -331,7 +344,7 @@ QList<QByteArray> NodeMessagesDB::ids(QSqlQuery &query)
 
   QList<QByteArray> out;
   while (query.next())
-    out.prepend(query.value(0).toByteArray());
+    out.prepend(SimpleID::decode(query.value(0).toByteArray()));
 
   return out;
 }
@@ -340,11 +353,39 @@ QList<QByteArray> NodeMessagesDB::ids(QSqlQuery &query)
 /*!
  * Обновление схемы базы до версии 2.
  */
-void NodeMessagesDB::V2()
+qint64 NodeMessagesDB::V2()
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
   query.exec(LS("ALTER TABLE messages ADD data BLOB"));
   query.exec(LS("PRAGMA user_version = 2"));
+
+  return 2;
+}
+
+
+qint64 NodeMessagesDB::V3()
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.exec(LS("BEGIN TRANSACTION;"));
+
+  query.prepare(LS("SELECT id, messageId, senderId, destId FROM messages"));
+  query.exec();
+
+  QSqlQuery update(QSqlDatabase::database(m_id));
+  update.prepare(LS("UPDATE messages SET messageId = :messageId, senderId = :senderId, destId = :destId WHERE id = :id;"));
+
+  while (query.next()) {
+    update.bindValue(LS(":id"),        query.value(0));
+    update.bindValue(LS(":messageId"), SimpleID::encode(query.value(1).toByteArray()));
+    update.bindValue(LS(":senderId"),  SimpleID::encode(query.value(2).toByteArray()));
+    update.bindValue(LS(":destId"),    SimpleID::encode(query.value(3).toByteArray()));
+    update.exec();
+  }
+
+  query.exec(LS("PRAGMA user_version = 3"));
+  query.exec(LS("COMMIT;"));
+
+  return 3;
 }
 
 
@@ -362,9 +403,9 @@ void AddMessageTask::run()
   query.prepare(LS("INSERT INTO messages (messageId,  senderId,  destId,  status,  date,  command,  text,  plain,  data) "
                                  "VALUES (:messageId, :senderId, :destId, :status, :date, :command, :text, :plain, :data);"));
 
-  query.bindValue(LS(":messageId"), m_packet.id());
-  query.bindValue(LS(":senderId"),  m_packet.sender());
-  query.bindValue(LS(":destId"),    m_packet.dest());
+  query.bindValue(LS(":messageId"), SimpleID::encode(m_packet.id()));
+  query.bindValue(LS(":senderId"),  SimpleID::encode(m_packet.sender()));
+  query.bindValue(LS(":destId"),    SimpleID::encode(m_packet.dest()));
   query.bindValue(LS(":status"),    NodeMessagesDB::status(m_status));
   query.bindValue(LS(":date"),      m_packet.date());
   query.bindValue(LS(":command"),   m_packet.command());
