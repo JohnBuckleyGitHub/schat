@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -77,6 +77,7 @@ private:
   static qint64 channelKey(const QByteArray &id, int type = SimpleID::ChannelId);
   static qint64 V2();
   static qint64 V3();
+  static qint64 V4();
   static void update(ChatChannel channel);
   static void version();
 
