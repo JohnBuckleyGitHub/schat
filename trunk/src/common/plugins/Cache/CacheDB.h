@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@ class CacheDB : public QObject
 
 public:
   CacheDB(QObject *parent = 0);
+  ~CacheDB();
 
   inline static QString id() { return m_id; }
   static bool open(const QByteArray &id, const QString &dir);
@@ -43,9 +44,6 @@ public:
   static void add(ClientChannel channel);
   static void add(FeedPtr feed);
   static void clear();
-  static void close();
-  static void setData(Channel *channel);
-  static void setKey(const QByteArray &id, qint64 key);
 
 private slots:
   void start();
@@ -53,7 +51,10 @@ private slots:
 private:
   static ClientChannel channel(qint64 id, bool feeds = true);
   static qint64 V2();
+  static qint64 V3();
+  static void close();
   static void create();
+  static void setKey(const QByteArray &id, qint64 key);
   static void version();
 
   QList<QRunnable*> m_tasks;        ///< Задачи для выполнения в отдельном потоке.

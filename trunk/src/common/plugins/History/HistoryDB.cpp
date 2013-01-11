@@ -303,10 +303,8 @@ qint64 HistoryDB::V3()
 
   QSqlQuery update(QSqlDatabase::database(m_id));
   update.prepare(LS("UPDATE messages SET messageId = :messageId, senderId = :senderId, destId = :destId WHERE id = :id;"));
-  int i = 0;
 
   while (query.next()) {
-    i++;
     update.bindValue(LS(":id"),        query.value(0));
     update.bindValue(LS(":messageId"), SimpleID::encode(query.value(1).toByteArray()));
     update.bindValue(LS(":senderId"),  SimpleID::encode(query.value(2).toByteArray()));

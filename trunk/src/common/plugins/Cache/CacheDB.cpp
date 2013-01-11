@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -68,37 +68,13 @@ public:
     }
     else {
       query.prepare(LS("INSERT INTO channels (channel, type, gender, name, data) VALUES (:channel, :type, :gender, :name, :data);"));
-      query.bindValue(LS(":channel"), m_id);
+      query.bindValue(LS(":channel"), SimpleID::encode(m_id));
       query.bindValue(LS(":type"),    m_type);
     }
 
     query.bindValue(LS(":gender"), m_gender);
     query.bindValue(LS(":name"),   m_name);
     query.bindValue(LS(":data"),   JSON::generate(m_data));
-    query.exec();
-  }
-};
-
-
-class ChannelDataTask : public QRunnable
-{
-  qint64 m_key;       ///< Ключ в таблице.
-  QVariantMap m_data; ///< JSON данные.
-
-public:
-  ChannelDataTask(Channel *channel)
-  : QRunnable()
-  , m_key(channel->key())
-  , m_data(channel->data())
-  {
-  }
-
-  void run()
-  {
-    QSqlQuery query(QSqlDatabase::database(CacheDB::id()));
-    query.prepare(LS("UPDATE channels SET data = :data WHERE id = :id;"));
-    query.bindValue(LS(":data"), JSON::generate(m_data));
-    query.bindValue(LS(":id"),   m_key);
     query.exec();
   }
 };
@@ -164,6 +140,13 @@ CacheDB::CacheDB(QObject *parent)
 }
 
 
+CacheDB::~CacheDB()
+{
+  m_self = 0;
+  m_id.clear();
+}
+
+
 /*!
  * Открытие базы данных.
  */
@@ -203,6 +186,8 @@ ClientChannel CacheDB::channel(const QByteArray &id, bool feeds)
 /*!
  * Получение первичного ключа в таблице channels для канала с идентификатором \p id.
  *
+ * \param id Не кодированный идентификатор канала.
+ *
  * \return первичный ключ или -1 в случае если канал не найден в кеше.
  */
 qint64 CacheDB::key(const QByteArray &id)
@@ -216,7 +201,7 @@ qint64 CacheDB::key(const QByteArray &id)
 
   QSqlQuery query(QSqlDatabase::database(m_id));
   query.prepare(LS("SELECT id FROM channels WHERE channel = :channel LIMIT 1;"));
-  query.bindValue(LS(":channel"), id);
+  query.bindValue(LS(":channel"), SimpleID::encode(id));
   query.exec();
 
   if (!query.first())
@@ -262,38 +247,6 @@ void CacheDB::clear()
 }
 
 
-/*!
- * Закрытие базы данных.
- */
-void CacheDB::close()
-{
-  QSqlDatabase::removeDatabase(m_id);
-  m_id.clear();
-}
-
-
-void CacheDB::setData(Channel *channel)
-{
-  if (channel->key() <= 0)
-    return;
-
-  ChannelDataTask *task = new ChannelDataTask(channel);
-  m_self->m_tasks.append(task);
-  if (m_self->m_tasks.size() == 1)
-    QTimer::singleShot(0, m_self, SLOT(start()));
-}
-
-
-void CacheDB::setKey(const QByteArray &id, qint64 key)
-{
-  if (key <= 0)
-    return;
-
-  QMutexLocker locker(&m_self->m_mutex);
-  m_self->m_cache[id] = key;
-}
-
-
 void CacheDB::start()
 {
   QThreadPool *pool = ChatCore::pool();
@@ -312,7 +265,7 @@ ClientChannel CacheDB::channel(qint64 id, bool feeds)
   if (!query.first())
     return ClientChannel();
 
-  ClientChannel channel(new Channel(query.value(0).toByteArray(), query.value(2).toString()));
+  ClientChannel channel(new Channel(SimpleID::decode(query.value(0).toByteArray()), query.value(2).toString()));
   setKey(channel->id(), id);
   channel->gender().setRaw(query.value(1).toLongLong());
   channel->setData(JSON::parse(query.value(3).toByteArray()).toMap());
@@ -337,6 +290,40 @@ qint64 CacheDB::V2()
   query.exec(LS("PRAGMA user_version = 2"));
 
   return 2;
+}
+
+
+qint64 CacheDB::V3()
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.exec(LS("BEGIN TRANSACTION;"));
+
+  query.prepare(LS("SELECT id, channel FROM channels"));
+  query.exec();
+
+  QSqlQuery update(QSqlDatabase::database(m_id));
+  update.prepare(LS("UPDATE channels SET channel = :channel WHERE id = :id;"));
+
+  while (query.next()) {
+    update.bindValue(LS(":id"),      query.value(0));
+    update.bindValue(LS(":channel"), SimpleID::encode(query.value(1).toByteArray()));
+    update.exec();
+  }
+
+  query.exec(LS("PRAGMA user_version = 3"));
+  query.exec(LS("COMMIT;"));
+
+  return 3;
+}
+
+
+/*!
+ * Закрытие базы данных.
+ */
+void CacheDB::close()
+{
+  QSqlDatabase::removeDatabase(m_id);
+  m_id.clear();
 }
 
 
@@ -371,6 +358,16 @@ void CacheDB::create()
 }
 
 
+void CacheDB::setKey(const QByteArray &id, qint64 key)
+{
+  if (key <= 0)
+    return;
+
+  QMutexLocker locker(&m_self->m_mutex);
+  m_self->m_cache[id] = key;
+}
+
+
 /*!
  * Добавление в базу информации о версии, в будущем эта информация может быть использована для автоматического обновления схемы базы данных.
  */
@@ -383,11 +380,12 @@ void CacheDB::version()
 
   qint64 version = query.value(0).toLongLong();
   if (!version) {
-    query.exec(LS("PRAGMA user_version = 2"));
-    version = 2;
+    query.exec(LS("PRAGMA user_version = 3"));
+    version = 3;
   }
 
   query.finish();
 
   if (version == 1) version = V2();
+  if (version == 2) version = V3();
 }
