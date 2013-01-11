@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -76,12 +76,18 @@ QByteArray SimpleID::decode(const QString &id)
 /*!
  * Кодирование идентификатора в Base32.
  *
+ * Если размер входного идентификатора равен 34, делается предположение что идентификатор уже кодирован и он возвращается без изменения.
+ *
  * \param id Идентификатор, размер должен быть равен DefaultSize.
  * \return Кодированный идентификатор или пустой массив в случае ошибки.
  */
 QByteArray SimpleID::encode(const QByteArray &id)
 {
-  if (id.size() != DefaultSize)
+  int size = id.size();
+
+  if (size == 34)
+    return id;
+  else if (size != DefaultSize)
     return QByteArray();
 
   char outbuf[41];

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ public:
     QVariantMap out = CoreApi::header();
     out["Id"]       = "History";
     out["Name"]     = "History";
-    out["Version"]  = "0.3.2";
+    out["Version"]  = "0.3.3";
     out["Site"]     = "http://wiki.schat.me/Plugin/History";
     out["Desc"]     = "Adds support for access to the message history";
     out["Desc/ru"]  = "Добавляет поддержку доступа к истории сообщений";

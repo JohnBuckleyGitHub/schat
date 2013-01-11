@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ public:
 
   void run()
   {
-    QByteArray id = m_packet.id();
+    const QByteArray id = SimpleID::encode(m_packet.id());
 
     QSqlQuery query(QSqlDatabase::database(HistoryDB::id()));
     query.prepare(LS("SELECT id FROM messages WHERE messageId = :messageId LIMIT 1;"));
@@ -61,8 +61,8 @@ public:
                        "VALUES (:messageId, :senderId, :destId, :status, :date, :command, :text, :plain, :data);"));
 
     query.bindValue(LS(":messageId"), id);
-    query.bindValue(LS(":senderId"),  m_packet.sender());
-    query.bindValue(LS(":destId"),    m_packet.dest());
+    query.bindValue(LS(":senderId"),  SimpleID::encode(m_packet.sender()));
+    query.bindValue(LS(":destId"),    SimpleID::encode(m_packet.dest()));
     query.bindValue(LS(":status"),    HistoryDB::status(m_packet.status()));
     query.bindValue(LS(":date"),      m_packet.date());
     query.bindValue(LS(":command"),   m_packet.command());
@@ -72,6 +72,7 @@ public:
     query.exec();
   }
 };
+
 
 HistoryDB::HistoryDB(QObject *parent)
   : QObject(parent)
@@ -125,17 +126,24 @@ int HistoryDB::status(int status)
 }
 
 
+/*!
+ * Получение последних сообщений.
+ *
+ * \param channel Кодированный идентификатор канала.
+ * \param limit   Ограничение на количество сообщений.
+ */
 QList<QByteArray> HistoryDB::last(const QByteArray &channel, int limit)
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
-  int type = SimpleID::typeOf(channel);
+  int type            = SimpleID::typeOf(channel);
+  const QByteArray id = SimpleID::encode(ChatClient::id());
 
   if (type == SimpleID::ChannelId) {
     query.prepare(LS("SELECT messageId FROM messages WHERE destId = :destId ORDER BY id DESC LIMIT :limit;"));
     query.bindValue(LS(":destId"), channel);
   }
   else if (type == SimpleID::UserId) {
-    if (ChatClient::id() == channel) {
+    if (id == channel) {
       query.prepare(LS("SELECT messageId FROM messages WHERE senderId = :senderId AND destId = :destId ORDER BY id DESC LIMIT :limit;"));
       query.bindValue(LS(":destId"), channel);
       query.bindValue(LS(":senderId"), channel);
@@ -143,8 +151,8 @@ QList<QByteArray> HistoryDB::last(const QByteArray &channel, int limit)
     else {
       query.prepare(LS("SELECT messageId FROM messages WHERE (senderId = :id1 AND destId = :id2) OR (senderId = :id3 AND destId = :id4) ORDER BY id DESC LIMIT :limit;"));
       query.bindValue(LS(":id1"), channel);
-      query.bindValue(LS(":id2"), ChatClient::id());
-      query.bindValue(LS(":id3"), ChatClient::id());
+      query.bindValue(LS(":id2"), id);
+      query.bindValue(LS(":id3"), id);
       query.bindValue(LS(":id4"), channel);
     }
   }
@@ -170,7 +178,7 @@ MessageRecord HistoryDB::get(const QByteArray &id)
   QSqlQuery query(QSqlDatabase::database(m_id));
   query.prepare(LS("SELECT id, senderId, destId, status, date, command, text, data FROM messages WHERE messageId = :messageId LIMIT 1;"));
 
-  query.bindValue(LS(":messageId"), id);
+  query.bindValue(LS(":messageId"), SimpleID::encode(id));
   query.exec();
 
   if (!query.first())
@@ -179,8 +187,8 @@ MessageRecord HistoryDB::get(const QByteArray &id)
   MessageRecord record;
   record.id        = query.value(0).toLongLong();
   record.messageId = id;
-  record.senderId  = query.value(1).toByteArray();
-  record.destId    = query.value(2).toByteArray();
+  record.senderId  = SimpleID::decode(query.value(1).toByteArray());
+  record.destId    = SimpleID::decode(query.value(2).toByteArray());
   record.status    = query.value(3).toLongLong();
   record.date      = query.value(4).toLongLong();
   record.command   = query.value(5).toString();
@@ -263,19 +271,51 @@ void HistoryDB::version()
 
   qint64 version = query.value(0).toLongLong();
   if (!version) {
-    query.exec(LS("PRAGMA user_version = 2"));
-    version = 2;
+    query.exec(LS("PRAGMA user_version = 3"));
+    version = 3;
     return;
   }
 
-  if (version == 1)
-    V2();
+  query.finish();
+
+  if (version == 1) version = V2();
+  if (version == 2) version = V3();
 }
 
 
-void HistoryDB::V2()
+qint64 HistoryDB::V2()
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
   query.exec(LS("ALTER TABLE messages ADD data BLOB"));
   query.exec(LS("PRAGMA user_version = 2"));
+
+  return 2;
+}
+
+
+qint64 HistoryDB::V3()
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.exec(LS("BEGIN TRANSACTION;"));
+
+  query.prepare(LS("SELECT id, messageId, senderId, destId, text FROM messages"));
+  query.exec();
+
+  QSqlQuery update(QSqlDatabase::database(m_id));
+  update.prepare(LS("UPDATE messages SET messageId = :messageId, senderId = :senderId, destId = :destId WHERE id = :id;"));
+  int i = 0;
+
+  while (query.next()) {
+    i++;
+    update.bindValue(LS(":id"),        query.value(0));
+    update.bindValue(LS(":messageId"), SimpleID::encode(query.value(1).toByteArray()));
+    update.bindValue(LS(":senderId"),  SimpleID::encode(query.value(2).toByteArray()));
+    update.bindValue(LS(":destId"),    SimpleID::encode(query.value(3).toByteArray()));
+    update.exec();
+  }
+
+  query.exec(LS("PRAGMA user_version = 3"));
+  query.exec(LS("COMMIT;"));
+
+  return 3;
 }
