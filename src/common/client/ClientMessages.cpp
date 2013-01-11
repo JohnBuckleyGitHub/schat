@@ -157,10 +157,15 @@ bool ClientMessages::command(const QByteArray &dest, const ClientCmd &cmd)
   }
 
   const QString command = cmd.command().toLower();
+  const QString& body   = cmd.body();
 
   if (command == CHANNELS_JOIN_CMD) {
-    if (cmd.isBody())
-      ChatClient::channels()->join(cmd.body());
+    if (cmd.isBody()) {
+      if (body.size() == 34)
+        ChatClient::channels()->join(SimpleID::decode(body));
+      else
+        ChatClient::channels()->join(body);
+    }
     else
       ChatClient::channels()->join(dest);
 
@@ -168,12 +173,12 @@ bool ClientMessages::command(const QByteArray &dest, const ClientCmd &cmd)
   }
 
   if (command == LS("nick")) {
-    ChatClient::channels()->nick(cmd.body());
+    ChatClient::channels()->nick(body);
     return true;
   }
 
   if (command == LS("name")) {
-    ChatClient::channels()->name(dest, cmd.body());
+    ChatClient::channels()->name(dest, body);
     return true;
   }
 
