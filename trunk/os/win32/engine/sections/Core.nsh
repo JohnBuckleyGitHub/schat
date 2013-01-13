@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -45,6 +45,7 @@ ${Section}
   WriteUninstaller "$INSTDIR\uninstall.exe"
   WriteINIStr "$INSTDIR\schat2.init" "General" "Portable" true
 
+  ReadTagDLL::extract "$INSTDIR\default.conf"
   CopyFiles /SILENT /FILESONLY '$EXEDIR\default.conf' '$INSTDIR\default.conf'
 ${SectionEnd}
 ${BodyEnd}
