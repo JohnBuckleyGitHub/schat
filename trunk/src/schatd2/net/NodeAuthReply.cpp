@@ -33,7 +33,7 @@ NodeAuthReply::NodeAuthReply(const AuthResult &result, ChatChannel channel)
   json       = result.json;
   serverName = Ch::server()->name();
 
-  if (Storage::value(LS("AnonymousAuth")).toBool())
+  if (Storage::value(STORAGE_ANONYMOUS_AUTH).toBool())
     flags = 1;
 
   if (channel) {
@@ -43,5 +43,5 @@ NodeAuthReply::NodeAuthReply(const AuthResult &result, ChatChannel channel)
     provider = channel->account()->provider;
   }
   else
-    provider = Storage::value(LS("AuthServer")).toString();
+    provider = Storage::value(STORAGE_AUTH_SERVER).toString();
 }

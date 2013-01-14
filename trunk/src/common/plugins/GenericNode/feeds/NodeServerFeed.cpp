@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -108,8 +108,8 @@ QVariantMap NodeServerFeed::feed(Channel *channel) const
 QVariantMap NodeServerFeed::auth() const
 {
   QVariantMap out;
-  out[LS("anonymous")] = Storage::value(LS("AnonymousAuth")).toBool();
-  out[LS("external")]  = Storage::value(LS("AuthServer")).toString();
+  out[LS("anonymous")] = Storage::value(STORAGE_ANONYMOUS_AUTH).toBool();
+  out[LS("external")]  = Storage::value(STORAGE_AUTH_SERVER).toString();
   return out;
 }
 
@@ -121,7 +121,7 @@ QVariantMap NodeServerFeed::users() const
 {
   QVariantMap out;
   out[LS("online")] = Ch::users().size();
-  out[LS("peak")]   = Storage::value(LS("PeakUsers")).toMap();
+  out[LS("peak")]   = Storage::value(STORAGE_PEAK_USERS).toMap();
   return out;
 }
 

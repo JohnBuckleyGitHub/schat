@@ -62,16 +62,16 @@ Storage::Storage(const QString &app, QObject *parent)
 
   // Инициализация настроек по умолчанию.
   m_settings = new Settings(etc() + LC('/') + Path::app() + LS(".conf"), this);
-  m_settings->setDefault(LS("AnonymousAuth"), true);
-  m_settings->setDefault(LS("AuthServer"),    LS("https://auth.schat.me"));
-  m_settings->setDefault(LS("Certificate"),   LS("server.crt"));
-  m_settings->setDefault(LS("Listen"),        QStringList("0.0.0.0:7667"));
-  m_settings->setDefault(LS("LogLevel"),      2);
-  m_settings->setDefault(LS("MaxOpenFiles"),  0);
-  m_settings->setDefault(LS("NickOverride"),  true);
-  m_settings->setDefault(LS("PrivateId"),     QString());
-  m_settings->setDefault(LS("PrivateKey"),    LS("server.key"));
-  m_settings->setDefault(LS("Workers"),       0);
+  m_settings->setDefault(STORAGE_ANONYMOUS_AUTH, true);
+  m_settings->setDefault(STORAGE_AUTH_SERVER,    LS("https://auth.schat.me"));
+  m_settings->setDefault(STORAGE_CERTIFICATE,    LS("server.crt"));
+  m_settings->setDefault(STORAGE_LISTEN,         QStringList(LS("0.0.0.0:7667")));
+  m_settings->setDefault(STORAGE_LOG_LEVEL,      2);
+  m_settings->setDefault(STORAGE_MAX_OPEN_FILES, 0);
+  m_settings->setDefault(STORAGE_NICK_OVERRIDE,  true);
+  m_settings->setDefault(STORAGE_PRIVATE_ID,     QString());
+  m_settings->setDefault(STORAGE_PRIVATE_KEY,    LS("server.key"));
+  m_settings->setDefault(STORAGE_WORKERS,        0);
 
   m_log = new NodeLog();
   new FeedStorage(this);
@@ -219,26 +219,26 @@ int Storage::start()
     logPath = LS("/var/log/") + Path::app();
 # endif
 
-  m_log->open(logPath + LC('/') + Path::app() + LS(".log"), static_cast<NodeLog::Level>(m_settings->value(LS("LogLevel")).toInt()));
+  m_log->open(logPath + LC('/') + Path::app() + LS(".log"), static_cast<NodeLog::Level>(m_settings->value(STORAGE_LOG_LEVEL).toInt()));
 
   setDefaultSslConf();
 
 # if defined(Q_OS_UNIX)
-  setMaxOpenFiles(m_settings->value(LS("MaxOpenFiles")).toInt());
+  setMaxOpenFiles(m_settings->value(STORAGE_MAX_OPEN_FILES).toInt());
 # endif
 
   DataBase::start();
 
-  m_privateId = m_settings->value(LS("PrivateId")).toString().toUtf8();
+  m_privateId = m_settings->value(STORAGE_PRIVATE_ID).toString().toUtf8();
   if (m_privateId.isEmpty()) {
-    m_privateId = value(LS("PrivateId")).toByteArray();
+    m_privateId = value(STORAGE_PRIVATE_ID).toByteArray();
 
     if (m_privateId.isEmpty())
       m_privateId = SimpleID::encode(SimpleID::uniqueId());
   }
 
   m_id = SimpleID::make(m_privateId, SimpleID::ServerId);
-  setValue(LS("PrivateId"), m_privateId);
+  setValue(STORAGE_PRIVATE_ID, m_privateId);
   return 0;
 }
 
@@ -260,13 +260,13 @@ void Storage::setDefaultSslConf()
   if (!QSslSocket::supportsSsl())
     return;
 
-  QList<QSslCertificate> certificates = QSslCertificate::fromPath(Path::file(etc(), m_settings->value(LS("Certificate")).toString()));
+  QList<QSslCertificate> certificates = QSslCertificate::fromPath(Path::file(etc(), m_settings->value(STORAGE_CERTIFICATE).toString()));
   if (certificates.isEmpty())
     return;
 
   QSslConfiguration conf = QSslConfiguration::defaultConfiguration();
 
-  QFile key(Path::file(etc(), m_settings->value(LS("PrivateKey")).toString()));
+  QFile key(Path::file(etc(), m_settings->value(STORAGE_PRIVATE_KEY).toString()));
   if (key.exists() && key.open(QFile::ReadOnly)) {
     conf.setPrivateKey(QSslKey(&key, QSsl::Rsa));
     key.close();

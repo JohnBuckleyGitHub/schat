@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -237,7 +237,7 @@ void Ch::load()
   Ch::server();
   Ch::channel(QString(LS("Main")));
 
-  m_self->m_peakUsers = Storage::value(LS("PeakUsers")).toMap().value(LS("count")).toInt();
+  m_self->m_peakUsers = Storage::value(STORAGE_PEAK_USERS).toMap().value(LS("count")).toInt();
 
   foreach (ChHook *hook, m_self->m_hooks) {
     hook->load();
@@ -431,7 +431,7 @@ void Ch::setOnline(ChatChannel channel)
       QVariantMap data;
       data[LS("count")] = m_peakUsers;
       data[LS("date")]  = DateTime::utc();
-      Storage::setValue(LS("PeakUsers"), data);
+      Storage::setValue(STORAGE_PEAK_USERS, data);
     }
 
     foreach (ChHook *hook, m_self->m_hooks) {
