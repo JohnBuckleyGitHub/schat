@@ -54,7 +54,7 @@ NodeInit::NodeInit(const QString &app, QObject *parent)
   QTimer::singleShot(0, this, SLOT(start()));
 
 # if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
-  QFile pid(LS("/var/run/") + Path::app() + LC('/') + Path::app() + LS(".pid"));
+  QFile pid(LS("/var/run/") + Path::app() + LS(".pid"));
   if (pid.open(QIODevice::WriteOnly))
     pid.write(QByteArray::number(QCoreApplication::applicationPid()));
 # endif
