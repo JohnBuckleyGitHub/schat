@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -128,7 +128,7 @@ void ExternalAuthTask::start()
     return done(data);
 
   m_manager = new QNetworkAccessManager(this);
-  QNetworkRequest request(QUrl(Storage::value(LS("AuthServer")).toString() + LS("/state/") + SimpleID::encode(m_data.id)));
+  QNetworkRequest request(QUrl(Storage::value(STORAGE_AUTH_SERVER).toString() + LS("/state/") + SimpleID::encode(m_data.id)));
   request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::AlwaysNetwork);
   request.setRawHeader("X-SChat-Cookie", SimpleID::encode(m_data.cookie));
 
@@ -147,7 +147,7 @@ AuthResult ExternalAuthTask::auth(const QVariantMap &data)
   if (SimpleID::typeOf(id) != SimpleID::UserId)
     return AuthResult(Notice::Forbidden, m_data.id);
 
-  AuthResult result = AnonymousAuth::isCollision(id, m_data.nick, m_data.id, Storage::value(LS("NickOverride")).toBool());
+  AuthResult result = AnonymousAuth::isCollision(id, m_data.nick, m_data.id, Storage::value(STORAGE_NICK_OVERRIDE).toBool());
   if (result.action == AuthResult::Reject) {
     if (result.status == Notice::NickAlreadyUse)
       m_cache[m_data.id + m_data.cookie] = data;

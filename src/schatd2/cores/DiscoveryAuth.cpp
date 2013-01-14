@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,8 +24,8 @@
 DiscoveryAuth::DiscoveryAuth(Core *core)
   : AnonymousAuth(core)
 {
-  m_anonymous = Storage::value(LS("AnonymousAuth")).toBool();
-  m_authServer = Storage::value(LS("AuthServer")).toString();
+  m_anonymous  = Storage::value(STORAGE_ANONYMOUS_AUTH).toBool();
+  m_authServer = Storage::value(STORAGE_AUTH_SERVER).toString();
 }
 
 

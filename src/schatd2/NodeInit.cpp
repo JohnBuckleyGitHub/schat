@@ -112,8 +112,8 @@ void NodeInit::start()
   m_storage->start();
   m_plugins->load();
 
-  QStringList listen = Storage::settings()->value("Listen").toStringList();
-  int workers = Storage::settings()->value("Workers").toInt();
+  QStringList listen = Storage::settings()->value(STORAGE_LISTEN).toStringList();
+  int workers = Storage::settings()->value(STORAGE_WORKERS).toInt();
   m_pool = new NodePool(listen, workers, m_core);
   connect(m_pool, SIGNAL(ready(QObject *)), m_core, SLOT(workerReady(QObject *)));
 
