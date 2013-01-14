@@ -1,0 +1,25 @@
+description "Simple Chat Daemon"
+author "Alexander Sedov <support@schat.me>"
+
+start on (filesystem and networking) or runlevel [2345]
+stop on runlevel [016]
+
+env UID=schatd2
+env GID=schatd2
+env UMASK=007
+env BASE=schatd2
+
+respawn
+expect fork
+
+pre-start script
+    touch /var/run/$BASE.pid
+    chown $UID:$GID /var/run/$BASE.pid
+end script
+
+post-stop script
+    rm -f /var/run/$BASE.pid
+end script
+
+exec start-stop-daemon --start --chuid $UID:$GID --umask $UMASK --pidfile /var/run/$BASE.pid --exec /usr/sbin/schatd2 -- -D -base $BASE
+
