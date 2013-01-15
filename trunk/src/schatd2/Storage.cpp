@@ -64,13 +64,13 @@ Storage::Storage(const QString &app, QObject *parent)
   m_settings = new Settings(etc() + LC('/') + Path::app() + LS(".conf"), this);
   m_settings->setDefault(STORAGE_ANONYMOUS_AUTH, true);
   m_settings->setDefault(STORAGE_AUTH_SERVER,    LS("https://auth.schat.me"));
-  m_settings->setDefault(STORAGE_CERTIFICATE,    LS("server.crt"));
+  m_settings->setDefault(STORAGE_CERTIFICATE,    LS(":/server.crt"));
   m_settings->setDefault(STORAGE_LISTEN,         QStringList(LS("0.0.0.0:7667")));
   m_settings->setDefault(STORAGE_LOG_LEVEL,      2);
   m_settings->setDefault(STORAGE_MAX_OPEN_FILES, 0);
   m_settings->setDefault(STORAGE_NICK_OVERRIDE,  true);
   m_settings->setDefault(STORAGE_PRIVATE_ID,     QString());
-  m_settings->setDefault(STORAGE_PRIVATE_KEY,    LS("server.key"));
+  m_settings->setDefault(STORAGE_PRIVATE_KEY,    LS(":/server.key"));
   m_settings->setDefault(STORAGE_WORKERS,        0);
 
   m_log = new NodeLog();
