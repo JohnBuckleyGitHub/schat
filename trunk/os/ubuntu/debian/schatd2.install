@@ -1,5 +1,3 @@
-etc/schatd2
-
 usr/lib/libschat-rest.so*
 usr/lib/libschat-tufao.so*
 usr/lib/libschatd.so*
