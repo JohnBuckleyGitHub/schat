@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2012 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2013 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -38,12 +38,8 @@ TRANSLATIONS += ../../res/translations/schatd2_ru.ts
 CODECFORTR = UTF-8
 
 unix:!macx {
-  ssl.files = ../../misc/tools/server.crt
-  ssl.files += ../../misc/tools/server.key
-  ssl.path = $$SCHAT_PREFIX/etc/schatd2
-  
   target.path += $$SCHAT_PREFIX/usr/sbin
-  INSTALLS += target ssl
+  INSTALLS += target
 }
 
 win32 {
@@ -77,12 +73,8 @@ win32 {
   doc.files += ../../res/doc/ChangeLog.html
   doc.path += ../../os/win32/schatd2/doc/
 
-  ssl.files = ../../misc/tools/server.crt
-  ssl.files += ../../misc/tools/server.key
-  ssl.path  = ../../os/win32/schatd2/
-
   target.path += ../../os/win32/schatd2/
-  INSTALLS += target qt sqldrivers doc ssl
+  INSTALLS += target qt sqldrivers doc
 
   greaterThan(QT_MAJOR_VERSION, 4) {
     platforms.files += $$[QT_INSTALL_PREFIX]/plugins/platforms/qwindows.dll
