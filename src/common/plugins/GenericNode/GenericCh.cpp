@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
  */
 
 #include "Ch.h"
+#include "feeds/FeedNames.h"
 #include "feeds/FeedStorage.h"
 #include "GenericCh.h"
 #include "sglobal.h"
@@ -29,7 +30,7 @@ GenericCh::GenericCh(QObject *parent)
 
 void GenericCh::newChannel(ChatChannel channel, ChatChannel user)
 {
-  Ch::addNewFeedIfNotExist(channel, LS("acl"), user);
+  Ch::addNewFeedIfNotExist(channel, FEED_ACL, user);
 }
 
 
@@ -44,7 +45,7 @@ void GenericCh::server(ChatChannel channel, bool created)
 {
   Q_UNUSED(created)
 
-  channel->feed(LS("acl"));
+  channel->feed(FEED_ACL);
   channel->feed(LS("server"));
 }
 
@@ -62,6 +63,6 @@ void GenericCh::userChannel(ChatChannel channel)
 
   channel->feed(LS("account"));
 
-  Ch::addNewUserFeedIfNotExist(channel, LS("acl"));
+  Ch::addNewUserFeedIfNotExist(channel, FEED_ACL);
   Ch::addNewUserFeedIfNotExist(channel, LS("profile"));
 }
