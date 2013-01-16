@@ -36,13 +36,13 @@ class HistoryPlugin : public QObject, CoreApi, ChatApi
 public:
   QVariantMap header() const
   {
-    QVariantMap out = CoreApi::header();
-    out["Id"]       = "History";
-    out["Name"]     = "History";
-    out["Version"]  = "0.3.3";
-    out["Site"]     = "http://wiki.schat.me/Plugin/History";
-    out["Desc"]     = "Adds support for access to the message history";
-    out["Desc/ru"]  = "Добавляет поддержку доступа к истории сообщений";
+    QVariantMap out        = CoreApi::header();
+    out[CORE_API_ID]       = "History";
+    out[CORE_API_NAME]     = "History";
+    out[CORE_API_VERSION]  = "0.3.3";
+    out[CORE_API_SITE]     = "http://wiki.schat.me/Plugin/History";
+    out[CORE_API_DESC]     = "Adds support for access to the message history";
+    out[CORE_API_DESC_RU]  = "Добавляет поддержку доступа к истории сообщений";
 
     return out;
   }

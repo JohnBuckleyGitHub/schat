@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #include <QStringList>
 #include <QVariant>
 
+#include "plugins/CoreApi.h"
 #include "tools/Ver.h"
 
 class CoreApi;
@@ -41,7 +42,7 @@ public:
   inline bool isValid() const              { return m_valid; }
   inline const QVariantMap& header() const { return m_header; }
   inline QObject *plugin()                 { return m_plugin; }
-  inline QString id() const                { return m_header.value(QLatin1String("Id")).toString(); }
+  inline QString id() const                { return m_header.value(CORE_API_ID).toString(); }
   inline void setLoaded(bool loaded)       { m_loaded = loaded; }
   QString icon() const;
 

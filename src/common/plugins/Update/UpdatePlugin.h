@@ -34,16 +34,16 @@ class UpdatePlugin : public QObject, CoreApi, ChatApi
 public:
   QVariantMap header() const
   {
-    QVariantMap out = CoreApi::header();
-    out["Id"]           = "Update";
-    out["Name"]         = "Update";
-    out["Version"]      = "0.3.0";
-    out["Site"]         = "http://wiki.schat.me/Plugin/Update";
-    out["Desc"]         = "Automatically downloads and installs updates";
-    out["Desc/ru"]      = "Автоматически загружает и устанавливает обновления";
+    QVariantMap out            = CoreApi::header();
+    out[CORE_API_ID]           = "Update";
+    out[CORE_API_NAME]         = "Update";
+    out[CORE_API_VERSION]      = "0.3.0";
+    out[CORE_API_SITE]         = "http://wiki.schat.me/Plugin/Update";
+    out[CORE_API_DESC]         = "Automatically downloads and installs updates";
+    out[CORE_API_DESC_RU]      = "Автоматически загружает и устанавливает обновления";
 
 #   if defined(Q_OS_WIN)
-    out["Configurable"] = true;
+    out[CORE_API_CONFIGURABLE] = true;
 #   endif
 
     return out;

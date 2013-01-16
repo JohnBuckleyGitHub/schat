@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -34,14 +34,14 @@ class ChannelsPlugin : public QObject, CoreApi, ChatApi
 public:
   QVariantMap header() const
   {
-    QVariantMap out     = CoreApi::header();
-    out["Id"]           = "Channels";
-    out["Name"]         = "Channels";
-    out["Version"]      = "0.3.0";
-    out["Site"]         = "http://wiki.schat.me/Plugin/Channels";
-    out["Desc"]         = "Advanced channels support";
-    out["Desc/ru"]      = "Расширенная поддержка каналов";
-    out["Configurable"] = true;
+    QVariantMap out            = CoreApi::header();
+    out[CORE_API_ID]           = "Channels";
+    out[CORE_API_NAME]         = "Channels";
+    out[CORE_API_VERSION]      = "0.3.0";
+    out[CORE_API_SITE]         = "http://wiki.schat.me/Plugin/Channels";
+    out[CORE_API_DESC]         = "Advanced channels support";
+    out[CORE_API_DESC_RU]      = "Расширенная поддержка каналов";
+    out[CORE_API_CONFIGURABLE] = true;
 
     return out;
   }

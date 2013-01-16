@@ -34,13 +34,13 @@ class NodeConsolePlugin : public QObject, CoreApi, NodeApi
 public:
   QVariantMap header() const
   {
-    QVariantMap out = CoreApi::header();
-    out["Id"]       = "NodeConsole";
-    out["Name"]     = "Node Console";
-    out["Version"]  = "0.1.1";
-    out["Type"]     = "server";
-    out["Site"]     = "http://wiki.schat.me/Plugin/NodeConsole";
-    out["Desc"]     = "Node Console";
+    QVariantMap out        = CoreApi::header();
+    out[CORE_API_ID]       = "NodeConsole";
+    out[CORE_API_NAME]     = "Node Console";
+    out[CORE_API_VERSION]  = "0.1.1";
+    out[CORE_API_TYPE]     = "server";
+    out[CORE_API_SITE]     = "http://wiki.schat.me/Plugin/NodeConsole";
+    out[CORE_API_DESC]     = "Node Console";
 
     return out;
   }

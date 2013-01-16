@@ -80,14 +80,14 @@ QVariantList PluginsView::list() const
 
     data[LS("id")]      = item->id();
     data[LS("icon")]    = LS("qrc") + item->icon();
-    data[LS("title")]   = header.value(LS("Name"));
-    data[LS("version")] = header.value(LS("Version"));
+    data[LS("title")]   = header.value(CORE_API_NAME);
+    data[LS("version")] = header.value(CORE_API_VERSION);
     data[LS("desc")]    = desc(header);
 
     bool enabled = item->isLoaded();
 
     data[LS("enabled")]      = enabled;
-    data[LS("configurable")] = enabled && header.value(LS("Configurable")).toBool();
+    data[LS("configurable")] = enabled && header.value(CORE_API_CONFIGURABLE).toBool();
 
     plugins.append(data);
   }
@@ -148,15 +148,15 @@ void PluginsView::restartSlot()
 QString PluginsView::desc(const QVariantMap &data) const
 {
   const QString &lang = ChatCore::translation()->name();
-  QString desc = data.value(LS("Desc/") + lang).toString();
+  QString desc = data.value(LS("desc/") + lang).toString();
   if (!desc.isEmpty())
     return desc;
 
   if (lang.size() > 2)
-    desc = data.value(LS("Desc/") + lang.left(2)).toString();
+    desc = data.value(LS("desc/") + lang.left(2)).toString();
 
   if (!desc.isEmpty())
     return desc;
 
-  return data.value(LS("Desc")).toString();
+  return data.value(CORE_API_DESC).toString();
 }
