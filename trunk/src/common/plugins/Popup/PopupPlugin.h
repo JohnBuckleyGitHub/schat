@@ -34,13 +34,13 @@ class PopupPlugin : public QObject, CoreApi, ChatApi
 public:
   QVariantMap header() const
   {
-    QVariantMap out = CoreApi::header();
-    out["Id"]       = "Popup";
-    out["Name"]     = "Popup";
-    out["Version"]  = "0.1.2";
-    out["Site"]     = "http://wiki.schat.me/Plugin/Popup";
-    out["Desc"]     = "Adds support for popup notifications";
-    out["Desc/ru"]  = "Добавляет поддержку всплывающих уведомлений";
+    QVariantMap out        = CoreApi::header();
+    out[CORE_API_ID]       = "Popup";
+    out[CORE_API_NAME]     = "Popup";
+    out[CORE_API_VERSION]  = "0.1.2";
+    out[CORE_API_SITE]     = "http://wiki.schat.me/Plugin/Popup";
+    out[CORE_API_DESC]     = "Adds support for popup notifications";
+    out[CORE_API_DESC_RU]  = "Добавляет поддержку всплывающих уведомлений";
 
     return out;
   }

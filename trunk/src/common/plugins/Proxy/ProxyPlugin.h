@@ -34,14 +34,14 @@ class ProxyPlugin : public QObject, CoreApi, ChatApi
 public:
   QVariantMap header() const
   {
-    QVariantMap out = CoreApi::header();
-    out["Id"]       = "Proxy";
-    out["Name"]     = "Proxy";
-    out["Version"]  = "0.1.0";
-    out["Site"]     = "http://wiki.schat.me/Plugin/Proxy";
-    out["Desc"]     = "Adds support for connections via HTTP and SOCKS5 proxy";
-    out["Desc/ru"]  = "Добавляет поддержку подключения через HTTP и SOCKS5 прокси";
-    out["Enabled"]  = false;
+    QVariantMap out        = CoreApi::header();
+    out[CORE_API_ID]       = "Proxy";
+    out[CORE_API_NAME]     = "Proxy";
+    out[CORE_API_VERSION]  = "0.1.0";
+    out[CORE_API_SITE]     = "http://wiki.schat.me/Plugin/Proxy";
+    out[CORE_API_DESC]     = "Adds support for connections via HTTP and SOCKS5 proxy";
+    out[CORE_API_DESC_RU]  = "Добавляет поддержку подключения через HTTP и SOCKS5 прокси";
+    out[CORE_API_ENABLED]  = false;
 
     return out;
   }

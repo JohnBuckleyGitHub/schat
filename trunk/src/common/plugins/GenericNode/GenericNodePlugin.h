@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -34,13 +34,13 @@ class GenericNodePlugin : public QObject, CoreApi, NodeApi
 public:
   QVariantMap header() const
   {
-    QVariantMap out = CoreApi::header();
-    out["Id"]       = "GenericNode";
-    out["Name"]     = "Generic Node";
-    out["Version"]  = "0.6.1";
-    out["Type"]     = "server";
-    out["Site"]     = "http://wiki.schat.me/Plugin/GenericNode";
-    out["Desc"]     = "Standard core of server";
+    QVariantMap out        = CoreApi::header();
+    out[CORE_API_ID]       = "GenericNode";
+    out[CORE_API_NAME]     = "Generic Node";
+    out[CORE_API_VERSION]  = "0.6.1";
+    out[CORE_API_TYPE]     = "server";
+    out[CORE_API_SITE]     = "http://wiki.schat.me/Plugin/GenericNode";
+    out[CORE_API_DESC]     = "Standard core of server";
 
     return out;
   }

@@ -34,13 +34,13 @@ class CachePlugin : public QObject, CoreApi, ChatApi
 public:
   QVariantMap header() const
   {
-    QVariantMap out = CoreApi::header();
-    out["Id"]       = "Cache";
-    out["Name"]     = "Cache";
-    out["Version"]  = "0.4.2";
-    out["Site"]     = "http://wiki.schat.me/Plugin/Cache";
-    out["Desc"]     = "Improves performance and reduces network traffic";
-    out["Desc/ru"]  = "Повышает производительность и уменьшает сетевой трафик";
+    QVariantMap out        = CoreApi::header();
+    out[CORE_API_ID]       = "Cache";
+    out[CORE_API_NAME]     = "Cache";
+    out[CORE_API_VERSION]  = "0.4.2";
+    out[CORE_API_SITE]     = "http://wiki.schat.me/Plugin/Cache";
+    out[CORE_API_DESC]     = "Improves performance and reduces network traffic";
+    out[CORE_API_DESC_RU]  = "Повышает производительность и уменьшает сетевой трафик";
 
     return out;
   }

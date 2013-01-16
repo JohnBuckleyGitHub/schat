@@ -34,13 +34,13 @@ class EmoticonsPlugin : public QObject, CoreApi, ChatApi
 public:
   QVariantMap header() const
   {
-    QVariantMap out = CoreApi::header();
-    out["Id"]       = "Emoticons";
-    out["Name"]     = "Emoticons";
-    out["Version"]  = "0.2.3";
-    out["Site"]     = "http://wiki.schat.me/Plugin/Emoticons";
-    out["Desc"]     = "Adds support for graphical emoticons";
-    out["Desc/ru"]  = "Добавляет поддержку графических смайликов";
+    QVariantMap out        = CoreApi::header();
+    out[CORE_API_ID]       = "Emoticons";
+    out[CORE_API_NAME]     = "Emoticons";
+    out[CORE_API_VERSION]  = "0.2.3";
+    out[CORE_API_SITE]     = "http://wiki.schat.me/Plugin/Emoticons";
+    out[CORE_API_DESC]     = "Adds support for graphical emoticons";
+    out[CORE_API_DESC_RU]  = "Добавляет поддержку графических смайликов";
 
     return out;
   }

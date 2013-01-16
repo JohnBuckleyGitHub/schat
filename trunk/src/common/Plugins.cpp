@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 #include <QPluginLoader>
 
 #include "Plugins.h"
-#include "plugins/CoreApi.h"
 #include "sglobal.h"
 #include "tools/Ver.h"
 
@@ -49,10 +48,10 @@ PluginItem::PluginItem(const QString &fileName)
     return;
 
   m_header = api->header();
-  if (m_header.value(LS("Id")).toString().isEmpty())
+  if (m_header.value(CORE_API_ID).toString().isEmpty())
     return;
 
-  if (m_header.value(LS("Name")).toString().isEmpty())
+  if (m_header.value(CORE_API_NAME).toString().isEmpty())
     return;
 
   m_valid = true;
@@ -125,11 +124,11 @@ bool Plugins::check(PluginItem *plugin)
   if (m_plugins.contains(plugin->id()))
     return false;
 
-  if (m_type != plugin->header().value(LS("Type")).toString())
+  if (m_type != plugin->header().value(CORE_API_TYPE).toString())
     return false;
 
   // Отключаем плагин если требуемая версия не совместима.
-  if (Ver::current() != Ver(plugin->header().value(LS("Required")).toString()))
+  if (Ver::current() != Ver(plugin->header().value(CORE_API_REQUIRED).toString()))
     return false;
 
   return true;

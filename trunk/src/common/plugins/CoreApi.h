@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,10 +23,21 @@
 #include <QLocale>
 #include <QObject>
 #include <QStringList>
-
 #include <QVariant>
 
 #include "version.h"
+
+#define CORE_API_AUTHOR       QLatin1String("author")
+#define CORE_API_ID           QLatin1String("id")
+#define CORE_API_NAME         QLatin1String("name")
+#define CORE_API_VERSION      QLatin1String("version")
+#define CORE_API_TYPE         QLatin1String("type")
+#define CORE_API_SITE         QLatin1String("site")
+#define CORE_API_DESC         QLatin1String("desc")
+#define CORE_API_DESC_RU      QLatin1String("desc/ru")
+#define CORE_API_REQUIRED     QLatin1String("required")
+#define CORE_API_ENABLED      QLatin1String("enabled")
+#define CORE_API_CONFIGURABLE QLatin1String("configurable")
 
 /*!
  * Базовый интерфейс для всех типов плагинов.
@@ -40,21 +51,21 @@ public:
   virtual QVariantMap header() const
   {
     QVariantMap out;
-    out["Author"]       = "IMPOMEZIA";        // Автор плагина.
-    out["Id"]           = "";                 // Машинное имя плагина.
-    out["Name"]         = "";                 // Имя плагина.
-    out["Version"]      = "0.1.0";            // Версия плагина.
-    out["Type"]         = "chat";             // Тип приложения для которого предназначается плагин, например "chat", "bot" или "server".
-    out["Site"]         = "https://schat.me"; // Домашняя страница плагина.
-    out["Desc"]         = "";                 // Описание плагина.
-    out["Required"]     = SCHAT_VERSION;      // Версия чата необходимая для работы плагина.
-    out["Enabled"]      = true;               // \b true если плагин по умолчанию включен.
-    out["Configurable"] = false;              // \b true если поддерживается дополнительный пользовательский интерфейс настроек.
+    out[CORE_API_AUTHOR]       = "Alexander Sedov";  // Автор плагина.
+    out[CORE_API_ID]           = QString();          // Машинное имя плагина.
+    out[CORE_API_NAME]         = QString();          // Имя плагина.
+    out[CORE_API_VERSION]      = "0.1.0";            // Версия плагина.
+    out[CORE_API_TYPE]         = "chat";             // Тип приложения для которого предназначается плагин, например "chat", "bot" или "server".
+    out[CORE_API_SITE]         = "https://schat.me"; // Домашняя страница плагина.
+    out[CORE_API_DESC]         = QString();          // Описание плагина.
+    out[CORE_API_REQUIRED]     = SCHAT_VERSION;      // Версия чата необходимая для работы плагина.
+    out[CORE_API_ENABLED]      = true;               // \b true если плагин по умолчанию включен.
+    out[CORE_API_CONFIGURABLE] = false;              // \b true если поддерживается дополнительный пользовательский интерфейс настроек.
 
     return out;
   }
 };
 
-Q_DECLARE_INTERFACE(CoreApi, "me.schat.CoreApi/1.1");
+Q_DECLARE_INTERFACE(CoreApi, "me.schat.CoreApi/1.2");
 
 #endif /* COREINTERFACE_H_ */

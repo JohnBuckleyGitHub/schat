@@ -34,14 +34,14 @@ class RawFeedsPlugin : public QObject, CoreApi, ChatApi
 public:
   QVariantMap header() const
   {
-    QVariantMap out = CoreApi::header();
-    out["Id"]       = "RawFeeds";
-    out["Name"]     = "Raw Feeds";
-    out["Version"]  = "0.2.4";
-    out["Site"]     = "http://wiki.schat.me/Plugin/RawFeeds";
-    out["Desc"]     = "Debug plugin to access the raw data feeds";
-    out["Desc/ru"]  = "Отладочный плагин для доступа к данным фидов";
-    out["Enabled"]  = false;
+    QVariantMap out        = CoreApi::header();
+    out[CORE_API_ID]       = "RawFeeds";
+    out[CORE_API_NAME]     = "Raw Feeds";
+    out[CORE_API_VERSION]  = "0.2.4";
+    out[CORE_API_SITE]     = "http://wiki.schat.me/Plugin/RawFeeds";
+    out[CORE_API_DESC]     = "Debug plugin to access the raw data feeds";
+    out[CORE_API_DESC_RU]  = "Отладочный плагин для доступа к данным фидов";
+    out[CORE_API_ENABLED]  = false;
 
     return out;
   }

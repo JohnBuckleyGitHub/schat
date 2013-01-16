@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -34,13 +34,13 @@ class NodeChannelsPlugin : public QObject, CoreApi, NodeApi
 public:
   QVariantMap header() const
   {
-    QVariantMap out = CoreApi::header();
-    out["Id"]       = "NodeChannels";
-    out["Name"]     = "Node Channels";
-    out["Version"]  = "0.2.0";
-    out["Type"]     = "server";
-    out["Site"]     = "http://wiki.schat.me/Plugin/NodeChannels";
-    out["Desc"]     = "Node Channels";
+    QVariantMap out        = CoreApi::header();
+    out[CORE_API_ID]       = "NodeChannels";
+    out[CORE_API_NAME]     = "Node Channels";
+    out[CORE_API_VERSION]  = "0.2.0";
+    out[CORE_API_TYPE]     = "server";
+    out[CORE_API_SITE]     = "http://wiki.schat.me/Plugin/NodeChannels";
+    out[CORE_API_DESC]     = "Node Channels";
 
     return out;
   }

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -93,7 +93,7 @@ void PluginsPage::settings(const QString &id)
     return;
 
   m_plugin = id;
-  m_pluginName->setText(LS("<b>") + plugin->header().value(LS("Name")).toString() + LS("</b>"));
+  m_pluginName->setText(LS("<b>") + plugin->header().value(CORE_API_NAME).toString() + LS("</b>"));
   m_pluginName->show();
   m_mainLayout->insertSpacing(2, 10);
   m_mainLayout->insertWidget(4, m_widget);

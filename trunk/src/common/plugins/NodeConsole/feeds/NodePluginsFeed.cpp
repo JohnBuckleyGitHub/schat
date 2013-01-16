@@ -57,8 +57,8 @@ void NodePluginsFeed::init()
     QVariantMap data;
     const QVariantMap &header = item->header();
 
-    data[LS("name")]    = header.value(LS("Name"));
-    data[LS("version")] = header.value(LS("Version"));
+    data[CORE_API_NAME]    = header.value(CORE_API_NAME);
+    data[CORE_API_VERSION] = header.value(CORE_API_VERSION);
     m_data[item->id()] = data;
   }
 }

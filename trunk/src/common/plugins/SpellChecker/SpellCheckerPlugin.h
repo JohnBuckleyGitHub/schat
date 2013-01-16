@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  * Copyright © 2012 Alexey Ivanov <alexey.ivanes@gmail.com>
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -35,13 +35,13 @@ class SpellCheckerPlugin : public QObject, CoreApi, ChatApi
 public:
   QVariantMap header() const
   {
-    QVariantMap out = CoreApi::header();
-    out["Id"]       = "SpellChecker";
-    out["Name"]     = "Spell Checker";
-    out["Version"]  = "0.1.2";
-    out["Site"]     = "http://wiki.schat.me/Plugin/SpellChecker";
-    out["Desc"]     = "Automatic spell checking";
-    out["Desc/ru"]  = "Автоматическая проверка орфографии";
+    QVariantMap out        = CoreApi::header();
+    out[CORE_API_ID]       = "SpellChecker";
+    out[CORE_API_NAME]     = "Spell Checker";
+    out[CORE_API_VERSION]  = "0.1.2";
+    out[CORE_API_SITE]     = "http://wiki.schat.me/Plugin/SpellChecker";
+    out[CORE_API_DESC]     = "Automatic spell checking";
+    out[CORE_API_DESC_RU]  = "Автоматическая проверка орфографии";
 
     return out;
   }

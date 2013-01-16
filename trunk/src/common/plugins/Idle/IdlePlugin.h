@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -34,14 +34,14 @@ class IdlePlugin : public QObject, CoreApi, ChatApi
 public:
   QVariantMap header() const
   {
-    QVariantMap out = CoreApi::header();
-    out["Id"]           = "Idle";
-    out["Name"]         = "Idle";
-    out["Version"]      = "0.2.6";
-    out["Site"]         = "http://wiki.schat.me/Plugin/Idle";
-    out["Desc"]         = "Detect idle time to automatically set Away status";
-    out["Desc/ru"]      = "Обнаружение времени простоя для автоматической установки статуса Отсутствую";
-    out["Configurable"] = true;
+    QVariantMap out            = CoreApi::header();
+    out[CORE_API_ID]           = "Idle";
+    out[CORE_API_NAME]         = "Idle";
+    out[CORE_API_VERSION]      = "0.2.6";
+    out[CORE_API_SITE]         = "http://wiki.schat.me/Plugin/Idle";
+    out[CORE_API_DESC]         = "Detect idle time to automatically set Away status";
+    out[CORE_API_DESC_RU]      = "Обнаружение времени простоя для автоматической установки статуса Отсутствую";
+    out[CORE_API_CONFIGURABLE] = true;
 
     return out;
   }

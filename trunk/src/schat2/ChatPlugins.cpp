@@ -49,7 +49,7 @@ void ChatPlugins::init()
     }
 
     const QString key = LS("Plugins/") + item->id();
-    settings->setLocalDefault(key, item->header().value(LS("Enabled")));
+    settings->setLocalDefault(key, item->header().value(CORE_API_ENABLED).toBool());
     if (settings->value(key) == false)
       continue;
 
