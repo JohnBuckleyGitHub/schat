@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include "client/ClientFeeds.h"
 #include "client/ClientHooks.h"
 #include "client/SimpleClient.h"
+#include "feeds/FeedNames.h"
 #include "net/packets/FeedNotice.h"
 #include "net/packets/Notice.h"
 #include "sglobal.h"
@@ -106,10 +107,12 @@ bool ClientFeeds::request(const QByteArray &id, const QString &command, const QS
  * Проверка прав доступа.
  *
  * \return -1 если произошла ошибка или права доступа.
+ *
+ * \bug эта функция может работать не правильно.
  */
 int ClientFeeds::match(ClientChannel channel, ClientChannel user)
 {
-  FeedPtr feed = channel->feed(LS("acl"), false);
+  FeedPtr feed = channel->feed(FEED_ACL, false);
   if (!feed)
     return -1;
 

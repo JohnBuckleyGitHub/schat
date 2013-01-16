@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 #include "DateTime.h"
 #include "feeds/FeedHeader.h"
+#include "feeds/FeedNames.h"
 #include "net/packets/Notice.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
@@ -171,9 +172,9 @@ void FeedHeader::setData(const QVariantMap &data)
 {
   m_data = data;
 
-  if (data.contains(LS("acl"))) {
-    m_acl.load(data.value(LS("acl")).toMap());
-    m_data.remove(LS("acl"));
+  if (data.contains(FEED_ACL)) {
+    m_acl.load(data.value(FEED_ACL).toMap());
+    m_data.remove(FEED_ACL);
   }
   else
     m_acl.load(data);

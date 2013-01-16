@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #include "Ch.h"
 #include "Channel.h"
 #include "DateTime.h"
+#include "feeds/FeedNames.h"
 #include "feeds/NodeInfoFeed.h"
 #include "net/packets/Notice.h"
 #include "net/SimpleID.h"
@@ -54,14 +55,14 @@ Feed* NodeInfoFeed::load(const QString &name, const QVariantMap &data)
 /*!
  * Переопределение проверки прав доступа.
  *
- * Этот фид использует права доступа фида "acl".
+ * Этот фид использует права доступа фида FEED_ACL.
  */
 bool NodeInfoFeed::can(Channel *channel, Acl::ResultAcl acl) const
 {
   if (!channel && acl != Acl::Read)
     return false;
 
-  FeedPtr feed = m_header.channel()->feed(LS("acl"), false, false);
+  FeedPtr feed = m_header.channel()->feed(FEED_ACL, false, false);
   if (feed)
     return feed->can(channel, acl);
 
@@ -109,7 +110,7 @@ FeedReply NodeInfoFeed::post(const QString &path, const QVariantMap &json, Chann
     return FeedReply(Notice::OK, date);
   }
   else if (path == LS("pinned")) {
-    if (!Ch::server()->feed(LS("acl"))->can(channel, Acl::Edit))
+    if (!Ch::server()->feed(FEED_ACL)->can(channel, Acl::Edit))
       return Notice::Forbidden;
 
     m_data[path] = value.toBool();

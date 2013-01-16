@@ -29,6 +29,7 @@
 #include "Ch.h"
 #include "DataBase.h"
 #include "DateTime.h"
+#include "feeds/FeedNames.h"
 #include "feeds/FeedStorage.h"
 #include "JSON.h"
 #include "net/SimpleID.h"
@@ -797,7 +798,7 @@ qint64 DataBase::V3()
 {
   QSqlQuery query;
   query.prepare(LS("SELECT id, json FROM feeds WHERE name = :name;"));
-  query.bindValue(LS(":name"), LS("acl"));
+  query.bindValue(LS(":name"), FEED_ACL);
   query.exec();
 
   QMap<qint64, QByteArray> feeds;

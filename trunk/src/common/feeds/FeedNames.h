@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,23 +16,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NODEACLFEED_H_
-#define NODEACLFEED_H_
+#ifndef FEEDNAMES_H_
+#define FEEDNAMES_H_
 
-#include "feeds/Feed.h"
-#include "feeds/FeedNames.h"
+#define FEED_ACL QLatin1String("acl")
 
-class SCHAT_EXPORT NodeAclFeed : public Feed
-{
-public:
-  NodeAclFeed(const QString &name, const QVariantMap &data);
-  NodeAclFeed(const QString &name = FEED_ACL, qint64 date = 0);
-  Feed* create(const QString &name);
-  Feed* load(const QString &name, const QVariantMap &data);
-
-  FeedReply del(const QString &path, Channel *channel = 0);
-  FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0);
-  FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0);
-};
-
-#endif /* NODEACLFEED_H_ */
+#endif /* FEEDNAMES_H_ */

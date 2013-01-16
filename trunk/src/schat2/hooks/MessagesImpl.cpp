@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "client/ClientChannels.h"
 #include "client/ClientMessages.h"
 #include "client/SimpleClient.h"
+#include "feeds/FeedNames.h"
 #include "hooks/MessagesImpl.h"
 #include "messages/ChannelMessage.h"
 #include "net/packets/MessageNotice.h"
@@ -86,7 +87,7 @@ bool MessagesImpl::ignored(ClientChannel user)
   if (!user || user->type() != SimpleID::UserId)
     return false;
 
-  FeedPtr feed = ChatClient::channel()->feed(LS("acl"), false);
+  FeedPtr feed = ChatClient::channel()->feed(FEED_ACL, false);
   if (!feed)
     return false;
 

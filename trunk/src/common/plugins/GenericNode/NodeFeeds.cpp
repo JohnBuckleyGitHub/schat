@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 #include "Ch.h"
 #include "cores/Core.h"
+#include "feeds/FeedNames.h"
 #include "feeds/FeedStorage.h"
 #include "JSON.h"
 #include "net/PacketReader.h"
@@ -125,7 +126,7 @@ FeedReply NodeFeeds::del(const CheckResult &result)
     if (!m_channel->canEdit(m_user))
       return Notice::Forbidden;
 
-    if (result.name == LS("acl"))
+    if (result.name == FEED_ACL)
       return Notice::BadRequest;
 
     FeedStorage::remove(result.feed);
