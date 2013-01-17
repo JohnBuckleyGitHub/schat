@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -36,16 +36,25 @@ NodePlugins::NodePlugins(QObject *parent)
 
 void NodePlugins::init()
 {
+  Settings *settings = Storage::settings();
+
   for (int i = 0; i < m_sorted.size(); ++i) {
     NodeApi *api = qobject_cast<NodeApi *>(m_plugins.value(m_sorted.at(i))->plugin());
 
     if (!api)
       continue;
 
+    PluginItem *item = m_plugins.value(m_sorted.at(i));
+    const QString key = LS("Plugins/") + item->id();
+    settings->setDefault(key, item->header().value(CORE_API_ENABLED).toBool());
+    if (settings->value(key) == false)
+      continue;
+
     NodePlugin *plugin = api->create();
     if (!plugin)
       continue;
 
+    item->setLoaded(true);
     m_nodePlugins.append(plugin);
   }
 }
