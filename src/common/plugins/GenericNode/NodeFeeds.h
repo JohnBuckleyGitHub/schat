@@ -21,6 +21,7 @@
 
 #include "NodeNoticeReader.h"
 
+class FeedEvent;
 class FeedNotice;
 class ServerChannel;
 
@@ -59,6 +60,7 @@ private:
 
   ChatChannel m_channel; ///< Канал фида.
   ChatChannel m_user;    ///< Отправитель пакета.
+  FeedEvent *m_event;    ///< Текущее событие.
   FeedNotice *m_packet;  ///< Текущий пакет.
 };
 

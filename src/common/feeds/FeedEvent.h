@@ -30,6 +30,16 @@ class SCHAT_EXPORT FeedEvent
 {
 public:
   FeedEvent();
+  FeedEvent(const QByteArray &channel, const QByteArray &sender, const QString &method);
+  bool isValid() const;
+
+  int status;         ///< Код состояния операции над фидом. \sa Notice::StatusCodes.
+  QByteArray channel; ///< Идентификатор канала фида.
+  QByteArray sender;  ///< Идентификатор канала совершившего действие над фидом.
+  qint64 date;        ///< Время модификации фида.
+  QString method;     ///< Тип запроса.
+  QString name;       ///< Имя фида.
+  QString path;       ///< Путь запроса, может быть пустым.
 };
 
 typedef QSharedPointer<FeedEvent> FeedEventPtr;

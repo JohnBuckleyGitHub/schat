@@ -18,6 +18,7 @@
 
 #include "Ch.h"
 #include "cores/Core.h"
+#include "feeds/FeedEvents.h"
 #include "feeds/FeedNames.h"
 #include "feeds/FeedStorage.h"
 #include "JSON.h"
@@ -38,6 +39,7 @@
 
 NodeFeeds::NodeFeeds(Core *core)
   : NodeNoticeReader(Notice::FeedType, core)
+  , m_event(0)
   , m_packet(0)
 {
 }
@@ -58,17 +60,21 @@ bool NodeFeeds::read(PacketReader *reader)
 
   FeedNotice packet(m_type, reader);
   m_packet = &packet;
+  m_event  = new FeedEvent(reader->dest(), reader->sender(), m_packet->command());
 
-  QString cmd = m_packet->command();
-  int status = Notice::NotImplemented;
+  const QString &method = m_packet->command();
+  int status            = Notice::NotImplemented;
 
-  if (cmd == LS("get"))
+  if (method == FEED_METHOD_GET)
     status = get();
-  else if (cmd == LS("put") || cmd == LS("post") || cmd == LS("delete"))
-    status = query(cmd);
+  else if (method == FEED_METHOD_PUT || method == FEED_METHOD_POST || method == FEED_METHOD_DELETE)
+    status = query(method);
 
   if (status != Notice::OK)
     reply(status);
+
+  m_event->status = status;
+  FeedEvents::start(m_event);
 
   return false;
 }
@@ -228,11 +234,11 @@ int NodeFeeds::query(const QString &verb)
   SCHAT_CHECK_ACL(Acl::Write)
 
   FeedReply reply(Notice::InternalError);
-  if (verb == LS("put"))
+  if (verb == FEED_METHOD_PUT)
     reply = result.feed->put(result.path, m_packet->json(), m_user.data());
-  else if (verb == LS("post"))
+  else if (verb == FEED_METHOD_POST)
     reply = post(result);
-  else if (verb == LS("delete"))
+  else if (verb == FEED_METHOD_DELETE)
     reply = del(result);
 
   if (reply.status != Notice::OK)
@@ -267,6 +273,9 @@ int NodeFeeds::query(const QString &verb)
 NodeFeeds::CheckResult NodeFeeds::check(int acl)
 {
   CheckResult result(m_packet->text());
+  m_event->name = result.name;
+  m_event->path = result.path;
+
   if (result.status != Notice::OK)
     return result;
 
@@ -277,10 +286,10 @@ NodeFeeds::CheckResult NodeFeeds::check(int acl)
 
   result.feed = m_channel->feed(result.name, false);
   if (!result.feed) {
-    if (m_packet->command() == LS("get") && result.name == LS("*")) {
+    if (m_packet->command() == FEED_METHOD_GET && result.name == LS("*")) {
       result.status = Notice::OK;
     }
-    else if (m_packet->command() == LS("post") && result.path.isEmpty()) {
+    else if (m_packet->command() == FEED_METHOD_POST && result.path.isEmpty()) {
       if (!m_channel->canEdit(m_user))
         result.status = Notice::Forbidden;
     }
@@ -305,7 +314,7 @@ void NodeFeeds::broadcast(FeedPtr feed, bool echo)
 
   FeedPacket packet = FeedNotice::reply(*m_packet, json);
   packet->setDest(m_channel->id());
-  packet->setCommand(LS("get"));
+  packet->setCommand(FEED_METHOD_GET);
   packet->setText(LS("*"));
   m_core->send(Sockets::all(m_channel, m_user, echo), packet);
 }

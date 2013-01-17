@@ -16,10 +16,36 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Channel.h"
 #include "feeds/FeedEvent.h"
 
 FeedEvent::FeedEvent()
+  : status(0)
+  , date(0)
 {
-  // TODO Auto-generated constructor stub
+}
 
+
+FeedEvent::FeedEvent(const QByteArray &channel, const QByteArray &sender, const QString &method)
+  : status(0)
+  , channel(channel)
+  , sender(sender)
+  , date(0)
+  , method(method)
+{
+}
+
+
+bool FeedEvent::isValid() const
+{
+  if (!status || !date)
+    return false;
+
+  if (name.isEmpty() || method.isEmpty())
+    return false;
+
+  if (Channel::isCompatibleId(channel))
+    return false;
+
+  return true;
 }

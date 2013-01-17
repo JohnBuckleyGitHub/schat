@@ -17,14 +17,94 @@
  */
 
 #include <QtPlugin>
+#include <QDir>
 
+#include "DateTime.h"
+#include "feeds/FeedEvents.h"
+#include "feeds/FeedStrings.h"
+#include "net/SimpleID.h"
 #include "NodeFeedLogPlugin.h"
 #include "NodeFeedLogPlugin.h"
 #include "NodeFeedLogPlugin_p.h"
+#include "Path.h"
+#include "sglobal.h"
 
 NodeFeedLogImpl::NodeFeedLogImpl(QObject *parent)
   : NodePlugin(parent)
 {
+  QString path = Path::cache();
+# if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
+  if (!Path::isPortable())
+    path = LS("/var/log/") + Path::app();
+# endif
+
+  openLog(path + LC('/') + Path::app() + LS(".feeds"));
+
+  connect(FeedEvents::i(), SIGNAL(notify(FeedEvent)), SLOT(notify(FeedEvent)));
+}
+
+
+void NodeFeedLogImpl::notify(const FeedEvent &event)
+{
+  if (!m_file.isOpen())
+    return;
+
+  m_stream << date(event.method == FEED_METHOD_GET ? 0 : event.date)
+           << LC(' ') << event.status
+           << LC(' ') << SimpleID::encode(event.sender)
+           << LC(' ') << event.method
+           << LC(' ') << SimpleID::encode(event.channel)
+           << LC('/') << event.name << (!event.path.isEmpty() ? (LC('/') + event.path) : QString())
+           << endl;
+}
+
+
+/*!
+ * Возвращает время в виде строки для записи в журнал.
+ *
+ * \param date время, в случае если время 0 будет использовано текущее время.
+ */
+QString NodeFeedLogImpl::date(qint64 date) const
+{
+  const QDateTime dt = date ? DateTime::toDateTime(date) : QDateTime::currentDateTime();
+  QDateTime utc(dt);
+  utc.setTimeSpec(Qt::UTC);
+  int seconds = dt.secsTo(utc);
+
+  const QChar sign = (seconds >= 0 ? LC('+') : LC('-'));
+
+  if (seconds < 0)
+    seconds = -seconds;
+
+  int minutes = (seconds % 3600) / 60;
+  int hours = (seconds / 3600);
+
+  QTime t(hours, minutes);
+  return dt.toString(LS("yyyy-MM-dd hh:mm:ss.zzz")) + sign + t.toString(LS("hh:mm"));
+}
+
+
+/*!
+ * Открытие журнала.
+ */
+void NodeFeedLogImpl::openLog(const QString &file)
+{
+  QDir dir(QFileInfo(file).absolutePath());
+  if (!dir.exists())
+    dir.mkpath(dir.absolutePath());
+
+  bool bom = false;
+
+  m_file.setFileName(file);
+  if (!m_file.exists())
+    bom = true;
+
+  if (!m_file.open(QFile::WriteOnly | QFile::Text | QFile::Append))
+    return;
+
+  m_stream.setDevice(&m_file);
+  m_stream.setGenerateByteOrderMark(bom);
+  m_stream.setCodec("UTF-8");
 }
 
 

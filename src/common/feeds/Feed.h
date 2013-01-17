@@ -23,6 +23,7 @@
 #include <QVariant>
 
 #include "feeds/FeedHeader.h"
+#include "feeds/FeedStrings.h"
 
 class FeedReply
 {
