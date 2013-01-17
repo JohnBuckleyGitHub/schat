@@ -20,7 +20,7 @@
 #include "client/ClientFeeds.h"
 #include "client/ClientHooks.h"
 #include "client/SimpleClient.h"
-#include "feeds/FeedNames.h"
+#include "feeds/FeedStrings.h"
 #include "net/packets/FeedNotice.h"
 #include "net/packets/Notice.h"
 #include "sglobal.h"
@@ -112,7 +112,7 @@ bool ClientFeeds::request(const QByteArray &id, const QString &command, const QS
  */
 int ClientFeeds::match(ClientChannel channel, ClientChannel user)
 {
-  FeedPtr feed = channel->feed(FEED_ACL, false);
+  FeedPtr feed = channel->feed(FEED_NAME_ACL, false);
   if (!feed)
     return -1;
 

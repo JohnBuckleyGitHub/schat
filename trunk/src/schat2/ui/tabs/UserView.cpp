@@ -29,7 +29,7 @@
 #include "client/ClientFeeds.h"
 #include "client/SimpleClient.h"
 #include "debugstream.h"
-#include "feeds/FeedNames.h"
+#include "feeds/FeedStrings.h"
 #include "hooks/ChannelMenu.h"
 #include "hooks/MessagesImpl.h"
 #include "sglobal.h"
@@ -285,7 +285,7 @@ void UserView::notify(const Notify &notify)
 {
   if (notify.type() == Notify::FeedReply) {
     const FeedNotify &n = static_cast<const FeedNotify &>(notify);
-    if (n.feed() != FEED_ACL || (n.channel() != m_channel->id() && n.channel() != ChatClient::id()))
+    if (n.feed() != FEED_NAME_ACL || (n.channel() != m_channel->id() && n.channel() != ChatClient::id()))
       return;
 
     if (n.path() != LS("head"))

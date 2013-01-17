@@ -19,7 +19,6 @@
 #include "Ch.h"
 #include "Channel.h"
 #include "DateTime.h"
-#include "feeds/FeedNames.h"
 #include "feeds/NodeInfoFeed.h"
 #include "net/packets/Notice.h"
 #include "net/SimpleID.h"
@@ -62,7 +61,7 @@ bool NodeInfoFeed::can(Channel *channel, Acl::ResultAcl acl) const
   if (!channel && acl != Acl::Read)
     return false;
 
-  FeedPtr feed = m_header.channel()->feed(FEED_ACL, false, false);
+  FeedPtr feed = m_header.channel()->feed(FEED_NAME_ACL, false, false);
   if (feed)
     return feed->can(channel, acl);
 
@@ -110,7 +109,7 @@ FeedReply NodeInfoFeed::post(const QString &path, const QVariantMap &json, Chann
     return FeedReply(Notice::OK, date);
   }
   else if (path == LS("pinned")) {
-    if (!Ch::server()->feed(FEED_ACL)->can(channel, Acl::Edit))
+    if (!Ch::server()->feed(FEED_NAME_ACL)->can(channel, Acl::Edit))
       return Notice::Forbidden;
 
     m_data[path] = value.toBool();

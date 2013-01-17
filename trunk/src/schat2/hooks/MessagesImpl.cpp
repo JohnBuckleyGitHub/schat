@@ -22,7 +22,7 @@
 #include "client/ClientChannels.h"
 #include "client/ClientMessages.h"
 #include "client/SimpleClient.h"
-#include "feeds/FeedNames.h"
+#include "feeds/FeedStrings.h"
 #include "hooks/MessagesImpl.h"
 #include "messages/ChannelMessage.h"
 #include "net/packets/MessageNotice.h"
@@ -87,7 +87,7 @@ bool MessagesImpl::ignored(ClientChannel user)
   if (!user || user->type() != SimpleID::UserId)
     return false;
 
-  FeedPtr feed = ChatClient::channel()->feed(FEED_ACL, false);
+  FeedPtr feed = ChatClient::channel()->feed(FEED_NAME_ACL, false);
   if (!feed)
     return false;
 

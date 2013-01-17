@@ -31,7 +31,7 @@
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/ClientFeeds.h"
-#include "feeds/FeedNames.h"
+#include "feeds/FeedStrings.h"
 #include "hooks/ChatViewHooks.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
@@ -138,7 +138,7 @@ void ChannelsPluginImpl::channel(const QByteArray &id)
   if (SimpleID::typeOf(id) != SimpleID::ChannelId)
     return;
 
-  FeedPtr feed = ChatClient::channels()->get(id)->feed(FEED_ACL, false);
+  FeedPtr feed = ChatClient::channels()->get(id)->feed(FEED_NAME_ACL, false);
   if (!feed)
     ClientFeeds::request(id, LS("get"), LS("acl/head"));
 }
@@ -175,11 +175,11 @@ void ChannelsPluginImpl::loadFinished(ChatView *view)
  */
 void ChannelsPluginImpl::ready()
 {
-  FeedPtr feed = ChatClient::channel()->feed(FEED_ACL, false);
+  FeedPtr feed = ChatClient::channel()->feed(FEED_NAME_ACL, false);
   if (!feed)
     ClientFeeds::request(ChatClient::id(), LS("get"), LS("acl/head"));
 
-  feed = ChatClient::server()->feed(FEED_ACL, false);
+  feed = ChatClient::server()->feed(FEED_NAME_ACL, false);
   if (!feed)
     ClientFeeds::request(ChatClient::serverId(), LS("get"), LS("acl/head"));
 }

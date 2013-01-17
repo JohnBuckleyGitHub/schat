@@ -19,7 +19,7 @@
 #include "Ch.h"
 #include "cores/Core.h"
 #include "feeds/FeedEvents.h"
-#include "feeds/FeedNames.h"
+#include "feeds/FeedStrings.h"
 #include "feeds/FeedStorage.h"
 #include "JSON.h"
 #include "net/PacketReader.h"
@@ -132,7 +132,7 @@ FeedReply NodeFeeds::del(const CheckResult &result)
     if (!m_channel->canEdit(m_user))
       return Notice::Forbidden;
 
-    if (result.name == FEED_ACL)
+    if (result.name == FEED_NAME_ACL)
       return Notice::BadRequest;
 
     FeedStorage::remove(result.feed);

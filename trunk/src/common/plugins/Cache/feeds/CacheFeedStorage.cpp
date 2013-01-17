@@ -55,13 +55,15 @@ void CacheFeedStorage::loadImpl(Channel *channel)
     return;
 
   QSqlQuery query(QSqlDatabase::database(CacheDB::id()));
-  query.prepare(LS("SELECT name, json FROM feeds WHERE channel = :channel;"));
+  query.prepare(LS("SELECT date, name, json FROM feeds WHERE channel = :channel;"));
   query.bindValue(LS(":channel"), key);
   query.exec();
 
   while (query.next()) {
-    const QString name = query.value(0).toString();
-    Feed *feed = FeedStorage::load(name, JSON::parse(query.value(1).toByteArray()).toMap());
+    const QString name = query.value(1).toString();
+
+    Feed *feed = FeedStorage::load(name, JSON::parse(query.value(2).toByteArray()).toMap());
+    feed->head().setDate(query.value(0).toLongLong());
     channel->feeds().add(feed, false);
 
     ChatNotify::start(new FeedNotify(Notify::FeedData, channel->id(), name, QVariantMap(), Notice::Found));

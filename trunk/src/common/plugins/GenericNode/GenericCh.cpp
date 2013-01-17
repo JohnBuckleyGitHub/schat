@@ -17,8 +17,8 @@
  */
 
 #include "Ch.h"
-#include "feeds/FeedNames.h"
 #include "feeds/FeedStorage.h"
+#include "feeds/FeedStrings.h"
 #include "GenericCh.h"
 #include "sglobal.h"
 
@@ -30,7 +30,7 @@ GenericCh::GenericCh(QObject *parent)
 
 void GenericCh::newChannel(ChatChannel channel, ChatChannel user)
 {
-  Ch::addNewFeedIfNotExist(channel, FEED_ACL, user);
+  Ch::addNewFeedIfNotExist(channel, FEED_NAME_ACL, user);
 }
 
 
@@ -45,7 +45,7 @@ void GenericCh::server(ChatChannel channel, bool created)
 {
   Q_UNUSED(created)
 
-  channel->feed(FEED_ACL);
+  channel->feed(FEED_NAME_ACL);
   channel->feed(LS("server"));
 }
 
@@ -63,6 +63,6 @@ void GenericCh::userChannel(ChatChannel channel)
 
   channel->feed(LS("account"));
 
-  Ch::addNewUserFeedIfNotExist(channel, FEED_ACL);
+  Ch::addNewUserFeedIfNotExist(channel, FEED_NAME_ACL);
   Ch::addNewUserFeedIfNotExist(channel, LS("profile"));
 }
