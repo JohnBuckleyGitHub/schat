@@ -16,32 +16,12 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NODEFEEDLOGPLUGIN_P_H_
-#define NODEFEEDLOGPLUGIN_P_H_
+#ifndef FEEDSTRINGS_H_
+#define FEEDSTRINGS_H_
 
-#include <QFile>
-#include <QTextStream>
+#define FEED_METHOD_GET    QLatin1String("get")
+#define FEED_METHOD_PUT    QLatin1String("put")
+#define FEED_METHOD_POST   QLatin1String("post")
+#define FEED_METHOD_DELETE QLatin1String("delete")
 
-#include "plugins/NodePlugin.h"
-
-class FeedEvent;
-
-class NodeFeedLogImpl : public NodePlugin
-{
-  Q_OBJECT
-
-public:
-  NodeFeedLogImpl(QObject *parent);
-
-private slots:
-  void notify(const FeedEvent &event);
-
-private:
-  QString date(qint64 date) const;
-  void openLog(const QString &file);
-
-  QFile m_file;           ///< Файл журнала.
-  QTextStream m_stream;   ///< Текстовый поток для записи в журнал.
-};
-
-#endif /* NODEFEEDLOGPLUGIN_P_H_ */
+#endif /* FEEDSTRINGS_H_ */
