@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2012 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2013 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ HEADERS += \
     client/NetworkPool.h \
     DateTime.h \
     feeds/Feed.h \
+    feeds/FeedEvents.h \
     feeds/FeedHeader.h \
     feeds/Feeds.h \
     feeds/FeedStorage.h \
@@ -66,6 +67,7 @@ SOURCES += \
     client/NetworkPool.cpp \
     DateTime.cpp \
     feeds/Feed.cpp \
+    feeds/FeedEvents.cpp \
     feeds/FeedHeader.cpp \
     feeds/Feeds.cpp \
     feeds/FeedStorage.cpp \
