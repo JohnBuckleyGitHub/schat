@@ -19,8 +19,8 @@
 #include "Account.h"
 #include "DataBase.h"
 #include "DateTime.h"
-#include "feeds/FeedNames.h"
 #include "feeds/FeedStorage.h"
+#include "feeds/FeedStrings.h"
 #include "net/SimpleID.h"
 #include "NodeNotify.h"
 #include "Normalize.h"
@@ -178,19 +178,19 @@ void ServerChannel::setKey(qint64 key)
 
 bool ServerChannel::canEdit(ChatChannel channel)
 {
-  return feed(FEED_ACL)->can(channel.data(), Acl::Edit);
+  return feed(FEED_NAME_ACL)->can(channel.data(), Acl::Edit);
 }
 
 
 bool ServerChannel::canRead(ChatChannel channel)
 {
-  return feed(FEED_ACL)->can(channel.data(), Acl::Read);
+  return feed(FEED_NAME_ACL)->can(channel.data(), Acl::Read);
 }
 
 
 bool ServerChannel::canWrite(ChatChannel channel)
 {
-  return feed(FEED_ACL)->can(channel.data(), Acl::Write);
+  return feed(FEED_NAME_ACL)->can(channel.data(), Acl::Write);
 }
 
 

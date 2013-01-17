@@ -23,5 +23,8 @@
 #define FEED_METHOD_PUT    QLatin1String("put")
 #define FEED_METHOD_POST   QLatin1String("post")
 #define FEED_METHOD_DELETE QLatin1String("delete")
+#define FEED_METHOD_FEED   QLatin1String("feed")
+
+#define FEED_NAME_ACL QLatin1String("acl")
 
 #endif /* FEEDSTRINGS_H_ */

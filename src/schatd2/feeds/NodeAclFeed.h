@@ -20,13 +20,12 @@
 #define NODEACLFEED_H_
 
 #include "feeds/Feed.h"
-#include "feeds/FeedNames.h"
 
 class SCHAT_EXPORT NodeAclFeed : public Feed
 {
 public:
   NodeAclFeed(const QString &name, const QVariantMap &data);
-  NodeAclFeed(const QString &name = FEED_ACL, qint64 date = 0);
+  NodeAclFeed(const QString &name = FEED_NAME_ACL, qint64 date = 0);
   Feed* create(const QString &name);
   Feed* load(const QString &name, const QVariantMap &data);
 

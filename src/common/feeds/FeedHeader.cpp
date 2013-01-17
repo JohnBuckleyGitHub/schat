@@ -18,7 +18,7 @@
 
 #include "DateTime.h"
 #include "feeds/FeedHeader.h"
-#include "feeds/FeedNames.h"
+#include "feeds/FeedStrings.h"
 #include "net/packets/Notice.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
@@ -172,9 +172,9 @@ void FeedHeader::setData(const QVariantMap &data)
 {
   m_data = data;
 
-  if (data.contains(FEED_ACL)) {
-    m_acl.load(data.value(FEED_ACL).toMap());
-    m_data.remove(FEED_ACL);
+  if (data.contains(FEED_NAME_ACL)) {
+    m_acl.load(data.value(FEED_NAME_ACL).toMap());
+    m_data.remove(FEED_NAME_ACL);
   }
   else
     m_acl.load(data);

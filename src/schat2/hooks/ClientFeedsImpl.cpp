@@ -61,11 +61,11 @@ void ClientFeedsImpl::readFeedImpl(const FeedNotice &packet)
 
   m_packet = &packet;
 
-  if (cmd == LS("feed"))
+  if (cmd == FEED_METHOD_FEED)
     feed();
-  else if (cmd == LS("get"))
+  else if (cmd == FEED_METHOD_GET)
     get();
-  else if (cmd == LS("put") || cmd == LS("post") || cmd == LS("delete"))
+  else if (cmd == FEED_METHOD_PUT || cmd == FEED_METHOD_POST || cmd == FEED_METHOD_DELETE)
     reply();
 }
 
@@ -96,7 +96,7 @@ void ClientFeedsImpl::feed()
   ChatNotify::start(new FeedNotify(Notify::FeedData, m_channel->id(), name));
 
   if (data.size() > 2 && data.value(LS("date")) != head.date())
-    ClientFeeds::request(m_channel, LS("get"), name + LS("/head"));
+    ClientFeeds::request(m_channel, FEED_METHOD_GET, name + LS("/head"));
 }
 
 
@@ -144,7 +144,7 @@ void ClientFeedsImpl::get(const QByteArray &id, const QStringList &feeds)
     return;
 
   foreach (const QString &name, feeds) {
-    ClientFeeds::request(id, LS("get"), name);
+    ClientFeeds::request(id, FEED_METHOD_GET, name);
   }
 }
 
@@ -181,7 +181,7 @@ void ClientFeedsImpl::reply()
   if (!feed)
     return;
 
-  if (notify->command() == LS("delete")) {
+  if (notify->command() == FEED_METHOD_DELETE) {
     if (notify->path().isEmpty()) {
       FeedStorage::remove(feed);
       m_channel->feeds().remove(notify->feed());
