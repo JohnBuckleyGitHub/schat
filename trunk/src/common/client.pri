@@ -26,6 +26,7 @@ HEADERS += \
     client/NetworkPool.h \
     DateTime.h \
     feeds/Feed.h \
+    feeds/FeedEvent.h \
     feeds/FeedEvents.h \
     feeds/FeedHeader.h \
     feeds/Feeds.h \
@@ -67,6 +68,7 @@ SOURCES += \
     client/NetworkPool.cpp \
     DateTime.cpp \
     feeds/Feed.cpp \
+    feeds/FeedEvent.cpp \
     feeds/FeedEvents.cpp \
     feeds/FeedHeader.cpp \
     feeds/Feeds.cpp \
