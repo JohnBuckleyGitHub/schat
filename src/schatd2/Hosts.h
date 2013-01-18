@@ -54,7 +54,7 @@ private:
   FeedPtr feed(const QString &name, int mask) const;
   QByteArray publicId(quint64 socket = 0) const;
   void updateHostsFeed(HostInfo host, const QString &method, quint64 socket);
-  void updateUser(const QByteArray &publicId, quint64 socket = 0);
+  void updateUserFeed(HostInfo host, const QString &method, quint64 socket);
 
   qint64 m_date;                      ///< Последняя дата модификации.
   QMap<QByteArray, HostInfo> m_hosts; ///< Таблица хостов, в качестве ключа публичный идентификатор хоста.

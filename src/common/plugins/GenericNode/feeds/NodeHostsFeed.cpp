@@ -59,7 +59,7 @@ FeedReply NodeHostsFeed::del(const QString &path, Channel *channel)
 {
   Q_UNUSED(channel)
 
-  QByteArray id = SimpleID::decode(path);
+  const QByteArray id = SimpleID::decode(path);
   if (SimpleID::typeOf(id) != SimpleID::HostId)
     return Notice::BadRequest;
 
