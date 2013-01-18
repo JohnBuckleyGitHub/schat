@@ -62,6 +62,7 @@ bool NodeFeeds::read(PacketReader *reader)
   m_packet = &packet;
   m_event  = new FeedEvent(reader->dest(), reader->sender(), m_packet->command());
   m_event->request = m_packet->json();
+  m_event->socket  = Core::socket();
 
   const QString &method = m_packet->command();
   int status            = Notice::NotImplemented;
@@ -333,5 +334,5 @@ void NodeFeeds::broadcast(FeedPtr feed, bool echo)
 
 void NodeFeeds::reply(int status)
 {
-  m_core->send(m_user->sockets(), FeedNotice::reply(*m_packet, status));
+  Core::send(FeedNotice::reply(*m_packet, status));
 }

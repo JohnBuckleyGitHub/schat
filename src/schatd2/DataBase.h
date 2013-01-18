@@ -55,7 +55,7 @@ public:
   static void add(Account *account);
 
   // hosts.
-  static QHash<QByteArray, HostInfo> hosts(qint64 channel);
+  static QMap<QByteArray, HostInfo> hosts(qint64 channel);
   static void add(HostInfo host);
   static void removeHost(const QByteArray &hostId);
 

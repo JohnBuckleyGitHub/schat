@@ -53,6 +53,7 @@ void NodeFeedLogImpl::notify(const FeedEvent &event)
   m_stream << date(event.method == FEED_METHOD_GET ? 0 : event.date)
            << LC(' ') << event.status
            << LC(' ') << SimpleID::encode(event.sender)
+           << LC('/') << event.socket
            << LC(' ') << event.method
            << LC(' ') << event.date
            << LC(' ') << SimpleID::encode(event.channel)

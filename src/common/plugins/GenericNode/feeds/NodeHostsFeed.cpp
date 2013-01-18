@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ QVariantMap NodeHostsFeed::feed(Channel *channel) const
   QVariantMap out;
 
   ServerChannel *user = static_cast<ServerChannel *>(head().channel());
-  const QHash<QByteArray, HostInfo> &hosts = user->hosts()->all();
+  const QMap<QByteArray, HostInfo> &hosts = user->hosts()->all();
   foreach (const HostInfo &info, hosts) {
     QVariantMap data;
     data[LS("online")]  = info->online;

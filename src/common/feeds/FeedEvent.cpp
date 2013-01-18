@@ -23,6 +23,7 @@ FeedEvent::FeedEvent()
   : status(0)
   , date(0)
   , diffTo(0)
+  , socket(0)
 {
 }
 
@@ -34,6 +35,7 @@ FeedEvent::FeedEvent(const QByteArray &channel, const QByteArray &sender, const 
   , date(0)
   , diffTo(0)
   , method(method)
+  , socket(0)
 {
 }
 
