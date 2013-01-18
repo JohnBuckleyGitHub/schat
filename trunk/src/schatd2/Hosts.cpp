@@ -21,6 +21,7 @@
 #include "DataBase.h"
 #include "DateTime.h"
 #include "events.h"
+#include "feeds/FeedEvents.h"
 #include "feeds/FeedStorage.h"
 #include "Hosts.h"
 #include "net/packets/auth.h"
@@ -40,7 +41,7 @@ Hosts::Hosts(ServerChannel *channel)
 }
 
 
-const QHash<QByteArray, HostInfo>& Hosts::all()
+const QMap<QByteArray, HostInfo>& Hosts::all()
 {
   if (m_hosts.isEmpty())
     m_hosts = DataBase::hosts(m_channel->key());
@@ -56,13 +57,18 @@ const QHash<QByteArray, HostInfo>& Hosts::all()
  */
 FeedPtr Hosts::feed() const
 {
-  return feed(LS("hosts"), 0600);
+  return feed(FEED_NAME_HOSTS, 0600);
 }
 
 
+/*!
+ * Получение фида \b user.
+ *
+ * Если фид не существует, то он будет создан, при создании будет задана маска прав доступа 0400.
+ */
 FeedPtr Hosts::user() const
 {
-  return feed(LS("user"), 0444);
+  return feed(FEED_NAME_USER, 0444);
 }
 
 
@@ -87,11 +93,13 @@ QList<quint64> Hosts::sockets(const QByteArray &publicId) const
 
 
 /*!
- * Добавление нового или обновление существующего подключения в списоке хостов.
+ * Добавление нового или обновление существующего подключения в списке хостов.
+ *
+ * \param hostInfo Информация о хосте пользователя.
  */
 void Hosts::add(HostInfo hostInfo)
 {
-  QByteArray id = toHostId(hostInfo->uniqueId, m_channel->id());
+  const QByteArray id = toHostId(hostInfo->uniqueId, m_channel->id());
   all();
 
   HostInfo host = m_hosts.value(id);
@@ -113,14 +121,10 @@ void Hosts::add(HostInfo hostInfo)
   host->hostId  = id;
   host->geo     = GeoHook::geo(host->address);
 
-  m_date = DateTime::utc();
-  host->date = m_date;
-
   host->sockets.append(hostInfo->socket);
   m_sockets[hostInfo->socket] = host;
 
-  DataBase::add(host);
-  FeedStorage::save(feed(), m_date);
+  updateHostsFeed(host, FEED_METHOD_POST, hostInfo->socket);
   updateUser(QByteArray(), hostInfo->socket);
 }
 
@@ -139,11 +143,7 @@ void Hosts::remove(quint64 socket)
 
   if (host->sockets.size() == 1) {
     host->online = false;
-    m_date = DateTime::utc();
-    host->date = m_date;
-
-    DataBase::add(host);
-    FeedStorage::save(feed(), m_date);
+    updateHostsFeed(host, FEED_METHOD_PUT, socket);
     updateUser(host->hostId);
   }
 
@@ -187,6 +187,11 @@ QByteArray Hosts::toHostId(const QByteArray &uniqueId, const QByteArray &channel
 }
 
 
+/*!
+ * Служебная функция получения фида.
+ *
+ * На фид установляется маска прав доступа \p mask и если фид не существует добавляется владелец фида.
+ */
 FeedPtr Hosts::feed(const QString &name, int mask) const
 {
   FeedPtr feed = m_channel->feed(name, false);
@@ -200,6 +205,11 @@ FeedPtr Hosts::feed(const QString &name, int mask) const
 }
 
 
+/*!
+ * Получение идентификатора хоста по сокету.
+ *
+ * \return Идентификатор хоста или пустые данные, если хост не найден.
+ */
 QByteArray Hosts::publicId(quint64 socket) const
 {
   if (socket == 0)
@@ -209,6 +219,34 @@ QByteArray Hosts::publicId(quint64 socket) const
     return QByteArray();
 
   return m_sockets.value(socket)->hostId;
+}
+
+
+/*!
+ * Фиксация события обновления фида \b hosts и отправка уведомления об этом.
+ *
+ * \param host   Информация о подключении.
+ * \param method \b post если пользователь подключился или \b put если отключился.
+ * \param socket Номер сокета подключения.
+ */
+void Hosts::updateHostsFeed(HostInfo host, const QString &method, quint64 socket)
+{
+  m_date           = DateTime::utc();
+  host->date       = m_date;
+
+  FeedPtr hosts    = feed();
+  FeedEvent *event = new FeedEvent(m_channel->id(), m_channel->id(), method);
+  event->name      = FEED_NAME_HOSTS;
+  event->diffTo    = hosts->head().date();
+  event->date      = m_date;
+  event->status    = Notice::OK;
+  event->path      = SimpleID::encode(host->hostId);
+  event->socket    = socket;
+
+  DataBase::add(host);
+  FeedStorage::save(feed(), m_date);
+
+  FeedEvents::start(event);
 }
 
 

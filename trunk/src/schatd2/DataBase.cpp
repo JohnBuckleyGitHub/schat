@@ -485,9 +485,9 @@ void DataBase::add(Account *account)
 /*!
  * Получения списка хостов связанных с каналом.
  */
-QHash<QByteArray, HostInfo> DataBase::hosts(qint64 channel)
+QMap<QByteArray, HostInfo> DataBase::hosts(qint64 channel)
 {
-  QHash<QByteArray, HostInfo> out;
+  QMap<QByteArray, HostInfo> out;
 
   QSqlQuery query;
   query.prepare(LS("SELECT hostId, name, address, version, os, osName, tz, date, geo, data FROM hosts WHERE channel = :channel;"));

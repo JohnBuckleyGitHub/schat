@@ -42,6 +42,7 @@ public:
   QString method;      ///< Тип запроса.
   QString name;        ///< Имя фида.
   QString path;        ///< Путь запроса, может быть пустым.
+  quint64 socket;      ///< Номер сокета пользователя.
   QVariantMap reply;   ///< Тело ответа на запрос к фиду.
   QVariantMap request; ///< Тело запроса к фиду.
 };

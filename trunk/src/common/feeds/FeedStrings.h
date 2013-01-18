@@ -26,7 +26,9 @@
 #define FEED_METHOD_FEED   QLatin1String("feed")
 
 #define FEED_NAME_ACL      QLatin1String("acl")
+#define FEED_NAME_HOSTS    QLatin1String("hosts")
 #define FEED_NAME_PROFILE  QLatin1String("profile")
+#define FEED_NAME_USER     QLatin1String("user")
 
 #define FEED_WILDCARD_ASTERISK QLatin1String("*")
 
