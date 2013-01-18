@@ -125,7 +125,7 @@ void Hosts::add(HostInfo hostInfo)
   m_sockets[hostInfo->socket] = host;
 
   updateHostsFeed(host, FEED_METHOD_POST, hostInfo->socket);
-  updateUser(QByteArray(), hostInfo->socket);
+  updateUserFeed(host, FEED_METHOD_POST, hostInfo->socket);
 }
 
 
@@ -144,7 +144,7 @@ void Hosts::remove(quint64 socket)
   if (host->sockets.size() == 1) {
     host->online = false;
     updateHostsFeed(host, FEED_METHOD_PUT, socket);
-    updateUser(host->hostId);
+    updateUserFeed(host, FEED_METHOD_DELETE, socket);
   }
 
   host->sockets.removeAll(socket);
@@ -161,16 +161,16 @@ void Hosts::unlink(const QByteArray &hostId)
   m_hosts.remove(hostId);
   DataBase::removeHost(hostId);
 
+  m_date = DateTime::utc();
+  updateUserFeed(host, FEED_METHOD_DELETE, 0);
+
   QList<quint64> sockets = host->sockets;
   if (!sockets.isEmpty()) {
-    foreach (quint64 socket, sockets) {
+    foreach (quint64 socket, sockets)
       m_sockets.remove(socket);
-    }
 
     Core::i()->send(sockets, ChannelNotice::request(m_channel->id(), m_channel->id(), LS("quit"))->data(Core::stream()), NewPacketsEvent::KillSocketOption);
   }
-
-  updateUser(hostId);
 }
 
 
@@ -245,32 +245,32 @@ void Hosts::updateHostsFeed(HostInfo host, const QString &method, quint64 socket
 
   DataBase::add(host);
   FeedStorage::save(feed(), m_date);
-
   FeedEvents::start(event);
 }
 
 
 /*!
- * Обновление фида \b user при отключении или подключении пользователя.
+ * Фиксация события обновления фида \b user и отправка уведомления об этом.
  */
-void Hosts::updateUser(const QByteArray &publicId, quint64 socket)
+void Hosts::updateUserFeed(HostInfo host, const QString &method, quint64 socket)
 {
-  FeedPtr feed = user();
-  FeedStorage::save(feed, m_date);
+  FeedPtr user     = this->user();
+  FeedEvent *event = new FeedEvent(m_channel->id(), m_channel->id(), method);
 
-  QList<quint64> sockets = Sockets::all(Ch::channel(m_channel->id()), true);
-  if (publicId.isEmpty())
-    sockets.removeAll(socket);
+  if (!user->head().f().isEmpty()) {
+    event->broadcast = Sockets::all(Ch::channel(m_channel->id()), true);
 
-  if (sockets.isEmpty())
-    return;
+    if (method == FEED_METHOD_POST)
+      event->broadcast.removeAll(socket);
+  }
 
-  QVariantMap headers = Feed::merge(FEED_KEY_F, feed->head().f());
-  if (headers.isEmpty())
-    return;
+  event->name      = FEED_NAME_USER;
+  event->diffTo    = user->head().date();
+  event->date      = m_date;
+  event->status    = Notice::OK;
+  event->path      = SimpleID::encode(host->hostId);
+  event->socket    = socket;
 
-  FeedNotice packet(m_channel->id(), m_channel->id(), FEED_METHOD_GET);
-  packet.setText(FEED_WILDCARD_ASTERISK);
-  packet.setData(headers);
-  Core::i()->send(sockets, packet.data(Core::stream()));
+  FeedStorage::save(user, m_date);
+  FeedEvents::start(event);
 }

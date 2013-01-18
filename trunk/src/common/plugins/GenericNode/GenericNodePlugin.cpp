@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,12 +19,15 @@
 #include <QtPlugin>
 
 #include "cores/Core.h"
+#include "feeds/FeedEvents.h"
 #include "feeds/NodeFeedStorage.h"
 #include "GenericCh.h"
 #include "GenericNodePlugin.h"
 #include "GenericNodePlugin_p.h"
 #include "NodeChannels.h"
 #include "NodeFeeds.h"
+#include "sglobal.h"
+#include "net/packets/FeedNotice.h"
 
 GenericNode::GenericNode(QObject *parent)
   : NodePlugin(parent)
@@ -33,6 +36,24 @@ GenericNode::GenericNode(QObject *parent)
   new NodeFeeds(Core::i());
   new GenericCh(this);
   new NodeFeedStorage(this);
+
+  connect(FeedEvents::i(), SIGNAL(notify(FeedEvent)), SLOT(notify(FeedEvent)));
+}
+
+
+void GenericNode::notify(const FeedEvent &event)
+{
+  if (!event.broadcast.isEmpty()) {
+    FeedPacket packet(new FeedNotice(event.channel, event.channel, FEED_METHOD_GET));
+    packet->setDirection(Notice::Server2Client);
+    packet->setText(FEED_WILDCARD_ASTERISK);
+
+    QVariantMap json;
+    json[event.name] = event.date;
+    packet->setData(Feed::merge(FEED_KEY_F, json));
+
+    Core::i()->send(event.broadcast, packet->data(Core::stream()));
+  }
 }
 
 
