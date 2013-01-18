@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -50,8 +50,8 @@ bool RawFeedsCmd::command(const QByteArray &dest, const ClientCmd &cmd)
     ClientCmd body(cmd.body());
     if (!body.isValid() && Channel::isCompatibleId(dest)) {
       QVariantMap json;
-      json[LS("compact")] = false;
-      ClientFeeds::request(dest, LS("get"), LS("*"), json);
+      json[FEED_KEY_COMPACT] = false;
+      ClientFeeds::request(dest, FEED_METHOD_GET, FEED_WILDCARD_ASTERISK, json);
     }
     else if (body.command() == LS("local"))
       localFeeds(dest);

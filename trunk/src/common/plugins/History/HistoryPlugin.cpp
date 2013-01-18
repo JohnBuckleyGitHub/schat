@@ -95,7 +95,7 @@ bool HistoryImpl::get(const QByteArray &id, const QList<QByteArray> &ids)
 
   QVariantMap data;
   data[LS("messages")] = MessageNotice::encode(required);
-  return ClientFeeds::request(id, LS("get"), LS("messages/fetch"), data);
+  return ClientFeeds::request(id, FEED_METHOD_GET, LS("messages/fetch"), data);
 }
 
 
@@ -111,7 +111,7 @@ bool HistoryImpl::last(const QByteArray &id)
     return false;
   }
 
-  return ClientFeeds::request(id, LS("get"), LS("messages/last"));
+  return ClientFeeds::request(id, FEED_METHOD_GET, LS("messages/last"));
 }
 
 

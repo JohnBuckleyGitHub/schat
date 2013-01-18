@@ -25,6 +25,14 @@
 #define FEED_METHOD_DELETE QLatin1String("delete")
 #define FEED_METHOD_FEED   QLatin1String("feed")
 
-#define FEED_NAME_ACL QLatin1String("acl")
+#define FEED_NAME_ACL      QLatin1String("acl")
+#define FEED_NAME_PROFILE  QLatin1String("profile")
+
+#define FEED_WILDCARD_ASTERISK QLatin1String("*")
+
+#define FEED_KEY_COMPACT QLatin1String("compact")
+#define FEED_KEY_F       QLatin1String("f")
+#define FEED_KEY_OPTIONS QLatin1String("options")
+#define FEED_KEY_VALUE   QLatin1String("value")
 
 #endif /* FEEDSTRINGS_H_ */

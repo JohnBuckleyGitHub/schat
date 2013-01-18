@@ -171,7 +171,7 @@ int NodeFeeds::get()
 {
   SCHAT_CHECK_ACL(Acl::Read)
 
-  if (result.name == LS("*"))
+  if (result.name == FEED_WILDCARD_ASTERISK)
     return headers();
 
   if (!result.path.isEmpty())
@@ -182,7 +182,7 @@ int NodeFeeds::get()
     return Notice::NotModified;
 
   m_event->reply = result.feed->feed(m_user.data());
-  FeedPacket packet = FeedNotice::reply(*m_packet, m_event->reply);
+  FeedPacket packet = FeedNotice::reply(*m_packet, Feed::merge(result.name, m_event->reply));
   packet->setDate(date);
   packet->setCommand(FEED_METHOD_FEED);
 
@@ -221,7 +221,7 @@ int NodeFeeds::get(FeedPtr feed, const QString &request)
  */
 int NodeFeeds::headers()
 {
-  if (m_packet->json().value(LS("compact"), true).toBool())
+  if (m_packet->json().value(FEED_KEY_COMPACT, true).toBool())
     m_core->send(m_user->sockets(), FeedNotice::reply(*m_packet, m_channel->feeds().f(m_user.data())));
   else
     m_core->send(m_user->sockets(), FeedNotice::reply(*m_packet, m_channel->feeds().headers(m_user.data())));
@@ -251,9 +251,9 @@ int NodeFeeds::query(const QString &verb)
   if (reply.date)
     FeedStorage::save(result.feed, reply.date);
 
-  int options = m_packet->json().value(LS("options")).toInt();
+  int options = m_packet->json().value(FEED_KEY_OPTIONS).toInt();
   if (options & Feed::Echo)
-    reply.json[LS("value")] = m_packet->json().value(LS("value"));
+    reply.json[FEED_KEY_VALUE] = m_packet->json().value(FEED_KEY_VALUE);
 
   FeedPacket packet = FeedNotice::reply(*m_packet, reply.json);
   packet->setDate(reply.date);
@@ -294,7 +294,7 @@ NodeFeeds::CheckResult NodeFeeds::check(int acl)
 
   result.feed = m_channel->feed(result.name, false);
   if (!result.feed) {
-    if (m_packet->command() == FEED_METHOD_GET && result.name == LS("*")) {
+    if (m_packet->command() == FEED_METHOD_GET && result.name == FEED_WILDCARD_ASTERISK) {
       result.status = Notice::OK;
     }
     else if (m_packet->command() == FEED_METHOD_POST && result.path.isEmpty()) {
@@ -319,14 +319,14 @@ NodeFeeds::CheckResult NodeFeeds::check(int acl)
  */
 void NodeFeeds::broadcast(FeedPtr feed, bool echo)
 {
-  QVariantMap json = Feed::merge(LS("f"), feed->head().f());
+  QVariantMap json = Feed::merge(FEED_KEY_F, feed->head().f());
   if (json.isEmpty())
     return;
 
   FeedPacket packet = FeedNotice::reply(*m_packet, json);
   packet->setDest(m_channel->id());
   packet->setCommand(FEED_METHOD_GET);
-  packet->setText(LS("*"));
+  packet->setText(FEED_WILDCARD_ASTERISK);
   m_core->send(Sockets::all(m_channel, m_user, echo), packet);
 }
 

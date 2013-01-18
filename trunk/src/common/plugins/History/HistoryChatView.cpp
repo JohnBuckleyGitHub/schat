@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ void HistoryChatView::ready()
       if (view->lastMessage()) {
         QVariantMap data;
         data[LS("date")] = view->lastMessage();
-        sent = ClientFeeds::request(id, LS("get"), LS("messages/since"), data);
+        sent = ClientFeeds::request(id, FEED_METHOD_GET, LS("messages/since"), data);
       }
       else
         sent = HistoryImpl::last(id);
@@ -82,7 +82,7 @@ void HistoryChatView::ready()
     }
   }
 
-  ClientFeeds::request(ChatClient::id(), LS("get"), LS("messages/offline"));
+  ClientFeeds::request(ChatClient::id(), FEED_METHOD_GET, LS("messages/offline"));
   ChatClient::io()->unlock();
 }
 

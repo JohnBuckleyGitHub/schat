@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -45,10 +45,7 @@ bool ProfileField::isMatch(const Notify &notify)
     return false;
 
   const FeedNotify &n = static_cast<const FeedNotify &>(notify);
-  if (type == Notify::FeedReply)
-    return n.match(ChatClient::id(), LS("profile"), LS("x-set"));
-
-  return n.match(ChatClient::id(), LS("profile"));
+  return n.match(ChatClient::id(), FEED_NAME_PROFILE);
 }
 
 
@@ -60,7 +57,7 @@ void ProfileField::retranslateUi()
 
 void ProfileField::reload()
 {
-  FeedPtr feed = ChatClient::channel()->feed(LS("profile"), false);
+  FeedPtr feed = ChatClient::channel()->feed(FEED_NAME_PROFILE, false);
   if (!feed)
     return;
 
@@ -89,14 +86,14 @@ void ProfileField::notify(const Notify &notify)
 
 bool ProfileField::apply(const QVariant &value)
 {
-  FeedPtr feed = ChatClient::channel()->feed(LS("profile"), false);
+  FeedPtr feed = ChatClient::channel()->feed(FEED_NAME_PROFILE, false);
   if (!feed)
     return false;
 
   if (feed->data().value(m_field) == value)
     return false;
 
-  return ClientFeeds::post(ChatClient::id(), LS("profile/") + m_field, value, Feed::Echo | Feed::Share | Feed::Broadcast);
+  return ClientFeeds::post(ChatClient::id(), FEED_NAME_PROFILE + LC('/') + m_field, value, Feed::Echo | Feed::Share | Feed::Broadcast);
 }
 
 

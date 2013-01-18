@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ RawFeedsMessage::RawFeedsMessage(const FeedNotice &packet)
   m_data[LS("Status")] = status;
 
   QString title = packet.command();
-  if (title == LS("get") && packet.text() == LS("*")) {
+  if (title == FEED_METHOD_GET && packet.text() == FEED_WILDCARD_ASTERISK) {
     title = LS("Feeds");
     m_data[LS("Command")] = LS("headers");
     headers(packet.json().value(LS("feeds")).toMap());
@@ -53,7 +53,7 @@ RawFeedsMessage::RawFeedsMessage(const FeedNotice &packet)
     title = packet.text();
     feed(title, packet.raw().size());
   }
-  else if (title == LS("get") || title == LS("put") || title == LS("post") || title == LS("delete"))
+  else if (title == FEED_METHOD_GET || title == FEED_METHOD_PUT || title == FEED_METHOD_POST || title == FEED_METHOD_DELETE)
     title = title + LC(' ') + packet.text();
 
   m_data[LS("Title")] = title;

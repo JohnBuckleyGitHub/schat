@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ Feed* NodeListFeed::load(const QString &name, const QVariantMap &data)
 
 
 /*!
- * Переопределение запроса "delete".
+ * Переопределение запроса \b delete.
  */
 FeedReply NodeListFeed::del(const QString &path, Channel *channel)
 {
@@ -64,7 +64,7 @@ FeedReply NodeListFeed::del(const QString &path, Channel *channel)
 
 
 /*!
- * Переопределение запроса "post".
+ * Переопределение запроса \b post.
  */
 FeedReply NodeListFeed::post(const QString &path, const QVariantMap &json, Channel *channel)
 {
@@ -76,7 +76,7 @@ FeedReply NodeListFeed::post(const QString &path, const QVariantMap &json, Chann
 
 
 /*!
- * Переопределение запроса "put".
+ * Переопределение запроса \b put.
  */
 FeedReply NodeListFeed::put(const QString &path, const QVariantMap &json, Channel *channel)
 {

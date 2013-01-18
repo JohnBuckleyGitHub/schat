@@ -64,5 +64,5 @@ void GenericCh::userChannel(ChatChannel channel)
   channel->feed(LS("account"));
 
   Ch::addNewUserFeedIfNotExist(channel, FEED_NAME_ACL);
-  Ch::addNewUserFeedIfNotExist(channel, LS("profile"));
+  Ch::addNewUserFeedIfNotExist(channel, FEED_NAME_PROFILE);
 }

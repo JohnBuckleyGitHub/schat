@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -227,12 +227,12 @@ void Hosts::updateUser(const QByteArray &publicId, quint64 socket)
   if (sockets.isEmpty())
     return;
 
-  QVariantMap headers = Feed::merge(LS("f"), feed->head().f());
+  QVariantMap headers = Feed::merge(FEED_KEY_F, feed->head().f());
   if (headers.isEmpty())
     return;
 
-  FeedNotice packet(m_channel->id(), m_channel->id(), LS("get"));
-  packet.setText(LS("*"));
+  FeedNotice packet(m_channel->id(), m_channel->id(), FEED_METHOD_GET);
+  packet.setText(FEED_WILDCARD_ASTERISK);
   packet.setData(headers);
   Core::i()->send(sockets, packet.data(Core::stream()));
 }

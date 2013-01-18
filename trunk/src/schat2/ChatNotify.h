@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -90,8 +90,8 @@ class SCHAT_CORE_EXPORT FeedNotify : public Notify
 public:
   FeedNotify(const QByteArray &channel, const FeedNotice *packet);
   FeedNotify(int type, const QByteArray &channel, const QString &name, const QVariantMap &json = QVariantMap(), int status = 200);
-  bool match(const QByteArray &id, const QString &name, const QString &action = QString()) const;
-  bool match(const QString &name, const QString &action = QString()) const;
+  bool match(const QByteArray &id, const QString &name) const;
+  bool match(const QString &name) const;
   inline const QByteArray& channel() const { return m_channel; }
   inline const QString& command() const    { return m_command; }
   inline const QString& feed() const       { return m_feed; }

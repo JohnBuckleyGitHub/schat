@@ -140,7 +140,7 @@ void ChannelsPluginImpl::channel(const QByteArray &id)
 
   FeedPtr feed = ChatClient::channels()->get(id)->feed(FEED_NAME_ACL, false);
   if (!feed)
-    ClientFeeds::request(id, LS("get"), LS("acl/head"));
+    ClientFeeds::request(id, FEED_METHOD_GET, LS("acl/head"));
 }
 
 
@@ -177,11 +177,11 @@ void ChannelsPluginImpl::ready()
 {
   FeedPtr feed = ChatClient::channel()->feed(FEED_NAME_ACL, false);
   if (!feed)
-    ClientFeeds::request(ChatClient::id(), LS("get"), LS("acl/head"));
+    ClientFeeds::request(ChatClient::id(), FEED_METHOD_GET, LS("acl/head"));
 
   feed = ChatClient::server()->feed(FEED_NAME_ACL, false);
   if (!feed)
-    ClientFeeds::request(ChatClient::serverId(), LS("get"), LS("acl/head"));
+    ClientFeeds::request(ChatClient::serverId(), FEED_METHOD_GET, LS("acl/head"));
 }
 
 

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -327,7 +327,7 @@ QVariantMap WebBridge::traffic() const
 
 void WebBridge::get(const QString &id, const QString &name, const QVariantMap &json)
 {
-  ClientFeeds::request(ChatClient::channels()->get(SimpleID::decode(id)), LS("get"), name, json);
+  ClientFeeds::request(ChatClient::channels()->get(SimpleID::decode(id)), FEED_METHOD_GET, name, json);
 }
 
 
@@ -371,12 +371,12 @@ QVariant WebBridge::feed(ClientChannel channel, const QString &name, int options
       return feed->data();
 
     if (options == 0)
-      ClientFeeds::request(channel->id(), LS("get"), name);
+      ClientFeeds::request(channel->id(), FEED_METHOD_GET, name);
   }
   else if (options == 1)
-    ClientFeeds::request(channel, LS("get"), name);
+    ClientFeeds::request(channel, FEED_METHOD_GET, name);
   else if (options == 2)
-    ClientFeeds::request(channel->id(), LS("get"), name);
+    ClientFeeds::request(channel->id(), FEED_METHOD_GET, name);
   else if (options == 4) {
     QVariant result = feed(channel, name, 3);
     feed(channel, name, 1);
