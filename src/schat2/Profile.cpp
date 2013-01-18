@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ QString Profile::translate(const QString &field)
  */
 QStringList Profile::available()
 {
-  FeedPtr feed = ChatClient::channel()->feed(LS("profile"), false);
+  FeedPtr feed = ChatClient::channel()->feed(FEED_NAME_PROFILE, false);
   if (!feed)
     return QStringList();
 
@@ -115,7 +115,7 @@ QStringList Profile::fields()
  */
 QStringList Profile::filled()
 {
-  FeedPtr feed = ChatClient::channel()->feed(LS("profile"), false);
+  FeedPtr feed = ChatClient::channel()->feed(FEED_NAME_PROFILE, false);
   if (!feed)
     return QStringList();
 
@@ -156,14 +156,9 @@ QString Profile::translateImpl(const QString & /*field*/) const
 }
 
 
-/*!
- * \deprecated Клиенту больше нет необходимости создавать фид profile самостоятельно.
- */
 void Profile::ready()
 {
-  FeedPtr feed = ChatClient::channel()->feed(LS("profile"), false);
-  if (!feed) {
-    ClientFeeds::request(ChatClient::id(), LS("add"), LS("profile"));
-    ClientFeeds::request(ChatClient::id(), LS("get"), LS("profile"));
-  }
+  FeedPtr feed = ChatClient::channel()->feed(FEED_NAME_PROFILE, false);
+  if (!feed)
+    ClientFeeds::request(ChatClient::id(), FEED_METHOD_GET, FEED_NAME_PROFILE);
 }

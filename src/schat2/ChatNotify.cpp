@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -50,30 +50,18 @@ FeedNotify::FeedNotify(int type, const QByteArray &channel, const QString &name,
 }
 
 
-/*!
- * \bug проверка на action больше не работает.
- */
-bool FeedNotify::match(const QByteArray &id, const QString &name, const QString &action) const
+bool FeedNotify::match(const QByteArray &id, const QString &name) const
 {
   if (m_channel != id)
     return false;
 
-  return match(name, action);
+  return match(name);
 }
 
 
-/*!
- * \bug проверка на action больше не работает.
- */
-bool FeedNotify::match(const QString &name, const QString &action) const
+bool FeedNotify::match(const QString &name) const
 {
-  if (m_name != name)
-    return false;
-
-  if (action.isEmpty())
-    return true;
-
-  return true;
+  return m_name == name;
 }
 
 

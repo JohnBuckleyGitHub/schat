@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ class NodeProfileFeed : public Feed
 {
 public:
   NodeProfileFeed(const QString &name, const QVariantMap &data);
-  NodeProfileFeed(const QString &name = QLatin1String("profile"), qint64 date = 0);
+  NodeProfileFeed(const QString &name = FEED_NAME_PROFILE, qint64 date = 0);
   Feed* create(const QString &name);
   Feed* load(const QString &name, const QVariantMap &data);
 

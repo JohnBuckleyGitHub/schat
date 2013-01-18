@@ -70,7 +70,7 @@ bool NodeInfoFeed::can(Channel *channel, Acl::ResultAcl acl) const
 
 
 /*!
- * Переопределение запроса "delete".
+ * Переопределение запроса \b delete.
  *
  * Для этой операции требуются права на редактирование.
  */
@@ -121,7 +121,7 @@ FeedReply NodeInfoFeed::post(const QString &path, const QVariantMap &json, Chann
 
 
 /*!
- * Переопределение запроса "put".
+ * Переопределение запроса \b put.
  *
  * Этот фид не поддерживает такой запрос.
  */

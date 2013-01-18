@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ void HistoryButton::activated(const QDate &date)
   data[LS("date")] = start;
   data[LS("end")]  = start + 86400000;
   data[LS("day")]  = date.toString(LS("yyyy_MM_dd"));
-  ClientFeeds::request(ChatCore::currentId(), LS("get"), LS("messages/since"), data);
+  ClientFeeds::request(ChatCore::currentId(), FEED_METHOD_GET, LS("messages/since"), data);
 
   ChannelBaseTab *tab = TabWidget::i()->channelTab(ChatCore::currentId(), false, false);
   if (tab)

@@ -37,26 +37,26 @@ ClientFeeds::ClientFeeds(QObject *parent)
 bool ClientFeeds::del(const QByteArray &id, const QString &name, int options)
 {
   QVariantMap json;
-  json[LS("options")] = options;
-  return request(id, LS("delete"), name, json);
+  json[FEED_KEY_OPTIONS] = options;
+  return request(id, FEED_METHOD_DELETE, name, json);
 }
 
 
 bool ClientFeeds::post(const QByteArray &id, const QString &name, const QVariant &value, int options)
 {
   QVariantMap json;
-  json[LS("value")]   = value;
-  json[LS("options")] = options;
-  return request(id, LS("post"), name, json);
+  json[FEED_KEY_VALUE]   = value;
+  json[FEED_KEY_OPTIONS] = options;
+  return request(id, FEED_METHOD_POST, name, json);
 }
 
 
 bool ClientFeeds::put(const QByteArray &id, const QString &name, const QVariant &value, int options)
 {
   QVariantMap json;
-  json[LS("value")]   = value;
-  json[LS("options")] = options;
-  return request(id, LS("put"), name, json);
+  json[FEED_KEY_VALUE]   = value;
+  json[FEED_KEY_OPTIONS] = options;
+  return request(id, FEED_METHOD_PUT, name, json);
 }
 
 

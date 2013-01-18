@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -129,11 +129,11 @@ void ChatSettings::ready()
     ChatClient::io()->lock();
     ClientFeeds::post(id, LS("settings"));
     ClientFeeds::put(id, LS("settings/head/mask"), 0700);
-    ClientFeeds::request(id, LS("get"), LS("settings"));
+    ClientFeeds::request(id, FEED_METHOD_GET, LS("settings"));
     ChatClient::io()->unlock();
   }
   else if (!m_synced)
-    ClientFeeds::request(ChatClient::channel(), LS("get"), LS("settings"));
+    ClientFeeds::request(ChatClient::channel(), FEED_METHOD_GET, LS("settings"));
 }
 
 

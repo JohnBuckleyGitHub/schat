@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -510,7 +510,7 @@ void ProfilePluginImpl::ready()
 {
   FeedPtr feed = ChatClient::channel()->feed(LS("user"), false);
   if (!feed)
-    ClientFeeds::request(ChatClient::id(), LS("get"), LS("user"));
+    ClientFeeds::request(ChatClient::id(), FEED_METHOD_GET, LS("user"));
 }
 
 
