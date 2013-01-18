@@ -20,6 +20,7 @@
 #define FEEDEVENT_H_
 
 #include <QSharedPointer>
+#include <QVariant>
 
 #include "schat.h"
 
@@ -33,13 +34,16 @@ public:
   FeedEvent(const QByteArray &channel, const QByteArray &sender, const QString &method);
   bool isValid() const;
 
-  int status;         ///< Код состояния операции над фидом. \sa Notice::StatusCodes.
-  QByteArray channel; ///< Идентификатор канала фида.
-  QByteArray sender;  ///< Идентификатор канала совершившего действие над фидом.
-  qint64 date;        ///< Время модификации фида.
-  QString method;     ///< Тип запроса.
-  QString name;       ///< Имя фида.
-  QString path;       ///< Путь запроса, может быть пустым.
+  int status;          ///< Код состояния операции над фидом. \sa Notice::StatusCodes.
+  QByteArray channel;  ///< Идентификатор канала фида.
+  QByteArray sender;   ///< Идентификатор канала совершившего действие над фидом.
+  qint64 date;         ///< Время модификации фида.
+  qint64 diffTo;       ///< Время модификации фида, до изменений.
+  QString method;      ///< Тип запроса.
+  QString name;        ///< Имя фида.
+  QString path;        ///< Путь запроса, может быть пустым.
+  QVariantMap reply;   ///< Тело ответа на запрос к фиду.
+  QVariantMap request; ///< Тело запроса к фиду.
 };
 
 typedef QSharedPointer<FeedEvent> FeedEventPtr;

@@ -61,6 +61,7 @@ bool NodeFeeds::read(PacketReader *reader)
   FeedNotice packet(m_type, reader);
   m_packet = &packet;
   m_event  = new FeedEvent(reader->dest(), reader->sender(), m_packet->command());
+  m_event->request = m_packet->json();
 
   const QString &method = m_packet->command();
   int status            = Notice::NotImplemented;
@@ -176,12 +177,14 @@ int NodeFeeds::get()
   if (!result.path.isEmpty())
     return get(result.feed, result.path);
 
-  if (m_packet->date() == result.feed->head().date())
+  qint64 date = result.feed->head().date();
+  if (m_packet->date() == date)
     return Notice::NotModified;
 
-  FeedPacket packet = FeedNotice::reply(*m_packet, Feed::merge(result.name, result.feed->feed(m_user.data())));
-  packet->setDate(result.feed->head().date());
-  packet->setCommand(LS("feed"));
+  m_event->reply = result.feed->feed(m_user.data());
+  FeedPacket packet = FeedNotice::reply(*m_packet, m_event->reply);
+  packet->setDate(date);
+  packet->setCommand(FEED_METHOD_FEED);
 
   Core::send(packet);
   return Notice::OK;
@@ -205,6 +208,7 @@ int NodeFeeds::get(FeedPtr feed, const QString &request)
   if (!reply.packets.isEmpty())
     Core::send(reply.packets);
 
+  m_event->reply = reply.json;
   return Notice::OK;
 }
 
@@ -252,7 +256,11 @@ int NodeFeeds::query(const QString &verb)
     reply.json[LS("value")] = m_packet->json().value(LS("value"));
 
   FeedPacket packet = FeedNotice::reply(*m_packet, reply.json);
-  packet->setDate(result.feed->head().date());
+  packet->setDate(reply.date);
+
+  m_event->reply  = reply.json;
+  m_event->diffTo = m_event->date;
+  m_event->date   = reply.date;
 
   if (options & Feed::Share)
     m_core->send(m_user->sockets(), packet);
@@ -298,6 +306,9 @@ NodeFeeds::CheckResult NodeFeeds::check(int acl)
   }
   else if (!result.feed->can(m_user.data(), static_cast<Acl::ResultAcl>(acl)))
     result.status = Notice::Forbidden;
+
+  if (result.feed)
+    m_event->date = result.feed->head().date();
 
   return result;
 }

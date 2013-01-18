@@ -22,6 +22,7 @@
 #include "DateTime.h"
 #include "feeds/FeedEvents.h"
 #include "feeds/FeedStrings.h"
+#include "JSON.h"
 #include "net/SimpleID.h"
 #include "NodeFeedLogPlugin.h"
 #include "NodeFeedLogPlugin.h"
@@ -53,9 +54,23 @@ void NodeFeedLogImpl::notify(const FeedEvent &event)
            << LC(' ') << event.status
            << LC(' ') << SimpleID::encode(event.sender)
            << LC(' ') << event.method
+           << LC(' ') << event.date
            << LC(' ') << SimpleID::encode(event.channel)
-           << LC('/') << event.name << (!event.path.isEmpty() ? (LC('/') + event.path) : QString())
-           << endl;
+           << LC('/') << event.name;
+
+  if (!event.path.isEmpty())
+    m_stream << LC('/') << event.path;
+
+  if (event.diffTo && event.diffTo != event.date)
+    m_stream << LS(" diffTo:") << event.diffTo;
+
+  if (!event.request.isEmpty())
+    m_stream << LS(" request:") << JSON::generate(event.request);
+
+  if (!event.reply.isEmpty())
+    m_stream << LS(" reply:") << JSON::generate(event.reply);
+
+  m_stream << endl;
 }
 
 
