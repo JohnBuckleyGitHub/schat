@@ -43,18 +43,6 @@ NodeHostsFeed::NodeHostsFeed(const QString &name, qint64 date)
 }
 
 
-Feed* NodeHostsFeed::create(const QString &name)
-{
-  return new NodeHostsFeed(name, DateTime::utc());
-}
-
-
-Feed* NodeHostsFeed::load(const QString &name, const QVariantMap &data)
-{
-  return new NodeHostsFeed(name, data);
-}
-
-
 FeedReply NodeHostsFeed::del(const QString &path, Channel *channel)
 {
   Q_UNUSED(channel)
@@ -120,4 +108,16 @@ QVariantMap NodeHostsFeed::feed(Channel *channel) const
   }
 
   return out;
+}
+
+
+Feed* NodeHostsFeedCreator::create(const QString &name) const
+{
+  return new NodeHostsFeed(name, DateTime::utc());
+}
+
+
+Feed* NodeHostsFeedCreator::load(const QString &name, const QVariantMap &data) const
+{
+  return new NodeHostsFeed(name, data);
 }

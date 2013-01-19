@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -33,18 +33,6 @@ NodeStorageFeed::NodeStorageFeed(const QString &name, qint64 date)
   : Feed(name, date)
 {
   m_header.acl().setMask(0);
-}
-
-
-Feed* NodeStorageFeed::create(const QString &name)
-{
-  return new NodeStorageFeed(name, DateTime::utc());
-}
-
-
-Feed* NodeStorageFeed::load(const QString &name, const QVariantMap &data)
-{
-  return new NodeStorageFeed(name, data);
 }
 
 
@@ -114,4 +102,16 @@ FeedReply NodeStorageFeed::put(const QString &path, const QVariantMap &json, Cha
     return FeedReply(status, DateTime::utc());
 
   return status;
+}
+
+
+Feed* NodeStorageFeedCreator::create(const QString &name) const
+{
+  return new NodeStorageFeed(name, DateTime::utc());
+}
+
+
+Feed* NodeStorageFeedCreator::load(const QString &name, const QVariantMap &data) const
+{
+  return new NodeStorageFeed(name, data);
 }

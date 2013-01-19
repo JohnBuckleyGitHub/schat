@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -38,18 +38,6 @@ NodeConsoleFeed::NodeConsoleFeed(const QString &name, qint64 date)
   : Feed(name, date)
 {
   m_header.acl().setMask(0444);
-}
-
-
-Feed* NodeConsoleFeed::create(const QString &name)
-{
-  return new NodeConsoleFeed(name, DateTime::utc());
-}
-
-
-Feed* NodeConsoleFeed::load(const QString &name, const QVariantMap &data)
-{
-  return new NodeConsoleFeed(name, data);
 }
 
 
@@ -155,4 +143,16 @@ FeedReply NodeConsoleFeed::tryAccess(Channel *user) const
     return Notice::Forbidden;
 
   return FeedReply(Notice::OK, DateTime::utc());
+}
+
+
+Feed* NodeConsoleFeedCreator::create(const QString &name) const
+{
+  return new NodeConsoleFeed(name, DateTime::utc());
+}
+
+
+Feed* NodeConsoleFeedCreator::load(const QString &name, const QVariantMap &data) const
+{
+  return new NodeConsoleFeed(name, data);
 }

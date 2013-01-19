@@ -37,7 +37,6 @@ HEADERS = \
     DataBase.h \
     events.h \
     feeds/NodeAclFeed.h \
-    feeds/NodeTopicFeed.h \
     Host.h \
     Hosts.h \
     net/NodeAuthReply.h \
@@ -69,7 +68,6 @@ SOURCES = \
     DataBase.cpp \
     events.cpp \
     feeds/NodeAclFeed.cpp \
-    feeds/NodeTopicFeed.cpp \
     Host.cpp \
     Hosts.cpp \
     net/NodeAuthReply.cpp \

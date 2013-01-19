@@ -65,8 +65,6 @@ public:
   virtual ~Feed() {}
 
   virtual bool isValid() const;
-  virtual Feed* create(const QString &name);
-  virtual Feed* load(const QString &name, const QVariantMap &data);
   virtual FeedReply del(const QString &path, Channel *channel = 0);
   virtual FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0) const;
   virtual FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0);

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -36,18 +36,6 @@ NodeProfileFeed::NodeProfileFeed(const QString &name, qint64 date)
   : Feed(name, date)
 {
   m_header.acl().setMask(0744);
-}
-
-
-Feed* NodeProfileFeed::create(const QString &name)
-{
-  return new NodeProfileFeed(name, DateTime::utc());
-}
-
-
-Feed* NodeProfileFeed::load(const QString &name, const QVariantMap &data)
-{
-  return new NodeProfileFeed(name, data);
 }
 
 
@@ -92,4 +80,16 @@ QVariantMap NodeProfileFeed::feed(Channel *channel) const
     out[LS("provider")] = account->provider;
 
   return out;
+}
+
+
+Feed* NodeProfileFeedCreator::create(const QString &name) const
+{
+  return new NodeProfileFeed(name, DateTime::utc());
+}
+
+
+Feed* NodeProfileFeedCreator::load(const QString &name, const QVariantMap &data) const
+{
+  return new NodeProfileFeed(name, data);
 }

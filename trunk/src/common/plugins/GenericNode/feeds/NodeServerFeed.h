@@ -20,14 +20,16 @@
 #define NODESERVERFEED_H_
 
 #include "feeds/Feed.h"
+#include "feeds/FeedCreator.h"
 
+/*!
+ * Серверная реализация фида \b server.
+ */
 class NodeServerFeed : public Feed
 {
 public:
   NodeServerFeed(const QString &name, const QVariantMap &data);
   NodeServerFeed(const QString &name = FEED_NAME_SERVER, qint64 date = 0);
-  Feed* create(const QString &name);
-  Feed* load(const QString &name, const QVariantMap &data);
 
   FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0) const;
   QVariantMap feed(Channel *channel = 0) const;
@@ -40,7 +42,15 @@ private:
   mutable qint64 m_date;        ///< Дата последнего обновления фида, используется для кеширования.
   mutable QVariantMap m_body;   ///< Кешированное тело фила.
   qint64 m_startupTime;         ///< Время запуска сервера.
+};
 
+
+class NodeServerFeedCreator : public FeedCreator
+{
+public:
+  Feed* create(const QString &name) const;
+  Feed* load(const QString &name, const QVariantMap &data) const;
+  inline QString name() const { return FEED_NAME_SERVER; }
 };
 
 #endif /* NODESERVERFEED_H_ */

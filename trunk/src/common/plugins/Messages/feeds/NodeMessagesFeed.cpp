@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -36,18 +36,6 @@ NodeMessagesFeed::NodeMessagesFeed(const QString &name, qint64 date)
   : Feed(name, date)
 {
   m_header.acl().setMask(0644);
-}
-
-
-Feed* NodeMessagesFeed::create(const QString &name)
-{
-  return new NodeMessagesFeed(name, DateTime::utc());
-}
-
-
-Feed* NodeMessagesFeed::load(const QString &name, const QVariantMap &data)
-{
-  return new NodeMessagesFeed(name, data);
 }
 
 
@@ -191,4 +179,16 @@ void NodeMessagesFeed::toPackets(QList<QByteArray> &out, const QList<MessageReco
     MessageNotice packet(record);
     out.append(packet.data(Core::stream()));
   }
+}
+
+
+Feed* NodeMessagesFeedCreator::create(const QString &name) const
+{
+  return new NodeMessagesFeed(name, DateTime::utc());
+}
+
+
+Feed* NodeMessagesFeedCreator::load(const QString &name, const QVariantMap &data) const
+{
+  return new NodeMessagesFeed(name, data);
 }

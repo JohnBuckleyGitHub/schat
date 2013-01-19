@@ -56,24 +56,6 @@ bool Feed::isValid() const
 }
 
 
-Feed* Feed::create(const QString &name)
-{
-  return new Feed(name, DateTime::utc());
-}
-
-
-/*!
- * Создание фида на основе сохранённых JSON данных.
- *
- * \param name Имя фида.
- * \param data JSON данные.
- */
-Feed* Feed::load(const QString &name, const QVariantMap &data)
-{
-  return new Feed(name, data);
-}
-
-
 /*!
  * Обработка \b delete запроса к фиду.
  */
@@ -84,7 +66,7 @@ FeedReply Feed::del(const QString &path, Channel *channel)
   if (path.isEmpty())
     return Notice::BadRequest;
 
-  if (path == LS("*")) {
+  if (path == FEED_WILDCARD_ASTERISK) {
     if (m_data.isEmpty())
       return Notice::NotModified;
 
@@ -132,7 +114,7 @@ FeedReply Feed::get(const QString &path, const QVariantMap &json, Channel *chann
     return Notice::NotFound;
 
   QVariantMap data;
-  data[LS("value")] = m_data.value(path);
+  data[FEED_KEY_VALUE] = m_data.value(path);
 
   return FeedReply(Notice::OK, data, head().date());
 }
@@ -145,10 +127,10 @@ FeedReply Feed::post(const QString &path, const QVariantMap &json, Channel *chan
 {
   Q_UNUSED(channel)
 
-  if (path.isEmpty() || path.contains(LC('*')) || !json.contains(LS("value")))
+  if (path.isEmpty() || path.contains(FEED_WILDCARD_ASTERISK) || !json.contains(FEED_KEY_VALUE))
     return Notice::BadRequest;
 
-  const QVariant& value = json[LS("value")];
+  const QVariant& value = json[FEED_KEY_VALUE];
 
   if (path.startsWith(LS("head/"))) {
     if (!Acl::canEdit(this, channel))
@@ -177,10 +159,10 @@ FeedReply Feed::put(const QString &path, const QVariantMap &json, Channel *chann
 {
   Q_UNUSED(channel)
 
-  if (path.isEmpty() || !json.contains(LS("value")))
+  if (path.isEmpty() || !json.contains(FEED_KEY_VALUE))
     return Notice::BadRequest;
 
-  const QVariant& value = json[LS("value")];
+  const QVariant& value = json[FEED_KEY_VALUE];
 
   if (path.startsWith(LS("head/"))) {
     if (!Acl::canEdit(this, channel))

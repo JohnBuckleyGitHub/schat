@@ -26,6 +26,7 @@ HEADERS += \
     client/NetworkPool.h \
     DateTime.h \
     feeds/Feed.h \
+    feeds/FeedCreator.h \
     feeds/FeedEvent.h \
     feeds/FeedEvents.h \
     feeds/FeedHeader.h \

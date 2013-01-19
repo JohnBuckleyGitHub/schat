@@ -19,9 +19,10 @@
 #include "DateTime.h"
 #include "feeds/FeedStorage.h"
 #include "net/packets/Notice.h"
+#include "feeds/FeedCreator.h"
 
 FeedStorage *FeedStorage::m_self = 0;
-QHash<QString, FeedPtr> FeedStorage::m_feeds;
+QMap<QString, FeedCreator*> FeedStorage::m_feeds;
 
 FeedStorage::FeedStorage(QObject *parent)
   : QObject(parent)
@@ -35,17 +36,21 @@ FeedStorage::FeedStorage(QObject *parent)
 
 FeedStorage::~FeedStorage()
 {
-  if (m_self == this)
+  if (m_self == this) {
     m_self = 0;
+    qDeleteAll(m_feeds);
+    m_feeds.clear();
+  }
 }
 
 
+/*!
+ * Создание фида по имени.
+ */
 Feed* FeedStorage::create(const QString &name)
 {
-  if (!m_feeds.contains(name)) {
-    Feed feed;
-    return feed.create(name);
-  }
+  if (!m_feeds.contains(name))
+    return new Feed(name, DateTime::utc());
 
   return m_feeds.value(name)->create(name);
 }
@@ -56,10 +61,8 @@ Feed* FeedStorage::create(const QString &name)
  */
 Feed* FeedStorage::load(const QString &name, const QVariantMap &data)
 {
-  if (!m_feeds.contains(name)) {
-    Feed feed;
-    return feed.load(name, data);
-  }
+  if (!m_feeds.contains(name))
+    return new Feed(name, data);
 
   return m_feeds.value(name)->load(name, data);
 }
@@ -86,6 +89,23 @@ int FeedStorage::save(FeedPtr feed, qint64 date)
   }
 
   return status;
+}
+
+
+void FeedStorage::add(FeedCreator *creator)
+{
+  if (!creator)
+    return;
+
+  const QString name = creator->name();
+
+  if (m_feeds.contains(name)) {
+    FeedCreator *exists = m_feeds.value(name);
+    delete exists;
+    m_feeds.remove(name);
+  }
+
+  m_feeds[name] = creator;
 }
 
 

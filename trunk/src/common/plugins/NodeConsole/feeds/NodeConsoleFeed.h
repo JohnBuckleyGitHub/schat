@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,14 +20,16 @@
 #define NODECONSOLEFEED_H_
 
 #include "feeds/Feed.h"
+#include "feeds/FeedCreator.h"
 
+/*!
+ * Серверная реализация фида \b console.
+ */
 class NodeConsoleFeed : public Feed
 {
 public:
   NodeConsoleFeed(const QString &name, const QVariantMap &data);
-  NodeConsoleFeed(const QString &name = QLatin1String("console"), qint64 date = 0);
-  Feed* create(const QString &name);
-  Feed* load(const QString &name, const QVariantMap &data);
+  NodeConsoleFeed(const QString &name = FEED_NAME_CONSOLE, qint64 date = 0);
 
   FeedReply del(const QString &path, Channel *channel = 0);
   FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0) const;
@@ -36,6 +38,15 @@ private:
   bool master(Channel *user) const;
   FeedReply login(const QVariantMap &json, Channel *user) const;
   FeedReply tryAccess(Channel *user) const;
+};
+
+
+class NodeConsoleFeedCreator : public FeedCreator
+{
+public:
+  Feed* create(const QString &name) const;
+  Feed* load(const QString &name, const QVariantMap &data) const;
+  inline QString name() const { return FEED_NAME_CONSOLE; }
 };
 
 #endif /* NODECONSOLEFEED_H_ */

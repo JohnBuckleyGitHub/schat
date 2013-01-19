@@ -35,20 +35,7 @@ NodeListFeed::NodeListFeed(const QString &name, const QVariantMap &data)
 NodeListFeed::NodeListFeed(const QString &name, qint64 date)
   : Feed(name, date)
 {
-  if (date != -1)
-    init();
-}
-
-
-Feed* NodeListFeed::create(const QString &name)
-{
-  return new NodeListFeed(name, DateTime::utc());
-}
-
-
-Feed* NodeListFeed::load(const QString &name, const QVariantMap &data)
-{
-  return new NodeListFeed(name, data);
+  init();
 }
 
 
@@ -104,4 +91,16 @@ void NodeListFeed::init()
 {
   m_header.acl().setMask(0444);
   m_data[LS("format")] = QVariantList() << LS("id") << LS("name") << LS("count") << LS("title") << LS("options");
+}
+
+
+Feed* NodeListFeedCreator::create(const QString &name) const
+{
+  return new NodeListFeed(name, DateTime::utc());
+}
+
+
+Feed* NodeListFeedCreator::load(const QString &name, const QVariantMap &data) const
+{
+  return new NodeListFeed(name, data);
 }

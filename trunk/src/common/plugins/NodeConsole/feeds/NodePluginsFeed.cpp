@@ -32,20 +32,7 @@ NodePluginsFeed::NodePluginsFeed(const QString &name, const QVariantMap &data)
 NodePluginsFeed::NodePluginsFeed(const QString &name, qint64 date)
   : Feed(name, date)
 {
-  if (date != -1)
-    init();
-}
-
-
-Feed* NodePluginsFeed::create(const QString &name)
-{
-  return new NodePluginsFeed(name, DateTime::utc());
-}
-
-
-Feed* NodePluginsFeed::load(const QString &name, const QVariantMap &data)
-{
-  return new NodePluginsFeed(name, data);
+  init();
 }
 
 
@@ -64,4 +51,16 @@ void NodePluginsFeed::init()
     data[CORE_API_VERSION] = header.value(CORE_API_VERSION);
     m_data[item->id()] = data;
   }
+}
+
+
+Feed* NodePluginsFeedCreator::create(const QString &name) const
+{
+  return new NodePluginsFeed(name, DateTime::utc());
+}
+
+
+Feed* NodePluginsFeedCreator::load(const QString &name, const QVariantMap &data) const
+{
+  return new NodePluginsFeed(name, data);
 }
