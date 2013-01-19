@@ -16,11 +16,12 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QContextMenuEvent>
 #include <QAction>
 #include <QApplication>
 #include <QClipboard>
+#include <QContextMenuEvent>
 #include <QMenu>
+#include <QMimeData>
 #include <QWebFrame>
 
 #include "ui/tabs/WebView.h"
