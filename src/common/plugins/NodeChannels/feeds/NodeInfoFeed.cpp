@@ -39,18 +39,6 @@ NodeInfoFeed::NodeInfoFeed(const QString &name, qint64 date)
 }
 
 
-Feed* NodeInfoFeed::create(const QString &name)
-{
-  return new NodeInfoFeed(name, DateTime::utc());
-}
-
-
-Feed* NodeInfoFeed::load(const QString &name, const QVariantMap &data)
-{
-  return new NodeInfoFeed(name, data);
-}
-
-
 /*!
  * Переопределение проверки прав доступа.
  *
@@ -159,4 +147,17 @@ void NodeInfoFeed::visibility(int value)
 
   static_cast<ServerChannel *>(m_header.channel())->setPermanent(value > 0);
   m_data[LS("visibility")] = value;
+}
+
+
+
+Feed* NodeInfoFeedCreator::create(const QString &name) const
+{
+  return new NodeInfoFeed(name, DateTime::utc());
+}
+
+
+Feed* NodeInfoFeedCreator::load(const QString &name, const QVariantMap &data) const
+{
+  return new NodeInfoFeed(name, data);
 }

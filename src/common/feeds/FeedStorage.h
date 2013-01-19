@@ -24,6 +24,8 @@
 #include "feeds/Feed.h"
 #include "schat.h"
 
+class FeedCreator;
+
 class SCHAT_EXPORT FeedStorage : public QObject
 {
   Q_OBJECT
@@ -32,7 +34,6 @@ public:
   FeedStorage(QObject *parent = 0);
   ~FeedStorage();
   inline static int revert(FeedPtr feed, const QVariantMap &data) { return m_self->revertImpl(feed, data); }
-  inline static void add(Feed *feed)           { m_feeds[feed->head().name()] = FeedPtr(feed); }
   inline static void add(FeedStorage *hook)    { if (!m_self->m_hooks.contains(hook)) m_self->m_hooks.append(hook); }
   inline static void clone(FeedPtr feed)       { return m_self->cloneImpl(feed); }
   inline static void load(Channel *channel)    { m_self->loadImpl(channel); }
@@ -41,6 +42,7 @@ public:
   static Feed* create(const QString &name);
   static Feed* load(const QString &name, const QVariantMap &data);
   static int save(FeedPtr feed, qint64 date = 0);
+  static void add(FeedCreator *creator);
 
 protected:
   virtual int revertImpl(FeedPtr feed, const QVariantMap &data);
@@ -50,9 +52,9 @@ protected:
   virtual void removeImpl(FeedPtr feed);
 
 private:
-  QList<FeedStorage*> m_hooks;            ///< Хуки.
-  static FeedStorage *m_self;             ///< Указатель на себя.
-  static QHash<QString, FeedPtr> m_feeds; ///< Таблица для создания фидов.
+  QList<FeedStorage*> m_hooks;                ///< Хуки.
+  static FeedStorage *m_self;                 ///< Указатель на себя.
+  static QMap<QString, FeedCreator*> m_feeds; ///< Таблица для создания фидов.
 };
 
 #endif /* FEEDSTORAGE_H_ */

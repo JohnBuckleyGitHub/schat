@@ -20,18 +20,29 @@
 #define NODEPROFILEFEED_H_
 
 #include "feeds/Feed.h"
+#include "feeds/FeedCreator.h"
 
+/*!
+ * Серверная реализация фида \b profile.
+ */
 class NodeProfileFeed : public Feed
 {
 public:
   NodeProfileFeed(const QString &name, const QVariantMap &data);
   NodeProfileFeed(const QString &name = FEED_NAME_PROFILE, qint64 date = 0);
-  Feed* create(const QString &name);
-  Feed* load(const QString &name, const QVariantMap &data);
 
   FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0);
   FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0);
   QVariantMap feed(Channel *channel = 0) const;
+};
+
+
+class NodeProfileFeedCreator : public FeedCreator
+{
+public:
+  Feed* create(const QString &name) const;
+  Feed* load(const QString &name, const QVariantMap &data) const;
+  inline QString name() const { return FEED_NAME_PROFILE; }
 };
 
 #endif /* NODEPROFILEFEED_H_ */

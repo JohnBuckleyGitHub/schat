@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@
 #include "feeds/NodeHostsFeed.h"
 #include "feeds/NodeProfileFeed.h"
 #include "feeds/NodeServerFeed.h"
-#include "feeds/NodeTopicFeed.h"
 #include "feeds/NodeUserFeed.h"
 #include "JSON.h"
 #include "net/packets/Notice.h"
@@ -35,12 +34,11 @@
 NodeFeedStorage::NodeFeedStorage(QObject *parent)
   : FeedStorage(parent)
 {
-  add(new NodeAclFeed());
-  add(new NodeTopicFeed());
-  add(new NodeHostsFeed());
-  add(new NodeUserFeed());
-  add(new NodeProfileFeed());
-  add(new NodeServerFeed());
+  add(new NodeAclFeedCreator());
+  add(new NodeHostsFeedCreator());
+  add(new NodeUserFeedCreator());
+  add(new NodeProfileFeedCreator());
+  add(new NodeServerFeedCreator());
 
   start();
 }

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,14 +20,16 @@
 #define NODELISTFEED_H_
 
 #include "feeds/Feed.h"
+#include "feeds/FeedCreator.h"
 
+/*!
+ * Серверная реализация фида \b list.
+ */
 class NodeListFeed : public Feed
 {
 public:
   NodeListFeed(const QString &name, const QVariantMap &data);
-  NodeListFeed(const QString &name = QLatin1String("list"), qint64 date = -1);
-  Feed* create(const QString &name);
-  Feed* load(const QString &name, const QVariantMap &data);
+  NodeListFeed(const QString &name = FEED_NAME_LIST, qint64 date = 0);
 
   FeedReply del(const QString &path, Channel *channel = 0);
   FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0);
@@ -35,6 +37,15 @@ public:
 
 private:
   void init();
+};
+
+
+class NodeListFeedCreator : public FeedCreator
+{
+public:
+  Feed* create(const QString &name) const;
+  Feed* load(const QString &name, const QVariantMap &data) const;
+  inline QString name() const { return FEED_NAME_LIST; }
 };
 
 #endif /* NODELISTFEED_H_ */

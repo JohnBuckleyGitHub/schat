@@ -46,18 +46,6 @@ NodeServerFeed::NodeServerFeed(const QString &name, qint64 date)
 }
 
 
-Feed* NodeServerFeed::create(const QString &name)
-{
-  return new NodeServerFeed(name, DateTime::utc());
-}
-
-
-Feed* NodeServerFeed::load(const QString &name, const QVariantMap &data)
-{
-  return new NodeServerFeed(name, data);
-}
-
-
 /*!
  * Обработка \b get запросов.
  *
@@ -131,4 +119,16 @@ void NodeServerFeed::init()
   m_header.acl().setMask(0444);
   m_startupTime = DateTime::utc();
   head().data()[LS("date")] = m_startupTime;
+}
+
+
+Feed* NodeServerFeedCreator::create(const QString &name) const
+{
+  return new NodeServerFeed(name, DateTime::utc());
+}
+
+
+Feed* NodeServerFeedCreator::load(const QString &name, const QVariantMap &data) const
+{
+  return new NodeServerFeed(name, data);
 }

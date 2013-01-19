@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,15 +20,17 @@
 #define NODEMESSAGESFEED_H_
 
 #include "feeds/Feed.h"
+#include "feeds/FeedCreator.h"
 #include "net/packets/MessageNotice.h"
 
+/*!
+ * Серверная реализация фида \b messages.
+ */
 class NodeMessagesFeed : public Feed
 {
 public:
   NodeMessagesFeed(const QString &name, const QVariantMap &data);
-  NodeMessagesFeed(const QString &name = QLatin1String("messages"), qint64 date = 0);
-  Feed* create(const QString &name);
-  Feed* load(const QString &name, const QVariantMap &data);
+  NodeMessagesFeed(const QString &name = FEED_NAME_MESSAGES, qint64 date = 0);
 
   FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0) const;
 
@@ -38,6 +40,15 @@ private:
   FeedReply offline(Channel *user) const;
   FeedReply since(const QVariantMap &json, Channel *user) const;
   void toPackets(QList<QByteArray> &out, const QList<MessageRecord> &records) const;
+};
+
+
+class NodeMessagesFeedCreator : public FeedCreator
+{
+public:
+  Feed* create(const QString &name) const;
+  Feed* load(const QString &name, const QVariantMap &data) const;
+  inline QString name() const { return FEED_NAME_MESSAGES; }
 };
 
 #endif /* NODEMESSAGESFEED_H_ */

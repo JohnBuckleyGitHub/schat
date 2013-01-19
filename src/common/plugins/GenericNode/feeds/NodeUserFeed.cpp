@@ -38,18 +38,6 @@ NodeUserFeed::NodeUserFeed(const QString &name, qint64 date)
 }
 
 
-Feed* NodeUserFeed::create(const QString &name)
-{
-  return new NodeUserFeed(name, DateTime::utc());
-}
-
-
-Feed* NodeUserFeed::load(const QString &name, const QVariantMap &data)
-{
-  return new NodeUserFeed(name, data);
-}
-
-
 QVariantMap NodeUserFeed::feed(Channel *channel) const
 {
   if (head().channel()->type() != SimpleID::UserId || !Acl::canRead(this, channel))
@@ -82,4 +70,16 @@ QVariantMap NodeUserFeed::feed(Channel *channel) const
   out[LS("groups")]      = account->groups.toString();
 
   return out;
+}
+
+
+Feed* NodeUserFeedCreator::create(const QString &name) const
+{
+  return new NodeUserFeed(name, DateTime::utc());
+}
+
+
+Feed* NodeUserFeedCreator::load(const QString &name, const QVariantMap &data) const
+{
+  return new NodeUserFeed(name, data);
 }

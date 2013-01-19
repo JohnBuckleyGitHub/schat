@@ -20,19 +20,30 @@
 #define NODEHOSTSFEED_H_
 
 #include "feeds/Feed.h"
+#include "feeds/FeedCreator.h"
 
+/*!
+ * Серверная реализация фида \b hosts.
+ */
 class NodeHostsFeed : public Feed
 {
 public:
   NodeHostsFeed(const QString &name, const QVariantMap &data);
   NodeHostsFeed(const QString &name = FEED_NAME_HOSTS, qint64 date = 0);
-  Feed* create(const QString &name);
-  Feed* load(const QString &name, const QVariantMap &data);
 
   FeedReply del(const QString &path, Channel *channel = 0);
   FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0);
   FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0);
   QVariantMap feed(Channel *channel = 0) const;
+};
+
+
+class NodeHostsFeedCreator : public FeedCreator
+{
+public:
+  Feed* create(const QString &name) const;
+  Feed* load(const QString &name, const QVariantMap &data) const;
+  inline QString name() const { return FEED_NAME_HOSTS; }
 };
 
 #endif /* NODEHOSTSFEED_H_ */

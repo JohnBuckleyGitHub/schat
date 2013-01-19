@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -34,18 +34,6 @@ NodeAclFeed::NodeAclFeed(const QString &name, qint64 date)
 }
 
 
-Feed* NodeAclFeed::create(const QString &name)
-{
-  return new NodeAclFeed(name, DateTime::utc());
-}
-
-
-Feed* NodeAclFeed::load(const QString &name, const QVariantMap &data)
-{
-  return new NodeAclFeed(name, data);
-}
-
-
 FeedReply NodeAclFeed::del(const QString &path, Channel *channel)
 {
   if (path.startsWith(LS("head/")))
@@ -70,4 +58,16 @@ FeedReply NodeAclFeed::put(const QString &path, const QVariantMap &json, Channel
     return Feed::put(path, json, channel);
 
   return Notice::Forbidden;
+}
+
+
+Feed* NodeAclFeedCreator::create(const QString &name) const
+{
+  return new NodeAclFeed(name, DateTime::utc());
+}
+
+
+Feed* NodeAclFeedCreator::load(const QString &name, const QVariantMap &data) const
+{
+  return new NodeAclFeed(name, data);
 }

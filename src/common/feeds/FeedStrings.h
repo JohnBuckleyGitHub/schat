@@ -26,9 +26,15 @@
 #define FEED_METHOD_FEED   QLatin1String("feed")
 
 #define FEED_NAME_ACL      QLatin1String("acl")
+#define FEED_NAME_CONSOLE  QLatin1String("console")
 #define FEED_NAME_HOSTS    QLatin1String("hosts")
+#define FEED_NAME_INFO     QLatin1String("info")
+#define FEED_NAME_LIST     QLatin1String("list")
+#define FEED_NAME_MESSAGES QLatin1String("messages")
+#define FEED_NAME_PLUGINS  QLatin1String("plugins")
 #define FEED_NAME_PROFILE  QLatin1String("profile")
 #define FEED_NAME_SERVER   QLatin1String("server")
+#define FEED_NAME_STORAGE  QLatin1String("storage")
 #define FEED_NAME_USER     QLatin1String("user")
 
 #define FEED_WILDCARD_ASTERISK QLatin1String("*")

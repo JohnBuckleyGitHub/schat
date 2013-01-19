@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,30 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "DateTime.h"
-#include "feeds/NodeTopicFeed.h"
+#ifndef FEEDCREATOR_H_
+#define FEEDCREATOR_H_
 
+#include <QVariant>
 
-NodeTopicFeed::NodeTopicFeed(const QString &name, const QVariantMap &data)
-  : Feed(name, data)
+class Feed;
+
+class FeedCreator
 {
-}
+public:
+  inline FeedCreator() {}
+  inline virtual ~FeedCreator() {}
 
+  virtual Feed* create(const QString &name) const = 0;
+  virtual Feed* load(const QString &name, const QVariantMap &data) const = 0;
+  virtual QString name() const = 0;
+};
 
-NodeTopicFeed::NodeTopicFeed(const QString &name, qint64 date)
-  : Feed(name, date)
-{
-}
-
-
-Feed* NodeTopicFeed::create(const QString &name)
-{
-  return new NodeTopicFeed(name, DateTime::utc());
-}
-
-
-Feed* NodeTopicFeed::load(const QString &name, const QVariantMap &data)
-{
-  return new NodeTopicFeed(name, data);
-}
-
+#endif /* FEEDCREATOR_H_ */

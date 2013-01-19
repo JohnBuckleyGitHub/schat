@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,17 +20,28 @@
 #define NODEPLUGINSFEED_H_
 
 #include "feeds/Feed.h"
+#include "feeds/FeedCreator.h"
 
+/*!
+ * Серверная реализация фида \b plugins.
+ */
 class NodePluginsFeed : public Feed
 {
 public:
   NodePluginsFeed(const QString &name, const QVariantMap &data);
-  NodePluginsFeed(const QString &name = QLatin1String("plugins"), qint64 date = -1);
-  Feed* create(const QString &name);
-  Feed* load(const QString &name, const QVariantMap &data);
+  NodePluginsFeed(const QString &name = FEED_NAME_PLUGINS, qint64 date = 0);
 
 private:
   void init();
+};
+
+
+class NodePluginsFeedCreator : public FeedCreator
+{
+public:
+  Feed* create(const QString &name) const;
+  Feed* load(const QString &name, const QVariantMap &data) const;
+  inline QString name() const { return FEED_NAME_PLUGINS; }
 };
 
 #endif /* NODEPLUGINSFEED_H_ */

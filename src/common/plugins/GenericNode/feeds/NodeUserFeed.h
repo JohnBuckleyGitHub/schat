@@ -20,16 +20,27 @@
 #define NODEUSERFEED_H_
 
 #include "feeds/Feed.h"
+#include "feeds/FeedCreator.h"
 
+/*!
+ * Серверная реализация фида \b user.
+ */
 class NodeUserFeed : public Feed
 {
 public:
   NodeUserFeed(const QString &name, const QVariantMap &data);
   NodeUserFeed(const QString &name = FEED_NAME_USER, qint64 date = 0);
-  Feed* create(const QString &name);
-  Feed* load(const QString &name, const QVariantMap &data);
 
   QVariantMap feed(Channel *channel = 0) const;
+};
+
+
+class NodeUserFeedCreator : public FeedCreator
+{
+public:
+  Feed* create(const QString &name) const;
+  Feed* load(const QString &name, const QVariantMap &data) const;
+  inline QString name() const { return FEED_NAME_USER; }
 };
 
 #endif /* NODEUSERFEED_H_ */

@@ -20,18 +20,29 @@
 #define NODEACLFEED_H_
 
 #include "feeds/Feed.h"
+#include "feeds/FeedCreator.h"
 
+/*!
+ * Серверная реализация фида \b acl.
+ */
 class SCHAT_EXPORT NodeAclFeed : public Feed
 {
 public:
   NodeAclFeed(const QString &name, const QVariantMap &data);
   NodeAclFeed(const QString &name = FEED_NAME_ACL, qint64 date = 0);
-  Feed* create(const QString &name);
-  Feed* load(const QString &name, const QVariantMap &data);
 
   FeedReply del(const QString &path, Channel *channel = 0);
   FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0);
   FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0);
+};
+
+
+class SCHAT_EXPORT NodeAclFeedCreator : public FeedCreator
+{
+public:
+  Feed* create(const QString &name) const;
+  Feed* load(const QString &name, const QVariantMap &data) const;
+  inline QString name() const { return FEED_NAME_ACL; }
 };
 
 #endif /* NODEACLFEED_H_ */
