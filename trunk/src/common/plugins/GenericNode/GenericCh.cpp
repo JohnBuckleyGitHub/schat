@@ -37,7 +37,7 @@ void GenericCh::newChannel(ChatChannel channel, ChatChannel user)
 void GenericCh::rename(ChatChannel channel)
 {
   if (channel->type() == SimpleID::ServerId)
-    FeedStorage::save(channel->feed(LS("server")), channel->date());
+    FeedStorage::save(channel->feed(FEED_NAME_SERVER), channel->date());
 }
 
 
@@ -46,13 +46,13 @@ void GenericCh::server(ChatChannel channel, bool created)
   Q_UNUSED(created)
 
   channel->feed(FEED_NAME_ACL);
-  channel->feed(LS("server"));
+  channel->feed(FEED_NAME_SERVER);
 }
 
 
 void GenericCh::updateStatistics()
 {
-  Ch::server()->feed(LS("server"))->head().setDate();
+  Ch::server()->feed(FEED_NAME_SERVER)->head().setDate();
 }
 
 

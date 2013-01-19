@@ -487,7 +487,7 @@ void ProfilePluginImpl::notify(const Notify &notify)
 {
   if (notify.type() == Notify::FeedData) {
     const FeedNotify &n = static_cast<const FeedNotify &>(notify);
-    if (n.feed() != LS("user"))
+    if (n.feed() != FEED_NAME_USER)
       return;
 
     ClientChannel user = ChatClient::channels()->get(n.channel());
@@ -497,7 +497,7 @@ void ProfilePluginImpl::notify(const Notify &notify)
     if (!user->account())
       user->setAccount(new Account());
 
-    FeedPtr feed = user->feed(LS("user"), false);
+    FeedPtr feed = user->feed(FEED_NAME_USER, false);
     if (!feed)
       return;
 
@@ -508,9 +508,9 @@ void ProfilePluginImpl::notify(const Notify &notify)
 
 void ProfilePluginImpl::ready()
 {
-  FeedPtr feed = ChatClient::channel()->feed(LS("user"), false);
+  FeedPtr feed = ChatClient::channel()->feed(FEED_NAME_USER, false);
   if (!feed)
-    ClientFeeds::request(ChatClient::id(), FEED_METHOD_GET, LS("user"));
+    ClientFeeds::request(ChatClient::id(), FEED_METHOD_GET, FEED_NAME_USER);
 }
 
 
