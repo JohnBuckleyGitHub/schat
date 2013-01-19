@@ -259,7 +259,7 @@ var ServerInfo = {
       encryption.text(Utils.tr('no-encryption'));
     }
 
-    ServerInfo.server(SimpleChat.feed(Settings.id, 'server', 4));
+    ServerInfo.server(SimpleChat.feed(Settings.id, 'server', 0));
   },
 
 

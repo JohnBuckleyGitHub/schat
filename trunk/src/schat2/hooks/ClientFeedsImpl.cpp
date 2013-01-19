@@ -38,10 +38,10 @@ void ClientFeedsImpl::addImpl(ClientChannel channel, const ChannelInfo & /*info*
 {
   SCHAT_DEBUG_STREAM("ClientFeedsImpl::addImpl()" << channel->name() << json.keys())
 
-  if (json.isEmpty() || !json.contains(LS("f")))
+  if (json.isEmpty() || !json.contains(FEED_KEY_F))
     return;
 
-  QVariantMap data = json.value(LS("f")).toMap();
+  QVariantMap data = json.value(FEED_KEY_F).toMap();
   if (data.isEmpty())
     return;
 
@@ -154,7 +154,7 @@ void ClientFeedsImpl::get(const QByteArray &id, const QStringList &feeds)
  */
 void ClientFeedsImpl::headers()
 {
-  QString key = LS("f");
+  QString key = FEED_KEY_F;
   if (m_packet->json().contains(LS("feeds")))
     key = LS("feeds");
 
@@ -188,16 +188,16 @@ void ClientFeedsImpl::reply()
       return;
     }
 
-    if (notify->path() == LS("*"))
+    if (notify->path() == FEED_WILDCARD_ASTERISK)
       feed->data().clear();
     else
       feed->data().remove(notify->path());
   }
   else {
-    if (!m_packet->json().contains(LS("value")))
+    if (!m_packet->json().contains(FEED_KEY_VALUE))
       return;
 
-    feed->data()[notify->path()] = m_packet->json().value(LS("value"));
+    feed->data()[notify->path()] = m_packet->json().value(FEED_KEY_VALUE);
   }
 
   feed->head().setDate(m_packet->date());
