@@ -19,6 +19,8 @@
 #include "Ch.h"
 #include "cores/Core.h"
 #include "DateTime.h"
+#include "feeds/FeedEvents.h"
+#include "feeds/FeedStorage.h"
 #include "net/PacketReader.h"
 #include "net/packets/MessageNotice.h"
 #include "net/packets/Notice.h"
@@ -33,6 +35,9 @@ NodeMessages::NodeMessages(Core *core)
 }
 
 
+/*!
+ * Чтение нового входящего сообщения.
+ */
 bool NodeMessages::read(PacketReader *reader)
 {
   if (SimpleID::typeOf(reader->sender()) != SimpleID::UserId)
@@ -45,47 +50,77 @@ bool NodeMessages::read(PacketReader *reader)
   MessageNotice packet(m_type, reader);
   m_packet = &packet;
 
-  m_dest = Ch::channel(reader->dest(), SimpleID::typeOf(reader->dest()));
-  if (!m_dest) {
-    reject(Notice::NotFound);
-    return false;
-  }
-  else if (m_dest->type() == SimpleID::ServerId) {
-    reject(Notice::BadRequest);
-    return false;
-  }
-  else if (!m_dest->canWrite(m_sender)) {
-    reject(Notice::Forbidden);
+  FeedEvent *event = createEvent();
+
+  if (!m_dest)
+    event->status = Notice::NotFound;
+  else if (m_dest->type() == SimpleID::ServerId)
+    event->status = Notice::BadRequest;
+  else if (!m_dest->canWrite(m_sender))
+    event->status = Notice::Forbidden;
+
+  if (event->status != Notice::OK) {
+    reject(event->status);
+    FeedEvents::start(event);
     return false;
   }
 
   if (packet.direction() == Notice::Internal) {
     Core::i()->route(m_dest);
+    delete event;
     return false;
   }
 
-  m_packet->setDate(Core::date());
+  FeedPtr feed  = m_dest->feed(FEED_NAME_MESSAGES, true, false);
+  event->diffTo = event->date;
+  event->date   = m_packet->date();
 
   if (m_dest->type() == SimpleID::UserId && m_dest->status().value() == Status::Offline) {
-    reject(Notice::ChannelOffline);
+    event->status = Notice::ChannelOffline;
+    reject(event->status);
 
-    m_packet->setId(m_packet->toId());
-    NodeMessagesDB::add(packet, Notice::ChannelOffline);
+    NodeMessagesDB::add(packet, event->status);
     Ch::gc(m_dest);
-    return false;
+  }
+  else {
+    NodeMessagesDB::add(packet);
+    Core::i()->route(m_dest);
   }
 
-  m_packet->setId(m_packet->toId());
-  NodeMessagesDB::add(packet);
-
-  Core::i()->route(m_dest);
+  FeedStorage::save(feed, m_packet->date());
+  FeedEvents::start(event);
   return false;
+}
+
+
+/*!
+ * Создание события для уведомления об операции с фидом \b messages
+ * и установка внутреннего и публичного идентификатора сообщения и его даты.
+ */
+FeedEvent *NodeMessages::createEvent()
+{
+  m_packet->setDate(Core::date());
+  m_packet->setInternalId(m_packet->id());
+  m_packet->setId(m_packet->toId());
+
+  FeedEvent *event = new FeedEvent(m_packet->dest(), m_packet->sender(), FEED_METHOD_POST);
+  event->name      = FEED_NAME_MESSAGES;
+  event->request   = m_packet->json();
+  event->socket    = Core::socket();
+  event->status    = Notice::OK;
+  event->path      = SimpleID::encode(m_packet->id());
+
+  m_dest = Ch::channel(m_packet->dest(), SimpleID::typeOf(m_packet->dest()));
+  if (m_dest)
+    event->date = m_dest->feed(FEED_NAME_MESSAGES, true, false)->head().date();
+
+  return event;
 }
 
 
 void NodeMessages::reject(int status)
 {
-  MessageNotice packet(m_packet->sender(), m_packet->dest(), m_packet->text(), Core::date(), m_packet->id());
+  MessageNotice packet(m_packet->sender(), m_packet->dest(), m_packet->text(), m_packet->date(), m_packet->internalId());
   packet.setStatus(status);
   m_core->send(m_sender->sockets(), packet.data(Core::stream()));
 }

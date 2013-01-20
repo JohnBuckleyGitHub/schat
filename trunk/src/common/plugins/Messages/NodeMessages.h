@@ -21,6 +21,7 @@
 
 #include "NodeNoticeReader.h"
 
+class FeedEvent;
 class MessageNotice;
 
 class NodeMessages : public NodeNoticeReader
@@ -32,6 +33,7 @@ protected:
   bool read(PacketReader *reader);
 
 private:
+  FeedEvent *createEvent();
   void reject(int status);
 
   MessageNotice *m_packet; ///< Прочитанный пакет.
