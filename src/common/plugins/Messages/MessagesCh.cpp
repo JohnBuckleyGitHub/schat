@@ -28,18 +28,18 @@ MessagesCh::MessagesCh(QObject *parent)
 
 void MessagesCh::newChannel(ChatChannel channel, ChatChannel user)
 {
-  Ch::addNewFeedIfNotExist(channel, LS("messages"), user);
+  Ch::addNewFeedIfNotExist(channel, FEED_NAME_MESSAGES, user);
 }
 
 
 void MessagesCh::sync(ChatChannel channel, ChatChannel user)
 {
   Q_UNUSED(user)
-  Ch::addNewFeedIfNotExist(channel, LS("messages"));
+  Ch::addNewFeedIfNotExist(channel, FEED_NAME_MESSAGES);
 }
 
 
 void MessagesCh::userChannel(ChatChannel channel)
 {
-  Ch::addNewUserFeedIfNotExist(channel, LS("messages"));
+  Ch::addNewUserFeedIfNotExist(channel, FEED_NAME_MESSAGES);
 }

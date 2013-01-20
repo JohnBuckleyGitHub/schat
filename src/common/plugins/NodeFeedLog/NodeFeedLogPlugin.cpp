@@ -23,6 +23,7 @@
 #include "feeds/FeedEvents.h"
 #include "feeds/FeedStrings.h"
 #include "JSON.h"
+#include "net/packets/Notice.h"
 #include "net/SimpleID.h"
 #include "NodeFeedLogPlugin.h"
 #include "NodeFeedLogPlugin.h"
@@ -50,7 +51,7 @@ void NodeFeedLogImpl::notify(const FeedEvent &event)
   if (!m_file.isOpen())
     return;
 
-  m_stream << date(event.method == FEED_METHOD_GET ? 0 : event.date)
+  m_stream << date((event.method != FEED_METHOD_GET && event.status == Notice::OK) ? event.date : 0)
            << LC(' ') << event.status
            << LC(' ') << SimpleID::encode(event.sender)
            << LC('/') << event.socket
