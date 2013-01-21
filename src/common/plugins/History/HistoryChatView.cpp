@@ -30,9 +30,6 @@
 #include "sglobal.h"
 #include "ui/tabs/ChatView.h"
 
-#define MESSAGES_SINCE QLatin1String("messages/since")
-#define MESSAGES_LAST  QLatin1String("messages/last")
-
 HistoryChatView::HistoryChatView(QObject *parent)
   : ChatViewHooks(parent)
 {
@@ -69,10 +66,11 @@ void HistoryChatView::notify(const Notify &notify)
 {
   if (notify.type() == Notify::FeedData) {
     const FeedNotify &n = static_cast<const FeedNotify &>(notify);
-    if (n.feed() != FEED_NAME_MESSAGES)
-      return;
-
-//    qDebug() << n.feed() << n.status() << SimpleID::encode(n.channel());
+    if (n.feed() == FEED_NAME_MESSAGES && n.status() == Notice::OK) {
+      ChatView *view = ChatViewHooks::view(n.channel());
+      if (view)
+        sync(n.channel(), view->lastMessage());
+    }
   }
 }
 
@@ -108,6 +106,12 @@ bool HistoryChatView::compatible(const QByteArray &id) const
 }
 
 
+/*!
+ * Хитрая функция для синхронизации списка последних сообщений в канале.
+ *
+ * \param id   Идентификатор канала.
+ * \param date Дата последнего полученного сообщения, если равно 0 запрашиваются 20 последних сообщений.
+ */
 bool HistoryChatView::sync(const QByteArray &id, qint64 date)
 {
   if (ChatClient::state() != ChatClient::Online) {
@@ -125,13 +129,10 @@ bool HistoryChatView::sync(const QByteArray &id, qint64 date)
     ClientFeeds::request(channel, FEED_METHOD_GET, FEED_NAME_MESSAGES);
 
   if (!HistoryDB::synced(feed)) {
-    if (date) {
-      QVariantMap data;
-      data[LS("date")] = date;
-      return ClientFeeds::request(id, FEED_METHOD_GET, MESSAGES_SINCE, data);
-    }
+    if (date)
+      return HistoryImpl::since(id, date);
 
-    return ClientFeeds::request(id, FEED_METHOD_GET, MESSAGES_LAST);
+    return ClientFeeds::request(id, FEED_METHOD_GET, LS("messages/last"));
   }
 
   if (date)
@@ -145,12 +146,18 @@ bool HistoryChatView::sync(const QByteArray &id, qint64 date)
 }
 
 
+/*!
+ * Эмуляция ответа на запрос последних сообщений.
+ *
+ * \param channelId Идентификатор канала.
+ * \param ids       Список идентификаторов сообщений.
+ */
 void HistoryChatView::emulateLast(const QByteArray &channelId, const QList<QByteArray> &ids)
 {
   QVariantMap data;
   data[LS("count")]    = ids.size();
   data[LS("messages")] = MessageNotice::encode(ids);
 
-  FeedNotify *notify = new FeedNotify(Notify::FeedReply, channelId, MESSAGES_LAST, data);
+  FeedNotify *notify = new FeedNotify(Notify::FeedReply, channelId, LS("messages/last"), data);
   ChatNotify::start(notify);
 }

@@ -81,6 +81,14 @@ HistoryImpl::~HistoryImpl()
 }
 
 
+bool HistoryImpl::fetch(const QByteArray &id, const QList<QByteArray> &messages)
+{
+  QVariantMap data;
+  data[LS("messages")] = MessageNotice::encode(messages);
+  return ClientFeeds::request(id, FEED_METHOD_GET, LS("messages/fetch"), data);
+}
+
+
 /*!
  * Загрузка сообщений по идентификаторам.
  */
@@ -89,13 +97,19 @@ bool HistoryImpl::get(const QByteArray &id, const QList<QByteArray> &ids)
   if (ids.isEmpty())
     return false;
 
-  QList<QByteArray> required = getLocal(ids);
+  const QList<QByteArray> required = getLocal(ids);
   if (required.isEmpty() || ChatClient::state() != ChatClient::Online)
     return false;
 
+  return fetch(id, required);
+}
+
+
+bool HistoryImpl::since(const QByteArray &id, qint64 date)
+{
   QVariantMap data;
-  data[LS("messages")] = MessageNotice::encode(required);
-  return ClientFeeds::request(id, FEED_METHOD_GET, LS("messages/fetch"), data);
+  data[LS("date")] = date;
+  return ClientFeeds::request(id, FEED_METHOD_GET, LS("messages/since"), data);
 }
 
 

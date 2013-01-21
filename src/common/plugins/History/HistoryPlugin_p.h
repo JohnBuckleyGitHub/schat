@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -33,7 +33,9 @@ class HistoryImpl : public ChatPlugin
 public:
   HistoryImpl(QObject *parent);
   ~HistoryImpl();
+  static bool fetch(const QByteArray &id, const QList<QByteArray> &required);
   static bool get(const QByteArray &id, const QList<QByteArray> &ids);
+  static bool since(const QByteArray &id, qint64 date);
   static QList<QByteArray> getLocal(const QList<QByteArray> &ids);
 
 private slots:
