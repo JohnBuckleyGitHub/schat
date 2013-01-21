@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -41,11 +41,15 @@ void ClientFeedsImpl::addImpl(ClientChannel channel, const ChannelInfo & /*info*
   if (json.isEmpty() || !json.contains(FEED_KEY_F))
     return;
 
-  QVariantMap data = json.value(FEED_KEY_F).toMap();
+  const QVariantMap data = json.value(FEED_KEY_F).toMap();
   if (data.isEmpty())
     return;
 
-  get(channel->id(), unsynced(channel, data));
+  QStringList feeds = unsynced(channel, data);
+  feeds.removeAll(FEED_NAME_HOSTS);
+  feeds.removeAll(FEED_NAME_USER);
+
+  get(channel->id(), feeds);
 }
 
 
