@@ -143,7 +143,7 @@ void HistoryImpl::notify(const Notify &notify)
 {
   if (notify.type() == Notify::FeedReply) {
     const FeedNotify &n = static_cast<const FeedNotify &>(notify);
-    if (n.name() == LS("messages/last") || n.name() == LS("messages/since"))
+    if ((n.name() == LS("messages/last") || n.name() == LS("messages/since")) && !n.json().value(LS("emulated")).toBool())
       get(n.channel(), MessageNotice::decode(n.json().value(LS("messages")).toStringList()));
   }
   else if (notify.type() == Notify::ClearCache) {
