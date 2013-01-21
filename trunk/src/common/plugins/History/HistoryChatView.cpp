@@ -159,6 +159,7 @@ void HistoryChatView::emulateLast(const QByteArray &channelId, const QList<QByte
   QVariantMap data;
   data[LS("count")]    = ids.size();
   data[LS("messages")] = MessageNotice::encode(ids);
+  data[LS("emulated")] = true;
 
   FeedNotify *notify = new FeedNotify(Notify::FeedReply, channelId, LS("messages/last"), data);
   ChatNotify::start(notify);
