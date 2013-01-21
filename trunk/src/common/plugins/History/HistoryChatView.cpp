@@ -125,8 +125,10 @@ bool HistoryChatView::sync(const QByteArray &id, qint64 date)
 
   FeedPtr feed = channel->feed(FEED_NAME_MESSAGES, false);
 
-  if (!feed)
+  if (!feed) {
     ClientFeeds::request(channel, FEED_METHOD_GET, FEED_NAME_MESSAGES);
+    return false;
+  }
 
   if (!HistoryDB::synced(feed)) {
     if (date)
@@ -140,7 +142,7 @@ bool HistoryChatView::sync(const QByteArray &id, qint64 date)
 
   const QList<QByteArray> last = HistoryDB::last(SimpleID::encode(id), 20);
   emulateLast(id, last);
-  const QList<QByteArray> unsynced = HistoryImpl::getLocal(last);
+  HistoryImpl::getLocal(last);
 
   return false;
 }
