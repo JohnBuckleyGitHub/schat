@@ -18,25 +18,32 @@
 
 #include <QWebFrame>
 
+#include "ChatNotify.h"
 #include "client/ChatClient.h"
+#include "client/ClientChannels.h"
 #include "client/ClientFeeds.h"
 #include "client/SimpleClient.h"
 #include "HistoryChatView.h"
+#include "HistoryDB.h"
 #include "HistoryPlugin_p.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
 #include "ui/tabs/ChatView.h"
 
+#define MESSAGES_SINCE QLatin1String("messages/since")
+#define MESSAGES_LAST  QLatin1String("messages/last")
+
 HistoryChatView::HistoryChatView(QObject *parent)
   : ChatViewHooks(parent)
 {
   connect(ChatClient::io(), SIGNAL(ready()), SLOT(ready()));
+  connect(ChatNotify::i(), SIGNAL(notify(Notify)), SLOT(notify(Notify)));
 }
 
 
 void HistoryChatView::addImpl(ChatView *view)
 {
-  if (compatible(view->id()) && HistoryImpl::last(view->id()))
+  if (compatible(view->id()) && sync(view->id()))
     emit loading(SimpleID::encode(view->id()));
 }
 
@@ -58,32 +65,33 @@ void HistoryChatView::loadFinishedImpl(ChatView *view)
 }
 
 
+void HistoryChatView::notify(const Notify &notify)
+{
+  if (notify.type() == Notify::FeedData) {
+    const FeedNotify &n = static_cast<const FeedNotify &>(notify);
+    if (n.feed() != FEED_NAME_MESSAGES)
+      return;
+
+//    qDebug() << n.feed() << n.status() << SimpleID::encode(n.channel());
+  }
+}
+
+
 /*!
  * Запрос последних сообщений для всех открытых каналов.
  */
 void HistoryChatView::ready()
 {
-  ChatClient::io()->lock();
+  ChatClientLocker locker;
 
-  bool sent = false;
   foreach (ChatView *view, i()->views()) {
     const QByteArray &id = view->id();
-    if (compatible(id)) {
-      if (view->lastMessage()) {
-        QVariantMap data;
-        data[LS("date")] = view->lastMessage();
-        sent = ClientFeeds::request(id, FEED_METHOD_GET, LS("messages/since"), data);
-      }
-      else
-        sent = HistoryImpl::last(id);
-
-      if (sent)
-        emit loading(SimpleID::encode(id));
+    if (compatible(id) && sync(id, view->lastMessage())) {
+      emit loading(SimpleID::encode(id));
     }
   }
 
   ClientFeeds::request(ChatClient::id(), FEED_METHOD_GET, LS("messages/offline"));
-  ChatClient::io()->unlock();
 }
 
 
@@ -97,4 +105,52 @@ bool HistoryChatView::compatible(const QByteArray &id) const
     return true;
 
   return false;
+}
+
+
+bool HistoryChatView::sync(const QByteArray &id, qint64 date)
+{
+  if (ChatClient::state() != ChatClient::Online) {
+    HistoryImpl::getLocal(HistoryDB::last(SimpleID::encode(id), 20));
+    return false;
+  }
+
+  ClientChannel channel = ChatClient::channels()->get(id);
+  if (!channel)
+    return false;
+
+  FeedPtr feed = channel->feed(FEED_NAME_MESSAGES, false);
+
+  if (!feed)
+    ClientFeeds::request(channel, FEED_METHOD_GET, FEED_NAME_MESSAGES);
+
+  if (!HistoryDB::synced(feed)) {
+    if (date) {
+      QVariantMap data;
+      data[LS("date")] = date;
+      return ClientFeeds::request(id, FEED_METHOD_GET, MESSAGES_SINCE, data);
+    }
+
+    return ClientFeeds::request(id, FEED_METHOD_GET, MESSAGES_LAST);
+  }
+
+  if (date)
+    return false;
+
+  const QList<QByteArray> last = HistoryDB::last(SimpleID::encode(id), 20);
+  emulateLast(id, last);
+  const QList<QByteArray> unsynced = HistoryImpl::getLocal(last);
+
+  return false;
+}
+
+
+void HistoryChatView::emulateLast(const QByteArray &channelId, const QList<QByteArray> &ids)
+{
+  QVariantMap data;
+  data[LS("count")]    = ids.size();
+  data[LS("messages")] = MessageNotice::encode(ids);
+
+  FeedNotify *notify = new FeedNotify(Notify::FeedReply, channelId, MESSAGES_LAST, data);
+  ChatNotify::start(notify);
 }

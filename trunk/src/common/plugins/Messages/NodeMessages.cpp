@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 #include "net/SimpleID.h"
 #include "NodeMessages.h"
 #include "NodeMessagesDB.h"
+#include "sglobal.h"
 
 NodeMessages::NodeMessages(Core *core)
   : NodeNoticeReader(Notice::MessageType, core)
@@ -87,6 +88,8 @@ bool NodeMessages::read(PacketReader *reader)
     Core::i()->route(m_dest);
   }
 
+  putLast(feed, m_packet->id());
+
   FeedStorage::save(feed, m_packet->date());
   FeedEvents::start(event);
   return false;
@@ -115,6 +118,17 @@ FeedEvent *NodeMessages::createEvent()
     event->date = m_dest->feed(FEED_NAME_MESSAGES, true, false)->head().date();
 
   return event;
+}
+
+
+/*!
+ * Запись идентификатора последнего сообщения в фид \b messages.
+ */
+void NodeMessages::putLast(FeedPtr feed, const QByteArray &id)
+{
+  QVariantMap data;
+  data[FEED_KEY_VALUE] = SimpleID::encode(id);
+  feed->put(LS("last"), data, Ch::server().data());
 }
 
 

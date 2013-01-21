@@ -100,21 +100,14 @@ bool HistoryImpl::get(const QByteArray &id, const QList<QByteArray> &ids)
 
 
 /*!
- * Отправка пакета с запросом на получение последних сообщений в канале.
+ * Получение локальных сообщений, для сообщений найденных
+ * в кэше эмулируется их получение для уведомления остальных
+ * компонентов чата о новом сообщении.
  *
- * \param id Идентификатор канала.
+ * \param ids Список необходимых сообщений.
+ *
+ * \return Список сообщений не найденных в кэше.
  */
-bool HistoryImpl::last(const QByteArray &id)
-{
-  if (ChatClient::state() != ChatClient::Online) {
-    getLocal(HistoryDB::last(SimpleID::encode(id), 20));
-    return false;
-  }
-
-  return ClientFeeds::request(id, FEED_METHOD_GET, LS("messages/last"));
-}
-
-
 QList<QByteArray> HistoryImpl::getLocal(const QList<QByteArray> &ids)
 {
   QList<QByteArray> out;

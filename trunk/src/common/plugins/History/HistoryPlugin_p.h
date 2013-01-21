@@ -34,7 +34,6 @@ public:
   HistoryImpl(QObject *parent);
   ~HistoryImpl();
   static bool get(const QByteArray &id, const QList<QByteArray> &ids);
-  static bool last(const QByteArray &id);
   static QList<QByteArray> getLocal(const QList<QByteArray> &ids);
 
 private slots:
