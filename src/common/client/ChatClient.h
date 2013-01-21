@@ -89,4 +89,17 @@ private:
   static ChatClient *m_self;  ///< Указатель на себя.
 };
 
+
+class SCHAT_EXPORT ChatClientLocker
+{
+public:
+  ChatClientLocker();
+  ChatClientLocker(SimpleClient *client);
+  ~ChatClientLocker();
+  void unlock();
+
+private:
+  SimpleClient *m_client;
+};
+
 #endif /* CHATCLIENT_H_ */

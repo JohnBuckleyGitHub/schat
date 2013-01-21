@@ -39,14 +39,17 @@ FeedNotify::FeedNotify(const QByteArray &channel, const FeedNotice *packet)
 }
 
 
-FeedNotify::FeedNotify(int type, const QByteArray &channel, const QString &name, const QVariantMap &json, int status)
+FeedNotify::FeedNotify(int type, const QByteArray &channel, const QString &name, const QVariantMap &json, int status, const QString &command)
   : Notify(type)
   , m_status(status)
   , m_channel(channel)
-  , m_feed(name)
+  , m_command(command)
   , m_name(name)
   , m_json(json)
 {
+  QPair<QString, QString> request = FeedNotice::split(name);
+  m_feed = request.first;
+  m_path = request.second;
 }
 
 

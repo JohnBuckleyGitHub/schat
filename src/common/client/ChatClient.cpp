@@ -165,3 +165,29 @@ void ChatClient::setup()
 {
   m_hooks->setup();
 }
+
+
+ChatClientLocker::ChatClientLocker()
+{
+  m_client = ChatClient::io();
+  m_client->lock();
+}
+
+
+ChatClientLocker::ChatClientLocker(SimpleClient *client)
+  : m_client(client)
+{
+  m_client->lock();
+}
+
+
+ChatClientLocker::~ChatClientLocker()
+{
+  m_client->unlock();
+}
+
+
+void ChatClientLocker::unlock()
+{
+  m_client->unlock();
+}

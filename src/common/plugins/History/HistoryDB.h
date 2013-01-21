@@ -22,6 +22,7 @@
 #include <QHash>
 #include <QObject>
 
+#include "feeds/Feed.h"
 #include "net/packets/MessageNotice.h"
 
 class MessageId;
@@ -36,9 +37,10 @@ public:
 
   inline static QString id() { return m_id; }
   static bool open(const QByteArray &id, const QString &dir);
+  static bool synced(FeedPtr feed);
   static int status(int status);
-  static QList<QByteArray> last(const QByteArray &channel, int limit);
   static MessageRecord get(const QByteArray &id);
+  static QList<QByteArray> last(const QByteArray &channel, int limit);
   static void add(MessagePacket packet);
   static void clear();
   static void close();

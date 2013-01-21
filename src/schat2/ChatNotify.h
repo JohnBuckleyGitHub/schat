@@ -89,7 +89,7 @@ class SCHAT_CORE_EXPORT FeedNotify : public Notify
 {
 public:
   FeedNotify(const QByteArray &channel, const FeedNotice *packet);
-  FeedNotify(int type, const QByteArray &channel, const QString &name, const QVariantMap &json = QVariantMap(), int status = 200);
+  FeedNotify(int type, const QByteArray &channel, const QString &name, const QVariantMap &json = QVariantMap(), int status = 200, const QString &command = QLatin1String("get"));
   bool match(const QByteArray &id, const QString &name) const;
   bool match(const QString &name) const;
   inline const QByteArray& channel() const { return m_channel; }

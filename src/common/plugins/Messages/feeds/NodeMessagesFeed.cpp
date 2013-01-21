@@ -54,6 +54,24 @@ FeedReply NodeMessagesFeed::get(const QString &path, const QVariantMap &json, Ch
 }
 
 
+FeedReply NodeMessagesFeed::put(const QString &path, const QVariantMap &json, Channel *channel)
+{
+  if (path.isEmpty() || !json.contains(FEED_KEY_VALUE))
+    return Notice::BadRequest;
+
+  if (channel->type() != SimpleID::ServerId)
+    return Notice::Forbidden;
+
+  const QVariant& value = json[FEED_KEY_VALUE];
+  if (path == LS("last")) {
+    m_data[LS("last")] = value;
+    return Notice::OK;
+  }
+
+  return Notice::NotModified;
+}
+
+
 /*!
  * Загрузка сообщений по идентификаторам.
  */

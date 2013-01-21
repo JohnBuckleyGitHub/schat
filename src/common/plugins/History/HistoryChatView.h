@@ -21,6 +21,8 @@
 
 #include "hooks/ChatViewHooks.h"
 
+class Notify;
+
 class HistoryChatView : public ChatViewHooks
 {
   Q_OBJECT
@@ -37,10 +39,13 @@ protected:
   void loadFinishedImpl(ChatView *view);
 
 private slots:
+  void notify(const Notify &notify);
   void ready();
 
 private:
   bool compatible(const QByteArray &id) const;
+  bool sync(const QByteArray &id, qint64 date = 0);
+  void emulateLast(const QByteArray &channelId, const QList<QByteArray> &ids);
 };
 
 #endif /* HISTORYCHATVIEW_H_ */
