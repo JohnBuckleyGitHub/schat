@@ -31,7 +31,7 @@ public:
   NodeInfoFeed(const QString &name, const QVariantMap &data);
   NodeInfoFeed(const QString &name = FEED_NAME_INFO, qint64 date = -1);
 
-  bool can(Channel *channel, Acl::ResultAcl acl) const;
+  bool can(Channel *channel, Acl::Mask acl) const;
   FeedReply del(const QString &path, Channel *channel = 0);
   FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0);
   FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0);

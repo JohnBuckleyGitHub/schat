@@ -43,8 +43,10 @@ NodeInfoFeed::NodeInfoFeed(const QString &name, qint64 date)
  * Переопределение проверки прав доступа.
  *
  * Этот фид использует права доступа фида FEED_ACL.
+ *
+ * \deprecated Использовать делегирование прав доступа.
  */
-bool NodeInfoFeed::can(Channel *channel, Acl::ResultAcl acl) const
+bool NodeInfoFeed::can(Channel *channel, Acl::Mask acl) const
 {
   if (!channel && acl != Acl::Read)
     return false;
