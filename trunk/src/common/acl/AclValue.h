@@ -27,9 +27,15 @@ class SCHAT_EXPORT AclValue
 {
 public:
   AclValue();
+  AclValue(const QByteArray &mask);
+  AclValue(int mask);
+  QByteArray toByteArray() const;
+
+  static int toInt(const QByteArray &mask);
+  static QByteArray toByteArray(int mask);
 
 private:
-  QByteArray m_data;
+  int m_mask;
 };
 
 #endif /* ACLVALUE_H_ */

@@ -17,8 +17,74 @@
  */
 
 #include "acl/AclValue.h"
+#include "acl/Acl.h"
 
 AclValue::AclValue()
+  : m_mask(0)
 {
-  m_data.reserve(3);
+}
+
+
+AclValue::AclValue(const QByteArray &mask)
+  : m_mask(toInt(mask))
+{
+}
+
+
+AclValue::AclValue(int mask)
+  : m_mask(mask)
+{
+}
+
+
+QByteArray AclValue::toByteArray() const
+{
+  return toByteArray(m_mask);
+}
+
+
+/*!
+ * Преобразование строкового представления прав доступа в число.
+ */
+int AclValue::toInt(const QByteArray &mask)
+{
+  if (mask.size() < 3)
+    return 0;
+
+  int out = 0;
+
+  if (mask.at(0) == 'r')
+    out |= Acl::Read;
+  else if (mask.at(0) == 'R')
+    out |= Acl::Read | Acl::SpecialRead;
+  else if (mask.at(1) == 'w')
+    out |= Acl::Write;
+  else if (mask.at(1) == 'W')
+    out |= Acl::Write | Acl::SpecialWrite;
+  else if (mask.at(2) == 'x')
+    out |= Acl::Edit;
+  else if (mask.at(2) == 'X')
+    out |= Acl::Edit | Acl::SpecialEdit;
+
+  return out;
+}
+
+
+/*!
+ * Преобразование числового представления правд доступа в строку.
+ */
+QByteArray AclValue::toByteArray(int mask)
+{
+  QByteArray out("---");
+
+  if (mask & Acl::Read)
+    out[0] = mask & Acl::SpecialRead  ? 'R' : 'r';
+
+  if (mask & Acl::Write)
+    out[1] = mask & Acl::SpecialWrite ? 'W' : 'w';
+
+  if (mask & Acl::Edit)
+    out[2] = mask & Acl::SpecialEdit  ? 'X' : 'x';
+
+  return out;
 }

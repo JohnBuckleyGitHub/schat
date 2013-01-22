@@ -36,9 +36,12 @@ class SCHAT_EXPORT Acl
 {
 public:
   enum Mask {
-    Read  = 04,
-    Write = 02,
-    Edit  = 01
+    Read         = 04,
+    Write        = 02,
+    Edit         = 01,
+    SpecialRead  = 040,
+    SpecialWrite = 020,
+    SpecialEdit  = 010
   };
 
   Acl(int acl = 0766);
