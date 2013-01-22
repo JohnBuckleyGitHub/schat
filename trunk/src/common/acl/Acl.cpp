@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ bool Acl::get(QVariantMap &data, Channel *channel) const
     save(data);
 
   data[LS("match")] = acl;
-  data[LS("mask")]  = m_mask;
+  data[ACL_MASK]  = m_mask;
   return true;
 }
 
@@ -81,11 +81,6 @@ int Acl::match(Channel *channel) const
 
   if (m_owners.contains(id))
     return (m_mask >> 6);
-
-  foreach (const QString &group, m_groups.all()) {
-    if (channel->account() && channel->account()->groups.contains(group))
-      return ((m_mask & ~0700) >> 3);
-  }
 
   return (m_mask & ~0770);
 }
@@ -120,22 +115,20 @@ void Acl::add(const QByteArray &owner)
 
 void Acl::load(const QVariantMap &json)
 {
-  m_mask = json.value(LS("mask")).toInt();
+  m_mask = json.value(ACL_MASK).toInt();
   m_others.clear();
   m_owners.clear();
 
-  const QVariantList owners = json.value(LS("owners")).toList();
+  const QVariantList owners = json.value(ACL_OWNERS).toList();
   foreach (const QVariant &owner, owners)
     add(SimpleID::decode(owner.toByteArray()));
 
-  const QVariantMap others = json.value(LS("others")).toMap();
+  const QVariantMap others = json.value(ACL_OTHERS).toMap();
   QMapIterator<QString, QVariant> i(others);
   while (i.hasNext()) {
     i.next();
     add(SimpleID::decode(i.key()), i.value().toInt());
   }
-
-  m_groups = json.value(LS("groups")).toString();
 }
 
 
@@ -155,8 +148,7 @@ void Acl::save(QVariantMap &data) const
     others[SimpleID::encode(i.key())] = i.value();
   }
 
-  data[LS("mask")]   = m_mask;
-  data[LS("owners")] = owners;
-  data[LS("others")] = others;
-  data[LS("groups")] = m_groups.toString();
+  data[ACL_MASK]   = m_mask;
+  data[ACL_OWNERS] = owners;
+  data[ACL_OTHERS] = others;
 }

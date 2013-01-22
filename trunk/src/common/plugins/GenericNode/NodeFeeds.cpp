@@ -305,7 +305,7 @@ NodeFeeds::CheckResult NodeFeeds::check(int acl)
     else
       result.status = Notice::NotFound;
   }
-  else if (!result.feed->can(m_user.data(), static_cast<Acl::ResultAcl>(acl)))
+  else if (!result.feed->can(m_user.data(), static_cast<Acl::Mask>(acl)))
     result.status = Notice::Forbidden;
 
   if (result.feed)

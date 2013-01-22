@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #ifndef ACL_H_
 #define ACL_H_
 
-#include <QHash>
+#include <QMap>
 #include <QVariant>
 
 #include "acl/Groups.h"
@@ -28,37 +28,25 @@
 class Channel;
 class Feed;
 
+#define ACL_MASK   QLatin1String("mask")
+#define ACL_OWNERS QLatin1String("owners")
+#define ACL_OTHERS QLatin1String("others")
+
 class SCHAT_EXPORT Acl
 {
 public:
-  /// Результирующий список прав.
-  enum ResultAcl {
+  enum Mask {
     Read  = 04,
     Write = 02,
     Edit  = 01
-  };
-
-  /// Общий список прав, подобный UNIX правам доступа: владелец/группа/остальные.
-  enum CommonAcl {
-    UsersRead   = 0400, ///< владельцы имеют право на чтение.
-    UsersWrite  = 0200, ///< владельцы имеют право на запись.
-    UsersEdit   = 0100, ///< владельцы имеют право на редактирование свойств.
-    GroupsRead  = 040,  ///< группы имеют право на чтение.
-    GroupsWrite = 020,  ///< группы имеют право на запись.
-    GroupsEdit  = 010,  ///< группы имеют право на редактирование свойств.
-    OthersRead  = 04,   ///< остальные имеют право на чтение.
-    OthersWrite = 02,   ///< остальные имеют право на запись.
-    OthersEdit  = 01    ///< остальные имеют право на редактирование свойств.
   };
 
   Acl(int acl = 0766);
 
   bool add(const QByteArray &other, int acl);
   bool get(QVariantMap &data, Channel *channel) const;
-  inline const Groups& groups() const                { return m_groups; }
   inline const QList<QByteArray> &owners() const     { return m_owners; }
   inline const QMap<QByteArray, int> &others() const { return m_others; }
-  inline Groups &groups()                            { return m_groups; }
   inline int mask() const                            { return m_mask; }
   inline void remove(const QByteArray &owner)        { m_owners.removeAll(owner); }
   inline void removeOther(const QByteArray &other)   { m_others.remove(other); }
@@ -72,7 +60,6 @@ public:
   void save(QVariantMap &data) const;
 
 private:
-  Groups m_groups;                 ///< Группы.
   int m_mask;                      ///< Общая маска прав доступа Acl:CommonAcl.
   QMap<QByteArray, int> m_others;  ///< Специальные права доступа для выбранных пользователей.
   QList<QByteArray> m_owners;      ///< Идентификаторы владельцев.

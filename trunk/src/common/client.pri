@@ -18,6 +18,7 @@
 HEADERS += \
     Account.h \
     acl/Acl.h \
+    acl/AclValue.h \
     acl/Groups.h \
     base32/base32.h \
     Channel.h \
@@ -63,6 +64,7 @@ HEADERS += \
 
 SOURCES += \
     acl/Acl.cpp \
+    acl/AclValue.cpp \
     base32/base32.cpp \
     Channel.cpp \
     client/AbstractClient.cpp \
