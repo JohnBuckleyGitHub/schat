@@ -92,6 +92,9 @@ int AclValue::match(const Feed *feed, Channel *channel)
     return 077;
 
   if (feed->head().name() == FEED_NAME_ACL) {
+    if (!feed->data().contains(FEED_WILDCARD_ASTERISK))
+      return 6; // Необходимо для обеспечения обратной совместимости новых клиентов с сервером старее 1.99.53.
+
     const QByteArray mask = feed->data().value(FEED_WILDCARD_ASTERISK).toByteArray();
     if (!channel)
       return toInt(mask);
