@@ -69,7 +69,7 @@ FeedReply NodeProfileFeed::put(const QString &path, const QVariantMap &json, Cha
 
 QVariantMap NodeProfileFeed::feed(Channel *channel) const
 {
-  if (head().channel()->type() != SimpleID::UserId || !Acl::canRead(this, channel))
+  if (head().channel()->type() != SimpleID::UserId || !can(channel, Acl::Read))
     return QVariantMap();
 
   User *user = static_cast<ServerChannel *>(head().channel())->user();

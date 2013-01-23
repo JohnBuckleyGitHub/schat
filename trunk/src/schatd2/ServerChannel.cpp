@@ -176,21 +176,21 @@ void ServerChannel::setKey(qint64 key)
 }
 
 
-bool ServerChannel::canEdit(ChatChannel channel)
+bool ServerChannel::canEdit(ChatChannel channel, bool special)
 {
-  return feed(FEED_NAME_ACL)->can(channel.data(), Acl::Edit);
+  return feed(FEED_NAME_ACL)->can(channel.data(), Acl::Edit | (special ? Acl::SpecialEdit : 0));
 }
 
 
-bool ServerChannel::canRead(ChatChannel channel)
+bool ServerChannel::canRead(ChatChannel channel, bool special)
 {
-  return feed(FEED_NAME_ACL)->can(channel.data(), Acl::Read);
+  return feed(FEED_NAME_ACL)->can(channel.data(), Acl::Read | (special ? Acl::SpecialRead : 0));
 }
 
 
-bool ServerChannel::canWrite(ChatChannel channel)
+bool ServerChannel::canWrite(ChatChannel channel, bool special)
 {
-  return feed(FEED_NAME_ACL)->can(channel.data(), Acl::Write);
+  return feed(FEED_NAME_ACL)->can(channel.data(), Acl::Write | (special ? Acl::SpecialWrite : 0));
 }
 
 

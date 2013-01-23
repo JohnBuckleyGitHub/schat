@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -52,9 +52,9 @@ public:
   void createAccount();
   void setKey(qint64 key);
 
-  bool canEdit(ChatChannel channel);
-  bool canRead(ChatChannel channel);
-  bool canWrite(ChatChannel channel);
+  bool canEdit(ChatChannel channel, bool special = true);
+  bool canRead(ChatChannel channel, bool special = false);
+  bool canWrite(ChatChannel channel, bool special = false);
 
 private:
   void normalize();
