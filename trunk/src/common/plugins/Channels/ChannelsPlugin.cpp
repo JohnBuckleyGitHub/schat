@@ -130,17 +130,12 @@ void ChannelsPluginImpl::unignore(const QByteArray &id)
 }
 
 
-/*!
- * \bug запрос фида может работать не корректно.
- */
 void ChannelsPluginImpl::channel(const QByteArray &id)
 {
   if (SimpleID::typeOf(id) != SimpleID::ChannelId)
     return;
 
-  FeedPtr feed = ChatClient::channels()->get(id)->feed(FEED_NAME_ACL, false);
-  if (!feed)
-    ClientFeeds::request(id, FEED_METHOD_GET, LS("acl/head"));
+  getAcl(ChatClient::channels()->get(id));
 }
 
 
@@ -170,18 +165,10 @@ void ChannelsPluginImpl::loadFinished(ChatView *view)
 }
 
 
-/*!
- * \bug Чтение фида может работать не корректно.
- */
 void ChannelsPluginImpl::ready()
 {
-  FeedPtr feed = ChatClient::channel()->feed(FEED_NAME_ACL, false);
-  if (!feed)
-    ClientFeeds::request(ChatClient::id(), FEED_METHOD_GET, LS("acl/head"));
-
-  feed = ChatClient::server()->feed(FEED_NAME_ACL, false);
-  if (!feed)
-    ClientFeeds::request(ChatClient::serverId(), FEED_METHOD_GET, LS("acl/head"));
+  getAcl(ChatClient::channel());
+  getAcl(ChatClient::server());
 }
 
 
@@ -207,6 +194,20 @@ void ChannelsPluginImpl::start()
 
   connect(TabWidget::i()->toolBar(), SIGNAL(showMenu(QMenu*,QAction*)), SLOT(showMenu(QMenu*,QAction*)));
   connect(m_list, SIGNAL(triggered(bool)), SLOT(list()));
+}
+
+
+/*!
+ * Загрузка фида \b acl если он не был получен.
+ */
+void ChannelsPluginImpl::getAcl(ClientChannel channel)
+{
+  if (!channel)
+    return;
+
+  FeedPtr feed = channel->feed(FEED_NAME_ACL, false);
+  if (!feed)
+    ClientFeeds::request(channel->id(), FEED_METHOD_GET, FEED_NAME_ACL);
 }
 
 

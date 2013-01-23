@@ -79,7 +79,7 @@ void ClientFeedsImpl::readFeedImpl(const FeedNotice &packet)
  */
 void ClientFeedsImpl::feed()
 {
-  QString name = m_packet->text();
+  const QString &name = m_packet->text();
   if (name.isEmpty())
     return;
 
@@ -92,15 +92,9 @@ void ClientFeedsImpl::feed()
   if (!feed)
     return;
 
-  FeedHeader &head = feed->head();
-  head.setData(data);
-  head.setDate(m_packet->date());
-
+  feed->head().setDate(m_packet->date());
   m_channel->feeds().add(feed);
   ChatNotify::start(new FeedNotify(Notify::FeedData, m_channel->id(), name));
-
-  if (data.size() > 2 && data.value(LS("date")) != head.date())
-    ClientFeeds::request(m_channel, FEED_METHOD_GET, name + LS("/head"));
 }
 
 
@@ -110,7 +104,7 @@ void ClientFeedsImpl::feed()
 void ClientFeedsImpl::get()
 {
   QPair<QString, QString> request = FeedNotice::split(m_packet->text());
-  if (request.first == LS("*")) {
+  if (request.first == FEED_WILDCARD_ASTERISK) {
     headers();
   }
   else if (request.second.isEmpty()) {
@@ -147,9 +141,8 @@ void ClientFeedsImpl::get(const QByteArray &id, const QStringList &feeds)
   if (feeds.isEmpty())
     return;
 
-  foreach (const QString &name, feeds) {
+  foreach (const QString &name, feeds)
     ClientFeeds::request(id, FEED_METHOD_GET, name);
-  }
 }
 
 

@@ -17,6 +17,7 @@
  */
 
 #include "client/ChatClient.h"
+#include "acl/AclValue.h"
 #include "client/ClientFeeds.h"
 #include "client/ClientHooks.h"
 #include "client/SimpleClient.h"
@@ -107,8 +108,6 @@ bool ClientFeeds::request(const QByteArray &id, const QString &command, const QS
  * Проверка прав доступа.
  *
  * \return -1 если произошла ошибка или права доступа.
- *
- * \bug эта функция может работать не правильно.
  */
 int ClientFeeds::match(ClientChannel channel, ClientChannel user)
 {
@@ -116,7 +115,7 @@ int ClientFeeds::match(ClientChannel channel, ClientChannel user)
   if (!feed)
     return -1;
 
-  return feed->head().acl().match(user.data());
+  return AclValue::match(feed.data(), user.data());
 }
 
 
