@@ -38,28 +38,52 @@ NodeAclFeed::NodeAclFeed(const QString &name, qint64 date)
 }
 
 
+/*!
+ * Переопределение запросов "delete acl/owner/<id>" и "delete acl/other/<id>".
+ */
 FeedReply NodeAclFeed::del(const QString &path, Channel *channel)
 {
-  if (path.startsWith(LS("head/")))
-    return Feed::del(path, channel);
+  if (path.startsWith(LS("head/"))) {
+    const FeedReply reply = Feed::del(path, channel);
+    if (reply.status == Notice::OK)
+      m_data.remove(path.mid(11));
+
+    return reply;
+  }
 
   return Notice::Forbidden;
 }
 
 
+/*!
+ * Переопределение запросов "post acl/head/owner" или "post acl/head/other/<id>".
+ */
 FeedReply NodeAclFeed::post(const QString &path, const QVariantMap &json, Channel *channel)
 {
-  if (path.startsWith(LS("head/")))
-    return Feed::post(path, json, channel);
+  if (path.startsWith(LS("head/"))) {
+    const FeedReply reply = Feed::post(path, json, channel);
+    if (reply.status == Notice::OK) {
+      if (path == LS("head/owner"))
+        m_data[json.value(FEED_KEY_VALUE).toString()] = AclValue::toByteArray(head().acl().mask() >> 6 | Acl::SpecialEdit);
+      else
+        m_data[path.mid(11)] = AclValue::toByteArray(json.value(FEED_KEY_VALUE).toInt());
+    }
+
+    return reply;
+  }
 
   return Notice::Forbidden;
 }
 
 
+/*!
+ * Переопределение запроса "put acl/head/mask" для установки прав доступа для пользователей
+ * права которых не установлены явно.
+ */
 FeedReply NodeAclFeed::put(const QString &path, const QVariantMap &json, Channel *channel)
 {
   if (path.startsWith(LS("head/"))) {
-    FeedReply reply = Feed::put(path, json, channel);
+    const FeedReply reply = Feed::put(path, json, channel);
     if (reply.status == Notice::OK)
       m_data[FEED_WILDCARD_ASTERISK] = AclValue::toByteArray(head().acl().mask() & ~0770);
 
