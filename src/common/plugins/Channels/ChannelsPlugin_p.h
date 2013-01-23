@@ -48,6 +48,8 @@ private slots:
   void start();
 
 private:
+  void getAcl(ClientChannel channel);
+
   ChannelsTr *m_tr; ///< Перевод.
   QAction *m_list;  ///< Пункт меню для показа списка каналов.
 };
