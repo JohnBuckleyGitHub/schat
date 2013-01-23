@@ -95,6 +95,7 @@ Section
   File "${SCHAT_SOURCE}\plugins\NodeConsole.dll"
   File "${SCHAT_SOURCE}\plugins\GeoIP.dll"
   File "${SCHAT_SOURCE}\plugins\RestApi.dll"
+  File "${SCHAT_SOURCE}\plugins\NodeFeedLog.dll"
 
   SetOutPath "$INSTDIR\plugins\qt\sqldrivers"
   File "${SCHAT_SOURCE}\plugins\qt\sqldrivers\qsqlite4.dll"
@@ -107,6 +108,7 @@ Section
   File "${SCHAT_SOURCE}\doc\ChangeLog.NodeConsole.html"
   File "${SCHAT_SOURCE}\doc\ChangeLog.GeoIP.html"
   File "${SCHAT_SOURCE}\doc\ChangeLog.RestApi.html"
+  File "${SCHAT_SOURCE}\doc\ChangeLog.NodeFeedLog.html"
 
   SetOutPath "$INSTDIR\www"
   File "${SCHAT_SOURCE}\www\receiver.html"
@@ -177,6 +179,7 @@ Section "Uninstall"
   Delete "$INSTDIR\plugins\NodeConsole.dll"
   Delete "$INSTDIR\plugins\GeoIP.dll"
   Delete "$INSTDIR\plugins\RestApi.dll"
+  Delete "$INSTDIR\plugins\NodeFeedLog.dll"
 
   Delete "$INSTDIR\doc\ChangeLog.html"
   Delete "$INSTDIR\doc\ChangeLog.GenericNode.html"
@@ -185,6 +188,7 @@ Section "Uninstall"
   Delete "$INSTDIR\doc\ChangeLog.NodeConsole.html"
   Delete "$INSTDIR\doc\ChangeLog.GeoIP.html"
   Delete "$INSTDIR\doc\ChangeLog.RestApi.html"
+  Delete "$INSTDIR\doc\ChangeLog.NodeFeedLog.html"
 
   Delete "$INSTDIR\www\css\bootstrap.css"
   Delete "$INSTDIR\www\css\main.css"
