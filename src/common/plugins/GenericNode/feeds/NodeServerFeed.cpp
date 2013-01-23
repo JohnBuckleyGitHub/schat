@@ -74,7 +74,7 @@ FeedReply NodeServerFeed::get(const QString &path, const QVariantMap &json, Chan
 QVariantMap NodeServerFeed::feed(Channel *channel) const
 {
   Channel *server = head().channel();
-  if (server->type() != SimpleID::ServerId || !Acl::canRead(this, channel))
+  if (server->type() != SimpleID::ServerId || !can(channel, Acl::Read))
     return QVariantMap();
 
   if (head().date() != m_date) {

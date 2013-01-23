@@ -19,19 +19,23 @@
 #ifndef ACLVALUE_H_
 #define ACLVALUE_H_
 
-#include <QByteArray>
+#include <QVariant>
 
 #include "schat.h"
+
+class Channel;
+class Feed;
 
 class SCHAT_EXPORT AclValue
 {
 public:
-  AclValue();
   AclValue(const QByteArray &mask);
-  AclValue(int mask);
+  AclValue(const QVariant &mask);
+  AclValue(int mask = 0);
   QByteArray toByteArray() const;
 
   static int toInt(const QByteArray &mask);
+  static int match(const Feed *feed, Channel *channel);
   static QByteArray toByteArray(int mask);
 
 private:

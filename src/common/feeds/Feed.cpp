@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Channel.h"
+#include "acl/AclValue.h"
 #include "DateTime.h"
 #include "feeds/Feed.h"
 #include "net/packets/Notice.h"
@@ -75,7 +77,7 @@ FeedReply Feed::del(const QString &path, Channel *channel)
   }
 
   if (path.startsWith(LS("head/"))) {
-    if (!Acl::canEdit(this, channel))
+    if (!can(channel, Acl::Edit | Acl::SpecialEdit))
       return Notice::Forbidden;
 
     int status = head().del(path.mid(5));
@@ -133,7 +135,7 @@ FeedReply Feed::post(const QString &path, const QVariantMap &json, Channel *chan
   const QVariant& value = json[FEED_KEY_VALUE];
 
   if (path.startsWith(LS("head/"))) {
-    if (!Acl::canEdit(this, channel))
+    if (!can(channel, Acl::Edit | Acl::SpecialEdit))
       return Notice::Forbidden;
 
     int status = head().post(path.mid(5), value);
@@ -165,7 +167,7 @@ FeedReply Feed::put(const QString &path, const QVariantMap &json, Channel *chann
   const QVariant& value = json[FEED_KEY_VALUE];
 
   if (path.startsWith(LS("head/"))) {
-    if (!Acl::canEdit(this, channel))
+    if (!can(channel, Acl::Edit | Acl::SpecialEdit))
       return Notice::Forbidden;
 
     int status = head().put(path.mid(5), value);
@@ -211,15 +213,18 @@ QVariantMap Feed::save() const
 }
 
 
-bool Feed::can(Channel *channel, Acl::Mask acl) const
+bool Feed::can(Channel *channel, int acl) const
 {
-  return m_header.acl().match(channel) & acl;
+  return AclValue::match(this, channel) & acl;
 }
 
 
 void Feed::setChannel(Channel *channel)
 {
   m_header.setChannel(channel);
+
+  if (channel && channel->type() == SimpleID::UserId)
+    m_header.acl().add(channel->id());
 }
 
 

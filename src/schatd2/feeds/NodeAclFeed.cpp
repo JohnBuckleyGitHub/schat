@@ -16,10 +16,12 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "DateTime.h"
 #include "acl/AclValue.h"
+#include "Channel.h"
+#include "DateTime.h"
 #include "feeds/NodeAclFeed.h"
 #include "net/packets/Notice.h"
+#include "net/SimpleID.h"
 #include "sglobal.h"
 
 NodeAclFeed::NodeAclFeed(const QString &name, const QVariantMap &data)
@@ -56,22 +58,42 @@ FeedReply NodeAclFeed::post(const QString &path, const QVariantMap &json, Channe
 
 FeedReply NodeAclFeed::put(const QString &path, const QVariantMap &json, Channel *channel)
 {
-  if (path.startsWith(LS("head/")))
-    return Feed::put(path, json, channel);
+  if (path.startsWith(LS("head/"))) {
+    FeedReply reply = Feed::put(path, json, channel);
+    if (reply.status == Notice::OK)
+      m_data[FEED_WILDCARD_ASTERISK] = AclValue::toByteArray(head().acl().mask() & ~0770);
+
+    return reply;
+  }
 
   return Notice::Forbidden;
 }
 
 
+/*!
+ * Переопределение установки канала для записи информации о владельце канала.
+ */
+void NodeAclFeed::setChannel(Channel *channel)
+{
+  Feed::setChannel(channel);
+
+  if (channel && channel->type() == SimpleID::UserId)
+    m_data[SimpleID::encode(channel->id())] = AclValue::toByteArray(head().acl().mask() >> 6 | Acl::SpecialEdit);
+}
+
+
+/*!
+ * Инициализация фида.
+ */
 void NodeAclFeed::init()
 {
   if (!m_data.isEmpty())
     return;
 
-  // Импортирование существующих прав доступа.
-  const QVariantMap &data = head().data();
   m_data[FEED_WILDCARD_ASTERISK] = AclValue::toByteArray(head().acl().mask() & ~0770);
 
+  // Импортирование существующих прав доступа.
+  const QVariantMap &data = head().data();
   const QVariantMap others = data.value(ACL_OTHERS).toMap();
   if (!others.isEmpty()) {
     QMapIterator<QString, QVariant> i(others);

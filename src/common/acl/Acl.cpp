@@ -61,7 +61,7 @@ bool Acl::get(QVariantMap &data, Channel *channel) const
  * Возвращает права доступа для конкретного пользователя.
  *
  * \param channel Канал-пользователь.
- * \return Acl::ResultAcl.
+ * \return Acl::Mask.
  */
 int Acl::match(Channel *channel) const
 {
@@ -69,10 +69,10 @@ int Acl::match(Channel *channel) const
     return (m_mask & ~0770);
 
   if (channel->type() == SimpleID::ServerId)
-    return Read | Write | Edit;
+    return 077;
 
   if (channel->account() && channel->account()->groups.contains(LS("master")))
-    return Read | Write | Edit;
+    return 077;
 
   const QByteArray &id = channel->id();
 
@@ -80,27 +80,9 @@ int Acl::match(Channel *channel) const
     return m_others.value(id);
 
   if (m_owners.contains(id))
-    return (m_mask >> 6);
+    return m_mask >> 6 | SpecialEdit;
 
   return (m_mask & ~0770);
-}
-
-
-bool Acl::canEdit(const Feed *feed, Channel *channel)
-{
-  return feed->can(channel, Edit);
-}
-
-
-bool Acl::canRead(const Feed *feed, Channel *channel)
-{
-  return feed->can(channel, Read);
-}
-
-
-bool Acl::canWrite(const Feed *feed, Channel *channel)
-{
-  return feed->can(channel, Write);
 }
 
 

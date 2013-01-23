@@ -49,7 +49,7 @@ bool FeedHeader::isValid() const
 int FeedHeader::del(const QString &path)
 {
   if (path.startsWith(LS("owner/"))) {
-    QByteArray id = SimpleID::decode(path.mid(6));
+    const QByteArray id = SimpleID::decode(path.mid(6));
     if (SimpleID::typeOf(id) != SimpleID::UserId)
       return Notice::BadRequest;
 
@@ -60,7 +60,7 @@ int FeedHeader::del(const QString &path)
     return Notice::OK;
   }
   else if (path.startsWith(LS("other/"))) {
-    QByteArray id = SimpleID::decode(path.mid(6));
+    const QByteArray id = SimpleID::decode(path.mid(6));
     if (SimpleID::typeOf(id) != SimpleID::UserId)
       return Notice::BadRequest;
 
@@ -78,7 +78,7 @@ int FeedHeader::del(const QString &path)
 int FeedHeader::post(const QString &path, const QVariant &value)
 {
   if (path == LS("owner")) {
-    QByteArray id = SimpleID::decode(value.toString());
+    const QByteArray id = SimpleID::decode(value.toString());
     if (SimpleID::typeOf(id) != SimpleID::UserId)
       return Notice::BadRequest;
 

@@ -84,7 +84,7 @@ FeedReply NodeHostsFeed::put(const QString &path, const QVariantMap &json, Chann
  */
 QVariantMap NodeHostsFeed::feed(Channel *channel) const
 {
-  if (head().channel()->type() != SimpleID::UserId || !Acl::canRead(this, channel))
+  if (head().channel()->type() != SimpleID::UserId || !can(channel, Acl::Read))
     return QVariantMap();
 
   QVariantMap out;

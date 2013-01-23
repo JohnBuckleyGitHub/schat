@@ -18,16 +18,22 @@
 
 #include "acl/AclValue.h"
 #include "acl/Acl.h"
-
-AclValue::AclValue()
-  : m_mask(0)
-{
-}
-
+#include "Channel.h"
+#include "feeds/Feed.h"
+#include "net/SimpleID.h"
 
 AclValue::AclValue(const QByteArray &mask)
   : m_mask(toInt(mask))
 {
+}
+
+
+AclValue::AclValue(const QVariant &mask)
+{
+  if (mask.type() == QVariant::String)
+    m_mask = toInt(mask.toString().toLatin1());
+  else
+    m_mask = mask.toInt();
 }
 
 
@@ -57,16 +63,43 @@ int AclValue::toInt(const QByteArray &mask)
     out |= Acl::Read;
   else if (mask.at(0) == 'R')
     out |= Acl::Read | Acl::SpecialRead;
-  else if (mask.at(1) == 'w')
+
+  if (mask.at(1) == 'w')
     out |= Acl::Write;
   else if (mask.at(1) == 'W')
     out |= Acl::Write | Acl::SpecialWrite;
-  else if (mask.at(2) == 'x')
+
+  if (mask.at(2) == 'x')
     out |= Acl::Edit;
   else if (mask.at(2) == 'X')
     out |= Acl::Edit | Acl::SpecialEdit;
 
   return out;
+}
+
+
+/*!
+ * Возвращает права доступа для конкретного пользователя.
+ *
+ * В отличии от Acl::match() поддерживается специальная обработка фида \b acl.
+ */
+int AclValue::match(const Feed *feed, Channel *channel)
+{
+  if (!feed)
+    return 0;
+
+  if (channel && channel->type() == SimpleID::ServerId)
+    return 077;
+
+  if (feed->head().name() == FEED_NAME_ACL) {
+    const QByteArray mask = feed->data().value(FEED_WILDCARD_ASTERISK).toByteArray();
+    if (!channel)
+      return toInt(mask);
+
+    return toInt(feed->data().value(SimpleID::encode(channel->id()), mask).toByteArray());
+  }
+
+  return feed->head().acl().match(channel);
 }
 
 
