@@ -288,8 +288,15 @@ void Ch::addNewFeedIfNotExist(ChatChannel channel, const QString &name, ChatChan
     return;
 
   feed = channel->feed(name, true, false);
-  if (user)
-    feed->head().acl().add(user->id());
+  if (user) {
+    if (feed->head().name() == FEED_NAME_ACL) {
+      QVariantMap data;
+      data[FEED_KEY_VALUE] = SimpleID::encode(user->id());
+      feed->post(LS("head/owner"), data, server().data());
+    }
+    else
+      feed->head().acl().add(user->id());
+  }
 
   FeedStorage::save(feed);
 }
@@ -341,7 +348,7 @@ ChatChannel Ch::channelImpl(const QByteArray &id, int type, bool db)
  */
 ChatChannel Ch::channelImpl(const QString &name, ChatChannel user)
 {
-  QByteArray normalized = Normalize::toId(LC('#') + name);
+  const QByteArray normalized = Normalize::toId(LC('#') + name);
   ChatChannel channel = channelImpl(normalized);
   if (!channel)
     channel = channelImpl(makeId(normalized));

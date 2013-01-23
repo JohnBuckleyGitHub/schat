@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright (c) 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright (c) 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -91,7 +91,7 @@ var Channels = {
     Channels.acl = SimpleChat.match(Settings.getId(), SimpleChat.id());
     var dropdown = $('#settings-dropdown');
 
-    if (Channels.acl == 7) {
+    if (Channels.acl & 9) {
       if (!dropdown.length)
         $('#channel-buttons').append('<div id="settings-dropdown" class="dropdown pull-right"><a id="channel-settings" data-toggle="dropdown" href="#"></a>' + Channels.menu() + '</div>');
     }
