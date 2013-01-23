@@ -91,7 +91,7 @@ bool MessagesImpl::ignored(ClientChannel user)
   if (!feed)
     return false;
 
-  return !Acl::canWrite(feed.data(), user.data());
+  return !feed->can(user.data(), Acl::Write);
 }
 
 
