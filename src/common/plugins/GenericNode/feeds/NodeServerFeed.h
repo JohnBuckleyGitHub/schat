@@ -36,7 +36,6 @@ public:
 
 private:
   QVariantMap auth() const;
-  QVariantMap users() const;
   void init();
 
   mutable qint64 m_date;        ///< Дата последнего обновления фида, используется для кеширования.

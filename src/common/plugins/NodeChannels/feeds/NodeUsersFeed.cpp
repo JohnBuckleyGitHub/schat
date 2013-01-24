@@ -22,6 +22,11 @@
 #include "net/packets/Notice.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
+#include "Storage.h"
+
+#define USERS_FEED_COUNT QLatin1String("count")
+#define USERS_FEED_PEAK  QLatin1String("peak")
+#define USERS_FEED_DATE  QLatin1String("date")
 
 NodeUsersFeed::NodeUsersFeed(const QString &name, const QVariantMap &data)
   : Feed(name, data)
@@ -43,10 +48,10 @@ FeedReply NodeUsersFeed::del(const QString &path, Channel *channel)
     return Notice::Forbidden;
 
   if (path.size() == 34) {
-    int count = m_data.value(LS("count")).toInt();
+    int count = m_data.value(USERS_FEED_COUNT).toInt();
     if (SimpleID::typeOf(SimpleID::decode(path)) == SimpleID::UserId) {
       --count;
-      m_data[LS("count")] = count;
+      m_data[USERS_FEED_COUNT] = count;
       return FeedReply(Notice::OK, DateTime::utc());
     }
   }
@@ -57,15 +62,22 @@ FeedReply NodeUsersFeed::del(const QString &path, Channel *channel)
 
 FeedReply NodeUsersFeed::post(const QString &path, const QVariantMap &json, Channel *channel)
 {
+  Q_UNUSED(json)
+
   if (!can(channel, Acl::Edit | Acl::SpecialEdit))
     return Notice::Forbidden;
 
   if (path.size() == 34) {
-    int count = m_data.value(LS("count")).toInt();
+    int count = m_data.value(USERS_FEED_COUNT).toInt();
     if (SimpleID::typeOf(SimpleID::decode(path)) == SimpleID::UserId) {
       ++count;
-      m_data[LS("count")] = count;
-      return FeedReply(Notice::OK, DateTime::utc());
+      m_data[USERS_FEED_COUNT] = count;
+      const qint64 date = DateTime::utc();
+      const int peak    = m_data.value(USERS_FEED_PEAK).toMap().value(USERS_FEED_COUNT).toInt();
+      if (count >= peak)
+        setPeak(count, date);
+
+      return FeedReply(Notice::OK, date);
     }
   }
 
@@ -76,7 +88,24 @@ FeedReply NodeUsersFeed::post(const QString &path, const QVariantMap &json, Chan
 void NodeUsersFeed::init()
 {
   m_header.acl().setMask(0444);
-  m_data[LS("count")] = 0;
+  m_data[USERS_FEED_COUNT] = 0;
+
+  if (!m_data.contains(USERS_FEED_PEAK)) {
+    const QVariantMap peak = Storage::value(STORAGE_PEAK_USERS).toMap();
+    if (peak.isEmpty())
+      setPeak(0, head().date());
+    else
+      m_data[USERS_FEED_PEAK] = peak;
+  }
+}
+
+
+void NodeUsersFeed::setPeak(int count, qint64 date)
+{
+  QVariantMap peak;
+  peak[USERS_FEED_COUNT]  = count;
+  peak[USERS_FEED_DATE]   = date;
+  m_data[USERS_FEED_PEAK] = peak;
 }
 
 
