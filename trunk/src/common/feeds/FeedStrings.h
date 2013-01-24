@@ -36,6 +36,7 @@
 #define FEED_NAME_SERVER   QLatin1String("server")
 #define FEED_NAME_STORAGE  QLatin1String("storage")
 #define FEED_NAME_USER     QLatin1String("user")
+#define FEED_NAME_USERS    QLatin1String("users")
 
 #define FEED_WILDCARD_ASTERISK QLatin1String("*")
 

@@ -17,8 +17,10 @@
  */
 
 #include "Account.h"
+#include "Ch.h"
 #include "DataBase.h"
 #include "DateTime.h"
+#include "feeds/FeedsCore.h"
 #include "feeds/FeedStorage.h"
 #include "feeds/FeedStrings.h"
 #include "net/SimpleID.h"
@@ -110,6 +112,9 @@ QString ServerChannel::serverName(const QString &name)
 bool ServerChannel::addChannel(const QByteArray &id)
 {
   if (m_channels.add(id)) {
+    if (SimpleID::typeOf(id) == SimpleID::UserId)
+      FeedsCore::post(this, FEED_NAME_USERS + LC('/') + SimpleID::encode(id), Ch::server().data());
+
     NodeNotify::start(NotifyItem::ChannelBonding, 1, this->id(), id);
     return true;
   }
@@ -122,6 +127,8 @@ bool ServerChannel::removeChannel(const QByteArray &id)
 {
   if (m_channels.contains(id)) {
     m_channels.remove(id);
+    if (SimpleID::typeOf(id) == SimpleID::UserId)
+      FeedsCore::del(this, FEED_NAME_USERS + LC('/') + SimpleID::encode(id), Ch::server().data());
 
     NodeNotify::start(NotifyItem::ChannelBonding, 0, this->id(), id);
     return true;

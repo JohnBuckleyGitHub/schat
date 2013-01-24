@@ -16,40 +16,30 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
-
-#include "feeds/FeedStorage.h"
-#include "feeds/NodeInfoFeed.h"
-#include "feeds/NodeListFeed.h"
+#include "DateTime.h"
 #include "feeds/NodeUsersFeed.h"
-#include "NodeChannelIndex.h"
-#include "NodeChannelsCh.h"
-#include "NodeChannelsPlugin.h"
-#include "NodeChannelsPlugin_p.h"
 
-NodeChannelsImpl *NodeChannelsImpl::m_self = 0;
-
-NodeChannelsImpl::NodeChannelsImpl(QObject *parent)
-  : NodePlugin(parent)
+NodeUsersFeed::NodeUsersFeed(const QString &name, const QVariantMap &data)
+  : Feed(name, data)
 {
-  m_self = this;
-
-  m_index = new NodeChannelIndex(this);
-
-  new NodeChannelsCh(this);
-
-  FeedStorage::add(new NodeInfoFeedCreator());
-  FeedStorage::add(new NodeListFeedCreator());
-  FeedStorage::add(new NodeUsersFeedCreator());
+  m_header.acl().setMask(0444);
 }
 
 
-NodePlugin *NodeChannelsPlugin::create()
+NodeUsersFeed::NodeUsersFeed(const QString &name, qint64 date)
+  : Feed(name, date)
 {
-  m_plugin = new NodeChannelsImpl(this);
-  return m_plugin;
+  m_header.acl().setMask(0444);
 }
 
-#if QT_VERSION < 0x050000
-  Q_EXPORT_PLUGIN2(NodeChannels, NodeChannelsPlugin);
-#endif
+
+Feed* NodeUsersFeedCreator::create(const QString &name) const
+{
+  return new NodeUsersFeed(name, DateTime::utc());
+}
+
+
+Feed* NodeUsersFeedCreator::load(const QString &name, const QVariantMap &data) const
+{
+  return new NodeUsersFeed(name, data);
+}
