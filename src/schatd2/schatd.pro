@@ -36,6 +36,7 @@ HEADERS = \
     cores/NodeAuth.h \
     DataBase.h \
     events.h \
+    feeds/FeedsCore.h \
     feeds/NodeAclFeed.h \
     Host.h \
     Hosts.h \
@@ -67,6 +68,7 @@ SOURCES = \
     cores/ExternalAuth.cpp \
     DataBase.cpp \
     events.cpp \
+    feeds/FeedsCore.cpp \
     feeds/NodeAclFeed.cpp \
     Host.cpp \
     Hosts.cpp \
