@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -34,7 +34,6 @@ class SCHAT_EXPORT Ch : public QObject
 public:
   Ch(QObject *parent = 0);
   ~Ch();
-  inline static const QList<QByteArray>& users() { return m_self->m_users; }
   inline static void add(ChHook *hook)           { if (!m_self) return; if (!m_self->m_hooks.contains(hook)) m_self->m_hooks.append(hook); }
   inline static void remove(ChHook *hook)        { if (!m_self) return; m_self->m_hooks.removeAll(hook); }
   static bool add(ChatChannel channel);
@@ -63,9 +62,7 @@ private:
   void setOnline(ChatChannel channel);
   void sync(ChatChannel channel, ChatChannel user = ChatChannel());
 
-  int m_peakUsers;                           ///< Максимальное количество пользователей подключеных к серверу, за всё время работы.
   QList<ChHook *> m_hooks;                   ///< Хуки.
-  QList<QByteArray> m_users;                 ///< Число пользователей подключенных к серверу.
   QMap<QByteArray, ChatChannel> m_channels;  ///< Кеш каналов, ключ в таблице идентификатор канала и нормализированный идентификатор имени и cookie для пользовательских каналов.
   static Ch *m_self;                         ///< Указатель на себя.
 };

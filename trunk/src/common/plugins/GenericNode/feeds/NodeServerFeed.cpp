@@ -85,7 +85,6 @@ QVariantMap NodeServerFeed::feed(Channel *channel) const
     m_body[LS("id")]      = SimpleID::encode(server->id());
     m_body[LS("version")] = QCoreApplication::applicationVersion();
     m_body[LS("os")]      = OsInfo::type();
-    m_body[LS("users")]   = users();
     m_body[LS("auth")]    = auth();
   }
 
@@ -98,18 +97,6 @@ QVariantMap NodeServerFeed::auth() const
   QVariantMap out;
   out[LS("anonymous")] = Storage::value(STORAGE_ANONYMOUS_AUTH).toBool();
   out[LS("external")]  = Storage::value(STORAGE_AUTH_SERVER).toString();
-  return out;
-}
-
-
-/*!
- * Количество подключенных пользователей и пиковое число подключенных пользователей.
- */
-QVariantMap NodeServerFeed::users() const
-{
-  QVariantMap out;
-  out[LS("online")] = Ch::users().size();
-  out[LS("peak")]   = Storage::value(STORAGE_PEAK_USERS).toMap();
   return out;
 }
 

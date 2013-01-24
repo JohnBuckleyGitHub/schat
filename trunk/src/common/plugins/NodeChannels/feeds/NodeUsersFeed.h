@@ -36,6 +36,7 @@ public:
 
 private:
   void init();
+  void setPeak(int count, qint64 date);
 };
 
 

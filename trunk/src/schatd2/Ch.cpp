@@ -35,7 +35,6 @@ Ch *Ch::m_self = 0;
 
 Ch::Ch(QObject *parent)
   : QObject(parent)
-  , m_peakUsers(0)
 {
   m_self = this;
 }
@@ -76,15 +75,7 @@ bool Ch::gc(ChatChannel channel)
     channel->status() = Status::Offline;
     channel->setDate();
 
-    const QByteArray &id = channel->id();
-    if (m_self->m_users.contains(id)) {
-      m_self->m_users.removeAll(id);
-      Ch::server()->removeChannel(id);
-
-      foreach (ChHook *hook, m_self->m_hooks) {
-        hook->updateStatistics();
-      }
-    }
+    Ch::server()->removeChannel(channel->id());
   }
 
   if (channel->channels().all().size())
@@ -236,8 +227,6 @@ void Ch::load()
 {
   Ch::server();
   Ch::channel(QString(LS("Main")));
-
-  m_self->m_peakUsers = Storage::value(STORAGE_PEAK_USERS).toMap().value(LS("count")).toInt();
 
   foreach (ChHook *hook, m_self->m_hooks) {
     hook->load();
@@ -420,33 +409,15 @@ void Ch::remove(const QByteArray &id)
 void Ch::setOnline(ChatChannel channel)
 {
   const QByteArray &id = channel->id();
-  ChatChannel server = Ch::server();
+  ChatChannel server   = Ch::server();
 
   if (server->channels().contains(id))
     return;
 
-  if (channel->type() == SimpleID::UserId) {
-    if (channel->sockets().isEmpty() || m_users.contains(id))
-      return;
+  if (channel->type() == SimpleID::UserId && channel->sockets().isEmpty())
+    return;
 
-    m_users.append(id);
-    server->addChannel(id);
-
-    if (m_users.size() >= m_peakUsers) {
-      m_peakUsers = m_users.size();
-
-      QVariantMap data;
-      data[LS("count")] = m_peakUsers;
-      data[LS("date")]  = DateTime::utc();
-      Storage::setValue(STORAGE_PEAK_USERS, data);
-    }
-
-    foreach (ChHook *hook, m_self->m_hooks) {
-      hook->updateStatistics();
-    }
-  }
-  else
-    server->addChannel(id);
+  server->addChannel(id);
 }
 
 
