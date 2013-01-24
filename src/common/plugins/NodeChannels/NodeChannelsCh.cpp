@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -42,19 +42,20 @@ void NodeChannelsCh::load()
 void NodeChannelsCh::newChannel(ChatChannel channel, ChatChannel user)
 {
   Q_UNUSED(user)
-  Ch::addNewFeedIfNotExist(channel, LS("info"));
+  Ch::addNewFeedIfNotExist(channel, FEED_NAME_INFO);
 }
 
 
 void NodeChannelsCh::server(ChatChannel channel, bool created)
 {
   Q_UNUSED(created)
-  channel->feed(LS("list"));
+  channel->feed(FEED_NAME_LIST);
+  channel->feed(FEED_NAME_USERS);
 }
 
 
 void NodeChannelsCh::sync(ChatChannel channel, ChatChannel user)
 {
   Q_UNUSED(user)
-  Ch::addNewFeedIfNotExist(channel, LS("info"));
+  Ch::addNewFeedIfNotExist(channel, FEED_NAME_INFO);
 }

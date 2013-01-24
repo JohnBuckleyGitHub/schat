@@ -22,20 +22,32 @@
 #include <QVariant>
 
 #include "feeds/Feed.h"
-#include "ServerChannel.h"
 
 class FeedEvent;
+class ServerChannel;
 
 class SCHAT_EXPORT FeedsCore
 {
   FeedsCore() {}
 
 public:
-  static FeedReply post(ChatChannel channel, const QString &name, ChatChannel sender, const QVariant &value = QVariant(), int options = 0);
-  static FeedReply post(const QString &name, ChatChannel sender, const QVariant &value = QVariant(), int options = 0);
   static FeedReply post(const QString &name, const QVariant &value = QVariant(), int options = 0);
+  static FeedReply post(const QString &name, ServerChannel *sender, const QVariant &value = QVariant(), int options = 0);
+  static FeedReply post(ServerChannel *channel, const QString &name, ServerChannel *sender, const QVariant &value = QVariant(), int options = 0);
 
-  static FeedReply request(ClientChannel channel, const QString &method, const QString &name, ChatChannel sender, const QVariantMap &json = QVariantMap());
+  static FeedReply put(const QString &name, const QVariant &value = QVariant(), int options = 0);
+  static FeedReply put(const QString &name, ServerChannel *sender, const QVariant &value = QVariant(), int options = 0);
+  static FeedReply put(ServerChannel *channel, const QString &name, ServerChannel *sender, const QVariant &value = QVariant(), int options = 0);
+
+  static FeedReply del(const QString &name);
+  static FeedReply del(const QString &name, ServerChannel *sender);
+  static FeedReply del(ServerChannel *channel, const QString &name, ServerChannel *sender);
+
+  static FeedReply get(const QString &name, const QVariantMap &data = QVariantMap());
+  static FeedReply get(const QString &name, ServerChannel *sender, const QVariantMap &data = QVariantMap());
+  static FeedReply get(ServerChannel *channel, const QString &name, ServerChannel *sender, const QVariantMap &data = QVariantMap());
+
+  static FeedReply request(ServerChannel *channel, const QString &method, const QString &name, ServerChannel *sender, const QVariantMap &json = QVariantMap());
 
 private:
   /// Числовое представление методов.
