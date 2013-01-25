@@ -16,21 +16,21 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SERVERHANDLER_H_
-#define SERVERHANDLER_H_
+#ifndef FEEDHANDLER_H_
+#define FEEDHANDLER_H_
 
-#include "handlers/FeedHandler.h"
+#include "RestHandler.h"
+#include "ServerChannel.h"
 
-class ServerHandler : public FeedHandler
+class FeedHandler : public RestHandler
 {
 public:
-  ServerHandler();
+  FeedHandler();
 
 protected:
-  bool serve();
+  bool serveFeed(ChatChannel channel, const QString &feedName);
 
-private:
-  bool uptime();
+  QMap<QByteArray, RestReplyCache> m_cache; ///< Кешированные ответы.
 };
 
-#endif /* SERVERHANDLER_H_ */
+#endif /* FEEDHANDLER_H_ */

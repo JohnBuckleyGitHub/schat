@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,30 +16,33 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Ch.h"
+#include "feeds/FeedStrings.h"
 #include "handlers/ServerHandler.h"
+#include "JSON.h"
+#include "RestApi.h"
 #include "sglobal.h"
 #include "Tufao/httpserverrequest.h"
 #include "Tufao/httpserverresponse.h"
-#include "Tufao/headers.h"
-#include "feeds/Feed.h"
-#include "Ch.h"
-#include "JSON.h"
 
 ServerHandler::ServerHandler()
-  : RestHandler()
+  : FeedHandler()
 {
 }
 
 
 bool ServerHandler::serve()
 {
-  if (!m_path.startsWith(LS("/v1/server")))
+  if (!m_path.startsWith(LS(REST_API_SERVER)))
     return false;
 
-  if (m_path == LS("/v1/server"))
-    return server();
+  if (m_path == LS(REST_API_SERVER))
+    return serveFeed(Ch::server(), FEED_NAME_SERVER);
 
-  else if (m_path == LS("/v1/server/uptime"))
+  else if (m_path == LS(REST_API_SERVER_USERS))
+    return serveFeed(Ch::server(), FEED_NAME_USERS);
+
+  else if (m_path == LS(REST_API_SERVER_UPTIME))
     return uptime();
 
   return false;
@@ -47,56 +50,14 @@ bool ServerHandler::serve()
 
 
 /*!
- * Обработка запроса "/api/v1/server".
- */
-bool ServerHandler::server()
-{
-  if (!ifMethodAllowed())
-    return true;
-
-  FeedPtr feed = Ch::server()->feed(LS("server"));
-  qint64 date  = feed->head().date();
-
-  if (m_cache.date != date) {
-    m_cache.date = date;
-    m_cache.etag = etag(date, "/v1/server");
-
-    QVariantMap data = feed->feed();
-    data.remove(LS("head"));
-    m_cache.body = JSON::generate(data);
-  }
-
-  setLastModified(date);
-  setETag(m_cache.etag);
-  setNoCache();
-
-  if (!ifModified(m_cache.etag)) {
-    m_response->writeHead(Tufao::HttpServerResponse::NOT_MODIFIED);
-    m_response->end();
-    return true;
-  }
-
-  m_response->writeHead(Tufao::HttpServerResponse::OK);
-  if (m_request->method() != "HEAD") {
-    setContentLength(m_cache.body.size());
-    m_response->end(m_cache.body);
-  }
-  else
-    m_response->end();
-
-  return true;
-}
-
-
-/*!
- * Обработка запроса "/api/v1/server/uptime".
+ * Обработка запроса REST_API_SERVER_UPTIME.
  */
 bool ServerHandler::uptime()
 {
   if (!ifMethodAllowed())
     return true;
 
-  FeedPtr feed = Ch::server()->feed(LS("server"));
+  FeedPtr feed = Ch::server()->feed(FEED_NAME_SERVER);
 
   setNoStore();
 
