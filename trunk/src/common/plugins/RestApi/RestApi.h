@@ -16,21 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SERVERHANDLER_H_
-#define SERVERHANDLER_H_
+#ifndef RESTAPI_H_
+#define RESTAPI_H_
 
-#include "handlers/FeedHandler.h"
+#define REST_API_SERVER        "/v1/server"
+#define REST_API_SERVER_UPTIME "/v1/server/uptime"
+#define REST_API_SERVER_USERS  "/v1/server/users"
 
-class ServerHandler : public FeedHandler
-{
-public:
-  ServerHandler();
-
-protected:
-  bool serve();
-
-private:
-  bool uptime();
-};
-
-#endif /* SERVERHANDLER_H_ */
+#endif /* RESTAPI_H_ */
