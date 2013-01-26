@@ -26,7 +26,6 @@
 #include "feeds/FeedEvents.h"
 #include "net/NodePool.h"
 #include "NodeInit.h"
-#include "NodeNotify.h"
 #include "NodePlugins.h"
 #include "Path.h"
 #include "Settings.h"
@@ -42,7 +41,6 @@ NodeInit::NodeInit(const QString &app, QObject *parent)
   , m_core(0)
   , m_pool(0)
 {
-  new NodeNotify(this);
   new FeedEvents(this);
 
   m_storage = new Storage(app, this);
