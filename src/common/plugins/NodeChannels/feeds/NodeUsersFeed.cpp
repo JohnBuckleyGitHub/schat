@@ -85,10 +85,12 @@ FeedReply NodeUsersFeed::post(const QString &path, const QVariantMap &json, Chan
 }
 
 
-void NodeUsersFeed::init()
+void NodeUsersFeed::setChannel(Channel *channel)
 {
-  m_header.acl().setMask(0444);
-  m_data[USERS_FEED_COUNT] = 0;
+  Feed::setChannel(channel);
+
+  if (channel->type() != SimpleID::ServerId)
+    return;
 
   if (!m_data.contains(USERS_FEED_PEAK)) {
     const QVariantMap peak = Storage::value(STORAGE_PEAK_USERS).toMap();
@@ -97,6 +99,13 @@ void NodeUsersFeed::init()
     else
       m_data[USERS_FEED_PEAK] = peak;
   }
+}
+
+
+void NodeUsersFeed::init()
+{
+  m_header.acl().setMask(0444);
+  m_data[USERS_FEED_COUNT] = 0;
 }
 
 

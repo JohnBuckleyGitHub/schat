@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -69,6 +69,15 @@ QList<quint64> Sockets::all(ChatChannel user, bool echo)
  * Получение списка всех сокетов пользователей в обычном канале.
  */
 QList<quint64> Sockets::channel(ChatChannel channel)
+{
+  if (!channel)
+    return QList<quint64>();
+
+  return Sockets::channel(channel.data());
+}
+
+
+QList<quint64> Sockets::channel(ServerChannel *channel)
 {
   QList<quint64> out;
   if (!channel)

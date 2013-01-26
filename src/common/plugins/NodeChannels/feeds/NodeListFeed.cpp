@@ -80,7 +80,7 @@ FeedReply NodeListFeed::put(const QString &path, const QVariantMap &json, Channe
 
     m_data[LS("channels")] = channels;
     m_header.setDate(NodeChannelsImpl::index()->date());
-    return Notice::OK;
+    return FeedReply(Notice::OK, DateTime::utc());
   }
 
   return Notice::Forbidden;

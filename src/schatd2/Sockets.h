@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ public:
   static QList<quint64> all(ChatChannel channel, ChatChannel user, bool echo = false);
   static QList<quint64> all(ChatChannel user, bool echo = false);
   static QList<quint64> channel(ChatChannel channel);
+  static QList<quint64> channel(ServerChannel *channel);
   static void echoFilter(ChatChannel channel, QList<quint64> &sockets, bool echo);
   static void merge(QList<quint64> &out, const QList<quint64> &sockets);
 };

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,9 +20,11 @@
 
 #include "Ch.h"
 #include "DateTime.h"
+#include "feeds/FeedEvents.h"
+#include "feeds/FeedsCore.h"
+#include "net/packets/Notice.h"
 #include "net/SimpleID.h"
 #include "NodeChannelIndex.h"
-#include "NodeNotify.h"
 #include "sglobal.h"
 
 ChannelIndexData::ChannelIndexData(ChatChannel channel)
@@ -31,7 +33,7 @@ ChannelIndexData::ChannelIndexData(ChatChannel channel)
   , visibility(0)
   , name(channel->name())
 {
-  FeedPtr feed = channel->feed(LS("info"), false);
+  FeedPtr feed = channel->feed(FEED_NAME_INFO, false);
   if (!feed)
     return;
 
@@ -89,7 +91,7 @@ NodeChannelIndex::NodeChannelIndex(QObject *parent)
   , m_updated(false)
   , m_date(0)
 {
-  connect(NodeNotify::i(), SIGNAL(notify(NotifyItem)), SLOT(notify(NotifyItem)));
+  connect(FeedEvents::i(), SIGNAL(notify(FeedEvent)), SLOT(notify(FeedEvent)));
 }
 
 
@@ -111,23 +113,29 @@ void NodeChannelIndex::build()
   m_date    = DateTime::utc();
   m_updated = true;
 
-  FeedPtr feed = Ch::server()->feed(LS("list"), false);
-  if (feed)
-    feed->put(LS("channels"), QVariantMap(), Ch::server().data());
+  FeedsCore::put(FEED_NAME_LIST + LS("/channels"));
 }
 
 
-/*!
- * Обработка уведомлений.
- */
-void NodeChannelIndex::notify(const NotifyItem &notify)
+void NodeChannelIndex::notify(const FeedEvent &event)
 {
-  if (notify.type() == NotifyItem::ChannelBonding && SimpleID::typeOf(notify.param1().toByteArray()) == SimpleID::ChannelId) {
+  if (isDirty(event))
     reload();
-  }
-  else if (notify.type() == NotifyItem::FeedModified && SimpleID::typeOf(notify.param1().toByteArray()) == SimpleID::ChannelId && notify.param2() == LS("info")) {
-    reload();
-  }
+}
+
+
+bool NodeChannelIndex::isDirty(const FeedEvent &event) const
+{
+  if (event.status != Notice::OK || event.method == FEED_METHOD_GET)
+    return false;
+
+  if (event.name == FEED_NAME_INFO)
+    return true;
+
+  if (event.name == FEED_NAME_USERS && event.path.size() == 34 && SimpleID::typeOf(event.channel) == SimpleID::ChannelId)
+    return true;
+
+  return false;
 }
 
 
