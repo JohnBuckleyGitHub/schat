@@ -24,7 +24,6 @@
 #include "feeds/FeedStorage.h"
 #include "feeds/FeedStrings.h"
 #include "net/SimpleID.h"
-#include "NodeNotify.h"
 #include "Normalize.h"
 #include "ServerChannel.h"
 #include "sglobal.h"
@@ -115,7 +114,6 @@ bool ServerChannel::addChannel(const QByteArray &id)
     if (SimpleID::typeOf(id) == SimpleID::UserId)
       FeedsCore::post(this, FEED_NAME_USERS + LC('/') + SimpleID::encode(id), Ch::server().data());
 
-    NodeNotify::start(NotifyItem::ChannelBonding, 1, this->id(), id);
     return true;
   }
 
@@ -130,7 +128,6 @@ bool ServerChannel::removeChannel(const QByteArray &id)
     if (SimpleID::typeOf(id) == SimpleID::UserId)
       FeedsCore::del(this, FEED_NAME_USERS + LC('/') + SimpleID::encode(id), Ch::server().data());
 
-    NodeNotify::start(NotifyItem::ChannelBonding, 0, this->id(), id);
     return true;
   }
 

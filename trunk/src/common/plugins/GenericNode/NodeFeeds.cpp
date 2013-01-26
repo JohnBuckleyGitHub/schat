@@ -27,7 +27,6 @@
 #include "net/packets/Notice.h"
 #include "net/SimpleID.h"
 #include "NodeFeeds.h"
-#include "NodeNotify.h"
 #include "sglobal.h"
 #include "Sockets.h"
 #include "Storage.h"
@@ -271,7 +270,6 @@ int NodeFeeds::query(const QString &verb)
   if (reply.date && options & Feed::Broadcast)
     broadcast(result.feed, true);
 
-  NodeNotify::start(NotifyItem::FeedModified, 0, m_channel->id(), result.name);
   return Notice::OK;
 }
 
