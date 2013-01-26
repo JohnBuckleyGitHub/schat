@@ -22,6 +22,7 @@
 #include "feeds/FeedStorage.h"
 #include "net/packets/FeedNotice.h"
 #include "net/packets/Notice.h"
+#include "Sockets.h"
 
 FeedReply FeedsCore::post(const QString &name, const QVariant &value, int options)
 {
@@ -162,6 +163,9 @@ FeedReply FeedsCore::request(ServerChannel *channel, const QString &method, cons
 
     if (reply.date)
       FeedStorage::save(feed, reply.date);
+
+    if (channel->type() != SimpleID::ServerId)
+      event->broadcast = Sockets::channel(channel);
   }
 
   return done(event, reply);

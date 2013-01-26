@@ -43,6 +43,7 @@ void NodeChannelsCh::newChannel(ChatChannel channel, ChatChannel user)
 {
   Q_UNUSED(user)
   Ch::addNewFeedIfNotExist(channel, FEED_NAME_INFO);
+  channel->feed(FEED_NAME_USERS);
 }
 
 
@@ -58,4 +59,5 @@ void NodeChannelsCh::sync(ChatChannel channel, ChatChannel user)
 {
   Q_UNUSED(user)
   Ch::addNewFeedIfNotExist(channel, FEED_NAME_INFO);
+  channel->feed(FEED_NAME_USERS);
 }

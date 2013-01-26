@@ -63,6 +63,9 @@ protected:
 typedef QSharedPointer<NotifyItem> NotifyItemPtr;
 
 
+/*!
+ * \deprecated Этот класс должен быть заменён на FeedEvents.
+ */
 class SCHAT_EXPORT NodeNotify : public QObject
 {
   Q_OBJECT

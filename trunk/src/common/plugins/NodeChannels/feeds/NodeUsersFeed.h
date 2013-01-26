@@ -34,6 +34,8 @@ public:
   FeedReply del(const QString &path, Channel *channel = 0);
   FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0);
 
+  void setChannel(Channel *channel);
+
 private:
   void init();
   void setPeak(int count, qint64 date);
