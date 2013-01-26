@@ -16,11 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "acl/AclValue.h"
+#include "Account.h"
 #include "acl/Acl.h"
+#include "acl/AclValue.h"
 #include "Channel.h"
 #include "feeds/Feed.h"
 #include "net/SimpleID.h"
+#include "sglobal.h"
 
 AclValue::AclValue(const QByteArray &mask)
   : m_mask(toInt(mask))
@@ -88,10 +90,13 @@ int AclValue::match(const Feed *feed, Channel *channel)
   if (!feed)
     return 0;
 
-  if (channel && channel->type() == SimpleID::ServerId)
-    return 077;
-
   if (feed->head().name() == FEED_NAME_ACL) {
+    if (channel && channel->type() == SimpleID::ServerId)
+      return 077;
+
+    if (channel->account() && channel->account()->groups.contains(LS("master")))
+      return 077;
+
     if (!feed->data().contains(FEED_WILDCARD_ASTERISK))
       return 6; // Необходимо для обеспечения обратной совместимости новых клиентов с сервером старее 1.99.53.
 
