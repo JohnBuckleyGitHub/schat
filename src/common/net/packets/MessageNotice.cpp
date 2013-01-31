@@ -102,3 +102,17 @@ QStringList MessageNotice::encode(const QList<QByteArray> &ids)
 
   return out;
 }
+
+
+/*!
+ * Преобразование списка сообщений в кодированный идентификатор списка.
+ */
+QByteArray MessageNotice::toTag(const QStringList &messages)
+{
+  QByteArray raw;
+  raw.reserve(messages.size() * SimpleID::DefaultSize);
+  foreach (const QString &id, messages)
+    raw.append(SimpleID::decode(id));
+
+  return SimpleID::encode(SimpleID::make(raw, SimpleID::MessageId));
+}

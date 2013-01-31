@@ -16,7 +16,6 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QRunnable>
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QStringList>
@@ -28,51 +27,13 @@
 #include "ChatCore.h"
 #include "client/ChatClient.h"
 #include "HistoryDB.h"
+#include "JSON.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
 #include "text/PlainTextFilter.h"
 
 QString HistoryDB::m_id;
 HistoryDB *HistoryDB::m_self = 0;
-
-class AddMessageTask : public QRunnable
-{
-  MessageNotice m_packet;
-
-public:
-  AddMessageTask(MessagePacket packet)
-  : QRunnable()
-  , m_packet(*packet)
-  {}
-
-  void run()
-  {
-    const QByteArray id = SimpleID::encode(m_packet.id());
-
-    QSqlQuery query(QSqlDatabase::database(HistoryDB::id()));
-    query.prepare(LS("SELECT id FROM messages WHERE messageId = :messageId LIMIT 1;"));
-    query.bindValue(LS(":messageId"), id);
-    query.exec();
-
-    if (query.first() && query.value(0).toLongLong() > 0)
-      return;
-
-    query.prepare(LS("INSERT INTO messages (messageId, senderId, destId, status, date, command, text, plain, data) "
-                       "VALUES (:messageId, :senderId, :destId, :status, :date, :command, :text, :plain, :data);"));
-
-    query.bindValue(LS(":messageId"), id);
-    query.bindValue(LS(":senderId"),  SimpleID::encode(m_packet.sender()));
-    query.bindValue(LS(":destId"),    SimpleID::encode(m_packet.dest()));
-    query.bindValue(LS(":status"),    HistoryDB::status(m_packet.status()));
-    query.bindValue(LS(":date"),      m_packet.date());
-    query.bindValue(LS(":command"),   m_packet.command());
-    query.bindValue(LS(":text"),      m_packet.text());
-    query.bindValue(LS(":plain"),     PlainTextFilter::filter(m_packet.text()));
-    query.bindValue(LS(":data"),      m_packet.raw());
-    query.exec();
-  }
-};
-
 
 HistoryDB::HistoryDB(QObject *parent)
   : QObject(parent)
@@ -116,6 +77,8 @@ bool HistoryDB::open(const QByteArray &id, const QString &dir)
 
 bool HistoryDB::synced(FeedPtr feed)
 {
+  return false;
+
   if (!feed)
     return false;
 
@@ -218,9 +181,21 @@ MessageRecord HistoryDB::get(const QByteArray &id)
 }
 
 
+void HistoryDB::add(const QByteArray &channelId, const QStringList &messages)
+{
+  if (messages.isEmpty())
+    return;
+
+  history::AddLast *task = new history::AddLast(channelId, messages);
+  m_self->m_tasks.append(task);
+  if (m_self->m_tasks.size() == 1)
+    QTimer::singleShot(0, m_self, SLOT(startTasks()));
+}
+
+
 void HistoryDB::add(MessagePacket packet)
 {
-  AddMessageTask *task = new AddMessageTask(packet);
+  history::AddMessage *task = new history::AddMessage(packet);
   m_self->m_tasks.append(task);
   if (m_self->m_tasks.size() == 1)
     QTimer::singleShot(0, m_self, SLOT(startTasks()));
@@ -272,7 +247,17 @@ void HistoryDB::create()
     "  text       TEXT,"
     "  plain      TEXT,"
     "  data       BLOB"
-    ");"));
+    ");"
+  ));
+
+  query.exec(LS(
+    "CREATE TABLE IF NOT EXISTS last ( "
+    "  id         INTEGER PRIMARY KEY,"
+    "  channel    BLOB    NOT NULL UNIQUE,"
+    "  tag        BLOB,"
+    "  data       BLOB"
+    ");"
+  ));
 
   version();
 }
@@ -335,4 +320,73 @@ qint64 HistoryDB::V3()
   query.exec(LS("COMMIT;"));
 
   return 3;
+}
+
+
+history::AddMessage::AddMessage(MessagePacket packet)
+  : QRunnable()
+  , m_packet(*packet)
+{
+}
+
+
+void history::AddMessage::run()
+{
+  const QByteArray id = SimpleID::encode(m_packet.id());
+
+  QSqlQuery query(QSqlDatabase::database(HistoryDB::id()));
+  query.prepare(LS("SELECT id FROM messages WHERE messageId = :messageId LIMIT 1;"));
+  query.bindValue(LS(":messageId"), id);
+  query.exec();
+
+  if (query.first() && query.value(0).toLongLong() > 0)
+    return;
+
+  query.prepare(LS("INSERT INTO messages (messageId, senderId, destId, status, date, command, text, plain, data) "
+                     "VALUES (:messageId, :senderId, :destId, :status, :date, :command, :text, :plain, :data);"));
+
+  query.bindValue(LS(":messageId"), id);
+  query.bindValue(LS(":senderId"),  SimpleID::encode(m_packet.sender()));
+  query.bindValue(LS(":destId"),    SimpleID::encode(m_packet.dest()));
+  query.bindValue(LS(":status"),    HistoryDB::status(m_packet.status()));
+  query.bindValue(LS(":date"),      m_packet.date());
+  query.bindValue(LS(":command"),   m_packet.command());
+  query.bindValue(LS(":text"),      m_packet.text());
+  query.bindValue(LS(":plain"),     PlainTextFilter::filter(m_packet.text()));
+  query.bindValue(LS(":data"),      m_packet.raw());
+  query.exec();
+}
+
+
+history::AddLast::AddLast(const QByteArray &channelId, const QStringList &messages)
+  : QRunnable()
+  , m_channelId(SimpleID::encode(channelId))
+  , m_messages(messages)
+{
+}
+
+
+void history::AddLast::run()
+{
+  QSqlQuery query(QSqlDatabase::database(HistoryDB::id()));
+  query.prepare(LS("SELECT id FROM last WHERE channel = :channel LIMIT 1;"));
+  query.bindValue(LS(":channel"), m_channelId);
+  query.exec();
+
+  qint64 key = 0;
+  if (query.first())
+    key = query.value(0).toLongLong();
+
+  if (key) {
+    query.prepare(LS("UPDATE last SET tag = :tag, data = :data WHERE id = :id;"));
+    query.bindValue(LS(":id"), key);
+  }
+  else {
+    query.prepare(LS("INSERT INTO last (channel, tag, data) VALUES (:channel, :tag, :data);"));
+    query.bindValue(LS(":channel"), m_channelId);
+  }
+
+  query.bindValue(LS(":tag"),  MessageNotice::toTag(m_messages));
+  query.bindValue(LS(":data"), JSON::generate(m_messages));
+  query.exec();
 }

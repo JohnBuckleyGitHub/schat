@@ -19,15 +19,17 @@
 #ifndef HISTORYDB_H_
 #define HISTORYDB_H_
 
-#include <QHash>
 #include <QObject>
+#include <QRunnable>
 
 #include "feeds/Feed.h"
 #include "net/packets/MessageNotice.h"
 
 class MessageId;
-class QRunnable;
 
+/*!
+ * Интерфейс базы данных локальной копии истории сообщений.
+ */
 class HistoryDB : public QObject
 {
   Q_OBJECT
@@ -41,6 +43,7 @@ public:
   static int status(int status);
   static MessageRecord get(const QByteArray &id);
   static QList<QByteArray> last(const QByteArray &channel, int limit);
+  static void add(const QByteArray &channelId, const QStringList &messages);
   static void add(MessagePacket packet);
   static void clear();
   static void close();
@@ -59,5 +62,38 @@ private:
   static HistoryDB *m_self;  ///< Указатель на себя.
   static QString m_id;       ///< Идентификатор соединения с базой.
 };
+
+
+namespace history {
+
+/*!
+ * Отложенная операция добавления сообщения в базу данных.
+ */
+class AddMessage : public QRunnable
+{
+public:
+  AddMessage(MessagePacket packet);
+  void run();
+
+private:
+  MessageNotice m_packet;
+};
+
+
+/*!
+ * Отложенная операция добавления или обновления списка последних сообщений для канала.
+ */
+class AddLast : public QRunnable
+{
+public:
+  AddLast(const QByteArray &channelId, const QStringList &messages);
+  void run();
+
+private:
+  const QByteArray m_channelId;
+  const QStringList m_messages;
+};
+
+} /* namespace history */
 
 #endif /* HISTORYDB_H_ */
