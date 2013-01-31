@@ -30,6 +30,8 @@
 #include "sglobal.h"
 #include "ui/tabs/ChatView.h"
 
+#include "JSON.h"
+
 HistoryChatView::HistoryChatView(QObject *parent)
   : ChatViewHooks(parent)
 {
@@ -70,6 +72,17 @@ void HistoryChatView::notify(const Notify &notify)
       ChatView *view = ChatViewHooks::view(n.channel());
       if (view)
         sync(n.channel(), view->lastMessage());
+    }
+  }
+  else if (notify.type() == Notify::FeedReply) {
+    const FeedNotify &n = static_cast<const FeedNotify &>(notify);
+    if (n.feed() == FEED_NAME_MESSAGES && n.path() == LS("last")) {
+      qDebug() << "FEED_NAME_MESSAGES" << JSON::generate(n.json(), true);
+      qDebug() << n.status();
+
+      if (n.status() == Notice::OK) {
+        HistoryDB::add(n.channel(), n.json().value(LS("messages")).toStringList());
+      }
     }
   }
 }

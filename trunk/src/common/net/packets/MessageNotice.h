@@ -56,6 +56,7 @@ public:
   QByteArray toId() const;
   static QList<QByteArray> decode(const QStringList &ids);
   static QStringList encode(const QList<QByteArray> &ids);
+  static QByteArray toTag(const QStringList &messages);
 
 private:
   QByteArray m_internalId; ///< Внутренний идентификатор сообщения.
