@@ -33,7 +33,7 @@ IdlePluginImpl::IdlePluginImpl(QObject *parent)
   : ChatPlugin(parent)
   , m_autoAway(0)
 {
-  ChatCore::settings()->setDefault(LS("AutoAway"), 600);
+  ChatCore::settings()->setDefault(SETTINGS_AUTO_AWAY, 600);
   ChatCore::translation()->addOther(LS("idle"));
 
   m_idle = new Idle(this);
@@ -59,7 +59,7 @@ void IdlePluginImpl::idle(int seconds)
 
 void IdlePluginImpl::settingsChanged(const QString &key, const QVariant &value)
 {
-  if (key != LS("AutoAway"))
+  if (key != SETTINGS_AUTO_AWAY)
     return;
 
   int autoAway = value.toInt();
@@ -76,7 +76,7 @@ void IdlePluginImpl::settingsChanged(const QString &key, const QVariant &value)
 
 void IdlePluginImpl::start()
 {
-  m_autoAway = ChatCore::settings()->value(LS("AutoAway")).toInt();
+  m_autoAway = ChatCore::settings()->value(SETTINGS_AUTO_AWAY).toInt();
   if (m_autoAway < 1)
     return;
 

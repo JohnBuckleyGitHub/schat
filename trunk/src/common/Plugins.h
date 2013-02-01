@@ -64,6 +64,8 @@ class SCHAT_EXPORT Plugins : public QObject
 
 public:
   Plugins(QObject *parent = 0);
+  ~Plugins();
+
   inline const QString& type() const           { return m_type; }
   inline PluginItem *plugin(const QString &id) { return m_plugins.value(id); }
   inline void setType(const QString &type)     { m_type = type; }

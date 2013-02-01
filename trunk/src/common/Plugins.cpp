@@ -82,6 +82,12 @@ Plugins::Plugins(QObject *parent)
 }
 
 
+Plugins::~Plugins()
+{
+  qDeleteAll(m_plugins);
+}
+
+
 /*!
  * Получение списка плагинов.
  */
