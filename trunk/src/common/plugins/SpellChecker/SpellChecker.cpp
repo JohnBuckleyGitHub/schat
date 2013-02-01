@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  * Copyright © 2012 Alexey Ivanov <alexey.ivanes@gmail.com>
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -62,6 +62,7 @@ SpellChecker::SpellChecker(QObject *parent)
 SpellChecker::~SpellChecker()
 {
   delete m_menu;
+  delete SpellBackend::instance();
 }
 
 
