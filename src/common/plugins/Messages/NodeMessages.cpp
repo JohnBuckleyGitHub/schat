@@ -88,8 +88,6 @@ bool NodeMessages::read(PacketReader *reader)
     Core::i()->route(m_dest);
   }
 
-  putLast(feed, m_packet->id());
-
   FeedStorage::save(feed, m_packet->date());
   FeedEvents::start(event);
   return false;
@@ -118,17 +116,6 @@ FeedEvent *NodeMessages::createEvent()
     event->date = m_dest->feed(FEED_NAME_MESSAGES, true, false)->head().date();
 
   return event;
-}
-
-
-/*!
- * Запись идентификатора последнего сообщения в фид \b messages.
- */
-void NodeMessages::putLast(FeedPtr feed, const QByteArray &id)
-{
-  QVariantMap data;
-  data[FEED_KEY_VALUE] = SimpleID::encode(id);
-  feed->put(LS("last"), data, Ch::server().data());
 }
 
 

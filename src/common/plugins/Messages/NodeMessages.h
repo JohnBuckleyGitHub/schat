@@ -34,7 +34,6 @@ protected:
 
 private:
   FeedEvent *createEvent();
-  void putLast(FeedPtr feed, const QByteArray &id);
   void reject(int status);
 
   MessageNotice *m_packet; ///< Прочитанный пакет.
