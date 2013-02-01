@@ -54,24 +54,6 @@ FeedReply NodeMessagesFeed::get(const QString &path, const QVariantMap &json, Ch
 }
 
 
-FeedReply NodeMessagesFeed::put(const QString &path, const QVariantMap &json, Channel *channel)
-{
-  if (path.isEmpty() || !json.contains(FEED_KEY_VALUE))
-    return Notice::BadRequest;
-
-  if (channel->type() != SimpleID::ServerId)
-    return Notice::Forbidden;
-
-  const QVariant& value = json[FEED_KEY_VALUE];
-  if (path == LS("last")) {
-    m_data[LS("last")] = value;
-    return Notice::OK;
-  }
-
-  return Notice::NotModified;
-}
-
-
 /*!
  * Загрузка сообщений по идентификаторам.
  */
@@ -109,26 +91,29 @@ FeedReply NodeMessagesFeed::last(const QVariantMap &json, Channel *user) const
     return Notice::BadRequest;
 
   qint64 before = json.value(LS("before"), 0).toLongLong();
-  QList<QByteArray> messages;
+  QStringList messages;
   Channel *channel = head().channel();
 
   if (channel->type() == SimpleID::ChannelId) {
-    messages = NodeMessagesDB::last(channel->id(), count, before);
+    messages = MessageNotice::encode(NodeMessagesDB::last(channel->id(), count, before));
   }
   else if (channel->type() == SimpleID::UserId) {
     if (!user)
       return Notice::BadRequest;
 
-    messages = NodeMessagesDB::last(channel->id(), user->id(), count, before);
+    messages = MessageNotice::encode(NodeMessagesDB::last(channel->id(), user->id(), count, before));
   }
 
   if (messages.isEmpty())
     return Notice::NotFound;
 
+  if (json.contains(LS("tag")) && json.value(LS("tag")) == MessageNotice::toTag(messages))
+    return Notice::NotModified;
+
   FeedReply reply(Notice::OK);
   reply.json = json;
   reply.json[LS("count")]    = messages.size();
-  reply.json[LS("messages")] = MessageNotice::encode(messages);
+  reply.json[LS("messages")] = messages;
   return reply;
 }
 

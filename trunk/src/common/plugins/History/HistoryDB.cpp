@@ -75,27 +75,6 @@ bool HistoryDB::open(const QByteArray &id, const QString &dir)
 }
 
 
-bool HistoryDB::synced(FeedPtr feed)
-{
-  return false;
-
-  if (!feed)
-    return false;
-
-  const QByteArray id = feed->data().value(LS("last")).toByteArray();
-  if (id.isEmpty() || SimpleID::typeOf(SimpleID::decode(id)) != SimpleID::MessageId)
-    return false;
-
-  QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(LS("SELECT id FROM messages WHERE messageId = :messageId AND date = :date;"));
-  query.bindValue(LS(":messageId"), id);
-  query.bindValue(LS(":date"),      feed->head().date());
-  query.exec();
-
-  return query.first();
-}
-
-
 int HistoryDB::status(int status)
 {
   if (status == Notice::OK)
@@ -114,44 +93,17 @@ int HistoryDB::status(int status)
  * \param channel Кодированный идентификатор канала.
  * \param limit   Ограничение на количество сообщений.
  */
-QList<QByteArray> HistoryDB::last(const QByteArray &channel, int limit)
+QList<QByteArray> HistoryDB::last(const QByteArray &channelId)
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
-  int type            = SimpleID::typeOf(SimpleID::decode(channel));
-  const QByteArray id = SimpleID::encode(ChatClient::id());
-
-  if (type == SimpleID::ChannelId) {
-    query.prepare(LS("SELECT messageId FROM messages WHERE destId = :destId AND status < 400 ORDER BY id DESC LIMIT :limit;"));
-    query.bindValue(LS(":destId"), channel);
-  }
-  else if (type == SimpleID::UserId) {
-    if (id == channel) {
-      query.prepare(LS("SELECT messageId FROM messages WHERE senderId = :senderId AND destId = :destId AND status < 400 ORDER BY id DESC LIMIT :limit;"));
-      query.bindValue(LS(":destId"), channel);
-      query.bindValue(LS(":senderId"), channel);
-    }
-    else {
-      query.prepare(LS("SELECT messageId FROM messages WHERE (senderId = :id1 AND destId = :id2) OR (senderId = :id3 AND destId = :id4) AND status < 400 ORDER BY id DESC LIMIT :limit;"));
-      query.bindValue(LS(":id1"), channel);
-      query.bindValue(LS(":id2"), id);
-      query.bindValue(LS(":id3"), id);
-      query.bindValue(LS(":id4"), channel);
-    }
-  }
-  else
-    return QList<QByteArray>();
-
-  query.bindValue(LS(":limit"), limit);
+  query.prepare(LS("SELECT data FROM last WHERE channel = :channel LIMIT 1;"));
+  query.bindValue(LS(":channel"), SimpleID::encode(channelId));
   query.exec();
 
-  if (!query.isActive())
+  if (!query.first())
     return QList<QByteArray>();
 
-  QList<QByteArray> out;
-  while (query.next())
-    out.prepend(query.value(0).toByteArray());
-
-  return out;
+  return MessageNotice::decode(JSON::parse(query.value(0).toByteArray()).toStringList());
 }
 
 
@@ -178,6 +130,23 @@ MessageRecord HistoryDB::get(const QByteArray &id)
   record.data      = query.value(7).toByteArray();
 
   return record;
+}
+
+
+/*!
+ * Получение идентификатора последних сообщений.
+ */
+QString HistoryDB::tag(const QByteArray &channelId)
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.prepare(LS("SELECT tag FROM last WHERE channel = :channel LIMIT 1;"));
+  query.bindValue(LS(":channel"), SimpleID::encode(channelId));
+  query.exec();
+
+  if (query.first())
+    return query.value(0).toString();
+
+  return QString();
 }
 
 

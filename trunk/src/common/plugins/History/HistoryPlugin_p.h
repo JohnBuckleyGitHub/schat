@@ -34,9 +34,9 @@ public:
   HistoryImpl(QObject *parent);
   ~HistoryImpl();
   static bool fetch(const QByteArray &id, const QList<QByteArray> &required);
-  static bool get(const QByteArray &id, const QList<QByteArray> &ids);
+  static bool get(const QByteArray &id, const QList<QByteArray> &messages);
   static bool since(const QByteArray &id, qint64 date);
-  static QList<QByteArray> getLocal(const QList<QByteArray> &ids);
+  static QList<QByteArray> getLocal(const QList<QByteArray> &messages);
 
 private slots:
   void notify(const Notify &notify);

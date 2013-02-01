@@ -30,8 +30,6 @@
 #include "sglobal.h"
 #include "ui/tabs/ChatView.h"
 
-#include "JSON.h"
-
 HistoryChatView::HistoryChatView(QObject *parent)
   : ChatViewHooks(parent)
 {
@@ -66,23 +64,16 @@ void HistoryChatView::loadFinishedImpl(ChatView *view)
 
 void HistoryChatView::notify(const Notify &notify)
 {
-  if (notify.type() == Notify::FeedData) {
-    const FeedNotify &n = static_cast<const FeedNotify &>(notify);
-    if (n.feed() == FEED_NAME_MESSAGES && n.status() == Notice::OK) {
-      ChatView *view = ChatViewHooks::view(n.channel());
-      if (view)
-        sync(n.channel(), view->lastMessage());
-    }
-  }
-  else if (notify.type() == Notify::FeedReply) {
+  if (notify.type() == Notify::FeedReply) {
     const FeedNotify &n = static_cast<const FeedNotify &>(notify);
     if (n.feed() == FEED_NAME_MESSAGES && n.path() == LS("last")) {
-      qDebug() << "FEED_NAME_MESSAGES" << JSON::generate(n.json(), true);
-      qDebug() << n.status();
-
-      if (n.status() == Notice::OK) {
-        HistoryDB::add(n.channel(), n.json().value(LS("messages")).toStringList());
+      if (n.status() == Notice::NotModified) {
+        const QList<QByteArray> messages = HistoryDB::last(n.channel());
+        HistoryImpl::get(n.channel(), messages);
+        emulateLast(n.channel(), messages);
       }
+      else if (n.status() == Notice::OK && !n.json().contains(LS("before")) && !n.json().contains(LS("emulated")))
+        HistoryDB::add(n.channel(), n.json().value(LS("messages")).toStringList());
     }
   }
 }
@@ -120,7 +111,7 @@ bool HistoryChatView::compatible(const QByteArray &id) const
 
 
 /*!
- * Хитрая функция для синхронизации списка последних сообщений в канале.
+ * Синхронизации списка последних сообщений в канале.
  *
  * \param id   Идентификатор канала.
  * \param date Дата последнего полученного сообщения, если равно 0 запрашиваются 20 последних сообщений.
@@ -128,36 +119,19 @@ bool HistoryChatView::compatible(const QByteArray &id) const
 bool HistoryChatView::sync(const QByteArray &id, qint64 date)
 {
   if (ChatClient::state() != ChatClient::Online) {
-    HistoryImpl::getLocal(HistoryDB::last(SimpleID::encode(id), 20));
+    HistoryImpl::getLocal(HistoryDB::last(id));
     return false;
-  }
-
-  ClientChannel channel = ChatClient::channels()->get(id);
-  if (!channel)
-    return false;
-
-  FeedPtr feed = channel->feed(FEED_NAME_MESSAGES, false);
-
-  if (!feed) {
-    ClientFeeds::request(channel, FEED_METHOD_GET, FEED_NAME_MESSAGES);
-    return false;
-  }
-
-  if (!HistoryDB::synced(feed)) {
-    if (date)
-      return HistoryImpl::since(id, date);
-
-    return ClientFeeds::request(id, FEED_METHOD_GET, LS("messages/last"));
   }
 
   if (date)
-    return false;
+    return HistoryImpl::since(id, date);
 
-  const QList<QByteArray> last = HistoryDB::last(SimpleID::encode(id), 20);
-  emulateLast(id, last);
-  HistoryImpl::getLocal(last);
+  QVariantMap json;
+  const QString tag = HistoryDB::tag(id);
+  if (!tag.isEmpty())
+    json[LS("tag")] = tag;
 
-  return false;
+  return ClientFeeds::request(id, FEED_METHOD_GET, LS("messages/last"), json);
 }
 
 

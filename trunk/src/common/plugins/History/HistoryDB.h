@@ -39,10 +39,10 @@ public:
 
   inline static QString id() { return m_id; }
   static bool open(const QByteArray &id, const QString &dir);
-  static bool synced(FeedPtr feed);
   static int status(int status);
   static MessageRecord get(const QByteArray &id);
-  static QList<QByteArray> last(const QByteArray &channel, int limit);
+  static QList<QByteArray> last(const QByteArray &channelId);
+  static QString tag(const QByteArray &channelId);
   static void add(const QByteArray &channelId, const QStringList &messages);
   static void add(MessagePacket packet);
   static void clear();

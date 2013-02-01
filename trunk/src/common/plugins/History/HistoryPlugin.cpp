@@ -92,12 +92,12 @@ bool HistoryImpl::fetch(const QByteArray &id, const QList<QByteArray> &messages)
 /*!
  * Загрузка сообщений по идентификаторам.
  */
-bool HistoryImpl::get(const QByteArray &id, const QList<QByteArray> &ids)
+bool HistoryImpl::get(const QByteArray &id, const QList<QByteArray> &messages)
 {
-  if (ids.isEmpty())
+  if (messages.isEmpty())
     return false;
 
-  const QList<QByteArray> required = getLocal(ids);
+  const QList<QByteArray> required = getLocal(messages);
   if (required.isEmpty() || ChatClient::state() != ChatClient::Online)
     return false;
 
@@ -118,17 +118,17 @@ bool HistoryImpl::since(const QByteArray &id, qint64 date)
  * в кэше эмулируется их получение для уведомления остальных
  * компонентов чата о новом сообщении.
  *
- * \param ids Список необходимых сообщений.
+ * \param messages Список необходимых сообщений.
  *
  * \return Список сообщений не найденных в кэше.
  */
-QList<QByteArray> HistoryImpl::getLocal(const QList<QByteArray> &ids)
+QList<QByteArray> HistoryImpl::getLocal(const QList<QByteArray> &messages)
 {
   QList<QByteArray> out;
-  for (int i = 0; i < ids.size(); ++i) {
-    MessageRecord record = HistoryDB::get(ids.at(i));
+  for (int i = 0; i < messages.size(); ++i) {
+    const MessageRecord record = HistoryDB::get(messages.at(i));
     if (!record.id) {
-      out.append(ids.at(i));
+      out.append(messages.at(i));
       continue;
     }
 
