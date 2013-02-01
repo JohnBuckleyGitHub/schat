@@ -47,7 +47,6 @@ void ClientFeedsImpl::addImpl(ClientChannel channel, const ChannelInfo & /*info*
 
   QStringList feeds = unsynced(channel, data);
   feeds.removeAll(FEED_NAME_HOSTS);
-  feeds.removeAll(FEED_NAME_USER);
 
   get(channel->id(), feeds);
 }
