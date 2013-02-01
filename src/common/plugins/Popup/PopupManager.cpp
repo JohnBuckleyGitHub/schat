@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QApplication>
 #include <QBasicTimer>
 #include <QDesktopWidget>
 #include <QFile>
@@ -35,10 +36,8 @@ PopupManager::PopupManager(QObject *parent)
   , m_flashed(true)
   , m_stylesLoaded(false)
 {
-  m_desktop = new QDesktopWidget();
   m_timeout = ChatCore::settings()->setDefaultAndRead(LS("Alerts/PopupTimeout"), 10).toUInt();
-
-  m_timer = new QBasicTimer();
+  m_timer   = new QBasicTimer();
 
   connect(ChatAlerts::i(), SIGNAL(popup(Alert)), SLOT(popup(Alert)));
   connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
@@ -47,7 +46,6 @@ PopupManager::PopupManager(QObject *parent)
 
 PopupManager::~PopupManager()
 {
-  delete m_desktop;
   delete m_timer;
 }
 
@@ -127,7 +125,7 @@ QString PopupManager::loadCSS(const QString &baseName)
 
 void PopupManager::layoutWidgets()
 {
-  QRect display = m_desktop->availableGeometry(TabWidget::i());
+  QRect display = QApplication::desktop()->availableGeometry(TabWidget::i());
   int bottom = display.bottom() - PopupWindow::Space;
   foreach (PopupWindow *window, m_windows) {
     if (!window->isVisible())
