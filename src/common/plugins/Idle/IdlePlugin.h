@@ -37,7 +37,7 @@ public:
     QVariantMap out            = CoreApi::header();
     out[CORE_API_ID]           = "Idle";
     out[CORE_API_NAME]         = "Idle";
-    out[CORE_API_VERSION]      = "0.2.6";
+    out[CORE_API_VERSION]      = "0.2.7";
     out[CORE_API_SITE]         = "http://wiki.schat.me/Plugin/Idle";
     out[CORE_API_DESC]         = "Detect idle time to automatically set Away status";
     out[CORE_API_DESC_RU]      = "Обнаружение времени простоя для автоматической установки статуса Отсутствую";
