@@ -73,7 +73,7 @@ AboutTab::AboutTab(TabWidget *parent)
   m_view->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
 
   m_layout = new QVBoxLayout(this);
-  m_layout->addWidget(m_view);
+  m_layout->addWidget(m_view, 1);
   m_layout->setMargin(0);
   m_layout->setSpacing(0);
 

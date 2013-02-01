@@ -1,4 +1,4 @@
-/* $Id
+/* $Id$
  * IMPOMEZIA Simple Chat
  * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
@@ -32,7 +32,7 @@ IdleSettings::IdleSettings(QWidget *parent)
   m_label = new QLabel(this);
   m_time = new QSpinBox(this);
   m_time->setRange(0, 1440);
-  m_time->setValue(ChatCore::settings()->value(LS("AutoAway")).toInt() / 60);
+  m_time->setValue(ChatCore::settings()->value(SETTINGS_AUTO_AWAY).toInt() / 60);
 
   QHBoxLayout *layout = new QHBoxLayout(this);
   layout->addWidget(m_label);
@@ -60,7 +60,7 @@ void IdleSettings::changed(int value)
   if (value > 0)
     value *= 60;
 
-  ChatCore::settings()->setValue(LS("AutoAway"), value);
+  ChatCore::settings()->setValue(SETTINGS_AUTO_AWAY, value);
 }
 
 

@@ -1,4 +1,4 @@
-/* $Id
+/* $Id$
  * IMPOMEZIA Simple Chat
  * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
