@@ -23,7 +23,6 @@
 
 #include "ui/tabs/WebView.h"
 
-class ConsoleTr;
 class Notify;
 
 class ConsoleView : public WebView
@@ -41,9 +40,6 @@ signals:
 private slots:
   void notify(const Notify &notify);
   void populateJavaScriptWindowObject();
-
-private:
-  ConsoleTr *m_tr; ///< Перевод.
 };
 
 #endif /* CONSOLEVIEW_H_ */

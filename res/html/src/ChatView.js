@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright (c) 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright (c) 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -598,7 +598,45 @@ var Modal = {
   current: '',
   create: {},
   hidden: {},
-  shown: {}
+  shown: {},
+
+  init: function() {
+    var body  = $('body');
+    var modal = $('#modal');
+
+    body.on('click.modal', '.modal-toggle', function (event) {
+      event.preventDefault();
+      var handler = $(this).attr('data-handler');
+
+      if (handler !== undefined && Modal.create.hasOwnProperty(handler)) {
+        Modal.create[handler](event);
+        Modal.current = handler;
+      }
+
+      $('#modal').modal();
+    });
+
+
+    modal.on('hidden', function () {
+      if (Modal.hidden.hasOwnProperty(Modal.current))
+        Modal.hidden[Modal.current]();
+
+      $('#modal-header h3 *').remove();
+      $('#modal-body *').remove();
+    });
+
+    modal.on('shown', function () {
+      if (Modal.shown.hasOwnProperty(Modal.current))
+        Modal.shown[Modal.current]();
+    });
+
+
+    body.on('click', '[data-dismiss="alert"]', function(event) {
+      event.preventDefault();
+      $(this).parent().remove();
+      alignChat();
+    });
+  }
 };
 
 
@@ -623,45 +661,7 @@ $(document).ready(function() {
     return;
   }
 
-  var body  = $('body');
-  var modal = $('#modal');
-
-  /*
-   * Создание модального диалога.
-   */
-  body.on('click.modal', '.modal-toggle', function (event) {
-    event.preventDefault();
-    var handler = $(this).attr('data-handler');
-
-    if (handler !== undefined && Modal.create.hasOwnProperty(handler)) {
-      Modal.create[handler](event);
-      Modal.current = handler;
-    }
-
-    $('#modal').modal();
-  });
-
-
-  modal.on('hidden', function () {
-    if (Modal.hidden.hasOwnProperty(Modal.current))
-      Modal.hidden[Modal.current]();
-
-    $('#modal-header h3 *').remove();
-    $('#modal-body *').remove();
-  });
-
-  modal.on('shown', function () {
-    if (Modal.shown.hasOwnProperty(Modal.current))
-      Modal.shown[Modal.current]();
-  });
-
-
-  body.on('click', '[data-dismiss="alert"]', function(event) {
-    event.preventDefault();
-    $(this).parent().remove();
-    alignChat();
-  });
-
+  Modal.init();
   Loader.load(jsfiles);
 });
 
