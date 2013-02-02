@@ -31,7 +31,7 @@ class ConsoleView : public WebView
 
 public:
   ConsoleView(QWidget *parent = 0);
-  ~ConsoleView();
+  Q_INVOKABLE bool setName(const QString &channelId, const QString &name);
   Q_INVOKABLE QString toPassword(const QString &password) const;
 
 signals:

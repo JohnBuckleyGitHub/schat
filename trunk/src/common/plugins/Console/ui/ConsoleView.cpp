@@ -20,6 +20,7 @@
 
 #include "ChatNotify.h"
 #include "client/ChatClient.h"
+#include "client/ClientChannels.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
 #include "ui/ConsoleView.h"
@@ -35,8 +36,9 @@ ConsoleView::ConsoleView(QWidget *parent)
 }
 
 
-ConsoleView::~ConsoleView()
+bool ConsoleView::setName(const QString &channelId, const QString &name)
 {
+  return ChatClient::channels()->name(SimpleID::decode(channelId), name);
 }
 
 

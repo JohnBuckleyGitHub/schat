@@ -193,7 +193,7 @@ bool NodeChannels::join()
  */
 int NodeChannels::name()
 {
-  if (!Channel::isValidName(m_packet->text()))
+  if (!isValidName())
     return Notice::BadRequest;
 
   ChatChannel channel = Ch::channel(m_packet->channelId(), SimpleID::typeOf(m_packet->channelId()));
@@ -295,6 +295,18 @@ int NodeChannels::update()
 
   m_core->send(Sockets::all(m_user, true), ChannelNotice::info(m_user));
   return Notice::OK;
+}
+
+
+/*!
+ * Проверка имени канала на корректность.
+ */
+bool NodeChannels::isValidName() const
+{
+  if (SimpleID::typeOf(m_packet->channelId()) == SimpleID::ServerId && m_packet->text().isEmpty())
+    return true;
+
+  return Channel::isValidName(m_packet->text());
 }
 
 
