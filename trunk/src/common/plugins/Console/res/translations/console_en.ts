@@ -3,6 +3,14 @@
 <TS version="2.0" language="en_US">
 <defaultcodec>UTF-8</defaultcodec>
 <context>
+    <name>ConsolePluginImpl</name>
+    <message>
+        <location filename="../../ConsolePlugin.cpp" line="61"/>
+        <source>Console</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ConsoleTab</name>
     <message>
         <location filename="../../ui/ConsoleTab.cpp" line="53"/>
