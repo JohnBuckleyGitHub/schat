@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,7 +16,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QMenu>
 #include <QtPlugin>
+#include <QTimer>
 
 #include "ChatCore.h"
 #include "ConsoleCmd.h"
@@ -26,13 +28,17 @@
 #include "Translation.h"
 #include "ui/ConsoleTab.h"
 #include "ui/TabWidget.h"
+#include "ui/TabsToolBar.h"
 
 ConsolePluginImpl::ConsolePluginImpl(QObject *parent)
   : ChatPlugin(parent)
+  , m_console(0)
 {
   new ConsoleCmd(this);
 
   ChatCore::translation()->addOther(LS("console"));
+
+  QTimer::singleShot(0, this, SLOT(start()));
 }
 
 
@@ -41,6 +47,31 @@ void ConsolePluginImpl::show()
   TabWidget *tabs = TabWidget::i();
   if (tabs->showPage("console") == -1)
     tabs->showPage(new ConsoleTab(tabs));
+}
+
+
+void ConsolePluginImpl::showMenu(QMenu *menu, QAction *separator)
+{
+  Q_UNUSED(separator)
+
+  m_console->setText(tr("Console"));
+  m_console->setChecked(TabWidget::isCurrent(TabWidget::page("console")));
+
+  menu->addAction(m_console);
+}
+
+
+void ConsolePluginImpl::start()
+{
+  if (!TabWidget::i())
+    return;
+
+  m_console = new QAction(this);
+  m_console->setIcon(QIcon(LS(":/images/Console/terminal.png")));
+  m_console->setCheckable(true);
+
+  connect(TabWidget::i()->toolBar(), SIGNAL(showMenu(QMenu*,QAction*)), SLOT(showMenu(QMenu*,QAction*)));
+  connect(m_console, SIGNAL(triggered(bool)), SLOT(show()));
 }
 
 

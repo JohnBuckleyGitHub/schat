@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,13 +21,25 @@
 
 #include "plugins/ChatPlugin.h"
 
+class QAction;
+class QMenu;
+
 class ConsolePluginImpl : public ChatPlugin
 {
   Q_OBJECT
 
 public:
   ConsolePluginImpl(QObject *parent);
+
+public slots:
   void show();
+
+private slots:
+  void showMenu(QMenu *menu, QAction *separator);
+  void start();
+
+private:
+  QAction *m_console;  ///< Пункт меню для показа вкладки консоли.
 };
 
 #endif /* CONSOLEPLUGIN_P_H_ */
