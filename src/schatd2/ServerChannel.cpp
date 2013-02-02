@@ -70,44 +70,6 @@ ServerChannel::~ServerChannel()
 }
 
 
-/*!
- * Проверка имени сервера на корректность.
- *
- * Имя сервера должно удовлетворять FQDN (Fully Qualified Domain Name),
- * однако имя, заканчивающееся на точку, будет признано некорректным.
- * Также имя не может начинаться с точки и содержать две точки подряд,
- * длина суффикса домена должна быть минимум 2 символа, например example.ru
- * или example.com корректные имена, а example.r некорректное.
- *
- * \return Имя сервера или пустая строка, если имя не корректно.
- */
-QString ServerChannel::serverName(const QString &name)
-{
-  QString tmp = name.simplified().left(MaxNameLength);
-
-  if (tmp.size() < MinNameLengh)
-    return QString();
-
-  if (tmp.contains(LC(' ')))
-    return QString();
-
-  if (tmp.indexOf(LS("..")) != -1)
-    return QString();
-
-  if (tmp.startsWith(LC('.')))
-    return QString();
-
-  if (tmp.endsWith(LC('.')))
-    return QString();
-
-  int index = tmp.lastIndexOf(LC('.'));
-  if (index == -1 || tmp.size() - index < 3)
-    return QString();
-
-  return tmp;
-}
-
-
 bool ServerChannel::addChannel(const QByteArray &id)
 {
   if (m_channels.add(id)) {
@@ -140,15 +102,7 @@ bool ServerChannel::removeChannel(const QByteArray &id)
  */
 bool ServerChannel::setName(const QString &name)
 {
-  QString in = name;
-
-  if (type() == SimpleID::ServerId) {
-    in = serverName(name);
-    if (in.isEmpty())
-      return false;
-  }
-
-  if (Channel::setName(in)) {
+  if (Channel::setName(name)) {
     normalize();
     return true;
   }

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -125,7 +125,7 @@ bool Channel::setName(const QString &name)
     return false;
   }
 
-  QString tmp = name.simplified().left(MaxNameLength);
+  const QString tmp = name.simplified().left(MaxNameLength);
   if (tmp.size() < MinNameLengh)
     return false;
 
@@ -158,7 +158,7 @@ void Channel::setDate(qint64 date)
  */
 bool Channel::isValidName(const QString &name)
 {
-  QString tmp = name.simplified();
+  const QString tmp = name.simplified();
 
   if (tmp.size() > MaxNameLength)
     return false;

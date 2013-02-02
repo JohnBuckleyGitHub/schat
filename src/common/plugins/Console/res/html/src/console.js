@@ -84,7 +84,8 @@ $(document).ready(function() {
 
 if (typeof ConsoleView === 'undefined') {
   ConsoleView = {
-    toPassword: function(password) { return password; }
+    toPassword: function(password)     { return password; },
+    setName: function(channelId, name) { return false; }
   }
 
 }

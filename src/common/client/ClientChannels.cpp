@@ -133,10 +133,10 @@ bool ClientChannels::join(const QString &name)
 
 bool ClientChannels::name(const QByteArray &id, const QString &name)
 {
-  if (!Channel::isValidName(name))
-    return false;
+  if ((SimpleID::typeOf(id) == SimpleID::ServerId && name.isEmpty()) || Channel::isValidName(name))
+    return m_client->send(ChannelNotice::request(ChatClient::id(), id, CHANNELS_NAME_CMD, name));
 
-  return m_client->send(ChannelNotice::request(ChatClient::id(), id, LS("name"), name));
+  return false;
 }
 
 
@@ -299,8 +299,12 @@ ClientChannel ClientChannels::add()
   else
     info.setOption(ChannelInfo::Updated);
 
-  if (m_packet->text() != LS("*")) {
-    QString name = channel->name();
+  if (m_packet->text() == LS("*")) {
+    if (channel->setName(ChatClient::io()->url().host()))
+      info.setOption(ChannelInfo::Renamed);
+  }
+  else {
+    const QString name = channel->name();
     if (channel->setName(m_packet->text()) && channel->name() != name)
       info.setOption(ChannelInfo::Renamed);
   }

@@ -157,7 +157,7 @@ ChannelPacket ChannelNotice::request(const QByteArray &user, const QByteArray &c
  */
 ChannelPacket ChannelNotice::update(ClientChannel channel)
 {
-  ChannelPacket packet(new ChannelNotice(channel->id(), channel->id(), LS("update"), DateTime::utc()));
+  ChannelPacket packet(new ChannelNotice(channel->id(), channel->id(), CHANNELS_UPDATE_CMD, DateTime::utc()));
   packet->setText(channel->name());
   packet->m_gender        = channel->gender().raw();
   packet->m_channelStatus = channel->status().value();

@@ -32,6 +32,17 @@ Console.home = {
       Loader.spinner.add('loading/logout');
       SimpleChat.request(SimpleChat.serverId(), 'delete', 'console/me');
     });
+
+    var body  = $('body');
+
+    /*
+     * Установка имени сервера.
+     */
+    body.on('click.name', '#name-ok', function (event) {
+      event.preventDefault();
+      ConsoleView.setName(SimpleChat.serverId(), $('#name-edit').val());
+      $('#modal').modal('hide');
+    });
   }
 };
 
@@ -66,7 +77,9 @@ Modal.create.name = function(event)
     '</form>'
   );
 
-  $('#name-edit').val(event.target.innerText);
+  var channel = SimpleChat.channel(SimpleChat.serverId());
+  if (channel !== null)
+    $('#name-edit').val(channel.Name);
 };
 
 

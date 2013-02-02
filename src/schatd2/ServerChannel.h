@@ -36,7 +36,6 @@ public:
   ServerChannel(ClientChannel channel);
   ServerChannel(const QByteArray &id, const QString &name);
   ~ServerChannel();
-  static QString serverName(const QString &name);
 
   inline bool permanent() const                { return m_permanent; }
   inline const Channels& channels() const      { return m_channels; }
