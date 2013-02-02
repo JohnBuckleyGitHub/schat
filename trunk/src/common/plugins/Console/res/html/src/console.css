@@ -43,3 +43,23 @@
 #password-block h3 {
   margin: 6px 0;
 }
+
+#name-group {
+  display: -webkit-box;
+}
+
+#name-edit, #name-ok {
+  display: block;
+}
+
+#name-edit {
+  margin-right: 0;
+  border-radius: 4px 0 0 4px;
+  margin: 0;
+}
+
+#name-ok {
+  margin: 0;
+  border-radius: 0 4px 4px 0;
+  border-left: 0;
+}

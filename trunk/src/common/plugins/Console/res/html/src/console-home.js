@@ -49,3 +49,28 @@ Console.feed.console.del.me = function(json) {
 
   Loader.spinner.remove('loading/logout');
 };
+
+
+Modal.create.name = function(event)
+{
+  var h3 = $('#modal-header h3');
+  h3.text(Utils.tr('console_server_name'));
+  h3.attr('data-tr', 'console_server_name');
+
+  $('#modal-body').append(
+    '<form id="title-form">' +
+      '<div id="name-group" class="control-group">' +
+        '<input id="name-edit" type="text" maxlength="20">' +
+        '<button id="name-ok" type="submit" class="btn" data-tr="ok">' + Utils.tr('ok') + '</button>' +
+      '</div>' +
+    '</form>'
+  );
+
+  $('#name-edit').val(event.target.innerText);
+};
+
+
+Modal.shown.name = function()
+{
+  $('#name-edit').focus();
+};

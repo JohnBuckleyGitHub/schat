@@ -76,6 +76,7 @@ Console.feed.console.get.tryAccess = function(json) {
 
 $(document).ready(function() {
   Loader.spinner.add('loading/try');
+  Modal.init();
 
   SimpleChat.get(SimpleChat.serverId(), 'console/try');
 });

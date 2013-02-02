@@ -21,6 +21,7 @@
 
 #include "plugins/ChatPlugin.h"
 
+class ConsoleTr;
 class QAction;
 class QMenu;
 
@@ -30,6 +31,7 @@ class ConsolePluginImpl : public ChatPlugin
 
 public:
   ConsolePluginImpl(QObject *parent);
+  ~ConsolePluginImpl();
 
 public slots:
   void show();
@@ -39,6 +41,7 @@ private slots:
   void start();
 
 private:
+  ConsoleTr *m_tr;     ///< Перевод.
   QAction *m_console;  ///< Пункт меню для показа вкладки консоли.
 };
 
