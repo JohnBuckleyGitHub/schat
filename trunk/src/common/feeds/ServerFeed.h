@@ -1,0 +1,32 @@
+/* $Id$
+ * IMPOMEZIA Simple Chat
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
+ *
+ *   This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef SERVERFEED_H_
+#define SERVERFEED_H_
+
+#define SERVER_FEED_AUTH_KEY    QLatin1String("auth")
+#define SERVER_FEED_DATE_KEY    QLatin1String("date")
+#define SERVER_FEED_ID_KEY      QLatin1String("id")
+#define SERVER_FEED_NAME_KEY    QLatin1String("name")
+#define SERVER_FEED_NAME_REQ    QLatin1String("server/name")
+#define SERVER_FEED_OS_KEY      QLatin1String("os")
+#define SERVER_FEED_SECONDS_KEY QLatin1String("seconds")
+#define SERVER_FEED_UPTIME_KEY  QLatin1String("uptime")
+#define SERVER_FEED_VERSION_KEY QLatin1String("version")
+
+#endif /* SERVERFEED_H_ */

@@ -17,8 +17,10 @@
  */
 
 #include "Ch.h"
+#include "feeds/FeedsCore.h"
 #include "feeds/FeedStorage.h"
 #include "feeds/FeedStrings.h"
+#include "feeds/ServerFeed.h"
 #include "GenericCh.h"
 #include "sglobal.h"
 
@@ -37,7 +39,7 @@ void GenericCh::newChannel(ChatChannel channel, ChatChannel user)
 void GenericCh::rename(ChatChannel channel)
 {
   if (channel->type() == SimpleID::ServerId)
-    FeedStorage::save(channel->feed(FEED_NAME_SERVER), channel->date());
+    FeedsCore::put(SERVER_FEED_NAME_REQ, channel->name());
 }
 
 
