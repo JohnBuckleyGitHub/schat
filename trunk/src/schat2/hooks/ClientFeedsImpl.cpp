@@ -108,7 +108,7 @@ void ClientFeedsImpl::get()
   }
   else if (request.second.isEmpty()) {
     if (m_packet->status() == Notice::NotModified && m_channel->feed(request.first, false))
-      ChatNotify::start(new FeedNotify(Notify::FeedData, m_channel->id(), request.first));
+      ChatNotify::start(new FeedNotify(Notify::FeedData, m_channel->id(), request.first, QVariantMap(), m_packet->status()));
     else
       ChatNotify::start(new FeedNotify(m_channel->id(), m_packet));
   }

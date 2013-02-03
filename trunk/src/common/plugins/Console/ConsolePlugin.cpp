@@ -57,9 +57,13 @@ protected:
     else if (key == LS("home"))                 return tr("Home");
     else if (key == LS("logout"))               return tr("Logout");
     else if (key == LS("server_name"))          return tr("Server Name");
+    else if (key == LS("about_server"))         return tr("About server");
+    else if (key == LS("name"))                 return tr("Name:");
+    else if (key == LS("version"))              return tr("Version:");
     return QString();
   }
 };
+
 
 ConsolePluginImpl::ConsolePluginImpl(QObject *parent)
   : ChatPlugin(parent)

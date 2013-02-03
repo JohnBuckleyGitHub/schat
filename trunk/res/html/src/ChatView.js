@@ -16,6 +16,15 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+var FEED_METHOD_GET    = 'get';
+var FEED_METHOD_PUT    = 'put';
+var FEED_METHOD_POST   = 'post';
+var FEED_METHOD_DELETE = 'delete';
+
+var FEED_NAME_HOSTS    = 'hosts';
+var FEED_NAME_SERVER   = 'server';
+
+
 var Settings = {
   id: '',
   status: '',

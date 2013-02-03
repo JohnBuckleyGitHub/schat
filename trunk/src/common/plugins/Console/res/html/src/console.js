@@ -6,7 +6,6 @@ var Console = {
    * Обновление имени сервера.
    */
   setName: function(name) {
-    console.log(name);
     var tag = $('.server-name');
     if (tag.length)
       tag.text(name);
@@ -31,11 +30,17 @@ Console.feed = {
         path = 'tryAccess';
 
       var cmd = json.cmd;
-      if (cmd == 'delete')
+      if (cmd == FEED_METHOD_DELETE)
         cmd = 'del';
 
       try {
         Console.feed[json.feed][cmd][path](json);
+      }
+      catch (e) {}
+    }
+    else if (json.type == 'body') {
+      try {
+        Console.feed[json.feed]['body'](json.data, json.id, json.status);
       }
       catch (e) {}
     }
@@ -49,11 +54,18 @@ Console.feed = {
     get: {},
     put: {},
     post: {},
-    del: {}
+    del: {},
   },
 
 
   storage: {
+    get: {},
+    put: {},
+    post: {},
+    del: {}
+  },
+
+  server: {
     get: {},
     put: {},
     post: {},
