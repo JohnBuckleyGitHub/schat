@@ -35,6 +35,7 @@ public:
 
 signals:
   void feed(const QVariantMap &data);
+  void serverRenamed(const QString &name);
 
 private slots:
   void notify(const Notify &notify);

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include <QLabel>
 #include <QMenu>
 #include <QMouseEvent>
+#include <QTextDocument>
 #include <QWidgetAction>
 
 #include "ChatCore.h"
@@ -158,7 +159,7 @@ void StatusBar::menuTriggered(QAction *action)
 void StatusBar::notify(const Notify &notify)
 {
   if (notify.type() == Notify::ServerRenamed)
-    m_label->setText(ChatClient::serverName());
+    setServerName();
 }
 
 
@@ -192,15 +193,14 @@ void StatusBar::retranslateUi()
     m_label->setText(ChatClient::io()->url().toString());
   }
   else if (state == ChatClient::Online) {
-    m_label->setText(ChatClient::serverName());
+    setServerName();
     m_icon->setToolTip(tr("Connected"));
   }
   else if (state == ChatClient::Error) {
     setError();
   }
-  else if (state == ChatClient::WaitAuth) {
-    m_label->setText(ChatClient::serverName());
-  }
+  else if (state == ChatClient::WaitAuth)
+    setServerName();
 }
 
 
@@ -220,6 +220,16 @@ void StatusBar::setError()
     m_label->setText(tr("Error"));
     m_icon->setToolTip(QString());
   }
+}
+
+
+void StatusBar::setServerName()
+{
+# if QT_VERSION >= 0x050000
+  m_label->setText(ChatClient::serverName()).toHtmlEscaped();
+# else
+  m_label->setText(Qt::escape(ChatClient::serverName()));
+# endif
 }
 
 

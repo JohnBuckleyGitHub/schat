@@ -58,3 +58,14 @@ h3 {
   background-color: #b4b4b4;
   border-radius: 8px;
 }
+
+#join-name {
+  border-radius: 4px 0 0 4px;
+  margin: 0;
+}
+
+#join {
+  margin-left: 0;
+  border-radius: 0 4px 4px 0;
+  border-left: 0;
+}
