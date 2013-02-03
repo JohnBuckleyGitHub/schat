@@ -69,6 +69,9 @@ void ChannelsView::notify(const Notify &notify)
 
     emit feed(json);
   }
+  else if (type == Notify::ServerRenamed) {
+    emit serverRenamed(ChatClient::serverName());
+  }
 }
 
 

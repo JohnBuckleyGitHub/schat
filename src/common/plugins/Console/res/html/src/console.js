@@ -1,6 +1,16 @@
 
 var Console = {
-  current: 'try'
+  current: 'try',
+
+  /*
+   * Обновление имени сервера.
+   */
+  setName: function(name) {
+    console.log(name);
+    var tag = $('.server-name');
+    if (tag.length)
+      tag.text(name);
+  }
 };
 
 
@@ -91,4 +101,5 @@ if (typeof ConsoleView === 'undefined') {
 }
 else {
   ConsoleView.feed.connect(Console.feed.read);
+  ConsoleView.serverRenamed.connect(Console.setName);
 }

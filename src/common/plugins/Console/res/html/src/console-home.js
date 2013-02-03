@@ -24,7 +24,7 @@ Console.home = {
 
     var channel = SimpleChat.channel(SimpleChat.serverId());
     if (channel !== null)
-      $('#server-name').html(channel.Name);
+      Console.setName(channel.Name);
 
     $('#nav-logout').on('click.home', function(event) {
       event.preventDefault();

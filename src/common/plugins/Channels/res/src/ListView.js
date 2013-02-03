@@ -14,7 +14,7 @@ var ChannelsList = {
   online: function() {
     var channel = SimpleChat.channel(SimpleChat.serverId());
     if (channel !== null)
-      $('#server-name').html(channel.Name);
+      ChannelsList.setName(channel.Name);
 
     ChannelsList.get();
   },
@@ -26,6 +26,14 @@ var ChannelsList = {
   get: function() {
     SimpleChat.feed(SimpleChat.serverId(), 'list', 1);
     Loader.spinner.add('loading/channels');
+  },
+
+
+  /*
+   * Обновление имени сервера.
+   */
+  setName: function(name) {
+    $('#server-name').text(name);
   }
 };
 
@@ -117,6 +125,7 @@ $(document).ready(function() {
     ChannelsView.join($(this).attr('id'));
   });
 
+
   /*
    * Обновление списка каналов.
    */
@@ -140,4 +149,5 @@ if (typeof ChannelsView === 'undefined') {
 }
 else {
   ChannelsView.feed.connect(ChannelsList.feed.read);
+  ChannelsView.serverRenamed.connect(ChannelsList.setName);
 }
