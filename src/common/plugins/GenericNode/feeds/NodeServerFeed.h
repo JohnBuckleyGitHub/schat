@@ -32,14 +32,12 @@ public:
   NodeServerFeed(const QString &name = FEED_NAME_SERVER, qint64 date = 0);
 
   FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0) const;
-  QVariantMap feed(Channel *channel = 0) const;
+  void setChannel(Channel *channel);
 
 private:
   QVariantMap auth() const;
   void init();
 
-  mutable qint64 m_date;        ///< Дата последнего обновления фида, используется для кеширования.
-  mutable QVariantMap m_body;   ///< Кешированное тело фила.
   qint64 m_startupTime;         ///< Время запуска сервера.
 };
 

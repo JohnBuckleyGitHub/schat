@@ -22,6 +22,7 @@
 #include "Channel.h"
 #include "DateTime.h"
 #include "feeds/NodeServerFeed.h"
+#include "feeds/ServerFeed.h"
 #include "net/packets/Notice.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
@@ -30,7 +31,6 @@
 
 NodeServerFeed::NodeServerFeed(const QString &name, const QVariantMap &data)
   : Feed(name, data)
-  , m_date(0)
   , m_startupTime(0)
 {
   init();
@@ -39,7 +39,6 @@ NodeServerFeed::NodeServerFeed(const QString &name, const QVariantMap &data)
 
 NodeServerFeed::NodeServerFeed(const QString &name, qint64 date)
   : Feed(name, date)
-  , m_date(0)
   , m_startupTime(0)
 {
   init();
@@ -57,10 +56,10 @@ FeedReply NodeServerFeed::get(const QString &path, const QVariantMap &json, Chan
   Q_UNUSED(json)
   Q_UNUSED(channel)
 
-  if (path == LS("uptime")) {
+  if (path == SERVER_FEED_UPTIME_KEY) {
     FeedReply reply(Notice::OK);
-    reply.json[LS("date")]    = m_startupTime;
-    reply.json[LS("seconds")] = qAbs((DateTime::utc() - m_startupTime) / 1000);
+    reply.json[SERVER_FEED_DATE_KEY]    = m_startupTime;
+    reply.json[SERVER_FEED_SECONDS_KEY] = qAbs((DateTime::utc() - m_startupTime) / 1000);
     return reply;
   }
 
@@ -68,27 +67,12 @@ FeedReply NodeServerFeed::get(const QString &path, const QVariantMap &json, Chan
 }
 
 
-/*!
- * Получение тела фида.
- */
-QVariantMap NodeServerFeed::feed(Channel *channel) const
+void NodeServerFeed::setChannel(Channel *channel)
 {
-  Channel *server = head().channel();
-  if (server->type() != SimpleID::ServerId || !can(channel, Acl::Read))
-    return QVariantMap();
+  Feed::setChannel(channel);
 
-  if (head().date() != m_date) {
-    m_date = head().date();
-
-    m_body.clear();
-    m_body[LS("name")]    = server->name();
-    m_body[LS("id")]      = SimpleID::encode(server->id());
-    m_body[LS("version")] = QCoreApplication::applicationVersion();
-    m_body[LS("os")]      = OsInfo::type();
-    m_body[LS("auth")]    = auth();
-  }
-
-  return m_body;
+  m_data[SERVER_FEED_NAME_KEY] = channel->name();
+  m_data[SERVER_FEED_ID_KEY]   = SimpleID::encode(channel->id());
 }
 
 
@@ -103,9 +87,13 @@ QVariantMap NodeServerFeed::auth() const
 
 void NodeServerFeed::init()
 {
-  m_header.acl().setMask(0444);
   m_startupTime = DateTime::utc();
-  head().data()[LS("date")] = m_startupTime;
+  m_header.acl().setMask(0444);
+  m_header.setDate(m_startupTime);
+
+  m_data[SERVER_FEED_VERSION_KEY] = QCoreApplication::applicationVersion();
+  m_data[SERVER_FEED_OS_KEY]      = OsInfo::type();
+  m_data[SERVER_FEED_AUTH_KEY]    = auth();
 }
 
 
