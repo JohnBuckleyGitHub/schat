@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright (c) 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright (c) 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ var Hosts = {
   // Базовый слот обрабатывающий новые данные фидов.
   feed: function(json)
   {
-    if (Pages.current != 1 || !json.hasOwnProperty('type') || json.own !== true || json.feed !== 'hosts')
+    if (Pages.current != 1 || !json.hasOwnProperty('type') || json.own !== true || json.feed !== FEED_NAME_HOSTS)
       return;
 
     try {
@@ -99,13 +99,13 @@ var Hosts = {
       $('#info-content > h1').html(Messages.nameTemplate(channel));
 
     Utils.TR('my_computers');
-    Hosts.read(SimpleChat.feed('hosts', 1));
+    Hosts.read(SimpleChat.feed(FEED_NAME_HOSTS, 1));
   },
 
 
   unlink: function()
   {
-    SimpleChat.request(SimpleChat.id(), 'delete', 'hosts/' + $(this).attr('data-id'), {'options':2});
+    SimpleChat.request(SimpleChat.id(), FEED_METHOD_DELETE, FEED_NAME_HOSTS + '/' + $(this).attr('data-id'), {'options':2});
     return false;
   },
 
@@ -259,7 +259,7 @@ var ServerInfo = {
       encryption.text(Utils.tr('no-encryption'));
     }
 
-    ServerInfo.server(SimpleChat.feed(Settings.id, 'server', 0));
+    ServerInfo.server(SimpleChat.feed(Settings.id, FEED_NAME_SERVER, 0));
   },
 
 
@@ -319,7 +319,7 @@ var ServerInfo = {
    * Чтение фидов.
    */
   feed: function(json) {
-    if (json === false || json.status !== 200 || json.name !== 'server')
+    if (json === false || json.status !== 200 || json.name !== FEED_NAME_SERVER)
       return;
 
     ServerInfo.server(json.data);
@@ -327,7 +327,7 @@ var ServerInfo = {
 
 
   /*
-   * Чтение фида 'server'.
+   * Чтение фида FEED_NAME_SERVER.
    */
   server: function(json) {
     if (json === false)

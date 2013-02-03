@@ -43,6 +43,26 @@ Console.home = {
       ConsoleView.setName(SimpleChat.serverId(), $('#name-edit').val());
       $('#modal').modal('hide');
     });
+
+
+    Utils.adjustWidth($('#about-server-block .field-row-label'));
+    Console.home.online();
+  },
+
+
+  /*
+   * Успешное подключение к серверу.
+   */
+  online: function() {
+    Console.home.getFeed(FEED_NAME_SERVER);
+  },
+
+
+  getFeed: function(name) {
+    Console.feed[name].body(SimpleChat.feed(SimpleChat.serverId(), name, 3), SimpleChat.serverId(), 300);
+
+
+    SimpleChat.feed(SimpleChat.serverId(), name, 1);
   }
 };
 
@@ -51,14 +71,30 @@ Console.home = {
  * Чтение ответа на "delete" запрос "console/me".
  */
 Console.feed.console.del.me = function(json) {
-  console.log(json);
-
   if (json.status == 200) {
     Loader.spinner.add('loading/try');
     SimpleChat.get(SimpleChat.serverId(), 'console/try');
   }
 
   Loader.spinner.remove('loading/logout');
+};
+
+
+/*
+ * Обработка получения тела фида FEED_NAME_SERVER.
+ */
+Console.feed.server.body = function(json, id, status) {
+  if (status == 300) {
+    status = 200;
+    Loader.spinner.add('loading/' + FEED_NAME_SERVER);
+  }
+  else
+    Loader.spinner.remove('loading/' + FEED_NAME_SERVER);
+
+  if (json === false || status != 200)
+    return;
+
+  $('#server-version').text(json.version);
 };
 
 
@@ -87,3 +123,8 @@ Modal.shown.name = function()
 {
   $('#name-edit').focus();
 };
+
+
+if (typeof SimpleChat !== 'undefined') {
+  SimpleChat.online.connect(Console.home.online);
+}

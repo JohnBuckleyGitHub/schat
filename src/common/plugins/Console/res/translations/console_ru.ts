@@ -5,7 +5,7 @@
 <context>
     <name>ConsolePluginImpl</name>
     <message>
-        <location filename="../../ConsolePlugin.cpp" line="95"/>
+        <location filename="../../ConsolePlugin.cpp" line="98"/>
         <source>Console</source>
         <translation>Консоль</translation>
     </message>
@@ -94,6 +94,21 @@
         <location filename="../../ConsolePlugin.cpp" line="59"/>
         <source>Server Name</source>
         <translation>Имя сервера</translation>
+    </message>
+    <message>
+        <location filename="../../ConsolePlugin.cpp" line="60"/>
+        <source>About server</source>
+        <translation>О сервере</translation>
+    </message>
+    <message>
+        <location filename="../../ConsolePlugin.cpp" line="61"/>
+        <source>Name:</source>
+        <translation>Имя:</translation>
+    </message>
+    <message>
+        <location filename="../../ConsolePlugin.cpp" line="62"/>
+        <source>Version:</source>
+        <translation>Версия:</translation>
     </message>
 </context>
 </TS>
