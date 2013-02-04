@@ -60,6 +60,7 @@ protected:
     else if (key == LS("about_server"))         return tr("About server");
     else if (key == LS("name"))                 return tr("Name:");
     else if (key == LS("version"))              return tr("Version:");
+    else if (key == LS("cert_expired"))         return tr("Certificate has expired");
     return QString();
   }
 };

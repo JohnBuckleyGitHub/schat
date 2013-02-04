@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -343,7 +343,7 @@ SimpleSocket::SimpleSocket(QObject *parent)
 # endif
 
   d->sslAvailable = QSslSocket::supportsSsl();
-  connect(this, SIGNAL(sslErrors(QList<QSslError>)), SLOT(sslErrors(QList<QSslError>)));
+  connect(this, SIGNAL(sslErrors(QList<QSslError>)), SLOT(checkSslErrors(QList<QSslError>)));
   connect(this, SIGNAL(encrypted()), SLOT(encrypted()));
 # endif
 }
@@ -372,7 +372,7 @@ SimpleSocket::SimpleSocket(SimpleSocketPrivate &dd, QObject *parent)
 # endif
 
   d->sslAvailable = QSslSocket::supportsSsl();
-  connect(this, SIGNAL(sslErrors(QList<QSslError>)), SLOT(sslErrors(QList<QSslError>)));
+  connect(this, SIGNAL(sslErrors(QList<QSslError>)), SLOT(checkSslErrors(QList<QSslError>)));
   connect(this, SIGNAL(encrypted()), SLOT(encrypted()));
 # endif
 }
@@ -701,9 +701,9 @@ void SimpleSocket::encrypted()
 }
 
 
-void SimpleSocket::sslErrors(const QList<QSslError> &errors)
+void SimpleSocket::checkSslErrors(const QList<QSslError> &errors)
 {
-  SCHAT_DEBUG_STREAM(this << "sslErrors()" << errors)
+  SCHAT_DEBUG_STREAM(this << "checkSslErrors()" << errors)
 
   QList<QSslError::SslError> noCriticalErrors;
   noCriticalErrors.append(QSslError::NoError);

@@ -107,6 +107,7 @@ $(document).ready(function() {
 if (typeof ConsoleView === 'undefined') {
   ConsoleView = {
     toPassword: function(password)     { return password; },
+    expirationText: function(days)     { return days;},
     setName: function(channelId, name) { return false; }
   }
 

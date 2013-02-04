@@ -5,7 +5,7 @@
 <context>
     <name>ConsolePluginImpl</name>
     <message>
-        <location filename="../../ConsolePlugin.cpp" line="98"/>
+        <location filename="../../ConsolePlugin.cpp" line="100"/>
         <source>Console</source>
         <translation type="unfinished"></translation>
     </message>
@@ -109,6 +109,22 @@
         <location filename="../../ConsolePlugin.cpp" line="62"/>
         <source>Version:</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ConsolePlugin.cpp" line="63"/>
+        <source>Certificate has expired</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ConsoleView</name>
+    <message numerus="yes">
+        <location filename="../../ui/ConsoleView.cpp" line="47"/>
+        <source>Certificate expires in %n days</source>
+        <translation>
+            <numerusform>Certificate expires in %n day</numerusform>
+            <numerusform>Certificate expires in %n days</numerusform>
+        </translation>
     </message>
 </context>
 </TS>

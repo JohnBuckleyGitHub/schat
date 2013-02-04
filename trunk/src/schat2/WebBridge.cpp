@@ -261,28 +261,28 @@ QVariant WebBridge::encryption() const
 # if !defined(SCHAT_NO_SSL)
   SimpleClient *io = ChatClient::io();
   if (!io->isEncrypted())
-    return false;
+    return QVariant();
 
   QVariantMap data;
   data[LS("protocol")] = io->sslConfiguration().protocol();
 
+  const QSslCertificate cert = io->peerCertificate();
 # if QT_VERSION >= 0x050000
   QString cn;
-  QStringList cns = io->peerCertificate().subjectInfo(QSslCertificate::CommonName);
+  QStringList cns = cert.subjectInfo(QSslCertificate::CommonName);
   if (!cns.isEmpty())
     cn = cns.first();
 # else
-  QString cn = io->peerCertificate().subjectInfo(QSslCertificate::CommonName);
-  data[LS("CN")] = cn;
+  data[LS("CN")] = cert.subjectInfo(QSslCertificate::CommonName);
 # endif
 
   QSslCipher cipher = io->sessionCipher();
-  data[LS("cipher")] = cipher.name() + LC('/') + cipher.authenticationMethod();
-
-  data[LS("url")] = QString(QUrl::fromLocalFile(ChatCore::networks()->root(SimpleID::encode(ChatClient::serverId())) + LS("/peer.crt")).toEncoded());
+  data[LS("cipher")]       = cipher.name() + LC('/') + cipher.authenticationMethod();
+  data[LS("daysToExpiry")] = QDateTime::currentDateTime().daysTo(cert.expiryDate());
+  data[LS("url")]          = QString(QUrl::fromLocalFile(ChatCore::networks()->root(SimpleID::encode(ChatClient::serverId())) + LS("/peer.crt")).toEncoded());
   return data;
 # else
-  return false;
+  return QVariant();
 # endif
 }
 

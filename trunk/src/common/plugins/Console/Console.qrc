@@ -12,6 +12,7 @@
   <file alias="js/Console/console-home.js">res/js/console-home.min.js</file>
   <file alias="js/Console/console-login.js">res/js/console-login.min.js</file>
   <file alias="js/Console/console-password.js">res/js/console-password.min.js</file>
+  <file alias="translations/console_en.qm">res/translations/console_en.qm</file>
   <file alias="translations/console_ru.qm">res/translations/console_ru.qm</file>
 </qresource>
 </RCC>

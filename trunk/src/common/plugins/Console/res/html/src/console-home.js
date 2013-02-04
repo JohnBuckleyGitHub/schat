@@ -55,6 +55,34 @@ Console.home = {
    */
   online: function() {
     Console.home.getFeed(FEED_NAME_SERVER);
+
+    var data = SimpleChat.encryption();
+    var encryption = $('#server-encryption');
+
+    if (data !== null) {
+      encryption.removeAttr('data-tr');
+      encryption.removeClass('red-text');
+
+      var protocol = '';
+      if (data.protocol == 2)
+        protocol = 'TLS v1';
+      else if (data.protocol == 0)
+        protocol = 'SSL v3';
+
+      encryption.html('<span class="green-text">' + protocol + '</span>');
+      var days = data.daysToExpiry;
+
+      if (days > 0 && days <= 42)
+        encryption.append(' <span class="orange-text">' + ConsoleView.expirationText(days) + '</span>');
+
+      if (days <= 0)
+        encryption.append(' <span class="red-text" data-tr="console_cert_expired">' + Utils.tr('console_cert_expired') + '</span>');
+    }
+    else {
+      encryption.addClass('red-text');
+      encryption.attr('data-tr', 'no-encryption');
+      encryption.text(Utils.tr('no-encryption'));
+    }
   },
 
 
