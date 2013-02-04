@@ -185,15 +185,15 @@ a:active, a:hover {
 .service-type .blocks, .info-type .blocks { border:1px solid #fff; color:#a5b2c3; }
 .service-type .nick, #topic-extra .nick { color:#a5b2c3; }
 
-.info-type .green-text {
+.info-type .green-text, .green-text {
   color:#6bb521;
 }
 
-.info-type .red-text {
+.info-type .red-text, .red-text {
   color:#da251d;
 }
 
-.info-type .orange-text {
+.info-type .orange-text, .orange-text {
   color:#f89406;
 }
 

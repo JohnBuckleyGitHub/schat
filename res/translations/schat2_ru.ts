@@ -111,23 +111,23 @@
 <context>
     <name>ChatAlerts</name>
     <message>
-        <location filename="../../src/schat2/ChatAlerts.cpp" line="324"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="328"/>
         <source>Offline</source>
         <translation>Не в сети</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ChatAlerts.cpp" line="325"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="329"/>
         <source>Connection lost</source>
         <translation>Соединение потеряно</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ChatAlerts.cpp" line="346"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="350"/>
         <source>Online</source>
         <translation>В сети</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ChatAlerts.cpp" line="337"/>
-        <location filename="../../src/schat2/ChatAlerts.cpp" line="339"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="341"/>
+        <location filename="../../src/schat2/ChatAlerts.cpp" line="343"/>
         <source>Successfully connected to &lt;b&gt;%1&lt;/b&gt;</source>
         <translation>Успешно подключены к &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
@@ -424,7 +424,7 @@
 <context>
     <name>NickEdit</name>
     <message>
-        <location filename="../../src/schat2/ui/fields/NickEdit.cpp" line="84"/>
+        <location filename="../../src/schat2/ui/fields/NickEdit.cpp" line="85"/>
         <source>Nickname is already in use</source>
         <translation>Ник уже занят</translation>
     </message>
@@ -691,18 +691,18 @@
 <context>
     <name>StatusBar</name>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="184"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="185"/>
         <source>Encrypted connection</source>
         <translation>Зашифрованное соединение</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="188"/>
         <location filename="../../src/schat2/ui/StatusBar.cpp" line="189"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="190"/>
         <source>No connection</source>
         <translation>Нет подключения</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/StatusBar.cpp" line="196"/>
+        <location filename="../../src/schat2/ui/StatusBar.cpp" line="197"/>
         <source>Connected</source>
         <translation>Подключено</translation>
     </message>
@@ -753,12 +753,12 @@
 <context>
     <name>TabWidget</name>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="388"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="390"/>
         <source>Pin tab</source>
         <translation>Закрепить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/TabWidget.cpp" line="394"/>
+        <location filename="../../src/schat2/ui/TabWidget.cpp" line="396"/>
         <source>Close tab</source>
         <translation>Закрыть</translation>
     </message>
@@ -1027,27 +1027,27 @@
 <context>
     <name>WebView</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WebView.cpp" line="117"/>
+        <location filename="../../src/schat2/ui/tabs/WebView.cpp" line="118"/>
         <source>Cut</source>
         <translation>Вырезать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WebView.cpp" line="118"/>
+        <location filename="../../src/schat2/ui/tabs/WebView.cpp" line="119"/>
         <source>Copy</source>
         <translation>Копировать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WebView.cpp" line="119"/>
+        <location filename="../../src/schat2/ui/tabs/WebView.cpp" line="120"/>
         <source>Copy Link</source>
         <translation>Копировать ссылку</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WebView.cpp" line="120"/>
+        <location filename="../../src/schat2/ui/tabs/WebView.cpp" line="121"/>
         <source>Paste</source>
         <translation>Вставить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/WebView.cpp" line="121"/>
+        <location filename="../../src/schat2/ui/tabs/WebView.cpp" line="122"/>
         <source>Select All</source>
         <translation>Выделить всё</translation>
     </message>

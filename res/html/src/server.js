@@ -243,8 +243,9 @@ var ServerInfo = {
     var data = SimpleChat.encryption();
     var encryption = $('#server-encryption');
 
-    if (data !== false) {
+    if (data !== null) {
       encryption.removeAttr('data-tr');
+      encryption.removeClass('red-text');
 
       var protocol = '';
       if (data.protocol == 2)
@@ -255,6 +256,7 @@ var ServerInfo = {
       encryption.html(protocol + ' <a href="' + data.url + '">' + data.CN + '</a> <span id="encryption-cipher">' + data.cipher + '</span>');
     }
     else {
+      encryption.addClass('red-text');
       encryption.attr('data-tr', 'no-encryption');
       encryption.text(Utils.tr('no-encryption'));
     }

@@ -42,6 +42,12 @@ bool ConsoleView::setName(const QString &channelId, const QString &name)
 }
 
 
+QString ConsoleView::expirationText(int days) const
+{
+  return tr("Certificate expires in %n days", "", days);
+}
+
+
 QString ConsoleView::toPassword(const QString &password) const
 {
   return SimpleID::encode(SimpleID::make(password.toUtf8(), SimpleID::PasswordId));
