@@ -60,12 +60,12 @@ h3 {
   display: block;
 }
 
-#name-edit {
+input.input-append {
   border-radius: 4px 0 0 4px;
   margin: 0;
 }
 
-#name-ok {
+.btn-prepend {
   margin: 0;
   border-radius: 0 4px 4px 0;
   border-left: 0;

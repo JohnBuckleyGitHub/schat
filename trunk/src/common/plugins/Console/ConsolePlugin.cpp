@@ -64,6 +64,10 @@ protected:
     else if (key == LS("users_online"))         return tr("Users online");
     else if (key == LS("now"))                  return tr("Now:");
     else if (key == LS("peak"))                 return tr("Peak:");
+    else if (key == LS("auth"))                 return tr("Registration");
+    else if (key == LS("oauth"))                return tr("OAuth");
+    else if (key == LS("anonymous"))            return tr("Anonymous");
+    else if (key == LS("ok"))                   return tr("OK");
     return QString();
   }
 };

@@ -164,8 +164,8 @@ Modal.create.name = function(event)
   $('#modal-body').append(
     '<form id="title-form">' +
       '<div id="name-group" class="control-group">' +
-        '<input id="name-edit" type="text" maxlength="20">' +
-        '<button id="name-ok" type="submit" class="btn" data-tr="ok">' + Utils.tr('ok') + '</button>' +
+        '<input id="name-edit" type="text" maxlength="20" class="input-append">' +
+        '<button id="name-ok" type="submit" class="btn btn-prepend" data-tr="ok">' + Utils.tr('ok') + '</button>' +
       '</div>' +
     '</form>'
   );
