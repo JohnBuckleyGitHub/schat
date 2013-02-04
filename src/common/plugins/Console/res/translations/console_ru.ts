@@ -5,7 +5,7 @@
 <context>
     <name>ConsolePluginImpl</name>
     <message>
-        <location filename="../../ConsolePlugin.cpp" line="103"/>
+        <location filename="../../ConsolePlugin.cpp" line="107"/>
         <source>Console</source>
         <translation>Консоль</translation>
     </message>
@@ -129,6 +129,26 @@
         <location filename="../../ConsolePlugin.cpp" line="66"/>
         <source>Peak:</source>
         <translation>Пик:</translation>
+    </message>
+    <message>
+        <location filename="../../ConsolePlugin.cpp" line="67"/>
+        <source>Registration</source>
+        <translation>Регистрация</translation>
+    </message>
+    <message>
+        <location filename="../../ConsolePlugin.cpp" line="68"/>
+        <source>OAuth</source>
+        <translation>OAuth</translation>
+    </message>
+    <message>
+        <location filename="../../ConsolePlugin.cpp" line="69"/>
+        <source>Anonymous</source>
+        <translation>Анонимная регистрация</translation>
+    </message>
+    <message>
+        <location filename="../../ConsolePlugin.cpp" line="70"/>
+        <source>OK</source>
+        <translation>ОК</translation>
     </message>
 </context>
 <context>

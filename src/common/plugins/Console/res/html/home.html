@@ -38,4 +38,19 @@
       <span class="field-row-value" id="users-online-peak">0</span>
     </div>
   </div>
+
+  <h3 data-tr="console_auth">Registration</h3>
+  <div id="auth-block">
+    <div class="field-row">
+      <form id="oauth-form">
+        <div id="oauth-group" class="control-group">
+          <input id="oauth" type="checkbox" checked> <label for="oauth" data-tr="console_oauth">OAuth</label>
+          <input id="oauth-server" type="text" class="span3 input-append" maxlength="256" value="https://auth.schat.me"><button id="join" type="submit" class="btn btn-prepend" data-tr="console_ok">OK</button>
+        </div>
+      </form>
+    </div>
+    <div class="field-row">
+      <span class="field-row-value"><input id="anonymous" type="checkbox" checked> <label for="anonymous" data-tr="console_anonymous">Anonymous</label></span>
+    </div>
+  </div>
 </div>
