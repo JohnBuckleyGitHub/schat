@@ -46,6 +46,7 @@ Console.home = {
 
 
     Utils.adjustWidth($('#about-server-block .field-row-label'));
+    Utils.adjustWidth($('#users-online-block .field-row-label'));
     Console.home.online();
   },
 
@@ -55,6 +56,7 @@ Console.home = {
    */
   online: function() {
     Console.home.getFeed(FEED_NAME_SERVER);
+    Console.home.getFeed(FEED_NAME_USERS);
 
     var data = SimpleChat.encryption();
     var encryption = $('#server-encryption');
@@ -86,11 +88,27 @@ Console.home = {
   },
 
 
+  /*
+   * Загрузка фида.
+   * Функция пытается использовать кэшированную версию фида и создаёт запрос к серверу для проверки изменился фид или нет.
+   *
+   * \param name Имя фида.
+   */
   getFeed: function(name) {
     Console.feed[name].body(SimpleChat.feed(SimpleChat.serverId(), name, 3), SimpleChat.serverId(), 300);
 
-
     SimpleChat.feed(SimpleChat.serverId(), name, 1);
+  },
+
+
+  prepare: function(name, status) {
+    if (status == 300) {
+      Loader.spinner.add('loading/' + name);
+      return true;
+    }
+
+    Loader.spinner.remove('loading/' + name);
+    return status == 200;
   }
 };
 
@@ -112,17 +130,28 @@ Console.feed.console.del.me = function(json) {
  * Обработка получения тела фида FEED_NAME_SERVER.
  */
 Console.feed.server.body = function(json, id, status) {
-  if (status == 300) {
-    status = 200;
-    Loader.spinner.add('loading/' + FEED_NAME_SERVER);
-  }
-  else
-    Loader.spinner.remove('loading/' + FEED_NAME_SERVER);
-
-  if (json === false || status != 200)
+  if (!Console.home.prepare(FEED_NAME_SERVER, status) || json === false)
     return;
 
-  $('#server-version').text(json.version);
+  var version = $('#server-version');
+  version.text(json.version);
+  version.append(' <i class="icon-os os-' + Pages.os(json.os) + '"></i>');
+};
+
+
+/*
+ * Обработка получения тела фида FEED_NAME_USERS.
+ */
+Console.feed.users.body = function(json, id, status) {
+  if (SimpleChat.serverId() != id || !Console.home.prepare(FEED_NAME_USERS, status) || json === false)
+    return;
+
+  var now  = $('#users-online-now');
+  var peak = $('#users-online-peak');
+
+  now.text(json.count);
+  peak.text(json.peak.count);
+  peak.append(' ' + DateTime.template(json.peak.date, true));
 };
 
 

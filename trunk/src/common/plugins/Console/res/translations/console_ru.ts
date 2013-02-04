@@ -5,7 +5,7 @@
 <context>
     <name>ConsolePluginImpl</name>
     <message>
-        <location filename="../../ConsolePlugin.cpp" line="100"/>
+        <location filename="../../ConsolePlugin.cpp" line="103"/>
         <source>Console</source>
         <translation>Консоль</translation>
     </message>
@@ -114,6 +114,21 @@
         <location filename="../../ConsolePlugin.cpp" line="63"/>
         <source>Certificate has expired</source>
         <translation>Срок действия сертификата истек</translation>
+    </message>
+    <message>
+        <location filename="../../ConsolePlugin.cpp" line="64"/>
+        <source>Users online</source>
+        <translation>Пользователи в сети</translation>
+    </message>
+    <message>
+        <location filename="../../ConsolePlugin.cpp" line="65"/>
+        <source>Now:</source>
+        <translation>Сейчас:</translation>
+    </message>
+    <message>
+        <location filename="../../ConsolePlugin.cpp" line="66"/>
+        <source>Peak:</source>
+        <translation>Пик:</translation>
     </message>
 </context>
 <context>

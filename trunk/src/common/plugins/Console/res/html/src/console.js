@@ -54,9 +54,8 @@ Console.feed = {
     get: {},
     put: {},
     post: {},
-    del: {},
+    del: {}
   },
-
 
   storage: {
     get: {},
@@ -66,6 +65,13 @@ Console.feed = {
   },
 
   server: {
+    get: {},
+    put: {},
+    post: {},
+    del: {}
+  },
+
+  users: {
     get: {},
     put: {},
     post: {},

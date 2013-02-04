@@ -15,7 +15,7 @@
   <div id="about-server-block">
     <div class="field-row">
       <span class="field-row-label" data-tr="console_name">Name:</span>
-      <span class="field-row-value"><a class="modal-toggle server-name" href="#" data-handler="name"></a></span>
+      <span class="field-row-value"><a class="modal-toggle server-name" href="#" data-handler="name"></a> <a class="modal-toggle" data-handler="name"><i class="icon-gear cursor-pointer"></i></a></span>
     </div>
     <div class="field-row">
       <span class="field-row-label" data-tr="console_version">Version:</span>
@@ -24,6 +24,18 @@
     <div class="field-row">
       <span class="field-row-label" data-tr="encryption">Encryption:</span>
       <span class="field-row-value" id="server-encryption"></span>
+    </div>
+  </div>
+
+  <h3 data-tr="console_users_online">Users online</h3>
+  <div id="users-online-block">
+    <div class="field-row">
+      <span class="field-row-label" data-tr="console_now">Now:</span>
+      <span class="field-row-value" id="users-online-now">0</span>
+    </div>
+    <div class="field-row">
+      <span class="field-row-label" data-tr="console_peak">Peak:</span>
+      <span class="field-row-value" id="users-online-peak">0</span>
     </div>
   </div>
 </div>

@@ -42,7 +42,7 @@ public:
 protected:
   QString valueImpl(const QString &key) const
   {
-    if (key == LS("bad_server"))                return tr("This server does not support remote management.");
+    if      (key == LS("bad_server"))           return tr("This server does not support remote management.");
     else if (key == LS("password"))             return tr("Password:");
     else if (key == LS("login"))                return tr("Login");
     else if (key == LS("empty_password"))       return tr("Password cannot be empty");
@@ -61,6 +61,9 @@ protected:
     else if (key == LS("name"))                 return tr("Name:");
     else if (key == LS("version"))              return tr("Version:");
     else if (key == LS("cert_expired"))         return tr("Certificate has expired");
+    else if (key == LS("users_online"))         return tr("Users online");
+    else if (key == LS("now"))                  return tr("Now:");
+    else if (key == LS("peak"))                 return tr("Peak:");
     return QString();
   }
 };

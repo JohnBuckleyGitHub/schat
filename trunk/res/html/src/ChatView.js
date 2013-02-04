@@ -23,7 +23,7 @@ var FEED_METHOD_DELETE = 'delete';
 
 var FEED_NAME_HOSTS    = 'hosts';
 var FEED_NAME_SERVER   = 'server';
-
+var FEED_NAME_USERS    = 'users';
 
 var Settings = {
   id: '',
@@ -419,7 +419,7 @@ var DateTime = {
    * \param date объект даты.
    */
   day: function(date) {
-    return DateTime.pad(date.getDate()) + ':' + DateTime.pad(date.getMonth() + 1) + ':' + date.getFullYear();
+    return DateTime.pad(date.getDate()) + '.' + DateTime.pad(date.getMonth() + 1) + '.' + date.getFullYear();
   },
 
   /*

@@ -337,6 +337,10 @@ a:active, a:hover {
   background-repeat: no-repeat;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
+
 .icon-spinner {
   background-image: url(qrc:/images/spinner.gif);
 }
@@ -381,6 +385,10 @@ a:active, a:hover {
 
 .icon-globe {
   background-image: url(qrc:/images/globe.png);
+}
+
+.icon-gear {
+  background-image: url(qrc:/images/gear.png);
 }
 
 .icon-plus-small {
