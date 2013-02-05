@@ -16,14 +16,23 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-var FEED_METHOD_GET    = 'get';
-var FEED_METHOD_PUT    = 'put';
-var FEED_METHOD_POST   = 'post';
-var FEED_METHOD_DELETE = 'delete';
+var FEED_METHOD_GET       = 'get';
+var FEED_METHOD_PUT       = 'put';
+var FEED_METHOD_POST      = 'post';
+var FEED_METHOD_DELETE    = 'delete';
 
-var FEED_NAME_HOSTS    = 'hosts';
-var FEED_NAME_SERVER   = 'server';
-var FEED_NAME_USERS    = 'users';
+var FEED_NAME_CONSOLE     = 'console';
+var FEED_NAME_HOSTS       = 'hosts';
+var FEED_NAME_SERVER      = 'server';
+var FEED_NAME_USERS       = 'users';
+
+var SERVER_FEED_AUTH_KEY  = 'auth';
+var SERVER_FEED_AUTH_REQ  = 'server/auth';
+var SERVER_FEED_OAUTH_KEY = 'oauth';
+var SERVER_FEED_OAUTH_REQ = 'server/oauth';
+
+var CONSOLE_FEED_ME_KEY   = 'me';
+var CONSOLE_FEED_ME_REQ   = 'console/me';
 
 var Settings = {
   id: '',

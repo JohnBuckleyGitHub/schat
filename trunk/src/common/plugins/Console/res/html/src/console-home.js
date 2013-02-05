@@ -26,24 +26,10 @@ Console.home = {
     if (channel !== null)
       Console.setName(channel.Name);
 
-    $('#nav-logout').on('click.home', function(event) {
-      event.preventDefault();
-
-      Loader.spinner.add('loading/logout');
-      SimpleChat.request(SimpleChat.serverId(), 'delete', 'console/me');
-    });
-
-    var body  = $('body');
-
-    /*
-     * Установка имени сервера.
-     */
-    body.on('click.name', '#name-ok', function (event) {
-      event.preventDefault();
-      ConsoleView.setName(SimpleChat.serverId(), $('#name-edit').val());
-      $('#modal').modal('hide');
-    });
-
+    $('#nav-logout').on('click.home',      Console.home.logout);
+    $('body').on('click.name', '#name-ok', Console.home.setServerName);
+    $('#oauth-ok').on('click.oauth-ok',    Console.home.setOAuthServer);
+    $('.auth-checkbox').on('click.oauth',  Console.home.setAuthMethods);
 
     Utils.adjustWidth($('#about-server-block .field-row-label'));
     Utils.adjustWidth($('#users-online-block .field-row-label'));
@@ -101,6 +87,9 @@ Console.home = {
   },
 
 
+  /*
+   * Подготовка фида к чтению.
+   */
   prepare: function(name, status) {
     if (status == 300) {
       Loader.spinner.add('loading/' + name);
@@ -109,6 +98,58 @@ Console.home = {
 
     Loader.spinner.remove('loading/' + name);
     return status == 200;
+  },
+
+
+  /*
+   * Выход из консоли.
+   *
+   * \param event Событие клика по ссылке выхода.
+   */
+  logout: function(event) {
+    event.preventDefault();
+
+    Loader.spinner.add('loading/logout');
+    SimpleChat.request(SimpleChat.serverId(), FEED_METHOD_DELETE, CONSOLE_FEED_ME_REQ);
+  },
+
+
+  /*
+   * Установка имени сервера.
+   *
+   * \param event Событие клика по кнопке OK в модальном окне.
+   */
+  setServerName: function(event) {
+    event.preventDefault();
+    ConsoleView.setName(SimpleChat.serverId(), $('#name-edit').val());
+    $('#modal').modal('hide');
+  },
+
+
+  /*
+   * Установка адреса сервера OAuth авторизации.
+   *
+   * \param event Событие клика по кнопке OK.
+   */
+  setOAuthServer: function(event) {
+    event.preventDefault();
+    $('#oauth-group').removeClass('error');
+    SimpleChat.request(SimpleChat.serverId(), FEED_METHOD_PUT, SERVER_FEED_OAUTH_REQ, {'value':$('#oauth-server').val()});
+  },
+
+
+  /*
+   * Установка доступных методов регистрации.
+   */
+  setAuthMethods: function() {
+    var auth = [];
+    if ($('#anonymous-auth').is(':checked'))
+      auth.push('anonymous');
+
+    if ($('#oauth-auth').is(':checked'))
+      auth.push('oauth');
+
+    SimpleChat.request(SimpleChat.serverId(), FEED_METHOD_PUT, SERVER_FEED_AUTH_REQ, {'value':auth});
   }
 };
 
@@ -136,6 +177,21 @@ Console.feed.server.body = function(json, id, status) {
   var version = $('#server-version');
   version.text(json.version);
   version.append(' <i class="icon-os os-' + Pages.os(json.os) + '"></i>');
+
+  $('#oauth-auth').attr('checked', json.auth.indexOf('oauth') != -1);
+  $('#anonymous-auth').attr('checked', json.auth.indexOf('anonymous') != -1);
+  $('#oauth-server').val(json.oauth);
+
+  $('#auth-block').fadeIn('fast');
+};
+
+
+/*
+ * Чтение ответа на "put" запрос "server/oauth".
+ */
+Console.feed.server.put.oauth = function(json) {
+  if (json.status != 200 && json.status != 303)
+    $('#oauth-group').addClass('error');
 };
 
 
