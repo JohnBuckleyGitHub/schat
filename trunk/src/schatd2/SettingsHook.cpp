@@ -30,8 +30,6 @@ SettingsHook::SettingsHook()
 QStringList SettingsHook::keys() const
 {
   QStringList keys;
-  keys.append(STORAGE_ANONYMOUS_AUTH);
-  keys.append(STORAGE_AUTH_SERVER);
   keys.append(STORAGE_NICK_OVERRIDE);
 
   return keys;

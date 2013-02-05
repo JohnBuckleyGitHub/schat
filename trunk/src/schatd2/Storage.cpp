@@ -62,8 +62,6 @@ Storage::Storage(const QString &app, QObject *parent)
 
   // Инициализация настроек по умолчанию.
   m_settings = new Settings(etc() + LC('/') + Path::app() + LS(".conf"), this);
-  m_settings->setDefault(STORAGE_ANONYMOUS_AUTH, true);
-  m_settings->setDefault(STORAGE_AUTH_SERVER,    LS("https://auth.schat.me"));
   m_settings->setDefault(STORAGE_CERTIFICATE,    LS(":/server.crt"));
   m_settings->setDefault(STORAGE_LISTEN,         QStringList(LS("0.0.0.0:7667")));
   m_settings->setDefault(STORAGE_LOG_LEVEL,      2);

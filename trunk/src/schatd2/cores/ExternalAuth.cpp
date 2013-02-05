@@ -26,6 +26,7 @@
 #include "cores/ExternalAuth.h"
 #include "DateTime.h"
 #include "events.h"
+#include "feeds/ServerFeed.h"
 #include "net/SimpleID.h"
 #include "NodeLog.h"
 #include "sglobal.h"
@@ -34,6 +35,9 @@
 
 QHash<QByteArray, QVariantMap> ExternalAuthTask::m_cache;
 
+/*
+ * \bug ! Необходимо динамически выгружать или отключать этот тип авторизации при необходимости.
+ */
 ExternalAuth::ExternalAuth(Core *core)
   : AnonymousAuth(core)
 {
@@ -128,7 +132,7 @@ void ExternalAuthTask::start()
     return done(data);
 
   m_manager = new QNetworkAccessManager(this);
-  QNetworkRequest request(QUrl(Storage::value(STORAGE_AUTH_SERVER).toString() + LS("/state/") + SimpleID::encode(m_data.id)));
+  QNetworkRequest request(QUrl(Ch::server()->feed(FEED_NAME_SERVER)->data().value(SERVER_FEED_OAUTH_KEY).toString() + LS("/state/") + SimpleID::encode(m_data.id)));
   request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::AlwaysNetwork);
   request.setRawHeader("X-SChat-Cookie", SimpleID::encode(m_data.cookie));
 

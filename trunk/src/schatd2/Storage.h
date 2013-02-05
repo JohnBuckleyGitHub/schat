@@ -30,8 +30,6 @@ class ServerData;
 class Settings;
 class StorageHook;
 
-#define STORAGE_ANONYMOUS_AUTH QLatin1String("AnonymousAuth")
-#define STORAGE_AUTH_SERVER    QLatin1String("AuthServer")
 #define STORAGE_CERTIFICATE    QLatin1String("Certificate")
 #define STORAGE_LISTEN         QLatin1String("Listen")
 #define STORAGE_LOG_LEVEL      QLatin1String("LogLevel")

@@ -76,15 +76,6 @@ void NodeServerFeed::setChannel(Channel *channel)
 }
 
 
-QVariantMap NodeServerFeed::auth() const
-{
-  QVariantMap out;
-  out[LS("anonymous")] = Storage::value(STORAGE_ANONYMOUS_AUTH).toBool();
-  out[LS("external")]  = Storage::value(STORAGE_AUTH_SERVER).toString();
-  return out;
-}
-
-
 void NodeServerFeed::init()
 {
   m_startupTime = DateTime::utc();
@@ -93,7 +84,11 @@ void NodeServerFeed::init()
 
   m_data[SERVER_FEED_VERSION_KEY] = QCoreApplication::applicationVersion();
   m_data[SERVER_FEED_OS_KEY]      = OsInfo::type();
-  m_data[SERVER_FEED_AUTH_KEY]    = auth();
+
+  if (!m_data.contains(SERVER_FEED_OAUTH_KEY)) {
+    m_data[SERVER_FEED_AUTH_KEY]  = QStringList() << AUTH_METHOD_ANONYMOUS << AUTH_METHOD_OAUTH;
+    m_data[SERVER_FEED_OAUTH_KEY] = LS("https://auth.schat.me");
+  }
 }
 
 

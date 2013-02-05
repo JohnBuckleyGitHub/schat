@@ -35,10 +35,9 @@ public:
   void setChannel(Channel *channel);
 
 private:
-  QVariantMap auth() const;
   void init();
 
-  qint64 m_startupTime;         ///< Время запуска сервера.
+  qint64 m_startupTime; ///< Время запуска сервера.
 };
 
 

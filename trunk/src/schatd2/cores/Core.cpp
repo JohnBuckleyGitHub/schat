@@ -30,6 +30,7 @@
 #include "DateTime.h"
 #include "debugstream.h"
 #include "events.h"
+#include "feeds/ServerFeed.h"
 #include "net/NodeAuthReply.h"
 #include "net/PacketReader.h"
 #include "net/packets/auth.h"
@@ -240,7 +241,7 @@ void Core::reject(const AuthResult &result, quint64 socket)
 
 void Core::customEvent(QEvent *event)
 {
-  switch (event->type()) {
+  switch ((int) event->type()) {
     case ServerEvent::NewPackets:
       newPacketsEvent(static_cast<NewPacketsEvent*>(event));
       break;
@@ -327,13 +328,14 @@ bool Core::auth()
   }
 
   if (m_auth.isEmpty()) {
-    if (Storage::value(STORAGE_ANONYMOUS_AUTH).toBool())
+    const QStringList methods = Ch::server()->feed(FEED_NAME_SERVER)->data().value(SERVER_FEED_AUTH_KEY).toStringList();
+    if (methods.contains(AUTH_METHOD_ANONYMOUS))
       addAuth(new AnonymousAuth(this));
 
     addAuth(new CookieAuth(this));
     addAuth(new DiscoveryAuth(this));
 
-    if (!Storage::value(STORAGE_AUTH_SERVER).toString().isEmpty())
+    if (methods.contains(AUTH_METHOD_OAUTH))
       addAuth(new ExternalAuth(this));
   }
 

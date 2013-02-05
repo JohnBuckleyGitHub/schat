@@ -16,7 +16,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Ch.h"
 #include "cores/DiscoveryAuth.h"
+#include "feeds/ServerFeed.h"
 #include "net/packets/auth.h"
 #include "sglobal.h"
 #include "Storage.h"
@@ -24,14 +26,14 @@
 DiscoveryAuth::DiscoveryAuth(Core *core)
   : AnonymousAuth(core)
 {
-  m_anonymous  = Storage::value(STORAGE_ANONYMOUS_AUTH).toBool();
-  m_authServer = Storage::value(STORAGE_AUTH_SERVER).toString();
 }
 
 
 AuthResult DiscoveryAuth::auth(const AuthRequest &data)
 {
-  if (m_anonymous && m_authServer.isEmpty())
+  const QStringList methods = Ch::server()->feed(FEED_NAME_SERVER)->data().value(SERVER_FEED_AUTH_KEY).toStringList();
+
+  if (methods.contains(AUTH_METHOD_ANONYMOUS) && !methods.contains(AUTH_METHOD_OAUTH))
     return AnonymousAuth::auth(data);
 
   return AuthResult(Notice::Found, data.id);

@@ -27,10 +27,6 @@ public:
   DiscoveryAuth(Core *core);
   AuthResult auth(const AuthRequest &data);
   int type() const;
-
-private:
-  bool m_anonymous;     ///< \b true если разрешена анонимная авторизация.
-  QString m_authServer; ///< Адрес авторизационного сервера.
 };
 
 #endif /* DISCOVERYAUTH_H_ */
