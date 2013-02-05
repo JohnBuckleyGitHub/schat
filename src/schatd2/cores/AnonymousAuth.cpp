@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -28,8 +28,11 @@
 #include "sglobal.h"
 #include "Storage.h"
 
-QHash<QByteArray, quint64> AnonymousAuth::m_collisions;
+QMap<QByteArray, quint64> AnonymousAuth::m_collisions;
 
+/*!
+ * \bug ! Необходимо динамически выгружать или отключать этот тип авторизации при необходимости.
+ */
 AnonymousAuth::AnonymousAuth(Core *core)
   : NodeAuth(core)
 {

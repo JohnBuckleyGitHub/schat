@@ -24,9 +24,13 @@
 #define SERVER_FEED_ID_KEY      QLatin1String("id")
 #define SERVER_FEED_NAME_KEY    QLatin1String("name")
 #define SERVER_FEED_NAME_REQ    QLatin1String("server/name")
+#define SERVER_FEED_OAUTH_KEY   QLatin1String("oauth")
 #define SERVER_FEED_OS_KEY      QLatin1String("os")
 #define SERVER_FEED_SECONDS_KEY QLatin1String("seconds")
 #define SERVER_FEED_UPTIME_KEY  QLatin1String("uptime")
 #define SERVER_FEED_VERSION_KEY QLatin1String("version")
+
+#define AUTH_METHOD_ANONYMOUS   QLatin1String("anonymous")
+#define AUTH_METHOD_OAUTH       QLatin1String("oauth")
 
 #endif /* SERVERFEED_H_ */

@@ -19,6 +19,7 @@
 #include "Account.h"
 #include "Ch.h"
 #include "cores/NodeAuth.h"
+#include "feeds/ServerFeed.h"
 #include "net/NodeAuthReply.h"
 #include "sglobal.h"
 #include "Storage.h"
@@ -31,9 +32,14 @@ NodeAuthReply::NodeAuthReply(const AuthResult &result, ChatChannel channel)
   status     = result.status;
   id         = result.authId;
   json       = result.json;
-  serverName = Ch::server()->name();
 
-  if (Storage::value(STORAGE_ANONYMOUS_AUTH).toBool())
+  ChatChannel server = Ch::server();
+  serverName = server->name();
+
+  FeedPtr feed              = server->feed(FEED_NAME_SERVER);
+  const QStringList methods = feed->data().value(SERVER_FEED_AUTH_KEY).toStringList();
+
+  if (methods.contains(AUTH_METHOD_ANONYMOUS))
     flags = 1;
 
   if (channel) {
@@ -42,6 +48,6 @@ NodeAuthReply::NodeAuthReply(const AuthResult &result, ChatChannel channel)
     hostId   = channel->hosts()->id();
     provider = channel->account()->provider;
   }
-  else
-    provider = Storage::value(STORAGE_AUTH_SERVER).toString();
+  else if (methods.contains(AUTH_METHOD_OAUTH))
+    provider = feed->data().value(SERVER_FEED_OAUTH_KEY).toString();
 }
