@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -120,7 +120,7 @@ void ServerTab::alert(const Alert &alert)
 void ServerTab::clientStateChanged(int state)
 {
   if (state == ChatClient::WaitAuth) {
-    m_auth->start(ChatClient::io()->json().value(LS("authServer")).toString());
+    m_auth->start(ChatClient::io()->json().value(CLIENT_PROP_AUTH_SERVER).toString());
 
 #   if QT_VERSION >= 0x050000
     ServiceMessage message(tr("Server %1 requires authorization").arg(LS("<b>") + ChatClient::serverName().toHtmlEscaped() + LS("</b>")));

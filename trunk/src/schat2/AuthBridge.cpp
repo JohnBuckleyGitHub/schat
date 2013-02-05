@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ AuthBridge::AuthBridge(QObject *parent)
 
 bool AuthBridge::anonymous() const
 {
-  return ChatClient::io()->json().value(LS("anonymous")).toBool();
+  return ChatClient::io()->json().value(CLIENT_PROP_ANONYMOUS).toBool();
 }
 
 
@@ -60,6 +60,9 @@ void AuthBridge::open()
 
 void AuthBridge::start(const QString &url)
 {
+  if (url.isEmpty())
+    return;
+
   if (!m_client) {
     m_client = new AuthClient(this);
     connect(m_client, SIGNAL(providersReady(QVariantMap)), SLOT(providersReady(QVariantMap)));

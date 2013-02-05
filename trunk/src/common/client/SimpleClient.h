@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,16 @@
 class AbstractNotice;
 class SimpleClientPrivate;
 
+#define CLIENT_PROP_ANONYMOUS     QLatin1String("anonymous")
+#define CLIENT_PROP_AUTH_SERVER   QLatin1String("authServer")
+#define CLIENT_PROP_ERROR         QLatin1String("error")
+#define CLIENT_PROP_ERROR_AUTH    QLatin1String("auth")
+#define CLIENT_PROP_ERROR_DATA    QLatin1String("data")
+#define CLIENT_PROP_ERROR_STATUS  QLatin1String("status")
+#define CLIENT_PROP_ERROR_TYPE    QLatin1String("type")
+#define CLIENT_PROP_HOST          QLatin1String("host")
+#define CLIENT_PROP_HOST_ID       QLatin1String("hostId")
+#define CLIENT_PROP_ID            QLatin1String("id")
 
 class SCHAT_EXPORT SimpleClient : public AbstractClient
 {

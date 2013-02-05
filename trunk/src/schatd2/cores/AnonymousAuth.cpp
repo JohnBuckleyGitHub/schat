@@ -22,6 +22,7 @@
 #include "cores/Core.h"
 #include "DateTime.h"
 #include "events.h"
+#include "feeds/ServerFeed.h"
 #include "net/packets/auth.h"
 #include "NodeLog.h"
 #include "Normalize.h"
@@ -30,9 +31,6 @@
 
 QMap<QByteArray, quint64> AnonymousAuth::m_collisions;
 
-/*!
- * \bug ! Необходимо динамически выгружать или отключать этот тип авторизации при необходимости.
- */
 AnonymousAuth::AnonymousAuth(Core *core)
   : NodeAuth(core)
 {
@@ -41,7 +39,10 @@ AnonymousAuth::AnonymousAuth(Core *core)
 
 AuthResult AnonymousAuth::auth(const AuthRequest &data)
 {
-  QByteArray id = Ch::userId(data.uniqueId);
+  if (!Ch::server()->feed(FEED_NAME_SERVER)->data().value(SERVER_FEED_AUTH_KEY).toStringList().contains(AUTH_METHOD_ANONYMOUS))
+    return AuthResult(Notice::NotImplemented, data.id);
+
+  const QByteArray id = Ch::userId(data.uniqueId);
 
   AuthResult result = isCollision(id, data.nick, data.id);
   if (result.action == AuthResult::Reject)
