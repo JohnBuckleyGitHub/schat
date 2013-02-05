@@ -35,9 +35,6 @@
 
 QHash<QByteArray, QVariantMap> ExternalAuthTask::m_cache;
 
-/*
- * \bug ! Необходимо динамически выгружать или отключать этот тип авторизации при необходимости.
- */
 ExternalAuth::ExternalAuth(Core *core)
   : AnonymousAuth(core)
 {
@@ -46,6 +43,9 @@ ExternalAuth::ExternalAuth(Core *core)
 
 AuthResult ExternalAuth::auth(const AuthRequest &data)
 {
+  if (!Ch::server()->feed(FEED_NAME_SERVER)->data().value(SERVER_FEED_AUTH_KEY).toStringList().contains(AUTH_METHOD_OAUTH))
+    return AuthResult(Notice::NotImplemented, data.id);
+
   if (SimpleID::typeOf(data.cookie) != SimpleID::CookieId)
     return AuthResult(Notice::BadRequest, data.id);
 

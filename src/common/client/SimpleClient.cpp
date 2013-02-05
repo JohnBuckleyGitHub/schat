@@ -43,22 +43,22 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
     return true;
 
   AbstractClientPrivate::authReply(reply);
-  json[LS("id")]     = SimpleID::encode(reply.serverId);
-  json[LS("host")]   = reply.host;
-  json[LS("hostId")] = reply.hostId;
+  json[CLIENT_PROP_ID]      = SimpleID::encode(reply.serverId);
+  json[CLIENT_PROP_HOST]    = reply.host;
+  json[CLIENT_PROP_HOST_ID] = reply.hostId;
 
   if (reply.status == Notice::OK) {
     authType = AuthRequest::Cookie;
-    json.remove(LS("error"));
+    json.remove(CLIENT_PROP_ERROR);
     return true;
   }
 
   QVariantMap error;
-  error[LS("type")]   = LS("auth");
-  error[LS("auth")]   = authType;
-  error[LS("status")] = reply.status;
-  error[LS("data")]   = reply.json;
-  json[LS("error")]   = error;
+  error[CLIENT_PROP_ERROR_TYPE]   = LS("auth");
+  error[CLIENT_PROP_ERROR_AUTH]   = authType;
+  error[CLIENT_PROP_ERROR_STATUS] = reply.status;
+  error[CLIENT_PROP_ERROR_DATA]   = reply.json;
+  json[CLIENT_PROP_ERROR]         = error;
 
   if (reply.status == Notice::NickAlreadyUse)
     return false;
@@ -72,9 +72,14 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
   }
 
   if (reply.status == Notice::Found || reply.status == Notice::Forbidden) {
-    json[LS("authServer")] = reply.provider;
-    json[LS("anonymous")]  = (bool) reply.flags & 1;
-    setClientState(SimpleClient::ClientWaitAuth);
+    json[CLIENT_PROP_AUTH_SERVER] = reply.provider;
+    json[CLIENT_PROP_ANONYMOUS]   = (bool) reply.flags & 1;
+
+    if (reply.provider.isEmpty() && !(reply.flags & 1))
+      setClientState(AbstractClient::ClientError);
+    else
+      setClientState(SimpleClient::ClientWaitAuth);
+
     return false;
   }
 
