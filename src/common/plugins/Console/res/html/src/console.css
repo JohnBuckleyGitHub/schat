@@ -52,12 +52,16 @@ h3 {
   margin: 6px 0;
 }
 
-#name-group {
+#name-group, #oauth-group {
   display: -webkit-box;
 }
 
 #name-edit, #name-ok {
   display: block;
+}
+
+#oauth-block {
+  margin-left: 10px;
 }
 
 input.input-append {
