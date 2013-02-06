@@ -19,6 +19,7 @@
 #include "acl/AclValue.h"
 #include "Channel.h"
 #include "DateTime.h"
+#include "feeds/FeedsCore.h"
 #include "feeds/NodeAclFeed.h"
 #include "net/packets/Notice.h"
 #include "net/SimpleID.h"
@@ -101,8 +102,14 @@ void NodeAclFeed::setChannel(Channel *channel)
 {
   Feed::setChannel(channel);
 
-  if (channel && channel->type() == SimpleID::UserId)
+  if (!channel)
+    return;
+
+  if (channel->type() == SimpleID::UserId)
     m_data[SimpleID::encode(channel->id())] = AclValue::toByteArray(head().acl().mask() >> 6 | Acl::SpecialEdit);
+
+  if (channel->type() == SimpleID::ServerId)
+    FeedsCore::sub(FEED_NAME_ACL);
 }
 
 

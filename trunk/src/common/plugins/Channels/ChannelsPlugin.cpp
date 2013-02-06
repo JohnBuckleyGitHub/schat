@@ -206,8 +206,8 @@ void ChannelsPluginImpl::getAcl(ClientChannel channel)
     return;
 
   FeedPtr feed = channel->feed(FEED_NAME_ACL, false);
-  if (!feed)
-    ClientFeeds::request(channel->id(), FEED_METHOD_GET, FEED_NAME_ACL);
+  if (!feed || channel->type() == SimpleID::ServerId)
+    ClientFeeds::request(channel, FEED_METHOD_GET, FEED_NAME_ACL);
 }
 
 
