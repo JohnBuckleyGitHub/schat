@@ -19,18 +19,22 @@
 #ifndef FEEDSCORE_H_
 #define FEEDSCORE_H_
 
+#include <QObject>
 #include <QVariant>
 
 #include "feeds/Feed.h"
 
 class FeedEvent;
+class FeedEvents;
 class ServerChannel;
 
-class SCHAT_EXPORT FeedsCore
+class SCHAT_EXPORT FeedsCore : public QObject
 {
-  FeedsCore() {}
+  Q_OBJECT
 
 public:
+  FeedsCore(QObject *parent = 0);
+
   static FeedReply post(const QString &name, const QVariant &value = QVariant(), int options = 0);
   static FeedReply post(const QString &name, ServerChannel *sender, const QVariant &value = QVariant(), int options = 0);
   static FeedReply post(ServerChannel *channel, const QString &name, ServerChannel *sender, const QVariant &value = QVariant(), int options = 0);
@@ -39,15 +43,19 @@ public:
   static FeedReply put(const QString &name, ServerChannel *sender, const QVariant &value = QVariant(), int options = 0);
   static FeedReply put(ServerChannel *channel, const QString &name, ServerChannel *sender, const QVariant &value = QVariant(), int options = 0);
 
-  static FeedReply del(const QString &name);
-  static FeedReply del(const QString &name, ServerChannel *sender);
-  static FeedReply del(ServerChannel *channel, const QString &name, ServerChannel *sender);
+  static FeedReply del(const QString &name, int options = 0);
+  static FeedReply del(const QString &name, ServerChannel *sender, int options = 0);
+  static FeedReply del(ServerChannel *channel, const QString &name, ServerChannel *sender, int options = 0);
 
   static FeedReply get(const QString &name, const QVariantMap &data = QVariantMap());
   static FeedReply get(const QString &name, ServerChannel *sender, const QVariantMap &data = QVariantMap());
   static FeedReply get(ServerChannel *channel, const QString &name, ServerChannel *sender, const QVariantMap &data = QVariantMap());
 
   static FeedReply request(ServerChannel *channel, const QString &method, const QString &name, ServerChannel *sender, const QVariantMap &json = QVariantMap());
+  static void sub(const QString &feedName);
+
+private slots:
+  void notify(const FeedEvent &event);
 
 private:
   /// Числовое представление методов.
@@ -59,8 +67,13 @@ private:
     Delete
   };
 
-  static int methodToInt(const QString &method);
   static FeedReply done(FeedEvent *event, const FeedReply &reply);
+  static int methodToInt(const QString &method);
+  void broadcast(const FeedEvent &event);
+
+  FeedEvents *m_events;                             ///< События фидов.
+  QMap<QString, QList<QByteArray> > m_subscription; ///< Таблица подписки на фиды сервера.
+  static FeedsCore *m_self;                         ///< Указатель на себя.
 };
 
 #endif /* FEEDSCORE_H_ */

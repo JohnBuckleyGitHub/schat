@@ -74,7 +74,7 @@ bool ServerChannel::addChannel(const QByteArray &id)
 {
   if (m_channels.add(id)) {
     if (SimpleID::typeOf(id) == SimpleID::UserId)
-      FeedsCore::post(this, FEED_NAME_USERS + LC('/') + SimpleID::encode(id), Ch::server().data());
+      FeedsCore::post(this, FEED_NAME_USERS + LC('/') + SimpleID::encode(id), Ch::server().data(), QVariant(), Feed::Broadcast);
 
     return true;
   }
@@ -88,7 +88,7 @@ bool ServerChannel::removeChannel(const QByteArray &id)
   if (m_channels.contains(id)) {
     m_channels.remove(id);
     if (SimpleID::typeOf(id) == SimpleID::UserId)
-      FeedsCore::del(this, FEED_NAME_USERS + LC('/') + SimpleID::encode(id), Ch::server().data());
+      FeedsCore::del(this, FEED_NAME_USERS + LC('/') + SimpleID::encode(id), Ch::server().data(), Feed::Broadcast);
 
     return true;
   }
