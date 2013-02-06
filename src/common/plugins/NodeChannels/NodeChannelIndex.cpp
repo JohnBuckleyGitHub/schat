@@ -100,7 +100,7 @@ NodeChannelIndex::NodeChannelIndex(QObject *parent)
  */
 void NodeChannelIndex::build()
 {
-  QList<ChatChannel> channels = this->channels();
+  const QList<ChatChannel> channels = this->channels();
 
   m_list.clear();
   foreach (ChatChannel channel, channels) {
@@ -113,7 +113,7 @@ void NodeChannelIndex::build()
   m_date    = DateTime::utc();
   m_updated = true;
 
-  FeedsCore::put(FEED_NAME_LIST + LS("/channels"));
+  FeedsCore::put(FEED_NAME_LIST + LS("/channels"), QVariant(), Feed::Broadcast);
 }
 
 

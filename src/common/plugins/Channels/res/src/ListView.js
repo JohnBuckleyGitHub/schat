@@ -24,7 +24,7 @@ var ChannelsList = {
    * Загрузка списка каналов.
    */
   get: function() {
-    SimpleChat.feed(SimpleChat.serverId(), 'list', 1);
+    SimpleChat.feed(SimpleChat.serverId(), FEED_NAME_LIST, 1);
     Loader.spinner.add('loading/channels');
   },
 
@@ -47,19 +47,19 @@ ChannelsList.feed = {
    */
   read: function(json) {
     if (json.type == 'body') {
-      if (json.feed == 'list')
+      if (json.feed == FEED_NAME_LIST)
         ChannelsList.feed.list(json.data, json.status);
     }
   },
 
 
   /*
-   * Чтение фида "list".
+   * Чтение фида FEED_NAME_LIST.
    */
   list: function(json, status) {
     $('.channel-item').remove();
 
-    if (status == 200) {
+    if (status == 200 || status == 303) {
       var channels     = json.channels;
       var channelsList = $('#channels-list');
 
@@ -123,15 +123,6 @@ $(document).ready(function() {
   $('body').on('click.channel', '.nick', function (event) {
     event.preventDefault();
     ChannelsView.join($(this).attr('id'));
-  });
-
-
-  /*
-   * Обновление списка каналов.
-   */
-  $('#reload').on('click.reload', function(event) {
-    event.preventDefault();
-    ChannelsList.online();
   });
 });
 

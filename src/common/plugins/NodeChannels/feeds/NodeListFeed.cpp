@@ -18,6 +18,7 @@
 
 #include "Ch.h"
 #include "DateTime.h"
+#include "feeds/FeedsCore.h"
 #include "feeds/NodeListFeed.h"
 #include "net/packets/Notice.h"
 #include "net/SimpleID.h"
@@ -91,6 +92,8 @@ void NodeListFeed::init()
 {
   m_header.acl().setMask(0444);
   m_data[LS("format")] = QVariantList() << LS("id") << LS("name") << LS("count") << LS("title") << LS("options");
+
+  FeedsCore::sub(FEED_NAME_LIST);
 }
 
 
