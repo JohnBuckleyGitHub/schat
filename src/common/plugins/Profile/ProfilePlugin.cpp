@@ -19,7 +19,6 @@
 #include <QApplication>
 #include <QtPlugin>
 
-#include "Account.h"
 #include "ChatCore.h"
 #include "ChatNotify.h"
 #include "client/ChatClient.h"
@@ -494,14 +493,9 @@ void ProfilePluginImpl::notify(const Notify &notify)
     if (!user)
       return;
 
-    if (!user->account())
-      user->setAccount(new Account());
-
     FeedPtr feed = user->feed(FEED_NAME_USER, false);
     if (!feed)
       return;
-
-    user->account()->groups = feed->data().value(LS("groups")).toString();
   }
 }
 

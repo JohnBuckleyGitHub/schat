@@ -21,6 +21,7 @@
 
 #include "feeds/Feed.h"
 #include "feeds/FeedCreator.h"
+#include "ServerChannel.h"
 
 /*!
  * Серверная реализация фида \b console.
@@ -38,6 +39,7 @@ private:
   bool master(Channel *user) const;
   FeedReply login(const QVariantMap &json, Channel *user) const;
   FeedReply tryAccess(Channel *user) const;
+  qint64 del(ChatChannel user);
 };
 
 

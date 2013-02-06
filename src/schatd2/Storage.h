@@ -35,10 +35,11 @@ class StorageHook;
 #define STORAGE_LOG_LEVEL      QLatin1String("LogLevel")
 #define STORAGE_MAX_OPEN_FILES QLatin1String("MaxOpenFiles")
 #define STORAGE_NICK_OVERRIDE  QLatin1String("NickOverride")
+#define STORAGE_PASSWORD       QLatin1String("password")
+#define STORAGE_PEAK_USERS     QLatin1String("PeakUsers")
 #define STORAGE_PRIVATE_ID     QLatin1String("PrivateId")
 #define STORAGE_PRIVATE_KEY    QLatin1String("PrivateKey")
 #define STORAGE_WORKERS        QLatin1String("Workers")
-#define STORAGE_PEAK_USERS     QLatin1String("PeakUsers")
 
 class SCHAT_EXPORT Storage : public QObject
 {

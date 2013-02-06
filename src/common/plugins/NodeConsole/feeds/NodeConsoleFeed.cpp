@@ -21,6 +21,8 @@
 #include "Channel.h"
 #include "DataBase.h"
 #include "DateTime.h"
+#include "feeds/ConsoleFeed.h"
+#include "feeds/FeedsCore.h"
 #include "feeds/NodeConsoleFeed.h"
 #include "net/packets/Notice.h"
 #include "net/SimpleID.h"
@@ -46,18 +48,14 @@ FeedReply NodeConsoleFeed::del(const QString &path, Channel *channel)
   if (path.isEmpty() || !channel)
     return Notice::BadRequest;
 
-  if (path == LS("me")) {
+  if (path == CONSOLE_FEED_ME_KEY) {
     if (!master(channel))
       return Notice::NotModified;
 
-    channel->account()->groups.remove(LS("master"));
-    channel->account()->setDate(DateTime::utc());
-    DataBase::add(Ch::channel(channel->id(), SimpleID::typeOf(channel->id()), false));
-
-    return FeedReply(Notice::OK, DateTime::utc());
+    return FeedReply(Notice::OK, del(Ch::channel(channel->id(), SimpleID::typeOf(channel->id()), false)));
   }
   else if (path.size() == 34) {
-    QByteArray id = SimpleID::decode(path);
+    const QByteArray id = SimpleID::decode(path);
     if (SimpleID::typeOf(id) != SimpleID::UserId)
       return Notice::BadRequest;
 
@@ -68,11 +66,7 @@ FeedReply NodeConsoleFeed::del(const QString &path, Channel *channel)
     if (!user->account()->groups.contains(LS("master")))
       return Notice::NotModified;
 
-    user->account()->groups.remove(LS("master"));
-    user->account()->setDate(DateTime::utc());
-    DataBase::add(user);
-
-    return FeedReply(Notice::OK, DateTime::utc());
+    return FeedReply(Notice::OK, del(user));
   }
 
   return Notice::NotFound;
@@ -90,9 +84,9 @@ FeedReply NodeConsoleFeed::get(const QString &path, const QVariantMap &json, Cha
   if (path == LS("head"))
     return FeedReply(Notice::OK, head().get(channel), head().date());
 
-  if (path == LS("login"))
+  if (path == CONSOLE_FEED_LOGIN_KEY)
     return login(json, channel);
-  else if (path == LS("try"))
+  else if (path == CONSOLE_FEED_TRY_KEY)
     return tryAccess(channel);
 
   return Notice::NotFound;
@@ -104,7 +98,7 @@ FeedReply NodeConsoleFeed::get(const QString &path, const QVariantMap &json, Cha
  */
 bool NodeConsoleFeed::master(Channel *user) const
 {
-  if (user && user->account()->groups.contains(LS("master")) && Storage::value(LS("password")) != LS("2AZ6EKXDJCXLKZQPYIKAV3BVQUGE3KMXOA"))
+  if (user && user->account()->groups.contains(LS("master")) && Storage::value(STORAGE_PASSWORD) != LS("2AZ6EKXDJCXLKZQPYIKAV3BVQUGE3KMXOA"))
     return true;
 
   return false;
@@ -119,18 +113,20 @@ FeedReply NodeConsoleFeed::login(const QVariantMap &json, Channel *user) const
   if (!user)
     return Notice::BadRequest;
 
-  QString password = json.value(LS("password")).toString();
+  const QString password = json.value(STORAGE_PASSWORD).toString();
   if (password.isEmpty() || SimpleID::typeOf(SimpleID::decode(password)) != SimpleID::PasswordId)
     return Notice::BadRequest;
 
-  if (Storage::value(LS("password")) != password)
+  if (Storage::value(STORAGE_PASSWORD) != password)
     return Notice::Forbidden;
 
+  const qint64 date = DateTime::utc();
   user->account()->groups.add(LS("master"));
-  user->account()->setDate(DateTime::utc());
+  user->account()->setDate(date);
   DataBase::add(Ch::channel(user->id(), SimpleID::typeOf(user->id()), false));
 
-  return FeedReply(Notice::OK, DateTime::utc());
+  FeedsCore::post(FEED_NAME_ACL + LS("/head/owner"), SimpleID::encode(user->id()), Feed::Broadcast);
+  return FeedReply(Notice::OK, date);
 }
 
 
@@ -143,6 +139,21 @@ FeedReply NodeConsoleFeed::tryAccess(Channel *user) const
     return Notice::Forbidden;
 
   return FeedReply(Notice::OK, DateTime::utc());
+}
+
+
+/*!
+ * Удаление пользователя из владельцев сервера.
+ */
+qint64 NodeConsoleFeed::del(ChatChannel user)
+{
+  const qint64 date = DateTime::utc();
+  user->account()->groups.remove(LS("master"));
+  user->account()->setDate(date);
+  DataBase::add(user);
+
+  FeedsCore::del(FEED_NAME_ACL + LS("/head/owner/") + SimpleID::encode(user->id()), Feed::Broadcast);
+  return date;
 }
 
 
