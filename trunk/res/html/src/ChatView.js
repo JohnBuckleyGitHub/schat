@@ -23,6 +23,7 @@ var FEED_METHOD_DELETE    = 'delete';
 
 var FEED_NAME_CONSOLE     = 'console';
 var FEED_NAME_HOSTS       = 'hosts';
+var FEED_NAME_LIST        = 'list';
 var FEED_NAME_SERVER      = 'server';
 var FEED_NAME_USERS       = 'users';
 
