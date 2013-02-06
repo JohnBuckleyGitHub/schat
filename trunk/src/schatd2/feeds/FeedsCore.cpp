@@ -17,12 +17,28 @@
  */
 
 #include "Ch.h"
+#include "cores/Core.h"
 #include "feeds/FeedEvents.h"
 #include "feeds/FeedsCore.h"
 #include "feeds/FeedStorage.h"
 #include "net/packets/FeedNotice.h"
 #include "net/packets/Notice.h"
 #include "Sockets.h"
+
+FeedsCore *FeedsCore::m_self = 0;;
+
+FeedsCore::FeedsCore(QObject *parent)
+  : QObject(parent)
+{
+  m_self = this;
+
+  m_events = new FeedEvents(this);
+  connect(m_events, SIGNAL(notify(FeedEvent)), SLOT(notify(FeedEvent)));
+
+  sub(FEED_NAME_SERVER);
+  sub(FEED_NAME_USERS);
+}
+
 
 FeedReply FeedsCore::post(const QString &name, const QVariant &value, int options)
 {
@@ -68,22 +84,24 @@ FeedReply FeedsCore::put(ServerChannel *channel, const QString &name, ServerChan
 }
 
 
-FeedReply FeedsCore::del(const QString &name)
+FeedReply FeedsCore::del(const QString &name, int options)
 {
   ServerChannel *server = Ch::server().data();
-  return del(server, name, server);
+  return del(server, name, server, options);
 }
 
 
-FeedReply FeedsCore::del(const QString &name, ServerChannel *sender)
+FeedReply FeedsCore::del(const QString &name, ServerChannel *sender, int options)
 {
-  return del(Ch::server().data(), name, sender);
+  return del(Ch::server().data(), name, sender, options);
 }
 
 
-FeedReply FeedsCore::del(ServerChannel *channel, const QString &name, ServerChannel *sender)
+FeedReply FeedsCore::del(ServerChannel *channel, const QString &name, ServerChannel *sender, int options)
 {
-  return request(channel, FEED_METHOD_DELETE, name, sender);
+  QVariantMap json;
+  json[FEED_KEY_OPTIONS] = options;
+  return request(channel, FEED_METHOD_DELETE, name, sender, json);
 }
 
 
@@ -158,17 +176,70 @@ FeedReply FeedsCore::request(ServerChannel *channel, const QString &method, cons
   }
 
   if (cmd != Get && reply.status == Notice::OK) {
-    event->diffTo = event->date;
-    event->date   = reply.date;
+    const int options = json.value(FEED_KEY_OPTIONS).toInt();
+    event->diffTo     = event->date;
+    event->date       = reply.date;
 
     if (reply.date)
       FeedStorage::save(feed, reply.date);
 
-    if (channel->type() != SimpleID::ServerId)
-      event->broadcast = Sockets::channel(channel);
+    if (options & Feed::Broadcast) {
+      if (channel->type() == SimpleID::ServerId) {
+        const QList<QByteArray> channels = m_self->m_subscription.value(event->name);
+        QList<quint64> sockets;
+
+        foreach (const QByteArray &id, channels) {
+          ChatChannel user = Ch::channel(id, SimpleID::UserId, false);
+          if (user)
+            Sockets::merge(sockets, user->sockets());
+        }
+
+        event->broadcast = sockets;
+      }
+      else
+        event->broadcast = Sockets::channel(channel);
+    }
   }
 
   return done(event, reply);
+}
+
+
+void FeedsCore::sub(const QString &feedName)
+{
+  if (!m_self->m_subscription.contains(feedName))
+    m_self->m_subscription[feedName] = QList<QByteArray>();
+}
+
+
+/*!
+ * Обработка уведомлений фидов.
+ */
+void FeedsCore::notify(const FeedEvent &event)
+{
+  if (!event.broadcast.isEmpty())
+    broadcast(event);
+
+  if (SimpleID::typeOf(event.channel) != SimpleID::ServerId || !m_subscription.contains(event.name))
+    return;
+
+  if (event.socket && event.method == FEED_METHOD_GET && (event.status == Notice::OK || event.status == Notice::NotModified) && SimpleID::typeOf(event.sender) == SimpleID::UserId) {
+    QList<QByteArray> &channels = m_subscription[event.name];
+    if (!channels.contains(event.sender))
+      channels.append(event.sender);
+  }
+  else if (!event.socket && event.method == FEED_METHOD_DELETE && event.name == FEED_NAME_USERS && event.path.size() == 34)
+    m_subscription[event.name].removeAll(SimpleID::decode(event.path));
+}
+
+
+FeedReply FeedsCore::done(FeedEvent *event, const FeedReply &reply)
+{
+  event->reply  = reply.json;
+  event->status = reply.status;
+
+  FeedEvents::start(event);
+  return reply;
 }
 
 
@@ -192,11 +263,18 @@ int FeedsCore::methodToInt(const QString &method)
 }
 
 
-FeedReply FeedsCore::done(FeedEvent *event, const FeedReply &reply)
+/*!
+ * Рассылка уведомления об изменении фида.
+ */
+void FeedsCore::broadcast(const FeedEvent &event)
 {
-  event->reply  = reply.json;
-  event->status = reply.status;
+  FeedPacket packet(new FeedNotice(event.channel, event.channel, FEED_METHOD_GET));
+  packet->setDirection(Notice::Server2Client);
+  packet->setText(FEED_WILDCARD_ASTERISK);
 
-  FeedEvents::start(event);
-  return reply;
+  QVariantMap json;
+  json[event.name] = event.date;
+  packet->setData(Feed::merge(FEED_KEY_F, json));
+
+  Core::i()->send(event.broadcast, packet->data(Core::stream()));
 }

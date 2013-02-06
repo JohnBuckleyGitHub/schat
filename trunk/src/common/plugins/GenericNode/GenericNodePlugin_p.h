@@ -21,17 +21,12 @@
 
 #include "plugins/NodePlugin.h"
 
-class FeedEvent;
-
 class GenericNode : public NodePlugin
 {
   Q_OBJECT
 
 public:
   GenericNode(QObject *parent);
-
-private slots:
-  void notify(const FeedEvent &event);
 };
 
 #endif /* GENERICNODEPLUGIN_P_H_ */

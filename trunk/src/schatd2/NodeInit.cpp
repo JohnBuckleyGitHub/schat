@@ -23,7 +23,7 @@
 
 #include "cores/Core.h"
 #include "debugstream.h"
-#include "feeds/FeedEvents.h"
+#include "feeds/FeedsCore.h"
 #include "net/NodePool.h"
 #include "NodeInit.h"
 #include "NodePlugins.h"
@@ -41,7 +41,7 @@ NodeInit::NodeInit(const QString &app, QObject *parent)
   , m_core(0)
   , m_pool(0)
 {
-  new FeedEvents(this);
+  new FeedsCore(this);
 
   m_storage = new Storage(app, this);
   m_core = new Core(this);
