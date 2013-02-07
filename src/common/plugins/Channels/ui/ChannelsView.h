@@ -31,11 +31,15 @@ class ChannelsView : public WebView
 
 public:
   ChannelsView(QWidget *parent = 0);
+  Q_INVOKABLE QString toUrl(const QString &id, const QString &name) const;
   Q_INVOKABLE void join(const QString &name);
 
 signals:
   void feed(const QVariantMap &data);
   void serverRenamed(const QString &name);
+
+protected:
+  void contextMenu(QMenu *menu, const QWebHitTestResult &result);
 
 private slots:
   void notify(const Notify &notify);

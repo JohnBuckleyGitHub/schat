@@ -86,7 +86,7 @@ ChannelsList.feed = {
 
     return '<div class="channel-item">' +
              '<div class="channel-item-header">' +
-               '<a href="#" class="nick color-default" id="' + list[0] + '">' + list[1] + '</a>' +
+               '<a href="' + ChannelsView.toUrl(list[0], list[1]) + '" class="nick color-default" id="' + list[0] + '">' + list[1] + '</a>' +
                '<span class="badge">' + list[2] + '</span>' +
              '</div>' +
              '<div class="channel-item-title">' + title + '</div>' +
@@ -135,7 +135,8 @@ if (typeof SimpleChat !== 'undefined') {
 
 if (typeof ChannelsView === 'undefined') {
   ChannelsView = {
-    join: function(name) {}
+    join: function(name) {},
+    toUrl: function(id, name) { return '#'; }
   }
 }
 else {
