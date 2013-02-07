@@ -26,9 +26,10 @@
 #include "net/SimpleID.h"
 #include "sglobal.h"
 #include "ui/ChannelsView.h"
-#include "ui/TabWidget.h"
 #include "WebBridge.h"
 #include "ui/tabs/ChatView.h"
+#include "ChatUrls.h"
+#include "hooks/ChannelMenu.h"
 
 ChannelsView::ChannelsView(QWidget *parent)
   : WebView(parent)
@@ -40,18 +41,35 @@ ChannelsView::ChannelsView(QWidget *parent)
 }
 
 
+QString ChannelsView::toUrl(const QString &id, const QString &name) const
+{
+  return LS("chat://channel/") + id + LS("/open?name=") + SimpleID::toBase32(name.toUtf8()) + LS("&gender=0");
+}
+
+
 void ChannelsView::join(const QString &name)
 {
-  if (name.size() == 34) {
-    const QByteArray id = SimpleID::decode(name);
-    if (SimpleID::typeOf(id) != SimpleID::ChannelId)
-      return;
-
-    if (!TabWidget::i()->channelTab(id, false, true))
-      ChatClient::channels()->join(id);
-  }
+  if (name.size() == 34)
+    ChatNotify::start(Notify::OpenChannel, SimpleID::decode(name));
   else
     ChatClient::channels()->join(name);
+}
+
+
+void ChannelsView::contextMenu(QMenu *menu, const QWebHitTestResult &result)
+{
+  menu->addSeparator();
+
+  const QUrl url = result.linkUrl();
+  if (url.scheme() == LS("chat") && url.host() == LS("channel"))
+    Hooks::ChannelMenu::bind(menu, ChatUrls::channel(url), Hooks::ChatViewScope);
+
+  menu->addSeparator();
+
+  if (!result.isContentEditable()) {
+    menu->removeAction(pageAction(QWebPage::SelectAll));
+    menu->addAction(pageAction(QWebPage::SelectAll));
+  }
 }
 
 

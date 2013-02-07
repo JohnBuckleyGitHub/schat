@@ -490,9 +490,13 @@ void TabWidget::currentChanged(int index)
 
 void TabWidget::notify(const Notify &notify)
 {
-  int type = notify.type();
+  const int type = notify.type();
 
   if (type == Notify::OpenChannel || type == Notify::OpenInfo) {
+    const QByteArray id = notify.data().toByteArray();
+    if (SimpleID::typeOf(id) == SimpleID::ChannelId && !TabWidget::i()->channelTab(id, false, false))
+      ChatClient::channels()->join(id);
+
     ChannelBaseTab *tab = channelTab(notify.data().toByteArray());
     if (!tab)
       return;

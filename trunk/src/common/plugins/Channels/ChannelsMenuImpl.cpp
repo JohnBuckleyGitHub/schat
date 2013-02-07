@@ -103,12 +103,14 @@ void ChannelsMenuImpl::permissions(QMenu *menu, ClientChannel user)
   if (acl == -1 || !(acl & Acl::Edit))
     return;
 
-  menu->addSeparator();
-  m_permissions = menu->addMenu(SCHAT_ICON(Key), tr("Permissions"));
+  if (user->id() != ChatClient::id()) {
+    menu->addSeparator();
+    m_permissions = menu->addMenu(SCHAT_ICON(Key), tr("Permissions"));
 
-  acl = ClientFeeds::match(channel, user);
-  m_ro = m_permissions->addAction(tr("Read only"));
-  m_ro->setCheckable(true);
-  m_ro->setChecked(acl == Acl::Read);
-  m_ro->setData(user->id());
+    acl = ClientFeeds::match(channel, user);
+    m_ro = m_permissions->addAction(tr("Read only"));
+    m_ro->setCheckable(true);
+    m_ro->setChecked(acl == Acl::Read);
+    m_ro->setData(user->id());
+  }
 }
