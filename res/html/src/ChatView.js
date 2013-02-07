@@ -21,8 +21,10 @@ var FEED_METHOD_PUT       = 'put';
 var FEED_METHOD_POST      = 'post';
 var FEED_METHOD_DELETE    = 'delete';
 
+var FEED_NAME_ACL         = 'acl';
 var FEED_NAME_CONSOLE     = 'console';
 var FEED_NAME_HOSTS       = 'hosts';
+var FEED_NAME_INFO        = 'info';
 var FEED_NAME_LIST        = 'list';
 var FEED_NAME_SERVER      = 'server';
 var FEED_NAME_USERS       = 'users';
