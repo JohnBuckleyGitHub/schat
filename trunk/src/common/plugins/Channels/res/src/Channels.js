@@ -33,12 +33,12 @@ var Channels = {
     if (SimpleChat.isOnline())
       Loader.spinner.add('loading/info');
 
-    Channels.info(SimpleChat.feed(Settings.getId(), 'info', 4), 300);
+    Channels.info(SimpleChat.feed(Settings.getId(), FEED_NAME_INFO, 4), 300);
   },
 
 
   /*
-   * Чтение фида "info".
+   * Чтение фида FEED_NAME_INFO.
    */
   info: function(json, status) {
     if (json.hasOwnProperty('title'))
@@ -74,12 +74,12 @@ var Channels = {
    * Чтение данных фидов.
    */
   feed: function(json) {
-    if (!json.hasOwnProperty('type') || json.id !== Settings.getId())
+    if (json === false)
       return;
 
-    if (json.feed == 'info')
+    if (json.feed == FEED_NAME_INFO && json.id == Settings.getId())
       Channels.info(json.data, json.status);
-    else if (json.feed == 'acl')
+    else if (json.feed == FEED_NAME_ACL)
       Channels.online();
   },
 
@@ -163,7 +163,7 @@ Modal.create.options = function(event)
   h3.text(event.target.innerText);
   h3.attr('data-tr', 'channels_options');
 
-  var feed = SimpleChat.feed(Settings.getId(), 'info', 4);
+  var feed = SimpleChat.feed(Settings.getId(), FEED_NAME_INFO, 4);
   if (feed !== false)
     var visibility = feed.visibility || 0;
 
@@ -219,7 +219,7 @@ $(document).ready(function() {
     $('#modal').modal('hide');
 
     if ($('#channel-title-text').text() != text)
-      SimpleChat.request(Settings.getId(), 'post', 'info/title', {'value':text, 'options':7});
+      SimpleChat.request(Settings.getId(), FEED_METHOD_POST, FEED_NAME_INFO + '/title', {'value':text, 'options':7});
   });
 
 
@@ -228,7 +228,7 @@ $(document).ready(function() {
    */
   modal.on('change.visibility', '#visibility', function (event) {
     var value = $(this).find('option:selected').attr('value');
-    SimpleChat.request(Settings.getId(), 'post', 'info/visibility', {'value':value, 'options':7});
+    SimpleChat.request(Settings.getId(), FEED_METHOD_POST, FEED_NAME_INFO + '/visibility', {'value':value, 'options':7});
 
     $('#visibility-error').addClass('hide');
     Channels.timeout.visibility = setTimeout(function() {
@@ -241,7 +241,7 @@ $(document).ready(function() {
    * Обработка изменения закрепления канала.
    */
   modal.on('change.pinned', '#pin', function (event) {
-    SimpleChat.request(Settings.getId(), 'post', 'info/pinned', {'value':$(this).is(':checked'), 'options':7});
+    SimpleChat.request(Settings.getId(), FEED_METHOD_POST, FEED_NAME_INFO + '/pinned', {'value':$(this).is(':checked'), 'options':7});
 
     $('#pin-error').addClass('hide');
     Channels.timeout.pin = setTimeout(function() {

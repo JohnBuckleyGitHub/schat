@@ -16,14 +16,15 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "client/ChatClient.h"
 #include "acl/AclValue.h"
+#include "client/ChatClient.h"
 #include "client/ClientFeeds.h"
 #include "client/ClientHooks.h"
 #include "client/SimpleClient.h"
 #include "feeds/FeedStrings.h"
 #include "net/packets/FeedNotice.h"
 #include "net/packets/Notice.h"
+#include "net/SimpleID.h"
 #include "sglobal.h"
 
 ClientFeeds::ClientFeeds(QObject *parent)
@@ -115,7 +116,20 @@ int ClientFeeds::match(ClientChannel channel, ClientChannel user)
   if (!feed)
     return -1;
 
-  return AclValue::match(feed.data(), user.data());
+  int acl = AclValue::match(feed.data(), user.data());
+  if (channel->type() != SimpleID::ServerId) {
+    feed = ChatClient::server()->feed(FEED_NAME_ACL, false);
+    if (feed) {
+      const int serverAcl = AclValue::match(feed.data(), user.data());
+      if (serverAcl & Acl::Edit)
+        acl |= Acl::Edit;
+
+      if (serverAcl & Acl::SpecialEdit)
+        acl |= Acl::SpecialEdit;
+    }
+  }
+
+  return acl;
 }
 
 

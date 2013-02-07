@@ -58,7 +58,7 @@ bool UserItem::reload()
   setText(m_user->name());
   setIcon(ChatIcons::icon(m_user));
 
-  int acl = ClientFeeds::match(m_channel, m_user);
+  const int acl = ClientFeeds::match(m_channel, m_user);
   if (acl != -1) {
     QFont font = this->font();
 
@@ -276,8 +276,7 @@ void UserView::mouseReleaseEvent(QMouseEvent *event)
  */
 void UserView::addTab(const QModelIndex &index)
 {
-  QUrl url = ChatUrls::toUrl(static_cast<UserItem *>(m_model.itemFromIndex(index))->user(), LS("open"));
-  ChatUrls::open(url);
+  ChatUrls::open(ChatUrls::toUrl(static_cast<UserItem *>(m_model.itemFromIndex(index))->user(), LS("open")));
 }
 
 
@@ -285,7 +284,7 @@ void UserView::notify(const Notify &notify)
 {
   if (notify.type() == Notify::FeedData) {
     const FeedNotify &n = static_cast<const FeedNotify &>(notify);
-    if (n.feed() == FEED_NAME_ACL && (n.channel() == m_channel->id() || n.channel() == ChatClient::id())) {
+    if (n.feed() == FEED_NAME_ACL && (n.channel() == m_channel->id() || n.channel() == ChatClient::id() || n.channel() == ChatClient::serverId())) {
       foreach (UserItem *item, m_channels)
         item->reload();
 

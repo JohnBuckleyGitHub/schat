@@ -286,7 +286,7 @@ void ChatView::menuTriggered(QAction *action)
 
 void ChatView::notify(const Notify &notify)
 {
-  int type = notify.type();
+  const int type = notify.type();
 
   if (type == Notify::ClearChat) {
     if (m_id == notify.data().toByteArray())
@@ -294,17 +294,16 @@ void ChatView::notify(const Notify &notify)
   }
   else if (type == Notify::FeedData || type == Notify::FeedReply) {
     const FeedNotify &n = static_cast<const FeedNotify &>(notify);
-    if (n.channel() != id() && n.channel() != ChatClient::id())
-      return;
+    if (n.channel() == id() || n.channel() == ChatClient::id() || (n.channel() == ChatClient::serverId() && n.feed() == FEED_NAME_ACL)) {
+      const QVariantMap json = WebBridge::feed(n);
+      if (json.isEmpty())
+        return;
 
-    QVariantMap json = WebBridge::feed(n);
-    if (json.isEmpty())
-      return;
-
-    if (!m_loaded)
-      m_pendingFeeds.enqueue(json);
-    else
-      emit feed(json);
+      if (!m_loaded)
+        m_pendingFeeds.enqueue(json);
+      else
+        emit feed(json);
+    }
   }
 }
 
