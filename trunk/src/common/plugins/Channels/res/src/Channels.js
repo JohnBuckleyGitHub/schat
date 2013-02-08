@@ -20,7 +20,8 @@ var Channels = {
   acl: -1,     // Права доступа к каналу.
   timeout: {
     visibility: null,
-    pin: null
+    pin: null,
+    acl: null
   },
 
   /*
@@ -74,6 +75,17 @@ var Channels = {
 
 
   /*
+   * Запуск спиннера с задержкой 400 мс.
+   */
+  startSpinner: function(id) {
+    $('#' + id + '-error').addClass('hide');
+    Channels.timeout[id] = setTimeout(function() {
+      $('#' + id + '-spinner').removeClass('hide');
+    }, 400);
+  },
+
+
+  /*
    * Чтение данных фидов.
    */
   feed: function(json) {
@@ -82,8 +94,12 @@ var Channels = {
 
     if (json.feed == FEED_NAME_INFO && json.id == Settings.getId())
       Channels.info(json.data, json.status);
-    else if (json.feed == FEED_NAME_ACL)
+    else if (json.feed == FEED_NAME_ACL) {
+      if (json.type == 'reply')
+        Channels.stopSpinner('acl', json.status);
+
       Channels.online();
+    }
   },
 
 
@@ -115,9 +131,6 @@ var Channels = {
 
 
   editAcl: function(id) {
-    console.log(id);
-    console.log(SimpleChat.channel(id));
-
     $('#modal-header h3').html(Messages.nameTemplate(SimpleChat.channel(id)));
 
     var body = $('#modal-body');
@@ -126,7 +139,7 @@ var Channels = {
       '<form>' +
         '<div id="acl-row" class="row">' +
           '<label for="acl" data-tr="channels_permissions">' + Utils.tr('channels_permissions') + '</label> ' +
-          '<select id="acl">' +
+          '<select id="acl" data-user="' + id + '">' +
             '<option value="6" data-tr="channels_default">'  + Utils.tr('channels_default')  + '</option>' +
             '<option value="15" data-tr="channels_owner">'   + Utils.tr('channels_owner')    + '</option>' +
             '<option value="4" data-tr="channels_readonly">' + Utils.tr('channels_readonly') + '</option>' +
@@ -136,6 +149,16 @@ var Channels = {
         '</div>' +
       '</form>'
     );
+
+    var acl  = SimpleChat.match(Settings.getId(), id);
+    var feed = SimpleChat.feed(Settings.getId(), FEED_NAME_ACL, 3);
+
+    if (feed !== false && feed.hasOwnProperty(id)) {
+      if (acl & 9)
+        $('#acl').val('15');
+      else if (!(acl & 2))
+        $('#acl').val('4');
+    }
 
     Modal.current = 'acl';
     $('#modal').modal();
@@ -162,11 +185,7 @@ var Channels = {
   setVisibility: function(event) {
     var value = $(this).find('option:selected').attr('value');
     SimpleChat.request(Settings.getId(), FEED_METHOD_POST, INFO_FEED_VISIBILITY_REQ, {'value':value, 'options':7});
-
-    $('#visibility-error').addClass('hide');
-    Channels.timeout.visibility = setTimeout(function() {
-      $('#visibility-spinner').removeClass('hide');
-    }, 400);
+    Channels.startSpinner('visibility');
   },
 
 
@@ -175,11 +194,22 @@ var Channels = {
    */
   pinChannel: function(event) {
     SimpleChat.request(Settings.getId(), FEED_METHOD_POST, INFO_FEED_PINNED_REQ, {'value':$(this).is(':checked'), 'options':7});
+    Channels.startSpinner('pin');
+  },
 
-    $('#pin-error').addClass('hide');
-    Channels.timeout.pin = setTimeout(function() {
-      $('#pin-spinner').removeClass('hide');
-    }, 400);
+
+  setAcl: function(event) {
+    var value = $(this).find('option:selected').attr('value');
+    var id    = $(this).attr('data-user');
+
+    if (value == 15)
+      SimpleChat.request(Settings.getId(), FEED_METHOD_POST,   ACL_FEED_HEAD_OWNER_REQ, {'value':id,'options':6});
+    else if (value == 6)
+      SimpleChat.request(Settings.getId(), FEED_METHOD_DELETE, ACL_FEED_HEAD_OTHER_REQ + '/' + id, {'options':6});
+    else if (value == 4)
+      SimpleChat.request(Settings.getId(), FEED_METHOD_POST,   ACL_FEED_HEAD_OTHER_REQ + '/' + id, {'value':4,'options':6});
+
+    Channels.startSpinner('acl');
   }
 };
 
@@ -283,6 +313,8 @@ $(document).ready(function() {
   modal.on('click.title',       '#title-ok',   Channels.setTitle);
   modal.on('change.visibility', '#visibility', Channels.setVisibility);
   modal.on('change.pinned',     '#pin',        Channels.pinChannel);
+
+  modal.on('change.acl',        '#acl',        Channels.setAcl);
 
   Channels.online();
 });

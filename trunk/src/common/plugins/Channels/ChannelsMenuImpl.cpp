@@ -59,9 +59,9 @@ bool ChannelsMenuImpl::triggerImpl(QAction *action)
   }
   else if (action == m_ro) {
     if (action->isChecked())
-      ClientFeeds::post(ChatCore::currentId(), ACL_FEED_HEAD_OTHER_REQ + SimpleID::encode(action->data().toByteArray()), Acl::Read, Feed::Share | Feed::Broadcast);
+      ClientFeeds::post(ChatCore::currentId(), ACL_FEED_HEAD_OTHER_REQ + LC('/') + SimpleID::encode(action->data().toByteArray()), Acl::Read, Feed::Share | Feed::Broadcast);
     else
-      ClientFeeds::del(ChatCore::currentId(),  ACL_FEED_HEAD_OTHER_REQ + SimpleID::encode(action->data().toByteArray()), Feed::Share | Feed::Broadcast);
+      ClientFeeds::del(ChatCore::currentId(),  ACL_FEED_HEAD_OTHER_REQ + LC('/') + SimpleID::encode(action->data().toByteArray()), Feed::Share | Feed::Broadcast);
   }
   else if (action == m_advanced) {
     ChannelBaseTab *tab = TabWidget::i()->channelTab(ChatCore::currentId());
