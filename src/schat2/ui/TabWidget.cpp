@@ -497,7 +497,7 @@ void TabWidget::notify(const Notify &notify)
     if (SimpleID::typeOf(id) == SimpleID::ChannelId && !TabWidget::i()->channelTab(id, false, false))
       ChatClient::channels()->join(id);
 
-    ChannelBaseTab *tab = channelTab(notify.data().toByteArray());
+    ChannelBaseTab *tab = channelTab(id);
     if (!tab)
       return;
 

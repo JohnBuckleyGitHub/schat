@@ -53,7 +53,7 @@ label {
   margin: 6px 0;
 }
 
-#visibility-row {
+#visibility-row, #acl-row {
   margin-top: 0;
 }
 

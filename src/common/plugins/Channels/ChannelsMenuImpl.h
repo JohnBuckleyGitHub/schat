@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ private:
   void permissions(QMenu *menu, ClientChannel user);
 
   bool m_self;          ///< \b true если пользователь совершает действия над собой.
+  QAction *m_advanced;  ///< Расширенная настройка правд доступа.
   QAction *m_ignore;    ///< Действие для игнорирования пользователя.
   QAction *m_ro;        ///< Права только для чтения.
   QMenu *m_permissions; ///< Меню управления правами пользователя в канале.

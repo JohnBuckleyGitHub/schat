@@ -52,7 +52,7 @@ public:
 protected:
   QString valueImpl(const QString &key) const
   {
-    if (key == LS("join"))                return tr("Join");
+    if      (key == LS("join"))           return tr("Join");
     else if (key == LS("channel_name"))   return tr("Channel name");
     else if (key == LS("list"))           return tr("Channels");
     else if (key == LS("no_title"))       return tr("No title");
@@ -63,6 +63,9 @@ protected:
     else if (key == LS("always_visible")) return tr("Always visible");
     else if (key == LS("hidden"))         return tr("Hidden");
     else if (key == LS("pin"))            return tr("Pin to channel list");
+    else if (key == LS("permissions"))    return tr("Permissions");
+    else if (key == LS("owner"))          return tr("Owner");
+    else if (key == LS("readonly"))       return tr("Read only");
     return QString();
   }
 };

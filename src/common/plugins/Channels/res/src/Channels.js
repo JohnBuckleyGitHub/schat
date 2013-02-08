@@ -47,22 +47,25 @@ var Channels = {
     if (status != 300)
       Loader.spinner.remove('loading/info');
 
-    Channels.spinner('visibility', status);
-    Channels.spinner('pin', status);
+    Channels.stopSpinner('visibility', status);
+    Channels.stopSpinner('pin',        status);
   },
 
 
   /*
    * Завершение показа спиннера если получен фид.
+   *
+   * \param id     Идентификатор спиннера.
+   * \param status Статус ответа на запрос.
    */
-  spinner: function(id, status) {
+  stopSpinner: function(id, status) {
     if (Channels.timeout[id] === null)
       return;
 
     clearInterval(Channels.timeout[id]);
     $('#' + id + '-spinner').addClass('hide');
 
-    if (status != 200) {
+    if (status != 200 && status != 303) {
       var error = $('#' + id + '-error');
       error.removeClass('hide');
       error.attr('title', SimpleChat.statusText(status));
@@ -108,6 +111,75 @@ var Channels = {
              '<li><a href="#" data-tr="channels_title" class="modal-toggle" data-handler="title">' + Utils.tr('channels_title') + '</a></li>' +
              '<li><a href="#" data-tr="channels_options" class="modal-toggle" data-handler="options">' + Utils.tr('channels_options') + '</a></li>' +
            '</ul>';
+  },
+
+
+  editAcl: function(id) {
+    console.log(id);
+    console.log(SimpleChat.channel(id));
+
+    $('#modal-header h3').html(Messages.nameTemplate(SimpleChat.channel(id)));
+
+    var body = $('#modal-body');
+    body.append('<form>');
+    body.append(
+      '<form>' +
+        '<div id="acl-row" class="row">' +
+          '<label for="acl" data-tr="channels_permissions">' + Utils.tr('channels_permissions') + '</label> ' +
+          '<select id="acl">' +
+            '<option value="6" data-tr="channels_default">'  + Utils.tr('channels_default')  + '</option>' +
+            '<option value="15" data-tr="channels_owner">'   + Utils.tr('channels_owner')    + '</option>' +
+            '<option value="4" data-tr="channels_readonly">' + Utils.tr('channels_readonly') + '</option>' +
+          '</select> ' +
+          '<i id="acl-spinner" class="icon-spinner hide"></i>' +
+          '<i id="acl-error" class="icon-error hide"></i>' +
+        '</div>' +
+      '</form>'
+    );
+
+    Modal.current = 'acl';
+    $('#modal').modal();
+  },
+
+
+  /*
+   * Установка нового заголовка канала.
+   */
+  setTitle: function(event) {
+    event.preventDefault();
+
+    var text = $('#title-edit').val();
+    $('#modal').modal('hide');
+
+    if ($('#channel-title-text').text() != text)
+      SimpleChat.request(Settings.getId(), FEED_METHOD_POST, INFO_FEED_TITLE_REQ, {'value':text, 'options':7});
+  },
+
+
+  /*
+   * Обработка изменения видимости канала.
+   */
+  setVisibility: function(event) {
+    var value = $(this).find('option:selected').attr('value');
+    SimpleChat.request(Settings.getId(), FEED_METHOD_POST, INFO_FEED_VISIBILITY_REQ, {'value':value, 'options':7});
+
+    $('#visibility-error').addClass('hide');
+    Channels.timeout.visibility = setTimeout(function() {
+      $('#visibility-spinner').removeClass('hide');
+    }, 400);
+  },
+
+
+  /*
+   * Обработка изменения закрепления канала.
+   */
+  pinChannel: function(event) {
+    SimpleChat.request(Settings.getId(), FEED_METHOD_POST, INFO_FEED_PINNED_REQ, {'value':$(this).is(':checked'), 'options':7});
+
+    $('#pin-error').addClass('hide');
+    Channels.timeout.pin = setTimeout(function() {
+      $('#pin-spinner').removeClass('hide');
+    }, 400);
   }
 };
 
@@ -182,7 +254,7 @@ Modal.create.options = function(event)
     '</div>'
   );
 
-  if (SimpleChat.match(SimpleChat.serverId(), SimpleChat.id()) == 7) {
+  if (SimpleChat.match(SimpleChat.serverId(), SimpleChat.id()) & 9) {
     body.append(
       '<div id="pin-row" class="row">' +
         '<input id="pin" type="checkbox" ' + (feed.pinned == true ? 'checked' : '') + '> ' +
@@ -206,49 +278,11 @@ Modal.hidden.options = function()
 
 $(document).ready(function() {
   $('#page-header').append('<div id="channel-title"><div id="channel-title-text"></div></div>');
+
   var modal = $('#modal-body');
-
-
-  /*
-   * Установка нового заголовка канала.
-   */
-  modal.on('click.title', '#title-ok', function (event) {
-    event.preventDefault();
-
-    var text = $('#title-edit').val();
-    $('#modal').modal('hide');
-
-    if ($('#channel-title-text').text() != text)
-      SimpleChat.request(Settings.getId(), FEED_METHOD_POST, FEED_NAME_INFO + '/title', {'value':text, 'options':7});
-  });
-
-
-  /*
-   * Обработка изменения видимости канала.
-   */
-  modal.on('change.visibility', '#visibility', function (event) {
-    var value = $(this).find('option:selected').attr('value');
-    SimpleChat.request(Settings.getId(), FEED_METHOD_POST, FEED_NAME_INFO + '/visibility', {'value':value, 'options':7});
-
-    $('#visibility-error').addClass('hide');
-    Channels.timeout.visibility = setTimeout(function() {
-      $('#visibility-spinner').removeClass('hide');
-    }, 400);
-  });
-
-
-  /*
-   * Обработка изменения закрепления канала.
-   */
-  modal.on('change.pinned', '#pin', function (event) {
-    SimpleChat.request(Settings.getId(), FEED_METHOD_POST, FEED_NAME_INFO + '/pinned', {'value':$(this).is(':checked'), 'options':7});
-
-    $('#pin-error').addClass('hide');
-    Channels.timeout.pin = setTimeout(function() {
-      $('#pin-spinner').removeClass('hide');
-    }, 400);
-  });
-
+  modal.on('click.title',       '#title-ok',   Channels.setTitle);
+  modal.on('change.visibility', '#visibility', Channels.setVisibility);
+  modal.on('change.pinned',     '#pin',        Channels.pinChannel);
 
   Channels.online();
 });

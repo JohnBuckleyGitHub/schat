@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,13 +25,18 @@
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/ClientFeeds.h"
+#include "feeds/AclFeed.h"
 #include "hooks/MessagesImpl.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
+#include "ui/tabs/ChannelBaseTab.h"
+#include "ui/tabs/ChatView.h"
+#include "ui/TabWidget.h"
 
 ChannelsMenuImpl::ChannelsMenuImpl(QObject *parent)
   : ChannelMenu(parent)
+  , m_advanced(0)
   , m_ignore(0)
   , m_ro(0)
   , m_permissions(0)
@@ -54,9 +59,14 @@ bool ChannelsMenuImpl::triggerImpl(QAction *action)
   }
   else if (action == m_ro) {
     if (action->isChecked())
-      ClientFeeds::post(ChatCore::currentId(), LS("acl/head/other/") + SimpleID::encode(action->data().toByteArray()), Acl::Read, Feed::Share | Feed::Broadcast);
+      ClientFeeds::post(ChatCore::currentId(), ACL_FEED_HEAD_OTHER_REQ + SimpleID::encode(action->data().toByteArray()), Acl::Read, Feed::Share | Feed::Broadcast);
     else
-      ClientFeeds::del(ChatCore::currentId(), LS("acl/head/other/") + SimpleID::encode(action->data().toByteArray()), Feed::Share | Feed::Broadcast);
+      ClientFeeds::del(ChatCore::currentId(),  ACL_FEED_HEAD_OTHER_REQ + SimpleID::encode(action->data().toByteArray()), Feed::Share | Feed::Broadcast);
+  }
+  else if (action == m_advanced) {
+    ChannelBaseTab *tab = TabWidget::i()->channelTab(ChatCore::currentId());
+    if (tab)
+      tab->chatView()->evaluateJavaScript(LS("Channels.editAcl(\"") + SimpleID::encode(action->data().toByteArray()) + LS("\");"));
   }
 
   return false;
@@ -87,12 +97,16 @@ void ChannelsMenuImpl::bindImpl(QMenu *menu, ClientChannel channel, Hooks::Scope
 
 void ChannelsMenuImpl::cleanupImpl()
 {
+  m_advanced = 0;
   m_ignore = 0;
   m_permissions = 0;
   m_ro = 0;
 }
 
 
+/*!
+ * Формирование меню прав доступа к каналу.
+ */
 void ChannelsMenuImpl::permissions(QMenu *menu, ClientChannel user)
 {
   ClientChannel channel = ChatClient::channels()->get(ChatCore::currentId());
@@ -103,14 +117,17 @@ void ChannelsMenuImpl::permissions(QMenu *menu, ClientChannel user)
   if (acl == -1 || !(acl & Acl::Edit))
     return;
 
-  if (user->id() != ChatClient::id()) {
-    menu->addSeparator();
-    m_permissions = menu->addMenu(SCHAT_ICON(Key), tr("Permissions"));
+  menu->addSeparator();
+  m_permissions = menu->addMenu(SCHAT_ICON(Key), tr("Permissions"));
 
+  if (!m_self) {
     acl = ClientFeeds::match(channel, user);
     m_ro = m_permissions->addAction(tr("Read only"));
     m_ro->setCheckable(true);
-    m_ro->setChecked(acl == Acl::Read);
+    m_ro->setChecked(!(acl & Acl::Write));
     m_ro->setData(user->id());
   }
+
+  m_advanced = m_permissions->addAction(tr("Advanced..."));
+  m_advanced->setData(user->id());
 }
