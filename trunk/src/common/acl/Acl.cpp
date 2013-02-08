@@ -76,11 +76,11 @@ int Acl::match(Channel *channel) const
 
   const QByteArray &id = channel->id();
 
-  if (m_others.contains(id))
-    return m_others.value(id);
-
   if (m_owners.contains(id))
     return m_mask >> 6 | SpecialEdit;
+
+  if (m_others.contains(id))
+    return m_others.value(id);
 
   return (m_mask & ~0770);
 }

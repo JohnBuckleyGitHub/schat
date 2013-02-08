@@ -75,13 +75,16 @@ int FeedHeader::post(const QString &path, const QVariant &value)
     if (m_acl.owners().contains(id))
       return Notice::NotModified;
 
+    m_acl.removeOther(id);
     m_acl.add(id);
     return Notice::OK;
   }
   else if (path.startsWith(LS("other/"))) {
-    if (!m_acl.add(SimpleID::decode(path.mid(6)), value.toInt()))
+    const QByteArray id = SimpleID::decode(path.mid(6));
+    if (!m_acl.add(id, value.toInt()))
       return Notice::BadRequest;
 
+    m_acl.remove(id);
     return Notice::OK;
   }
 
