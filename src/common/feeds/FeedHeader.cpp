@@ -48,25 +48,15 @@ bool FeedHeader::isValid() const
 
 int FeedHeader::del(const QString &path)
 {
-  if (path.startsWith(LS("owner/"))) {
+  if (path.startsWith(LS("owner/")) || path.startsWith(LS("other/"))) {
     const QByteArray id = SimpleID::decode(path.mid(6));
     if (SimpleID::typeOf(id) != SimpleID::UserId)
       return Notice::BadRequest;
 
-    if (!m_acl.owners().contains(id))
+    if (!m_acl.owners().contains(id) && !m_acl.others().contains(id))
       return Notice::NotFound;
 
     m_acl.remove(id);
-    return Notice::OK;
-  }
-  else if (path.startsWith(LS("other/"))) {
-    const QByteArray id = SimpleID::decode(path.mid(6));
-    if (SimpleID::typeOf(id) != SimpleID::UserId)
-      return Notice::BadRequest;
-
-    if (!m_acl.others().contains(id))
-      return Notice::NotFound;
-
     m_acl.removeOther(id);
     return Notice::OK;
   }

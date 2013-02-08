@@ -41,6 +41,9 @@ var INFO_FEED_TITLE_REQ      = 'info/title';
 var INFO_FEED_VISIBILITY_REQ = 'info/visibility';
 var INFO_FEED_PINNED_REQ     = 'info/pinned';
 
+var ACL_FEED_HEAD_OTHER_REQ  = 'acl/head/other';
+var ACL_FEED_HEAD_OWNER_REQ  = 'acl/head/owner';
+
 var Settings = {
   id: '',
   status: '',
