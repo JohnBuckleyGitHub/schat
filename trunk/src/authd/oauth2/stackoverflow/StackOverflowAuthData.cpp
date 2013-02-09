@@ -16,14 +16,19 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "handlers/ProvidersHandler.h"
-#include "handlers/StateHandler.h"
-#include "oauth2/facebook/FacebookAuth.h"
-#include "oauth2/github/GithubAuth.h"
-#include "oauth2/google/GoogleAuth.h"
-#include "oauth2/live/LiveAuth.h"
-#include "oauth2/mail_ru/MailRuAuth.h"
-#include "oauth2/odnoklassniki/OdnoklassnikiAuth.h"
-#include "oauth2/vkontakte/VkontakteAuth.h"
-#include "oauth2/yandex/YandexAuth.h"
-#include "oauth2/stackoverflow/StackOverflowAuth.h"
+#include <QUrl>
+
+#include "oauth2/stackoverflow/StackOverflowAuthData.h"
+
+StackOverflowAuthData::StackOverflowAuthData()
+  : OAuthData("stackoverflow")
+{
+  name = "Stack Overflow";
+  htmlName = name;
+}
+
+
+QByteArray StackOverflowAuthData::toUrl(const QByteArray &state) const
+{
+  return "https://stackexchange.com/oauth?client_id=" + id + "&redirect_uri=" + QUrl::toPercentEncoding(redirect) + "&state=" + state;
+}
