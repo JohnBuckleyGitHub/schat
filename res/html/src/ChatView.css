@@ -476,6 +476,10 @@ a:active, a:hover {
   background-position: -128px 0;
 }
 
+.provider-stackoverflow {
+  background-position: -144px 0;
+}
+
 #easyTooltip {
   padding:5px;
   border:1px solid rgba(159, 159, 141, 0.5);

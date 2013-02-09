@@ -34,6 +34,7 @@
 #include "oauth2/mail_ru/MailRuAuthData.h"
 #include "oauth2/OAuthData.h"
 #include "oauth2/odnoklassniki/OdnoklassnikiAuthData.h"
+#include "oauth2/stackoverflow/StackOverflowAuthData.h"
 #include "oauth2/vkontakte/VkontakteAuthData.h"
 #include "oauth2/yandex/YandexAuthData.h"
 #include "Path.h"
@@ -56,7 +57,7 @@ AuthCore::AuthCore(QObject *parent)
   m_settings = new Settings(defaultConf(), this);
   m_settings->setDefault(LS("Listen"),   QStringList(LS("http://0.0.0.0:7668")));
   m_settings->setDefault(LS("Root"),     defaultRoot());
-  m_settings->setDefault(LS("Order"),    QStringList() << LS("facebook") << LS("vkontakte") << LS("google") << LS("live") << LS("github") << LS("yandex") << LS("odnoklassniki") << LS("mail_ru"));
+  m_settings->setDefault(LS("Order"),    QStringList() << LS("facebook") << LS("vkontakte") << LS("google") << LS("live") << LS("github") << LS("stackoverflow") << LS("yandex") << LS("odnoklassniki") << LS("mail_ru"));
   m_settings->setDefault(LS("LogLevel"), 2);
   m_settings->setDefault(LS("BaseUrl"),  QString());
 
@@ -77,6 +78,7 @@ AuthCore::AuthCore(QObject *parent)
   add(new OdnoklassnikiAuthCreator());
   add(new LiveAuthCreator());
   add(new GithubAuthCreator());
+  add(new StackOverflowAuthCreator());
 
   QTimer::singleShot(0, this, SLOT(start()));
 }
@@ -127,6 +129,7 @@ void AuthCore::start()
   add(new OdnoklassnikiAuthData());
   add(new LiveAuthData());
   add(new GithubAuthData());
+  add(new StackOverflowAuthData());
 
   if (m_providers.isEmpty()) {
     SCHAT_LOG_FATAL("Providers list is empty")

@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2012 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2013 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -109,6 +109,8 @@ HEADERS = \
     oauth2/OAuthHandler.h \
     oauth2/odnoklassniki/OdnoklassnikiAuth.h \
     oauth2/odnoklassniki/OdnoklassnikiAuthData.h \
+    oauth2/stackoverflow/StackOverflowAuth.h \
+    oauth2/stackoverflow/StackOverflowAuthData.h \
     oauth2/vkontakte/VkontakteAuth.h \
     oauth2/vkontakte/VkontakteAuthData.h \
     oauth2/yandex/YandexAuth.h \
@@ -137,6 +139,8 @@ SOURCES = \
     oauth2/OAuthHandler.cpp \
     oauth2/odnoklassniki/OdnoklassnikiAuth.cpp \
     oauth2/odnoklassniki/OdnoklassnikiAuthData.cpp \
+    oauth2/stackoverflow/StackOverflowAuth.cpp \
+    oauth2/stackoverflow/StackOverflowAuthData.cpp \
     oauth2/vkontakte/VkontakteAuth.cpp \
     oauth2/vkontakte/VkontakteAuthData.cpp \
     oauth2/yandex/YandexAuth.cpp \

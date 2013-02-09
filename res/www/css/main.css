@@ -7,7 +7,7 @@
 }
 
 [class^="provider-"] {
-  background-image: url("../img/providers.png");
+  background-image: url(../img/providers.png?1);
   background-position: 0 0;
 }
 
@@ -41,6 +41,10 @@
 
 .provider-github {
   background-position: -128px 0;
+}
+
+.provider-stackoverflow {
+  background-position: -144px 0;
 }
 
 .icon-spinner {
