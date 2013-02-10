@@ -24,11 +24,12 @@
 class NetworkComboBox;
 class NetworkManager;
 class QComboBox;
+class QGridLayout;
 class QLabel;
 class QMenu;
 class QToolBar;
 class QToolButton;
-class QVBoxLayout;
+class SLineEdit;
 
 class NetworkWidget : public QWidget
 {
@@ -36,13 +37,13 @@ class NetworkWidget : public QWidget
 
 public:
   /// Дополнительные возможности виджета.
-  enum WidgetLayout {
+  enum WidgetOptions {
     BasicLayout = 0,
     AccountButtonLayout = 1,
     ExtraLayout = 2
   };
 
-  NetworkWidget(QWidget *parent, int layout = 3);
+  NetworkWidget(QWidget *parent, int options = AccountButtonLayout | ExtraLayout);
   QAction *connectAction();
 
 public slots:
@@ -53,6 +54,7 @@ protected:
   void changeEvent(QEvent *event);
 
 private slots:
+  void applyUrl();
   void indexChanged(int index);
   void menuTriggered(QAction *action);
   void reload();
@@ -64,7 +66,7 @@ private:
   void setTitle(const QString &title);
   void signOut();
 
-  int m_layout;                  ///< Дополнительные возможности виджета.
+  int m_options;                 ///< Дополнительные возможности виджета.
   NetworkComboBox *m_combo;      ///< Комбобокс выбора серверов.
   NetworkManager *m_manager;     ///< Указатель на менеджер сетевых подключений.
   QAction *m_add;                ///< Действие для добавления сервера.
@@ -73,10 +75,12 @@ private:
   QAction *m_edit;               ///< Действие для редактирования текущего подключения.
   QAction *m_remove;             ///< Действие для удаления сервера.
   QAction *m_signOut;            ///< Действие для выхода из текущей учётной записи.
+  QGridLayout *m_layout;         ///< Основной компоновщик.
+  QLabel *m_urlLabel;            ///< Текстоая метка для поля редактирования адреса сервера.
   QMenu *m_menu;                 ///< Меню дополнительных действий.
   QToolBar *m_toolBar;           ///< Тулбар для размещения основных действий.
   QToolButton *m_actions;        ///< Кнопка дополнительных действий.
-  QVBoxLayout *m_mainLayout;     ///< Основной компоновщик.
+  SLineEdit *m_urlEdit;          ///< Поле редактирования адреса сервера.
 };
 
 #endif /* NETWORKWIDGET_H_ */
