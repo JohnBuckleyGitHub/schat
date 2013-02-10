@@ -84,7 +84,6 @@ HEADERS = \
     ui/MainToolBar.h \
     ui/network/NetworkButton.h \
     ui/network/NetworkComboBox.h \
-    ui/network/NetworkExtra.h \
     ui/network/NetworkWidget.h \
     ui/profile/ProfileField.h \
     ui/profile/ProfileFieldFactory.h \
@@ -173,7 +172,6 @@ SOURCES = \
     ui/MainToolBar.cpp \
     ui/network/NetworkButton.cpp \
     ui/network/NetworkComboBox.cpp \
-    ui/network/NetworkExtra.cpp \
     ui/network/NetworkWidget.cpp \
     ui/profile/ProfileField.cpp \
     ui/profile/ProfileFieldFactory.cpp \
