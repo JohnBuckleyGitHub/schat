@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,12 +20,9 @@
 #define NETWORKWIDGET_H_
 
 #include <QWidget>
-#include <QPointer>
 
 class NetworkComboBox;
-class NetworkExtra;
 class NetworkManager;
-class OfflineLogin;
 class QComboBox;
 class QLabel;
 class QMenu;
@@ -49,8 +46,6 @@ public:
   QAction *connectAction();
 
 public slots:
-  void add(NetworkExtra *extra);
-  void doneExtra();
   void open();
 
 protected:
@@ -71,7 +66,6 @@ private:
 
   int m_layout;                  ///< Дополнительные возможности виджета.
   NetworkComboBox *m_combo;      ///< Комбобокс выбора серверов.
-  NetworkExtra *m_extra;         ///< Дополнительный виджет.
   NetworkManager *m_manager;     ///< Указатель на менеджер сетевых подключений.
   QAction *m_add;                ///< Действие для добавления сервера.
   QAction *m_computers;          ///< Действие для просмотра компьютеров.
@@ -79,7 +73,6 @@ private:
   QAction *m_edit;               ///< Действие для редактирования текущего подключения.
   QAction *m_remove;             ///< Действие для удаления сервера.
   QAction *m_signOut;            ///< Действие для выхода из текущей учётной записи.
-  QLabel *m_title;               ///< Заголовок текущего расширенного действия.
   QMenu *m_menu;                 ///< Меню дополнительных действий.
   QToolBar *m_toolBar;           ///< Тулбар для размещения основных действий.
   QToolButton *m_actions;        ///< Кнопка дополнительных действий.

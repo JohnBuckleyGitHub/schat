@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -37,13 +37,11 @@
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
 #include "ui/network/NetworkComboBox.h"
-#include "ui/network/NetworkExtra.h"
 #include "ui/network/NetworkWidget.h"
 
 NetworkWidget::NetworkWidget(QWidget *parent, int layout)
   : QWidget(parent)
   , m_layout(layout)
-  , m_extra(0)
   , m_manager(ChatCore::networks())
 {
   m_combo = new NetworkComboBox(this);
@@ -58,9 +56,6 @@ NetworkWidget::NetworkWidget(QWidget *parent, int layout)
   m_connect = m_toolBar->addAction(QString(), this, SLOT(open()));
   m_toolBar->setStyleSheet(LS("QToolBar { margin:0px; border:0px; }"));
 
-  m_title = new QLabel(this);
-  m_title->setVisible(false);
-
   QGridLayout *mainLay = new QGridLayout();
   mainLay->addWidget(m_combo, 0, 0);
   mainLay->addWidget(m_toolBar, 0, 1);
@@ -70,7 +65,6 @@ NetworkWidget::NetworkWidget(QWidget *parent, int layout)
 
   m_mainLayout = new QVBoxLayout(this);
   m_mainLayout->addItem(mainLay);
-  m_mainLayout->addWidget(m_title);
   m_mainLayout->setMargin(0);
 
   m_combo->load();
@@ -100,40 +94,6 @@ QAction *NetworkWidget::connectAction()
   }
 
   return m_connect;
-}
-
-
-/*!
- * Добавление дополнительного виджета.
- */
-void NetworkWidget::add(NetworkExtra *extra)
-{
-  if (m_extra) {
-    m_mainLayout->removeWidget(m_extra);
-    delete m_extra;
-  }
-
-  m_extra = extra;
-  setTitle(m_extra->title());
-  m_mainLayout->addWidget(m_extra);
-
-  connect(m_extra, SIGNAL(done()), SLOT(doneExtra()));
-  QTimer::singleShot(0, m_extra, SLOT(setFocus()));
-}
-
-
-/*!
- * Удаление дополнительного виджета.
- */
-void NetworkWidget::doneExtra()
-{
-  if (!m_extra)
-    return;
-
-  m_mainLayout->removeWidget(m_extra);
-  delete m_extra;
-  m_extra = 0;
-  m_title->setVisible(false);
 }
 
 
@@ -190,7 +150,6 @@ void NetworkWidget::indexChanged(int index)
   if (index == -1)
     return;
 
-  doneExtra();
   reload();
 }
 
@@ -263,20 +222,6 @@ void NetworkWidget::retranslateUi()
   m_signOut->setText(tr("Sign out"));
   m_computers->setText(tr("My Computers"));
   m_actions->setToolTip(tr("Actions"));
-
-  if (m_extra)
-    setTitle(m_extra->title());
-}
-
-
-void NetworkWidget::setTitle(const QString &title)
-{
-  if (!title.isEmpty()) {
-    m_title->setText(LS("<b>") + title + LS("</b>"));
-    m_title->setVisible(true);
-  }
-  else
-    m_title->setVisible(false);
 }
 
 
