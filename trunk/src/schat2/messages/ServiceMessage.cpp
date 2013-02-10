@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -30,10 +30,10 @@
 ServiceMessage::ServiceMessage(const QString &text, const QByteArray &user)
   : Message(ChatCore::randomId())
 {
-  m_data[LS("Type")] = LS("service");
-  m_data[LS("Text")] = text;
-  m_data[LS("Date")] = ChatClient::date();
-  m_data[LS("Func")] = LS("addServiceMessage");
+  m_data[MESSAGE_TYPE] = LS("service");
+  m_data[MESSAGE_TEXT] = text;
+  m_data[MESSAGE_DATE] = ChatClient::date();
+  m_data[MESSAGE_FUNC] = LS("addServiceMessage");
 
   setAuthor(user);
 }
@@ -41,10 +41,7 @@ ServiceMessage::ServiceMessage(const QString &text, const QByteArray &user)
 
 bool ServiceMessage::isValid() const
 {
-  if (m_data.value("Text").toString().isEmpty())
-    return false;
-
-  return true;
+  return !m_data.value(MESSAGE_TEXT).toString().isEmpty();
 }
 
 
@@ -108,7 +105,7 @@ ServiceMessage ServiceMessage::quit(const QByteArray &user)
 ServiceMessage ServiceMessage::showId(const QByteArray &id)
 {
   ServiceMessage message(LS("<b>") + SimpleID::encode(id) + LS("</b>"), id);
-  message.data()[LS("Type")]  = LS("info");
-  message.data()[LS("Date")]  = 0;
+  message.data()[MESSAGE_TYPE]  = LS("info");
+  message.data()[MESSAGE_DATE]  = 0;
   return message;
 }

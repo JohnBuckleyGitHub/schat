@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -34,10 +34,10 @@ Message::Message(const QByteArray &id, const QByteArray &tab, const QString &typ
   setId(id);
 
   if (!type.isEmpty())
-    m_data[LS("Type")] = type;
+    m_data[MESSAGE_TYPE] = type;
 
   if (!func.isEmpty())
-    m_data[LS("Func")] = func;
+    m_data[MESSAGE_FUNC] = func;
 }
 
 
@@ -61,7 +61,7 @@ void Message::setAuthor(const QByteArray &id)
   QVariantMap data = WebBridge::channel(id);
 
   if (!data.isEmpty())
-    m_data[LS("Author")] = data;
+    m_data[MESSAGE_AUTHOR] = data;
 }
 
 
@@ -70,7 +70,7 @@ void Message::setDate(qint64 date)
   if (!date)
     date = DateTime::utc();
 
-  m_data[LS("Date")] = date;
+  m_data[MESSAGE_DATE] = date;
 }
 
 
@@ -79,5 +79,5 @@ void Message::setDate(qint64 date)
  */
 void Message::setId(const QByteArray &id)
 {
-  m_data[LS("Id")] = QString(SimpleID::encode(id));
+  m_data[MESSAGE_ID] = QString(SimpleID::encode(id));
 }

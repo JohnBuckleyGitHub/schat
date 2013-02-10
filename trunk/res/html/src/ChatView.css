@@ -685,6 +685,79 @@ a:active, a:hover {
   color: #3a87ad;
 }
 
+.alert-box {
+  background-color: #fafafa;
+  background-image: -webkit-linear-gradient(top, #ffffff, #f2f2f2);
+  background-repeat: repeat-x;
+  border: 1px solid #d4d4d4;
+  -webkit-border-radius: 4px;
+  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
+  color: #333;
+  padding: 4px 2px 2px 4px;
+  display: -webkit-box;
+}
+
+.alert-box-icon {
+  width: 20px;
+  height: 16px;
+}
+
+.alert-box-body {
+  -webkit-box-flex: 1;
+}
+
+.alert-box-close {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+  background: url(qrc:/images/close.png) no-repeat center;
+}
+
+.alert-box-close:hover {
+  background: url(qrc:/images/close-hover.png) no-repeat center;
+}
+
+.alert-box-info .alert-box {
+  border: 1px solid #a8e2ff;
+  background-image: -webkit-linear-gradient(top, #fbfeff, #e7f7ff);
+  color: #004465;
+}
+
+.alert-box-info .alert-box-icon {
+  background: url(qrc:/images/information.png) no-repeat left center;
+}
+
+.alert-box-warning .alert-box {
+  border: 1px solid #e8d9c0;
+  background-image: -webkit-linear-gradient(top, #fefdfc, #f9f5ed);
+  color: #4b391b;
+}
+
+.alert-box-warning .alert-box-icon {
+  background: url(qrc:/images/exclamation-circle.png) no-repeat left center;
+}
+
+.alert-box-success .alert-box {
+  border: 1px solid #c6e2c7;
+  background-image: -webkit-linear-gradient(top, #fefefe, #eff7ef);
+  color: #234323;
+}
+
+.alert-box-success .alert-box-icon {
+  background: url(qrc:/images/ok.png) no-repeat left center;
+}
+
+.alert-box-error .alert-box {
+  border: 1px solid #e7c1c1;
+  background-image: -webkit-linear-gradient(top, #fefcfc, #f8ecec);
+  color: #4a1d1c;
+}
+
+.alert-box-error .alert-box-icon {
+  background: url(qrc:/images/exclamation-red.png) no-repeat left center;
+}
+
 .btn-toggle {
   padding: 2px;
   width: 7px;

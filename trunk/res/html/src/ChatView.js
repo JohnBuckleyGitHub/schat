@@ -324,19 +324,33 @@ var Messages = {
   // Добавление сервисного сообщения.
   addServiceMessage: function(json)
   {
-    var html = '<div class="container ' + json.Type + '-type" id="' + json.Id + '">';
-    html += '<div class="blocks ';
-    if (json.Extra !== undefined)
-      html += json.Extra;
+    var html = '<div class="container ' + json.Type + '-type" id="' + json.Id + '">' +
+                 '<div class="blocks ' + (json.Extra !== undefined ? json.Extra : '') + '">' +
+                   DateTime.template(json.Date, false) +
+                   Messages.nameBlock(json.Author) +
+                   '<span class="msg-body-block">' + json.Text + '</span>' +
+                 '</div>' +
+               '</div>';
 
-    html += '">';
+    Messages.addRawMessage(html, json.Id, json.Hint.Day);
+  },
 
-    html += DateTime.template(json.Date, false);
-    html += Messages.nameBlock(json.Author);
-    html += '<span class="msg-body-block">' + json.Text + '</span>';
 
-    html += '</div>';
-    html += '</div>';
+  /*
+   * Добавление нового уведомления.
+   */
+  addAlertMessage: function(json) {
+    var html = '<div class="container ' + json.Type + '-type" id="' + json.Id + '">' +
+                 '<div class="blocks ' + (json.Extra !== undefined ? json.Extra : '') + '">' +
+                   '<div class="alert-box">' +
+                     '<div class="alert-box-icon"></div>' +
+                     '<div class="alert-box-body">' + json.Text + '</div>' +
+                     '<div class="alert-box-buttons">' +
+                       '<a class="alert-box-close" href="#" data-id="' + json.Id + '"></a>' +
+                     '</div>' +
+                   '</div>' +
+                 '</div>' +
+               '</div>';
 
     Messages.addRawMessage(html, json.Id, json.Hint.Day);
   },
@@ -688,6 +702,12 @@ $(document).ready(function() {
     Loader.done();
     return;
   }
+
+  $('body').on('click', '.alert-box-close', function(event) {
+    event.preventDefault();
+    $('#' + $(this).attr('data-id')).remove();
+    alignChat();
+  });
 
   Modal.init();
   Loader.load(jsfiles);

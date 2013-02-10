@@ -99,15 +99,15 @@ void ServerTab::alert(const Alert &alert)
 {
   if (alert.type() == LS("online")) {
     ServiceMessage message(alert.data().value(LS("popup")).toMap().value(LS("text")).toString());
-    message.data()[LS("Type")]  = LS("info");
-    message.data()[LS("Extra")] = LS("green-text");
+    message.data()[MESSAGE_TYPE]  = LS("info");
+    message.data()[MESSAGE_EXTRA] = LS("green-text");
 
     m_chatView->add(message);
   }
   else if (alert.type() == LS("offline")) {
     ServiceMessage message(alert.data().value(LS("popup")).toMap().value(LS("text")).toString());
-    message.data()[LS("Type")]  = LS("info");
-    message.data()[LS("Extra")] = LS("red-text");
+    message.data()[MESSAGE_TYPE]  = LS("info");
+    message.data()[MESSAGE_EXTRA] = LS("red-text");
 
     m_chatView->add(message);
   }
@@ -127,8 +127,8 @@ void ServerTab::clientStateChanged(int state)
 #   else
     ServiceMessage message(tr("Server %1 requires authorization").arg(LS("<b>") + Qt::escape(ChatClient::serverName()) + LS("</b>")));
 #   endif
-    message.data()[LS("Type")]  = LS("info");
-    message.data()[LS("Extra")] = LS("orange-text");
+    message.data()[MESSAGE_TYPE]  = LS("info");
+    message.data()[MESSAGE_EXTRA] = LS("orange-text");
     chatView()->add(message);
     chatView()->evaluateJavaScript(LS("AuthDialog.show();"));
 
