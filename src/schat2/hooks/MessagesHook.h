@@ -16,18 +16,20 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHANNELSCMD_H_
-#define CHANNELSCMD_H_
+#ifndef MESSAGESHOOK_H_
+#define MESSAGESHOOK_H_
 
-#include "hooks/MessagesHook.h"
+#include "client/ClientHooks.h"
 
-class ChannelsCmd : public MessagesHook
+class SCHAT_CORE_EXPORT MessagesHook : public Hooks::Messages
 {
   Q_OBJECT
 
 public:
-  ChannelsCmd(QObject *parent = 0);
-  bool command(const QByteArray &dest, const ClientCmd &cmd);
+  MessagesHook(QObject *parent = 0);
+
+protected:
+  bool isTalk(const QByteArray &id, const QString &command) const;
 };
 
-#endif /* CHANNELSCMD_H_ */
+#endif /* MESSAGESHOOK_H_ */

@@ -88,6 +88,8 @@ FeedReply NodeConsoleFeed::get(const QString &path, const QVariantMap &json, Cha
     return login(json, channel);
   else if (path == CONSOLE_FEED_TRY_KEY)
     return tryAccess(channel);
+  else if (path == CONSOLE_FEED_COOKIE_KEY)
+    return cookie(json, channel);
 
   return Notice::NotFound;
 }
@@ -102,6 +104,26 @@ bool NodeConsoleFeed::master(Channel *user) const
     return true;
 
   return false;
+}
+
+
+FeedReply NodeConsoleFeed::cookie(const QVariantMap &json, Channel *user) const
+{
+  if (!master(user))
+    return Notice::Forbidden;
+
+  const QByteArray id = SimpleID::decode(json.value(FEED_KEY_VALUE).toString());
+  if (SimpleID::typeOf(id) != SimpleID::UserId)
+    return Notice::BadRequest;
+
+  ChatChannel channel = Ch::channel(id, SimpleID::UserId);
+  if (!channel || !channel->account())
+    return Notice::NotFound;
+
+  FeedReply reply(Notice::OK);
+  reply.json[LS("user")]              = SimpleID::encode(id);
+  reply.json[CONSOLE_FEED_COOKIE_KEY] = SimpleID::encode(channel->account()->cookie);
+  return reply;
 }
 
 

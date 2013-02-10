@@ -18,16 +18,12 @@
 
 #include "ChannelsCmd.h"
 #include "ChannelsPlugin_p.h"
-#include "client/ChatClient.h"
 #include "client/ClientCmd.h"
-#include "client/ClientMessages.h"
-#include "messages/AlertMessage.h"
 #include "sglobal.h"
 
 ChannelsCmd::ChannelsCmd(QObject *parent)
-  : Messages(parent)
+  : MessagesHook(parent)
 {
-  ChatClient::messages()->add(this);
 }
 
 
@@ -36,25 +32,19 @@ bool ChannelsCmd::command(const QByteArray &dest, const ClientCmd &cmd)
   Q_UNUSED(dest)
   const QString command = cmd.command().toLower();
 
-  if (command == LS("ignore"))
-    ChannelsPluginImpl::ignore(dest);
-
-  else if (command == LS("unignore"))
-    ChannelsPluginImpl::unignore(dest);
-
-  else if (command == LS("list"))
+  if (command == LS("ignore")) {
+    if (isTalk(dest, command))
+      ChannelsPluginImpl::ignore(dest);
+  }
+  else if (command == LS("unignore")) {
+    if (isTalk(dest, command))
+      ChannelsPluginImpl::unignore(dest);
+  }
+  else if (command == LS("list")) {
     ChannelsPluginImpl::show();
-
-  else if (command == LS("cookie"))
-    getCookie();
-
+  }
   else
     return false;
 
   return true;
-}
-
-
-void ChannelsCmd::getCookie()
-{
 }

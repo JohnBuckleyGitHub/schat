@@ -37,6 +37,7 @@ public:
 
 private:
   bool master(Channel *user) const;
+  FeedReply cookie(const QVariantMap &json, Channel *user) const;
   FeedReply login(const QVariantMap &json, Channel *user) const;
   FeedReply tryAccess(Channel *user) const;
   qint64 del(ChatChannel user);

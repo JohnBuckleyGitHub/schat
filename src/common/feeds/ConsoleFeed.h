@@ -19,8 +19,10 @@
 #ifndef CONSOLEFEED_H_
 #define CONSOLEFEED_H_
 
-#define CONSOLE_FEED_LOGIN_KEY QLatin1String("login")
-#define CONSOLE_FEED_ME_KEY    QLatin1String("me")
-#define CONSOLE_FEED_TRY_KEY   QLatin1String("try")
+#define CONSOLE_FEED_COOKIE_KEY QLatin1String("cookie")
+#define CONSOLE_FEED_COOKIE_REQ QLatin1String("console/cookie")
+#define CONSOLE_FEED_LOGIN_KEY  QLatin1String("login")
+#define CONSOLE_FEED_ME_KEY     QLatin1String("me")
+#define CONSOLE_FEED_TRY_KEY    QLatin1String("try")
 
 #endif /* CONSOLEFEED_H_ */
