@@ -31,6 +31,7 @@
 #include "client/SimpleClient.h"
 #include "hooks/ChannelMenu.h"
 #include "messages/ServiceMessage.h"
+#include "QtEscape.h"
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
 #include "ui/tabs/ChatView.h"
@@ -122,11 +123,7 @@ void ServerTab::clientStateChanged(int state)
   if (state == ChatClient::WaitAuth) {
     m_auth->start(ChatClient::io()->json().value(CLIENT_PROP_AUTH_SERVER).toString());
 
-#   if QT_VERSION >= 0x050000
-    ServiceMessage message(tr("Server %1 requires authorization").arg(LS("<b>") + ChatClient::serverName().toHtmlEscaped() + LS("</b>")));
-#   else
     ServiceMessage message(tr("Server %1 requires authorization").arg(LS("<b>") + Qt::escape(ChatClient::serverName()) + LS("</b>")));
-#   endif
     message.data()[MESSAGE_TYPE]  = LS("info");
     message.data()[MESSAGE_EXTRA] = LS("orange-text");
     chatView()->add(message);

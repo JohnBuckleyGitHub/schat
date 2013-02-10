@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 #include <QFileDialog>
 #include <QFileIconProvider>
 #include <QHostAddress>
-#include <QTextDocument>
 #include <QTimer>
 #include <QtPlugin>
 #include <QWebElement>
@@ -44,6 +43,7 @@
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
 #include "Path.h"
+#include "QtEscape.h"
 #include "SendFileAction.h"
 #include "SendFileDB.h"
 #include "SendFileMessages.h"
@@ -651,19 +651,11 @@ void SendFilePluginImpl::incomingFile(const MessagePacket &packet)
   AlertType *type = ChatAlerts::type(LS("file"));
   if (type && type->popup()) {
     QVariantMap popup;
-#   if QT_VERSION >= 0x050000
-    popup[LS("text")] = tr("Incoming file: %1").arg(LS("<b>") + transaction->fileName().toHtmlEscaped() + LS("</b>"));
-#   else
     popup[LS("text")] = tr("Incoming file: %1").arg(LS("<b>") + Qt::escape(transaction->fileName()) + LS("</b>"));
-#   endif
 
     ClientChannel user = ChatClient::channels()->get(packet->sender());
     if (user)
-#     if QT_VERSION >= 0x050000
-      popup[LS("title")] = QString(LS("<b>%1</b>")).arg(user->name().toHtmlEscaped());
-#     else
       popup[LS("title")] = QString(LS("<b>%1</b>")).arg(Qt::escape(user->name()));
-#     endif
 
     alert.data()[LS("popup")] = popup;
   }

@@ -22,7 +22,6 @@
 #include <QLabel>
 #include <QMenu>
 #include <QMouseEvent>
-#include <QTextDocument>
 #include <QWidgetAction>
 
 #include "ChatCore.h"
@@ -32,6 +31,7 @@
 #include "hooks/ChannelMenu.h"
 #include "net/packets/Notice.h"
 #include "NetworkManager.h"
+#include "QtEscape.h"
 #include "sglobal.h"
 #include "ui/BgOperationWidget.h"
 #include "ui/LoginIcon.h"
@@ -225,11 +225,7 @@ void StatusBar::setError()
 
 void StatusBar::setServerName()
 {
-# if QT_VERSION >= 0x050000
-  m_label->setText(ChatClient::serverName()).toHtmlEscaped();
-# else
   m_label->setText(Qt::escape(ChatClient::serverName()));
-# endif
 }
 
 

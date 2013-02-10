@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,14 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QTextDocument>
-
 #include "alerts/MessageAlert.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "messages/ChannelMessage.h"
 #include "net/packets/MessageNotice.h"
 #include "net/SimpleID.h"
+#include "QtEscape.h"
 #include "sglobal.h"
 
 MessageAlert::MessageAlert(const ChannelMessage &message)
@@ -53,11 +52,7 @@ void MessageAlert::popup(const QVariantMap &data)
     return;
 
   const QVariantMap author = data.value(LS("Author")).toMap();
-# if QT_VERSION >= 0x050000
-  const QString nick = QString(LS("<b>%1</b>")).arg(author.value(LS("Name")).toString().toHtmlEscaped());
-# else
   const QString nick = QString(LS("<b>%1</b>")).arg(Qt::escape(author.value(LS("Name")).toString()));
-# endif
   QVariantMap popup;
 
   if (SimpleID::typeOf(m_tab) == SimpleID::ChannelId) {

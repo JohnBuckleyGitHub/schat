@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  */
 
 #include <QDesktopServices>
-#include <QTextDocument>
 #include <QDir>
 
 #if defined(Q_OS_WIN32)
@@ -34,6 +33,7 @@
 #include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
 #include "net/SimpleID.h"
+#include "QtEscape.h"
 #include "sglobal.h"
 
 ChatUrls *ChatUrls::m_self = 0;
@@ -237,11 +237,7 @@ void ChatUrls::openChannelUrl(const QUrl &url)
     ChatNotify::start(Notify::InsertText, QChar(QChar::Nbsp) + QString(LS("<a class=\"nick color-%1\" href=\"%2\">%3</a>"))
         .arg(Gender::colorToString(channel->gender().color()))
         .arg(url.toString())
-#       if QT_VERSION >= 0x050000
-        .arg(QString(channel->name()) + QChar(QChar::Nbsp)).toHtmlEscaped());
-#       else
         .arg(Qt::escape(channel->name())) + QChar(QChar::Nbsp));
-#       endif
   }
   else if (action == LS("edit")) {
     if (actions.size() == 1)

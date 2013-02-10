@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
 
 #include <QFile>
 #include <QVariant>
-#include <QTextDocument>
 
 #include "EmoticonData.h"
+#include "QtEscape.h"
 #include "sglobal.h"
 
 EmoticonData::EmoticonData(const QString &file, const QString &id, const QVariantMap &data)
@@ -43,11 +43,7 @@ EmoticonData::EmoticonData(const QString &file, const QString &id, const QVarian
   m_hidden = data.value(LS("hidden"), false).toBool();
 
   for (int i = 3; i < icon.size(); ++i) {
-#   if QT_VERSION >= 0x050000
-    QString text = icon.at(i).toString().toHtmlEscaped();
-#   else
-    QString text = Qt::escape(icon.at(i).toString());
-#   endif
+    const QString text = Qt::escape(icon.at(i).toString());
     if (text.isEmpty())
       continue;
 

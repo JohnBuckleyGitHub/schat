@@ -20,6 +20,10 @@
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
 
+#if QT_VERSION >= 0x050000
+# include <QUrlQuery>
+#endif
+
 #include "oauth2/stackoverflow/StackOverflowAuth.h"
 #include "sglobal.h"
 #include "oauth2/OAuthData.h"
