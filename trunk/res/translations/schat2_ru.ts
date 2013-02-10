@@ -141,25 +141,25 @@
     </message>
     <message>
         <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="250"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="397"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="396"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
     <message>
         <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="251"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="398"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="397"/>
         <source>Reload</source>
         <translation>Обновить</translation>
     </message>
     <message>
         <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="252"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="400"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="399"/>
         <source>Seconds</source>
         <translation>Секунды</translation>
     </message>
     <message>
         <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="253"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="403"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="402"/>
         <source>Service messages</source>
         <translation>Сервисные сообщения</translation>
     </message>
@@ -348,6 +348,14 @@
         <location filename="../../src/schat2/ui/MainToolBar.cpp" line="76"/>
         <source>Preferences</source>
         <translation>Настройки</translation>
+    </message>
+</context>
+<context>
+    <name>MessagesHook</name>
+    <message>
+        <location filename="../../src/schat2/hooks/MessagesHook.cpp" line="42"/>
+        <source>Command %1 can be executed only in private talks.</source>
+        <translation type="unfinished">Команда %1 может быть выполнена только в приватных разговорах.</translation>
     </message>
 </context>
 <context>
@@ -630,37 +638,37 @@
 <context>
     <name>ServiceMessage</name>
     <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="61"/>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="58"/>
         <source>has joined</source>
         <comment>Female</comment>
         <translation>зашла</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="63"/>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="60"/>
         <source>has joined</source>
         <comment>Male</comment>
         <translation>зашёл</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="80"/>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="77"/>
         <source>has left</source>
         <comment>Female</comment>
         <translation>вышла</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="82"/>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="79"/>
         <source>has left</source>
         <comment>Male</comment>
         <translation>вышел</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="99"/>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="96"/>
         <source>has quit chat</source>
         <comment>Female</comment>
         <translation>вышла из чата</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="101"/>
+        <location filename="../../src/schat2/messages/ServiceMessage.cpp" line="98"/>
         <source>has quit chat</source>
         <comment>Male</comment>
         <translation>вышел из чата</translation>

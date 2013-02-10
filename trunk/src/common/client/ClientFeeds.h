@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@ public:
   ClientFeeds(QObject *parent = 0);
   inline Hooks::Feeds *hooks() const { return m_hooks; }
   static bool del(const QByteArray &id, const QString &name, int options = 0);
+  static bool get(const QByteArray &id, const QString &name, const QVariant &value = QVariant());
   static bool post(const QByteArray &id, const QString &name, const QVariant &value = QVariant(), int options = 0);
   static bool put(const QByteArray &id, const QString &name, const QVariant &value = QVariant(), int options = 0);
   static bool request(ClientChannel channel, const QString &command, const QString &name, const QVariantMap &json = QVariantMap());

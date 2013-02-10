@@ -3,24 +3,32 @@
 <TS version="2.0" language="ru_RU">
 <defaultcodec>UTF-8</defaultcodec>
 <context>
+    <name>ChannelsCmd</name>
+    <message>
+        <location filename="../../ChannelsCmd.cpp" line="70"/>
+        <source>Not enough rights, you must be a server administrator.</source>
+        <translation>Недостаточно прав, вы должны быть администратором сервера.</translation>
+    </message>
+</context>
+<context>
     <name>ChannelsMenuImpl</name>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="93"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="90"/>
         <source>Ignore</source>
         <translation>Игнорировать</translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="124"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="121"/>
         <source>Permissions</source>
         <translation>Права доступа</translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="128"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="125"/>
         <source>Read only</source>
         <translation>Только чтение</translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="134"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="131"/>
         <source>Advanced...</source>
         <translation>Расширенные...</translation>
     </message>

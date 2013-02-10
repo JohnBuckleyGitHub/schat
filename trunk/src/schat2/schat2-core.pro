@@ -49,6 +49,7 @@ HEADERS = \
     hooks/ClientFeedsImpl.h \
     hooks/ClientImpl.h \
     hooks/CommandsImpl.h \
+    hooks/MessagesHook.h \
     hooks/MessagesImpl.h \
     hooks/PluginsPage.h \
     hooks/SendButton.h \
@@ -138,6 +139,7 @@ SOURCES = \
     hooks/ClientFeedsImpl.cpp \
     hooks/ClientImpl.cpp \
     hooks/CommandsImpl.cpp \
+    hooks/MessagesHook.cpp \
     hooks/MessagesImpl.cpp \
     hooks/PluginsPage.cpp \
     hooks/SendButton.cpp \

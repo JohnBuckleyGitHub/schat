@@ -44,6 +44,14 @@ bool ClientFeeds::del(const QByteArray &id, const QString &name, int options)
 }
 
 
+bool ClientFeeds::get(const QByteArray &id, const QString &name, const QVariant &value)
+{
+  QVariantMap json;
+  json[FEED_KEY_VALUE]   = value;
+  return request(id, FEED_METHOD_GET, name, json);
+}
+
+
 bool ClientFeeds::post(const QByteArray &id, const QString &name, const QVariant &value, int options)
 {
   QVariantMap json;
