@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,11 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QTextDocument>
 #include <QUrl>
 
 #include "ChatUrls.h"
 #include "net/SimpleID.h"
+#include "QtEscape.h"
 #include "sglobal.h"
 #include "text/UrlFilter.h"
 
@@ -57,11 +57,7 @@ bool UrlFilter::filter(QList<HtmlToken> &tokens, const QVariantHash &/*options*/
       }
     }
     else if (token.type == HtmlToken::Text && !name.isEmpty()) {
-#     if QT_VERSION >= 0x050000
-      tokens[i].text = name.toHtmlEscaped();
-#     else
       tokens[i].text = Qt::escape(name);
-#     endif
       name.clear();
     }
   }

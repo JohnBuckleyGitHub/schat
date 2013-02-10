@@ -20,7 +20,6 @@
 #include <QProcess>
 #include <QSound>
 #include <QTimer>
-#include <QTextDocument>
 
 #include "alerts/AlertType.h"
 #include "alerts/MessageAlert.h"
@@ -33,6 +32,7 @@
 #include "messages/Message.h"
 #include "net/SimpleID.h"
 #include "Path.h"
+#include "QtEscape.h"
 #include "sglobal.h"
 #include "ui/TabWidget.h"
 #include "WebBridge.h"
@@ -337,12 +337,8 @@ void ChatAlerts::online()
 {
   Alert alert(LS("online"), ChatClient::io()->date());
 
-# if QT_VERSION >= 0x050000
-  QString text = tr("Successfully connected to <b>%1</b>").arg(ChatClient::serverName().toHtmlEscaped());
-# else
   QString text = tr("Successfully connected to <b>%1</b>").arg(Qt::escape(ChatClient::serverName()));
-# endif
-  QString peer = WebBridge::i()->serverPeer();
+  const QString peer = WebBridge::i()->serverPeer();
   if (!peer.isEmpty())
     text += LS(" (") + peer + LS(")");
 
