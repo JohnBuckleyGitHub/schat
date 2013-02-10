@@ -30,6 +30,16 @@ MessagesHook::MessagesHook(QObject *parent)
 }
 
 
+bool MessagesHook::isOnline() const
+{
+  if (ChatClient::state() == ChatClient::Online)
+    return true;
+
+  AlertMessage::show(tr("No connection to the server."), ALERT_MESSAGE_ERROR);
+  return false;
+}
+
+
 /*!
  * Возвращает \b true если текущая вкладка является приватным разговором, и \b false если нет.
  * Если вкладка не является приватным разговор, показывается уведомление об этом.

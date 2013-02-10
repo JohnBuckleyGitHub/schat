@@ -758,6 +758,10 @@ a:active, a:hover {
   background: url(qrc:/images/exclamation-red.png) no-repeat left center;
 }
 
+.alert-box-spinner .alert-box-icon {
+  background: url(qrc:/images/spinner.gif) no-repeat left center;
+}
+
 .btn-toggle {
   padding: 2px;
   width: 7px;

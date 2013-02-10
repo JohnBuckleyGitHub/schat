@@ -29,6 +29,7 @@ public:
   MessagesHook(QObject *parent = 0);
 
 protected:
+  bool isOnline() const;
   bool isTalk(const QByteArray &id, const QString &command) const;
 };
 

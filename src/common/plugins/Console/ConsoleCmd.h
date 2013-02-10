@@ -22,6 +22,7 @@
 #include "hooks/MessagesHook.h"
 
 class ConsolePluginImpl;
+class Notify;
 
 class ConsoleCmd : public MessagesHook
 {
@@ -31,10 +32,14 @@ public:
   ConsoleCmd(ConsolePluginImpl *plugin);
   bool command(const QByteArray &dest, const ClientCmd &cmd);
 
+private slots:
+  void notify(const Notify &notify);
+
 private:
   void getCookie(const QByteArray &id);
 
   ConsolePluginImpl *m_plugin; ///< Указатель на плагин.
+  QByteArray m_cookie;         ///< Индентификатор пользователя для которого ожидается получение cookie.
 };
 
 #endif /* CONSOLECMD_H_ */

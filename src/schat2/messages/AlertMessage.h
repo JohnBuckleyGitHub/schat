@@ -23,6 +23,7 @@
 
 #define ALERT_MESSAGE_ERROR   QLatin1String("error")
 #define ALERT_MESSAGE_INFO    QLatin1String("info")
+#define ALERT_MESSAGE_SPINNER QLatin1String(" alert-box-spinner")
 #define ALERT_MESSAGE_SUCCESS QLatin1String("success")
 #define ALERT_MESSAGE_WARNING QLatin1String("warning")
 
@@ -30,8 +31,8 @@ class SCHAT_CORE_EXPORT AlertMessage : public Message
 {
 public:
   AlertMessage(const QString &text, const QString &extra = ALERT_MESSAGE_INFO);
-  static bool show(const Message &message);
-  static bool show(const QString &text, const QString &extra = ALERT_MESSAGE_INFO);
+  static QString show(const Message &message);
+  static QString show(const QString &text, const QString &extra = ALERT_MESSAGE_INFO);
 };
 
 #endif /* ALERTMESSAGE_H_ */

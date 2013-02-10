@@ -33,26 +33,26 @@ AlertMessage::AlertMessage(const QString &text, const QString &extra)
 }
 
 
-bool AlertMessage::show(const Message &message)
+QString AlertMessage::show(const Message &message)
 {
   if (!TabWidget::i() || !message.isValid())
-    return false;
+    return QString();
 
   if (SimpleID::typeOf(message.tab()) == SimpleID::ServerId) {
     TabWidget::i()->serverTab()->chatView()->add(message);
-    return true;
+    return message.id();
   }
 
   ChannelBaseTab *tab = TabWidget::i()->channelTab(message.tab(), false, false);
   if (!tab)
-    return false;
+    return QString();
 
   tab->chatView()->add(message);
-  return true;
+  return message.id();
 }
 
 
-bool AlertMessage::show(const QString &text, const QString &extra)
+QString AlertMessage::show(const QString &text, const QString &extra)
 {
   return show(AlertMessage(text, extra));
 }
