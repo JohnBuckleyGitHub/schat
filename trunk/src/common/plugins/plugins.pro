@@ -19,24 +19,5 @@ CONFIG   += ordered
 TEMPLATE = subdirs
 
 SUBDIRS += \
-    GenericNode \
-    Messages \
-    NodeChannels \
-    NodeConsole \
-    RestApi \
-    GeoIP \
-    NodeFeedLog \
-    Cache \
-    History \
-    Profile \
-    Channels \
-    Popup \
-    Emoticons \
-    Idle \
-    SendFile \
-    SpellChecker \
-    Proxy \
-    Console \
-    RawFeeds \
-    YouTube \
-    Update \
+
+
