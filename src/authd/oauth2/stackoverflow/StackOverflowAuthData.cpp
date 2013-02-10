@@ -23,7 +23,7 @@
 StackOverflowAuthData::StackOverflowAuthData()
   : OAuthData("stackoverflow")
 {
-  name = "Stack Overflow";
+  name = "Stack Exchange";
   htmlName = name;
 }
 
