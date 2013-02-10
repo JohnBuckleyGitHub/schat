@@ -113,8 +113,6 @@ void ExternalAuthTask::ready()
 
   m_reply->deleteLater();
 
-  qDebug() << raw;
-
   done(data);
 }
 
