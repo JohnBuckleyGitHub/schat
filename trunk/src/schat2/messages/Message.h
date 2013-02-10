@@ -43,6 +43,7 @@ public:
 
   inline const QByteArray& tab() const   { return m_tab; }
   inline const QVariantMap& data() const { return m_data; };
+  inline QString id() const              { return m_data.value(MESSAGE_ID).toString(); }
   inline QVariantMap& data()             { return m_data; };
   inline virtual bool isValid() const    { return true; }
   static QByteArray detectTab(const QByteArray &sender, const QByteArray &dest);

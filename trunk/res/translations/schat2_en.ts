@@ -362,7 +362,12 @@
 <context>
     <name>MessagesHook</name>
     <message>
-        <location filename="../../src/schat2/hooks/MessagesHook.cpp" line="42"/>
+        <location filename="../../src/schat2/hooks/MessagesHook.cpp" line="38"/>
+        <source>No connection to the server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/hooks/MessagesHook.cpp" line="52"/>
         <source>Command %1 can be executed only in private talks.</source>
         <translation type="unfinished"></translation>
     </message>

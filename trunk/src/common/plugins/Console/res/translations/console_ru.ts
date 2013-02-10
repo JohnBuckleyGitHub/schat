@@ -3,6 +3,14 @@
 <TS version="2.0" language="ru_RU">
 <defaultcodec>UTF-8</defaultcodec>
 <context>
+    <name>ConsoleCmd</name>
+    <message>
+        <location filename="../../ConsoleCmd.cpp" line="78"/>
+        <source>Not enough rights, you must be a server administrator.</source>
+        <translation>Недостаточно прав, вы должны быть администратором сервера.</translation>
+    </message>
+</context>
+<context>
     <name>ConsolePluginImpl</name>
     <message>
         <location filename="../../ConsolePlugin.cpp" line="107"/>

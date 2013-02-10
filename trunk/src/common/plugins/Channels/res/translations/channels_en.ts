@@ -3,14 +3,6 @@
 <TS version="2.0" language="en_US">
 <defaultcodec>UTF-8</defaultcodec>
 <context>
-    <name>ChannelsCmd</name>
-    <message>
-        <location filename="../../ChannelsCmd.cpp" line="70"/>
-        <source>Not enough rights, you must be a server administrator.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>ChannelsMenuImpl</name>
     <message>
         <location filename="../../ChannelsMenuImpl.cpp" line="90"/>

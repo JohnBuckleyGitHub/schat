@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "ChatNotify.h"
 #include "client/ChatClient.h"
 #include "client/ClientCmd.h"
 #include "client/ClientFeeds.h"
@@ -31,7 +32,7 @@ ConsoleCmd::ConsoleCmd(ConsolePluginImpl *plugin)
   : MessagesHook(plugin)
   , m_plugin(plugin)
 {
-  ChatClient::messages()->add(this);
+  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 }
 
 
@@ -44,13 +45,31 @@ bool ConsoleCmd::command(const QByteArray &dest, const ClientCmd &cmd)
     m_plugin->show();
   }
   else if (command == LS("cookie")) {
-    if (isTalk(dest, command))
+    if (isTalk(dest, command) && isOnline())
       getCookie(dest);
   }
   else
     return false;
 
   return true;
+}
+
+
+void ConsoleCmd::notify(const Notify &notify)
+{
+  if (notify.type() == Notify::FeedReply) {
+    const FeedNotify &n = static_cast<const FeedNotify &>(notify);
+    if (n.channel() == ChatClient::serverId() && n.name() == CONSOLE_FEED_COOKIE_REQ && !m_cookie.isEmpty()) {
+      if (n.status() == Notice::OK) {
+        const QByteArray id = SimpleID::decode(n.json().value(LS("user")).toString());
+        if (m_cookie == id)
+          AlertMessage::show(LS("<b>Cookie:</b> ") + n.json().value(CONSOLE_FEED_COOKIE_KEY).toString(), ALERT_MESSAGE_INFO);
+      }
+
+      m_cookie.clear();
+    }
+
+  }
 }
 
 
@@ -65,4 +84,5 @@ void ConsoleCmd::getCookie(const QByteArray &id)
   }
 
   ClientFeeds::get(ChatClient::serverId(), CONSOLE_FEED_COOKIE_REQ, SimpleID::encode(id));
+  m_cookie = id;
 }
