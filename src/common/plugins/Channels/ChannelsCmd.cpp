@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include "client/ChatClient.h"
 #include "client/ClientCmd.h"
 #include "client/ClientMessages.h"
+#include "messages/AlertMessage.h"
 #include "sglobal.h"
 
 ChannelsCmd::ChannelsCmd(QObject *parent)
@@ -44,8 +45,16 @@ bool ChannelsCmd::command(const QByteArray &dest, const ClientCmd &cmd)
   else if (command == LS("list"))
     ChannelsPluginImpl::show();
 
+  else if (command == LS("cookie"))
+    getCookie();
+
   else
     return false;
 
   return true;
+}
+
+
+void ChannelsCmd::getCookie()
+{
 }

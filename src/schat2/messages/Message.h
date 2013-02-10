@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,6 +22,14 @@
 #include <QVariant>
 
 #include "schat.h"
+
+#define MESSAGE_AUTHOR QLatin1String("Author")
+#define MESSAGE_DATE   QLatin1String("Date")
+#define MESSAGE_EXTRA  QLatin1String("Extra")
+#define MESSAGE_FUNC   QLatin1String("Func")
+#define MESSAGE_ID     QLatin1String("Id")
+#define MESSAGE_TEXT   QLatin1String("Text")
+#define MESSAGE_TYPE   QLatin1String("Type")
 
 /*!
  * Базовый класс для текстовых сообщений.

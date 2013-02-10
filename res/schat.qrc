@@ -23,6 +23,7 @@
   <file alias="images/edit-paste.png">images/crystal/editpaste.png</file>
   <file alias="images/edit-select-all.png">images/oxygen/edit-select-all.png</file>
   <file alias="images/exclamation.png">images/fugue/exclamation.png</file>
+  <file alias="images/exclamation-circle.png">images/fugue/exclamation-circle.png</file>
   <file alias="images/exclamation-red.png">images/fugue/exclamation-red.png</file>
   <file alias="images/exclamation-red-frame.png">images/fugue/exclamation-red-frame.png</file>
   <file alias="images/external-small.png">images/fugue/external-small.png</file>

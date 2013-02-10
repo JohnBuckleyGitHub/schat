@@ -16,21 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CHANNELSCMD_H_
-#define CHANNELSCMD_H_
+#ifndef ALERTMESSAGE_H_
+#define ALERTMESSAGE_H_
 
-#include "client/ClientHooks.h"
+#include "messages/Message.h"
 
-class ChannelsCmd : public Hooks::Messages
+#define ALERT_MESSAGE_ERROR   QLatin1String("error")
+#define ALERT_MESSAGE_INFO    QLatin1String("info")
+#define ALERT_MESSAGE_SUCCESS QLatin1String("success")
+#define ALERT_MESSAGE_WARNING QLatin1String("warning")
+
+class SCHAT_CORE_EXPORT AlertMessage : public Message
 {
-  Q_OBJECT
-
 public:
-  ChannelsCmd(QObject *parent = 0);
-  bool command(const QByteArray &dest, const ClientCmd &cmd);
-
-private:
-  void getCookie();
+  AlertMessage(const QString &text, const QString &extra = ALERT_MESSAGE_INFO);
+  static bool show(const Message &message);
+  static bool show(const QString &text, const QString &extra = ALERT_MESSAGE_INFO);
 };
 
-#endif /* CHANNELSCMD_H_ */
+#endif /* ALERTMESSAGE_H_ */

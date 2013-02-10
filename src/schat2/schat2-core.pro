@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2012 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2013 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -56,6 +56,7 @@ HEADERS = \
     hooks/SettingsTabImpl.h \
     hooks/ToolBarActions.h \
     hooks/UserMenuImpl.h \
+    messages/AlertMessage.h \
     messages/ChannelMessage.h \
     messages/Message.h \
     messages/ServiceMessage.h \
@@ -144,6 +145,7 @@ SOURCES = \
     hooks/SettingsTabImpl.cpp \
     hooks/ToolBarActions.cpp \
     hooks/UserMenuImpl.cpp \
+    messages/AlertMessage.cpp \
     messages/ChannelMessage.cpp \
     messages/Message.cpp \
     messages/ServiceMessage.cpp \
