@@ -47,7 +47,7 @@ unix:!macx {
   js.files += ../../res/www/js/result.js
   js.path = /usr/share/schatd2/www/js
 
-  jquery.files += ../../res/html/js/jquery-1.8.2.min.js
+  jquery.files += ../../res/html/js/jquery-1.9.1.min.js
   jquery.path = /usr/share/schatd2/www/js
 
   other.files += ../../res/www/receiver.html
@@ -75,7 +75,7 @@ win32 {
   js.files += ../../res/www/js/result.js
   js.path = ../../os/win32/schatd2/www/js
 
-  jquery.files += ../../res/html/js/jquery-1.8.2.min.js
+  jquery.files += ../../res/html/js/jquery-1.9.1.min.js
   jquery.path = ../../os/win32/schatd2/www/js
 
   other.files += ../../res/www/receiver.html
