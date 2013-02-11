@@ -39,11 +39,11 @@ public:
   /// Дополнительные возможности виджета.
   enum WidgetOptions {
     BasicLayout = 0,
-    AccountButtonLayout = 1,
+    BigButton   = 1,
     ExtraLayout = 2
   };
 
-  NetworkWidget(QWidget *parent, int options = AccountButtonLayout | ExtraLayout);
+  NetworkWidget(QWidget *parent, int options = ExtraLayout);
   QAction *connectAction();
 
 public slots:
