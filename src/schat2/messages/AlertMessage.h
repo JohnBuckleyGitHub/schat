@@ -32,7 +32,7 @@ class SCHAT_CORE_EXPORT AlertMessage : public Message
 public:
   AlertMessage(const QString &text, const QString &extra = ALERT_MESSAGE_INFO);
   static QString show(const Message &message);
-  static QString show(const QString &text, const QString &extra = ALERT_MESSAGE_INFO);
+  static QString show(const QString &text, const QString &extra = ALERT_MESSAGE_INFO, const QByteArray &tab = QByteArray());
 };
 
 #endif /* ALERTMESSAGE_H_ */
