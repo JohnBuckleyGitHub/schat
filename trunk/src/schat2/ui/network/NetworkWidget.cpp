@@ -57,6 +57,9 @@ NetworkWidget::NetworkWidget(QWidget *parent, int options)
   m_toolBar->setIconSize(QSize(16, 16));
   m_toolBar->addWidget(m_actions);
 
+  if (m_options & BigButton)
+    m_toolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+
   m_connect = m_toolBar->addAction(QString(), this, SLOT(open()));
   m_toolBar->setStyleSheet(LS("QToolBar { margin:0px; border:0px; }"));
 
