@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,10 +19,6 @@
 #include <QStringList>
 #include <QUrl>
 
-#if QT_VERSION >= 0x050000
-# include <QUrlQuery>
-#endif
-
 #include "AuthCore.h"
 #include "handlers/ProvidersHandler.h"
 #include "JSON.h"
@@ -31,6 +27,7 @@
 #include "sglobal.h"
 #include "Tufao/headers.h"
 #include "Tufao/httpserverresponse.h"
+#include "UrlQuery.h"
 
 bool ProvidersHandler::serve(const QUrl &url, const QString &path, Tufao::HttpServerRequest *, Tufao::HttpServerResponse *response, QObject *)
 {
@@ -45,11 +42,7 @@ bool ProvidersHandler::serve(const QUrl &url, const QString &path, Tufao::HttpSe
     QMapIterator<QString, OAuthData *> i(providers);
     while (i.hasNext()) {
       i.next();
-#     if QT_VERSION >= 0x050000
       list[i.key()] = i.value()->toJSON(QUrlQuery(url).queryItemValue(LS("state")).toLatin1());
-#     else
-      list[i.key()] = i.value()->toJSON(url.queryItemValue(LS("state")).toLatin1());
-#     endif
     }
 
     if (m_order.isEmpty()) {

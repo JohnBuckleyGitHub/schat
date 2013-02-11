@@ -16,21 +16,29 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef QTESCAPE_H_
-#define QTESCAPE_H_
+#ifndef URLQUERY_H_
+#define URLQUERY_H_
 
 #if QT_VERSION >= 0x050000
-# include <QString>
-
-namespace Qt {
-
-  inline QString escape(const QString &plain) {
-    return plain.toHtmlEscaped();
-  }
-
-}
+# include <QUrlQuery>
 #else
-# include <QTextDocument>
+# include <QUrl>
+  /*!
+   * Класс обвёртка для QUrl обеспечивающий совместимость с Qt 5.
+   */
+  class QUrlQuery
+  {
+  public:
+    inline explicit QUrlQuery(const QUrl &url)
+    : m_url(url)
+    {}
+
+    inline bool hasQueryItem(const QString &key) const      { return m_url.hasQueryItem(key); }
+    inline QString queryItemValue(const QString &key) const { return m_url.queryItemValue(key); }
+
+  private:
+    QUrl m_url; ///< Копия объекта QUrl.
+  };
 #endif
 
-#endif /* QTESCAPE_H_ */
+#endif /* URLQUERY_H_ */

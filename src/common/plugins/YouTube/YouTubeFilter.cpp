@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -18,13 +18,10 @@
 
 #include <QUrl>
 
-#if QT_VERSION >= 0x050000
-# include <QUrlQuery>
-#endif
-
 #include "net/SimpleID.h"
 #include "sglobal.h"
 #include "YouTubeFilter.h"
+#include "UrlQuery.h"
 
 YouTubeFilter::YouTubeFilter()
   : AbstractFilter(950)
@@ -41,16 +38,12 @@ bool YouTubeFilter::filter(QList<HtmlToken> &tokens, const QVariantHash &/*optio
     if (tokens.at(i).type == HtmlToken::StartTag && tokens.at(i).tag == LS("a")) {
       HtmlATag tag(tokens.at(i));
 
-      QString u = tag.url.replace(LS("&amp;"), LS("&"));
-      QUrl url(u);
+      const QString u = tag.url.replace(LS("&amp;"), LS("&"));
+      const QUrl url(u);
       if (!m_hosts.contains(url.host()))
         continue;
 
-#     if QT_VERSION >= 0x050000
-      QString vid = QUrlQuery(url).queryItemValue(LS("v"));
-#     else
-      QString vid = url.queryItemValue(LS("v"));
-#     endif
+      const QString vid = QUrlQuery(url).queryItemValue(LS("v"));
       if (vid.size() != 11)
         continue;
 

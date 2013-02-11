@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,10 +19,6 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 
-#if QT_VERSION >= 0x050000
-# include <QUrlQuery>
-#endif
-
 #include "AuthCore.h"
 #include "AuthState.h"
 #include "JSON.h"
@@ -31,13 +27,10 @@
 #include "oauth2/OAuthData.h"
 #include "oauth2/yandex/YandexAuth.h"
 #include "sglobal.h"
+#include "UrlQuery.h"
 
 YandexAuth::YandexAuth(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
-# if QT_VERSION >= 0x050000
   : OAuthHandler(LS("yandex"), QUrlQuery(url).queryItemValue(LS("state")).toLatin1(), url, path, request, response, parent)
-# else
-  : OAuthHandler(LS("yandex"), url.queryItemValue(LS("state")).toLatin1(), url, path, request, response, parent)
-# endif
 {
 }
 

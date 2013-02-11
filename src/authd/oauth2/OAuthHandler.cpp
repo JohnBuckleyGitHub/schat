@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,10 +20,6 @@
 #include <QNetworkReply>
 #include <QTimer>
 
-#if QT_VERSION >= 0x050000
-# include <QUrlQuery>
-#endif
-
 #include "AuthCore.h"
 #include "AuthHandler.h"
 #include "AuthState.h"
@@ -35,6 +31,7 @@
 #include "Tufao/headers.h"
 #include "Tufao/httpserverrequest.h"
 #include "Tufao/httpserverresponse.h"
+#include "UrlQuery.h"
 
 OAuthHandler::OAuthHandler(const QString &provider, const QByteArray &state, const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
   : QObject(parent)
@@ -53,11 +50,8 @@ OAuthHandler::OAuthHandler(const QString &provider, const QByteArray &state, con
   }
 
   setState(state);
-# if QT_VERSION >= 0x050000
-  if (QUrlQuery(url).hasQueryItem(LS("error")) || !QUrlQuery(url).hasQueryItem(LS("code"))) {
-# else
-  if (url.hasQueryItem(LS("error")) || !url.hasQueryItem(LS("code"))) {
-# endif
+  const QUrlQuery query(url);
+  if (query.hasQueryItem(LS("error")) || !query.hasQueryItem(LS("code"))) {
     serveError();
     return;
   }
@@ -65,11 +59,7 @@ OAuthHandler::OAuthHandler(const QString &provider, const QByteArray &state, con
   serveOk();
 
   m_manager = new QNetworkAccessManager(this);
-# if QT_VERSION >= 0x050000
   m_code = QUrlQuery(url).queryItemValue(LS("code")).toUtf8();
-# else
-  m_code = url.queryItemValue(LS("code")).toUtf8();
-# endif
   log(NodeLog::InfoLevel, "Start receiving token, code:" + m_code);
 
   QTimer::singleShot(0, this, SLOT(getToken()));

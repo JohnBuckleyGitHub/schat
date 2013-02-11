@@ -20,26 +20,19 @@
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
 
-#if QT_VERSION >= 0x050000
-# include <QUrlQuery>
-#endif
-
-#include "oauth2/stackoverflow/StackOverflowAuth.h"
-#include "sglobal.h"
-#include "oauth2/OAuthData.h"
-#include "NodeLog.h"
-#include "JSON.h"
-#include "User.h"
-#include "net/SimpleID.h"
 #include "AuthCore.h"
 #include "AuthState.h"
+#include "JSON.h"
+#include "net/SimpleID.h"
+#include "NodeLog.h"
+#include "oauth2/OAuthData.h"
+#include "oauth2/stackoverflow/StackOverflowAuth.h"
+#include "sglobal.h"
+#include "UrlQuery.h"
+#include "User.h"
 
 StackOverflowAuth::StackOverflowAuth(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
-# if QT_VERSION >= 0x050000
   : OAuthHandler(LS("stackoverflow"), QUrlQuery(url).queryItemValue(LS("state")).toLatin1(), url, path, request, response, parent)
-# else
-  : OAuthHandler(LS("stackoverflow"), url.queryItemValue(LS("state")).toLatin1(), url, path, request, response, parent)
-# endif
 {
 }
 
@@ -75,11 +68,7 @@ void StackOverflowAuth::tokenReady()
 {
   OAUTH_PREPARE_REPLY
 
-# if QT_VERSION >= 0x050000
   const QByteArray token = QUrlQuery(QUrl(LC('?') + raw)).queryItemValue(LS("access_token")).toUtf8();
-# else
-  const QByteArray token = QUrl(LC('?') + raw).queryItemValue(LS("access_token")).toUtf8();
-# endif
   log(NodeLog::InfoLevel, "Token is successfully received");
 
   QNetworkRequest request(QUrl(LS("https://api.stackexchange.com/2.1/me?order=desc&sort=reputation&site=stackoverflow&access_token=") + token + LS("&key=") + m_provider->publicKey));
