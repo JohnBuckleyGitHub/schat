@@ -22,7 +22,9 @@
 #include "cores/Core.h"
 #include "DataBase.h"
 #include "DateTime.h"
+#include "feeds/FeedsCore.h"
 #include "feeds/FeedStorage.h"
+#include "feeds/ServerFeed.h"
 #include "net/packets/auth.h"
 #include "net/packets/Notice.h"
 #include "NodeLog.h"
@@ -225,8 +227,18 @@ QByteArray Ch::userId(const QByteArray &uniqueId)
 
 void Ch::load()
 {
-  Ch::server();
-  Ch::channel(QString(LS("Main")));
+  ChatChannel server = Ch::server();
+  FeedPtr feed       = server->feed(FEED_NAME_SERVER);
+  ChatChannel channel;
+
+  if (feed->data().contains(SERVER_FEED_CHANNEL_KEY))
+    channel = Ch::channel(SimpleID::decode(feed->data().value(SERVER_FEED_CHANNEL_KEY).toString()));
+
+  if (!channel) {
+    channel = Ch::channel(QString(LS("Main")));
+    if (channel)
+      FeedsCore::post(SERVER_FEED_CHANNEL_REQ, SimpleID::encode(channel->id()), Feed::Broadcast);
+  }
 
   foreach (ChHook *hook, m_self->m_hooks) {
     hook->load();

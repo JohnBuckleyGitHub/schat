@@ -20,6 +20,8 @@
 #define SERVERFEED_H_
 
 #define SERVER_FEED_AUTH_KEY    QLatin1String("auth")
+#define SERVER_FEED_CHANNEL_KEY QLatin1String("channel")
+#define SERVER_FEED_CHANNEL_REQ QLatin1String("server/channel")
 #define SERVER_FEED_DATE_KEY    QLatin1String("date")
 #define SERVER_FEED_ID_KEY      QLatin1String("id")
 #define SERVER_FEED_NAME_KEY    QLatin1String("name")
