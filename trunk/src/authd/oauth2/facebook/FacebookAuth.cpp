@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,25 +20,18 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 
-#if QT_VERSION >= 0x050000
-# include <QUrlQuery>
-#endif
-
 #include "AuthCore.h"
+#include "AuthState.h"
 #include "JSON.h"
 #include "net/SimpleID.h"
 #include "NodeLog.h"
 #include "oauth2/facebook/FacebookAuth.h"
 #include "oauth2/OAuthData.h"
 #include "sglobal.h"
-#include "AuthState.h"
+#include "UrlQuery.h"
 
 FacebookAuth::FacebookAuth(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
-# if QT_VERSION >= 0x050000
   : OAuthHandler(LS("facebook"), QUrlQuery(url).queryItemValue(LS("state")).toLatin1(), url, path, request, response, parent)
-# else
-  : OAuthHandler(LS("facebook"), url.queryItemValue(LS("state")).toLatin1(), url, path, request, response, parent)
-# endif
 {
 }
 
@@ -79,11 +72,7 @@ void FacebookAuth::tokenReady()
     return setError("token_error: " + data.value(LS("error")).toMap().value(LS("message")).toByteArray());
   }
 
-# if QT_VERSION >= 0x050000
-  QByteArray token = QUrlQuery(QUrl(LC('?') + raw)).queryItemValue(LS("access_token")).toUtf8();
-# else
-  QByteArray token = QUrl(LC('?') + raw).queryItemValue(LS("access_token")).toUtf8();
-# endif
+  const QByteArray token = QUrlQuery(QUrl(LC('?') + raw)).queryItemValue(LS("access_token")).toUtf8();
   log(NodeLog::InfoLevel, "Token is successfully received");
 
   QNetworkRequest request(QUrl(LS("https://graph.facebook.com/me?access_token=") + token));

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -18,10 +18,6 @@
 
 #include <QNetworkReply>
 
-#if QT_VERSION >= 0x050000
-# include <QUrlQuery>
-#endif
-
 #include "AuthCore.h"
 #include "AuthState.h"
 #include "JSON.h"
@@ -30,13 +26,10 @@
 #include "oauth2/github/GithubAuth.h"
 #include "oauth2/OAuthData.h"
 #include "sglobal.h"
+#include "UrlQuery.h"
 
 GithubAuth::GithubAuth(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
-# if QT_VERSION >= 0x050000
   : OAuthHandler(LS("github"), QUrlQuery(url).queryItemValue(LS("state")).toLatin1(), url, path, request, response, parent)
-# else
-  : OAuthHandler(LS("github"), url.queryItemValue(LS("state")).toLatin1(), url, path, request, response, parent)
-# endif
 {
 }
 

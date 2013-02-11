@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,10 +21,6 @@
 #include <QNetworkRequest>
 #include <QNetworkReply>
 
-#if QT_VERSION >= 0x050000
-# include <QUrlQuery>
-#endif
-
 #include "AuthCore.h"
 #include "AuthCore.h"
 #include "AuthHandler.h"
@@ -36,13 +32,10 @@
 #include "oauth2/OAuthData.h"
 #include "sglobal.h"
 #include "Tufao/httpserverresponse.h"
+#include "UrlQuery.h"
 
 GoogleAuth::GoogleAuth(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent)
-# if QT_VERSION >= 0x050000
   : OAuthHandler(LS("google"), QUrlQuery(url).queryItemValue(LS("state")).toLatin1(), url, path, request, response, parent)
-#else
-  : OAuthHandler(LS("google"), url.queryItemValue(LS("state")).toLatin1(), url, path, request, response, parent)
-#endif
   , m_current(0)
 {
   m_domains.append(LS("accounts.google.com")); // Домен по умолчанию.

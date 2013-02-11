@@ -23,10 +23,6 @@
 # include <qt_windows.h>
 #endif
 
-#if QT_VERSION >= 0x050000
-# include <QUrlQuery>
-#endif
-
 #include "ChatNotify.h"
 #include "ChatUrls.h"
 #include "client/ChatClient.h"
@@ -35,6 +31,7 @@
 #include "net/SimpleID.h"
 #include "QtEscape.h"
 #include "sglobal.h"
+#include "UrlQuery.h"
 
 ChatUrls *ChatUrls::m_self = 0;
 
@@ -86,13 +83,8 @@ ClientChannel ChatUrls::channel(const QUrl &url)
   if (channel)
     return channel;
 
-# if QT_VERSION >= 0x050000
   channel = ClientChannel(new Channel(id, SimpleID::fromBase32(QUrlQuery(url).queryItemValue(LS("name")).toLatin1())));
   channel->gender().setRaw(QUrlQuery(url).queryItemValue(LS("gender")).toInt());
-# else
-  channel = ClientChannel(new Channel(id, SimpleID::fromBase32(url.queryItemValue(LS("name")).toLatin1())));
-  channel->gender().setRaw(url.queryItemValue(LS("gender")).toInt());
-# endif
   if (!channel->isValid())
     return ClientChannel();
 
