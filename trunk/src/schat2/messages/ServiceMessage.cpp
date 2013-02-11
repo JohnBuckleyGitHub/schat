@@ -100,12 +100,3 @@ ServiceMessage ServiceMessage::quit(const QByteArray &user)
 
   return ServiceMessage(text, user);
 }
-
-
-ServiceMessage ServiceMessage::showId(const QByteArray &id)
-{
-  ServiceMessage message(LS("<b>") + SimpleID::encode(id) + LS("</b>"), id);
-  message.data()[MESSAGE_TYPE]  = LS("info");
-  message.data()[MESSAGE_DATE]  = 0;
-  return message;
-}

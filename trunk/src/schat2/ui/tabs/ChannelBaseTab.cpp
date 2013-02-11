@@ -29,6 +29,7 @@
 #include "debugstream.h"
 #include "hooks/ChannelMenu.h"
 #include "JSON.h"
+#include "messages/AlertMessage.h"
 #include "messages/ServiceMessage.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
@@ -171,7 +172,7 @@ void ChannelBaseTab::notify(const Notify &notify)
 {
   if (notify.type() == Notify::ShowID) {
     if (notify.data().toByteArray() == id())
-      add(ServiceMessage::showId(notify.data().toByteArray()));
+      AlertMessage::show(LS("<b>Id:</b> ") + SimpleID::encode(id()), ALERT_MESSAGE_INFO, id());
   }
   else if (notify.type() == Notify::Find && notify.data().toByteArray() == id()) {
     find(m_findWidget->text());

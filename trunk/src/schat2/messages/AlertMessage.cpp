@@ -52,7 +52,11 @@ QString AlertMessage::show(const Message &message)
 }
 
 
-QString AlertMessage::show(const QString &text, const QString &extra)
+QString AlertMessage::show(const QString &text, const QString &extra, const QByteArray &tab)
 {
-  return show(AlertMessage(text, extra));
+  AlertMessage message(text, extra);
+  if (!tab.isEmpty())
+    message.m_tab = tab;
+
+  return show(message);
 }

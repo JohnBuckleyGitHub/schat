@@ -30,7 +30,9 @@
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "hooks/ChannelMenu.h"
+#include "messages/AlertMessage.h"
 #include "messages/ServiceMessage.h"
+#include "net/SimpleID.h"
 #include "QtEscape.h"
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
@@ -149,7 +151,7 @@ void ServerTab::notify(const Notify &notify)
   int type = notify.type();
   if (type == Notify::ShowID) {
     if (notify.data().toByteArray() == id())
-      m_chatView->add(ServiceMessage::showId(notify.data().toByteArray()));
+      AlertMessage::show(LS("<b>Id:</b> ") + SimpleID::encode(id()), ALERT_MESSAGE_INFO, id());
   }
   else if (type == Notify::OpenChannel || type == Notify::OpenInfo) {
     if (notify.data() != id())
