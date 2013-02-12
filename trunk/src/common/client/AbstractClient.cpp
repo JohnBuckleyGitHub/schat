@@ -117,12 +117,12 @@ QString AbstractClientPrivate::serverName(const AuthReply &reply)
 /*!
  * Чтение пакета Protocol::AuthReplyPacket.
  */
-bool AbstractClientPrivate::authReply(const AuthReply &reply)
+AbstractClientPrivate::AuthReplyAction AbstractClientPrivate::authReply(const AuthReply &reply)
 {
   SCHAT_DEBUG_STREAM(this << "AbstractClientPrivate::authReply" << reply.status << Notice::status(reply.status) << SimpleID::encode(reply.userId))
 
   if (clientState == AbstractClient::ClientOnline)
-    return true;
+    return Nothing;
 
   Q_Q(AbstractClient);
 
@@ -133,7 +133,7 @@ bool AbstractClientPrivate::authReply(const AuthReply &reply)
     collisions = 0;
     q->setAuthorized(reply.userId);
     channel->setId(reply.userId);
-    channel->account()->cookie = reply.cookie;
+    channel->account()->cookie   = reply.cookie;
     channel->account()->provider = reply.provider;
 
     cookie = reply.cookie;
@@ -143,32 +143,50 @@ bool AbstractClientPrivate::authReply(const AuthReply &reply)
       channel->status().set(Status::Online);
 
     server->setId(reply.serverId);
-    setClientState(AbstractClient::ClientOnline);
 
     if (setup)
-      emit(q->setup());
-    else
-      emit(q->restore());
+      return Setup;
 
-    emit(q->ready());
-    return true;
+    return Restore;
   }
 
   if (reply.status == Notice::NickAlreadyUse) {
     authId = reply.id;
 
-    if (collisions > 19) {
-      setClientState(AbstractClient::ClientError);
-      return false;
-    }
+    if (collisions > 19)
+      return ErrorState;
 
     channel->setName(mangleNick());
     q->requestAuth();
-    return false;
+    return Nothing;
   }
 
   collisions = 0;
-  return false;
+  return Nothing;
+}
+
+
+void AbstractClientPrivate::doneAuth(AuthReplyAction action)
+{
+  if (action == Nothing)
+    return;
+
+  Q_Q(AbstractClient);
+
+  if (action == Setup || action == Restore) {
+    setClientState(AbstractClient::ClientOnline);
+
+    if (action == Setup)
+      emit(q->setup());
+    else
+      emit(q->restore());
+
+    emit(q->ready());
+  }
+  else if (action == ErrorState)
+    setClientState(AbstractClient::ClientError);
+  else if (action == WaitAuthState)
+    setClientState(AbstractClient::ClientWaitAuth);
 }
 
 
@@ -478,7 +496,7 @@ void AbstractClient::newPacketsImpl()
       emit packetReady(reader.type());
     }
     else if (reader.type() == Protocol::AuthReplyPacket) {
-      d->authReply(AuthReply(d->reader));
+      d->doneAuth(d->authReply(AuthReply(d->reader)));
     }
   }
 

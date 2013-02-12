@@ -35,13 +35,23 @@ class AbstractClientPrivate : public SimpleSocketPrivate
   Q_DECLARE_PUBLIC(AbstractClient);
 
 public:
+  /// Результат выполнения функции authReply().
+  enum AuthReplyAction {
+    Nothing,       ///< Ничего не делать.
+    ErrorState,    ///< Установить состояние AbstractClient::ClientError.
+    WaitAuthState, ///< Установить состояние AbstractClient::WaitAuth.
+    Setup,         ///< Успешное подключение к новому серверу.
+    Restore        ///< Успешное подключение к предыдущему серверу.
+  };
+
   AbstractClientPrivate();
   virtual ~AbstractClientPrivate();
 
   bool isSetup(const AuthReply &reply);
   QString mangleNick();
   QString serverName(const AuthReply &reply);
-  virtual bool authReply(const AuthReply &reply);
+  virtual AuthReplyAction authReply(const AuthReply &reply);
+  virtual void doneAuth(AuthReplyAction action);
   virtual void setClientState(AbstractClient::ClientState state);
   void startReconnectTimer();
 
