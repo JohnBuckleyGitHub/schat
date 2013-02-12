@@ -62,7 +62,7 @@ private:
   QNetworkReply *m_reply;                        ///< Текущий HTTP запрос.
   QString m_host;                                ///< IP адрес пользователя.
   quint64 m_socket;                              ///< Сокет пользователя.
-  static QHash<QByteArray, QVariantMap> m_cache; ///< Кэшированные ответы от сервера авторизации, для того чтобы не запрашивать информацию с сервера при разрешении коллизий ников.
+  static QMap<QByteArray, QVariantMap> m_cache; ///< Кэшированные ответы от сервера авторизации, для того чтобы не запрашивать информацию с сервера при разрешении коллизий ников.
 };
 
 #endif /* EXTERNALAUTH_H_ */

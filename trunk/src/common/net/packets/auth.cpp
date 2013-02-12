@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -62,6 +62,11 @@ AuthReply::AuthReply(PacketReader *reader)
     serverName = reader->text();
     provider   = reader->text();
   }
+
+  if (fields & ChannelField) {
+    policy  = reader->get<quint8>();
+    channel = reader->id();
+  }
 }
 
 
@@ -72,6 +77,9 @@ QByteArray AuthReply::data(QDataStream *stream) const
 
   if (!host.isEmpty())
     fields |= HostField;
+
+  if (!channel.isEmpty())
+    fields |= ChannelField;
 
   PacketWriter writer(stream, Protocol::AuthReplyPacket, serverId, userId);
   writer.put(fields);
@@ -99,6 +107,11 @@ QByteArray AuthReply::data(QDataStream *stream) const
     writer.put<quint8>(flags);
     writer.put(serverName);
     writer.put(provider);
+  }
+
+  if (fields & ChannelField) {
+    writer.put<quint8>(policy);
+    writer.putId(channel);
   }
 
   return writer.data();

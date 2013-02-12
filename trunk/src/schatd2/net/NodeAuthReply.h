@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,7 +27,10 @@ class AuthResult;
 class NodeAuthReply : public AuthReply
 {
 public:
-  NodeAuthReply(const AuthResult &result, ChatChannel channel = ChatChannel());
+  NodeAuthReply(const AuthRequest &request, const AuthResult &result, ChatChannel user = ChatChannel());
+
+private:
+  QString path(const QUrl &url) const;
 };
 
 #endif /* NODEAUTHREPLY_H_ */

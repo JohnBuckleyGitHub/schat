@@ -46,6 +46,8 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
   json[CLIENT_PROP_ID]      = SimpleID::encode(reply.serverId);
   json[CLIENT_PROP_HOST]    = reply.host;
   json[CLIENT_PROP_HOST_ID] = reply.hostId;
+  json[CLIENT_PROP_CHANNEL] = reply.channel;
+  json[CLIENT_PROP_POLICY]  = reply.policy;
 
   if (reply.status == Notice::OK) {
     authType = AuthRequest::Cookie;
