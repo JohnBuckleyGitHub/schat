@@ -33,7 +33,7 @@
 #include "Storage.h"
 #include "User.h"
 
-QHash<QByteArray, QVariantMap> ExternalAuthTask::m_cache;
+QMap<QByteArray, QVariantMap> ExternalAuthTask::m_cache;
 
 ExternalAuth::ExternalAuth(Core *core)
   : AnonymousAuth(core)
@@ -195,10 +195,10 @@ void ExternalAuthTask::done(const QVariantMap &data)
 {
   AuthResult result = auth(data);
   if (result.action == AuthResult::Reject) {
-    Core::i()->reject(result, m_socket);
+    Core::i()->reject(m_data, result, m_socket);
   }
   else if (result.action == AuthResult::Accept) {
-    Core::i()->accept(result, m_host);
+    Core::i()->accept(m_data, result, m_host);
   }
 
   m_timer->stop();
@@ -212,7 +212,7 @@ void ExternalAuthTask::done(const QVariantMap &data)
 void ExternalAuthTask::setError(int errorCode)
 {
   m_reply->deleteLater();
-  Core::i()->reject(AuthResult(errorCode, m_data.id), m_socket);
+  Core::i()->reject(m_data, AuthResult(errorCode, m_data.id), m_socket);
   m_timer->stop();
   deleteLater();
 }

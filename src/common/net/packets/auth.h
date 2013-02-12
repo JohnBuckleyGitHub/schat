@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -48,9 +48,10 @@ class SCHAT_EXPORT AuthReply
 public:
   /// Поля данных.
   enum Fields {
-    BasicFields = 0, ///< Поля по умолчанию.
-    JSonField = 1,   ///< Присутствует поле с JSON данными.
-    HostField = 4    ///< Адрес с которого был подключен клиент. \since 1.99.32.
+    BasicFields  = 0, ///< Поля по умолчанию.
+    JSonField    = 1, ///< Присутствует поле с JSON данными.
+    HostField    = 4, ///< Адрес с которого был подключен клиент. \since 1.99.32.
+    ChannelField = 8  ///< Идентификатор основного канала и политика канала. \since 1.99.56.
   };
 
   AuthReply()
@@ -74,6 +75,8 @@ public:
   QVariantMap json;      ///< JSON данные.
   QString host;          ///< IP адрес клиента.
   QByteArray hostId;     ///< Идентификатор хоста клиента.
+  QByteArray channel;    ///< Идентификатор главного канала сервера или запрощенного канала.
+  quint8 policy;         ///< Политика главного канала.
 };
 
 

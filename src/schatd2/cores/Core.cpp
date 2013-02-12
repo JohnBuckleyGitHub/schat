@@ -192,7 +192,7 @@ bool Core::add(ChatChannel channel)
 /*!
  * Успешная авторизация пользователя.
  */
-void Core::accept(const AuthResult &result, const QString &host)
+void Core::accept(const AuthRequest &request, const AuthResult &result, const QString &host)
 {
   ChatChannel channel = Ch::channel(result.id);
   if (!channel)
@@ -203,7 +203,7 @@ void Core::accept(const AuthResult &result, const QString &host)
 
   QList<QByteArray> packets;
   if (result.packet) {
-    NodeAuthReply reply(result, channel);
+    NodeAuthReply reply(request, result, channel);
     reply.host = host.isEmpty() ? packetsEvent()->address.toString() : host;
     packets.append(reply.data(m_sendStream));
   }
@@ -220,7 +220,7 @@ void Core::accept(const AuthResult &result, const QString &host)
  * \param result Информация с результатом авторизации.
  * \param socket Номер сокета, если 0, то он будет определён автоматически.
  */
-void Core::reject(const AuthResult &result, quint64 socket)
+void Core::reject(const AuthRequest &request, const AuthResult &result, quint64 socket)
 {
   if (!socket)
     socket = m_socket;
@@ -229,7 +229,7 @@ void Core::reject(const AuthResult &result, quint64 socket)
     SCHAT_LOG_WARN_STR("auth rejected. status:\"" + QByteArray::number(result.status) + ' ' + Notice::status(result.status).toUtf8() + "\", socket:" + QByteArray::number(socket))
   }
 
-  NodeAuthReply reply(result);
+  NodeAuthReply reply(request, result);
 
   for (int i = 0; i < m_listeners.size(); ++i) {
     NewPacketsEvent *event = new NewPacketsEvent(QList<quint64>() << socket, reply.data(m_sendStream));
@@ -319,11 +319,10 @@ void Core::packet(int type)
  */
 bool Core::auth()
 {
-  AuthRequest data(m_reader);
+  AuthRequest request(m_reader);
 
-  if (!data.isValid()) {
-    AuthResult result(Notice::BadRequest, data.id, NewPacketsEvent::KillSocketOption);
-    reject(result);
+  if (!request.isValid()) {
+    reject(request, AuthResult(Notice::BadRequest, request.id, NewPacketsEvent::KillSocketOption));
     return false;
   }
 
@@ -340,24 +339,23 @@ bool Core::auth()
   }
 
   for (int i = 0; i < m_auth.size(); ++i) {
-    if (data.authType != m_auth.at(i)->type())
+    if (request.authType != m_auth.at(i)->type())
       continue;
 
-    AuthResult result = m_auth.at(i)->auth(data);
+    AuthResult result = m_auth.at(i)->auth(request);
     if (result.action == AuthResult::Reject) {
-      reject(result);
+      reject(request, result);
       return false;
     }
     else if (result.action == AuthResult::Accept) {
-      accept(result);
+      accept(request, result);
       return true;
     }
     else if (result.action == AuthResult::Pending)
       return true;
   }
 
-  AuthResult result(Notice::NotImplemented, data.id, NewPacketsEvent::KillSocketOption);
-  reject(result);
+  reject(request, AuthResult(Notice::NotImplemented, request.id, NewPacketsEvent::KillSocketOption));
   return false;
 }
 

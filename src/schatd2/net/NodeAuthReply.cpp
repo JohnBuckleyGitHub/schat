@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QUrl>
+
 #include "Account.h"
 #include "Ch.h"
 #include "cores/NodeAuth.h"
@@ -24,7 +26,7 @@
 #include "sglobal.h"
 #include "Storage.h"
 
-NodeAuthReply::NodeAuthReply(const AuthResult &result, ChatChannel channel)
+NodeAuthReply::NodeAuthReply(const AuthRequest &request, const AuthResult &result, ChatChannel user)
   : AuthReply()
 {
   flags      = 0;
@@ -42,12 +44,36 @@ NodeAuthReply::NodeAuthReply(const AuthResult &result, ChatChannel channel)
   if (methods.contains(AUTH_METHOD_ANONYMOUS))
     flags = 1;
 
-  if (channel) {
-    userId   = channel->id();
-    cookie   = channel->account()->cookie;
-    hostId   = channel->hosts()->id();
-    provider = channel->account()->provider;
+  if (user) {
+    userId   = user->id();
+    cookie   = user->account()->cookie;
+    hostId   = user->hosts()->id();
+    provider = user->account()->provider;
+
+    const QString name = path(request.host);
+    if (!name.isEmpty()) {
+      ChatChannel c = Ch::channel(name, user);
+      if (c) {
+        channel  = c->id();
+        policy   = 0;
+      }
+    }
+
+    if (channel.isEmpty()) {
+      channel  = SimpleID::decode(feed->data().value(SERVER_FEED_CHANNEL_KEY).toString());
+      policy   = feed->data().value(SERVER_FEED_POLICY_KEY).toInt();
+    }
   }
   else if (methods.contains(AUTH_METHOD_OAUTH))
     provider = feed->data().value(SERVER_FEED_OAUTH_KEY).toString();
+}
+
+
+QString NodeAuthReply::path(const QUrl &url) const
+{
+  QString path = url.path();
+  if (path.startsWith(LC('/')))
+    path.remove(0, 1);
+
+  return path;
 }

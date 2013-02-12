@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -65,8 +65,8 @@ public:
   virtual void quit() {}
 
   // Авторизация.
-  void accept(const AuthResult &result, const QString &host = QString());
-  void reject(const AuthResult &result, quint64 socket = 0);
+  void accept(const AuthRequest &request, const AuthResult &result, const QString &host = QString());
+  void reject(const AuthRequest &request, const AuthResult &result, quint64 socket = 0);
 
 public slots:
   inline void workerReady(QObject *listener) { m_listeners.append(listener); }

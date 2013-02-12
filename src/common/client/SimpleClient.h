@@ -26,6 +26,7 @@ class SimpleClientPrivate;
 
 #define CLIENT_PROP_ANONYMOUS     QLatin1String("anonymous")
 #define CLIENT_PROP_AUTH_SERVER   QLatin1String("authServer")
+#define CLIENT_PROP_CHANNEL       QLatin1String("channel")
 #define CLIENT_PROP_ERROR         QLatin1String("error")
 #define CLIENT_PROP_ERROR_AUTH    QLatin1String("auth")
 #define CLIENT_PROP_ERROR_DATA    QLatin1String("data")
@@ -34,6 +35,7 @@ class SimpleClientPrivate;
 #define CLIENT_PROP_HOST          QLatin1String("host")
 #define CLIENT_PROP_HOST_ID       QLatin1String("hostId")
 #define CLIENT_PROP_ID            QLatin1String("id")
+#define CLIENT_PROP_POLICY        QLatin1String("policy")
 
 class SCHAT_EXPORT SimpleClient : public AbstractClient
 {
