@@ -37,12 +37,12 @@ SimpleClientPrivate::~SimpleClientPrivate()
 }
 
 
-bool SimpleClientPrivate::authReply(const AuthReply &reply)
+SimpleClientPrivate::AuthReplyAction SimpleClientPrivate::authReply(const AuthReply &reply)
 {
   if (clientState == AbstractClient::ClientOnline)
-    return true;
+    return Nothing;
 
-  AbstractClientPrivate::authReply(reply);
+  AuthReplyAction action = AbstractClientPrivate::authReply(reply);
   json[CLIENT_PROP_ID]      = SimpleID::encode(reply.serverId);
   json[CLIENT_PROP_HOST]    = reply.host;
   json[CLIENT_PROP_HOST_ID] = reply.hostId;
@@ -52,7 +52,7 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
   if (reply.status == Notice::OK) {
     authType = AuthRequest::Cookie;
     json.remove(CLIENT_PROP_ERROR);
-    return true;
+    return action;
   }
 
   QVariantMap error;
@@ -63,14 +63,14 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
   json[CLIENT_PROP_ERROR]         = error;
 
   if (reply.status == Notice::NickAlreadyUse)
-    return false;
+    return action;
 
   // Выбранный способ авторизации не реализован.
   if (reply.status == Notice::NotImplemented) {
     if (authType == AuthRequest::Discovery || authType == AuthRequest::External)
       authType = AuthRequest::Anonymous;
 
-    return false;
+    return action;
   }
 
   if (reply.status == Notice::Found || reply.status == Notice::Forbidden) {
@@ -78,14 +78,12 @@ bool SimpleClientPrivate::authReply(const AuthReply &reply)
     json[CLIENT_PROP_ANONYMOUS]   = (bool) reply.flags & 1;
 
     if (reply.provider.isEmpty() && !(reply.flags & 1))
-      setClientState(AbstractClient::ClientError);
-    else
-      setClientState(SimpleClient::ClientWaitAuth);
+      return ErrorState;
 
-    return false;
+    return WaitAuthState;
   }
 
-  return false;
+  return action;
 }
 
 
@@ -179,7 +177,7 @@ void SimpleClient::newPacketsImpl()
 
     switch (reader.type()) {
       case Protocol::AuthReplyPacket:
-        d->authReply(AuthReply(d->reader));
+        d->doneAuth(d->authReply(AuthReply(d->reader)));
         break;
 
       case Protocol::NoticePacket:

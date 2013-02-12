@@ -197,6 +197,9 @@ void ClientChannels::clientStateChanged(int state, int previousState)
       channel->channels().clear();
     }
   }
+  else if (state == ChatClient::Online) {
+    m_mainId = m_client->json().value(CLIENT_PROP_CHANNEL).toByteArray();
+  }
 }
 
 
@@ -275,7 +278,6 @@ void ClientChannels::setup()
   m_synced.clear();
   m_unsynced.clear();
   m_joined.clear();
-  m_mainId.clear();
 }
 
 
@@ -322,6 +324,8 @@ ClientChannel ClientChannels::add()
 
 /*!
  * Чтение заголовка канала.
+ *
+ * \deprecated Способ определения главного канала, на основе того данные какого канала были получены первыми является устаревшим и нужен для совместимости с серверами версии ниже 1.99.56.
  */
 void ClientChannels::channel()
 {
