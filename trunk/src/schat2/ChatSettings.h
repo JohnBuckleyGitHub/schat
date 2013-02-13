@@ -26,7 +26,24 @@
 class FeedNotify;
 class Notify;
 
-#define SETTINGS_AUTO_AWAY QLatin1String("AutoAway")
+#define SETTINGS_AUTO_AWAY               QLatin1String("AutoAway")
+#define SETTINGS_AUTO_CONNECT            QLatin1String("AutoConnect")
+#define SETTINGS_AUTO_JOIN               QLatin1String("AutoJoin")
+#define SETTINGS_DEFAULT_SERVER          QLatin1String("DefaultServer")
+#define SETTINGS_DISPLAY_SECONDS         QLatin1String("Display/Seconds")
+#define SETTINGS_DISPLAY_SERVICE         QLatin1String("Display/Service")
+#define SETTINGS_LABS_DEVELOPER_EXTRAS   QLatin1String("Labs/DeveloperExtras")
+#define SETTINGS_LABS_DISABLE_UI         QLatin1String("Labs/DisableUI")
+#define SETTINGS_LABS_STATIC_TRAY_ALERTS QLatin1String("Labs/StaticTrayAlerts")
+#define SETTINGS_MAXIMIZED               QLatin1String("Maximized")
+#define SETTINGS_NETWORKS                QLatin1String("Networks")
+#define SETTINGS_PINNED_TABS             QLatin1String("PinnedTabs")
+#define SETTINGS_PROFILE_GENDER          QLatin1String("Profile/Gender")
+#define SETTINGS_PROFILE_NICK            QLatin1String("Profile/Nick")
+#define SETTINGS_PROFILE_STATUS          QLatin1String("Profile/Status")
+#define SETTINGS_TOOLBAR_ACTIONS         QLatin1String("ToolBarActions")
+#define SETTINGS_TRANSLATION             QLatin1String("Translation")
+#define SETTINGS_WINDOWS_AERO            QLatin1String("WindowsAero")
 
 class SCHAT_CORE_EXPORT ChatSettings : public Settings
 {

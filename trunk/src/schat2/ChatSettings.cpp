@@ -36,24 +36,23 @@ ChatSettings::ChatSettings(const QString &fileName, const QString &defaultFile, 
     m_settings->setIniCodec("UTF-8");
   }
 
-  setLocalDefault(LS("AutoConnect"),           true);
-  setLocalDefault(LS("AutoJoin"),              true);
-  setLocalDefault(LS("DefaultServer"),         LS("schat://schat.me"));
-  setLocalDefault(LS("Labs/CookieAuth"),       true);
-  setLocalDefault(LS("Labs/DeveloperExtras"),  false);
-  setLocalDefault(LS("Labs/DisableUI"),        false);
-  setLocalDefault(LS("Maximized"),             false);
-  setLocalDefault(LS("Networks"),              QStringList());
-  setLocalDefault(LS("Profile/Gender"),        0);
-  setLocalDefault(LS("Profile/Nick"),          Channel::defaultName());
-  setLocalDefault(LS("Profile/Status"),        1);
-  setLocalDefault(LS("WindowsAero"),           true);
+  setLocalDefault(SETTINGS_AUTO_CONNECT,          true);
+  setLocalDefault(SETTINGS_DEFAULT_SERVER,        LS("schat://schat.me"));
+  setLocalDefault(SETTINGS_LABS_DEVELOPER_EXTRAS, false);
+  setLocalDefault(SETTINGS_LABS_DISABLE_UI,       false);
+  setLocalDefault(SETTINGS_MAXIMIZED,             false);
+  setLocalDefault(SETTINGS_NETWORKS,              QStringList());
+  setLocalDefault(SETTINGS_PROFILE_GENDER,        0);
+  setLocalDefault(SETTINGS_PROFILE_NICK,          Channel::defaultName());
+  setLocalDefault(SETTINGS_PROFILE_STATUS,        1);
+  setLocalDefault(SETTINGS_WINDOWS_AERO,          true);
 
-  setDefault(LS("Display/Seconds"),            false);
-  setDefault(LS("Display/Service"),            false);
-  setDefault(LS("Labs/StaticTrayAlerts"),      false);
-  setDefault(LS("Translation"),                LS("auto"));
-  setDefault(LS("ToolBarActions"),             QStringList());
+  setDefault(SETTINGS_AUTO_JOIN,                  true);
+  setDefault(SETTINGS_DISPLAY_SECONDS,            false);
+  setDefault(SETTINGS_DISPLAY_SERVICE,            false);
+  setDefault(SETTINGS_LABS_STATIC_TRAY_ALERTS,    false);
+  setDefault(SETTINGS_TOOLBAR_ACTIONS,            QStringList());
+  setDefault(SETTINGS_TRANSLATION,                LS("auto"));
 }
 
 

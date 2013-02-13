@@ -28,8 +28,6 @@
 # include <qt_windows.h>
 #endif
 
-#include "debugstream.h"
-
 #include "actions/MenuBuilder.h"
 #include "ChatAlerts.h"
 #include "ChatCore.h"
@@ -40,6 +38,8 @@
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
+#include "debugstream.h"
+#include "feeds/ServerFeed.h"
 #include "messages/ChannelMessage.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
@@ -217,7 +217,7 @@ ChannelBaseTab *TabWidget::channelTab(const QByteArray &id, bool create, bool sh
       tab->setOnline();
       connect(tab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
 
-      if (channel->type() == SimpleID::ChannelId && channel->id() == ChatClient::channels()->mainId())
+      if (channel->type() == SimpleID::ChannelId && isAutoPin(channel->id()))
         tab->pin();
     }
 
@@ -559,6 +559,22 @@ void TabWidget::clientStateChanged(int state, int previousState)
 
   if ((state == ChatClient::Error || state == ChatClient::Offline) && previousState == ChatClient::Connecting)
     closePage("progress");
+}
+
+
+bool TabWidget::isAutoPin(const QByteArray &id) const
+{
+  if (ChatClient::channels()->mainId() != id)
+    return false;
+
+  int policy = ChatClient::channels()->policy();
+  if (policy & ServerFeed::ForcedJoinPolicy)
+    return true;
+
+  if (policy & ServerFeed::AutoJoinPolicy && ChatCore::settings()->value(SETTINGS_AUTO_JOIN).toBool())
+    return true;
+
+  return false;
 }
 
 
