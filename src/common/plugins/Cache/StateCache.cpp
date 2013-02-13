@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "ChatSettings.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
+#include "feeds/ServerFeed.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
 #include "StateCache.h"
@@ -34,7 +35,7 @@
 StateCache::StateCache(QObject *parent)
   : QObject(parent)
   , m_settings(ChatCore::settings())
-  , m_key(LS("PinnedTabs"))
+  , m_key(SETTINGS_PINNED_TABS)
 {
   m_settings->setDefault(m_key, QStringList());
 
@@ -48,9 +49,13 @@ StateCache::StateCache(QObject *parent)
 
 void StateCache::pinned(AbstractTab *tab)
 {
-  QString id = encode(tab->id());
+  const QString id = encode(tab->id());
   if (!m_tabs.contains(id)) {
     m_tabs.append(id);
+
+    if (ChatClient::channels()->mainId() == tab->id())
+      m_settings->setValue(SETTINGS_AUTO_JOIN, true);
+
     save();
   }
 }
@@ -79,15 +84,17 @@ void StateCache::save()
   for (int i = tabs->count() - 1; i >= 0; --i) {
     AbstractTab *tab = tabs->widget(i);
     if (tab->options() & AbstractTab::Pinned) {
-      QString id = encode(tab->id());
+      const QString id = encode(tab->id());
       m_tabs.removeAll(id);
       m_tabs.prepend(id);
     }
   }
 
-  QString mainId = SimpleID::encode(ChatClient::channels()->mainId());
-  m_tabs.removeAll(mainId);
-  m_tabs.prepend(mainId);
+  if (ChatClient::channels()->policy() & ServerFeed::ForcedJoinPolicy) {
+    const QString mainId = SimpleID::encode(ChatClient::channels()->mainId());
+    m_tabs.removeAll(mainId);
+    m_tabs.prepend(mainId);
+  }
 
   m_settings->setValue(m_key, m_tabs);
 }
@@ -120,13 +127,15 @@ void StateCache::start()
 void StateCache::synced()
 {
   m_tabs = m_settings->value(m_key).toStringList();
+  if (ChatClient::channels()->policy() & ServerFeed::AutoJoinPolicy && m_tabs.isEmpty() && m_settings->value(SETTINGS_AUTO_JOIN).toBool())
+    m_tabs.append(SimpleID::encode(ChatClient::channels()->mainId()));
 
   TabWidget *tabs = TabWidget::i();
   if (!tabs)
     return;
 
   foreach (const QString &text, m_tabs) {
-    QByteArray id = decode(text);
+    const QByteArray id = decode(text);
     if (Channel::isCompatibleId(id))
       join(id);
   }
@@ -147,11 +156,7 @@ void StateCache::tabIndexChanged(int index)
   if (!tab || !Channel::isCompatibleId(tab->id()))
     return;
 
-  QString id = SimpleID::encode(tab->id());
-  if (ChatClient::channels()->mainId() == tab->id() && !m_tabs.contains(id)) {
-    m_tabs.append(id);
-    save();
-  }
+  const QString id = SimpleID::encode(tab->id());
 
   if (tab->options() & AbstractTab::Pinned)
     m_settings->setValue(m_prefix + LS("LastTalk"), QString(id));
@@ -160,9 +165,13 @@ void StateCache::tabIndexChanged(int index)
 
 void StateCache::unpinned(AbstractTab *tab)
 {
-  QString id = encode(tab->id());
+  const QString id = encode(tab->id());
   if (m_tabs.contains(id)) {
     m_tabs.removeAll(id);
+
+    if (ChatClient::channels()->mainId() == tab->id())
+      m_settings->setValue(SETTINGS_AUTO_JOIN, false);
+
     save();
   }
 }
