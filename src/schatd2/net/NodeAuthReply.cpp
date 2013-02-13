@@ -55,7 +55,7 @@ NodeAuthReply::NodeAuthReply(const AuthRequest &request, const AuthResult &resul
       ChatChannel c = Ch::channel(name, user);
       if (c) {
         channel  = c->id();
-        policy   = 0;
+        policy   = ServerFeed::ForcedJoinPolicy;
       }
     }
 

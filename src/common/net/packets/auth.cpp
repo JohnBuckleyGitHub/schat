@@ -22,6 +22,7 @@
 #include "Account.h"
 #include "Channel.h"
 #include "DateTime.h"
+#include "feeds/ServerFeed.h"
 #include "net/PacketReader.h"
 #include "net/packets/auth.h"
 #include "net/PacketWriter.h"
@@ -32,6 +33,7 @@
 #include "tools/Ver.h"
 
 AuthReply::AuthReply(PacketReader *reader)
+  : policy(ServerFeed::ForcedJoinPolicy)
 {
   serverId = reader->sender();
   userId   = reader->dest();

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -66,6 +66,7 @@ public:
   inline const QByteArray& mainId() const                         { return m_mainId; }
   inline const QMap<QByteArray, ClientChannel>& channels() const  { return m_channels; }
   inline Hooks::Channels *hooks() const                           { return m_hooks; }
+  inline int policy() const                                       { return m_policy; }
 
   bool info(const QList<QByteArray> &channels);
   bool join(const QByteArray &id);
@@ -104,6 +105,7 @@ private:
 
   ChannelNotice *m_packet;                     ///< Текущий прочитанный пакет.
   Hooks::Channels *m_hooks;                    ///< Хуки.
+  int m_policy;                                ///< Политика основного канала. \sa ServerFeed::Policy.
   QByteArray m_mainId;                         ///< Идентификатор главного канала.
   QList<QByteArray> m_joined;                  ///< Список каналов в которых находится клиент.
   QList<QByteArray> m_synced;                  ///< Список синхронизированных каналов.

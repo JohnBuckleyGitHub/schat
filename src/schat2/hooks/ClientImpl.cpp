@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/SimpleClient.h"
+#include "feeds/ServerFeed.h"
 #include "hooks/ClientImpl.h"
 #include "sglobal.h"
 
@@ -35,11 +36,19 @@ ClientImpl::ClientImpl(QObject *parent)
 }
 
 
+/*!
+ * \deprecated Вход в главный канал по имени а не по идентификатору, является устаревшим и нужен для совместимости с серверами версии ниже 1.99.56.
+ */
 void ClientImpl::setup()
 {
-  if (ChatCore::settings()->value(LS("AutoJoin")).toBool()) {
-    const QStringList path = ChatUrls::path(ChatClient::io()->url());
-    ChatClient::channels()->join(path.isEmpty() ? LS("Main") : path.at(0));
+  if (ChatClient::channels()->policy() & ServerFeed::ForcedJoinPolicy) {
+    const QByteArray id = ChatClient::channels()->mainId();
+    if (id.isEmpty()) {
+      const QStringList path = ChatUrls::path(ChatClient::io()->url());
+      ChatClient::channels()->join(path.isEmpty() ? LS("Main") : path.at(0));
+    }
+    else
+      ChatClient::channels()->join(id);
   }
 }
 
