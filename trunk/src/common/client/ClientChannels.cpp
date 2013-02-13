@@ -21,14 +21,15 @@
 #include "client/ClientHooks.h"
 #include "client/SimpleClient.h"
 #include "debugstream.h"
+#include "feeds/ServerFeed.h"
 #include "net/Channels.h"
 #include "net/packets/ChannelNotice.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
 
-
 ClientChannels::ClientChannels(QObject *parent)
   : QObject(parent)
+  , m_policy(ServerFeed::ForcedJoinPolicy)
   , m_client(ChatClient::io())
 {
   m_hooks = new Hooks::Channels(this);
@@ -199,6 +200,7 @@ void ClientChannels::clientStateChanged(int state, int previousState)
   }
   else if (state == ChatClient::Online) {
     m_mainId = m_client->json().value(CLIENT_PROP_CHANNEL).toByteArray();
+    m_policy = m_client->json().value(CLIENT_PROP_POLICY).toInt();
   }
 }
 

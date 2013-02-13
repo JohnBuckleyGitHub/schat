@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,25 +24,25 @@ class Protocol
 public:
   /// Protocol version.
   enum Version {
-    V3 = 0x3,  ///< Version 3 (obsolete).
-    V4 = 0x4,  ///< Version 4.
-    V4_0 = 0x0 ///< Version 4.0.
+    V3   = 0x3,  ///< Version 3 (obsolete).
+    V4   = 0x4,  ///< Version 4.
+    V4_0 = 0x0   ///< Version 4.0.
   };
 
   /// Значения по умолчанию.
   enum Defaults {
-    DefaultPort = 7667,          ///< Порт по умолчанию.
-    MaxProtocolVersion = 0x0,    ///< Максимальная поддерживаемая версия протколола.
-    MaxAuthPacketVersion = 0x1,  ///< Максимальная версия авторизационного пакета.
-    ConnectTime = 20000,         ///< Время ожидания перехода в состояние QAbstractSocket::ConnectedState для клиента.
-    HandshakeTime = 20000,       ///< Время для авторизации.
-    IdleTime = 20000,            ///< Время простоя после, которого клиент пошлёт пакет для проверки соединения.
-    ReplyTime = 15000,           ///< Время в течении которого будет ожидаться подтверждение доставки пакета.
-    MaxServerIdleTime = 40000,   ///< Время по истечении, которого сервер разорвёт соединение если не происходит обмена данных.
-    FastReconnectTime = 1000,    ///< Задержка после разрыва соединения для быстрой попытки восстановить связь.
-    MaxFastReconnects = 2,       ///< Максимальное количество попыток для использования FastReconnectTime.
-    NormalReconnectTime = 6000,  ///< Стандартный интервал попыток восстановить соединение.
-    MaxNormalReconnects = 8,     ///< Число попыток восстановить соединение с нормальным интервалом.
+    DefaultPort          = 7667,  ///< Порт по умолчанию.
+    MaxProtocolVersion   = 0x0,   ///< Максимальная поддерживаемая версия протколола.
+    MaxAuthPacketVersion = 0x1,   ///< Максимальная версия авторизационного пакета.
+    ConnectTime          = 20000, ///< Время ожидания перехода в состояние QAbstractSocket::ConnectedState для клиента.
+    HandshakeTime        = 20000, ///< Время для авторизации.
+    IdleTime             = 20000, ///< Время простоя после, которого клиент пошлёт пакет для проверки соединения.
+    ReplyTime            = 15000, ///< Время в течении которого будет ожидаться подтверждение доставки пакета.
+    MaxServerIdleTime    = 40000, ///< Время по истечении, которого сервер разорвёт соединение если не происходит обмена данных.
+    FastReconnectTime    = 1000,  ///< Задержка после разрыва соединения для быстрой попытки восстановить связь.
+    MaxFastReconnects    = 2,     ///< Максимальное количество попыток для использования FastReconnectTime.
+    NormalReconnectTime  = 6000,  ///< Стандартный интервал попыток восстановить соединение.
+    MaxNormalReconnects  = 8,     ///< Число попыток восстановить соединение с нормальным интервалом.
   };
 
   /*!
@@ -65,10 +65,10 @@ public:
 
   /// Transport packet options.
   enum Options {
-    NoOptions = 0,              ///< No packet options.
+    NoOptions              = 0, ///< No packet options.
     ContainsInternalPacket = 1, ///< Содержит виртуальный пакет для внутреннего использования на транспортном уровне.
-    HugePackets = 2,            ///< Поддержка больших виртуальных пакетов, для указания размера используется quint32.
-    TimeStamp = 4               ///< Содержит время в виде числа миллисекунд с 1970-01-01T00:00:00.000 UTC.
+    HugePackets            = 2, ///< Поддержка больших виртуальных пакетов, для указания размера используется quint32.
+    TimeStamp              = 4  ///< Содержит время в виде числа миллисекунд с 1970-01-01T00:00:00.000 UTC.
   };
 
   /*!
@@ -87,35 +87,35 @@ public:
     /// Отчёт о доставке пакетов, ("dc").
     /// - 02 bytes - reserved.
     /// - ...      - список пакетов QList<quint64>.
-    DeliveryConfirmationPacket = 0x7563, // "dc" or 30051
+    DeliveryConfirmationPacket  = 0x7563, // "dc" or 30051
     /// Проверка возможности установки безопасного соединения.
     /// - 02 bytes - option \sa ProbeSecureConnectionOption.
     ProbeSecureConnectionPacket = 0x7073, // "ps" or 28787
     /// Запрос авторизации.
-    AuthRequestPacket = 0x6152, // "aR" or 24914
+    AuthRequestPacket           = 0x6152, // "aR" or 24914
     /// Ответ на запрос авторизации.
-    AuthReplyPacket = 0x6172, // "ar" or 24946
-    NoticePacket = 0x6e // "n" or 110
+    AuthReplyPacket             = 0x6172, // "ar" or 24946
+    NoticePacket                = 0x6e // "n" or 110
   };
 
   /// Опция заголовка виртуального пакета.
   enum HeaderOption {
-    BasicHeader = 0,      ///< Базовый пакет, не содержит идентификатора отправителя и назначения.
-    SenderField = 1,      ///< Пакет содержит идентификатор отправителя.
+    BasicHeader      = 0, ///< Базовый пакет, не содержит идентификатора отправителя и назначения.
+    SenderField      = 1, ///< Пакет содержит идентификатор отправителя.
     DestinationField = 2, ///< Пакет содержит идентификатор получателя.
-    Multicast = 4,        ///< Пакет будет разослан всем подписчикам пользователя.
-    EnableEcho = 8,       ///< Пакет будет отослан обратно отправителю.
-    ChannelField = 16     ///< Пакет содержит идентификатор канала.
+    Multicast        = 4, ///< Пакет будет разослан всем подписчикам пользователя.
+    EnableEcho       = 8, ///< Пакет будет отослан обратно отправителю.
+    ChannelField     = 16 ///< Пакет содержит идентификатор канала.
   };
 
   /// Опции виртуального пакета ProbeSecureConnection.
   enum ProbeSecureConnectionOption {
-    SecureConnectionRequest = 0x29A,     ///< Запрос клиентом безопасного подключения.
+    SecureConnectionRequest     = 0x29A, ///< Запрос клиентом безопасного подключения.
     SecureConnectionUnavailable = 0x309, ///< Безопасное соединение не доступно.
-    SecureConnectionAvailable = 0x2A     ///< Безопасное соединение доступно.
+    SecureConnectionAvailable   = 0x2A   ///< Безопасное соединение доступно.
   };
 
-  Protocol() {}
+  inline Protocol() {}
 };
 
 #endif /* PROTOCOL_H_ */

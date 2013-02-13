@@ -36,4 +36,16 @@
 #define AUTH_METHOD_ANONYMOUS   QLatin1String("anonymous")
 #define AUTH_METHOD_OAUTH       QLatin1String("oauth")
 
+class ServerFeed
+{
+public:
+  /// Политика основного канала.
+  enum Policy {
+    NoPolicy           = 0, ///< Нет специальных политик, клиент при подключении будет показывать список каналов.
+    ForcedJoinPolicy   = 1, ///< Клиент всегда будет входить в главный канал.
+    AutoJoinPolicy     = 2, ///< Клиент будет автоматически входить в главный канал если это не переопределено настройками пользователя.
+    DisabledPartPolicy = 4, ///< Если включен автоматический вход, клиент не сможет выйти из главного канала.
+  };
+};
+
 #endif /* SERVERFEED_H_ */

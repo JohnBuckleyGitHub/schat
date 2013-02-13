@@ -89,6 +89,9 @@ void NodeServerFeed::init()
     m_data[SERVER_FEED_AUTH_KEY]  = QStringList() << AUTH_METHOD_ANONYMOUS << AUTH_METHOD_OAUTH;
     m_data[SERVER_FEED_OAUTH_KEY] = LS("https://auth.schat.me");
   }
+
+  if (!m_data.contains(SERVER_FEED_POLICY_KEY))
+    m_data[SERVER_FEED_POLICY_KEY] = ServerFeed::ForcedJoinPolicy;
 }
 
 
