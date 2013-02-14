@@ -410,14 +410,16 @@ void TabWidget::contextMenuEvent(QContextMenuEvent *event)
   if (tab->bindMenu(&menu))
     menu.addSeparator();
 
-  if (tab->options() & AbstractTab::CanBePinned) {
-    pin = menu.addAction(SCHAT_ICON(Pin), tr("Pin tab"));
-    pin->setCheckable(true);
-    pin->setChecked(tab->options() & AbstractTab::Pinned);
-  }
+  if (isCloseable(tab->id())) {
+    if (tab->options() & AbstractTab::CanBePinned) {
+      pin = menu.addAction(SCHAT_ICON(Pin), tr("Pin tab"));
+      pin->setCheckable(true);
+      pin->setChecked(tab->options() & AbstractTab::Pinned);
+    }
 
-  if (count() > 1)
-    close = menu.addAction(SCHAT_ICON(Remove), tr("Close tab"));
+    if (count() > 1)
+      close = menu.addAction(SCHAT_ICON(Remove), tr("Close tab"));
+  }
 
   if (!menu.actions().isEmpty()) {
     QAction *action = menu.exec(event->globalPos());
@@ -447,8 +449,11 @@ void TabWidget::keyPressEvent(QKeyEvent *event)
     if (event->key() == Qt::Key_W) {
       int index = currentIndex();
       if (index != -1 && count() > 1) {
-        unpin(widget(index));
-        closeTab(index);
+        AbstractTab *tab = widget(index);
+        if (isCloseable(tab->id())) {
+          unpin(tab);
+          closeTab(index);
+        }
       }
     }
   }
@@ -464,8 +469,11 @@ void TabWidget::mouseReleaseEvent(QMouseEvent *event)
 {
   int index = tabAt(event->pos());
   if (index != -1 && count() > 1 && event->button() == Qt::MidButton) {
-    unpin(widget(index));
-    closeTab(index);
+    AbstractTab *tab = widget(index);
+    if (isCloseable(tab->id())) {
+      unpin(tab);
+      closeTab(index);
+    }
   }
   else
     QTabWidget::mouseReleaseEvent(event);
@@ -576,10 +584,15 @@ void TabWidget::clientStateChanged(int state, int previousState)
   }
 
   if ((state == ChatClient::Error || state == ChatClient::Offline) && previousState == ChatClient::Connecting)
-    closePage("progress");
+    closePage(PROGRESS_TAB);
 }
 
 
+/*!
+ * \param id Идентификатор канала.
+ *
+ * \return \b true если эта вкладка должна быть автоматически закреплена.
+ */
 bool TabWidget::isAutoPin(const QByteArray &id) const
 {
   if (ChatClient::channels()->mainId() != id)
@@ -589,10 +602,17 @@ bool TabWidget::isAutoPin(const QByteArray &id) const
   if (policy & ServerFeed::ForcedJoinPolicy)
     return true;
 
-  if (policy & ServerFeed::AutoJoinPolicy && ChatCore::settings()->value(SETTINGS_AUTO_JOIN).toBool())
+  return (policy & ServerFeed::AutoJoinPolicy && ChatCore::settings()->value(SETTINGS_AUTO_JOIN).toBool());
+}
+
+
+bool TabWidget::isCloseable(const QByteArray &id) const
+{
+  if (ChatClient::channels()->mainId() != id)
     return true;
 
-  return false;
+  int policy = ChatClient::channels()->policy();
+  return (!(policy & ServerFeed::ForcedJoinPolicy && policy & ServerFeed::DisabledPartPolicy));
 }
 
 

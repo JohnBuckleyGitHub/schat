@@ -127,7 +127,9 @@ void StateCache::start()
 void StateCache::synced()
 {
   m_tabs = m_settings->value(m_key).toStringList();
-  if (ChatClient::channels()->policy() & ServerFeed::AutoJoinPolicy && m_tabs.isEmpty() && m_settings->value(SETTINGS_AUTO_JOIN).toBool())
+  const int policy = ChatClient::channels()->policy();
+
+  if (policy & ServerFeed::AutoJoinPolicy && m_tabs.isEmpty() && m_settings->value(SETTINGS_AUTO_JOIN).toBool())
     m_tabs.append(SimpleID::encode(ChatClient::channels()->mainId()));
 
   TabWidget *tabs = TabWidget::i();
@@ -140,13 +142,17 @@ void StateCache::synced()
       join(id);
   }
 
-  if (m_tabs.isEmpty()) {
-    tabs->tab("list");
-    tabs->closePage("progress");
-    tabs->closePage("welcome");
-  }
-  else
+  if (!m_tabs.isEmpty()) {
     restoreLastTalk();
+    return;
+  }
+
+  if (policy & ServerFeed::ForcedJoinPolicy)
+    return;
+
+  tabs->tab("list");
+  tabs->closePage("progress");
+  tabs->closePage("welcome");
 }
 
 
