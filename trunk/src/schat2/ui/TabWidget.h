@@ -104,6 +104,7 @@ private slots:
 
 private:
   bool isAutoPin(const QByteArray &id) const;
+  bool isCloseable(const QByteArray &id) const;
   int addChatTab(AbstractTab *tab);
   int tabAt(const QPoint &pos) const;
   void addImpl(const Message &message, bool create = true);
