@@ -27,7 +27,7 @@
 #include "WebBridge.h"
 
 ConsoleTab::ConsoleTab(TabWidget *parent)
-  : AbstractTab("console", LS("console"), parent)
+  : AbstractTab(CONSOLE_TAB, LS(CONSOLE_TAB), parent)
 {
   QString url = QApplication::applicationDirPath() + "/styles/Console/index.html";
   if (QFile::exists(url))
@@ -51,4 +51,18 @@ ConsoleTab::ConsoleTab(TabWidget *parent)
 void ConsoleTab::retranslateUi()
 {
   setText(tr("Console"));
+}
+
+
+AbstractTab *ConsoleTabCreator::create(const QVariant &data, TabWidget *parent) const
+{
+  Q_UNUSED(data)
+  return new ConsoleTab(parent);
+}
+
+
+void ConsoleTabCreator::reload(AbstractTab *tab, const QVariant &data) const
+{
+  Q_UNUSED(tab)
+  Q_UNUSED(data);
 }

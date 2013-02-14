@@ -94,9 +94,7 @@ ConsolePluginImpl::~ConsolePluginImpl()
 
 void ConsolePluginImpl::show()
 {
-  TabWidget *tabs = TabWidget::i();
-  if (tabs->showPage("console") == -1)
-    tabs->showPage(new ConsoleTab(tabs));
+  TabWidget::i()->tab(CONSOLE_TAB);
 }
 
 
@@ -105,7 +103,7 @@ void ConsolePluginImpl::showMenu(QMenu *menu, QAction *separator)
   Q_UNUSED(separator)
 
   m_console->setText(tr("Console"));
-  m_console->setChecked(TabWidget::isCurrent(TabWidget::page("console")));
+  m_console->setChecked(TabWidget::isCurrent(TabWidget::i()->tab(CONSOLE_TAB, TabWidget::NoOptions)));
 
   menu->addAction(m_console);
 }
@@ -113,14 +111,17 @@ void ConsolePluginImpl::showMenu(QMenu *menu, QAction *separator)
 
 void ConsolePluginImpl::start()
 {
-  if (!TabWidget::i())
+  TabWidget *tabs = TabWidget::i();
+  if (!tabs)
     return;
 
   m_console = new QAction(this);
   m_console->setIcon(QIcon(LS(":/images/Console/terminal.png")));
   m_console->setCheckable(true);
 
-  connect(TabWidget::i()->toolBar(), SIGNAL(showMenu(QMenu*,QAction*)), SLOT(showMenu(QMenu*,QAction*)));
+  tabs->add(new ConsoleTabCreator());
+
+  connect(tabs->toolBar(), SIGNAL(showMenu(QMenu*,QAction*)), SLOT(showMenu(QMenu*,QAction*)));
   connect(m_console, SIGNAL(triggered(bool)), SLOT(show()));
 }
 

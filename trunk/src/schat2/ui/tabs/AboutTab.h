@@ -62,7 +62,7 @@ class AboutTabCreator : public TabCreator
 public:
   AboutTabCreator() : TabCreator() {}
   AbstractTab *create(const QVariant &data, TabWidget *parent) const;
-  QByteArray name() const;
+  inline QByteArray name() const { return ABOUT_TAB; }
   void reload(AbstractTab *tab, const QVariant &data) const;
 };
 

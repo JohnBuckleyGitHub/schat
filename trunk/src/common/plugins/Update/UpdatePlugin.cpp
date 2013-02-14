@@ -292,8 +292,8 @@ void UpdatePluginImpl::finished()
 
 void UpdatePluginImpl::notify(const Notify &notify)
 {
-  if (notify.type() == Notify::PageOpen && notify.data() == "about") {
-    AboutTab *tab = qobject_cast<AboutTab*>(TabWidget::page(notify.data().toByteArray()));
+  if (notify.type() == Notify::PageOpen && notify.data() == ABOUT_TAB) {
+    AboutTab *tab = qobject_cast<AboutTab*>(TabWidget::i()->tab(ABOUT_TAB, TabWidget::NoOptions));
     if (tab)
       tab->layout()->insertWidget(1, new UpdateWidget(this, tab));
   }

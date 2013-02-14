@@ -22,6 +22,7 @@
 #include <QByteArray>
 
 class AbstractTab;
+class QVariant;
 class TabWidget;
 
 class TabCreator

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 #include "ui/tabs/ProgressTab.h"
 
 ProgressTab::ProgressTab(TabWidget *parent)
-  : AbstractTab("progress", LS("progress"), parent)
+  : AbstractTab(PROGRESS_TAB, LS(PROGRESS_TAB), parent)
 {
   QFrame *frame = new QFrame(this);
 # if defined(Q_OS_WIN32)
@@ -53,4 +53,18 @@ ProgressTab::ProgressTab(TabWidget *parent)
 void ProgressTab::retranslateUi()
 {
   setText(tr("Connecting"));
+}
+
+
+AbstractTab *ProgressTabCreator::create(const QVariant &data, TabWidget *parent) const
+{
+  Q_UNUSED(data)
+  return new ProgressTab(parent);
+}
+
+
+void ProgressTabCreator::reload(AbstractTab *tab, const QVariant &data) const
+{
+  Q_UNUSED(tab)
+  Q_UNUSED(data);
 }

@@ -140,7 +140,13 @@ void StateCache::synced()
       join(id);
   }
 
-  restoreLastTalk();
+  if (m_tabs.isEmpty()) {
+    tabs->tab("list");
+    tabs->closePage("progress");
+    tabs->closePage("welcome");
+  }
+  else
+    restoreLastTalk();
 }
 
 
@@ -228,7 +234,7 @@ void StateCache::join(const QByteArray &id)
  */
 void StateCache::restoreLastTalk()
 {
-  QByteArray id = SimpleID::decode(m_settings->value(m_prefix + LS("LastTalk")).toString());
+  const QByteArray id = SimpleID::decode(m_settings->value(m_prefix + LS("LastTalk")).toString());
   if (!Channel::isCompatibleId(id))
     return;
 

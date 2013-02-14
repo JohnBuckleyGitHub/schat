@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 #include "ui/tabs/SettingsTabHook.h"
 
 SettingsTab::SettingsTab(const QUrl &url, TabWidget *parent)
-  : AbstractTab("settings", LS("settings"), parent)
+  : AbstractTab(SETTINGS_TAB, LS(SETTINGS_TAB), parent)
 {
   m_contents = new QListWidget(this);
   m_contents->setSpacing(1);
@@ -125,4 +125,18 @@ void SettingsTab::retranslateUi()
   }
 
   setText(tr("Preferences"));
+}
+
+
+AbstractTab *SettingsTabCreator::create(const QVariant &data, TabWidget *parent) const
+{
+  return new SettingsTab(data.toUrl(), parent);
+}
+
+
+void SettingsTabCreator::reload(AbstractTab *tab, const QVariant &data) const
+{
+  SettingsTab *settings = qobject_cast<SettingsTab*>(tab);
+  if (settings)
+    settings->openUrl(data.toUrl());
 }

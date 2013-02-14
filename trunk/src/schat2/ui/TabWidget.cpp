@@ -76,14 +76,19 @@ TabWidget::TabWidget(QWidget *parent)
   setStyleSheet(LS("QToolBar { margin:0px; border:0px; }"));
   #endif
 
-  QWebSettings::globalSettings()->setFontSize(QWebSettings::DefaultFontSize, fontInfo().pixelSize());
-  QWebSettings::globalSettings()->setFontSize(QWebSettings::DefaultFixedFontSize, fontInfo().pixelSize());
-  QWebSettings::globalSettings()->setFontFamily(QWebSettings::StandardFont, fontInfo().family());
-  QWebSettings::globalSettings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, SCHAT_OPTION("Labs/DeveloperExtras").toBool());
+  QWebSettings::globalSettings()->setFontSize(QWebSettings::DefaultFontSize,         fontInfo().pixelSize());
+  QWebSettings::globalSettings()->setFontSize(QWebSettings::DefaultFixedFontSize,    fontInfo().pixelSize());
+  QWebSettings::globalSettings()->setFontFamily(QWebSettings::StandardFont,          fontInfo().family());
+  QWebSettings::globalSettings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, ChatCore::settings()->value(SETTINGS_LABS_DEVELOPER_EXTRAS).toBool());
 
   m_authIcon = new AuthIcon();
   m_serverTab = new ServerTab(this);
   m_serverTab->setVisible(false);
+
+  add(new AboutTabCreator());
+  add(new SettingsTabCreator());
+  add(new WelcomeTabCreator());
+  add(new ProgressTabCreator());
 
   showWelcome();
 
@@ -91,8 +96,6 @@ TabWidget::TabWidget(QWidget *parent)
 
   createToolBars();
   retranslateUi();
-
-  add(new AboutTabCreator());
 
   connect(this, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
   connect(this, SIGNAL(currentChanged(int)), SLOT(currentChanged(int)));
@@ -156,59 +159,16 @@ AbstractTab *TabWidget::tab(const QByteArray &name, int options, const QVariant 
     ChatNotify::start(Notify::PageOpen, name);
   }
 
+  if (!tab)
+    return 0;
+
   if (!created)
     creator->reload(tab, data);
 
-  if (tab && (options & ShowTab))
+  if (options & ShowTab)
     setCurrentIndex(indexOf(tab));
 
   return tab;
-}
-
-
-/*!
- * Добавление новой страницы.
- *
- * \param tab     Новая вкладка.
- * \param current \b true если необходимо установить вкладку в качестве текущей.
- *
- * \return Индекс вкладки или -1 в случае ошибки.
- */
-int TabWidget::showPage(AbstractTab *tab, bool current)
-{
-  if (!tab)
-    return -1;
-
-  const QByteArray &id = tab->id();
-  if (id.isEmpty() || m_pages.contains(id)) {
-    QTimer::singleShot(0, tab, SLOT(deleteLater()));
-    return -1;
-  }
-
-  m_pages[id] = tab;
-  int index = addTab(tab, tab->text());
-  tab->setOnline();
-
-  ChatNotify::start(Notify::PageOpen, id);
-
-  if (current)
-    setCurrentIndex(index);
-
-  return index;
-}
-
-
-int TabWidget::showPage(const QByteArray &id)
-{
-  AbstractTab *tab = m_pages.value(id);
-  if (!tab)
-    return -1;
-
-  int index = indexOf(tab);
-  if (index != -1)
-    setCurrentIndex(index);
-
-  return index;
 }
 
 
@@ -232,9 +192,9 @@ void TabWidget::add(TabCreator *creator)
 }
 
 
-void TabWidget::closePage(const QByteArray &id)
+void TabWidget::closePage(const QByteArray &name)
 {
-  AbstractTab *tab = m_pages.value(id);
+  AbstractTab *tab = m_pages.value(name);
   if (tab)
     closeTab(indexOf(tab));;
 }
@@ -285,8 +245,8 @@ ChannelBaseTab *TabWidget::channelTab(const QByteArray &id, bool create, bool sh
         tab->pin();
     }
 
-    closePage("progress");
-    closePage("welcome");
+    closePage(PROGRESS_TAB);
+    closePage(WELCOME_TAB);
   }
 
   if (show && tab)
@@ -574,13 +534,7 @@ void TabWidget::notify(const Notify &notify)
     tab(ABOUT_TAB);
   }
   else if (type == Notify::OpenSettings) {
-    if (m_pages.contains("settings")) {
-      SettingsTab *settings = static_cast<SettingsTab*>(page("settings"));
-      settings->openUrl(notify.data().toUrl());
-      showPage("settings");
-    }
-    else
-      showPage(new SettingsTab(notify.data().toUrl(), this));
+    tab(SETTINGS_TAB, CreateTab | ShowTab, notify.data());
   }
   else if (type == Notify::CopyRequest && currentIndex() != -1) {
     widget(currentIndex())->copy();
@@ -614,10 +568,10 @@ void TabWidget::addChannel(const QByteArray &id)
 void TabWidget::clientStateChanged(int state, int previousState)
 {
   if (state == ChatClient::Error) {
-    QVariantMap error = ChatClient::io()->json().value(LS("error")).toMap();
-    int status = error.value(LS("status")).toInt();
+    const QVariantMap error = ChatClient::io()->json().value(CLIENT_PROP_ERROR).toMap();
+    const int status = error.value(CLIENT_PROP_ERROR_STATUS).toInt();
 
-    if (status == Notice::Unauthorized && !page("welcome"))
+    if (status == Notice::Unauthorized && !m_pages.contains(WELCOME_TAB))
       ChatUrls::open(QUrl(LS("chat://settings/network")));
   }
 
@@ -725,9 +679,9 @@ void TabWidget::retranslateUi()
 void TabWidget::showWelcome()
 {
   if (ChatCore::networks()->isAutoConnect())
-    showPage(new ProgressTab(this));
+    tab(PROGRESS_TAB);
   else
-    showPage(new WelcomeTab(this));
+    tab(WELCOME_TAB);
 }
 
 

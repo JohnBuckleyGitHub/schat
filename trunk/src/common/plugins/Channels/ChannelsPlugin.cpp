@@ -115,9 +115,7 @@ void ChannelsPluginImpl::ignore(const QByteArray &id)
  */
 void ChannelsPluginImpl::show()
 {
-  TabWidget *tabs = TabWidget::i();
-  if (tabs->showPage("list") == -1)
-    tabs->showPage(new ListTab(tabs));
+  TabWidget::i()->tab(LIST_TAB);
 }
 
 
@@ -180,7 +178,7 @@ void ChannelsPluginImpl::showMenu(QMenu *menu, QAction *separator)
   Q_UNUSED(separator)
 
   m_list->setText(tr("Channels"));
-  m_list->setChecked(TabWidget::isCurrent(TabWidget::page("list")));
+  m_list->setChecked(TabWidget::isCurrent(TabWidget::i()->tab(LIST_TAB, TabWidget::NoOptions)));
 
   menu->addAction(m_list);
 }
@@ -188,14 +186,17 @@ void ChannelsPluginImpl::showMenu(QMenu *menu, QAction *separator)
 
 void ChannelsPluginImpl::start()
 {
-  if (!TabWidget::i())
+  TabWidget *tabs = TabWidget::i();
+  if (!tabs)
     return;
 
   m_list = new QAction(this);
   m_list->setIcon(QIcon(LS(":/images/Channels/list.png")));
   m_list->setCheckable(true);
 
-  connect(TabWidget::i()->toolBar(), SIGNAL(showMenu(QMenu*,QAction*)), SLOT(showMenu(QMenu*,QAction*)));
+  tabs->add(new ListTabCreator());
+
+  connect(tabs->toolBar(), SIGNAL(showMenu(QMenu*,QAction*)), SLOT(showMenu(QMenu*,QAction*)));
   connect(m_list, SIGNAL(triggered(bool)), SLOT(list()));
 }
 
