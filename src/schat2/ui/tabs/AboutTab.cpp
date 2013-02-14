@@ -64,7 +64,7 @@ protected:
 
 
 AboutTab::AboutTab(TabWidget *parent)
-  : AbstractTab("about", LS("about"), parent)
+  : AbstractTab(ABOUT_TAB, LS(ABOUT_TAB), parent)
 {
   m_tr = new AboutTr();
 
@@ -159,4 +159,24 @@ QString AboutTab::fileUrl(const QString &fileName) const
 void AboutTab::retranslateUi()
 {
   setText(tr("About"));
+}
+
+
+AbstractTab *AboutTabCreator::create(const QVariant &data, TabWidget *parent) const
+{
+  Q_UNUSED(data)
+  return new AboutTab(parent);
+}
+
+
+QByteArray AboutTabCreator::name() const
+{
+  return ABOUT_TAB;
+}
+
+
+void AboutTabCreator::reload(AbstractTab *tab, const QVariant &data) const
+{
+  Q_UNUSED(tab)
+  Q_UNUSED(data);
 }

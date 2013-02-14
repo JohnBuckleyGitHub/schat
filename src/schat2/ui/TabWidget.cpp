@@ -48,6 +48,7 @@
 #include "ui/MainToolBar.h"
 #include "ui/SoundButton.h"
 #include "ui/TabBar.h"
+#include "ui/TabCreator.h"
 #include "ui/tabs/AboutTab.h"
 #include "ui/tabs/ChannelTab.h"
 #include "ui/tabs/ChatView.h"
@@ -91,6 +92,8 @@ TabWidget::TabWidget(QWidget *parent)
   createToolBars();
   retranslateUi();
 
+  add(new AboutTabCreator());
+
   connect(this, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
   connect(this, SIGNAL(currentChanged(int)), SLOT(currentChanged(int)));
   connect(ChatClient::channels(), SIGNAL(channel(const QByteArray &)), SLOT(addChannel(const QByteArray &)));
@@ -104,6 +107,7 @@ TabWidget::~TabWidget()
 {
   ChatAlerts::reset();
   delete m_authIcon;
+  qDeleteAll(m_creators);
 }
 
 
@@ -119,6 +123,46 @@ ClientChannel TabWidget::channel(const QByteArray &id) const
     return m_channels.value(id)->channel();
 
   return ClientChannel();
+}
+
+
+/*!
+ * Создание или открытие новой вкладки.
+ *
+ * \param name    Внутреннее имя вкладки или идентификатор канала.
+ * \param options Опции. \sa TabWidget::TabOptions.
+ * \param data    Дополнительные данные для вкладки.
+ */
+AbstractTab *TabWidget::tab(const QByteArray &name, int options, const QVariant &data)
+{
+  if (Channel::isCompatibleId(name))
+    return channelTab(name, options & CreateTab, options & ShowTab);
+
+  if (!m_creators.contains(name))
+    return 0;
+
+  AbstractTab *tab    = m_pages.value(name);
+  bool created        = false;
+  TabCreator *creator = m_creators.value(name);
+
+  if (!tab && (options & CreateTab)) {
+    created = true;
+    tab     = m_creators.value(name)->create(data, this);
+
+    m_pages[name] = tab;
+    addTab(tab, tab->text());
+    tab->setOnline();
+
+    ChatNotify::start(Notify::PageOpen, name);
+  }
+
+  if (!created)
+    creator->reload(tab, data);
+
+  if (tab && (options & ShowTab))
+    setCurrentIndex(indexOf(tab));
+
+  return tab;
 }
 
 
@@ -165,6 +209,26 @@ int TabWidget::showPage(const QByteArray &id)
     setCurrentIndex(index);
 
   return index;
+}
+
+
+/*!
+ * Добавление нового класса помощника для создания вкладок.
+ */
+void TabWidget::add(TabCreator *creator)
+{
+  const QByteArray name = creator->name();
+
+  if (name.isEmpty()) {
+    delete creator;
+    return;
+  }
+
+  TabCreator *exists = m_creators.value(name);
+  if (exists)
+    delete exists;
+
+  m_creators[name] = creator;
 }
 
 
@@ -506,8 +570,8 @@ void TabWidget::notify(const Notify &notify)
     else
       tab->chatView()->evaluateJavaScript(LS("Pages.setPage(0);"));
   }
-  else if (type == Notify::OpenAbout && showPage("about") == -1) {
-    showPage(new AboutTab(this));
+  else if (type == Notify::OpenAbout) {
+    tab(ABOUT_TAB);
   }
   else if (type == Notify::OpenSettings) {
     if (m_pages.contains("settings")) {

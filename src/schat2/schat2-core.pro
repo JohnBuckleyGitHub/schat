@@ -97,6 +97,7 @@ HEADERS = \
     ui/StatusMenu.h \
     ui/StatusWidget.h \
     ui/TabBar.h \
+    ui/TabCreator.h \
     ui/tabs/AboutTab.h \
     ui/tabs/AbstractTab.h \
     ui/tabs/ChannelBaseTab.h \
