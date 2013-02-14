@@ -35,7 +35,7 @@
 #include "ui/tabs/WelcomeTab.h"
 
 WelcomeTab::WelcomeTab(TabWidget *parent)
-  : AbstractTab("welcome", LS("welcome"), parent)
+  : AbstractTab(WELCOME_TAB, LS(WELCOME_TAB), parent)
   , m_languageBox(0)
   , m_languageLabel(0)
 {
@@ -109,3 +109,18 @@ void WelcomeTab::retranslateUi()
   if (m_languageLabel)
     m_languageLabel->setText(QLatin1String("<b>") + tr("Language") + QLatin1String("</b>"));
 }
+
+
+AbstractTab *WelcomeTabCreator::create(const QVariant &data, TabWidget *parent) const
+{
+  Q_UNUSED(data)
+  return new WelcomeTab(parent);
+}
+
+
+void WelcomeTabCreator::reload(AbstractTab *tab, const QVariant &data) const
+{
+  Q_UNUSED(tab)
+  Q_UNUSED(data);
+}
+

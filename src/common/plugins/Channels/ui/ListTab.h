@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,7 +19,10 @@
 #ifndef LISTTAB_H_
 #define LISTTAB_H_
 
+#include "ui/TabCreator.h"
 #include "ui/tabs/AbstractTab.h"
+
+#define LIST_TAB "list"
 
 class ChannelsView;
 
@@ -34,6 +37,16 @@ private:
   void retranslateUi();
 
   ChannelsView *m_view;
+};
+
+
+class ListTabCreator : public TabCreator
+{
+public:
+  ListTabCreator() : TabCreator() {}
+  AbstractTab *create(const QVariant &data, TabWidget *parent) const;
+  inline QByteArray name() const { return LIST_TAB; }
+  void reload(AbstractTab *tab, const QVariant &data) const;
 };
 
 #endif /* LISTTAB_H_ */

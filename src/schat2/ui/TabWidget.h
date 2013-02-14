@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -66,11 +66,8 @@ public:
   static TabWidget *i()                          { return m_self; }
 
   AbstractTab *tab(const QByteArray &name, int options = CreateTab | ShowTab, const QVariant &data = QVariant());
-  int showPage(AbstractTab *tab, bool current = true);
-  int showPage(const QByteArray &id);
-  static AbstractTab *page(const QByteArray &id) { return m_self->m_pages.value(id); }
   void add(TabCreator *creator);
-  void closePage(const QByteArray &id);
+  void closePage(const QByteArray &name);
 
   ChannelBaseTab *channelTab(const QByteArray &id, bool create = true, bool show = true);
   static bool isActive(const QByteArray &id);

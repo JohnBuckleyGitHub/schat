@@ -169,12 +169,6 @@ AbstractTab *AboutTabCreator::create(const QVariant &data, TabWidget *parent) co
 }
 
 
-QByteArray AboutTabCreator::name() const
-{
-  return ABOUT_TAB;
-}
-
-
 void AboutTabCreator::reload(AbstractTab *tab, const QVariant &data) const
 {
   Q_UNUSED(tab)

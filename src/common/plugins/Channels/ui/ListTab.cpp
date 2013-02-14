@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 #include "ui/ListTab.h"
 
 ListTab::ListTab(TabWidget *parent)
-  : AbstractTab("list", LS("list"), parent)
+  : AbstractTab(LIST_TAB, LS(LIST_TAB), parent)
 {
   QString url = QApplication::applicationDirPath() + LS("/styles/Channels/index.html");
   if (QFile::exists(url))
@@ -49,4 +49,18 @@ ListTab::ListTab(TabWidget *parent)
 void ListTab::retranslateUi()
 {
   setText(tr("Channels"));
+}
+
+
+AbstractTab *ListTabCreator::create(const QVariant &data, TabWidget *parent) const
+{
+  Q_UNUSED(data)
+  return new ListTab(parent);
+}
+
+
+void ListTabCreator::reload(AbstractTab *tab, const QVariant &data) const
+{
+  Q_UNUSED(tab)
+  Q_UNUSED(data);
 }

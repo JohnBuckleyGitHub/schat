@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #ifndef SETTINGSTAB_H_
 #define SETTINGSTAB_H_
 
+#include "ui/TabCreator.h"
 #include "ui/tabs/AbstractTab.h"
 
 class QListWidget;
@@ -27,6 +28,8 @@ class QPushButton;
 class QStackedWidget;
 class QUrl;
 class SettingsPage;
+
+#define SETTINGS_TAB "settings"
 
 class SettingsTab : public AbstractTab
 {
@@ -50,6 +53,16 @@ private:
   QListWidget *m_contents;
   QStackedWidget *m_pages;
   QStringList m_ids; ///< Идентификаторы страниц настроек.
+};
+
+
+class SettingsTabCreator : public TabCreator
+{
+public:
+  SettingsTabCreator() : TabCreator() {}
+  AbstractTab *create(const QVariant &data, TabWidget *parent) const;
+  inline QByteArray name() const { return SETTINGS_TAB; }
+  void reload(AbstractTab *tab, const QVariant &data) const;
 };
 
 #endif /* SETTINGSTAB_H_ */
