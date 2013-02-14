@@ -21,12 +21,15 @@
 
 #include <QVariant>
 
+#include "ui/TabCreator.h"
 #include "ui/tabs/AbstractTab.h"
 
 class AboutTr;
 class QUrl;
 class QVBoxLayout;
 class WebView;
+
+#define ABOUT_TAB "about"
 
 class SCHAT_CORE_EXPORT AboutTab : public AbstractTab
 {
@@ -51,6 +54,16 @@ private:
   AboutTr *m_tr;         ///< Класс перевода строк.
   QVBoxLayout *m_layout; ///< Основной компоновщик.
   WebView *m_view;       ///< Главный виджет.
+};
+
+
+class AboutTabCreator : public TabCreator
+{
+public:
+  AboutTabCreator() : TabCreator() {}
+  AbstractTab *create(const QVariant &data, TabWidget *parent) const;
+  QByteArray name() const;
+  void reload(AbstractTab *tab, const QVariant &data) const;
 };
 
 #endif /* ABOUTTAB_H_ */

@@ -25,23 +25,20 @@
 #include "Channel.h"
 #include "schat.h"
 
-class AboutTab;
 class AbstractMessage;
 class AbstractTab;
 class AuthIcon;
 class ChannelBaseTab;
-class ChannelTab;
 class MainToolBar;
 class Message;
 class Notify;
 class PrivateTab;
 class ProgressTab;
 class ServerTab;
-class SettingsTab;
 class TabBar;
+class TabCreator;
 class TabsToolBar;
 class TrayIcon;
-class WelcomeTab;
 
 /*!
  * Класс, обеспечивающий отображение и управление вкладками.
@@ -51,6 +48,13 @@ class SCHAT_CORE_EXPORT TabWidget : public QTabWidget
   Q_OBJECT
 
 public:
+  /// Опции открытия вкладки.
+  enum TabOptions {
+    NoOptions = 0, ///< Нет опций.
+    CreateTab = 1, ///< Создать при необходимости вкладку.
+    ShowTab   = 2, ///< Сделать вкладку текущей.
+  };
+
   TabWidget(QWidget *parent = 0);
   ~TabWidget();
 
@@ -61,9 +65,11 @@ public:
   inline TabsToolBar *toolBar() const            { return m_tabsToolBar; }
   static TabWidget *i()                          { return m_self; }
 
+  AbstractTab *tab(const QByteArray &name, int options = CreateTab | ShowTab, const QVariant &data = QVariant());
   int showPage(AbstractTab *tab, bool current = true);
   int showPage(const QByteArray &id);
   static AbstractTab *page(const QByteArray &id) { return m_self->m_pages.value(id); }
+  void add(TabCreator *creator);
   void closePage(const QByteArray &id);
 
   ChannelBaseTab *channelTab(const QByteArray &id, bool create = true, bool show = true);
@@ -115,6 +121,7 @@ private:
   QList<QByteArray> m_prefetch;                 ///< Список каналов для которых было запрошено создание вкладки, но они не были созданы.
   QMap<QByteArray, AbstractTab*> m_pages;       ///< Вкладки не связанные с каналами.
   QMap<QByteArray, ChannelBaseTab*> m_channels; ///< Таблица каналов.
+  QMap<QByteArray, TabCreator*> m_creators;     ///< Таблица создания вкладок.
   ServerTab *m_serverTab;                       ///< Вкладка сервера.
   static TabWidget *m_self;                     ///< Указатель на себя.
   TabBar *m_tabBar;                             ///< Заголовок виджета.
