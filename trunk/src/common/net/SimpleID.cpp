@@ -161,7 +161,7 @@ QByteArray SimpleID::toBase32(const QByteArray &data)
  * Получение уникального идентификатора клиента на основе
  * mac адреса первого активного сетевого интерфейса.
  */
-QByteArray SimpleID::uniqueId()
+QByteArray SimpleID::uniqueId(const QByteArray &salt)
 {
   #if defined(SCHAT_RANDOM_CLIENT_ID)
   return QCryptographicHash::hash(QUuid::createUuid().toString().toLatin1(), QCryptographicHash::Sha1) += UniqueUserId;
@@ -173,7 +173,7 @@ QByteArray SimpleID::uniqueId()
     QNetworkInterface::InterfaceFlags flags = iface.flags();
 
     if (!hw.isEmpty() && !flags.testFlag(QNetworkInterface::IsLoopBack) && flags.testFlag(QNetworkInterface::IsUp) && flags.testFlag(QNetworkInterface::IsRunning)) {
-      return make(hw.toLatin1(), UniqueUserId);
+      return make(hw.toLatin1() + salt, UniqueUserId);
     }
   }
 
