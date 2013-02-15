@@ -12,7 +12,7 @@
     <!-- Directories -->
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFilesFolder">
-        <Directory Id="CV_Author" Name="$(var.Manufacturer)">
+        <Directory Id="CV_Author" Name="IMPOMEZIA">
           <Directory Id="INSTALLLOCATION" Name="$(var.ProductName)" />
         </Directory>
       </Directory>
