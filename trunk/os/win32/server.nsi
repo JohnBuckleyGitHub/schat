@@ -23,6 +23,8 @@
 !include "engine\default.nsh"
 !include "engine\revision.nsh"
 
+!AddPluginDir "contrib\plugins"
+
 !undef SCHAT_SOURCE
 !define SCHAT_SOURCE "schatd2"
 
@@ -46,6 +48,8 @@ VIAddVersionKey  "OriginalFilename" "schat2-server-${SCHAT_VERSION}.exe"
 VIAddVersionKey  "ProductName"      "${SCHAT_NAME}"
 VIAddVersionKey  "ProductVersion"   "${SCHAT_VERSION}"
 
+ReserveFile "contrib\plugins\FindProcDLL.dll"
+
 !define MUI_ABORTWARNING
 !define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_FINISHPAGE_LINK            "${SCHAT_WEB_SITE}"
@@ -64,6 +68,24 @@ VIAddVersionKey  "ProductVersion"   "${SCHAT_VERSION}"
 !insertmacro MUI_UNPAGE_INSTFILES
 
 !insertmacro MUI_LANGUAGE "English"
+
+Function .onInit
+  newcheck:
+  FindProcDLL::FindProc "schatd2.exe"
+  Pop $R0
+  ${If} $R0 == 1 
+    MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "An instance of ${SCHAT_NAME} is currently running. Exit ${SCHAT_NAME} and then try again." IDRETRY newcheck
+    Quit
+  ${EndIf}
+
+  FindProcDLL::FindProc "schatd2-srv.exe"
+  Pop $R0
+  ${If} $R0 == 1 
+    MessageBox MB_RETRYCANCEL|MB_ICONEXCLAMATION "An instance of ${SCHAT_NAME} is currently running. Exit ${SCHAT_NAME} and then try again." IDRETRY newcheck
+    Quit
+  ${EndIf}     
+FunctionEnd
+
 
 Section
 
