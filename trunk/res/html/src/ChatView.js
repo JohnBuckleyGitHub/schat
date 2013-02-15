@@ -31,6 +31,8 @@ var FEED_NAME_USERS          = 'users';
 
 var SERVER_FEED_AUTH_KEY     = 'auth';
 var SERVER_FEED_AUTH_REQ     = 'server/auth';
+var SERVER_FEED_POLICY_KEY   = 'policy';
+var SERVER_FEED_POLICY_REQ   = 'server/policy';
 var SERVER_FEED_OAUTH_KEY    = 'oauth';
 var SERVER_FEED_OAUTH_REQ    = 'server/oauth';
 

@@ -33,7 +33,7 @@
 #include "tools/Ver.h"
 
 AuthReply::AuthReply(PacketReader *reader)
-  : policy(ServerFeed::ForcedJoinPolicy)
+  : policy(ServerFeed::MainChannelPolicy | ServerFeed::ForcedJoinPolicy)
 {
   serverId = reader->sender();
   userId   = reader->dest();

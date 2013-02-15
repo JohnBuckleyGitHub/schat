@@ -26,10 +26,11 @@ Console.home = {
     if (channel !== null)
       Console.setName(channel.Name);
 
-    $('#nav-logout').on('click.home',      Console.home.logout);
-    $('body').on('click.name', '#name-ok', Console.home.setServerName);
-    $('#oauth-ok').on('click.oauth-ok',    Console.home.setOAuthServer);
-    $('.auth-checkbox').on('click.oauth',  Console.home.setAuthMethods);
+    $('#nav-logout').on('click.home',                     Console.home.logout);
+    $('body').on('click.name', '#name-ok',                Console.home.setServerName);
+    $('#oauth-ok').on('click.oauth-ok',                   Console.home.setOAuthServer);
+    $('.auth-checkbox').on('click.oauth',                 Console.home.setAuthMethods);
+    $('#main-channel-block :checkbox').on('click.policy', Console.home.setPolicy);
 
     Utils.adjustWidth($('#about-server-block .field-row-label'));
     Utils.adjustWidth($('#users-online-block .field-row-label'));
@@ -150,6 +151,54 @@ Console.home = {
       auth.push('oauth');
 
     SimpleChat.request(SimpleChat.serverId(), FEED_METHOD_PUT, SERVER_FEED_AUTH_REQ, {'value':auth});
+  },
+
+
+  /*
+   * Установка политики основного канала.
+   */
+  setPolicy: function() {
+    console.log('setMainChannelOptions');
+
+    var policy = 0;
+    if ($('#use-main-channel').is(':checked'))
+      policy |= 1;
+
+    if (policy & 1 && $('#forced-join').is(':checked'))
+      policy |= 2;
+
+    if (policy & 2 && $('#disable-leave').is(':checked'))
+      policy |= 4;
+
+    Console.home.showPolicy(policy);
+
+    SimpleChat.request(SimpleChat.serverId(), FEED_METHOD_PUT, SERVER_FEED_POLICY_REQ, {'value':policy});
+  },
+
+
+  /*
+   * Отображение текущей политики основного канала.
+   */
+  showPolicy: function(policy) {
+    policy = policy || 0;
+
+    var useMain    = $('#use-main-channel');
+    var forcedJoin = $('#forced-join');
+    var noLeave    = $('#disable-leave');
+
+    useMain.attr('checked',    !!(policy & 1));
+    forcedJoin.attr('checked', !!(policy & 2));
+    noLeave.attr('checked',    !!(policy & 4));
+
+    if (policy & 1)
+      forcedJoin.parent().show();
+    else
+      forcedJoin.parent().hide();
+
+    if (policy & 1 && policy & 2)
+      noLeave.parent().show();
+    else
+      noLeave.parent().hide();
   }
 };
 
@@ -182,7 +231,10 @@ Console.feed.server.body = function(json, id, status) {
   $('#anonymous-auth').attr('checked', json.auth.indexOf('anonymous') != -1);
   $('#oauth-server').val(json.oauth);
 
+  Console.home.showPolicy(json.policy);
+
   $('#auth-block').fadeIn('fast');
+  $('#main-channel-block').fadeIn('fast');
 };
 
 

@@ -5,42 +5,42 @@
 <context>
     <name>UpdatePluginImpl</name>
     <message>
-        <location filename="../../UpdatePlugin.cpp" line="202"/>
+        <location filename="../../UpdatePlugin.cpp" line="207"/>
         <source>Release Notes</source>
         <translation>Об обновлении</translation>
     </message>
     <message>
-        <location filename="../../UpdatePlugin.cpp" line="208"/>
+        <location filename="../../UpdatePlugin.cpp" line="213"/>
         <source>Download</source>
         <translation>Cкачать</translation>
     </message>
     <message>
-        <location filename="../../UpdatePlugin.cpp" line="211"/>
+        <location filename="../../UpdatePlugin.cpp" line="216"/>
         <source>Pause</source>
         <translation>Пауза</translation>
     </message>
     <message>
-        <location filename="../../UpdatePlugin.cpp" line="214"/>
+        <location filename="../../UpdatePlugin.cpp" line="219"/>
         <source>Resume</source>
         <translation>Возобновить</translation>
     </message>
     <message>
-        <location filename="../../UpdatePlugin.cpp" line="255"/>
+        <location filename="../../UpdatePlugin.cpp" line="260"/>
         <source>Downloading update</source>
         <translation>Загрузка обновления</translation>
     </message>
     <message>
-        <location filename="../../UpdatePlugin.cpp" line="432"/>
+        <location filename="../../UpdatePlugin.cpp" line="437"/>
         <source>Install Update Now</source>
         <translation>Установить обновление сейчас</translation>
     </message>
     <message>
-        <location filename="../../UpdatePlugin.cpp" line="437"/>
+        <location filename="../../UpdatePlugin.cpp" line="442"/>
         <source>Update Error</source>
         <translation>Ошибка обновления</translation>
     </message>
     <message>
-        <location filename="../../UpdatePlugin.cpp" line="441"/>
+        <location filename="../../UpdatePlugin.cpp" line="446"/>
         <source>Update Available</source>
         <translation>Доступно обновление</translation>
     </message>

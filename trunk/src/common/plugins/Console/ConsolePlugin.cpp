@@ -68,6 +68,10 @@ protected:
     else if (key == LS("oauth"))                return tr("OAuth");
     else if (key == LS("anonymous"))            return tr("Anonymous");
     else if (key == LS("ok"))                   return tr("OK");
+    else if (key == LS("main_channel"))         return tr("Main channel");
+    else if (key == LS("use_main_channel"))     return tr("Use main channel");
+    else if (key == LS("forced_join"))          return tr("Forced join to main channel");
+    else if (key == LS("disable_leave"))        return tr("Disable leave from channel");
     return QString();
   }
 };

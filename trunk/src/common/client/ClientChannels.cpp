@@ -29,7 +29,7 @@
 
 ClientChannels::ClientChannels(QObject *parent)
   : QObject(parent)
-  , m_policy(ServerFeed::ForcedJoinPolicy)
+  , m_policy(ServerFeed::MainChannelPolicy | ServerFeed::ForcedJoinPolicy)
   , m_client(ChatClient::io())
 {
   m_hooks = new Hooks::Channels(this);
