@@ -55,13 +55,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="655"/>
-        <location filename="../../SendFilePlugin.cpp" line="657"/>
+        <location filename="../../SendFilePlugin.cpp" line="654"/>
         <source>Incoming file: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../SendFilePlugin.cpp" line="697"/>
+        <location filename="../../SendFilePlugin.cpp" line="689"/>
         <source>Save</source>
         <translation type="unfinished"></translation>
     </message>

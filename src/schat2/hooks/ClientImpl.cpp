@@ -41,7 +41,9 @@ ClientImpl::ClientImpl(QObject *parent)
  */
 void ClientImpl::setup()
 {
-  if (ChatClient::channels()->policy() & ServerFeed::ForcedJoinPolicy) {
+  const int policy = ChatClient::channels()->policy();
+
+  if (policy & ServerFeed::MainChannelPolicy && policy & ServerFeed::ForcedJoinPolicy) {
     const QByteArray id = ChatClient::channels()->mainId();
     if (id.isEmpty()) {
       const QStringList path = ChatUrls::path(ChatClient::io()->url());

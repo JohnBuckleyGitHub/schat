@@ -28,7 +28,7 @@
 <context>
     <name>ChannelsPluginImpl</name>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="182"/>
+        <location filename="../../ChannelsPlugin.cpp" line="180"/>
         <source>Channels</source>
         <translation type="unfinished"></translation>
     </message>

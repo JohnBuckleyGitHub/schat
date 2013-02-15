@@ -91,7 +91,7 @@ void NodeServerFeed::init()
   }
 
   if (!m_data.contains(SERVER_FEED_POLICY_KEY))
-    m_data[SERVER_FEED_POLICY_KEY] = ServerFeed::ForcedJoinPolicy;
+    m_data[SERVER_FEED_POLICY_KEY] = ServerFeed::MainChannelPolicy | ServerFeed::ForcedJoinPolicy;
 }
 
 

@@ -598,11 +598,11 @@ bool TabWidget::isAutoPin(const QByteArray &id) const
   if (ChatClient::channels()->mainId() != id)
     return false;
 
-  int policy = ChatClient::channels()->policy();
-  if (policy & ServerFeed::ForcedJoinPolicy)
-    return true;
+  const int policy = ChatClient::channels()->policy();
+  if (!(policy & ServerFeed::MainChannelPolicy))
+    return false;
 
-  return (policy & ServerFeed::AutoJoinPolicy && ChatCore::settings()->value(SETTINGS_AUTO_JOIN).toBool());
+  return (policy & ServerFeed::ForcedJoinPolicy || ChatCore::settings()->value(SETTINGS_AUTO_JOIN).toBool());
 }
 
 

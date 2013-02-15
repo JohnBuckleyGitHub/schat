@@ -5,7 +5,7 @@
 <context>
     <name>ConsoleCmd</name>
     <message>
-        <location filename="../../ConsoleCmd.cpp" line="78"/>
+        <location filename="../../ConsoleCmd.cpp" line="82"/>
         <source>Not enough rights, you must be a server administrator.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13,7 +13,7 @@
 <context>
     <name>ConsolePluginImpl</name>
     <message>
-        <location filename="../../ConsolePlugin.cpp" line="107"/>
+        <location filename="../../ConsolePlugin.cpp" line="109"/>
         <source>Console</source>
         <translation type="unfinished"></translation>
     </message>
@@ -156,6 +156,26 @@
     <message>
         <location filename="../../ConsolePlugin.cpp" line="70"/>
         <source>OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ConsolePlugin.cpp" line="71"/>
+        <source>Main channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ConsolePlugin.cpp" line="72"/>
+        <source>Use main channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ConsolePlugin.cpp" line="73"/>
+        <source>Forced join to main channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ConsolePlugin.cpp" line="74"/>
+        <source>Disable leave from channel</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
