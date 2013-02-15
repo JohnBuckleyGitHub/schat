@@ -37,7 +37,7 @@ public:
     QVariantMap out        = CoreApi::header();
     out[CORE_API_ID]       = "Console";
     out[CORE_API_NAME]     = "Console";
-    out[CORE_API_VERSION]  = "0.2.0";
+    out[CORE_API_VERSION]  = "0.2.1";
     out[CORE_API_SITE]     = "http://wiki.schat.me/Plugin/Console";
     out[CORE_API_DESC]     = "Server Management console";
     out[CORE_API_DESC_RU]  = "Консоль управления сервером";
