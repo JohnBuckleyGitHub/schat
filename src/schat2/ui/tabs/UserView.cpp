@@ -156,7 +156,7 @@ UserView::UserView(ClientChannel channel, QWidget *parent)
 /*!
  * Добавление канала-пользователя в список.
  *
- * \param channel Указатель на канал.
+ * \param user Указатель на канал.
  */
 bool UserView::add(ClientChannel user)
 {

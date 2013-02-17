@@ -90,8 +90,7 @@ int HistoryDB::status(int status)
 /*!
  * Получение последних сообщений.
  *
- * \param channel Кодированный идентификатор канала.
- * \param limit   Ограничение на количество сообщений.
+ * \param channelId Идентификатор канала.
  */
 QList<QByteArray> HistoryDB::last(const QByteArray &channelId)
 {
