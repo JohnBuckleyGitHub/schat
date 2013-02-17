@@ -217,8 +217,9 @@ void Core::accept(const AuthRequest &request, const AuthResult &result, const QS
 /*!
  * Отклонение авторизации.
  *
- * \param result Информация с результатом авторизации.
- * \param socket Номер сокета, если 0, то он будет определён автоматически.
+ * \param request Объект запроса авторизации.
+ * \param result  Информация с результатом авторизации.
+ * \param socket  Номер сокета, если 0, то он будет определён автоматически.
  */
 void Core::reject(const AuthRequest &request, const AuthResult &result, quint64 socket)
 {
