@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  * Copyright © 2012 Alexey Ivanov <alexey.ivanes@gmail.com>
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -168,7 +168,7 @@ void HunspellChecker::load(const QStringList &dicts)
   m_mutex.lock();
   foreach (const QString &name, dicts) {
     if (QFile::exists(name + LS(".dic"))) {
-      Hunspell *dic = new Hunspell(QString(name + LS(".aff")).toUtf8().constData(), QString(name + LS(".dic")).toUtf8().constData());
+      Hunspell *dic = new Hunspell(QString(name + LS(".aff")).toLocal8Bit().constData(), QString(name + LS(".dic")).toLocal8Bit().constData());
       if (QTextCodec::codecForName(dic->get_dic_encoding()))
         m_list.append(dic);
       else

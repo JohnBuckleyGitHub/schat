@@ -38,7 +38,7 @@ public:
     QVariantMap out        = CoreApi::header();
     out[CORE_API_ID]       = "SpellChecker";
     out[CORE_API_NAME]     = "Spell Checker";
-    out[CORE_API_VERSION]  = "0.1.3";
+    out[CORE_API_VERSION]  = "0.1.4";
     out[CORE_API_SITE]     = "http://wiki.schat.me/Plugin/SpellChecker";
     out[CORE_API_DESC]     = "Automatic spell checking";
     out[CORE_API_DESC_RU]  = "Автоматическая проверка орфографии";
