@@ -73,7 +73,7 @@ class Download
    */
   private function write()
   {
-    $result = json_encode($this->json);
+    $result = json_encode($this->json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     if ($result === FALSE) {
       echo 'json encode failed' . json_last_error() . "\n";
       return FALSE;
