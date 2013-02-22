@@ -30,7 +30,9 @@ CONFIG += console
 DEPENDPATH  += ../schatd2
 INCLUDEPATH += ../schatd2
 
-unix:!macx { 
+unix:!macx {
+  include(../common/prefix.pri)
+
   css.files += ../../res/www/css/bootstrap.css
   css.files += ../../res/www/css/main.css
   css.files += ../../res/www/css/result.css
@@ -54,7 +56,7 @@ unix:!macx {
   other.files += ../../res/www/favicon.ico
   other.path = /usr/share/schatd2/www
 
-  target.path += $$SCHAT_PREFIX/usr/sbin
+  target.path += $${PREFIX}/sbin
   INSTALLS += target css img js other jquery
 }
 

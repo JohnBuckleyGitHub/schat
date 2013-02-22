@@ -95,7 +95,9 @@ TRANSLATIONS += ../../data/translations/schatd-lib_ru.ts
 CODECFORTR = UTF-8
 
 unix:!macx {
-  target.path += $$SCHAT_PREFIX/usr/lib
+  include(../common/prefix.pri)
+
+  target.path += $${LIBDIR}
   INSTALLS += target
 }
 

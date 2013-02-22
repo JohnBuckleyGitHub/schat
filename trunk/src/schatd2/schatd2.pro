@@ -38,7 +38,9 @@ TRANSLATIONS += ../../res/translations/schatd2_ru.ts
 CODECFORTR = UTF-8
 
 unix:!macx {
-  target.path += $$SCHAT_PREFIX/usr/sbin
+  include(../common/prefix.pri)
+
+  target.path += $${PREFIX}/sbin
   INSTALLS += target
 }
 

@@ -15,33 +15,10 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-TEMPLATE = lib
-QT = core network
-TARGET = schat-client
-DEFINES += SCHAT_LIBRARY
-win32:RC_FILE = client.rc
+unix:!macx {
+  isEmpty(PREFIX):PREFIX = /usr
 
-unix {
-  macx {
-    target.path += ../../out/SimpleChat2.app/Contents/Frameworks/
-  } else {
-    include(../common/prefix.pri)
+  DEFINES += SCHAT_PREFIX=\\\"$${PREFIX}\\\"
 
-    target.path += $${LIBDIR}
-  }
-
-  INSTALLS += target
+  isEmpty(LIBDIR):LIBDIR = $${PREFIX}/lib
 }
-
-win32 {
-  target.path += ../../os/win32/schat2/
-  INSTALLS += target
-}
-
-TRANSLATIONS += ../../res/translations/schat2-client_en.ts
-TRANSLATIONS += ../../res/translations/schat2-client_ru.ts
-CODECFORTR = UTF-8
-
-include(../common/config.pri)
-include(../common/client.pri)
-include(../common/common.pri)

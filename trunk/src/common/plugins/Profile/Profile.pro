@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2012 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2013 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -40,21 +40,3 @@ include(../plugins.pri)
 TRANSLATIONS += res/translations/profile_en.ts
 TRANSLATIONS += res/translations/profile_ru.ts
 CODECFORTR = UTF-8
-
-translations.files = res/translations/profile_en.qm
-translations.files += res/translations/profile_ru.qm
-
-macx {
-  translations.path += ../../../../out/SimpleChat2.app/Contents/Resources/translations
-  INSTALLS += translations
-}
-
-unix:!macx {
-  translations.path = $$SCHAT_PREFIX/usr/share/$${PLUGIN_TARGET}/translations
-  INSTALLS += translations
-}
-
-win32 {
-  translations.path += ../../../../os/win32/$${PLUGIN_TARGET}/translations
-  INSTALLS += translations
-}

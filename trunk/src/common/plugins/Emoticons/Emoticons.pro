@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2012 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2013 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -53,16 +53,9 @@ TRANSLATIONS += res/translations/emoticons_en.ts
 TRANSLATIONS += res/translations/emoticons_ru.ts
 CODECFORTR = UTF-8
 
-translations.files = res/translations/emoticons_en.qm
-translations.files += res/translations/emoticons_ru.qm
-
-macx:      translations.path += ../../../../out/SimpleChat2.app/Contents/Resources/translations
-unix:!macx:translations.path = $$SCHAT_PREFIX/usr/share/$${PLUGIN_TARGET}/translations
-win32:     translations.path += ../../../../os/win32/$${PLUGIN_TARGET}/translations
-
 extensions.files += extensions/kolobok.schat
 macx:      extensions.path += ../../../../out/SimpleChat2.app/Contents/Resources/extensions/emoticons
-unix:!macx:extensions.path += $$SCHAT_PREFIX/usr/share/$${PLUGIN_TARGET}/extensions/emoticons
+unix:!macx:extensions.path += $${PREFIX}/share/$${PLUGIN_TARGET}/extensions/emoticons
 win32:     extensions.path += ../../../../os/win32/$${PLUGIN_TARGET}/extensions/emoticons
 
-INSTALLS += extensions translations
+INSTALLS += extensions

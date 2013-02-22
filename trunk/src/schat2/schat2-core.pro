@@ -241,7 +241,9 @@ unix {
   macx {
     target.path += ../../out/SimpleChat2.app/Contents/Frameworks/
   } else {
-    target.path += $$SCHAT_PREFIX/usr/lib
+    include(../common/prefix.pri)
+
+    target.path += $${LIBDIR}
   }
 
   INSTALLS += target
