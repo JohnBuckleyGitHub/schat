@@ -168,18 +168,6 @@
         </Directory>
       </Directory>
       <Directory Id="translations" Name="translations">
-        <Component Id="emoticons_en.qm" Guid="{A41AC6BE-9EEB-416F-A489-6EAF97944474}">
-          <File Id="emoticons_en.qm" KeyPath="yes" Source="..\schat2\translations\emoticons_en.qm" />
-        </Component>
-        <Component Id="emoticons_ru.qm" Guid="{D0D3D0A3-35F4-405A-BC53-FAD4C3CCE546}">
-          <File Id="emoticons_ru.qm" KeyPath="yes" Source="..\schat2\translations\emoticons_ru.qm" />
-        </Component>
-        <Component Id="profile_en.qm" Guid="{0F979C2B-3CE8-483E-BC2C-FE25D14DC508}">
-          <File Id="profile_en.qm" KeyPath="yes" Source="..\schat2\translations\profile_en.qm" />
-        </Component>
-        <Component Id="profile_ru.qm" Guid="{2E248F8D-09DF-415D-9584-BA489D773A4D}">
-          <File Id="profile_ru.qm" KeyPath="yes" Source="..\schat2\translations\profile_ru.qm" />
-        </Component>
         <Component Id="qt_ru.qm" Guid="{BF51A5C9-4972-46C8-9BF1-51EB7C931B1E}">
           <File Id="qt_ru.qm" KeyPath="yes" Source="..\schat2\translations\qt_ru.qm" />
         </Component>
@@ -191,12 +179,6 @@
         </Component>
         <Component Id="schat2_ru.qm" Guid="{9EFB66AF-0397-4C36-8A4E-CCD4C12C9B68}">
           <File Id="schat2_ru.qm" KeyPath="yes" Source="..\schat2\translations\schat2_ru.qm" />
-        </Component>
-        <Component Id="sendfile_en.qm" Guid="{44D2A480-C724-4C7D-9796-427944081D84}">
-          <File Id="sendfile_en.qm" KeyPath="yes" Source="..\schat2\translations\sendfile_en.qm" />
-        </Component>
-        <Component Id="sendfile_ru.qm" Guid="{9B650F34-9268-40F9-88C7-51336C7F0984}">
-          <File Id="sendfile_ru.qm" KeyPath="yes" Source="..\schat2\translations\sendfile_ru.qm" />
         </Component>
       </Directory>
       <Directory Id="spelling" Name="spelling">
@@ -258,8 +240,6 @@
       <ComponentRef Id="Emoticons.dll" />
       <ComponentRef Id="kolobok.schat" />
       <ComponentRef Id="ChangeLog.Emoticons.html" />
-      <ComponentRef Id="emoticons_en.qm" />
-      <ComponentRef Id="emoticons_ru.qm" />
     </ComponentGroup>
     <ComponentGroup Id="History">
       <ComponentRef Id="History.dll" />
@@ -272,8 +252,6 @@
     <ComponentGroup Id="Profile">
       <ComponentRef Id="Profile.dll" />
       <ComponentRef Id="ChangeLog.Profile.html" />
-      <ComponentRef Id="profile_en.qm" />
-      <ComponentRef Id="profile_ru.qm" />
     </ComponentGroup>
     <ComponentGroup Id="Popup">
       <ComponentRef Id="Popup.dll" />
@@ -290,8 +268,6 @@
     <ComponentGroup Id="SendFile">
       <ComponentRef Id="SendFile.dll" />
       <ComponentRef Id="ChangeLog.SendFile.html" />
-      <ComponentRef Id="sendfile_en.qm" />
-      <ComponentRef Id="sendfile_ru.qm" />
     </ComponentGroup>
     <ComponentGroup Id="SpellChecker">
       <ComponentRef Id="SpellChecker.dll" />
