@@ -167,7 +167,7 @@ QString AuthCore::defaultRoot() const
 {
 # if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
   if (!Path::isPortable())
-    return LS("/usr/share/schatd2/www");
+    return SCHAT_PREFIX + LS("/share/schatd2/www");
 # endif
 
   return Path::data(Path::SystemScope) + LS("/www");
