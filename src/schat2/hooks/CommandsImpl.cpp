@@ -143,6 +143,7 @@ bool CommandsImpl::command(const QByteArray &dest, const ClientCmd &cmd)
     MessagePacket packet(new MessageNotice(ChatClient::id(), dest, QString(), 0, ChatCore::randomId()));
     packet->setCommand(command);
     packet->setDirection(Notice::Internal);
+    packet->setStatus(Notice::Found);
     ChatClient::io()->send(packet, false);
   }
   else
@@ -161,7 +162,7 @@ int CommandsImpl::read(MessagePacket packet)
 
     AlertMessage::show(prefix + Hooks::CommandsImpl::tr("Latency time: <b style='color:#%1'>%2 ms</b>")
         .arg(colorizePing(offset))
-        .arg(offset), ALERT_MESSAGE_INFO, packet->dest());
+        .arg(offset), ALERT_MESSAGE_INFO, Message::detectTab(packet->sender(), packet->dest()));
 
     return 1;
   }
