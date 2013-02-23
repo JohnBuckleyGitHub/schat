@@ -180,14 +180,6 @@
     </message>
 </context>
 <context>
-    <name>CommandsImpl</name>
-    <message>
-        <location filename="../../src/schat2/hooks/CommandsImpl.cpp" line="166"/>
-        <source>Latency time: &lt;b style=&apos;color:#%1&apos;&gt;%2 ms&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>FindWidget</name>
     <message>
         <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="48"/>
@@ -272,6 +264,14 @@
         <source></source>
         <comment>Necessary for lupdate. ...</comment>
         <translation></translation>
+    </message>
+</context>
+<context>
+    <name>Hooks::CommandsImpl</name>
+    <message>
+        <location filename="../../src/schat2/hooks/CommandsImpl.cpp" line="164"/>
+        <source>Latency time: &lt;b style=&apos;color:#%1&apos;&gt;%2 ms&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

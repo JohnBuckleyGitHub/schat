@@ -180,14 +180,6 @@
     </message>
 </context>
 <context>
-    <name>CommandsImpl</name>
-    <message>
-        <location filename="../../src/schat2/hooks/CommandsImpl.cpp" line="166"/>
-        <source>Latency time: &lt;b style=&apos;color:#%1&apos;&gt;%2 ms&lt;/b&gt;</source>
-        <translation>Время задержки: &lt;b style=&apos;color:#%1&apos;&gt;%2 мс&lt;/b&gt;</translation>
-    </message>
-</context>
-<context>
     <name>FindWidget</name>
     <message>
         <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="48"/>
@@ -263,6 +255,14 @@
         <location filename="../../src/schat2/ui/fields/GenderField.cpp" line="156"/>
         <source>Yellow</source>
         <translation>Жёлтый</translation>
+    </message>
+</context>
+<context>
+    <name>Hooks::CommandsImpl</name>
+    <message>
+        <location filename="../../src/schat2/hooks/CommandsImpl.cpp" line="164"/>
+        <source>Latency time: &lt;b style=&apos;color:#%1&apos;&gt;%2 ms&lt;/b&gt;</source>
+        <translation>Время задержки: &lt;b style=&apos;color:#%1&apos;&gt;%2 мс&lt;/b&gt;</translation>
     </message>
 </context>
 <context>

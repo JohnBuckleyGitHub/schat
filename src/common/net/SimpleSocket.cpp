@@ -438,6 +438,7 @@ bool SimpleSocket::setSocketDescriptor(int socketDescriptor)
     d->serverSide = true;
     #if QT_VERSION >= 0x040600
     setSocketOption(QAbstractSocket::KeepAliveOption, 1);
+    setSocketOption(QAbstractSocket::LowDelayOption, 1);
     #endif
     d->setTimerState(SimpleSocketPrivate::WaitingHandshake);
 
