@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,7 +25,10 @@
 #include "client/ClientCmd.h"
 #include "client/ClientMessages.h"
 #include "client/SimpleClient.h"
+#include "DateTime.h"
 #include "hooks/CommandsImpl.h"
+#include "messages/AlertMessage.h"
+#include "QtEscape.h"
 #include "sglobal.h"
 #include "ui/StatusMenu.h"
 
@@ -44,7 +47,7 @@ CommandsImpl::CommandsImpl(QObject *parent)
  */
 bool CommandsImpl::command(const QByteArray &dest, const ClientCmd &cmd)
 {
-  QString command = cmd.command().toLower();
+  const QString command = cmd.command().toLower();
 
   /// - /about Открытие вкладки O Simple Chat.
   if (command == LS("about"))
@@ -136,10 +139,65 @@ bool CommandsImpl::command(const QByteArray &dest, const ClientCmd &cmd)
     if (body.isValid() && body.isBody())
       ChatCore::settings()->setValue(body.command(), body.body());
   }
+  else if (command == LS("ping")) {
+    MessagePacket packet(new MessageNotice(ChatClient::id(), dest, QString(), 0, ChatCore::randomId()));
+    packet->setCommand(command);
+    packet->setDirection(Notice::Internal);
+    ChatClient::io()->send(packet, false);
+  }
   else
     return false;
 
   return true;
+}
+
+
+int CommandsImpl::read(MessagePacket packet)
+{
+  const QString &command = packet->command();
+  if (command == LS("pong")) {
+    const int offset     = qAbs(DateTime::utc() - packet->date());
+    const QString prefix = !packet->text().isEmpty() ? LS("<b>") + Qt::escape(packet->text()) + LS("</b> ") : QString();
+
+    AlertMessage::show(prefix + tr("Latency time: <b style='color:#%1'>%2 ms</b>")
+        .arg(colorizePing(offset))
+        .arg(offset), ALERT_MESSAGE_INFO, packet->dest());
+
+    return 1;
+  }
+  else if (command == LS("ping")) {
+    if (packet->dest() != ChatClient::id())
+      return 1;
+
+    MessagePacket pong(new MessageNotice(ChatClient::id(), packet->sender(), ChatClient::io()->json().value(CLIENT_PROP_HOST).toString(), packet->date(), packet->id()));
+    pong->setCommand(LS("pong"));
+    pong->setDirection(Notice::Internal);
+    pong->setStatus(Notice::Found);
+    ChatClient::io()->send(pong, ChatClient::id() == packet->sender());
+
+    return 1;
+  }
+
+  return 0;
+}
+
+
+QString CommandsImpl::colorizePing(int offset) const
+{
+  if (offset > 500)
+    return LS("da251d");
+
+  if (offset > 200)
+    return LS("ff9900");
+
+  return LS("6bb521");
+  QString color = "6bb521";
+  if (offset > 200 && offset < 500)
+    color = "ff9900";
+  else if (offset >= 500)
+    color = "da251d";
+
+  return QString(LS("<b style='color:#%1'>%2</b>")).arg(color).arg(offset);
 }
 
 
@@ -172,7 +230,7 @@ void CommandsImpl::setGender(const QString &gender, const QString &color)
     return;
 
   ChatClient::channel()->gender() = data.raw();
-  ChatCore::settings()->setValue(LS("Profile/Gender"), data.raw());
+  ChatCore::settings()->setValue(SETTINGS_PROFILE_GENDER, data.raw());
 
   if (ChatClient::state() == ChatClient::Online)
     ChatClient::channels()->update();

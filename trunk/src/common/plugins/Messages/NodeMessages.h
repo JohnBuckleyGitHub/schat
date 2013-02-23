@@ -34,6 +34,7 @@ protected:
 
 private:
   FeedEvent *createEvent();
+  void pong(qint64 date);
   void reject(int status);
 
   MessageNotice *m_packet; ///< Прочитанный пакет.

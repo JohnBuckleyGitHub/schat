@@ -49,9 +49,9 @@ bool NodeMessages::read(PacketReader *reader)
     return false;
 
   MessageNotice packet(m_type, reader);
-  m_packet = &packet;
-
-  FeedEvent *event = createEvent();
+  m_packet          = &packet;
+  const qint64 date = m_packet->date();
+  FeedEvent *event  = createEvent();
 
   if (!m_dest)
     event->status = Notice::NotFound;
@@ -67,6 +67,9 @@ bool NodeMessages::read(PacketReader *reader)
   }
 
   if (packet.direction() == Notice::Internal) {
+    if (m_packet->command() == LS("ping"))
+      pong(date);
+
     Core::i()->route(m_dest);
     delete event;
     return false;
@@ -116,6 +119,29 @@ FeedEvent *NodeMessages::createEvent()
     event->date = m_dest->feed(FEED_NAME_MESSAGES, true, false)->head().date();
 
   return event;
+}
+
+
+void NodeMessages::pong(qint64 date)
+{
+  QList<quint64> sockets;
+  QString command = m_packet->command();
+
+  if (m_dest->type() == SimpleID::ChannelId) {
+    command = LS("pong");
+    sockets.append(Core::socket());
+  }
+  else if (m_dest->type() == SimpleID::UserId && m_sender->id() == m_dest->id())
+    sockets = m_sender->sockets();
+
+  if (sockets.isEmpty())
+    return;
+
+  MessageNotice pong(m_packet->sender(), m_packet->dest(), m_packet->text(), date, m_packet->internalId());
+  pong.setCommand(command);
+  pong.setDirection(Notice::Internal);
+  pong.setStatus(Notice::Found);
+  m_core->send(sockets, pong.data(Core::stream()));
 }
 
 

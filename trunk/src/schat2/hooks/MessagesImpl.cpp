@@ -53,7 +53,7 @@ MessagesImpl::MessagesImpl(QObject *parent)
  */
 int MessagesImpl::read(MessagePacket packet)
 {
-  QString command = packet->command();
+  const QString &command = packet->command();
   if (command != LS("m") && command != LS("me") && command != LS("say"))
     return 0;
 
