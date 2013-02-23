@@ -66,46 +66,46 @@ unix {
     include(../common/prefix.pri)
 
     icon16.files = ../../res/images/icons/16x16/schat2.png
-    icon16.path = $${PREFIX}/share/icons/hicolor/16x16/apps
+    icon16.path = /usr/share/icons/hicolor/16x16/apps
 
     icon22.files = ../../res/images/icons/22x22/schat2.png
-    icon22.path = $${PREFIX}/share/icons/hicolor/22x22/apps
+    icon22.path = /usr/share/icons/hicolor/22x22/apps
 
     icon24.files = ../../res/images/icons/24x24/schat2.png
-    icon24.path = $${PREFIX}/share/icons/hicolor/24x24/apps
+    icon24.path = /usr/share/icons/hicolor/24x24/apps
 
     icon32.files = ../../res/images/icons/32x32/schat2.png
-    icon32.path = $${PREFIX}/share/icons/hicolor/32x32/apps
+    icon32.path = /usr/share/icons/hicolor/32x32/apps
 
     icon36.files = ../../res/images/icons/36x36/schat2.png
-    icon36.path = $${PREFIX}/share/icons/hicolor/36x36/apps
+    icon36.path = /usr/share/icons/hicolor/36x36/apps
 
     icon48.files = ../../res/images/icons/48x48/schat2.png
-    icon48.path = $${PREFIX}/share/icons/hicolor/48x48/apps
+    icon48.path = /usr/share/icons/hicolor/48x48/apps
 
     icon64.files = ../../res/images/icons/64x64/schat2.png
-    icon64.path = $${PREFIX}/share/icons/hicolor/64x64/apps
+    icon64.path = /usr/share/icons/hicolor/64x64/apps
 
     icon72.files = ../../res/images/icons/72x72/schat2.png
-    icon72.path = $${PREFIX}/share/icons/hicolor/72x72/apps
+    icon72.path = /usr/share/icons/hicolor/72x72/apps
 
     icon96.files = ../../res/images/icons/96x96/schat2.png
-    icon96.path = $${PREFIX}/share/icons/hicolor/96x96/apps
+    icon96.path = /usr/share/icons/hicolor/96x96/apps
 
     icon128.files = ../../res/images/icons/128x128/schat2.png
-    icon128.path = $${PREFIX}/share/icons/hicolor/128x128/apps
+    icon128.path = /usr/share/icons/hicolor/128x128/apps
 
     icon196.files = ../../res/images/icons/196x196/schat2.png
-    icon196.path = $${PREFIX}/share/icons/hicolor/196x196/apps
+    icon196.path = /usr/share/icons/hicolor/196x196/apps
 
     icon256.files = ../../res/images/icons/256x256/schat2.png
-    icon256.path = $${PREFIX}/share/icons/hicolor/256x256/apps
+    icon256.path = /usr/share/icons/hicolor/256x256/apps
 
     icon512.files = ../../res/images/icons/512x512/schat2.png
-    icon512.path = $${PREFIX}/share/icons/hicolor/512x512/apps
+    icon512.path = /usr/share/icons/hicolor/512x512/apps
 
     applications.files = ../../os/ubuntu/schat2.desktop
-    applications.path = $${PREFIX}/share/applications
+    applications.path = /usr/share/applications
 
     translations.path = $${PREFIX}/share/schat2/translations
     sounds.path  += $${PREFIX}/share/schat2/sounds/

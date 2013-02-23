@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -51,8 +51,6 @@ ChatApp::ChatApp(int &argc, char **argv)
   QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
 # endif
 
-  Path::init();
-
   QPalette palette = this->palette();
   palette.setColor(QPalette::Inactive, QPalette::Highlight, palette.color(QPalette::Highlight));
   setPalette(palette);
@@ -83,12 +81,12 @@ bool ChatApp::isRunning()
 
   const QString message = args.join(LS(", "));
 
-  if (args.contains(LS("-exit"))) {
+  if (args.contains(CMDLINE_ARG_EXIT)) {
     sendMessage(message);
     return true;
   }
 
-  if (args.contains(LS("-exec")))
+  if (args.contains(CMDLINE_ARG_EXEC) || args.contains(CMDLINE_ARG_BASE))
     return false;
 
   return sendMessage(message);
@@ -98,14 +96,15 @@ bool ChatApp::isRunning()
 
 void ChatApp::start()
 {
-  QStringList args = arguments();
+  const QStringList args = arguments();
+  Path::initWithBase(value(CMDLINE_ARG_BASE, args));
 
   m_core = new ChatCore(this);
-  if (!ChatCore::settings()->value("Labs/DisableUI").toBool()) {
+  if (!ChatCore::settings()->value(SETTINGS_LABS_DISABLE_UI).toBool()) {
     m_window = new ChatWindow();
     connect(m_window, SIGNAL(restartRequest()), SLOT(restart()));
 
-    if (args.contains(LS("-hide")))
+    if (args.contains(CMDLINE_ARG_HIDE))
       m_window->hide();
     else
       m_window->showChat();
@@ -167,11 +166,11 @@ bool ChatApp::selfUpdate()
 void ChatApp::handleMessage(const QString& message)
 {
 # if !defined(SCHAT_NO_SINGLEAPP)
-  QStringList args = message.split(LS(", "));
+  const QStringList args = message.split(LS(", "));
   if (!m_window)
     return;
 
-  if (args.contains(LS("-exit"))) {
+  if (args.contains(CMDLINE_ARG_EXIT)) {
     m_window->closeChat();
     return;
   }
@@ -193,4 +192,14 @@ void ChatApp::restart()
 # endif
 
   start();
+}
+
+
+QString ChatApp::value(const QString &cmdKey, const QStringList &arguments) const
+{
+  const int index = arguments.indexOf(cmdKey);
+  if (index == -1 || index + 1 == arguments.size())
+    return QString();
+
+  return arguments.at(index + 1);
 }
