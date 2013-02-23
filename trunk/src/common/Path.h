@@ -41,6 +41,8 @@ public:
   };
 
   static void init(const QString &app = QString());
+  static void initWithBase(const QString &base);
+
   inline static bool isPortable()    { return m_portable; }
   static QString app();
   static QString appDirPath();

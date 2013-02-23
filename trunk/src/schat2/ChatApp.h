@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,11 @@
 class ChatCore;
 class ChatWindow;
 
+#define CMDLINE_ARG_BASE QLatin1String("-base")
+#define CMDLINE_ARG_EXEC QLatin1String("-exec")
+#define CMDLINE_ARG_EXIT QLatin1String("-exit")
+#define CMDLINE_ARG_HIDE QLatin1String("-hide")
+
 class ChatApp : public QtSingleApplication
 {
   Q_OBJECT
@@ -49,6 +54,8 @@ private slots:
   void restart();
 
 private:
+  QString value(const QString &cmdKey, const QStringList &arguments) const;
+
   ChatCore *m_core;     ///< Глобальный объект чата.
   ChatWindow *m_window; ///< Главное окно.
 };

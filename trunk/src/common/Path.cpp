@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -38,6 +38,27 @@ void Path::init(const QString &app)
   QSettings s(appDirPath() + LC('/') + Path::app() + LS(".init"), QSettings::IniFormat);
   s.setIniCodec("UTF-8");
   m_portable = s.value(LS("Portable"), false).toBool();
+
+  QDir().mkpath(data());
+  QDir().mkpath(cache());
+
+  foreach (const QString &path, plugins()) {
+    QCoreApplication::addLibraryPath(path);
+  }
+}
+
+
+void Path::initWithBase(const QString &base)
+{
+  if (base.isEmpty() || base.contains(LC('.')) || base.contains(LC('/')) || base.contains(LC('\\')))
+    return init();
+
+  QSettings s(appDirPath() + LC('/') + Path::app() + LS(".init"), QSettings::IniFormat);
+  s.setIniCodec("UTF-8");
+  m_portable = s.value(LS("Portable"), false).toBool();
+
+  m_appDirPath = QCoreApplication::applicationDirPath();
+  m_app        = base;
 
   QDir().mkpath(data());
   QDir().mkpath(cache());
