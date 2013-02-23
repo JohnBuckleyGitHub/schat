@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -31,8 +31,10 @@ class SCHAT_CORE_EXPORT CommandsImpl : public Messages
 public:
   CommandsImpl(QObject *parent = 0);
   bool command(const QByteArray &dest, const ClientCmd &cmd);
+  int read(MessagePacket packet);
 
 private:
+  QString colorizePing(int offset) const;
   void setGender(const QString &gender, const QString &color);
 };
 

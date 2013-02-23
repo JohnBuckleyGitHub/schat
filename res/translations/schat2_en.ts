@@ -180,6 +180,14 @@
     </message>
 </context>
 <context>
+    <name>CommandsImpl</name>
+    <message>
+        <location filename="../../src/schat2/hooks/CommandsImpl.cpp" line="166"/>
+        <source>Latency time: &lt;b style=&apos;color:#%1&apos;&gt;%2 ms&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FindWidget</name>
     <message>
         <location filename="../../src/schat2/ui/tabs/FindWidget.cpp" line="48"/>
