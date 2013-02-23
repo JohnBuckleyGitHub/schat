@@ -159,7 +159,7 @@ int CommandsImpl::read(MessagePacket packet)
     const int offset     = qAbs(DateTime::utc() - packet->date());
     const QString prefix = !packet->text().isEmpty() ? LS("<b>") + Qt::escape(packet->text()) + LS("</b> ") : QString();
 
-    AlertMessage::show(prefix + tr("Latency time: <b style='color:#%1'>%2 ms</b>")
+    AlertMessage::show(prefix + Hooks::CommandsImpl::tr("Latency time: <b style='color:#%1'>%2 ms</b>")
         .arg(colorizePing(offset))
         .arg(offset), ALERT_MESSAGE_INFO, packet->dest());
 
