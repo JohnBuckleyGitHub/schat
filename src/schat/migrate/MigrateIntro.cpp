@@ -16,19 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#include <QLabel>
+#include <QVBoxLayout>
 
-#include "revision.h"
+#include "migrate/MigrateIntro.h"
 
-#define SCHAT_VERSION      "0.8.6"
-#define SCHAT_VERSION_RC   0,8,6,SCHAT_REVISION
-#define SCHAT_NAME         "IMPOMEZIA Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "schat.me"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2013 IMPOMEZIA"
+MigrateIntro::MigrateIntro(QWidget *parent)
+  : QWizardPage(parent)
+{
+  setTitle(tr("Welcome to the update wizard to Simple Chat 2"));
+  setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/watermark.png"));
 
-static const int UpdateLevelQt   = 2013022400;
-static const int UpdateLevelCore = 2013022400;
+  QLabel *text = new QLabel(this);
+  text->setWordWrap(true);
+  text->setOpenExternalLinks(true);
 
-#endif /*VERSION_H_*/
+  QVBoxLayout *layout = new QVBoxLayout(this);
+  layout->addWidget(text);
+  layout->addStretch();
+}

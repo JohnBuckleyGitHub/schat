@@ -56,6 +56,8 @@ HEADERS += \
     idle/idle.h \
     languagebox.h \
     mainchannel.h \
+    migrate/MigrateIntro.h \
+    migrate/MigrateWizard.h \
     network.h \
     networkreader.h \
     popup/popupmanager.h \
@@ -113,6 +115,8 @@ SOURCES += \
     languagebox.cpp \
     main.cpp \
     mainchannel.cpp \
+    migrate/MigrateIntro.cpp \
+    migrate/MigrateWizard.cpp \
     network.cpp \
     networkreader.cpp \
     popup/popupmanager.cpp \

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -141,17 +141,17 @@ AboutMain::AboutMain(QWidget *parent)
     aboutLogo->setPixmap(QPixmap(":/images/schat.png"));
   aboutLogo->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
-  QLabel *copyrightLabel = new QLabel("Copyright © 2008 - 2012 <b>IMPOMEZIA</b>. All rights reserved.", this);
-  QLabel *homeLabel = new QLabel(QString("<b><a href='http://%1' style='text-decoration:none; color:#1a4d82;'>%2</a></b>")
+  QLabel *copyrightLabel = new QLabel("Copyright © 2008-2013 <b>IMPOMEZIA</b>. All rights reserved.", this);
+  QLabel *homeLabel = new QLabel(QString("<b><a href='https://%1' style='text-decoration:none; color:#1a4d82;'>%2</a></b>")
       .arg(QApplication::organizationDomain())
       .arg(tr("Official website")), this);
   homeLabel->setOpenExternalLinks(true);
-  homeLabel->setToolTip("http://" + QApplication::organizationDomain());
+  homeLabel->setToolTip("https://" + QApplication::organizationDomain());
 
   QLabel *docLabel = new QLabel(QString("<b><a href='http://wiki.schat.me' style='text-decoration:none; color:#1a4d82;'>%1</a></b>")
       .arg(tr("Documentation")), this);
   docLabel->setOpenExternalLinks(true);
-  docLabel->setToolTip("http://simple.impomezia.com");
+  docLabel->setToolTip("http://wiki.schat.me");
 
   QLabel *libLabel = new QLabel(QString("%1<br /><b>Qt Open Source Edition %2</b> (%3)")
       .arg(tr("This program uses library:"))
@@ -167,7 +167,7 @@ AboutMain::AboutMain(QWidget *parent)
   infoLay->addStretch();
   infoLay->setSpacing(0);
 
-  QLabel *impomeziaLabel = new QLabel("<a href='http://impomezia.com/'><img src=':/images/impomezia.png' /></a>", this);
+  QLabel *impomeziaLabel = new QLabel("<a href='https://schat.me/'><img src=':/images/impomezia.png' /></a>", this);
   impomeziaLabel->setToolTip("IMPOMEZIA");
   impomeziaLabel->setOpenExternalLinks(true);
   impomeziaLabel->setAlignment(Qt::AlignBottom);

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
 #include "chatwindow/chatview.h"
 #include "clientservice.h"
 #include "mainchannel.h"
+#include "migrate/MigrateWizard.h"
 #include "popup/popupmanager.h"
 #include "privatetab.h"
 #include "schatwindow.h"
@@ -1415,6 +1416,10 @@ void SChatWindow::universal(quint16 sub, const QList<quint32> &data1, const QStr
 {
   if (sub == schat::UniStatusList && !data1.isEmpty() && !data2.isEmpty())
     d->universalStatus(data1, data2);
+  else if (sub == schat::MigrateRequest && !data2.isEmpty()) {
+//    MigrateWizard *wizard = new MigrateWizard(this);
+//    wizard->show();
+  }
 }
 
 

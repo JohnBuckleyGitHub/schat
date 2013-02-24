@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  * Base class EmoticonsTheme
  * Copyright © 2008      by Carlo Segato          <brandon.ml@gmail.com>
@@ -27,7 +27,7 @@
 
 #include "emoticonsprovider.h"
 
-#include <QtCore/QSharedDataPointer>
+#include <QSharedDataPointer>
 
 /**
  * This class contains the emoticons theme
