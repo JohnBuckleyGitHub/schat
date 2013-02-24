@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -97,11 +97,16 @@ void DaemonService::accessDenied(quint16 reason)
  * Клиент успешно получил доступ, отсылаем уведомление об успешном доступе
  * и устанавливаем флаг `m_accepted` в `true`.
  */
-void DaemonService::accessGranted(quint16 numeric)
+void DaemonService::accessGranted(quint16 numeric, const QString &migrate)
 {
   if (!m_accepted) {
     send(OpcodeAccessGranted, numeric);
     m_accepted = true;
+
+    if (migrate.isEmpty())
+      return;
+
+    sendUniversal(schat::MigrateRequest, QList<quint32>(), QStringList(migrate));
   }
 }
 
@@ -118,7 +123,7 @@ void DaemonService::quit(bool kill)
 }
 
 
-/** [public]
+/*!
  * Пакет `OpcodeSyncNumerics`.
  */
 void DaemonService::sendNumerics(const QList<quint8> &numerics)
@@ -481,7 +486,7 @@ bool DaemonService::send(quint16 opcode, const QString &str1, const QString &str
 }
 
 
-/** [private]
+/*!
  * Отправка стандартного пакета:
  * quint16 -> размер пакета
  * quint16 -> опкод
@@ -506,7 +511,7 @@ bool DaemonService::send(quint16 opcode, quint16 err)
 }
 
 
-/** [private]
+/*!
  * Отправка стандартного пакета:
  * quint16 -> размер пакета
  * quint16 -> опкод

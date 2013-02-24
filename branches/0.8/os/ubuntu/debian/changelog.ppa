@@ -1,6 +1,6 @@
 schat (##SCHAT_VERSION##~##DIST##) ##DIST##; urgency=low
 
-  * Stable release 0.8.5.
+  * Stable release 0.8.6.
 
  -- Alexander Sedov <impomezia@gmail.com>  ##RDATE##
  
