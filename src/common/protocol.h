@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -294,6 +294,14 @@ static const quint16 UniStatus                      = 10;
  * Отправитель: Сервер.
  */
 static const quint16 UniStatusList                  = 20;
+
+
+/*!
+ * Уведомление о переходе на Simple Chat 2.
+ *
+ * \since 0.8.6.
+ */
+static const quint16 MigrateRequest                 = 0x4d52;
 
 
 /*!

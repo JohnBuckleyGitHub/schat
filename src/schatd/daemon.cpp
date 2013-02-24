@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -186,6 +186,8 @@ void Daemon::reload(int code)
                 .arg(envConfFile("NormalizeFile")));
   }
   m_motd = initMotd();
+  initMigrate();
+
   m_floodLimits = FloodLimits(m_settings->getInt("FloodDetectTime"),
       m_settings->getInt("FloodLimit"),
       m_settings->getInt("JoinFloodBanTime"),
@@ -776,6 +778,18 @@ void Daemon::incomingLocalConnection()
 #endif /*SCHAT_NO_LOCAL_SERVER*/
 
 
+bool Daemon::initMigrate()
+{
+  QFile file(envConfFile("MigrateFile"));
+  if (file.exists() && file.open(QFile::ReadOnly)) {
+    m_migrate = file.readAll();
+    return true;
+  }
+
+  return false;
+}
+
+
 /*!
  * Инициализирует поддержку команды /motd (Message Of The Day).
  *
@@ -1070,7 +1084,7 @@ quint16 Daemon::greetingLink(const QStringList &list, DaemonService *service)
   connect(this, SIGNAL(sendRelayMessage(const QString &, const QString &, const QString &)), service, SLOT(sendRelayMessage(const QString &, const QString &, const QString &)));
   connect(this, SIGNAL(sendSyncProfile(quint8, const QString &, const QString &, const QString &)), service, SLOT(sendNewNick(quint8, const QString &, const QString &, const QString &)));
   connect(this, SIGNAL(sendSyncBye(const QString &, const QString &)), service, SLOT(sendSyncBye(const QString &, const QString &)));
-  service->accessGranted(m_numeric);
+  service->accessGranted(m_numeric, m_migrate);
   service->sendNumerics(m_numerics);
 
   SCHATD_LOG(0, DaemonLog::Notice, tr("Connected server: %1@%2, %3").arg(numeric).arg(list.at(AbstractProfile::Host)).arg(list.at(AbstractProfile::UserAgent)));
@@ -1150,7 +1164,7 @@ quint16 Daemon::greetingUser(const QStringList &list, DaemonService *service)
   connect(this, SIGNAL(sendNewProfile(quint8, const QString &, const QString &)), service, SLOT(sendNewProfile(quint8, const QString &, const QString &)));
   connect(this, SIGNAL(sendMessage(const QString &, const QString &)), service, SLOT(sendMessage(const QString &, const QString &)));
   connect(this, SIGNAL(sendUniversal(quint16, const QList<quint32> &, const QStringList &)), service, SLOT(sendUniversal(quint16, const QList<quint32> &, const QStringList &)));
-  service->accessGranted(m_numeric);
+  service->accessGranted(m_numeric, m_migrate);
   emit newUser(list, 1, m_numeric);
 
   sendAllUsers(service);
