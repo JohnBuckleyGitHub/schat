@@ -56,6 +56,8 @@ HEADERS += \
     idle/idle.h \
     languagebox.h \
     mainchannel.h \
+    migrate/JSON.h \
+    migrate/k8json/k8json.h \
     migrate/MigrateIntro.h \
     migrate/MigrateWizard.h \
     network.h \
@@ -115,6 +117,8 @@ SOURCES += \
     languagebox.cpp \
     main.cpp \
     mainchannel.cpp \
+    migrate/JSON.cpp \
+    migrate/k8json/k8json.cpp \
     migrate/MigrateIntro.cpp \
     migrate/MigrateWizard.cpp \
     network.cpp \

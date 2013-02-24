@@ -16,25 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MIGRATEWIZARD_H_
-#define MIGRATEWIZARD_H_
+#ifndef JSON_H_
+#define JSON_H_
 
 #include <QVariant>
-#include <QWizard>
 
-class MigrateWizard : public QWizard
+class JSON
 {
-  Q_OBJECT
+  JSON() {}
 
 public:
-  enum Pages {
-    PageIntro,
-  };
-
-  MigrateWizard(const QString &data, QWidget *parent = 0);
+  static QByteArray generate(const QVariant &data, bool formatted = false);
+  static QString quote(const QString &text);
+  static QVariant parse(const QByteArray &data);
 
 private:
-  QVariantMap m_data; ///< Информация полученная от сервера.
+  static void gen(QByteArray &res, const QVariant &val);
 };
 
-#endif /* MIGRATEWIZARD_H_ */
+#endif /* JSON_H_ */
