@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2009 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  * Base class EmoticonsProvider
  * Copyright © 2008 by Carlo Segato <brandon.ml@gmail.com>
@@ -19,10 +19,14 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QFileInfo>
+#include <QTextDocument>
+#include <QDir>
+#include <QPixmap>
+#include <QUrl>
+
 #include "emoticonsprovider.h"
 #include "emoticons.h"
-
-#include <QtGui>
 
 class EmoticonsProviderPrivate
 {

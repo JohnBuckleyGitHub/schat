@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,7 +16,16 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtGui>
+#include <QAbstractButton>
+#include <QApplication>
+#include <QFile>
+#include <QFileInfo>
+#include <QLabel>
+#include <QProgressBar>
+#include <QTextEdit>
+#include <QTextStream>
+#include <QTimer>
+#include <QVBoxLayout>
 
 #include "md5calcthread.h"
 #include "mirrorwriter.h"

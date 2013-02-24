@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  * This file based on "kopetechatwindowstyle.cpp" - A Chat Window Style.
  * Copyright © 2005      by Michaël Larouche      <larouche@kde.org>
@@ -20,10 +20,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDir>
+#include <QFileInfo>
+#include <QTextCodec>
+#include <QTextStream>
+
 #include "chatwindowstyle.h"
 #include "settings.h"
-
-#include <QtGui>
 
 class ChatWindowStyle::Private
 {
