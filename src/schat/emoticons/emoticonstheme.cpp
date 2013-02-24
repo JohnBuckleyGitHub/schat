@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  * Base class EmoticonsTheme
  * Copyright © 2008      by Carlo Segato          <brandon.ml@gmail.com>
@@ -21,8 +21,6 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
-#include <QtGui>
 
 #include "emoticonstheme.h"
 #include "emoticons.h"

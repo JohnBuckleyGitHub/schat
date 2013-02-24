@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2010 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   a button that pops up a list of all emoticons and returns
  *   the emoticon-string if one is selected in the list
@@ -21,12 +21,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "emoticonselector.h"
-#include "settings.h"
+#include <QGridLayout>
+#include <QMenu>
 
 #include <math.h>
 
-#include <QtGui>
+#include "emoticonselector.h"
+#include "settings.h"
 
 /*!
  * \brief Конструктор класса EmoticonLabel.

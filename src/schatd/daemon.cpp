@@ -16,8 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtCore>
-#include <QtNetwork>
+#include <QCoreApplication>
+#include <QCryptographicHash>
+#include <QFileInfo>
+#include <QLocalServer>
+#include <QProcess>
 
 #include "abstractprofile.h"
 #include "channellog.h"
