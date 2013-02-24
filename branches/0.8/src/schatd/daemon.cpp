@@ -963,7 +963,7 @@ QString Daemon::normalizeNick(const QString &nick) const
  */
 QString Daemon::serverInfo() const
 {
-  QString info = QString("<b>IMPOMEZIA Simple Chat Daemon %1</b>, <a href='http://impomezia.ru'>http://impomezia.ru</a>"
+  QString info = QString("<b>IMPOMEZIA Simple Chat Daemon %1</b>, <a href='https://schat.me'>https://schat.me</a>"
       "<table><tr><td class='info'>%2 </td><td><b>").arg(SCHAT_VERSION).arg(tr("Platform:"));
 
 #if   defined(Q_OS_AIX)

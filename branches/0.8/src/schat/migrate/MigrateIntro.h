@@ -16,19 +16,17 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#ifndef MIGRATEINTRO_H_
+#define MIGRATEINTRO_H_
 
-#include "revision.h"
+#include <QWizardPage>
 
-#define SCHAT_VERSION      "0.8.6"
-#define SCHAT_VERSION_RC   0,8,6,SCHAT_REVISION
-#define SCHAT_NAME         "IMPOMEZIA Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "schat.me"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2013 IMPOMEZIA"
+class MigrateIntro : public QWizardPage
+{
+  Q_OBJECT
 
-static const int UpdateLevelQt   = 2013022400;
-static const int UpdateLevelCore = 2013022400;
+public:
+  MigrateIntro(QWidget *parent = 0);
+};
 
-#endif /*VERSION_H_*/
+#endif /* MIGRATEINTRO_H_ */

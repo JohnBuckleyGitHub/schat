@@ -39,6 +39,7 @@
   <file>images/go-jump-locationbar-v.png</file>
   <file>images/gplv3-88x31.png</file>
   <file>images/impomezia.png</file>
+  <file>images/impomezia48.png</file>
   <file>images/load.gif</file>
   <file>images/main.png</file>
   <file>images/male.png</file>
@@ -65,6 +66,7 @@
   <file>images/undo.png</file>
   <file>images/update.png</file>
   <file>images/warning.png</file>
+  <file>images/watermark.png</file>
   <file>translations/en.png</file>
   <file>translations/ru.png</file>
   <file>translations/schat_en.qm</file>

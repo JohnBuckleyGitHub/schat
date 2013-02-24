@@ -16,19 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VERSION_H_
-#define VERSION_H_
+#include <QApplication>
 
-#include "revision.h"
+#include "migrate/MigrateIntro.h"
+#include "migrate/MigrateWizard.h"
 
-#define SCHAT_VERSION      "0.8.6"
-#define SCHAT_VERSION_RC   0,8,6,SCHAT_REVISION
-#define SCHAT_NAME         "IMPOMEZIA Simple Chat"
-#define SCHAT_ORGANIZATION "IMPOMEZIA"
-#define SCHAT_DOMAIN       "schat.me"
-#define SCHAT_COPYRIGHT    "Copyright © 2008-2013 IMPOMEZIA"
+MigrateWizard::MigrateWizard(QWidget *parent)
+  : QWizard(parent)
+{
+  setWindowFlags(windowFlags() ^ Qt::WindowContextHelpButtonHint);
 
-static const int UpdateLevelQt   = 2013022400;
-static const int UpdateLevelCore = 2013022400;
+  setOption(QWizard::NoBackButtonOnStartPage, true);
+  setWizardStyle(QWizard::ModernStyle);
+  setPixmap(QWizard::LogoPixmap, QPixmap(":/images/impomezia48.png"));
+  setWindowTitle(QApplication::applicationName());
 
-#endif /*VERSION_H_*/
+  setPage(PageIntro, new MigrateIntro(this));
+
+  setStartId(PageIntro);
+}
