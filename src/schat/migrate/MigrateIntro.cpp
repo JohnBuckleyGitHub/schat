@@ -21,17 +21,17 @@
 
 #include "migrate/MigrateIntro.h"
 
-MigrateIntro::MigrateIntro(QWidget *parent)
+MigrateIntro::MigrateIntro(const QString &text, QWidget *parent)
   : QWizardPage(parent)
 {
   setTitle(tr("Welcome to the update wizard to Simple Chat 2"));
   setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/watermark.png"));
 
-  QLabel *text = new QLabel(this);
-  text->setWordWrap(true);
-  text->setOpenExternalLinks(true);
+  QLabel *label = new QLabel(text, this);
+  label->setWordWrap(true);
+  label->setOpenExternalLinks(true);
 
   QVBoxLayout *layout = new QVBoxLayout(this);
-  layout->addWidget(text);
+  layout->addWidget(label);
   layout->addStretch();
 }

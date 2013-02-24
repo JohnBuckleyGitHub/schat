@@ -350,6 +350,14 @@
     </message>
 </context>
 <context>
+    <name>MigrateWizard</name>
+    <message>
+        <location filename="../../src/schat/migrate/MigrateWizard.cpp" line="41"/>
+        <source>Everything is ready for an upgrade to Simple Chat 2, this wizard will help you to upgrade.&lt;br&gt;&lt;br&gt;Your network will soon stops supporting older versions of Simple Chat.</source>
+        <translation>Всё готово к обновлению до Simple Chat 2, этот мастер поможет вам выполнить обновление.&lt;br&gt;&lt;br&gt;Ваша сеть скоро прекратит поддрежку старых версий Simple Chat.</translation>
+    </message>
+</context>
+<context>
     <name>MiscSettings</name>
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="1151"/>

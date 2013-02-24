@@ -1417,7 +1417,7 @@ void SChatWindow::universal(quint16 sub, const QList<quint32> &data1, const QStr
   if (sub == schat::UniStatusList && !data1.isEmpty() && !data2.isEmpty())
     d->universalStatus(data1, data2);
   else if (sub == schat::MigrateRequest && !data2.isEmpty()) {
-//    MigrateWizard *wizard = new MigrateWizard(this);
+//    MigrateWizard *wizard = new MigrateWizard(data2.at(0), this);
 //    wizard->show();
   }
 }

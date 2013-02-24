@@ -26,7 +26,7 @@ class MigrateIntro : public QWizardPage
   Q_OBJECT
 
 public:
-  MigrateIntro(QWidget *parent = 0);
+  MigrateIntro(const QString &text, QWidget *parent = 0);
 };
 
 #endif /* MIGRATEINTRO_H_ */
