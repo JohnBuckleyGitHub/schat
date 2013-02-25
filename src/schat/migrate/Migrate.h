@@ -81,18 +81,20 @@ public:
 
   Migrate(QObject *parent);
   ~Migrate();
+  inline const QFile &file() const      { return m_file; }
   inline const UpdateInfo &info() const { return m_info; }
   inline DownloadState state() const    { return m_state; }
   inline Status status() const          { return m_status; }
 
 signals:
   void done(int status);
+  void downloadProgress(qint64 bytesReceived, qint64 bytesTotal);
 
 public slots:
   void check();
+  void download();
 
 private slots:
-  void download();
   void finished();
   void readyRead();
   void start();

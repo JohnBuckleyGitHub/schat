@@ -16,31 +16,37 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MIGRATEPREPARE_H_
-#define MIGRATEPREPARE_H_
+#ifndef MIGRATEPROGRESS_H_
+#define MIGRATEPROGRESS_H_
 
 #include <QWizardPage>
 
 class Migrate;
 class QLabel;
-class Spinner;
+class QProgressBar;
+class QTextEdit;
 
-class MigratePrepare : public QWizardPage
+class MigrateProgress : public QWizardPage
 {
   Q_OBJECT
 
 public:
-  MigratePrepare(Migrate *migrate, QWidget *parent = 0);
+  MigrateProgress(const QString &url, Migrate *migrate, QWidget *parent = 0);
   inline bool isComplete() const { return m_completed; }
+  void initializePage();
 
 private slots:
-  void reload(int status);
+  void done(int status);
+  void downloadProgress(qint64 bytesReceived);
+  void finished(int exitCode = 1);
 
 private:
-  bool m_completed;   ///< \b true если страница выполнила своё действие.
-  Migrate *m_migrate; ///< Класс для проверки и загрузки обновления.
-  QLabel *m_text;     ///< Основной текст.
-  Spinner *m_spinner; ///< Спиннер.
+  bool m_completed;         ///< \b true если страница выполнила своё действие.
+  Migrate *m_migrate;       ///< Класс для проверки и загрузки обновления.
+  QLabel *m_label;          ///< Надпись сверху прогресс бара.
+  QProgressBar *m_progress; ///< Прогресс бар.
+  QString m_url;            ///< Адрес сервера.
+  QTextEdit *m_log;         ///< Виджет для показа лога.
 };
 
-#endif /* MIGRATEPREPARE_H_ */
+#endif /* MIGRATEPROGRESS_H_ */
