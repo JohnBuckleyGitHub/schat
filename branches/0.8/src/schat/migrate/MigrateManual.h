@@ -16,26 +16,23 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MIGRATEWIZARD_H_
-#define MIGRATEWIZARD_H_
+#ifndef MIGRATEMANUAL_H_
+#define MIGRATEMANUAL_H_
 
-#include <QVariant>
-#include <QWizard>
+#include <QWizardPage>
 
-class MigrateWizard : public QWizard
+class MigrateManual : public QWizardPage
 {
   Q_OBJECT
 
 public:
-  enum Pages {
-    PageIntro,
-    PageManual,
-  };
+  MigrateManual(const QString &url, QWidget *parent = 0);
 
-  MigrateWizard(const QString &data, QWidget *parent = 0);
+private slots:
+  void linkActivated(const QString &link);
 
 private:
-  QVariantMap m_data; ///< Информация полученная от сервера.
+  QString m_url;
 };
 
-#endif /* MIGRATEWIZARD_H_ */
+#endif /* MIGRATEMANUAL_H_ */
