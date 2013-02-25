@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2011 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2013 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -56,10 +56,6 @@ HEADERS += \
     idle/idle.h \
     languagebox.h \
     mainchannel.h \
-    migrate/JSON.h \
-    migrate/k8json/k8json.h \
-    migrate/MigrateIntro.h \
-    migrate/MigrateWizard.h \
     network.h \
     networkreader.h \
     popup/popupmanager.h \
@@ -117,10 +113,6 @@ SOURCES += \
     languagebox.cpp \
     main.cpp \
     mainchannel.cpp \
-    migrate/JSON.cpp \
-    migrate/k8json/k8json.cpp \
-    migrate/MigrateIntro.cpp \
-    migrate/MigrateWizard.cpp \
     network.cpp \
     networkreader.cpp \
     popup/popupmanager.cpp \
@@ -286,4 +278,5 @@ unix {
 
 win32:LIBS += -luser32
 
+include(migrate.pri)
 include(../common/common.pri)

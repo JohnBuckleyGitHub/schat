@@ -18,9 +18,10 @@
 
 #include <QApplication>
 
-#include "migrate/MigrateIntro.h"
-#include "migrate/MigrateWizard.h"
 #include "migrate/JSON.h"
+#include "migrate/MigrateIntro.h"
+#include "migrate/MigrateManual.h"
+#include "migrate/MigrateWizard.h"
 
 MigrateWizard::MigrateWizard(const QString &data, QWidget *parent)
   : QWizard(parent)
@@ -34,7 +35,8 @@ MigrateWizard::MigrateWizard(const QString &data, QWidget *parent)
   setPixmap(QWizard::LogoPixmap, QPixmap(":/images/impomezia48.png"));
   setWindowTitle(QApplication::applicationName());
 
-  setPage(PageIntro, new MigrateIntro(m_data.value("intro", tr("Everything is ready for an upgrade to Simple Chat 2, this wizard will help you to upgrade.<br><br>Your network will soon stops supporting older versions of Simple Chat.")).toString(), this));
+  setPage(PageIntro,  new MigrateIntro(m_data.value("intro", tr("Everything is ready for an upgrade to Simple Chat 2, this wizard will help you to upgrade.<br><br>Your network will soon stops supporting older versions of Simple Chat.")).toString(), this));
+  setPage(PageManual, new MigrateManual(m_data.value("url", "schat://schat.me/achim").toString(), this));
 
   setStartId(PageIntro);
 }

@@ -350,9 +350,42 @@
     </message>
 </context>
 <context>
+    <name>MigrateManual</name>
+    <message>
+        <location filename="../../src/schat/migrate/MigrateManual.cpp" line="30"/>
+        <source>Manual upgrade</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/migrate/MigrateManual.cpp" line="31"/>
+        <source>Perform required actions for manual upgrade</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/migrate/MigrateManual.cpp" line="33"/>
+        <source>First, download the upgrade from %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/migrate/MigrateManual.cpp" line="37"/>
+        <source>Then install and run Simple Chat 2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/migrate/MigrateManual.cpp" line="40"/>
+        <source>Finally, enter your nick and server address &lt;b&gt;%1&lt;/b&gt;. %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/migrate/MigrateManual.cpp" line="40"/>
+        <source>Copy</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MigrateWizard</name>
     <message>
-        <location filename="../../src/schat/migrate/MigrateWizard.cpp" line="41"/>
+        <location filename="../../src/schat/migrate/MigrateWizard.cpp" line="38"/>
         <source>Everything is ready for an upgrade to Simple Chat 2, this wizard will help you to upgrade.&lt;br&gt;&lt;br&gt;Your network will soon stops supporting older versions of Simple Chat.</source>
         <translation type="unfinished"></translation>
     </message>
