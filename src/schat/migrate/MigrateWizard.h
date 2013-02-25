@@ -39,6 +39,9 @@ public:
   MigrateWizard(const QString &data, QWidget *parent = 0);
   static QString bytesToHuman(qint64 size);
 
+signals:
+  void closeChat();
+
 private:
   Migrate *m_migrate; ///< Класс для проверки и загрузки обновления.
   QVariantMap m_data; ///< Информация полученная от сервера.

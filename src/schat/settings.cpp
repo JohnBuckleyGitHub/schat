@@ -308,7 +308,6 @@ void Settings::read()
   setList("Profile/RecentRealNames", QStringList());
   setList("Profile/RecentByeMsgs",   QStringList());
 
-  setBool("Migrate/AutoDownload", false);
   setBool("Migrate/Ready",        false);
   setInt("Migrate/Revision",      0);
   setString("Migrate/Channel",    "stable");

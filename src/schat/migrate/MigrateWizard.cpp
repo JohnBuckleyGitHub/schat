@@ -35,6 +35,7 @@ MigrateWizard::MigrateWizard(const QString &data, QWidget *parent)
 {
   m_data = JSON::parse(data.toUtf8()).toMap();
 
+  setAttribute(Qt::WA_DeleteOnClose);
   setWindowFlags(windowFlags() ^ Qt::WindowContextHelpButtonHint);
 
   setOption(QWizard::NoBackButtonOnStartPage, true);
@@ -53,7 +54,10 @@ MigrateWizard::MigrateWizard(const QString &data, QWidget *parent)
   m_migrate->check();
 
   setPage(PagePrepare,  new MigratePrepare(m_migrate, this));
-  setPage(PageProgress, new MigrateProgress(url, m_migrate, this));
+
+  MigrateProgress *progress = new MigrateProgress(url, m_migrate, this);
+  connect(progress, SIGNAL(closeChat()), SIGNAL(closeChat()));
+  setPage(PageProgress, progress);
 # endif
 
   setStartId(PageIntro);

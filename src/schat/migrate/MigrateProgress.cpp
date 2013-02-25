@@ -92,7 +92,7 @@ void MigrateProgress::done(int status)
   connect(process, SIGNAL(error(QProcess::ProcessError)), SLOT(finished()));
   connect(process, SIGNAL(finished(int,QProcess::ExitStatus)), SLOT(finished(int)));
 
-  process->start(m_migrate->file().fileName(), QStringList("/S"));
+  process->start('"' + m_migrate->file().fileName() + '"', QStringList("/S"));
 }
 
 
@@ -115,4 +115,9 @@ void MigrateProgress::finished(int exitCode)
   m_progress->setValue(100);
   m_completed = true;
   emit completeChanged();
+
+  QProcess::startDetached('"' + QSettings(QLatin1String("HKEY_CURRENT_USER\\Software\\IMPOMEZIA\\Simple Chat 2"), QSettings::NativeFormat).value(QLatin1String(".")).toString() + QLatin1String("\\schat2.exe") + '"');
+  QSettings(QLatin1String("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run"), QSettings::NativeFormat).remove(QApplication::applicationName());
+
+  emit closeChat();
 }
