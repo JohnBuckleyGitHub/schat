@@ -19,12 +19,30 @@ HEADERS += \
     migrate/JSON.h \
     migrate/k8json/k8json.h \
     migrate/MigrateIntro.h \
-    migrate/MigrateManual.h \
     migrate/MigrateWizard.h \
 
 SOURCES += \
     migrate/JSON.cpp \
     migrate/k8json/k8json.cpp \
     migrate/MigrateIntro.cpp \
-    migrate/MigrateManual.cpp \
     migrate/MigrateWizard.cpp \
+
+win32 {
+  HEADERS += \
+    migrate/Migrate.h \
+    migrate/MigratePrepare.h \
+    migrate/QProgressIndicator/QProgressIndicator.h \
+    migrate/Spinner.h \
+
+  SOURCES += \ 
+    migrate/Migrate.cpp \
+    migrate/MigratePrepare.cpp \
+    migrate/QProgressIndicator/QProgressIndicator.cpp \
+    migrate/Spinner.cpp \
+
+}
+else {
+  DEFINES += SCHAT_NO_AUTO_MIGRATE
+  HEADERS += migrate/MigrateManual.h
+  SOURCES += migrate/MigrateManual.cpp
+}

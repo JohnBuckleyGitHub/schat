@@ -20,8 +20,14 @@
 
 #include "migrate/JSON.h"
 #include "migrate/MigrateIntro.h"
-#include "migrate/MigrateManual.h"
 #include "migrate/MigrateWizard.h"
+
+#if defined(SCHAT_NO_AUTO_MIGRATE)
+# include "migrate/MigrateManual.h"
+#else
+# include "migrate/Migrate.h"
+# include "migrate/MigratePrepare.h"
+#endif
 
 MigrateWizard::MigrateWizard(const QString &data, QWidget *parent)
   : QWizard(parent)
@@ -36,7 +42,38 @@ MigrateWizard::MigrateWizard(const QString &data, QWidget *parent)
   setWindowTitle(QApplication::applicationName());
 
   setPage(PageIntro,  new MigrateIntro(m_data.value("intro", tr("Everything is ready for an upgrade to Simple Chat 2, this wizard will help you to upgrade.<br><br>Your network will soon stops supporting older versions of Simple Chat.")).toString(), this));
+
+# if defined(SCHAT_NO_AUTO_MIGRATE)
   setPage(PageManual, new MigrateManual(m_data.value("url", "schat://schat.me/achim").toString(), this));
+# else
+  m_migrate = new Migrate(this);
+  m_migrate->check();
+
+  setPage(PagePrepare, new MigratePrepare(m_migrate, this));
+# endif
 
   setStartId(PageIntro);
+}
+
+
+QString MigrateWizard::bytesToHuman(qint64 size)
+{
+  QString num;
+  QString key;
+  if (size < 1000000) {
+    if (!size)
+      num = QLatin1String("0");
+    else if (size && size < 1024)
+      num = QLatin1String("1");
+    else
+      num = QString::number((int) size / 1024);
+
+    key = tr("kB");
+  }
+  else {
+    num = QString::number((double) size / 1048576, 'f', 2);
+    key = tr("MB");
+  }
+
+  return num += QLatin1Char(' ') + key;
 }

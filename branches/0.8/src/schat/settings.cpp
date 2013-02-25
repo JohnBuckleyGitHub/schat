@@ -308,6 +308,13 @@ void Settings::read()
   setList("Profile/RecentRealNames", QStringList());
   setList("Profile/RecentByeMsgs",   QStringList());
 
+  setBool("Migrate/AutoDownload", false);
+  setBool("Migrate/Ready",        false);
+  setInt("Migrate/Revision",      0);
+  setString("Migrate/Channel",    "stable");
+  setString("Migrate/Url",        "http://download.schat.me/schat2/update.json");
+  setString("Migrate/Version",    QString());
+
   if (m_default)
     AbstractSettings::read(m_default);
 
@@ -341,6 +348,7 @@ void Settings::read()
 
   if (getInt("Profile/MaxRecentItems") < 0)
     setInt("Profile/MaxRecentItems", 0);
+
   NickEdit::modifyRecentList("Profile/RecentNicks",     m_profile->nick(), false);
   NickEdit::modifyRecentList("Profile/RecentRealNames", m_profile->fullName(), false);
   NickEdit::modifyRecentList("Profile/RecentByeMsgs",   m_profile->byeMsg(), false);
@@ -348,6 +356,7 @@ void Settings::read()
   m_updateTimer->setInterval(getInt("Updates/CheckInterval") * 60 * 1000);
   if (getBool("Updates/Enable"))
     m_updateTimer->start();
+
   connect(m_updateTimer, SIGNAL(timeout()), SLOT(updatesCheck()));
 }
 
