@@ -385,12 +385,12 @@
 <context>
     <name>MigratePrepare</name>
     <message>
-        <location filename="../../src/schat/migrate/MigratePrepare.cpp" line="33"/>
+        <location filename="../../src/schat/migrate/MigratePrepare.cpp" line="35"/>
         <source>Preparing to upgrade</source>
         <translation>Подготовка к обновлению</translation>
     </message>
     <message>
-        <location filename="../../src/schat/migrate/MigratePrepare.cpp" line="34"/>
+        <location filename="../../src/schat/migrate/MigratePrepare.cpp" line="36"/>
         <source>Checking for upgrades...</source>
         <translation>Идёт проверка обновлений...</translation>
     </message>
@@ -411,19 +411,62 @@
     </message>
 </context>
 <context>
+    <name>MigrateProgress</name>
+    <message>
+        <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="40"/>
+        <source>Downloading and installing upgrade</source>
+        <translation>Загрузка и установка обновления</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="41"/>
+        <source>Please wait...</source>
+        <translation>Пожалуйста подождите...</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="44"/>
+        <source>Downloading upgrade...</source>
+        <translation>Загрузка обновления...</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="76"/>
+        <source>An error occurred when downloading upgrade.</source>
+        <translation>Произошла ошибка при загрузке обновления.</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="81"/>
+        <source>Preparing to upgrade...</source>
+        <translation>Подготовка к обновлению...</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="90"/>
+        <source>Installing upgrade...</source>
+        <translation>Установка обновления...</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="110"/>
+        <source>An error occurred when installing upgrade.</source>
+        <translation>Ошибка при установке обновления.</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="114"/>
+        <source>Installation complete</source>
+        <translation>Установка завершена</translation>
+    </message>
+</context>
+<context>
     <name>MigrateWizard</name>
     <message>
-        <location filename="../../src/schat/migrate/MigrateWizard.cpp" line="44"/>
+        <location filename="../../src/schat/migrate/MigrateWizard.cpp" line="46"/>
         <source>Everything is ready for an upgrade to Simple Chat 2, this wizard will help you to upgrade.&lt;br&gt;&lt;br&gt;Your network will soon stops supporting older versions of Simple Chat.</source>
         <translation>Всё готово к обновлению до Simple Chat 2, этот мастер поможет вам выполнить обновление.&lt;br&gt;&lt;br&gt;Ваша сеть скоро прекратит поддрежку старых версий Simple Chat.</translation>
     </message>
     <message>
-        <location filename="../../src/schat/migrate/MigrateWizard.cpp" line="71"/>
+        <location filename="../../src/schat/migrate/MigrateWizard.cpp" line="76"/>
         <source>kB</source>
         <translation>КБ</translation>
     </message>
     <message>
-        <location filename="../../src/schat/migrate/MigrateWizard.cpp" line="75"/>
+        <location filename="../../src/schat/migrate/MigrateWizard.cpp" line="80"/>
         <source>MB</source>
         <translation>МБ</translation>
     </message>

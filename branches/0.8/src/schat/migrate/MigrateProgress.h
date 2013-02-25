@@ -35,6 +35,9 @@ public:
   inline bool isComplete() const { return m_completed; }
   void initializePage();
 
+signals:
+  void closeChat();
+
 private slots:
   void done(int status);
   void downloadProgress(qint64 bytesReceived);

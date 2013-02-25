@@ -243,9 +243,6 @@ void Migrate::readJSON()
     return setDone(NoUpdates);
 
   setDone(UpdateAvailable);
-
-  if (m_settings->getBool(m_prefix + LS("/AutoDownload")))
-    QTimer::singleShot(0, this, SLOT(download()));
 }
 
 
