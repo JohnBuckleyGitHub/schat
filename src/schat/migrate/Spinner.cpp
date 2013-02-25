@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -16,31 +16,26 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MIGRATEWIZARD_H_
-#define MIGRATEWIZARD_H_
+#include "migrate/Spinner.h"
 
-#include <QVariant>
-#include <QWizard>
-
-class Migrate;
-
-class MigrateWizard : public QWizard
+Spinner::Spinner(QWidget* parent)
+  : QProgressIndicator(parent)
 {
-  Q_OBJECT
+  setAnimationDelay(100);
+  setMaximumSize(16, 16);
+  setVisible(false);
+}
 
-public:
-  enum Pages {
-    PageIntro,
-    PageManual,
-    PagePrepare
-  };
 
-  MigrateWizard(const QString &data, QWidget *parent = 0);
-  static QString bytesToHuman(qint64 size);
+void Spinner::start()
+{
+  setVisible(true);
+  startAnimation();
+}
 
-private:
-  Migrate *m_migrate; ///< Класс для проверки и загрузки обновления.
-  QVariantMap m_data; ///< Информация полученная от сервера.
-};
 
-#endif /* MIGRATEWIZARD_H_ */
+void Spinner::stop()
+{
+  stopAnimation();
+  setVisible(false);
+}

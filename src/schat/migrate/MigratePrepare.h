@@ -16,31 +16,29 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MIGRATEWIZARD_H_
-#define MIGRATEWIZARD_H_
+#ifndef MIGRATEPREPARE_H_
+#define MIGRATEPREPARE_H_
 
-#include <QVariant>
-#include <QWizard>
+#include <QWizardPage>
 
 class Migrate;
+class QLabel;
+class Spinner;
 
-class MigrateWizard : public QWizard
+class MigratePrepare : public QWizardPage
 {
   Q_OBJECT
 
 public:
-  enum Pages {
-    PageIntro,
-    PageManual,
-    PagePrepare
-  };
+  MigratePrepare(Migrate *migrate, QWidget *parent = 0);
 
-  MigrateWizard(const QString &data, QWidget *parent = 0);
-  static QString bytesToHuman(qint64 size);
+private slots:
+  void reload(int status);
 
 private:
   Migrate *m_migrate; ///< Класс для проверки и загрузки обновления.
-  QVariantMap m_data; ///< Информация полученная от сервера.
+  QLabel *m_text;     ///< Основной текст.
+  Spinner *m_spinner; ///< Спиннер.
 };
 
-#endif /* MIGRATEWIZARD_H_ */
+#endif /* MIGRATEPREPARE_H_ */

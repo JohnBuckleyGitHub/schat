@@ -383,11 +383,49 @@
     </message>
 </context>
 <context>
+    <name>MigratePrepare</name>
+    <message>
+        <location filename="../../src/schat/migrate/MigratePrepare.cpp" line="33"/>
+        <source>Preparing to upgrade</source>
+        <translation>Подготовка к обновлению</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/migrate/MigratePrepare.cpp" line="34"/>
+        <source>Checking for upgrades...</source>
+        <translation>Идёт проверка обновлений...</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/migrate/MigratePrepare.cpp" line="57"/>
+        <source>An error occurred while checking for upgrades.</source>
+        <translation>Произошла ошибка при проверке обновлений.</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/migrate/MigratePrepare.cpp" line="63"/>
+        <source>New version is ready for download</source>
+        <translation>Новая версия готова к загрузке</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/migrate/MigratePrepare.cpp" line="64"/>
+        <source>New version of Simple Chat available. Version &lt;b&gt;%1&lt;/b&gt;, size &lt;b&gt;%2&lt;/b&gt;.</source>
+        <translation>Доступна новая версия Simple Chat. Версия &lt;b&gt;%1&lt;/b&gt;, размер &lt;b&gt;%2&lt;/b&gt;.</translation>
+    </message>
+</context>
+<context>
     <name>MigrateWizard</name>
     <message>
-        <location filename="../../src/schat/migrate/MigrateWizard.cpp" line="38"/>
+        <location filename="../../src/schat/migrate/MigrateWizard.cpp" line="44"/>
         <source>Everything is ready for an upgrade to Simple Chat 2, this wizard will help you to upgrade.&lt;br&gt;&lt;br&gt;Your network will soon stops supporting older versions of Simple Chat.</source>
         <translation>Всё готово к обновлению до Simple Chat 2, этот мастер поможет вам выполнить обновление.&lt;br&gt;&lt;br&gt;Ваша сеть скоро прекратит поддрежку старых версий Simple Chat.</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/migrate/MigrateWizard.cpp" line="71"/>
+        <source>kB</source>
+        <translation>КБ</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/migrate/MigrateWizard.cpp" line="75"/>
+        <source>MB</source>
+        <translation>МБ</translation>
     </message>
 </context>
 <context>
