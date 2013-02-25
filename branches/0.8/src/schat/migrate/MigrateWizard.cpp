@@ -27,6 +27,7 @@
 #else
 # include "migrate/Migrate.h"
 # include "migrate/MigratePrepare.h"
+# include "migrate/MigrateProgress.h"
 #endif
 
 MigrateWizard::MigrateWizard(const QString &data, QWidget *parent)
@@ -43,13 +44,16 @@ MigrateWizard::MigrateWizard(const QString &data, QWidget *parent)
 
   setPage(PageIntro,  new MigrateIntro(m_data.value("intro", tr("Everything is ready for an upgrade to Simple Chat 2, this wizard will help you to upgrade.<br><br>Your network will soon stops supporting older versions of Simple Chat.")).toString(), this));
 
+  const QString url = m_data.value("url", "schat://schat.me/achim").toString();
+
 # if defined(SCHAT_NO_AUTO_MIGRATE)
-  setPage(PageManual, new MigrateManual(m_data.value("url", "schat://schat.me/achim").toString(), this));
+  setPage(PageManual, new MigrateManual(url, this));
 # else
   m_migrate = new Migrate(this);
   m_migrate->check();
 
-  setPage(PagePrepare, new MigratePrepare(m_migrate, this));
+  setPage(PagePrepare,  new MigratePrepare(m_migrate, this));
+  setPage(PageProgress, new MigrateProgress(url, m_migrate, this));
 # endif
 
   setStartId(PageIntro);

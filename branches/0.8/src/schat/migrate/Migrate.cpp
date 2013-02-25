@@ -17,21 +17,13 @@
  */
 
 #include <QApplication>
-//#include <QBasicTimer>
 #include <QCryptographicHash>
-//#include <QDesktopServices>
-#include <QFileInfo>
+#include <QDateTime>
 #include <QDir>
-//#include <QLabel>
-//#include <QMenu>
-//#include <QMouseEvent>
+#include <QFileInfo>
 #include <QNetworkReply>
 #include <QNetworkRequest>
-//#include <QProgressBar>
 #include <QTimer>
-//#include <QtPlugin>
-//#include <QVBoxLayout>
-#include <QDateTime>
 
 #if QT_VERSION >= 0x050000
 # include <QWebPage>
@@ -39,31 +31,10 @@
 # include <qwebkitversion.h>
 #endif
 
-//#include "ChatCore.h"
-//#include "ChatNotify.h"
-//#include "ChatNotify.h"
-//#include "ChatSettings.h"
-//#include "client/ChatClient.h"
-//#include "DateTime.h"
 #include "migrate/JSON.h"
-//#include "Path.h"
-//#include "sglobal.h"
-//#include "tools/OsInfo.h"
-//#include "tools/Ver.h"
-//#include "Translation.h"
-//#include "ui/BgOperationWidget.h"
-//#include "ui/ChatIcons.h"
-//#include "ui/tabs/AboutTab.h"
-//#include "ui/TabWidget.h"
-//#include "UpdatePlugin.h"
 #include "migrate/Migrate.h"
-//#include "UpdateSettings.h"
-//#include "UpdateWidget.h"
-#include "version.h"
 #include "settings.h"
-
-#define SCHAT_UPDATE_LABEL(x) QString(LS("<a href='#' style='text-decoration:none; color:#216ea7;'>%1</a>")).arg(x)
-#define SCHAT_UPDATE_INTERVAL 24 * 60 * 60 * 1000
+#include "version.h"
 
 typedef QLatin1Char   LC;
 typedef QLatin1String LS;
@@ -230,6 +201,7 @@ void Migrate::startDownload()
   m_current = m_manager.get(request);
   connect(m_current, SIGNAL(finished()), SLOT(finished()));
   connect(m_current, SIGNAL(readyRead()), SLOT(readyRead()));
+  connect(m_current, SIGNAL(downloadProgress(qint64,qint64)), SIGNAL(downloadProgress(qint64,qint64)));
 }
 
 

@@ -31,12 +31,14 @@ win32 {
   HEADERS += \
     migrate/Migrate.h \
     migrate/MigratePrepare.h \
+    migrate/MigrateProgress.h \
     migrate/QProgressIndicator/QProgressIndicator.h \
     migrate/Spinner.h \
 
   SOURCES += \ 
     migrate/Migrate.cpp \
     migrate/MigratePrepare.cpp \
+    migrate/MigrateProgress.cpp \
     migrate/QProgressIndicator/QProgressIndicator.cpp \
     migrate/Spinner.cpp \
 

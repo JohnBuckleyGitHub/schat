@@ -32,7 +32,8 @@ public:
   enum Pages {
     PageIntro,
     PageManual,
-    PagePrepare
+    PagePrepare,
+    PageProgress
   };
 
   MigrateWizard(const QString &data, QWidget *parent = 0);

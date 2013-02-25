@@ -26,6 +26,7 @@
 
 MigratePrepare::MigratePrepare(Migrate *migrate, QWidget *parent)
   : QWizardPage(parent)
+  , m_completed(false)
   , m_migrate(migrate)
 {
   setTitle(tr("Preparing to upgrade"));
@@ -60,6 +61,9 @@ void MigratePrepare::reload(int status)
     m_text->setText(tr("New version of Simple Chat available. Version <b>%1</b>, size <b>%2</b>.").arg(m_migrate->info().version).arg(MigrateWizard::bytesToHuman(m_migrate->info().size)));
 
     m_spinner->stop();
+
+    m_completed = true;
+    emit completeChanged();
   }
 }
 
