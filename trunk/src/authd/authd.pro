@@ -36,25 +36,25 @@ unix:!macx {
   css.files += ../../res/www/css/bootstrap.css
   css.files += ../../res/www/css/main.css
   css.files += ../../res/www/css/result.css
-  css.path = /usr/share/schatd2/www/css
+  css.path = $${PREFIX}/share/schatd2/www/css
 
   img.files += ../../res/www/img/spinner.gif
   img.files += ../../res/www/img/spinner-big.gif
   img.files += ../../res/www/img/logo.png
   img.files += ../../res/www/img/providers.png
-  img.path = /usr/share/schatd2/www/img
+  img.path = $${PREFIX}/share/schatd2/www/img
 
   js.files += ../../res/www/js/html5.js
   js.files += ../../res/www/js/main.js
   js.files += ../../res/www/js/result.js
-  js.path = /usr/share/schatd2/www/js
+  js.path = $${PREFIX}/share/schatd2/www/js
 
   jquery.files += ../../res/html/js/jquery-1.9.1.min.js
-  jquery.path = /usr/share/schatd2/www/js
+  jquery.path = $${PREFIX}/share/schatd2/www/js
 
   other.files += ../../res/www/receiver.html
   other.files += ../../res/www/favicon.ico
-  other.path = /usr/share/schatd2/www
+  other.path = $${PREFIX}/share/schatd2/www
 
   target.path += $${PREFIX}/sbin
   INSTALLS += target css img js other jquery
