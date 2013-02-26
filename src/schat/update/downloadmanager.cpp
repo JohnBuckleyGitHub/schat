@@ -136,7 +136,7 @@ void DownloadManager::startNextDownload()
     }
   }
 
-  QNetworkRequest request(url);
+  QNetworkRequest request(url.toString() + (m_getMirror ? '?' + QString::number(QDateTime::currentDateTime().toTime_t()) : QString()));
   request.setRawHeader("Referer", url.toEncoded());
   request.setRawHeader("User-Agent", QString("Mozilla/5.0 Qt/%1 %2/%3").arg(qVersion()).arg(QCoreApplication::applicationName()).arg(QCoreApplication::applicationVersion()).toLatin1());
   m_current = m_manager.get(request);
