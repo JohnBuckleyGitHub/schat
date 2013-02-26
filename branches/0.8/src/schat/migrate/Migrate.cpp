@@ -239,9 +239,6 @@ void Migrate::readJSON()
   if (!m_info.isValid())
     return setDone(CheckError);
 
-  if (SCHAT_REVISION >= m_info.revision)
-    return setDone(NoUpdates);
-
   setDone(UpdateAvailable);
 }
 
