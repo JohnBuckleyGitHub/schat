@@ -1055,6 +1055,7 @@ public:
   #else
   QGroupBox *updateGroup;
   QCheckBox *autoDownload;
+  QCheckBox *upgrade;
   #endif
 
   #if defined(Q_WS_WIN)
@@ -1197,21 +1198,24 @@ MiscSettings::MiscSettings(QWidget *parent)
   d->updateGroup->setCheckable(true);
   d->updateGroup->setChecked(SimpleSettings->getBool("Updates/Enable"));
 
-  #if !defined(SCHAT_NO_UPDATE)
+# if !defined(SCHAT_NO_UPDATE)
   d->autoDownload = new QCheckBox(tr("Automatically download updates"), this);
   d->autoDownload->setChecked(SimpleSettings->getBool("Updates/AutoDownload"));
+  d->upgrade = new QCheckBox(tr("Allow upgrade to version 2"), this);
+  d->upgrade->setChecked(SimpleSettings->getBool("Migrate/Wizard"));
 
   QVBoxLayout *updateLay = new QVBoxLayout(d->updateGroup);
   updateLay->addWidget(d->autoDownload);
+  updateLay->addWidget(d->upgrade);
   updateLay->setContentsMargins(16, 6, 6, 6);
   updateLay->setSpacing(0);
-  #endif
+# endif
 
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(integration);
-  #if !defined(Q_OS_MAC)
+# if !defined(Q_OS_MAC)
   mainLay->addSpacing(12);
-  #endif
+# endif
   mainLay->addWidget(logGroup);
   mainLay->addSpacing(12);
   mainLay->addWidget(d->updateGroup);
@@ -1232,9 +1236,10 @@ void MiscSettings::reset(int page)
     d->logPrivate->setChecked(true);
     d->updateGroup->setChecked(true);
 
-    #if !defined(SCHAT_NO_UPDATE)
+#   if !defined(SCHAT_NO_UPDATE)
     d->autoDownload->setChecked(false);
-    #endif
+    d->upgrade->setChecked(true);
+#   endif
   }
 }
 
@@ -1247,9 +1252,10 @@ void MiscSettings::save()
   SimpleSettings->setBool("LogPrivate", d->logPrivate->isChecked());
   SimpleSettings->setBool("Updates/Enable", d->updateGroup->isChecked());
 
-  #if !defined(SCHAT_NO_UPDATE)
+# if !defined(SCHAT_NO_UPDATE)
   SimpleSettings->setBool("Updates/AutoDownload", d->autoDownload->isChecked());
-  #endif
+  SimpleSettings->setBool("Migrate/Wizard",       d->upgrade->isChecked());
+# endif
 
   SimpleSettings->notify(Settings::MiscSettingsChanged);
 }
