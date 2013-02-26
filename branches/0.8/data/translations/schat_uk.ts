@@ -385,27 +385,27 @@
 <context>
     <name>MigratePrepare</name>
     <message>
-        <location filename="../../src/schat/migrate/MigratePrepare.cpp" line="35"/>
+        <location filename="../../src/schat/migrate/MigratePrepare.cpp" line="32"/>
         <source>Preparing to upgrade</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/migrate/MigratePrepare.cpp" line="36"/>
+        <location filename="../../src/schat/migrate/MigratePrepare.cpp" line="33"/>
         <source>Checking for upgrades...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/migrate/MigratePrepare.cpp" line="57"/>
+        <location filename="../../src/schat/migrate/MigratePrepare.cpp" line="54"/>
         <source>An error occurred while checking for upgrades.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/migrate/MigratePrepare.cpp" line="63"/>
+        <location filename="../../src/schat/migrate/MigratePrepare.cpp" line="60"/>
         <source>New version is ready for download</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/migrate/MigratePrepare.cpp" line="64"/>
+        <location filename="../../src/schat/migrate/MigratePrepare.cpp" line="61"/>
         <source>New version of Simple Chat available. Version &lt;b&gt;%1&lt;/b&gt;, size &lt;b&gt;%2&lt;/b&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -413,42 +413,42 @@
 <context>
     <name>MigrateProgress</name>
     <message>
-        <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="40"/>
+        <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="38"/>
         <source>Downloading and installing upgrade</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="41"/>
+        <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="39"/>
         <source>Please wait...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="44"/>
+        <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="42"/>
         <source>Downloading upgrade...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="76"/>
+        <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="74"/>
         <source>An error occurred when downloading upgrade.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="81"/>
+        <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="79"/>
         <source>Preparing to upgrade...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="90"/>
+        <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="88"/>
         <source>Installing upgrade...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="110"/>
+        <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="108"/>
         <source>An error occurred when installing upgrade.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="114"/>
+        <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="112"/>
         <source>Installation complete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -461,12 +461,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/migrate/MigrateWizard.cpp" line="76"/>
+        <location filename="../../src/schat/migrate/MigrateWizard.cpp" line="79"/>
         <source>kB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat/migrate/MigrateWizard.cpp" line="80"/>
+        <location filename="../../src/schat/migrate/MigrateWizard.cpp" line="83"/>
         <source>MB</source>
         <translation type="unfinished"></translation>
     </message>
@@ -474,65 +474,70 @@
 <context>
     <name>MiscSettings</name>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1151"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1152"/>
         <source>Integration</source>
         <translation>Інтеграція</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1156"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1157"/>
         <source>&amp;Autorun</source>
         <translation>&amp;Автозапуск</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1157"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1158"/>
         <source>Autorun at system startup</source>
         <translation>Автозапуск програми при старті системи</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1162"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1163"/>
         <source>&amp;Server autorun</source>
         <translation>Автозапуск &amp;сервера</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1163"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1164"/>
         <source>Server autorun at system startup</source>
         <translation>Автозапуск сервера при старті системи</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1176"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1177"/>
         <source>&amp;Logging</source>
         <translation>&amp;Журналювання</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1178"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1179"/>
         <source>&amp;Main channel log</source>
         <translation>Журнал &amp;загального каналу</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1179"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1180"/>
         <source>Keep a log of main channel</source>
         <translation>Вести журнал загального каналу</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1182"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1183"/>
         <source>&amp;Private logs</source>
         <translation>Журнали &amp;приватів</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1183"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1184"/>
         <source>Keep logs of private messages</source>
         <translation>Вести журнали приватних повідомлень</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1193"/>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1195"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1194"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1196"/>
         <source>Checks for updates</source>
         <translation>Перевірка оновлень</translation>
     </message>
     <message>
-        <location filename="../../src/schat/settingsdialog.cpp" line="1201"/>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1202"/>
         <source>Automatically download updates</source>
         <translation>Автоматично завантажувати оновлення</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat/settingsdialog.cpp" line="1204"/>
+        <source>Allow upgrade to version 2</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -921,12 +926,12 @@
         <translation>Сервер &lt;b&gt;%1&lt;/b&gt; приєднався до мережі &lt;b&gt;%2&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="1557"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="1560"/>
         <source>Preferences...</source>
         <translation>Налаштування...</translation>
     </message>
     <message>
-        <location filename="../../src/schat/schatwindow.cpp" line="1558"/>
+        <location filename="../../src/schat/schatwindow.cpp" line="1561"/>
         <source>Manage server...</source>
         <translation>Керування сервером... </translation>
     </message>

@@ -309,6 +309,7 @@ void Settings::read()
   setList("Profile/RecentByeMsgs",   QStringList());
 
   setBool("Migrate/Ready",        false);
+  setBool("Migrate/Wizard",       true);
   setInt("Migrate/Revision",      0);
   setString("Migrate/Channel",    "stable");
   setString("Migrate/Url",        "http://download.schat.me/schat2/update.json");
