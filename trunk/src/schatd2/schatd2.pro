@@ -33,10 +33,6 @@ SOURCES = \
 DEFINES += SCHAT_DAEMON
 SCHAT_DAEMON_LIB = 1
 
-TRANSLATIONS += ../../res/translations/schatd2_en.ts
-TRANSLATIONS += ../../res/translations/schatd2_ru.ts
-CODECFORTR = UTF-8
-
 unix:!macx {
   include(../common/prefix.pri)
 

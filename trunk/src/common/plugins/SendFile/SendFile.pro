@@ -49,9 +49,10 @@ SOURCES  = \
 
 RESOURCES += SendFile.qrc
 
-include(../../config.pri)
-include(../plugins.pri)
-
 TRANSLATIONS += res/translations/sendfile_en.ts
 TRANSLATIONS += res/translations/sendfile_ru.ts
-CODECFORTR = UTF-8
+CODECFORTR  = UTF-8
+CODECFORSRC = UTF-8
+
+include(../../config.pri)
+include(../plugins.pri)

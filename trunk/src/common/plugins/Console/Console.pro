@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2012 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2013 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@ RESOURCES += Console.qrc
 
 TRANSLATIONS += res/translations/console_en.ts
 TRANSLATIONS += res/translations/console_ru.ts
-CODECFORTR = UTF-8
+CODECFORTR  = UTF-8
+CODECFORSRC = UTF-8
 
 include(../plugins.pri)

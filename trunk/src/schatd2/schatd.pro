@@ -90,10 +90,6 @@ SOURCES = \
 
 include(../common/client.pri)
 
-TRANSLATIONS += ../../data/translations/schatd-lib_en.ts
-TRANSLATIONS += ../../data/translations/schatd-lib_ru.ts
-CODECFORTR = UTF-8
-
 unix:!macx {
   include(../common/prefix.pri)
 

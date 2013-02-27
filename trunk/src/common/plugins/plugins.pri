@@ -15,6 +15,8 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+include(../../prefix.pri)
+
 TEMPLATE      = lib
 CONFIG        += plugin
 PLUGIN_TARGET = schat2
@@ -106,8 +108,6 @@ macx:contains( PLUGIN_TARGET, schat2 ) {
 }
 
 unix:!macx {
-  include(../../prefix.pri)
-
   target.path += $${PREFIX}/share/$${PLUGIN_TARGET}/plugins
   INSTALLS += target
 }
@@ -118,4 +118,19 @@ win32 {
 
   target.path += ../../../../os/win32/$${PLUGIN_TARGET}/plugins
   INSTALLS += target doc
+}
+
+
+!isEmpty(TRANSLATIONS) {
+  LOWER = $$lower($$TARGET)
+
+  for(LANG, AVAILABLE_LANGS) {
+    TS = $$_PRO_FILE_PWD_/res/translations/$${LOWER}_$${LANG}.ts
+    QM = $$_PRO_FILE_PWD_/res/translations/$${LOWER}_$${LANG}.qm
+
+    system($${LRELEASE} -silent $${TS} -qm $${QM})
+
+    win32:QM = $$replace(QM, /, \\\\)
+    QMAKE_DISTCLEAN += $${QM}
+  }
 }
