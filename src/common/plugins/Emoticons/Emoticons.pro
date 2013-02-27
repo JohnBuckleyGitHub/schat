@@ -47,11 +47,12 @@ SOURCES  = \
 
 RESOURCES += Emoticons.qrc
 
-include(../plugins.pri)
-
 TRANSLATIONS += res/translations/emoticons_en.ts
 TRANSLATIONS += res/translations/emoticons_ru.ts
-CODECFORTR = UTF-8
+CODECFORTR  = UTF-8
+CODECFORSRC = UTF-8
+
+include(../plugins.pri)
 
 extensions.files += extensions/kolobok.schat
 macx:      extensions.path += ../../../../out/SimpleChat2.app/Contents/Resources/extensions/emoticons

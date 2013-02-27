@@ -52,7 +52,6 @@ DEFINES += SCHAT_WEBKIT
 SCHAT_CLIENT_LIB = 1
 SCHAT_CORE_LIB = 1
 
-qm_build_all.target = build_qm
 for(LANG, AVAILABLE_LANGS) {
   TS = ../../res/translations/schat2-client_$${LANG}.ts ../../res/translations/schat2_$${LANG}.ts
   QM = ../../res/translations/schat2_$${LANG}.qm

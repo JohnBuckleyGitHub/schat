@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2012 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2013 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -45,11 +45,13 @@ SOURCES  = \
 RESOURCES += SpellChecker.qrc
 
 include(3rdparty/hunspell/hunspell.pri)
-include(../plugins.pri)
 
 TRANSLATIONS += res/translations/spellchecker_en.ts
 TRANSLATIONS += res/translations/spellchecker_ru.ts
-CODECFORTR = UTF-8
+CODECFORTR  = UTF-8
+CODECFORSRC = UTF-8
+
+include(../plugins.pri)
 
 macx:dictionaries.path += ../../../../out/SimpleChat2.app/Contents/Resources/spelling
 win32:dictionaries.path += ../../../../os/win32/$${PLUGIN_TARGET}/spelling

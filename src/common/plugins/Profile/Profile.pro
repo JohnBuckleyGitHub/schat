@@ -35,8 +35,9 @@ SOURCES  = \
 
 RESOURCES += Profile.qrc
 
-include(../plugins.pri)
-
 TRANSLATIONS += res/translations/profile_en.ts
 TRANSLATIONS += res/translations/profile_ru.ts
-CODECFORTR = UTF-8
+CODECFORTR  = UTF-8
+CODECFORSRC = UTF-8
+
+include(../plugins.pri)
