@@ -15,6 +15,8 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+include(../common/prefix.pri)
+
 SCHAT_RESOURCES   = 0
 SCHAT_RC_FILE     = 1
 SCHAT_SINGLEAPP   = 0
@@ -50,9 +52,19 @@ DEFINES += SCHAT_WEBKIT
 SCHAT_CLIENT_LIB = 1
 SCHAT_CORE_LIB = 1
 
-translations.files += ../../res/translations/schat2_ru.qm
-translations.files += ../../res/translations/schat2_en.qm
-translations.files += ../../res/translations/ru.png
+qm_build_all.target = build_qm
+for(LANG, AVAILABLE_LANGS) {
+  TS = ../../res/translations/schat2-client_$${LANG}.ts ../../res/translations/schat2_$${LANG}.ts
+  QM = ../../res/translations/schat2_$${LANG}.qm
+
+  system($${LRELEASE} -silent $${TS} -qm $${QM})
+
+  win32:QM = $$replace(QM, /, \\\\)
+  QMAKE_DISTCLEAN += $${QM}
+
+  translations.files += ../../res/translations/schat2_$${LANG}.qm
+  translations.files += ../../res/translations/$${LANG}.png
+}
 
 sounds.files += ../../res/sounds/Received.wav
 
@@ -63,8 +75,6 @@ unix {
 
     INSTALLS += translations sounds
   } else {
-    include(../common/prefix.pri)
-
     icon16.files = ../../res/images/icons/16x16/schat2.png
     icon16.path = $${PREFIX}/share/icons/hicolor/16x16/apps
 

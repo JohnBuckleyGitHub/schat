@@ -131,7 +131,6 @@
   <file>images/spinner-yellow.gif</file>
   <file>images/stop.png</file>
   <file>translations/en.png</file>
-  <file>translations/schat2_en.qm</file>
   <file>translations/unknown.png</file>
 </qresource>
 </RCC>
