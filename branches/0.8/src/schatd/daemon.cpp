@@ -18,6 +18,7 @@
 
 #include <QCoreApplication>
 #include <QCryptographicHash>
+#include <QDir>
 #include <QFileInfo>
 #include <QLocalServer>
 #include <QProcess>
