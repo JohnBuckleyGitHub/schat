@@ -18,7 +18,20 @@
 unix:!macx {
   isEmpty(PREFIX):PREFIX = /usr
 
-  DEFINES += SCHAT_PREFIX=\\\"$${PREFIX}\\\"
-
   isEmpty(LIBDIR):LIBDIR = $${PREFIX}/lib
+  isEmpty(DISTRO):DISTRO = ubuntu
+
+  DEFINES += SCHAT_PREFIX=\\\"$${PREFIX}\\\"
+  DEFINES += SCHAT_DISTRO=\\\"$${DISTRO}\\\"
+  LRELEASE = $$[QT_INSTALL_BINS]/lrelease-qt4
+}
+
+AVAILABLE_LANGS=en ru
+
+isEmpty(LRELEASE) {
+  LRELEASE = $$[QT_INSTALL_BINS]/lrelease
+  win32 {
+    LRELEASE = $$replace(LRELEASE, \\\\, \\\\)
+    LRELEASE = $$replace(LRELEASE, /, \\\\)
+  }
 }

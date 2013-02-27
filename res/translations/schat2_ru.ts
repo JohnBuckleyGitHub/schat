@@ -260,7 +260,7 @@
 <context>
     <name>Hooks::CommandsImpl</name>
     <message>
-        <location filename="../../src/schat2/hooks/CommandsImpl.cpp" line="164"/>
+        <location filename="../../src/schat2/hooks/CommandsImpl.cpp" line="163"/>
         <source>Latency time: &lt;b style=&apos;color:#%1&apos;&gt;%2 ms&lt;/b&gt;</source>
         <translation>Время задержки: &lt;b style=&apos;color:#%1&apos;&gt;%2 мс&lt;/b&gt;</translation>
     </message>
