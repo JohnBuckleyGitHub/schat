@@ -346,7 +346,7 @@
     <message>
         <location filename="../../src/schat/migrate/MigrateIntro.cpp" line="27"/>
         <source>Welcome to the update wizard to Simple Chat 2</source>
-        <translation type="unfinished"></translation>
+        <translation>Вітаємо у майстрі оновлення до Simple Chat 2</translation>
     </message>
 </context>
 <context>
@@ -354,32 +354,32 @@
     <message>
         <location filename="../../src/schat/migrate/MigrateManual.cpp" line="30"/>
         <source>Manual upgrade</source>
-        <translation type="unfinished"></translation>
+        <translation>Оновлення вручну</translation>
     </message>
     <message>
         <location filename="../../src/schat/migrate/MigrateManual.cpp" line="31"/>
         <source>Perform required actions for manual upgrade</source>
-        <translation type="unfinished"></translation>
+        <translation>Виконайте необхідні дії для оновлення вручну</translation>
     </message>
     <message>
         <location filename="../../src/schat/migrate/MigrateManual.cpp" line="33"/>
         <source>First, download the upgrade from %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Спочатку скачайте оновлення з сайту %1</translation>
     </message>
     <message>
         <location filename="../../src/schat/migrate/MigrateManual.cpp" line="37"/>
         <source>Then install and run Simple Chat 2</source>
-        <translation type="unfinished"></translation>
+        <translation>Потім встановіть та запустіть Simple Chat 2 </translation>
     </message>
     <message>
         <location filename="../../src/schat/migrate/MigrateManual.cpp" line="40"/>
         <source>Finally, enter your nick and server address &lt;b&gt;%1&lt;/b&gt;. %2</source>
-        <translation type="unfinished"></translation>
+        <translation>І останнє - введіть свій нік та адресу сервера &lt;b&gt;%1&lt;/b&gt;. %2</translation>
     </message>
     <message>
         <location filename="../../src/schat/migrate/MigrateManual.cpp" line="40"/>
         <source>Copy</source>
-        <translation type="unfinished">Копіювати</translation>
+        <translation>Копіювати</translation>
     </message>
 </context>
 <context>
@@ -387,27 +387,27 @@
     <message>
         <location filename="../../src/schat/migrate/MigratePrepare.cpp" line="32"/>
         <source>Preparing to upgrade</source>
-        <translation type="unfinished"></translation>
+        <translation>Підготовка до оновлення</translation>
     </message>
     <message>
         <location filename="../../src/schat/migrate/MigratePrepare.cpp" line="33"/>
         <source>Checking for upgrades...</source>
-        <translation type="unfinished"></translation>
+        <translation>Перевірка оновлень...</translation>
     </message>
     <message>
         <location filename="../../src/schat/migrate/MigratePrepare.cpp" line="54"/>
         <source>An error occurred while checking for upgrades.</source>
-        <translation type="unfinished"></translation>
+        <translation>Виникла помилка при перевірці оновлень.</translation>
     </message>
     <message>
         <location filename="../../src/schat/migrate/MigratePrepare.cpp" line="60"/>
         <source>New version is ready for download</source>
-        <translation type="unfinished"></translation>
+        <translation>Нова версія готова до завантаження</translation>
     </message>
     <message>
         <location filename="../../src/schat/migrate/MigratePrepare.cpp" line="61"/>
         <source>New version of Simple Chat available. Version &lt;b&gt;%1&lt;/b&gt;, size &lt;b&gt;%2&lt;/b&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Доступна нова версія Simple Chat. Версія &lt;b&gt;%1&lt;/b&gt;, розмір &lt;b&gt;%2&lt;/b&gt;.</translation>
     </message>
 </context>
 <context>
@@ -415,42 +415,42 @@
     <message>
         <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="38"/>
         <source>Downloading and installing upgrade</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантаження та встановлення оновлення</translation>
     </message>
     <message>
         <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="39"/>
         <source>Please wait...</source>
-        <translation type="unfinished"></translation>
+        <translation>Зачекайте будь ласка...</translation>
     </message>
     <message>
         <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="42"/>
         <source>Downloading upgrade...</source>
-        <translation type="unfinished"></translation>
+        <translation>Завантаження оновлення...</translation>
     </message>
     <message>
         <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="74"/>
         <source>An error occurred when downloading upgrade.</source>
-        <translation type="unfinished"></translation>
+        <translation>Виникла помилка при завантаженні оновлення.</translation>
     </message>
     <message>
         <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="79"/>
         <source>Preparing to upgrade...</source>
-        <translation type="unfinished"></translation>
+        <translation>Підготовка до оновлення...</translation>
     </message>
     <message>
         <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="88"/>
         <source>Installing upgrade...</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановлення оновлення...</translation>
     </message>
     <message>
         <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="108"/>
         <source>An error occurred when installing upgrade.</source>
-        <translation type="unfinished"></translation>
+        <translation>Виникла помилка при встановленні оновлення.</translation>
     </message>
     <message>
         <location filename="../../src/schat/migrate/MigrateProgress.cpp" line="112"/>
         <source>Installation complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Встановлення завершено</translation>
     </message>
 </context>
 <context>
@@ -458,17 +458,17 @@
     <message>
         <location filename="../../src/schat/migrate/MigrateWizard.cpp" line="46"/>
         <source>Everything is ready for an upgrade to Simple Chat 2, this wizard will help you to upgrade.&lt;br&gt;&lt;br&gt;Your network will soon stops supporting older versions of Simple Chat.</source>
-        <translation type="unfinished"></translation>
+        <translation>Все готово для оновлення до Simple Chat 2, цей майстер допоможе вам виконати оновлення.&lt;br&gt;&lt;br&gt;Ваша мережа скоро припинить підтримку старих версій Simple Chat.</translation>
     </message>
     <message>
         <location filename="../../src/schat/migrate/MigrateWizard.cpp" line="79"/>
         <source>kB</source>
-        <translation type="unfinished"></translation>
+        <translation>Кб</translation>
     </message>
     <message>
         <location filename="../../src/schat/migrate/MigrateWizard.cpp" line="83"/>
         <source>MB</source>
-        <translation type="unfinished"></translation>
+        <translation>Мб</translation>
     </message>
 </context>
 <context>
@@ -537,7 +537,7 @@
     <message>
         <location filename="../../src/schat/settingsdialog.cpp" line="1204"/>
         <source>Allow upgrade to version 2</source>
-        <translation type="unfinished"></translation>
+        <translation>Дозволити оновлення до версії 2</translation>
     </message>
 </context>
 <context>
