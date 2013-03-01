@@ -2,7 +2,7 @@ Source: schat2
 Section: net
 Priority: extra
 Maintainer: Alexander Sedov <impomezia@gmail.com>
-Build-Depends: debhelper (>= 7), libqtwebkit-dev | libqt4-dev, qt4-qmake, libxss-dev, zlib1g-dev
+Build-Depends: debhelper (>= 7), libqtwebkit-dev | libqt4-dev, qt4-qmake, libxss-dev, zlib1g-dev, pkg-config
 Standards-Version: 3.8.3
 Homepage: https://schat.me
 
