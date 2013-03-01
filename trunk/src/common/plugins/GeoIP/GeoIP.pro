@@ -1,6 +1,6 @@
 # $Id$
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2012 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2013 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -21,29 +21,28 @@ OTHER_FILES += GeoIP.json
 
 DEFINES += GEOIPDATADIR=\\\"./res\\\"
 
-win32 {
-    DEFINES += _CRT_SECURE_NO_WARNINGS
-    LIBS += -lwsock32 -lws2_32
-}
-
 HEADERS  = \
-   GeoIP/GeoIP.h \
-   GeoIP/GeoIP_internal.h \
-   GeoIP/GeoIPCity.h \
-   GeoIP/global.h \
-   GeoIP/types.h \
    GeoIPImpl.h \
    GeoIPPlugin.h \
    GeoIPPlugin_p.h \
    QGeoIP.h \
 
 SOURCES  = \
-   GeoIP/GeoIP.c \
-   GeoIP/GeoIPCity.c \
-   GeoIP/regionName.c \
-   GeoIP/timeZone.c \
    GeoIPImpl.cpp \
    GeoIPPlugin.cpp \
    QGeoIP.cpp \
+
+unix:!macx {
+  system(pkg-config --modversion geoip > /dev/null 2>&1) {
+    LIBS += -lGeoIP
+    DEFINES += SCHAT_EXTERNAL_GEOIP  
+  }
+  else {
+    include(GeoIP/GeoIP.pri)
+  }
+}
+else {
+  include(GeoIP/GeoIP.pri)
+}
 
 include(../plugins.pri)

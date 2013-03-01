@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  * Original QGeoIPRecord and QGeoIP classes
  * Copyright © Wim Leers <http://wimleers.com/> <https://github.com/wimleers/QGeoIP>
@@ -26,14 +26,17 @@
 #include <QHostAddress>
 #include <QMetaType>
 
-#include "GeoIP/GeoIP.h"
-#include "GeoIP/GeoIPCity.h"
+#if defined(SCHAT_EXTERNAL_GEOIP)
+# include <GeoIP.h>
+# include <GeoIPCity.h>
+#else
+# include "GeoIP/GeoIP.h"
+# include "GeoIP/GeoIPCity.h"
+#endif
 
-#define DEBUG
 #ifdef DEBUG
 #include <QDebug>
 #endif
-
 
 struct QGeoIPRecord {
   QGeoIPRecord()

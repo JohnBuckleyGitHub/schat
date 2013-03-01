@@ -45,11 +45,12 @@ SOURCES  = \
 RESOURCES += SpellChecker.qrc
 
 unix:!macx {
-  !system(pkg-config --modversion hunspell > /dev/null 2>&1) {
-    include(3rdparty/hunspell/hunspell.pri)
+  system(pkg-config --modversion hunspell > /dev/null 2>&1) {
+    LIBS += -lhunspell
+    DEFINES += SCHAT_EXTERNAL_HUNSPELL  
   }
   else {
-    LIBS += -lhunspell
+    include(3rdparty/hunspell/hunspell.pri)
   }
 }
 else {
