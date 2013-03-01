@@ -44,7 +44,17 @@ SOURCES  = \
 
 RESOURCES += SpellChecker.qrc
 
-include(3rdparty/hunspell/hunspell.pri)
+unix:!macx {
+  !system(pkg-config --modversion hunspell > /dev/null 2>&1) {
+    include(3rdparty/hunspell/hunspell.pri)
+  }
+  else {
+    LIBS += -lhunspell
+  }
+}
+else {
+  include(3rdparty/hunspell/hunspell.pri)
+}
 
 TRANSLATIONS += res/translations/spellchecker_en.ts
 TRANSLATIONS += res/translations/spellchecker_ru.ts
