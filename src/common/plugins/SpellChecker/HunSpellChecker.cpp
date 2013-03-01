@@ -22,7 +22,12 @@
 #include <QThreadPool>
 #include <QFile>
 
-#include "hunspell/hunspell.hxx"
+#if defined(SCHAT_EXTERNAL_HUNSPELL)
+# include <hunspell/hunspell.hxx>
+#else
+# include "hunspell/hunspell.hxx"
+#endif
+
 #include "HunSpellChecker.h"
 #include "sglobal.h"
 #include "SpellChecker.h"
