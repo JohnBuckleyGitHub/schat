@@ -1,7 +1,7 @@
 #!/bin/bash
 # $Id: ppa.sh 3255 2012-11-03 17:36:32Z IMPOMEZIA $
 # IMPOMEZIA Simple Chat
-# Copyright (c) 2008-2012 IMPOMEZIA <schat@impomezia.com>
+# Copyright (c) 2008-2013 IMPOMEZIA <schat@impomezia.com>
 #
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 set -e
 
-PPA_LEVEL=4
+PPA_LEVEL=0
 
 PPA_VERSION=$SCHAT_VERSION-1~ppa$PPA_LEVEL
 RDATE=`date -R`
@@ -58,6 +58,7 @@ cp ../../$WORKDIR/os/ubuntu/ubuntu.patch debian/patches
 rm debian/changelog.in
 rm debian/changelog.ppa
 
+upload "raring"
 upload "quantal"
 upload "precise"
 upload "oneiric"
