@@ -787,6 +787,7 @@ bool generate(QByteArray &res, const QVariant &val, int indent) {
     }
     break;
 
+#   if QT_VERSION >= 0x040500
     case QVariant::Hash: {
       res += '{';
       indent++;
@@ -820,6 +821,7 @@ bool generate(QByteArray &res, const QVariant &val, int indent) {
       indent--;
     }
     break;
+#   endif
 
     case QVariant::List: {
       res += '[';

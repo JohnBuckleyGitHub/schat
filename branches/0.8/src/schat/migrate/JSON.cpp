@@ -102,6 +102,7 @@ void JSON::gen(QByteArray &res, const QVariant &val)
     }
     break;
 
+#   if QT_VERSION >= 0x040500
     case QVariant::Hash: {
       res += '{';
       bool comma = false;
@@ -121,6 +122,7 @@ void JSON::gen(QByteArray &res, const QVariant &val)
       res += '}';
     }
     break;
+#   endif
 
     case QVariant::List: {
       res += '[';
