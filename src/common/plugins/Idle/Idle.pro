@@ -35,19 +35,21 @@ SOURCES  = \
 
 RESOURCES += Idle.qrc
 
-include(Idle.pri)
-
 unix {
   macx {
     SOURCES += idle_mac.cpp
     LIBS += -framework IOKit -framework Cocoa
   }
   else {
+    CONFIG  += link_pkgconfig
     SOURCES += idle_x11.cpp
-    contains( SCHAT_XSS, 1 ) {
-      LIBS += -lXss
-    } else {
+
+    !system(pkg-config --modversion xscrnsaver > /dev/null 2>&1) {
       DEFINES += SCHAT_NO_XSS
+      message(XScrnSaver not found. Idle plugin will use minimal functionality.)
+    }
+    else {
+      LIBS += -lXss
     }
   }
 } else:win32 {
