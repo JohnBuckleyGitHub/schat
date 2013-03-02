@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,8 +27,12 @@ GeoIPImpl::GeoIPImpl()
 {
   m_geo = new QGeoIP();
 
-  QString path = Path::data(Path::SystemScope) + LS("/res/");
-  m_geo->open(path + LS("GeoLiteCity.dat"), path + LS("GeoIPASNum.dat"));
+  const QString path = Path::data(Path::SystemScope) + LS("/res/");
+  if (!m_geo->open(path + LS("GeoLiteCity.dat"), path + LS("GeoIPASNum.dat"))) {
+#   if defined(Q_OS_LINUX)
+    m_geo->open(LS("/usr/share/GeoIP/GeoIPCity.dat"), LS("/usr/share/GeoIP/GeoIPASNum.dat"));
+#   endif
+  }
 }
 
 

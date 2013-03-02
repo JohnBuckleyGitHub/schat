@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  * Original QGeoIPRecord and QGeoIP classes
  * Copyright © Wim Leers <http://wimleers.com/> <https://github.com/wimleers/QGeoIP>
@@ -19,6 +19,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QFile>
+
 #include "QGeoIP.h"
 
 QGeoIP::QGeoIP()
@@ -34,15 +36,12 @@ QGeoIP::~QGeoIP() {
 
 
 bool QGeoIP::open(const QString &city, const QString &asn) {
-  if (!this->open(&m_city, city)) {
+  if (!QFile::exists(city) || !open(&m_city, city)) {
     qCritical("Could not open city DB, %s.", qPrintable(city));
     return false;
   }
 
-  if (asn.isEmpty())
-    return true;
-
-  if (!this->open(&m_asn, asn)) {
+  if (!asn.isEmpty() && QFile::exists(asn) && !open(&m_asn, asn)) {
     qCritical("Could not open ISP DB, %s.", qPrintable(asn));
     return false;
   }
@@ -122,18 +121,23 @@ QGeoIPRecord QGeoIP::recordByAddr(const QHostAddress &ip) {
  *   true if successful, otherwise false.
  */
 bool QGeoIP::open(GeoIP **db, const QString &fileName) {
+# if defined(Q_OS_LINUX)
+  *db = GeoIP_open(fileName.toLocal8Bit().constData(), GEOIP_MEMORY_CACHE | GEOIP_CHECK_CACHE);
+# else
   *db = GeoIP_open(fileName.toLocal8Bit().constData(), GEOIP_STANDARD);
-  if (this->isOpen(*db)) {
+# endif
+
+  if (isOpen(*db)) {
     GeoIP_set_charset(*db, GEOIP_CHARSET_ISO_8859_1);
     return true;
   }
-  else
-    return false;
+
+  return false;
 }
 
 
 void QGeoIP::close(GeoIP **db) {
-  if (this->isOpen(*db)) {
+  if (isOpen(*db)) {
     GeoIP_delete(*db);
     *db = 0;
   }
