@@ -36,15 +36,11 @@ QGeoIP::~QGeoIP() {
 
 
 bool QGeoIP::open(const QString &city, const QString &asn) {
-  if (!QFile::exists(city) || !open(&m_city, city)) {
-    qCritical("Could not open city DB, %s.", qPrintable(city));
+  if (!QFile::exists(city) || !open(&m_city, city))
     return false;
-  }
 
-  if (!asn.isEmpty() && QFile::exists(asn) && !open(&m_asn, asn)) {
-    qCritical("Could not open ISP DB, %s.", qPrintable(asn));
+  if (!asn.isEmpty() && QFile::exists(asn) && !open(&m_asn, asn))
     return false;
-  }
 
   return true;
 }

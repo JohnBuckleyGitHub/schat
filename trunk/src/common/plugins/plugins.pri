@@ -108,7 +108,7 @@ macx:contains( PLUGIN_TARGET, schat2 ) {
 }
 
 unix:!macx {
-  target.path += $${PREFIX}/share/$${PLUGIN_TARGET}/plugins
+  target.path += $${LIBDIR}/$${PLUGIN_TARGET}/plugins
   INSTALLS += target
 }
 
