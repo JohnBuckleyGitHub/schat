@@ -21,13 +21,13 @@ OTHER_FILES += GeoIP.json
 
 DEFINES += GEOIPDATADIR=\\\"./res\\\"
 
-HEADERS  = \
+HEADERS = \
    GeoIPImpl.h \
    GeoIPPlugin.h \
    GeoIPPlugin_p.h \
    QGeoIP.h \
 
-SOURCES  = \
+SOURCES = \
    GeoIPImpl.cpp \
    GeoIPPlugin.cpp \
    QGeoIP.cpp \
