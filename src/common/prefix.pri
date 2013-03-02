@@ -22,7 +22,9 @@ unix:!macx {
   isEmpty(DISTRO):DISTRO = ubuntu
 
   DEFINES += SCHAT_PREFIX=\\\"$${PREFIX}\\\"
+  DEFINES += SCHAT_LIBDIR=\\\"$${LIBDIR}\\\"
   DEFINES += SCHAT_DISTRO=\\\"$${DISTRO}\\\"
+
   LRELEASE = $$[QT_INSTALL_BINS]/lrelease
 }
 
@@ -30,6 +32,7 @@ AVAILABLE_LANGS=en ru
 
 isEmpty(LRELEASE) {
   LRELEASE = $$[QT_INSTALL_BINS]/lrelease
+
   win32 {
     LRELEASE = $$replace(LRELEASE, \\\\, \\\\)
     LRELEASE = $$replace(LRELEASE, /, \\\\)

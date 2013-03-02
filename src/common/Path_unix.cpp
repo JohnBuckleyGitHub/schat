@@ -43,6 +43,12 @@ QStringList Path::plugins()
   out.append(data(SystemScope) + LS("/plugins/qt"));
   out.append(data(SystemScope) + LS("/plugins"));
 
+# if defined(SCHAT_DAEMON)
+  out.append(SCHAT_LIBDIR + LS("/schatd2/plugins"));
+# else
+  out.append(SCHAT_LIBDIR + LS("/schat2/plugins"));
+# endif
+
   if (!isPortable())
     out.append(data() + LS("/plugins"));
 
