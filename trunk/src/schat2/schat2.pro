@@ -110,9 +110,6 @@ unix {
     icon256.files = ../../res/images/icons/256x256/schat2.png
     icon256.path = $${PREFIX}/share/icons/hicolor/256x256/apps
 
-    icon512.files = ../../res/images/icons/512x512/schat2.png
-    icon512.path = $${PREFIX}/share/icons/hicolor/512x512/apps
-
     applications.files = ../../os/ubuntu/schat2.desktop
     applications.path = $${PREFIX}/share/applications
 
