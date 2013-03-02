@@ -23,7 +23,7 @@ unix:!macx {
 
   DEFINES += SCHAT_PREFIX=\\\"$${PREFIX}\\\"
   DEFINES += SCHAT_DISTRO=\\\"$${DISTRO}\\\"
-  LRELEASE = $$[QT_INSTALL_BINS]/lrelease-qt4
+  LRELEASE = $$[QT_INSTALL_BINS]/lrelease
 }
 
 AVAILABLE_LANGS=en ru
