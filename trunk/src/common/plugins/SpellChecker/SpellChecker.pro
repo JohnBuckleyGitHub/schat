@@ -46,8 +46,9 @@ RESOURCES += SpellChecker.qrc
 
 unix:!macx {
   system(pkg-config --modversion hunspell > /dev/null 2>&1) {
-    LIBS += -lhunspell
-    DEFINES += SCHAT_EXTERNAL_HUNSPELL  
+    CONFIG    += link_pkgconfig
+    PKGCONFIG += hunspell
+    DEFINES   += SCHAT_EXTERNAL_HUNSPELL
   }
   else {
     include(3rdparty/hunspell/hunspell.pri)

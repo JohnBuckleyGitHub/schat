@@ -41,15 +41,15 @@ unix {
     LIBS += -framework IOKit -framework Cocoa
   }
   else {
-    CONFIG  += link_pkgconfig
     SOURCES += idle_x11.cpp
 
-    !system(pkg-config --modversion xscrnsaver > /dev/null 2>&1) {
-      DEFINES += SCHAT_NO_XSS
-      message(XScrnSaver not found. Idle plugin will use minimal functionality.)
+    system(pkg-config --modversion xscrnsaver > /dev/null 2>&1) {
+      CONFIG    += link_pkgconfig
+      PKGCONFIG += xscrnsaver
     }
     else {
-      LIBS += -lXss
+      DEFINES += SCHAT_NO_XSS
+      message(XScrnSaver not found. Idle plugin will use minimal functionality.)
     }
   }
 } else:win32 {

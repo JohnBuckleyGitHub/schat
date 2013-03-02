@@ -34,8 +34,9 @@ SOURCES = \
 
 unix:!macx {
   system(pkg-config --modversion geoip > /dev/null 2>&1) {
-    LIBS += -lGeoIP
-    DEFINES += SCHAT_EXTERNAL_GEOIP  
+    CONFIG    += link_pkgconfig
+    PKGCONFIG += geoip
+    DEFINES   += SCHAT_EXTERNAL_GEOIP
   }
   else {
     include(GeoIP/GeoIP.pri)
