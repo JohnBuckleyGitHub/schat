@@ -17,13 +17,10 @@
 
 unix:!macx {
   isEmpty(PREFIX):PREFIX = /usr
-
   isEmpty(LIBDIR):LIBDIR = $${PREFIX}/lib
-  isEmpty(DISTRO):DISTRO = ubuntu
 
   DEFINES += SCHAT_PREFIX=\\\"$${PREFIX}\\\"
   DEFINES += SCHAT_LIBDIR=\\\"$${LIBDIR}\\\"
-  DEFINES += SCHAT_DISTRO=\\\"$${DISTRO}\\\"
 
   LRELEASE = $$[QT_INSTALL_BINS]/lrelease
 }
