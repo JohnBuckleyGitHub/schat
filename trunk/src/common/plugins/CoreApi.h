@@ -35,6 +35,7 @@
 #define CORE_API_SITE         QLatin1String("site")
 #define CORE_API_DESC         QLatin1String("desc")
 #define CORE_API_DESC_RU      QLatin1String("desc/ru")
+#define CORE_API_DESC_UK      QLatin1String("desc/uk")
 #define CORE_API_REQUIRED     QLatin1String("required")
 #define CORE_API_ENABLED      QLatin1String("enabled")
 #define CORE_API_CONFIGURABLE QLatin1String("configurable")

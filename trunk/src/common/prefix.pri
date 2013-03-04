@@ -25,7 +25,7 @@ unix:!macx {
   LRELEASE = $$[QT_INSTALL_BINS]/lrelease
 }
 
-AVAILABLE_LANGS=en ru
+AVAILABLE_LANGS=en ru uk
 
 isEmpty(LRELEASE) {
   LRELEASE = $$[QT_INSTALL_BINS]/lrelease

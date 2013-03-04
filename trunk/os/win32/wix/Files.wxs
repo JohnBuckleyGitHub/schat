@@ -171,14 +171,26 @@
         <Component Id="qt_ru.qm" Guid="{BF51A5C9-4972-46C8-9BF1-51EB7C931B1E}">
           <File Id="qt_ru.qm" KeyPath="yes" Source="..\schat2\translations\qt_ru.qm" />
         </Component>
+        <Component Id="qt_uk.qm" Guid="{3C173990-B14D-4AD4-83C6-49D2DB55A8B5}">
+          <File Id="qt_uk.qm" KeyPath="yes" Source="..\schat2\translations\qt_uk.qm" />
+        </Component>
+        <Component Id="en.png" Guid="{D8EA9E77-85C2-40E5-B08D-673713BAC9A2}">
+          <File Id="en.png" KeyPath="yes" Source="..\schat2\translations\en.png" />
+        </Component>
         <Component Id="ru.png" Guid="{20A8E14F-83FD-4466-938A-B730F49D14B9}">
           <File Id="ru.png" KeyPath="yes" Source="..\schat2\translations\ru.png" />
+        </Component>
+        <Component Id="uk.png" Guid="{1B69DA22-CF6F-4710-8DE5-A2806012D468}">
+          <File Id="uk.png" KeyPath="yes" Source="..\schat2\translations\uk.png" />
         </Component>
         <Component Id="schat2_en.qm" Guid="{1E2442A5-2EF1-4D44-8375-8639C702BD2A}">
           <File Id="schat2_en.qm" KeyPath="yes" Source="..\schat2\translations\schat2_en.qm" />
         </Component>
         <Component Id="schat2_ru.qm" Guid="{9EFB66AF-0397-4C36-8A4E-CCD4C12C9B68}">
           <File Id="schat2_ru.qm" KeyPath="yes" Source="..\schat2\translations\schat2_ru.qm" />
+        </Component>
+        <Component Id="schat2_uk.qm" Guid="{25D7B74F-791D-4031-828F-0C25CF263A58}">
+          <File Id="schat2_uk.qm" KeyPath="yes" Source="..\schat2\translations\schat2_uk.qm" />
         </Component>
       </Directory>
       <Directory Id="spelling" Name="spelling">
@@ -215,13 +227,17 @@
       <ComponentRef Id="ssleay32.dll" />
       <ComponentRef Id="zlib.dll" />
       <ComponentRef Id="ChangeLog.html" />
+      <ComponentRef Id="en.png" />
       <ComponentRef Id="ru.png" />
+      <ComponentRef Id="uk.png" />
       <ComponentRef Id="schat2_en.qm" />
       <ComponentRef Id="schat2_ru.qm" />
+      <ComponentRef Id="schat2_uk.qm" />
       <ComponentRef Id="Received.wav" />
     </ComponentGroup>
     <ComponentGroup Id="Qt">
       <ComponentRef Id="qt_ru.qm" />
+      <ComponentRef Id="qt_uk.qm" />
       <ComponentRef Id="QtCore4.dll" />
       <ComponentRef Id="QtGui4.dll" />
       <ComponentRef Id="QtNetwork4.dll" />

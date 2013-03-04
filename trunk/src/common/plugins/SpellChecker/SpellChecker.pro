@@ -60,6 +60,7 @@ else {
 
 TRANSLATIONS += res/translations/spellchecker_en.ts
 TRANSLATIONS += res/translations/spellchecker_ru.ts
+TRANSLATIONS += res/translations/spellchecker_uk.ts
 CODECFORTR  = UTF-8
 CODECFORSRC = UTF-8
 

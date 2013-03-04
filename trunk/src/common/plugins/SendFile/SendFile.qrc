@@ -5,5 +5,6 @@
   <file alias="images/SendFile/icon.png">res/images/human-o2/mail-attachment.png</file>
   <file alias="js/SendFile/SendFile.js">res/js/SendFile.min.js</file>
   <file alias="translations/sendfile_ru.qm">res/translations/sendfile_ru.qm</file>
+  <file alias="translations/sendfile_uk.qm">res/translations/sendfile_uk.qm</file>
 </qresource>
 </RCC>

@@ -35,6 +35,7 @@ RESOURCES += Proxy.qrc
 
 TRANSLATIONS += res/translations/proxy_en.ts
 TRANSLATIONS += res/translations/proxy_ru.ts
+TRANSLATIONS += res/translations/proxy_uk.ts
 CODECFORTR  = UTF-8
 CODECFORSRC = UTF-8
 

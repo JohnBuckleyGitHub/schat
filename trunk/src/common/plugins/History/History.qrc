@@ -7,5 +7,6 @@
   <file alias="js/History/days.js">res/js/days.min.js</file>
   <file alias="js/History/History.js">res/js/History.min.js</file>
   <file alias="translations/history_ru.qm">res/translations/history_ru.qm</file>
+  <file alias="translations/history_uk.qm">res/translations/history_uk.qm</file>
 </qresource>
 </RCC>
