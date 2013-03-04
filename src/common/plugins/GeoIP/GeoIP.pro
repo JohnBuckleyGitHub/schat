@@ -33,7 +33,11 @@ SOURCES = \
    QGeoIP.cpp \
 
 unix:!macx {
-  equals(GEOIP, 1)|system(pkg-config --modversion geoip > /dev/null 2>&1) {
+  equals(GEOIP, 1) {
+    LIBS      +=-lGeoIP
+    DEFINES   += SCHAT_EXTERNAL_GEOIP
+  }
+  else:system(pkg-config --modversion geoip > /dev/null 2>&1) {
     CONFIG    += link_pkgconfig
     PKGCONFIG += geoip
     DEFINES   += SCHAT_EXTERNAL_GEOIP
