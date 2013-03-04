@@ -37,6 +37,7 @@ RESOURCES += Update.qrc
 
 TRANSLATIONS += res/translations/update_en.ts
 TRANSLATIONS += res/translations/update_ru.ts
+TRANSLATIONS += res/translations/update_uk.ts
 CODECFORTR  = UTF-8
 CODECFORSRC = UTF-8
 

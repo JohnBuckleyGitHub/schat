@@ -40,6 +40,7 @@ RESOURCES += \
 
 TRANSLATIONS += res/translations/youtube_en.ts
 TRANSLATIONS += res/translations/youtube_ru.ts
+TRANSLATIONS += res/translations/youtube_uk.ts
 CODECFORTR  = UTF-8
 CODECFORSRC = UTF-8
 

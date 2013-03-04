@@ -51,6 +51,7 @@ RESOURCES += SendFile.qrc
 
 TRANSLATIONS += res/translations/sendfile_en.ts
 TRANSLATIONS += res/translations/sendfile_ru.ts
+TRANSLATIONS += res/translations/sendfile_uk.ts
 CODECFORTR  = UTF-8
 CODECFORSRC = UTF-8
 

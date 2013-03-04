@@ -6,5 +6,6 @@
   <file alias="js/Profile/Profile.js">res/js/Profile.min.js</file>
   <file alias="translations/profile_en.qm">res/translations/profile_en.qm</file>
   <file alias="translations/profile_ru.qm">res/translations/profile_ru.qm</file>
+  <file alias="translations/profile_uk.qm">res/translations/profile_uk.qm</file>
 </qresource>
 </RCC>

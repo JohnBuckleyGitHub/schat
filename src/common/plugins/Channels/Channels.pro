@@ -43,6 +43,7 @@ RESOURCES += Channels.qrc
 
 TRANSLATIONS += res/translations/channels_en.ts
 TRANSLATIONS += res/translations/channels_ru.ts
+TRANSLATIONS += res/translations/channels_uk.ts
 CODECFORTR  = UTF-8
 CODECFORSRC = UTF-8
 

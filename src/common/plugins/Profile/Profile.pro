@@ -37,6 +37,7 @@ RESOURCES += Profile.qrc
 
 TRANSLATIONS += res/translations/profile_en.ts
 TRANSLATIONS += res/translations/profile_ru.ts
+TRANSLATIONS += res/translations/profile_uk.ts
 CODECFORTR  = UTF-8
 CODECFORSRC = UTF-8
 

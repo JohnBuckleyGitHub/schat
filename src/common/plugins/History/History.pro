@@ -41,6 +41,7 @@ RESOURCES += History.qrc
 
 TRANSLATIONS += res/translations/history_en.ts
 TRANSLATIONS += res/translations/history_ru.ts
+TRANSLATIONS += res/translations/history_uk.ts
 CODECFORTR  = UTF-8
 CODECFORSRC = UTF-8
 

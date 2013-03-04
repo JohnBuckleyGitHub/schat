@@ -38,8 +38,12 @@ ${Section}
   SetOutPath "$INSTDIR\translations"
   File "${SCHAT_SOURCE}\translations\schat2_en.qm"
   File "${SCHAT_SOURCE}\translations\schat2_ru.qm"
+  File "${SCHAT_SOURCE}\translations\schat2_uk.qm"
   File "${SCHAT_SOURCE}\translations\qt_ru.qm"
+  File "${SCHAT_SOURCE}\translations\qt_uk.qm"
+  File "${SCHAT_SOURCE}\translations\en.png"
   File "${SCHAT_SOURCE}\translations\ru.png"
+  File "${SCHAT_SOURCE}\translations\uk.png"
 
   WriteRegStr HKCU "${SCHAT_REGKEY}" "" $INSTDIR
   WriteUninstaller "$INSTDIR\uninstall.exe"
@@ -60,8 +64,12 @@ ${Uninstall}
   Delete "$INSTDIR\sounds\Received.wav"
   Delete "$INSTDIR\translations\schat2_en.qm"
   Delete "$INSTDIR\translations\schat2_ru.qm"
+  Delete "$INSTDIR\translations\schat2_uk.qm"
   Delete "$INSTDIR\translations\qt_ru.qm"
+  Delete "$INSTDIR\translations\qt_uk.qm"
+  Delete "$INSTDIR\translations\en.png"
   Delete "$INSTDIR\translations\ru.png"
+  Delete "$INSTDIR\translations\uk.png"
 
   RMDir "$INSTDIR\doc"
   RMDir "$INSTDIR\sounds"

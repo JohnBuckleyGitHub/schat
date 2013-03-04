@@ -61,6 +61,7 @@ unix {
 
 TRANSLATIONS += res/translations/idle_en.ts
 TRANSLATIONS += res/translations/idle_ru.ts
+TRANSLATIONS += res/translations/idle_uk.ts
 CODECFORTR  = UTF-8
 CODECFORSRC = UTF-8
 

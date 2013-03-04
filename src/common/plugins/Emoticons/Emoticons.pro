@@ -49,6 +49,7 @@ RESOURCES += Emoticons.qrc
 
 TRANSLATIONS += res/translations/emoticons_en.ts
 TRANSLATIONS += res/translations/emoticons_ru.ts
+TRANSLATIONS += res/translations/emoticons_uk.ts
 CODECFORTR  = UTF-8
 CODECFORSRC = UTF-8
 
