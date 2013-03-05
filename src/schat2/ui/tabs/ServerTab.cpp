@@ -19,7 +19,6 @@
 #include <QApplication>
 #include <QFile>
 #include <QVBoxLayout>
-#include <QTextDocument>
 #include <QWebPage>
 #include <QWebFrame>
 
@@ -30,6 +29,7 @@
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
 #include "hooks/ChannelMenu.h"
+#include "messages/AlertMessage.h"
 #include "messages/AlertMessage.h"
 #include "messages/ServiceMessage.h"
 #include "net/SimpleID.h"
@@ -125,10 +125,7 @@ void ServerTab::clientStateChanged(int state)
   if (state == ChatClient::WaitAuth) {
     m_auth->start(ChatClient::io()->json().value(CLIENT_PROP_AUTH_SERVER).toString());
 
-    ServiceMessage message(tr("Server %1 requires authorization").arg(LS("<b>") + Qt::escape(ChatClient::serverName()) + LS("</b>")));
-    message.data()[MESSAGE_TYPE]  = LS("info");
-    message.data()[MESSAGE_EXTRA] = LS("orange-text");
-    chatView()->add(message);
+    chatView()->add(AlertMessage(tr("Server %1 requires authorization").arg(LS("<b>") + Qt::escape(ChatClient::serverName()) + LS("</b>"))));
     chatView()->evaluateJavaScript(LS("AuthDialog.show();"));
 
     if (m_tabs->indexOf(this) == -1) {

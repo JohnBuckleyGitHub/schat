@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ public:
   AuthClient(QObject *parent = 0);
   ~AuthClient();
   inline const QByteArray& state() const { return m_state; }
+  void cancel();
   void start(const QString &url);
 
 signals:

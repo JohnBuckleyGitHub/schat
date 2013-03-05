@@ -45,11 +45,21 @@ AuthClient::~AuthClient()
 }
 
 
+/*!
+ * Отмена авторизации.
+ *
+ * \sa AuthBridge::cancel();
+ */
+void AuthClient::cancel()
+{
+  m_timer->stop();
+  deleteReply();
+}
+
+
 void AuthClient::start(const QString &url)
 {
-  if (m_timer->isActive())
-    m_timer->stop();
-
+  m_timer->stop();
   deleteReply();
 
   m_retry = 1;
@@ -92,25 +102,26 @@ void AuthClient::getState()
   connect(m_reply, SIGNAL(finished()), SLOT(stateReady()));
   connect(m_reply, SIGNAL(sslErrors(QList<QSslError>)), SLOT(sslErrors()));
 
-  m_timer->start(30000, this);
+  m_timer->start(25000, this);
 }
 
 
+/*!
+ * Слот вызывается тогда когда получен список провайдеров.
+ */
 void AuthClient::providersReady()
 {
   if (m_reply->error())
     return setError(m_reply->error());
 
-  QByteArray raw = m_reply->readAll();
-  QVariantMap data = JSON::parse(raw).toMap();
-
+  const QVariantMap data = JSON::parse(m_reply->readAll()).toMap();
   if (data.isEmpty())
     return setError(QNetworkReply::UnknownContentError);
 
   deleteReply();
   emit providersReady(data);
 
-  getState();
+  QTimer::singleShot(0, this, SLOT(getState()));
 }
 
 
@@ -120,6 +131,9 @@ void AuthClient::sslErrors()
 }
 
 
+/*!
+ * Получение ответа на запрос состояния.
+ */
 void AuthClient::stateReady()
 {
   int error = m_reply->error();
@@ -134,16 +148,15 @@ void AuthClient::stateReady()
     return;
   }
 
-  QByteArray raw = m_reply->readAll();
+  const QVariantMap data  = JSON::parse(m_reply->readAll()).toMap();
   deleteReply();
 
-  QVariantMap data  = JSON::parse(raw).toMap();
   if (data.isEmpty())
     return invalidState();
 
-  QByteArray id     = SimpleID::decode(data.value(LS("id")).toByteArray());
-  QByteArray cookie = SimpleID::decode(data.value(LS("cookie")).toByteArray());
-  QString provider  = data.value(LS("provider")).toString();
+  const QByteArray id     = SimpleID::decode(data.value(LS("id")).toByteArray());
+  const QByteArray cookie = SimpleID::decode(data.value(LS("cookie")).toByteArray());
+  const QString provider  = data.value(LS("provider")).toString();
 
   if (SimpleID::typeOf(id) != SimpleID::UserId || SimpleID::typeOf(cookie) != SimpleID::CookieId || provider.isEmpty())
     return invalidState();
