@@ -24,6 +24,7 @@
 
 #include "schat.h"
 
+class AlertMessage;
 class AuthClient;
 
 /*!
@@ -49,9 +50,11 @@ private slots:
   void forbidden();
   void providersReady(const QVariantMap &data);
   void ready(const QString &provider, const QByteArray &id, const QByteArray &cookie);
+  void timeout();
 
 private:
   QString retryLink() const;
+  void add(const AlertMessage &message);
 
   AuthClient *m_client;    ///< HTTP клиент для авторизации.
   QVariantMap m_providers; ///< Провайдеры авторизации.
