@@ -123,6 +123,7 @@ unix {
 
 win32 {
   translations.files += $$[QT_INSTALL_PREFIX]/translations/qt_ru.qm
+  translations.files += $$[QT_INSTALL_PREFIX]/translations/qt_uk.qm
   translations.path += ../../os/win32/schat2/translations
 
   qt.files += $$[QT_INSTALL_PREFIX]/bin/libeay32.dll

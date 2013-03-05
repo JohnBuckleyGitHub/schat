@@ -1,5 +1,5 @@
 Name:		schat2
-Version:	2.0.1.3554
+Version:	##SCHAT_VERSION##
 Release:	0
 Summary:	Simple Chat
 Group:		Productivity/Networking/Talk/Clients
