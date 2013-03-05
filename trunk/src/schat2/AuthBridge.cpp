@@ -38,10 +38,15 @@ bool AuthBridge::anonymous() const
 
 /*!
  * Обработка закрытия авторизационного диалога.
+ *
+ * \sa AuthClient::cancel()
  */
 void AuthBridge::cancel()
 {
   if (ChatClient::state() == ChatClient::WaitAuth) {
+    if (m_client)
+      m_client->cancel();
+
     m_providers.clear();
     ChatClient::io()->leave();
   }

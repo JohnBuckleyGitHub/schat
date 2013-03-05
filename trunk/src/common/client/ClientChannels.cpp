@@ -50,6 +50,9 @@ ClientChannels::ClientChannels(QObject *parent)
  */
 ClientChannel ClientChannels::get(const QByteArray &id)
 {
+  if (id.isEmpty())
+    return ClientChannel();
+
   if (!m_channels.contains(id)) {
     if (ChatClient::id() == id)
       m_channels[id] = ChatClient::channel();

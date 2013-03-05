@@ -58,7 +58,7 @@ QByteArray Message::detectTab(const QByteArray &sender, const QByteArray &dest)
  */
 void Message::setAuthor(const QByteArray &id)
 {
-  QVariantMap data = WebBridge::channel(id);
+  const QVariantMap data = WebBridge::channel(id);
 
   if (!data.isEmpty())
     m_data[MESSAGE_AUTHOR] = data;
