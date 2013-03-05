@@ -17,11 +17,16 @@
  */
 
 #include "AuthBridge.h"
+#include "ChatNotify.h"
 #include "client/AuthClient.h"
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
+#include "messages/AlertMessage.h"
 #include "net/packets/auth.h"
 #include "sglobal.h"
+#include "ui/tabs/ChatView.h"
+#include "ui/tabs/ServerTab.h"
+#include "ui/TabWidget.h"
 
 AuthBridge::AuthBridge(QObject *parent)
   : QObject(parent)
@@ -49,6 +54,9 @@ void AuthBridge::cancel()
 
     m_providers.clear();
     ChatClient::io()->leave();
+
+    AlertMessage message(tr("Authorization has been canceled by you. %1").arg(retryLink()), ALERT_MESSAGE_ERROR);
+    TabWidget::i()->serverTab()->chatView()->add(message);
   }
 }
 
@@ -60,6 +68,12 @@ void AuthBridge::open()
 {
   ChatClient::io()->setAuthType(AuthRequest::Anonymous);
   ChatClient::open(ChatClient::io()->url());
+}
+
+
+void AuthBridge::retry()
+{
+  ChatClient::open();
 }
 
 
@@ -80,12 +94,14 @@ void AuthBridge::start(const QString &url)
 }
 
 
-/*!
- * \todo Реализовать полноценную поддержку обработки ошибки авторизации с уведомлением пользователя.
- */
 void AuthBridge::forbidden()
 {
   ChatClient::io()->leave();
+
+  AlertMessage message(tr("Access denied. %1").arg(retryLink()), ALERT_MESSAGE_ERROR);
+  TabWidget::i()->serverTab()->chatView()->add(message);
+
+  ChatNotify::start(Notify::ShowChat);
 }
 
 
@@ -107,4 +123,18 @@ void AuthBridge::ready(const QString &provider, const QByteArray &id, const QByt
   ChatClient::io()->setAuthType(AuthRequest::External);
   ChatClient::io()->setAuthId(SimpleID::decode(m_client->state()));
   ChatClient::io()->openUrl(ChatClient::io()->url(), cookie);
+
+  const QString htmlName = m_providers.value(LS("providers")).toMap().value(provider).toMap().value(LS("htmlName")).toString();
+  if (!htmlName.isEmpty()) {
+    AlertMessage message(tr("You have successfully logged in using <b>%1</b>").arg(htmlName), ALERT_MESSAGE_SUCCESS);
+    TabWidget::i()->serverTab()->chatView()->add(message);
+  }
+
+  ChatNotify::start(Notify::ShowChat);
+}
+
+
+QString AuthBridge::retryLink() const
+{
+  return LS("<a href=\"#\" class=\"retry-auth\">") + tr("Try again?") + LS("</a>");
 }
