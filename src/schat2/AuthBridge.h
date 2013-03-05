@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@ public:
   Q_INVOKABLE QVariantMap providers() const { return m_providers; }
   Q_INVOKABLE void cancel();
   Q_INVOKABLE void open();
+  Q_INVOKABLE void retry();
   void start(const QString &url);
 
 signals:
@@ -50,6 +51,8 @@ private slots:
   void ready(const QString &provider, const QByteArray &id, const QByteArray &cookie);
 
 private:
+  QString retryLink() const;
+
   AuthClient *m_client;    ///< HTTP клиент для авторизации.
   QVariantMap m_providers; ///< Провайдеры авторизации.
 };

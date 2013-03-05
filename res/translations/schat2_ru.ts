@@ -96,6 +96,29 @@
     </message>
 </context>
 <context>
+    <name>AuthBridge</name>
+    <message>
+        <location filename="../../src/schat2/AuthBridge.cpp" line="58"/>
+        <source>Authorization has been canceled by you. %1</source>
+        <translation>Авторизация была отменена вами. %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/AuthBridge.cpp" line="95"/>
+        <source>Access denied. %1</source>
+        <translation>Доступ запрещен. %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/AuthBridge.cpp" line="126"/>
+        <source>You have successfully logged in using &lt;b&gt;%1&lt;/b&gt;</source>
+        <translation>Вы успешно вошли используя &lt;b&gt;%1&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/AuthBridge.cpp" line="136"/>
+        <source>Try again?</source>
+        <translation>Попробовать снова?</translation>
+    </message>
+</context>
+<context>
     <name>ChannelMenuImpl</name>
     <message>
         <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="48"/>
@@ -647,7 +670,7 @@
         <translation>Сервер %1 требует авторизацию</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="196"/>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="193"/>
         <source>Network</source>
         <translation>Сеть</translation>
     </message>

@@ -40,6 +40,7 @@ win32 {
 
 TRANSLATIONS += ../../res/translations/schat2-client_en.ts
 TRANSLATIONS += ../../res/translations/schat2-client_ru.ts
+TRANSLATIONS += ../../res/translations/schat2-client_uk.ts
 CODECFORTR  = UTF-8
 CODECFORSRC = UTF-8 
 

@@ -186,7 +186,7 @@ Modal.create.auth = function(event)
   if (Auth.anonymous()) {
     $('#modal-body').append('<div id="anonymous-auth"><a data-tr="or_anon_connect" href="#">' + Utils.tr('or_anon_connect') + '</a></div>');
 
-    $("#anonymous-auth a").on("click", function(event) {
+    $('#anonymous-auth a').on('click', function(event) {
       event.preventDefault();
       Auth.open();
     });
@@ -208,12 +208,13 @@ Modal.hidden.auth = function()
 };
 
 
-if (typeof Auth === "undefined") {
+if (typeof Auth === 'undefined') {
   Auth = {
     providers: function() { return {}; },
-    cancel: function() {},
+    cancel: function()    {},
     anonymous: function() { return true; },
-    open: function() {}
+    open: function()      {},
+    retry: function()     {}
   }
 }
 else {
@@ -338,6 +339,16 @@ var ServerInfo = {
     $('#server-version').text(json.version);
   }
 };
+
+
+$(document).ready(function() {
+  $('body').on('click', '.retry-auth', function(event) {
+    event.preventDefault();
+
+    Auth.retry();
+  });
+});
+
 
 Pages.onInfo.push(ServerInfo.setInterval);
 Pages.onInfo.push(ServerInfo.adjustWidth);

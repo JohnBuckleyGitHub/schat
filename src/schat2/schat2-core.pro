@@ -235,6 +235,7 @@ else {
 
 TRANSLATIONS += ../../res/translations/schat2_en.ts
 TRANSLATIONS += ../../res/translations/schat2_ru.ts
+TRANSLATIONS += ../../res/translations/schat2_uk.ts
 CODECFORTR  = UTF-8
 CODECFORSRC = UTF-8
 
