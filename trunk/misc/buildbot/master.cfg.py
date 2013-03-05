@@ -80,7 +80,7 @@ c['properties'] = {
 c['schedulers'] = [
   ForceScheduler(
     name='force',
-    builderNames=['lucid', 'lucid64', 'win32', 'win32-legacy', 'macosx', 'macosx-legacy', 'source', 'ppa', 'ppa-dev', 'precise', 'precise64', 'release']
+    builderNames=['lucid', 'lucid64', 'win32', 'win32-legacy', 'macosx', 'macosx-legacy', 'source', 'ppa', 'ppa-dev', 'obs', 'obs-dev', 'precise', 'precise64', 'release']
   ),
   SingleBranchScheduler(
     name='trunk',
@@ -307,6 +307,18 @@ def MakeSrcBuilder():
   return f
 
 
+def MakeObsBuilder():
+  f = BuildFactory()
+  f.addSteps(svn_co)
+  f.addStep(ShellCommand(
+    name          = 'upload',
+    command       = ['bash', 'os/obs/obs-upload.sh', Property('project'), WithProperties('%(version)s.%(got_revision)s')],
+    haltOnFailure = True,
+    logEnviron    = False,
+  ))
+  return f
+
+
 def MakeDevelBuilder():
   f = BuildFactory()
   f.addStep(MasterShellCommand(
@@ -433,6 +445,20 @@ c['builders'] = [
     factory    = MakePpaBuilder(),
     properties = {
       'ppa': 'development'
+    },
+  ),
+  BuilderConfig(name = 'obs',
+    slavenames = ['master'],
+    factory    = MakeObsBuilder(),
+    properties = {
+      'project': 'home:impomezia'
+    },
+  ),
+  BuilderConfig(name = 'obs-dev',
+    slavenames = ['master'],
+    factory    = MakeObsBuilder(),
+    properties = {
+      'project': 'home:impomezia:devel'
     },
   ),
 ]
