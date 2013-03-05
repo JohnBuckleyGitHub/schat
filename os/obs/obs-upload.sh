@@ -22,8 +22,6 @@ PROJECT=$1
 VERSION=$2
 SOURCE=schat2-$VERSION
 
-echo $PROJECT $VERSION
-
 cd ..
 
 rm -fr $PROJECT
