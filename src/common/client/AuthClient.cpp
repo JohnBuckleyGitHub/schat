@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -94,6 +94,11 @@ void AuthClient::timerEvent(QTimerEvent *event)
  */
 void AuthClient::getState()
 {
+  if (m_retry == 13) {
+    emit timeout();
+    return;
+  }
+
   QNetworkRequest request(QUrl(m_url + LS("/state/") + m_state + LS("?retry=") + QString::number(m_retry)));
   request.setRawHeader("X-SChat-Secret", m_secret);
 

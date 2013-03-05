@@ -45,6 +45,7 @@ signals:
   void forbidden();
   void providersReady(const QVariantMap &data);
   void ready(const QString &provider, const QByteArray &id, const QByteArray &cookie, const QVariantMap &data);
+  void timeout();
 
 protected:
   void timerEvent(QTimerEvent *event);

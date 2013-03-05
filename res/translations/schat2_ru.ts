@@ -103,17 +103,22 @@
         <translation>Авторизация была отменена вами. %1</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/AuthBridge.cpp" line="95"/>
+        <location filename="../../src/schat2/AuthBridge.cpp" line="101"/>
         <source>Access denied. %1</source>
         <translation>Доступ запрещен. %1</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/AuthBridge.cpp" line="126"/>
+        <location filename="../../src/schat2/AuthBridge.cpp" line="127"/>
         <source>You have successfully logged in using &lt;b&gt;%1&lt;/b&gt;</source>
         <translation>Вы успешно вошли используя &lt;b&gt;%1&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../../src/schat2/AuthBridge.cpp" line="136"/>
+        <source>Exceeded number of attempts to check authorization. %1</source>
+        <translation>Превышено число попыток проверить авторизацию. %1</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/AuthBridge.cpp" line="142"/>
         <source>Try again?</source>
         <translation>Попробовать снова?</translation>
     </message>

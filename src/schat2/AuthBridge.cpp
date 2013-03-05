@@ -55,8 +55,7 @@ void AuthBridge::cancel()
     m_providers.clear();
     ChatClient::io()->leave();
 
-    AlertMessage message(tr("Authorization has been canceled by you. %1").arg(retryLink()), ALERT_MESSAGE_ERROR);
-    TabWidget::i()->serverTab()->chatView()->add(message);
+    add(AlertMessage(tr("Authorization has been canceled by you. %1").arg(retryLink()), ALERT_MESSAGE_ERROR));
   }
 }
 
@@ -87,6 +86,7 @@ void AuthBridge::start(const QString &url)
     connect(m_client, SIGNAL(providersReady(QVariantMap)), SLOT(providersReady(QVariantMap)));
     connect(m_client, SIGNAL(forbidden()), SLOT(forbidden()));
     connect(m_client, SIGNAL(ready(QString,QByteArray,QByteArray,QVariantMap)), SLOT(ready(QString,QByteArray,QByteArray)));
+    connect(m_client, SIGNAL(timeout()), SLOT(timeout()));
   }
 
   m_providers.clear();
@@ -98,9 +98,7 @@ void AuthBridge::forbidden()
 {
   ChatClient::io()->leave();
 
-  AlertMessage message(tr("Access denied. %1").arg(retryLink()), ALERT_MESSAGE_ERROR);
-  TabWidget::i()->serverTab()->chatView()->add(message);
-
+  add(AlertMessage(tr("Access denied. %1").arg(retryLink()), ALERT_MESSAGE_ERROR));
   ChatNotify::start(Notify::ShowChat);
 }
 
@@ -125,16 +123,27 @@ void AuthBridge::ready(const QString &provider, const QByteArray &id, const QByt
   ChatClient::io()->openUrl(ChatClient::io()->url(), cookie);
 
   const QString htmlName = m_providers.value(LS("providers")).toMap().value(provider).toMap().value(LS("htmlName")).toString();
-  if (!htmlName.isEmpty()) {
-    AlertMessage message(tr("You have successfully logged in using <b>%1</b>").arg(htmlName), ALERT_MESSAGE_SUCCESS);
-    TabWidget::i()->serverTab()->chatView()->add(message);
-  }
+  if (!htmlName.isEmpty())
+    add(AlertMessage(tr("You have successfully logged in using <b>%1</b>").arg(htmlName), ALERT_MESSAGE_SUCCESS));
 
   ChatNotify::start(Notify::ShowChat);
+}
+
+
+void AuthBridge::timeout()
+{
+  ChatClient::io()->leave();
+  add(AlertMessage(tr("Exceeded number of attempts to check authorization. %1").arg(retryLink()), ALERT_MESSAGE_ERROR));
 }
 
 
 QString AuthBridge::retryLink() const
 {
   return LS("<a href=\"#\" class=\"retry-auth\">") + tr("Try again?") + LS("</a>");
+}
+
+
+void AuthBridge::add(const AlertMessage &message)
+{
+  TabWidget::i()->serverTab()->chatView()->add(message);
 }
