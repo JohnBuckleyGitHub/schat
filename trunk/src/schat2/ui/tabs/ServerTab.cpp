@@ -37,7 +37,9 @@
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
 #include "ui/tabs/ChatView.h"
+#include "ui/tabs/ProgressTab.h"
 #include "ui/tabs/ServerTab.h"
+#include "ui/tabs/WelcomeTab.h"
 #include "ui/TabWidget.h"
 #include "WebBridge.h"
 
@@ -127,6 +129,8 @@ void ServerTab::clientStateChanged(int state)
 
     chatView()->add(AlertMessage(tr("Server %1 requires authorization").arg(LS("<b>") + Qt::escape(ChatClient::serverName()) + LS("</b>"))));
     chatView()->evaluateJavaScript(LS("AuthDialog.show();"));
+    m_tabs->closePage(PROGRESS_TAB);
+    m_tabs->closePage(WELCOME_TAB);
 
     if (m_tabs->indexOf(this) == -1) {
       m_tabs->addTab(this, QString());

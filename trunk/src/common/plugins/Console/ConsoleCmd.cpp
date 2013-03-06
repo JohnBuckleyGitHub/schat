@@ -78,7 +78,7 @@ void ConsoleCmd::notify(const Notify &notify)
  */
 void ConsoleCmd::getCookie(const QByteArray &id)
 {
-  if (!(ClientFeeds::match(ChatClient::server(), ChatClient::channel()) & (Acl::Edit && Acl::SpecialEdit))) {
+  if (!(ClientFeeds::match(ChatClient::server(), ChatClient::channel()) & (Acl::Edit | Acl::SpecialEdit))) {
     AlertMessage::show(LS("<b>cookie</b> ") + tr("Not enough rights, you must be a server administrator."), ALERT_MESSAGE_ERROR);
     return;
   }

@@ -21,6 +21,7 @@
 #include "DateTime.h"
 #include "feeds/FeedEvents.h"
 #include "feeds/FeedStorage.h"
+#include "feeds/MessagesFeed.h"
 #include "net/PacketReader.h"
 #include "net/packets/MessageNotice.h"
 #include "net/packets/Notice.h"
@@ -87,7 +88,9 @@ bool NodeMessages::read(PacketReader *reader)
     Ch::gc(m_dest);
   }
   else {
-    NodeMessagesDB::add(packet);
+    if (feed->data().value(MESSAGES_FEED_LOGGING_KEY, true).toBool())
+      NodeMessagesDB::add(packet);
+
     Core::i()->route(m_dest);
   }
 
