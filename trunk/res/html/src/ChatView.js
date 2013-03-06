@@ -16,35 +16,38 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-var FEED_METHOD_GET          = 'get';
-var FEED_METHOD_PUT          = 'put';
-var FEED_METHOD_POST         = 'post';
-var FEED_METHOD_DELETE       = 'delete';
+var FEED_METHOD_GET           = 'get';
+var FEED_METHOD_PUT           = 'put';
+var FEED_METHOD_POST          = 'post';
+var FEED_METHOD_DELETE        = 'delete';
 
-var FEED_NAME_ACL            = 'acl';
-var FEED_NAME_CONSOLE        = 'console';
-var FEED_NAME_HOSTS          = 'hosts';
-var FEED_NAME_INFO           = 'info';
-var FEED_NAME_LIST           = 'list';
-var FEED_NAME_SERVER         = 'server';
-var FEED_NAME_USERS          = 'users';
+var FEED_NAME_ACL             = 'acl';
+var FEED_NAME_CONSOLE         = 'console';
+var FEED_NAME_HOSTS           = 'hosts';
+var FEED_NAME_INFO            = 'info';
+var FEED_NAME_LIST            = 'list';
+var FEED_NAME_MESSAGES        = 'messages';
+var FEED_NAME_SERVER          = 'server';
+var FEED_NAME_USERS           = 'users';
 
-var SERVER_FEED_AUTH_KEY     = 'auth';
-var SERVER_FEED_AUTH_REQ     = 'server/auth';
-var SERVER_FEED_POLICY_KEY   = 'policy';
-var SERVER_FEED_POLICY_REQ   = 'server/policy';
-var SERVER_FEED_OAUTH_KEY    = 'oauth';
-var SERVER_FEED_OAUTH_REQ    = 'server/oauth';
+var SERVER_FEED_AUTH_KEY      = 'auth';
+var SERVER_FEED_AUTH_REQ      = 'server/auth';
+var SERVER_FEED_POLICY_KEY    = 'policy';
+var SERVER_FEED_POLICY_REQ    = 'server/policy';
+var SERVER_FEED_OAUTH_KEY     = 'oauth';
+var SERVER_FEED_OAUTH_REQ     = 'server/oauth';
 
-var CONSOLE_FEED_ME_KEY      = 'me';
-var CONSOLE_FEED_ME_REQ      = 'console/me';
+var CONSOLE_FEED_ME_KEY       = 'me';
+var CONSOLE_FEED_ME_REQ       = 'console/me';
 
-var INFO_FEED_TITLE_REQ      = 'info/title';
-var INFO_FEED_VISIBILITY_REQ = 'info/visibility';
-var INFO_FEED_PINNED_REQ     = 'info/pinned';
+var INFO_FEED_LOGGING_KEY     = 'logging';
+var INFO_FEED_LOGGING_REQ     = 'info/logging';
+var INFO_FEED_PINNED_REQ      = 'info/pinned';
+var INFO_FEED_TITLE_REQ       = 'info/title';
+var INFO_FEED_VISIBILITY_REQ  = 'info/visibility';
 
-var ACL_FEED_HEAD_OTHER_REQ  = 'acl/head/other';
-var ACL_FEED_HEAD_OWNER_REQ  = 'acl/head/owner';
+var ACL_FEED_HEAD_OTHER_REQ   = 'acl/head/other';
+var ACL_FEED_HEAD_OWNER_REQ   = 'acl/head/owner';
 
 var Settings = {
   id: '',

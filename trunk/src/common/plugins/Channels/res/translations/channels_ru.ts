@@ -28,7 +28,7 @@
 <context>
     <name>ChannelsPluginImpl</name>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="180"/>
+        <location filename="../../ChannelsPlugin.cpp" line="181"/>
         <source>Channels</source>
         <translation>Каналы</translation>
     </message>
@@ -112,6 +112,11 @@
         <location filename="../../ChannelsPlugin.cpp" line="68"/>
         <source>Read only</source>
         <translation>Только чтение</translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="69"/>
+        <source>Logging messages</source>
+        <translation>Журналирование сообщений</translation>
     </message>
 </context>
 <context>
