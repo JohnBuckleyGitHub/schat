@@ -76,10 +76,10 @@ FeedReply NodeInfoFeed::post(const QString &path, const QVariantMap &json, Chann
   if (!can(channel, Acl::Edit))
     return Notice::Forbidden;
 
-  if (!channel || path.isEmpty() || path.contains(LC('*')) || !json.contains(LS("value")))
+  if (!channel || path.isEmpty() || path.contains(FEED_WILDCARD_ASTERISK) || !json.contains(FEED_KEY_VALUE))
     return Notice::BadRequest;
 
-  const QVariant& value = json[LS("value")];
+  const QVariant& value = json[FEED_KEY_VALUE];
   qint64 date = DateTime::utc();
 
   // Установка текстового заголовка канала.

@@ -16,14 +16,15 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "cores/Core.h"
 #include "DateTime.h"
+#include "feeds/MessagesFeed.h"
 #include "feeds/NodeMessagesFeed.h"
 #include "net/packets/Notice.h"
 #include "net/SimpleID.h"
+#include "NodeMessagesDB.h"
 #include "ServerChannel.h"
 #include "sglobal.h"
-#include "NodeMessagesDB.h"
-#include "cores/Core.h"
 
 NodeMessagesFeed::NodeMessagesFeed(const QString &name, const QVariantMap &data)
   : Feed(name, data)
@@ -39,6 +40,38 @@ NodeMessagesFeed::NodeMessagesFeed(const QString &name, qint64 date)
 }
 
 
+/*!
+ * Переопределение проверки прав доступа.
+ *
+ * Этот фид использует права доступа фида FEED_ACL.
+ */
+bool NodeMessagesFeed::can(Channel *channel, int acl) const
+{
+  if (!channel && acl != Acl::Read)
+    return false;
+
+  FeedPtr feed = m_header.channel()->feed(FEED_NAME_ACL, false, false);
+  if (feed)
+    return feed->can(channel, acl);
+
+  return Feed::can(channel, acl);
+}
+
+
+/*!
+ * Переопределение запроса \b delete.
+ *
+ * Для этой операции требуются права на редактирование.
+ */
+FeedReply NodeMessagesFeed::del(const QString &path, Channel *channel)
+{
+  if (!can(channel, Acl::Edit))
+    return Notice::Forbidden;
+
+  return Feed::del(path, channel);
+}
+
+
 FeedReply NodeMessagesFeed::get(const QString &path, const QVariantMap &json, Channel *channel) const
 {
   if (path == LS("fetch"))
@@ -51,6 +84,32 @@ FeedReply NodeMessagesFeed::get(const QString &path, const QVariantMap &json, Ch
     return since(json, channel);
 
   return Notice::NotImplemented;
+}
+
+
+FeedReply NodeMessagesFeed::post(const QString &path, const QVariantMap &json, Channel *channel)
+{
+  if (!can(channel, Acl::Edit))
+    return Notice::Forbidden;
+
+  if (path == MESSAGES_FEED_LOGGING_KEY && head().channel()->type() != SimpleID::ChannelId)
+    return Notice::BadRequest;
+
+  return Feed::post(path, json, channel);
+}
+
+
+/*!
+ * Переопределение запроса \b put.
+ *
+ * Этот фид не поддерживает такой запрос.
+ */
+FeedReply NodeMessagesFeed::put(const QString &path, const QVariantMap &json, Channel *channel)
+{
+  Q_UNUSED(path)
+  Q_UNUSED(json)
+  Q_UNUSED(channel)
+  return Notice::Forbidden;
 }
 
 

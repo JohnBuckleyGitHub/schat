@@ -32,8 +32,6 @@ YouTubeFilter::YouTubeFilter()
 
 bool YouTubeFilter::filter(QList<HtmlToken> &tokens, const QVariantHash &/*options*/) const
 {
-  QString name;
-
   for (int i = 0; i < tokens.size(); ++i) {
     if (tokens.at(i).type == HtmlToken::StartTag && tokens.at(i).tag == LS("a")) {
       HtmlATag tag(tokens.at(i));
