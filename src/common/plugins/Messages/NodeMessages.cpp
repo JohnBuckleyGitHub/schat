@@ -88,7 +88,7 @@ bool NodeMessages::read(PacketReader *reader)
     Ch::gc(m_dest);
   }
   else {
-    if (feed->data().value(MESSAGES_FEED_LOGGING_KEY, true).toBool())
+    if (feed->get(MESSAGES_FEED_LOGGING_KEY).status == Notice::OK)
       NodeMessagesDB::add(packet);
 
     Core::i()->route(m_dest);

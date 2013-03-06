@@ -40,38 +40,6 @@ NodeMessagesFeed::NodeMessagesFeed(const QString &name, qint64 date)
 }
 
 
-/*!
- * Переопределение проверки прав доступа.
- *
- * Этот фид использует права доступа фида FEED_ACL.
- */
-bool NodeMessagesFeed::can(Channel *channel, int acl) const
-{
-  if (!channel && acl != Acl::Read)
-    return false;
-
-  FeedPtr feed = m_header.channel()->feed(FEED_NAME_ACL, false, false);
-  if (feed)
-    return feed->can(channel, acl);
-
-  return Feed::can(channel, acl);
-}
-
-
-/*!
- * Переопределение запроса \b delete.
- *
- * Для этой операции требуются права на редактирование.
- */
-FeedReply NodeMessagesFeed::del(const QString &path, Channel *channel)
-{
-  if (!can(channel, Acl::Edit))
-    return Notice::Forbidden;
-
-  return Feed::del(path, channel);
-}
-
-
 FeedReply NodeMessagesFeed::get(const QString &path, const QVariantMap &json, Channel *channel) const
 {
   if (path == LS("fetch"))
@@ -82,34 +50,10 @@ FeedReply NodeMessagesFeed::get(const QString &path, const QVariantMap &json, Ch
     return offline(channel);
   else if (path == LS("since"))
     return since(json, channel);
+  else if (path == MESSAGES_FEED_LOGGING_KEY)
+    return logging();
 
   return Notice::NotImplemented;
-}
-
-
-FeedReply NodeMessagesFeed::post(const QString &path, const QVariantMap &json, Channel *channel)
-{
-  if (!can(channel, Acl::Edit))
-    return Notice::Forbidden;
-
-  if (path == MESSAGES_FEED_LOGGING_KEY && head().channel()->type() != SimpleID::ChannelId)
-    return Notice::BadRequest;
-
-  return Feed::post(path, json, channel);
-}
-
-
-/*!
- * Переопределение запроса \b put.
- *
- * Этот фид не поддерживает такой запрос.
- */
-FeedReply NodeMessagesFeed::put(const QString &path, const QVariantMap &json, Channel *channel)
-{
-  Q_UNUSED(path)
-  Q_UNUSED(json)
-  Q_UNUSED(channel)
-  return Notice::Forbidden;
 }
 
 
@@ -174,6 +118,25 @@ FeedReply NodeMessagesFeed::last(const QVariantMap &json, Channel *user) const
   reply.json[LS("count")]    = messages.size();
   reply.json[LS("messages")] = messages;
   return reply;
+}
+
+
+/*!
+ * Возвращает Notice::OK если журналирование разрешено или Notice::Forbidden если запрещено.
+ *
+ * Журналирование всегда разрешено для каналов пользователей.
+ */
+FeedReply NodeMessagesFeed::logging() const
+{
+  Channel *channel = head().channel();
+  if (channel->type() != SimpleID::ChannelId)
+    return Notice::OK;
+
+  FeedPtr feed = channel->feed(FEED_NAME_INFO, false, false);
+  if (feed && !feed->data().value(MESSAGES_FEED_LOGGING_KEY, true).toBool())
+    return Notice::Forbidden;
+
+  return Notice::OK;
 }
 
 

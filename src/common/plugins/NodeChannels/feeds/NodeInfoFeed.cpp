@@ -80,7 +80,7 @@ FeedReply NodeInfoFeed::post(const QString &path, const QVariantMap &json, Chann
     return Notice::BadRequest;
 
   const QVariant& value = json[FEED_KEY_VALUE];
-  qint64 date = DateTime::utc();
+  const qint64 date = DateTime::utc();
 
   // Установка текстового заголовка канала.
   if (path == LS("title")) {
@@ -92,11 +92,13 @@ FeedReply NodeInfoFeed::post(const QString &path, const QVariantMap &json, Chann
     m_data[path] = data;
     return FeedReply(Notice::OK, date);
   }
-  else if (path == LS("visibility")) {
+
+  if (path == LS("visibility")) {
     visibility(value.toInt());
     return FeedReply(Notice::OK, date);
   }
-  else if (path == LS("pinned")) {
+
+  if (path == LS("pinned")) {
     if (!Ch::server()->feed(FEED_NAME_ACL)->can(channel, Acl::Edit))
       return Notice::Forbidden;
 
@@ -104,7 +106,12 @@ FeedReply NodeInfoFeed::post(const QString &path, const QVariantMap &json, Chann
     return FeedReply(Notice::OK, date);
   }
 
-  return Notice::BadRequest;
+  if (!m_data.contains(path) || m_data.value(path) != value) {
+    m_data[path] = value;
+    return FeedReply(Notice::OK, date);
+  }
+
+  return Notice::NotModified;
 }
 
 

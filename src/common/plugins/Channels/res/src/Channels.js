@@ -21,7 +21,8 @@ var Channels = {
   timeout: {
     visibility: null,
     pin: null,
-    acl: null
+    acl: null,
+    logging: null
   },
 
   /*
@@ -50,6 +51,7 @@ var Channels = {
 
     Channels.stopSpinner('visibility', status);
     Channels.stopSpinner('pin',        status);
+    Channels.stopSpinner('logging',    status);
   },
 
 
@@ -198,6 +200,15 @@ var Channels = {
   },
 
 
+  /*
+   * Обработка изменения журналирования канала.
+   */
+  logging: function(event) {
+    SimpleChat.request(Settings.getId(), FEED_METHOD_POST, INFO_FEED_LOGGING_REQ, {'value':$(this).is(':checked'), 'options':7});
+    Channels.startSpinner('logging');
+  },
+
+
   setAcl: function(event) {
     var value = $(this).find('option:selected').attr('value');
     var id    = $(this).attr('data-user');
@@ -284,6 +295,15 @@ Modal.create.options = function(event)
     '</div>'
   );
 
+  body.append(
+    '<div id="logging-row" class="row">' +
+      '<input id="logging" type="checkbox" ' + (feed[INFO_FEED_LOGGING_KEY] == true ? 'checked' : '') + '> ' +
+      '<label for="logging" data-tr="channels_logging">' + Utils.tr('channels_logging') + '</label> ' +
+      '<i id="logging-spinner" class="icon-spinner hide"></i>' +
+      '<i id="logging-error" class="icon-error hide"></i>' +
+    '</div>'
+  );
+
   if (SimpleChat.match(SimpleChat.serverId(), SimpleChat.id()) & 9) {
     body.append(
       '<div id="pin-row" class="row">' +
@@ -313,6 +333,7 @@ $(document).ready(function() {
   modal.on('click.title',       '#title-ok',   Channels.setTitle);
   modal.on('change.visibility', '#visibility', Channels.setVisibility);
   modal.on('change.pinned',     '#pin',        Channels.pinChannel);
+  modal.on('change.logging',    '#logging',    Channels.logging);
 
   modal.on('change.acl',        '#acl',        Channels.setAcl);
 

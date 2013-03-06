@@ -37,7 +37,7 @@ public:
     QVariantMap out        = CoreApi::header();
     out[CORE_API_ID]       = "NodeChannels";
     out[CORE_API_NAME]     = "Node Channels";
-    out[CORE_API_VERSION]  = "0.3.0";
+    out[CORE_API_VERSION]  = "0.3.1";
     out[CORE_API_TYPE]     = "server";
     out[CORE_API_SITE]     = "http://wiki.schat.me/Plugin/NodeChannels";
     out[CORE_API_DESC]     = "Node Channels";

@@ -32,15 +32,12 @@ public:
   NodeMessagesFeed(const QString &name, const QVariantMap &data);
   NodeMessagesFeed(const QString &name = FEED_NAME_MESSAGES, qint64 date = 0);
 
-  bool can(Channel *channel, int acl) const;
-  FeedReply del(const QString &path, Channel *channel = 0);
   FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0) const;
-  FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0);
-  FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0);
 
 private:
   FeedReply fetch(const QVariantMap &json, Channel *user) const;
   FeedReply last(const QVariantMap &json, Channel *user) const;
+  FeedReply logging() const;
   FeedReply offline(Channel *user) const;
   FeedReply since(const QVariantMap &json, Channel *user) const;
   void toPackets(QList<QByteArray> &out, const QList<MessageRecord> &records) const;
