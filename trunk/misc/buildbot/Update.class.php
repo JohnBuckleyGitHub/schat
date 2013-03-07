@@ -107,7 +107,7 @@ class UpdateWin32 extends Update
 
   protected function url() {
     if ($this->channel == 'stable')
-      return 'http://impomezia.s3.amazonaws.com/schat/' . $this->version . '/schat2-' . $this->version . '.exe';
+      return 'http://schat.googlecode.com/files/schat2-' . $this->version . '.exe';
     else
       return 'http://download.schat.me/schat2/snapshots/' . $this->version . '/r' . $this->revision . '/schat2-' . $this->version . '-dev.exe';
   }
@@ -133,7 +133,7 @@ class UpdateOSX extends Update
 
 
   protected function url() {
-    return 'http://impomezia.s3.amazonaws.com/schat/' . $this->version . '/SimpleChat2-' . $this->version . '.dmg';
+    return 'http://schat.googlecode.com/files/SimpleChat2-' . $this->version . '.dmg';
   }
 }
 

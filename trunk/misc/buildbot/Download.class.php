@@ -3,7 +3,7 @@
 class Download
 {
   public $version  = '';
-  public $url      = 'http://impomezia.s3.amazonaws.com/schat';
+  public $url      = 'http://schat.googlecode.com/files';
   public $path     = '/var/www/download.schat.me/htdocs/schat2';
   public $fileName = '/var/www/schat/htdocs/json/download.json';
 
@@ -91,7 +91,7 @@ class Download
   function fileInfo($json, $key, $file)
   {
     $json->$key->size = $this->fileSize($file);
-    $json->$key->url  = $this->url . '/' . $this->version . '/' .$file;
+    $json->$key->url  = $this->url . '/' .$file;
   }
 
 
