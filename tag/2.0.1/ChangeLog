@@ -1,0 +1,10 @@
+2.0.1
+-----
+ * Improved interactivity for OAuth authorization.
+ * In Windows OpenSSL library has been updated to 1.0.1e and libpng to 1.5.14.
+ + Added support for package "geoip-database-contrib" for GeoIP databases in Ubuntu.
+ * Reduced network delays.
+ + Added command "/ping".
+ + Chat client now supports command line key "-base".
+ + Added support for specifying PREFIX and LIBDIR for Linux when calling qmake.
+ * Fixed, spell checking does not work if the path to the dictionary contains Russian characters.
