@@ -1,3 +1,8 @@
+2.0.2
+-----
+ * Restored compatibility with Debian GNU/Linux 6.0.
+ * Fixed, checkbox "Logging messages" was not checked by default.
+
 2.0.1
 -----
  * Improved interactivity for OAuth authorization.
