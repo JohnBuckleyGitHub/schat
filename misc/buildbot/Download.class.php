@@ -4,6 +4,7 @@ class Download
 {
   public $version  = '';
   public $url      = 'http://schat.googlecode.com/files';
+  public $aws      = 'http://impomezia.s3.amazonaws.com/schat';
   public $path     = '/var/www/download.schat.me/htdocs/schat2';
   public $fileName = '/var/www/schat/htdocs/json/download.json';
 
@@ -52,16 +53,16 @@ class Download
     $this->json->ubuntu->url        = 'download/ubuntu';
 
     $this->json->ubuntu->lucid->version = $this->version;
-    $this->fileInfo($this->json->ubuntu->lucid, 'client',   'schat2_'  . $this->version . '-1~lucid_i386.deb');
-    $this->fileInfo($this->json->ubuntu->lucid, 'client64', 'schat2_'  . $this->version . '-1~lucid_amd64.deb');
-    $this->fileInfo($this->json->ubuntu->lucid, 'server',   'schatd2_' . $this->version . '-1~lucid_i386.deb');
-    $this->fileInfo($this->json->ubuntu->lucid, 'server64', 'schatd2_' . $this->version . '-1~lucid_amd64.deb');
+    $this->awsFileInfo($this->json->ubuntu->lucid, 'client',   'schat2_'  . $this->version . '-1~lucid_i386.deb');
+    $this->awsFileInfo($this->json->ubuntu->lucid, 'client64', 'schat2_'  . $this->version . '-1~lucid_amd64.deb');
+    $this->awsFileInfo($this->json->ubuntu->lucid, 'server',   'schatd2_' . $this->version . '-1~lucid_i386.deb');
+    $this->awsFileInfo($this->json->ubuntu->lucid, 'server64', 'schatd2_' . $this->version . '-1~lucid_amd64.deb');
 
     $this->json->ubuntu->precise->version = $this->version;
-    $this->fileInfo($this->json->ubuntu->precise, 'client',   'schat2_'  . $this->version . '-1~precise_i386.deb');
-    $this->fileInfo($this->json->ubuntu->precise, 'client64', 'schat2_'  . $this->version . '-1~precise_amd64.deb');
-    $this->fileInfo($this->json->ubuntu->precise, 'server',   'schatd2_' . $this->version . '-1~precise_i386.deb');
-    $this->fileInfo($this->json->ubuntu->precise, 'server64', 'schatd2_' . $this->version . '-1~precise_amd64.deb');
+    $this->awsFileInfo($this->json->ubuntu->precise, 'client',   'schat2_'  . $this->version . '-1~precise_i386.deb');
+    $this->awsFileInfo($this->json->ubuntu->precise, 'client64', 'schat2_'  . $this->version . '-1~precise_amd64.deb');
+    $this->awsFileInfo($this->json->ubuntu->precise, 'server',   'schatd2_' . $this->version . '-1~precise_i386.deb');
+    $this->awsFileInfo($this->json->ubuntu->precise, 'server64', 'schatd2_' . $this->version . '-1~precise_amd64.deb');
 
     return $this->write();
   }
@@ -92,6 +93,13 @@ class Download
   {
     $json->$key->size = $this->fileSize($file);
     $json->$key->url  = $this->url . '/' .$file;
+  }
+
+
+  function awsFileInfo($json, $key, $file)
+  {
+    $json->$key->size = $this->fileSize($file);
+    $json->$key->url  = $this->aws . '/' . $this->version . '/' .$file;
   }
 
 
