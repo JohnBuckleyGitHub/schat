@@ -297,7 +297,7 @@ Modal.create.options = function(event)
 
   body.append(
     '<div id="logging-row" class="row">' +
-      '<input id="logging" type="checkbox" ' + (feed[INFO_FEED_LOGGING_KEY] == true ? 'checked' : '') + '> ' +
+      '<input id="logging" type="checkbox" ' + (feed[INFO_FEED_LOGGING_KEY] === false ? '' : 'checked') + '> ' +
       '<label for="logging" data-tr="channels_logging">' + Utils.tr('channels_logging') + '</label> ' +
       '<i id="logging-spinner" class="icon-spinner hide"></i>' +
       '<i id="logging-error" class="icon-error hide"></i>' +
