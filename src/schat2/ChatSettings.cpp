@@ -37,6 +37,7 @@ ChatSettings::ChatSettings(const QString &fileName, const QString &defaultFile, 
   }
 
   setLocalDefault(SETTINGS_AUTO_CONNECT,          true);
+  setLocalDefault(SETTINGS_AUTO_SCROLL,           true);
   setLocalDefault(SETTINGS_DEFAULT_SERVER,        LS("schat://schat.me"));
   setLocalDefault(SETTINGS_LABS_DEVELOPER_EXTRAS, false);
   setLocalDefault(SETTINGS_LABS_DISABLE_UI,       false);
@@ -53,6 +54,8 @@ ChatSettings::ChatSettings(const QString &fileName, const QString &defaultFile, 
   setDefault(SETTINGS_LABS_STATIC_TRAY_ALERTS,    false);
   setDefault(SETTINGS_TOOLBAR_ACTIONS,            QStringList());
   setDefault(SETTINGS_TRANSLATION,                LS("auto"));
+
+  setValue(SETTINGS_AUTO_SCROLL, true);
 }
 
 

@@ -81,6 +81,7 @@ private:
   void reloadPage();
 
   bool m_loaded;                                       ///< true если документ загружен.
+  QAction *m_autoscroll;                               ///< Автопрокрутка.
   QAction *m_clear;                                    ///< Очистить.
   QAction *m_reload;                                   ///< Обновить.
   QAction *m_seconds;                                  ///< Секунды.
