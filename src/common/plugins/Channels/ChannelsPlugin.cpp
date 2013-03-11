@@ -84,7 +84,7 @@ ChannelsPluginImpl::ChannelsPluginImpl(QObject *parent)
   connect(ChatClient::channels(), SIGNAL(channel(QByteArray)), SLOT(channel(QByteArray)));
 
   ChatCore::translation()->addOther(LS("channels"));
-  ChatCore::settings()->setDefault(LS("Channels/Ignoring"), false);
+  ChatCore::settings()->setDefault(SETTINGS_CHANNELS_IGNORING, false);
 
   connect(ChatViewHooks::i(), SIGNAL(initHook(ChatView*)), SLOT(init(ChatView*)));
   connect(ChatViewHooks::i(), SIGNAL(loadFinishedHook(ChatView*)), SLOT(loadFinished(ChatView*)));
