@@ -158,8 +158,6 @@ Console.home = {
    * Установка политики основного канала.
    */
   setPolicy: function() {
-    console.log('setMainChannelOptions');
-
     var policy = 0;
     if ($('#use-main-channel').is(':checked'))
       policy |= 1;

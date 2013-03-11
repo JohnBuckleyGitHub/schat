@@ -27,7 +27,9 @@ var FEED_NAME_HOSTS           = 'hosts';
 var FEED_NAME_INFO            = 'info';
 var FEED_NAME_LIST            = 'list';
 var FEED_NAME_MESSAGES        = 'messages';
+var FEED_NAME_PROFILE         = 'profile';
 var FEED_NAME_SERVER          = 'server';
+var FEED_NAME_USER            = 'user';
 var FEED_NAME_USERS           = 'users';
 
 var SERVER_FEED_AUTH_KEY      = 'auth';
@@ -643,6 +645,26 @@ var Loader = {
         else
           $('#loading-body').fadeOut('fast');
       }
+    },
+
+
+    /*
+     * Подготовка фида к чтению.
+     * Если статус равен 302 запускается спинер, в остальных случаях он удаляется.
+     *
+     * \param name   имя фида.
+     * \param status статус запроса.
+     *
+     * \return true если статус раверн 200 или 300.
+     */
+    prepare: function(name, status) {
+      if (status == 302) {
+        Loader.spinner.add('loading/' + name);
+        return true;
+      }
+
+      Loader.spinner.remove('loading/' + name);
+      return status == 200 || status == 300;
     }
   }
 };

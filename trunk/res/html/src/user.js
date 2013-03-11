@@ -23,33 +23,17 @@ var Profile = {
   },
 
 
-  body: function(json) {
-    Profile.read(json);
-  },
-
-
   feed: function(json) {
-    if (!json.hasOwnProperty('type'))
-      return;
-
-    if (json.feed !== 'profile')
-      return;
-
-    if (json.id !== Settings.id)
-      return;
-
-    try {
-      Profile[json.type](json.data);
-    }
-    catch (e) {}
+    if (json.type === 'body' && json.feed === FEED_NAME_PROFILE && json.id === Settings.getId())
+      Profile.read(json.data, json.status);
   },
 
 
   /*
    * Чтение фида.
    */
-  read: function(json) {
-    if (json === false)
+  read: function(json, status) {
+    if (!Loader.spinner.prepare(FEED_NAME_PROFILE, status) || json === false)
       return;
 
     if (json.hasOwnProperty('provider')) {
@@ -79,7 +63,6 @@ var Profile = {
     }
 
     Profile.retranslate();
-    Loader.spinner.remove('loading/profile');
   },
 
 
@@ -110,21 +93,11 @@ var Profile = {
     if (Pages.current != 1)
       return;
 
-    if (SimpleChat.isOnline())
-      Loader.spinner.add('loading/profile');
-
     Utils.TR('profile');
 
-    Profile.read(SimpleChat.feed(Settings.id, 'profile', 1));
+    Profile.read(SimpleChat.feed(Settings.getId(), FEED_NAME_PROFILE, 3), 302);
+    SimpleChat.feed(Settings.getId(), FEED_NAME_PROFILE, 1);
     Profile.setStatus();
-  },
-
-
-  reply: function(json) {
-    if (json.action !== "x-set")
-      return;
-
-    Profile.read(SimpleChat.feed(Settings.id, 'profile', 3));
   },
 
 
@@ -186,24 +159,9 @@ var Profile = {
 
 
 var Connections = {
-  body: function(json) {
-    Connections.read(json);
-  },
-
   feed: function(json) {
-    if (!json.hasOwnProperty('type'))
-      return;
-
-    if (json.feed !== 'user')
-      return;
-
-    if (json.id !== Settings.id)
-      return;
-
-    try {
-      Connections[json.type](json.data);
-    }
-    catch (e) {}
+    if (json.type === 'body' && json.feed === FEED_NAME_USER && json.id == Settings.getId())
+      Connections.read(json.data, json.status);
   },
 
   process: function(key, json) {
@@ -219,8 +177,8 @@ var Connections = {
   /*
    * Чтение фида.
    */
-  read: function(json) {
-    if (json === false || !json.hasOwnProperty('connections'))
+  read: function(json, status) {
+    if (!Loader.spinner.prepare(FEED_NAME_USER, status) || json === false)
       return;
 
     $('.connection-row').remove();
@@ -245,8 +203,6 @@ var Connections = {
       $(".icon-os").tooltip();
     } else
       Connections.offline();
-
-    Loader.spinner.remove('loading/connections');
   },
 
 
@@ -254,7 +210,7 @@ var Connections = {
     if (Pages.current != 1)
       return;
 
-    if (SimpleChat.status(Settings.id) != 'Offline')
+    if (SimpleChat.status(Settings.getId()) != 'Offline')
       Connections.online();
     else
       Connections.offline();
@@ -271,7 +227,7 @@ var Connections = {
     Utils.TR("user_offline");
     $("#user-offline").show();
     $(".connection-row").remove();
-    Loader.spinner.remove('loading/connections');
+    Loader.spinner.remove('loading/user');
   },
 
 
@@ -280,10 +236,8 @@ var Connections = {
    */
   online: function()
   {
-    if (SimpleChat.isOnline())
-      Loader.spinner.add('loading/connections');
-
-    Connections.read(SimpleChat.feed(Settings.id, 'user', 0));
+    Connections.read(SimpleChat.feed(Settings.getId(), FEED_NAME_USER, 3), 302);
+    SimpleChat.feed(Settings.getId(), FEED_NAME_USER, 1);
   }
 };
 
@@ -300,7 +254,7 @@ Modal.create.connection = function(e)
 
   var id = $(e.target).data('id');
 
-  var feed = SimpleChat.feed(Settings.id, 'user', 3);
+  var feed = SimpleChat.feed(Settings.id, FEED_NAME_USER, 3);
   if (feed === false || !feed.hasOwnProperty('connections'))
     return;
 
