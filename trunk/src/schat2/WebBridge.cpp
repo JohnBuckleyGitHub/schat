@@ -106,6 +106,7 @@ WebBridge::WebBridge(QObject *parent)
   connect(ChatClient::channels(), SIGNAL(quit(QByteArray)), SLOT(quit(QByteArray)));
   connect(ChatClient::i(), SIGNAL(online()), SIGNAL(online()));
   connect(ChatClient::i(), SIGNAL(offline()), SIGNAL(offline()));
+  connect(ChatCore::settings(), SIGNAL(changed(QString,QVariant)), SIGNAL(settingsChanged(QString,QVariant)));
 }
 
 

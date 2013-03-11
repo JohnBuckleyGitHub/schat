@@ -171,8 +171,9 @@ void ChatView::allowFocus(bool allow)
 void ChatView::loadFinished()
 {
   m_loaded = true;
-  m_seconds->setChecked(SCHAT_OPTION("Display/Seconds").toBool());
-  m_service->setChecked(SCHAT_OPTION("Display/Service").toBool());
+  m_autoscroll->setChecked(ChatCore::settings()->value(SETTINGS_AUTO_SCROLL).toBool());
+  m_seconds->setChecked(ChatCore::settings()->value(SETTINGS_DISPLAY_SECONDS).toBool());
+  m_service->setChecked(ChatCore::settings()->value(SETTINGS_DISPLAY_SERVICE).toBool());
 
   evaluateJavaScript("showSeconds", m_seconds->isChecked());
   evaluateJavaScript("showService", m_service->isChecked());
@@ -223,6 +224,7 @@ void ChatView::contextMenu(QMenu *menu, const QWebHitTestResult &result)
   developerMenu(display);
   display->removeAction(pageAction(QWebPage::Reload));
 
+  menu->addAction(m_autoscroll);
   menu->addSeparator();
 
   ClientChannel channel = ChatClient::channels()->get(id());
@@ -247,6 +249,7 @@ void ChatView::retranslateUi()
 {
   WebView::retranslateUi();
 
+  m_autoscroll->setText(tr("Autoscroll"));
   m_clear->setText(tr("Clear"));
   m_reload->setText(tr("Reload"));
   m_seconds->setText(tr("Seconds"));
@@ -269,18 +272,16 @@ void ChatView::alignChat()
 
 void ChatView::menuTriggered(QAction *action)
 {
-  if (action == m_clear) {
+  if (action == m_clear)
     ChatNotify::start(Notify::ClearChat, id());
-  }
-  else if (action == m_reload) {
+  else if (action == m_reload)
     reloadPage();
-  }
-  else if (action == m_seconds) {
-    ChatCore::settings()->setValue(LS("Display/Seconds"), action->isChecked());
-  }
-  else if (action == m_service) {
-    ChatCore::settings()->setValue(LS("Display/Service"), action->isChecked());
-  }
+  else if (action == m_seconds)
+    ChatCore::settings()->setValue(SETTINGS_DISPLAY_SECONDS, action->isChecked());
+  else if (action == m_service)
+    ChatCore::settings()->setValue(SETTINGS_DISPLAY_SERVICE, action->isChecked());
+  else if (action == m_autoscroll)
+    ChatCore::settings()->setValue(SETTINGS_AUTO_SCROLL, action->isChecked());
 }
 
 
@@ -325,14 +326,16 @@ void ChatView::populateJavaScriptWindowObject()
 
 void ChatView::settingsChanged(const QString &key, const QVariant &value)
 {
-  if (key == LS("Display/Seconds")) {
+  if (key == SETTINGS_DISPLAY_SECONDS) {
     m_seconds->setChecked(value.toBool());
     evaluateJavaScript(LS("showSeconds"), value);
   }
-  else if (key == LS("Display/Service")) {
+  else if (key == SETTINGS_DISPLAY_SERVICE) {
     m_service->setChecked(value.toBool());
     evaluateJavaScript(LS("showService"), value);
   }
+  else if (key == SETTINGS_AUTO_SCROLL)
+    m_autoscroll->setChecked(value.toBool());
 }
 
 
@@ -393,6 +396,9 @@ void ChatView::clearPage()
 
 void ChatView::createActions()
 {
+  m_autoscroll = new QAction(tr("Autoscroll"), this);
+  m_autoscroll->setCheckable(true);
+
   m_clear = new QAction(SCHAT_ICON(EditClear), tr("Clear"), this);
   m_reload = new QAction(SCHAT_ICON(Reload), tr("Reload"), this);
 

@@ -167,26 +167,32 @@
         <translation>Відображати</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="250"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="396"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="251"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="398"/>
+        <source>Autoscroll</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="252"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="401"/>
         <source>Clear</source>
         <translation>Очистити</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="251"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="397"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="253"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="402"/>
         <source>Reload</source>
         <translation>Оновити</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="252"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="399"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="254"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="404"/>
         <source>Seconds</source>
         <translation>Секунди</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="253"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="402"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="255"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="407"/>
         <source>Service messages</source>
         <translation>Сервісне повідомлення</translation>
     </message>
@@ -670,12 +676,12 @@
 <context>
     <name>ServerTab</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="128"/>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="130"/>
         <source>Server %1 requires authorization</source>
         <translation>Сервер %1 вимагає авторизацію</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="193"/>
+        <location filename="../../src/schat2/ui/tabs/ServerTab.cpp" line="197"/>
         <source>Network</source>
         <translation>Мережа</translation>
     </message>

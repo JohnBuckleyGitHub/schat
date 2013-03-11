@@ -54,12 +54,22 @@ var Settings = {
   status: '',
   scroll: false,
   scrollTo: null,
+  autoscroll: SimpleChat.value('AutoScroll'),
 
   getId: function() {
     if (Settings.id == '')
       Settings.id = ChatView.getId();
 
     return Settings.id;
+  },
+
+
+  changed: function(key, value) {
+    if (key == 'AutoScroll') {
+      Settings.autoscroll = value;
+      if (value === true)
+        alignChat();
+    }
   }
 };
 
@@ -735,7 +745,8 @@ function alignChat() {
     }
   }
 
-  document.body.scrollTop = document.body.offsetHeight;
+  if (Settings.autoscroll)
+    document.body.scrollTop = document.body.offsetHeight;
 }
 
 
@@ -874,6 +885,7 @@ else {
   SimpleChat.retranslated.connect(Utils.retranslate);
   SimpleChat.renamed.connect(Messages.rename);
   SimpleChat.recolored.connect(Messages.recolor);
+  SimpleChat.settingsChanged.connect(Settings.changed);
 }
 
 if (typeof ChatView === 'undefined') {
