@@ -1,3 +1,9 @@
+2.0.3
+-----
+ * [Channels] Fixed, menu "Permissions" is also displayed in private talks.
+ * Accelerated display user profile by using the cached data.
+ + Added support for disabling autoscroll.
+
 2.0.2
 -----
  * Restored compatibility with Debian GNU/Linux 6.0.

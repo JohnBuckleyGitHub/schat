@@ -25,7 +25,7 @@
 #include "../../version.h"
 
 VS_VERSION_INFO VERSIONINFO
-  FILEVERSION 0,3,2,0
+  FILEVERSION 0,3,3,0
   PRODUCTVERSION SCHAT_VERSION_RC
   FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
@@ -43,7 +43,7 @@ VS_VERSION_INFO VERSIONINFO
       BEGIN
         VALUE "CompanyName",      SCHAT_ORGANIZATION
         VALUE "FileDescription",  "Advanced channels support"
-        VALUE "FileVersion",      "0.3.2"
+        VALUE "FileVersion",      "0.3.3"
         VALUE "LegalCopyright",   SCHAT_COPYRIGHT
         VALUE "OriginalFilename", "Channels.dll"
         VALUE "ProductName",      SCHAT_NAME
