@@ -224,10 +224,27 @@ var Connections = {
    */
   offline: function()
   {
-    Utils.TR("user_offline");
-    $("#user-offline").show();
-    $(".connection-row").remove();
+    var mdate = SimpleChat.mdate(Settings.getId(), FEED_NAME_USER);
+    var block = $('#user-offline');
+
+    if (mdate && SimpleChat.isOnline()) {
+      block.removeAttr('data-tr');
+      block.html('<div id="offline-since">' +
+                   '<span data-tr="offline_since">' + Utils.tr('offline_since') + '</span> ' +
+                   DateTime.template(mdate, true) +
+                 '</div>');
+    }
+    else {
+      block.attr('data-tr', 'user_offline');
+      block.html(Utils.tr('user_offline'));
+    }
+
+    block.show();
+    $('.connection-row').remove();
     Loader.spinner.remove('loading/user');
+
+    if (!mdate)
+      SimpleChat.feed(Settings.getId(), FEED_NAME_USER, 1);
   },
 
 

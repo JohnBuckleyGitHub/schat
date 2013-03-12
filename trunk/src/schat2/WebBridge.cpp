@@ -64,6 +64,7 @@ protected:
     else if (key == LS("profile"))           return tr("Profile");
     else if (key == LS("connections"))       return tr("Connections");
     else if (key == LS("user_offline"))      return tr("User offline");
+    else if (key == LS("offline_since"))     return tr("Offline since:");
     else if (key == LS("chat_version"))      return tr("Version");
     else if (key == LS("os_name"))           return tr("OS");
     else if (key == LS("kB"))                return tr("kB");
@@ -133,6 +134,19 @@ int WebBridge::match(const QString &channelId, const QString &userId) const
     return -1;
 
   return ClientFeeds::match(channel, user);
+}
+
+
+qint64 WebBridge::mdate(const QString &id, const QString &name) const
+{
+  ClientChannel channel = ChatClient::channels()->get(SimpleID::decode(id));
+  if (channel) {
+    FeedPtr feed = channel->feed(name, false);
+    if (feed)
+      return feed->head().date();
+  }
+
+  return 0;
 }
 
 
@@ -411,7 +425,7 @@ QVariantMap WebBridge::feed(const FeedNotify &notify)
   if (!channel)
     return QVariantMap();
 
-  int type = notify.type();
+  const int type = notify.type();
   QVariantMap out;
 
   if (type == Notify::FeedData) {
