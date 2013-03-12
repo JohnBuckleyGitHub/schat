@@ -881,26 +881,27 @@ function htmlspecialchars (string, quote_style, charset, double_encode) {
 
 if (typeof SimpleChat === 'undefined') {
   SimpleChat = {
-    channel: function(id)                  { return '{}'; },
-    translate: function(key)               { return key; },
-    setTabPage: function(id, page)         {},
-    feed: function(id, name, options)      { return false; },
-    randomId: function()                   { return ''; },
     bytesToHuman: function(size)           { return '0 bytes'; },
-    status: function(id)                   { return 'Offline'; },
+    channel: function(id)                  { return '{}'; },
     day: function(day)                     { return day; },
-    get: function(id, name, json)          {},
-    isOnline: function()                   { return true; },
-    serverPeer: function()                 { return ''; },
-    traffic: function()                    { return {tx:0, rx:0}; },
-    serverId: function()                   { return ''; },
     encryption: function()                 { return false; },
+    feed: function(id, name, options)      { return false; },
+    get: function(id, name, json)          {},
+    id: function()                         { return ''; },
+    isOnline: function()                   { return true; },
+    match: function(channelId, userId)     { return -1; },
+    mdate: function(id, name)              { return 0; },
+    randomId: function()                   { return ''; },
+    request: function(id, cmd, name, json) {},
+    serverId: function()                   { return ''; },
+    serverPeer: function()                 { return ''; },
+    setTabPage: function(id, page)         {},
+    status: function(id)                   { return 'Offline'; },
     statusText: function(status)           { return ''; },
     toBase32: function(text)               { return ''; },
-    request: function(id, cmd, name, json) {},
-    id: function()                         { return ''; },
-    value: function(key)                   { return null; },
-    match: function(channelId, userId)     { return -1; }
+    traffic: function()                    { return {tx:0, rx:0}; },
+    translate: function(key)               { return key; },
+    value: function(key)                   { return null; }
   };
 }
 else {
