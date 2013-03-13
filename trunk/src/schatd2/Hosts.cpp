@@ -271,6 +271,8 @@ void Hosts::updateUserFeed(HostInfo host, const QString &method, quint64 socket)
   event->path      = SimpleID::encode(host->hostId);
   event->socket    = socket;
 
+  user->data()[LS("last")] = event->path;
+
   FeedStorage::save(user, m_date);
   FeedEvents::start(event);
 }
