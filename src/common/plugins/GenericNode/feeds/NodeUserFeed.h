@@ -21,6 +21,7 @@
 
 #include "feeds/Feed.h"
 #include "feeds/FeedCreator.h"
+#include "Host.h"
 
 /*!
  * Серверная реализация фида \b user.
@@ -32,6 +33,9 @@ public:
   NodeUserFeed(const QString &name = FEED_NAME_USER, qint64 date = 0);
 
   QVariantMap feed(Channel *channel = 0) const;
+
+private:
+  QVariantMap toMap(HostInfo host) const;
 };
 
 

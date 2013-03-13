@@ -49,17 +49,8 @@ QVariantMap NodeUserFeed::feed(Channel *channel) const
   ServerChannel *ch = static_cast<ServerChannel *>(head().channel());
   const QMap<QByteArray, HostInfo> &hosts = ch->hosts()->all();
   foreach (const HostInfo &info, hosts) {
-    if (info->online) {
-      QVariantMap data;
-      data[LS("host")]    = info->address;
-      data[LS("version")] = Ver(info->version).toString();
-      data[LS("os")]      = info->os;
-      data[LS("osName")]  = info->osName;
-      data[LS("tz")]      = info->tz;
-
-      merge(LS("geo"),  data, info->geo);
-      connections[SimpleID::encode(info->hostId)] = data;
-    }
+    if (info->online)
+      connections[SimpleID::encode(info->hostId)] = toMap(info);
   }
 
   Account *account = ch->account();
@@ -68,6 +59,27 @@ QVariantMap NodeUserFeed::feed(Channel *channel) const
 
   out[LS("connections")] = connections;
   out[LS("groups")]      = account->groups.toString();
+
+  if (connections.isEmpty() && m_data.contains(LS("last")))
+    merge(LS("last"), out, toMap(hosts.value(SimpleID::decode(m_data.value(LS("last")).toString()))));
+
+  return out;
+}
+
+
+QVariantMap NodeUserFeed::toMap(HostInfo host) const
+{
+  if (!host)
+    return QVariantMap();
+
+  QVariantMap out;
+  out[LS("host")]    = host->address;
+  out[LS("version")] = Ver(host->version).toString();
+  out[LS("os")]      = host->os;
+  out[LS("osName")]  = host->osName;
+  out[LS("tz")]      = host->tz;
+
+  merge(LS("geo"), out, host->geo);
 
   return out;
 }
