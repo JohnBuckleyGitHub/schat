@@ -324,6 +324,7 @@ void CacheDB::close()
 {
   QSqlDatabase::removeDatabase(m_id);
   m_id.clear();
+  m_self->m_cache.clear();
 }
 
 
