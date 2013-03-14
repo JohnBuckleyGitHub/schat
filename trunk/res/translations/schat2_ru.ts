@@ -954,8 +954,8 @@
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="67"/>
-        <source>Offline since:</source>
-        <translation>Не в сети с:</translation>
+        <source>Offline since</source>
+        <translation>Не в сети с</translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="68"/>

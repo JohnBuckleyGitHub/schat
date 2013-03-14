@@ -674,10 +674,10 @@ var Loader = {
  * Управление модальным диалогом.
  */
 var Modal = {
-  current: '',
-  create: {},
-  hidden: {},
-  shown: {},
+  current: '', // Текущий диалог.
+  create:  {}, // Функции создания.
+  hidden:  {}, // Функции, вызывающиеся после скрытия диалога.
+  shown:   {}, // Функции, вызывающиеся после показа диалога.
 
   init: function() {
     var body  = $('body');
@@ -688,7 +688,9 @@ var Modal = {
       var handler = $(this).attr('data-handler');
 
       if (handler !== undefined && Modal.create.hasOwnProperty(handler)) {
-        Modal.create[handler](event);
+        if (Modal.create[handler](event) === false)
+          return;
+
         Modal.current = handler;
       }
 

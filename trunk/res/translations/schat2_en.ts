@@ -963,7 +963,7 @@
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="67"/>
-        <source>Offline since:</source>
+        <source>Offline since</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

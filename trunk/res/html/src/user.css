@@ -55,8 +55,12 @@ h3 {
   margin-top: 0;
 }
 
-#user-status-text, #user-account, #user-offline, #offline-since .date-time-block {
+#user-status-text, #user-account, #user-offline {
   color: #5b5d6d;
+}
+
+#offline-since .date-time-block {
+  color: inherit;
   font-size: inherit;
 }
 

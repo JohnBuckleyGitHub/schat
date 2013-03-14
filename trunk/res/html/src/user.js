@@ -165,13 +165,17 @@ var Connections = {
   },
 
   process: function(key, json) {
-    var id = "#" + key;
-    $("#connections").append('<div class="connection-row bottom-line" id="' + key + '"><i class="icon-os"></i> <a href="#" class="connection-host modal-toggle" data-handler="connection"></a></div>');
+    $('#connections').append(
+        '<div class="connection-row bottom-line" id="' + key + '">' +
+          '<i data-original-title="' + htmlspecialchars(json.osName) + '" class="icon-os os-' + Pages.os(json.os) + '"></i> ' +
+          '<a href="#" class="connection-host modal-toggle" data-handler="connection">' + json.host + '</a>' +
+        '</div>'
+    );
 
-    $(id + " .icon-os").attr("class", "icon-os os-" + Pages.os(json.os));
-    $(id + " .icon-os").attr("data-original-title", htmlspecialchars(json.osName));
-    $(id + " > .connection-host").text(json.host);
-    $(id + " > .connection-host").data('id', key);
+    $('#' + key + ' > .connection-host').data('id', key);
+
+    for (var i = 0; i < UserHooks.process.length; i++)
+      UserHooks.process[i](key, json);
   },
 
   /*
@@ -192,15 +196,11 @@ var Connections = {
     for (var key in connections) if (connections.hasOwnProperty(key) && key.length == 34) {
       count++;
       Connections.process(key, connections[key]);
-
-      for (var i = 0; i < UserHooks.process.length; i++) {
-        UserHooks.process[i](key, connections[key]);
-      }
     }
 
     if (count > 0) {
-      $("#user-offline").hide();
-      $(".icon-os").tooltip();
+      $('#user-offline').hide();
+      $('.icon-os').tooltip();
     } else
       Connections.offline();
   },
@@ -226,13 +226,19 @@ var Connections = {
   {
     var mdate = SimpleChat.mdate(Settings.getId(), FEED_NAME_USER);
     var block = $('#user-offline');
+    $('.connection-row').remove();
 
     if (mdate && SimpleChat.isOnline()) {
       block.removeAttr('data-tr');
-      block.html('<div id="offline-since">' +
-                   '<span data-tr="offline_since">' + Utils.tr('offline_since') + '</span> ' +
-                   DateTime.template(mdate, true) +
-                 '</div>');
+      var html = '<div id="offline-since"><span data-tr="offline_since">' + Utils.tr('offline_since') + '</span> ';
+      var feed = SimpleChat.feed(Settings.getId(), FEED_NAME_USER, 3);
+
+      if (feed !== false && feed.hasOwnProperty('last'))
+        html += '<a href="#" class="modal-toggle" data-handler="connection">' + DateTime.template(mdate, true) + '</a>';
+      else
+        html += DateTime.template(mdate, true);
+
+      block.html(html +'</div>');
     }
     else {
       block.attr('data-tr', 'user_offline');
@@ -240,7 +246,6 @@ var Connections = {
     }
 
     block.show();
-    $('.connection-row').remove();
     Loader.spinner.remove('loading/user');
 
     if (!mdate)
@@ -267,23 +272,28 @@ var UserHooks = {
 
 Modal.create.connection = function(e)
 {
-  $('#modal-header h3').text(e.target.innerText);
-
-  var id = $(e.target).data('id');
+  var h3 = $('#modal-header h3');
+  h3.text(e.target.innerText);
 
   var feed = SimpleChat.feed(Settings.id, FEED_NAME_USER, 3);
   if (feed === false || !feed.hasOwnProperty('connections'))
-    return;
+    return false;
 
-  var json  = feed.connections[id];
+  var id   = $(e.target).data('id');
+  var json = typeof id === 'undefined' ? feed.last : feed.connections[id];
+
+  if (typeof json === 'undefined')
+    return false;
+
   var modal = $('#modal-body');
-
+  h3.text(json.host);
   modal.append(Utils.row('chat_version', htmlspecialchars(json.version)));
   modal.append(Utils.row('os_name', '<i class="icon-os os-' + Pages.os(json.os) + '"></i> ' + htmlspecialchars(json.osName)));
 
-  for (var i = 0; i < UserHooks.connection.length; i++) {
+  for (var i = 0; i < UserHooks.connection.length; i++)
     UserHooks.connection[i](json);
-  }
+
+  return true;
 };
 
 Modal.shown.connection = function()
