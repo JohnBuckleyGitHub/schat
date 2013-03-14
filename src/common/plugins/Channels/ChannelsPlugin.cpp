@@ -66,6 +66,7 @@ protected:
     else if (key == LS("permissions"))    return tr("Permissions");
     else if (key == LS("owner"))          return tr("Owner");
     else if (key == LS("readonly"))       return tr("Read only");
+    else if (key == LS("moderator"))      return tr("Moderator");
     else if (key == LS("logging"))        return tr("Logging messages");
     return QString();
   }

@@ -132,7 +132,13 @@ var Channels = {
   },
 
 
+  /*
+   * Показ окна редактирования расширенных прав доступа.
+   */
   editAcl: function(id) {
+    if (Modal.current !== null)
+      return;
+
     $('#modal-header h3').html(Messages.nameTemplate(SimpleChat.channel(id)));
 
     var body = $('#modal-body');
@@ -142,9 +148,10 @@ var Channels = {
         '<div id="acl-row" class="row">' +
           '<label for="acl" data-tr="channels_permissions">' + Utils.tr('channels_permissions') + '</label> ' +
           '<select id="acl" data-user="' + id + '">' +
-            '<option value="6" data-tr="channels_default">'  + Utils.tr('channels_default')  + '</option>' +
-            '<option value="15" data-tr="channels_owner">'   + Utils.tr('channels_owner')    + '</option>' +
-            '<option value="4" data-tr="channels_readonly">' + Utils.tr('channels_readonly') + '</option>' +
+            '<option value="6" data-tr="channels_default">'    + Utils.tr('channels_default')   + '</option>' +
+            '<option value="15" data-tr="channels_owner">'     + Utils.tr('channels_owner')     + '</option>' +
+            '<option value="22" data-tr="channels_moderator">' + Utils.tr('channels_moderator') + '</option>' +
+            '<option value="4" data-tr="channels_readonly">'   + Utils.tr('channels_readonly')  + '</option>' +
           '</select> ' +
           '<i id="acl-spinner" class="icon-spinner hide"></i>' +
           '<i id="acl-error" class="icon-error hide"></i>' +
@@ -152,18 +159,28 @@ var Channels = {
       '</form>'
     );
 
-    var acl  = SimpleChat.match(Settings.getId(), id);
-    var feed = SimpleChat.feed(Settings.getId(), FEED_NAME_ACL, 3);
-
-    if (feed !== false && feed.hasOwnProperty(id)) {
-      if (acl & 9)
-        $('#acl').val('15');
-      else if (!(acl & 2))
-        $('#acl').val('4');
-    }
+    if (SimpleChat.feed(Settings.getId(), FEED_NAME_ACL, 3) !== false)
+      $('#acl').val(Channels.value(SimpleChat.match(Settings.getId(), id)));
 
     Modal.current = 'acl';
     $('#modal').modal();
+  },
+
+
+  /*
+   * Определение выбранного пункта в комбобоксе редактирования расширенных прав доступа.
+   */
+  value: function(acl) {
+    if (acl & 9)
+      return 15;
+
+    if (acl & 22)
+      return 22;
+
+    else if (!(acl & 2))
+      return 4;
+
+    return 6;
   },
 
 
@@ -211,14 +228,17 @@ var Channels = {
 
   setAcl: function(event) {
     var value = $(this).find('option:selected').attr('value');
-    var id    = $(this).attr('data-user');
+    var user  = $(this).attr('data-user');
+    var id    = Settings.getId();
 
     if (value == 15)
-      SimpleChat.request(Settings.getId(), FEED_METHOD_POST,   ACL_FEED_HEAD_OWNER_REQ, {'value':id,'options':6});
+      SimpleChat.request(id, FEED_METHOD_POST,   ACL_FEED_HEAD_OWNER_REQ, {'value':user,'options':6});
     else if (value == 6)
-      SimpleChat.request(Settings.getId(), FEED_METHOD_DELETE, ACL_FEED_HEAD_OTHER_REQ + '/' + id, {'options':6});
+      SimpleChat.request(id, FEED_METHOD_DELETE, ACL_FEED_HEAD_OTHER_REQ + '/' + user, {'options':6});
     else if (value == 4)
-      SimpleChat.request(Settings.getId(), FEED_METHOD_POST,   ACL_FEED_HEAD_OTHER_REQ + '/' + id, {'value':4,'options':6});
+      SimpleChat.request(id, FEED_METHOD_POST,   ACL_FEED_HEAD_OTHER_REQ + '/' + user, {'value':4,'options':6});
+    else if (value == 22)
+      SimpleChat.request(id, FEED_METHOD_POST,   ACL_FEED_HEAD_OTHER_REQ + '/' + user, {'value':22,'options':6});
 
     Channels.startSpinner('acl');
   }
