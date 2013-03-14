@@ -30,7 +30,7 @@ Acl::Acl(int mask)
 
 bool Acl::add(const QByteArray &other, int acl)
 {
-  if (SimpleID::typeOf(other) != SimpleID::UserId || acl < 0 || acl > 7)
+  if (SimpleID::typeOf(other) != SimpleID::UserId || acl < 0 || acl > 077)
     return false;
 
   m_others[other] = acl;

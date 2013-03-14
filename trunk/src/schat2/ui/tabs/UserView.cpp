@@ -62,7 +62,7 @@ bool UserItem::reload()
   if (acl != -1) {
     QFont font = this->font();
 
-    m_bold = acl & Acl::Edit;
+    m_bold   = acl & Acl::Edit || acl & Acl::SpecialWrite;
     m_italic = !(acl & Acl::Write) || Hooks::MessagesImpl::ignored(m_user);
 
     font.setBold(m_bold);

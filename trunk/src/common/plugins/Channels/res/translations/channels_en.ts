@@ -28,7 +28,7 @@
 <context>
     <name>ChannelsPluginImpl</name>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="181"/>
+        <location filename="../../ChannelsPlugin.cpp" line="182"/>
         <source>Channels</source>
         <translation type="unfinished"></translation>
     </message>
@@ -115,6 +115,11 @@
     </message>
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="69"/>
+        <source>Moderator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="70"/>
         <source>Logging messages</source>
         <translation type="unfinished"></translation>
     </message>
