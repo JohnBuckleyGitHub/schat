@@ -44,7 +44,6 @@ AbstractClientPrivate::AbstractClientPrivate()
   , reconnects(0)
   , pool(new NetworkPool())
   , reconnectTimer(new QBasicTimer())
-  , uniqueId(SimpleID::uniqueId(Channel::defaultName().toUtf8()))
 {
   Account account;
   channel->setAccount(&account);

@@ -1,5 +1,6 @@
 2.0.3
 -----
+ + Fixed a bug on generating a unique identifier of a computer.
  + Added initial support for moderators of channels.
  + Added support for displaying the date the user disconnects and information about the last connection.
  * Fixed, in some cases, the client could hang when changing the server.
