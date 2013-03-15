@@ -174,7 +174,7 @@ var Channels = {
     if (acl & 9)
       return 15;
 
-    if (acl & 22)
+    if (acl & 16)
       return 22;
 
     else if (!(acl & 2))

@@ -1,7 +1,10 @@
 2.0.3
 -----
- * [Channels] Fixed, menu "Permissions" is also displayed in private talks.
- * Accelerated display user profile by using the cached data.
+ + Added initial support for moderators of channels.
+ + Added support for displaying the date the user disconnects and information about the last connection.
+ * Fixed, in some cases, the client could hang when changing the server.
+ * Fixed, menu "Permissions" is also displayed in private talks.
+ * Improved speed to displaying user profile by using the cached data.
  + Added support for disabling autoscroll.
 
 2.0.2
