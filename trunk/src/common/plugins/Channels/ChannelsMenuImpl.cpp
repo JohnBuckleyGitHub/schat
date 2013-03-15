@@ -113,21 +113,30 @@ void ChannelsMenuImpl::permissions(QMenu *menu, ClientChannel user)
   if (!channel || channel->type() != SimpleID::ChannelId)
     return;
 
-  int acl = ClientFeeds::match(channel, ChatClient::channel());
-  if (acl == -1 || !(acl & Acl::Edit))
+  const int acl = ClientFeeds::match(channel, ChatClient::channel());
+  if (acl == -1)
     return;
 
-  menu->addSeparator();
-  m_permissions = menu->addMenu(SCHAT_ICON(Key), tr("Permissions"));
+  const bool ro  = !m_self && (acl & Acl::Edit || acl & Acl::SpecialWrite);
+  const bool adv = acl & Acl::Edit;
 
-  if (!m_self) {
-    acl = ClientFeeds::match(channel, user);
-    m_ro = m_permissions->addAction(tr("Read only"));
-    m_ro->setCheckable(true);
-    m_ro->setChecked(!(acl & Acl::Write));
-    m_ro->setData(user->id());
+  if (ro || adv) {
+    menu->addSeparator();
+    m_permissions = menu->addMenu(SCHAT_ICON(Key), tr("Permissions"));
+
+    if (ro) {
+      const int acl = ClientFeeds::match(channel, user);
+      m_ro = m_permissions->addAction(tr("Read only"));
+      m_ro->setCheckable(true);
+      m_ro->setChecked(!(acl & Acl::Write));
+      m_ro->setData(user->id());
+    }
+
+    if (adv) {
+      m_advanced = m_permissions->addAction(tr("Advanced..."));
+      m_advanced->setData(user->id());
+    }
   }
 
-  m_advanced = m_permissions->addAction(tr("Advanced..."));
-  m_advanced->setData(user->id());
+
 }

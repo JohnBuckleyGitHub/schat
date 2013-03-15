@@ -37,6 +37,7 @@ public:
   void setChannel(Channel *channel);
 
 private:
+  bool isGenericUser(const QByteArray &id) const;
   void init();
 };
 

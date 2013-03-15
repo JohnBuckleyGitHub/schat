@@ -17,6 +17,7 @@
  */
 
 #include "acl/AclValue.h"
+#include "Ch.h"
 #include "Channel.h"
 #include "DateTime.h"
 #include "feeds/FeedsCore.h"
@@ -44,15 +45,33 @@ NodeAclFeed::NodeAclFeed(const QString &name, qint64 date)
  */
 FeedReply NodeAclFeed::del(const QString &path, Channel *channel)
 {
-  if (path.startsWith(LS("head/"))) {
-    const FeedReply reply = Feed::del(path, channel);
-    if (reply.status == Notice::OK)
-      m_data.remove(path.mid(11));
+  if (!path.startsWith(LS("head/")))
+    return Notice::Forbidden;
 
-    return reply;
+  const int acl = AclValue::match(this, channel);
+  FeedReply reply(Notice::Forbidden);
+
+  if (acl & (Acl::Edit | Acl::SpecialEdit)) {
+    reply = Feed::del(path, channel);
+  }
+  else if (acl & Acl::SpecialWrite) {
+    const QByteArray id = SimpleID::decode(path.mid(11));
+    if (SimpleID::typeOf(id) != SimpleID::UserId)
+      return Notice::BadRequest;
+
+    if (isGenericUser(id)) {
+      reply.status = head().del(path.mid(5));
+      if (reply.status != Notice::OK)
+        return reply;
+    }
   }
 
-  return Notice::Forbidden;
+  if (reply.status == Notice::OK) {
+    m_data.remove(path.mid(11));
+    reply.date = DateTime::utc();
+  }
+
+  return reply;
 }
 
 
@@ -61,19 +80,37 @@ FeedReply NodeAclFeed::del(const QString &path, Channel *channel)
  */
 FeedReply NodeAclFeed::post(const QString &path, const QVariantMap &json, Channel *channel)
 {
-  if (path.startsWith(LS("head/"))) {
-    const FeedReply reply = Feed::post(path, json, channel);
-    if (reply.status == Notice::OK) {
-      if (path == LS("head/owner"))
-        m_data[json.value(FEED_KEY_VALUE).toString()] = AclValue::toByteArray(head().acl().mask() >> 6 | Acl::SpecialEdit);
-      else
-        m_data[path.mid(11)] = AclValue::toByteArray(json.value(FEED_KEY_VALUE).toInt());
-    }
+  if (!path.startsWith(LS("head/")))
+    return Notice::Forbidden;
 
-    return reply;
+  const int acl = AclValue::match(this, channel);
+  FeedReply reply(Notice::Forbidden);
+
+  if (acl & (Acl::Edit | Acl::SpecialEdit) || path == LS("head/owner")) {
+    reply = Feed::post(path, json, channel);
+  }
+  else if (acl & Acl::SpecialWrite && path.startsWith(LS("head/other/"))) {
+    const QByteArray id = SimpleID::decode(path.mid(11));
+    if (SimpleID::typeOf(id) != SimpleID::UserId)
+      return Notice::BadRequest;
+
+    if (isGenericUser(id)) {
+      reply.status = head().post(path.mid(5), json[FEED_KEY_VALUE]);
+      if (reply.status != Notice::OK)
+        return reply;
+    }
   }
 
-  return Notice::Forbidden;
+  if (reply.status == Notice::OK) {
+    if (path == LS("head/owner"))
+      m_data[json.value(FEED_KEY_VALUE).toString()] = AclValue::toByteArray(head().acl().mask() >> 6 | Acl::SpecialEdit);
+    else
+      m_data[path.mid(11)] = AclValue::toByteArray(json.value(FEED_KEY_VALUE).toInt());
+
+    reply.date = DateTime::utc();
+  }
+
+  return reply;
 }
 
 
@@ -110,6 +147,28 @@ void NodeAclFeed::setChannel(Channel *channel)
 
   if (channel->type() == SimpleID::ServerId)
     FeedsCore::sub(FEED_NAME_ACL);
+}
+
+
+/*!
+ * Возвращает \b true если пользователь не является владельцем или модератором.
+ */
+bool NodeAclFeed::isGenericUser(const QByteArray &id) const
+{
+  ChatChannel user = Ch::channel(id, SimpleID::UserId);
+  if (!user)
+    return true;
+
+  const int acl = AclValue::match(this, user.data());
+  Ch::gc(user);
+
+  if (acl & (Acl::Edit | Acl::SpecialEdit))
+    return false;
+
+  if (acl & (Acl::SpecialWrite))
+    return false;
+
+  return true;
 }
 
 
