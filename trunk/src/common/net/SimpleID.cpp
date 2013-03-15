@@ -163,21 +163,20 @@ QByteArray SimpleID::toBase32(const QByteArray &data)
  */
 QByteArray SimpleID::uniqueId(const QByteArray &salt)
 {
-  #if defined(SCHAT_RANDOM_CLIENT_ID)
+# if defined(SCHAT_RANDOM_CLIENT_ID)
   return QCryptographicHash::hash(QUuid::createUuid().toString().toLatin1(), QCryptographicHash::Sha1) += UniqueUserId;
-  #endif
+# endif
 
   QList<QNetworkInterface> all = QNetworkInterface::allInterfaces();
   foreach (QNetworkInterface iface, all) {
-    QString hw = iface.hardwareAddress();
-    QNetworkInterface::InterfaceFlags flags = iface.flags();
+    const QString hw = iface.hardwareAddress();
+    const QNetworkInterface::InterfaceFlags flags = iface.flags();
 
-    if (!hw.isEmpty() && !flags.testFlag(QNetworkInterface::IsLoopBack) && flags.testFlag(QNetworkInterface::IsUp) && flags.testFlag(QNetworkInterface::IsRunning)) {
+    if (!hw.isEmpty() && !flags.testFlag(QNetworkInterface::IsLoopBack) && flags.testFlag(QNetworkInterface::IsUp) && flags.testFlag(QNetworkInterface::IsRunning))
       return make(hw.toLatin1() + salt, UniqueUserId);
-    }
   }
 
-  return make("", UniqueUserId);
+  return QByteArray();
 }
 
 
