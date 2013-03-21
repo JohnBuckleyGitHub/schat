@@ -83,6 +83,9 @@ void ChannelsMenuImpl::bindImpl(QMenu *menu, ClientChannel channel, Hooks::Scope
   if (scope == Hooks::UserViewScope || scope == Hooks::ChatViewScope)
     permissions(menu, channel);
 
+  if (!m_self)
+    invite(menu, channel);
+
   if (ChatCore::settings()->value(SETTINGS_CHANNELS_IGNORING).toBool() && !m_self) {
     if (!m_permissions)
       menu->addSeparator();
@@ -100,7 +103,50 @@ void ChannelsMenuImpl::cleanupImpl()
   m_advanced = 0;
   m_ignore = 0;
   m_permissions = 0;
+  m_invite = 0;
   m_ro = 0;
+}
+
+
+void ChannelsMenuImpl::invite(QAction *action)
+{
+  if (!action)
+    return;
+
+  const QVariantList data = action->data().toList();
+  if (data.size() == 2)
+    ChannelsPluginImpl::inviteTo(data.at(0).toByteArray(), data.at(1).toByteArray());
+}
+
+
+/*!
+ * Формирование меню приглашения в канал.
+ */
+void ChannelsMenuImpl::invite(QMenu *menu, ClientChannel user)
+{
+  QList<ClientChannel> list;
+  const QMap<QByteArray, ClientChannel>& channels = ChatClient::channels()->channels();
+  const QByteArray id                             = ChatClient::id();
+  const QByteArray& userId                        = user->id();
+
+  QMapIterator<QByteArray, ClientChannel> i(channels);
+  while (i.hasNext()) {
+    i.next();
+
+    ClientChannel channel = i.value();
+    if (SimpleID::typeOf(i.value()->id()) == SimpleID::ChannelId && channel->channels().contains(id) && !channel->channels().contains(userId) && user->status() != Status::Offline)
+      list.append(channel);
+  }
+
+  if (list.isEmpty())
+    return;
+
+  m_invite = menu->addMenu(ChatIcons::icon(ChatIcons::icon(user, ChatIcons::NoOptions), LS(":/images/add-small.png")), tr("Invite to"));
+  foreach (const ClientChannel &channel, list) {
+    m_invite->addAction(SCHAT_ICON(Channel), channel->name())->setData(QVariantList() << user->id() << channel->id());
+  }
+
+  connect(m_invite, SIGNAL(triggered(QAction*)), SLOT(invite(QAction*)));
 }
 
 
@@ -137,6 +183,4 @@ void ChannelsMenuImpl::permissions(QMenu *menu, ClientChannel user)
       m_advanced->setData(user->id());
     }
   }
-
-
 }

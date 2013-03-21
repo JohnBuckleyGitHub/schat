@@ -33,13 +33,18 @@ protected:
   void bindImpl(QMenu *menu, ClientChannel channel, Hooks::Scope scope);
   void cleanupImpl();
 
+private slots:
+  void invite(QAction *action);
+
 private:
+  void invite(QMenu *menu, ClientChannel user);
   void permissions(QMenu *menu, ClientChannel user);
 
   bool m_self;          ///< \b true если пользователь совершает действия над собой.
   QAction *m_advanced;  ///< Расширенная настройка правд доступа.
   QAction *m_ignore;    ///< Действие для игнорирования пользователя.
   QAction *m_ro;        ///< Права только для чтения.
+  QMenu *m_invite;      ///< Меню приглашения в канал.
   QMenu *m_permissions; ///< Меню управления правами пользователя в канале.
 };
 
