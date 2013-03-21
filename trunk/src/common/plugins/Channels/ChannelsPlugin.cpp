@@ -31,8 +31,10 @@
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/ClientFeeds.h"
+#include "client/SimpleClient.h"
 #include "feeds/FeedStrings.h"
 #include "hooks/ChatViewHooks.h"
+#include "JSON.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
 #include "Tr.h"
@@ -109,6 +111,23 @@ void ChannelsPluginImpl::ignore(const QByteArray &id)
     return;
 
   ClientFeeds::post(ChatClient::id(), LS("acl/head/other/") + SimpleID::encode(id), Acl::Read, Feed::Share | Feed::Broadcast);
+}
+
+
+void ChannelsPluginImpl::inviteTo(const QByteArray &userId, const QByteArray &channelId)
+{
+  if (SimpleID::typeOf(userId) != SimpleID::UserId || SimpleID::typeOf(channelId) != SimpleID::ChannelId)
+    return;
+
+  QVariantMap data;
+  data[LS("id")]   = SimpleID::encode(channelId);
+  data[LS("name")] = ChatClient::channels()->get(channelId)->name();
+
+  MessagePacket packet(new MessageNotice(ChatClient::id(), userId, JSON::generate(data), 0, ChatCore::randomId()));
+  packet->setCommand(LS("invite"));
+  packet->setDirection(Notice::Internal);
+  packet->setStatus(Notice::Found);
+  ChatClient::io()->send(packet, false);
 }
 
 

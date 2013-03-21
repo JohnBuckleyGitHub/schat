@@ -5,22 +5,27 @@
 <context>
     <name>ChannelsMenuImpl</name>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="90"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="95"/>
         <source>Ignore</source>
         <translation>Игнорировать</translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="121"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="135"/>
+        <source>Invite to</source>
+        <translation>Пригласить в</translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsMenuImpl.cpp" line="161"/>
         <source>Permissions</source>
         <translation>Права доступа</translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="125"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="165"/>
         <source>Read only</source>
         <translation>Только чтение</translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="131"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="172"/>
         <source>Advanced...</source>
         <translation>Расширенные...</translation>
     </message>
