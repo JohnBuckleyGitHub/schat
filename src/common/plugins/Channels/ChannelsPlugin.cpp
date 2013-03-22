@@ -70,6 +70,8 @@ protected:
     else if (key == LS("readonly"))       return tr("Read only");
     else if (key == LS("moderator"))      return tr("Moderator");
     else if (key == LS("logging"))        return tr("Logging messages");
+    else if (key == LS("accept"))         return tr("Accept invitation");
+    else if (key == LS("reject"))         return tr("Reject");
     return QString();
   }
 };
@@ -166,11 +168,12 @@ void ChannelsPluginImpl::channel(const QByteArray &id)
  */
 void ChannelsPluginImpl::init(ChatView *view)
 {
-  if (SimpleID::typeOf(view->id()) != SimpleID::ChannelId)
-    return;
-
-  view->addJS(LS("qrc:/js/Channels/bootstrap-dropdown.js"));
-  view->addJS(LS("qrc:/js/Channels/Channels.js"));
+  if (SimpleID::typeOf(view->id()) == SimpleID::ChannelId) {
+    view->addJS(LS("qrc:/js/Channels/bootstrap-dropdown.js"));
+    view->addJS(LS("qrc:/js/Channels/Channels.js"));
+  }
+  else if (SimpleID::typeOf(view->id()) == SimpleID::UserId)
+    view->addJS(LS("qrc:/js/Channels/ChannelsUser.js"));
 }
 
 

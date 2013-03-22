@@ -5,7 +5,7 @@
 <context>
     <name>ChannelsCmd</name>
     <message>
-        <location filename="../../ChannelsCmd.cpp" line="129"/>
+        <location filename="../../ChannelsCmd.cpp" line="128"/>
         <source>%1 invites you to channel %2</source>
         <translation>%1 приглашает вас в канал %2</translation>
     </message>
@@ -41,7 +41,7 @@
 <context>
     <name>ChannelsPluginImpl</name>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="201"/>
+        <location filename="../../ChannelsPlugin.cpp" line="203"/>
         <source>Channels</source>
         <translation>Каналы</translation>
     </message>
@@ -136,6 +136,16 @@
         <source>Logging messages</source>
         <translation>Журналирование сообщений</translation>
     </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="73"/>
+        <source>Accept invitation</source>
+        <translation>Принять приглашение</translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="74"/>
+        <source>Reject</source>
+        <translation>Отказаться</translation>
+    </message>
 </context>
 <context>
     <name>ListTab</name>
@@ -148,7 +158,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../ChannelsCmd.cpp" line="52"/>
+        <location filename="../../ChannelsCmd.cpp" line="50"/>
         <source>Invitation to a channel</source>
         <translation>Приглашение в канал</translation>
     </message>

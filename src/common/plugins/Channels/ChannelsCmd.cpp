@@ -95,13 +95,17 @@ int ChannelsCmd::read(MessagePacket packet)
     if (SimpleID::typeOf(channelId) != SimpleID::ChannelId)
       return 1;
 
+    const QString name = json.value(LS("name")).toString();
     const qint64 date  = DateTime::utc();
-    const QString text = inviteText(tab, channelId, json.value(LS("name")).toString());
+    const QString text = inviteText(tab, channelId, name);
 
     AlertMessage message(text, ALERT_MESSAGE_INFO);
     message.setTab(tab);
     message.setId(packet->id());
     message.setDate(date);
+    message.data()[MESSAGE_FUNC]  = LS("addInviteMessage");
+    message.data()[LS("Url")]     = LS("chat://channel/") + SimpleID::encode(channelId) + LS("/open?name=") + SimpleID::toBase32(name.toUtf8()) + LS("&gender=0");
+    message.data()[LS("Channel")] = QString(SimpleID::encode(channelId));
     TabWidget::add(message);
 
     Alert alert(command, packet->id(), date);

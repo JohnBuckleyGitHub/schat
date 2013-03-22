@@ -39,6 +39,7 @@
 #include "sglobal.h"
 #include "Tr.h"
 #include "Translation.h"
+#include "ui/TabWidget.h"
 #include "WebBridge.h"
 
 WebBridge *WebBridge::m_self = 0;
@@ -344,6 +345,12 @@ QVariantMap WebBridge::traffic() const
 void WebBridge::get(const QString &id, const QString &name, const QVariantMap &json)
 {
   ClientFeeds::request(ChatClient::channels()->get(SimpleID::decode(id)), FEED_METHOD_GET, name, json);
+}
+
+
+void WebBridge::pinTab(const QString &id) const
+{
+  TabWidget::pin(SimpleID::decode(id));
 }
 
 
