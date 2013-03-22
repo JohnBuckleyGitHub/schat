@@ -12,6 +12,7 @@
   <file alias="images/Channels/settings.png">res/images/settings.png</file>
   <file alias="js/Channels/bootstrap-dropdown.js">res/js/bootstrap-dropdown.min.js</file>
   <file alias="js/Channels/Channels.js">res/js/Channels.min.js</file>
+  <file alias="js/Channels/ChannelsUser.js">res/js/ChannelsUser.min.js</file>
   <file alias="js/Channels/ListView.js">res/js/ListView.min.js</file>
   <file alias="translations/channels_ru.qm">res/translations/channels_ru.qm</file>
   <file alias="translations/channels_uk.qm">res/translations/channels_uk.qm</file>

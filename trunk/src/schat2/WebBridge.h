@@ -58,6 +58,7 @@ public:
   Q_INVOKABLE QVariant value(const QString &key) const;
   Q_INVOKABLE QVariantMap traffic() const;
   Q_INVOKABLE void get(const QString &id, const QString &name, const QVariantMap &json = QVariantMap());
+  Q_INVOKABLE void pinTab(const QString &id) const;
   Q_INVOKABLE void request(const QString &id, const QString &command, const QString &name, const QVariantMap &json = QVariantMap());
   Q_INVOKABLE void setTabPage(const QString &id, int page);
 

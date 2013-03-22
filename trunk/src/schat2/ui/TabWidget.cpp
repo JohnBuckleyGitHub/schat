@@ -243,6 +243,12 @@ ChannelBaseTab *TabWidget::channelTab(const QByteArray &id, bool create, bool sh
 
       if (channel->type() == SimpleID::ChannelId && isAutoPin(channel->id()))
         tab->pin();
+
+      if (m_autoPin.contains(id)) {
+        m_autoPin.removeAll(id);
+        tab->pin();
+        emit pinned(tab);
+      }
     }
 
     closePage(PROGRESS_TAB);
@@ -268,6 +274,21 @@ void TabWidget::add(const Message &message, bool create)
     return;
 
   m_self->addImpl(message, create);
+}
+
+
+void TabWidget::pin(const QByteArray &id)
+{
+  if (!m_self)
+    return;
+
+  AbstractTab *tab = m_self->tab(id, NoOptions);
+  if (tab && tab->options() & AbstractTab::CanBePinned) {
+    tab->pin();
+    emit m_self->pinned(tab);
+  }
+  else if (!m_self->m_autoPin.contains(id))
+    m_self->m_autoPin.append(id);
 }
 
 

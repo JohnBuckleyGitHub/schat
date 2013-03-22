@@ -74,6 +74,7 @@ public:
   static bool isActiveChatWindow();
   static bool isCurrent(AbstractTab *tab);
   static void add(const Message &message, bool create = true);
+  static void pin(const QByteArray &id);
   void stopAlert();
 
 signals:
@@ -116,6 +117,7 @@ private:
 
   AuthIcon *m_authIcon;                         ///< Иконка провайдеров авторизации.
   MainToolBar *m_mainToolBar;                   ///< Правая панель инструментов.
+  QList<QByteArray> m_autoPin;                  ///< Список для автоматического закрепления каналов.
   QList<QByteArray> m_prefetch;                 ///< Список каналов для которых было запрошено создание вкладки, но они не были созданы.
   QMap<QByteArray, AbstractTab*> m_pages;       ///< Вкладки не связанные с каналами.
   QMap<QByteArray, ChannelBaseTab*> m_channels; ///< Таблица каналов.

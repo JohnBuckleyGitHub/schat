@@ -904,7 +904,8 @@ if (typeof SimpleChat === 'undefined') {
     toBase32: function(text)               { return ''; },
     traffic: function()                    { return {tx:0, rx:0}; },
     translate: function(key)               { return key; },
-    value: function(key)                   { return null; }
+    value: function(key)                   { return null; },
+    pinTab: function(id)                   {}
   };
 }
 else {
