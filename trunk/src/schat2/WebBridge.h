@@ -61,8 +61,10 @@ public:
   Q_INVOKABLE void request(const QString &id, const QString &command, const QString &name, const QVariantMap &json = QVariantMap());
   Q_INVOKABLE void setTabPage(const QString &id, int page);
 
+  static QString toLink(const QByteArray &id, const QString &action = QLatin1String("insert"), const QString &name = QString());
   static QVariant feed(ClientChannel channel, const QString &name, int options = 0);
-  static QVariantMap channel(const QByteArray &id);
+  static QVariantMap channel(ClientChannel channel, const QString &action = QLatin1String("insert"));
+  static QVariantMap channel(const QByteArray &id, const QString &action = QLatin1String("insert"));
   static QVariantMap feed(const FeedNotify &notify);
 
   void retranslate();

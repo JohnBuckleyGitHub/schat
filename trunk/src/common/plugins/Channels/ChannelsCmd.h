@@ -21,6 +21,8 @@
 
 #include "hooks/MessagesHook.h"
 
+class Alert;
+
 class ChannelsCmd : public MessagesHook
 {
   Q_OBJECT
@@ -28,6 +30,11 @@ class ChannelsCmd : public MessagesHook
 public:
   ChannelsCmd(QObject *parent = 0);
   bool command(const QByteArray &dest, const ClientCmd &cmd);
+  int read(MessagePacket packet);
+
+private:
+  QString inviteText(const QByteArray &tab, const QByteArray &channelId, const QString &name) const;
+  void popup(Alert &alert, const QString &text) const;
 };
 
 #endif /* CHANNELSCMD_H_ */

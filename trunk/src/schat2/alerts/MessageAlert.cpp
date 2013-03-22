@@ -74,10 +74,10 @@ void MessageAlert::popup(const QVariantMap &data)
 MessageAlertType::MessageAlertType(const QString &type, int weight)
   : AlertType(type, weight)
 {
-  m_defaults[LS("popup")] = type != LS("public");
-  m_defaults[LS("tray")]  = true;
-  m_defaults[LS("sound")] = true;
-  m_defaults[LS("file")]  = LS("Received.wav");
+  m_defaults[ALERT_POPUP_KEY] = type != LS("public");
+  m_defaults[ALERT_TRAY_KEY]  = true;
+  m_defaults[ALERT_SOUND_KEY] = true;
+  m_defaults[ALERT_FILE_KEY]  = LS("Received.wav");
 
   if (type == LS("public"))
     m_icon = QIcon(LS(":/images/channel.png"));

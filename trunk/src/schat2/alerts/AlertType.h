@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,11 @@
 
 #include "schat.h"
 
+#define ALERT_POPUP_KEY QLatin1String("popup")
+#define ALERT_SOUND_KEY QLatin1String("sound")
+#define ALERT_TRAY_KEY  QLatin1String("tray")
+#define ALERT_FILE_KEY  QLatin1String("file")
+
 /*!
  * Базовый класс, хранящий информацию об обработке уведомления.
  */
@@ -32,9 +37,9 @@ class SCHAT_CORE_EXPORT AlertType
 public:
   AlertType(const QString &type, int weight);
   virtual ~AlertType() {}
-  inline bool popup() const                  { return value(QLatin1String("popup"), false).toBool(); }
-  inline bool sound() const                  { return value(QLatin1String("sound"), false).toBool(); }
-  inline bool tray() const                   { return value(QLatin1String("tray"),  false).toBool(); }
+  inline bool popup() const                  { return value(ALERT_POPUP_KEY, false).toBool(); }
+  inline bool sound() const                  { return value(ALERT_SOUND_KEY, false).toBool(); }
+  inline bool tray() const                   { return value(ALERT_TRAY_KEY,  false).toBool(); }
   inline const QIcon& icon() const           { return m_icon; }
   inline const QString& type() const         { return m_type; }
   inline const QVariantMap& defaults() const { return m_defaults; }

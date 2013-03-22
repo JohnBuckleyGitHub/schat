@@ -41,11 +41,12 @@ public:
   Message(const QByteArray &id, const QByteArray &tab = QByteArray(), const QString &type = QString(), const QString &func = QString());
   virtual ~Message() {}
 
-  inline const QByteArray& tab() const   { return m_tab; }
-  inline const QVariantMap& data() const { return m_data; };
-  inline QString id() const              { return m_data.value(MESSAGE_ID).toString(); }
-  inline QVariantMap& data()             { return m_data; };
-  inline virtual bool isValid() const    { return true; }
+  inline const QByteArray& tab() const      { return m_tab; }
+  inline const QVariantMap& data() const    { return m_data; };
+  inline QString id() const                 { return m_data.value(MESSAGE_ID).toString(); }
+  inline QVariantMap& data()                { return m_data; };
+  inline virtual bool isValid() const       { return true; }
+  inline void setTab(const QByteArray &tab) { m_tab = tab; }
   static QByteArray detectTab(const QByteArray &sender, const QByteArray &dest);
   void setAuthor(const QByteArray &id);
   void setDate(qint64 date = 0);

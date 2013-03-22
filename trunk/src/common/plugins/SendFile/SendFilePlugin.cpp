@@ -92,10 +92,10 @@ public:
   IncomingFileAlertType(int weight)
   : AlertType(LS("file"), weight)
   {
-    m_defaults[LS("popup")] = true;
-    m_defaults[LS("tray")]  = true;
-    m_defaults[LS("sound")] = true;
-    m_defaults[LS("file")]  = LS("Received.wav");
+    m_defaults[ALERT_POPUP_KEY] = true;
+    m_defaults[ALERT_TRAY_KEY]  = true;
+    m_defaults[ALERT_SOUND_KEY] = true;
+    m_defaults[ALERT_FILE_KEY]  = LS("Received.wav");
 
     m_icon = QIcon(LS(":/images/SendFile/attach.png"));
   }
