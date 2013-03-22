@@ -16,14 +16,45 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "alerts/AlertType.h"
 #include "ChannelsCmd.h"
 #include "ChannelsPlugin_p.h"
+#include "ChatAlerts.h"
 #include "client/ClientCmd.h"
+#include "DateTime.h"
+#include "messages/AlertMessage.h"
+#include "net/SimpleID.h"
 #include "sglobal.h"
+#include "ui/ChatIcons.h"
+#include "ui/TabWidget.h"
+#include "WebBridge.h"
+#include "JSON.h"
+
+
+class InviteAlertType : public AlertType
+{
+public:
+  InviteAlertType(int weight)
+  : AlertType(LS("invite"), weight)
+  {
+    m_defaults[ALERT_POPUP_KEY] = true;
+    m_defaults[ALERT_TRAY_KEY]  = true;
+    m_defaults[ALERT_SOUND_KEY] = true;
+    m_defaults[ALERT_FILE_KEY]  = LS("Received.wav");
+
+    m_icon = SCHAT_ICON(Add);
+  }
+
+  QString name() const
+  {
+    return QObject::tr("Invitation to a channel");
+  }
+};
 
 ChannelsCmd::ChannelsCmd(QObject *parent)
   : MessagesHook(parent)
 {
+  ChatAlerts::add(new InviteAlertType(380));
 }
 
 
@@ -47,4 +78,69 @@ bool ChannelsCmd::command(const QByteArray &dest, const ClientCmd &cmd)
     return false;
 
   return true;
+}
+
+
+int ChannelsCmd::read(MessagePacket packet)
+{
+  const QString &command = packet->command();
+
+  if (command == LS("invite")) {
+    const QByteArray tab = Message::detectTab(packet->sender(), packet->dest());
+    if (SimpleID::typeOf(tab) != SimpleID::UserId)
+      return 1;
+
+    const QVariantMap json     = JSON::parse(packet->text().toUtf8()).toMap();
+    const QByteArray channelId = SimpleID::decode(json.value(LS("id")).toString());
+    if (SimpleID::typeOf(channelId) != SimpleID::ChannelId)
+      return 1;
+
+    const qint64 date  = DateTime::utc();
+    const QString text = inviteText(tab, channelId, json.value(LS("name")).toString());
+
+    AlertMessage message(text, ALERT_MESSAGE_INFO);
+    message.setTab(tab);
+    message.setId(packet->id());
+    message.setDate(date);
+    TabWidget::add(message);
+
+    Alert alert(command, packet->id(), date);
+    alert.setTab(tab);
+    popup(alert, text);
+    ChatAlerts::start(alert);
+    return 1;
+  }
+
+  return 0;
+}
+
+
+/*!
+ * Формирование текста приглашения в канал.
+ *
+ * \param tab       Идентификатор отправителя приглашения.
+ * \param channelId Идентификатор канала, в который приглашается пользователь.
+ * \param name      Имя канала, на случай если получатель ничего не знает об этом канале.
+ */
+QString ChannelsCmd::inviteText(const QByteArray &tab, const QByteArray &channelId, const QString &name) const
+{
+  return tr("%1 invites you to channel %2")
+      .arg(WebBridge::toLink(tab))
+      .arg(WebBridge::toLink(channelId, LS("open"), name));
+}
+
+
+/*!
+ * Формирование информации для всплывающего окна.
+ */
+void ChannelsCmd::popup(Alert &alert, const QString &text) const
+{
+  AlertType *type = ChatAlerts::type(LS("invite"));
+  if (!type || !type->popup())
+    return;
+
+  QVariantMap popup;
+  popup[LS("text")]  = text;
+  popup[LS("title")] = type->name();
+  alert.data()[LS("popup")] = popup;
 }

@@ -78,8 +78,8 @@ public:
   OnlineAlertType(int weight)
   : AlertType(LS("online"), weight)
   {
-    m_defaults[LS("popup")] = false;
-    m_defaults[LS("sound")] = false;
+    m_defaults[ALERT_POPUP_KEY] = false;
+    m_defaults[ALERT_SOUND_KEY] = false;
     m_icon = QIcon(LS(":/images/online.png"));
   }
 
@@ -96,8 +96,8 @@ public:
   OfflineAlertType(int weight)
   : AlertType(LS("offline"), weight)
   {
-    m_defaults[LS("popup")] = false;
-    m_defaults[LS("sound")] = false;
+    m_defaults[ALERT_POPUP_KEY] = false;
+    m_defaults[ALERT_SOUND_KEY] = false;
     m_icon = QIcon(LS(":/images/offline.png"));
   }
 

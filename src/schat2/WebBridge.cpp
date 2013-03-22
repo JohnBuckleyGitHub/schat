@@ -35,6 +35,7 @@
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
 #include "Profile.h"
+#include "QtEscape.h"
 #include "sglobal.h"
 #include "Tr.h"
 #include "Translation.h"
@@ -362,6 +363,24 @@ void WebBridge::setTabPage(const QString &id, int page)
 }
 
 
+QString WebBridge::toLink(const QByteArray &id, const QString &action, const QString &name)
+{
+  QVariantMap data = channel(id, action);
+  if (data.isEmpty() && !name.isEmpty())
+    data = channel(ClientChannel(new Channel(id, name)), action);
+
+  if (data.isEmpty())
+    return QString();
+
+  return QString(LS("<a class=\"nick %1 color-%2\" href=\"%3\">%4</a>"))
+      .arg(data.value(LS("Id")).toString())
+      .arg(data.value(LS("Color")).toString())
+      .arg(data.value(LS("Url")).toString())
+      .arg(Qt::escape(data.value(LS("Name")).toString()));
+}
+
+
+
 /*!
  * Базовая функция получения фида.
  *
@@ -402,20 +421,31 @@ QVariant WebBridge::feed(ClientChannel channel, const QString &name, int options
 }
 
 
-QVariantMap WebBridge::channel(const QByteArray &id)
+/*!
+ * Получение информации о канале.
+ */
+QVariantMap WebBridge::channel(ClientChannel channel, const QString &action)
 {
-  ClientChannel channel = ChatClient::channels()->get(id);
   if (!channel)
     return QVariantMap();
 
   QVariantMap data;
-  data[LS("Id")]     = QString(SimpleID::encode(id));
+  data[LS("Id")]     = QString(SimpleID::encode(channel->id()));
   data[LS("Name")]   = channel->name();
-  data[LS("Url")]    = ChatUrls::toUrl(channel, LS("insert")).toString();
+  data[LS("Url")]    = ChatUrls::toUrl(channel, action).toString();
   data[LS("Color")]  = channel->gender().toString();
   data[LS("Status")] = channel->status().toString();
   data[LS("Gender")] = channel->gender().value();
   return data;
+}
+
+
+/*!
+ * Получение информации о канале.
+ */
+QVariantMap WebBridge::channel(const QByteArray &id, const QString &action)
+{
+  return channel(ChatClient::channels()->get(id), action);
 }
 
 
