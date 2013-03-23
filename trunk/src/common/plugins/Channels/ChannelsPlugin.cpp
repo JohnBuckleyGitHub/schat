@@ -66,6 +66,7 @@ protected:
     else if (key == LS("hidden"))         return tr("Hidden");
     else if (key == LS("pin"))            return tr("Pin to channel list");
     else if (key == LS("permissions"))    return tr("Permissions");
+    else if (key == LS("default_acl"))    return tr("Default permissions");
     else if (key == LS("owner"))          return tr("Owner");
     else if (key == LS("readonly"))       return tr("Read only");
     else if (key == LS("moderator"))      return tr("Moderator");

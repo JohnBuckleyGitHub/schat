@@ -23,6 +23,10 @@ var ACL_READWRITE = 6;  // rw-
 var ACL_READONLY  = 4;  // r--
 var ACL_FORBIDDEN = 0;  // ---
 
+var ACL_CHANNEL_READWRITE = 502;
+var ACL_CHANNEL_READONLY  = 484;
+var ACL_CHANNEL_FORBIDDEN = 448;
+
 var Channels = {
   acl: -1,     // Права доступа к каналу.
   timeout: {
@@ -223,6 +227,15 @@ var Channels = {
 
 
   /*
+   * Установка прав доступа по умолчанию.
+   */
+  setDefaultAcl: function(event) {
+    var value = $(this).find('option:selected').attr('value');
+    SimpleChat.request(Settings.getId(), FEED_METHOD_PUT, ACL_FEED_HEAD_MASK_REQ, {'value':value,'options':6});
+  },
+
+
+  /*
    * Обработка изменения закрепления канала.
    */
   pinChannel: function(event) {
@@ -316,14 +329,29 @@ Modal.create.options = function(event)
   body.append('<form>');
   body.append(
     '<div id="visibility-row" class="row">' +
-      '<label for="visibility" data-tr="channels_visibility">' + Utils.tr('channels_visibility') + '</label> ' +
-      '<select id="visibility">' +
+      '<label for="visibility" data-tr="channels_visibility" class="options-label">' + Utils.tr('channels_visibility') + '</label> ' +
+      '<select id="visibility" class="options-select">' +
         '<option value="0"  data-tr="channels_default">'                                                   + Utils.tr('channels_default')        + '</option>' +
         '<option value="1"  ' + (visibility > 0 ? 'selected' : '') + ' data-tr="channels_always_visible">' + Utils.tr('channels_always_visible') + '</option>' +
         '<option value="-1" ' + (visibility < 0 ? 'selected' : '') + ' data-tr="channels_hidden">'         + Utils.tr('channels_hidden')         + '</option>' +
       '</select> ' +
       '<i id="visibility-spinner" class="icon-spinner hide"></i>' +
       '<i id="visibility-error" class="icon-error hide"></i>' +
+    '</div>'
+  );
+
+  var aclFeed = SimpleChat.feed(Settings.getId(), FEED_NAME_ACL, 3);
+  if (aclFeed !== false)
+    var acl = SimpleChat.aclToInt(aclFeed['*']);
+
+  body.append(
+    '<div id="permissions-row" class="row">' +
+      '<label for="permissions" data-tr="channels_default_acl" class="options-label">' + Utils.tr('channels_default_acl') + '</label> ' +
+      '<select id="permissions" class="options-select">' +
+        '<option value="502" data-tr="channels_readwrite" ' + (acl == 6 ? 'selected' : '') + '>' + Utils.tr('channels_readwrite') + '</option>' +
+        '<option value="484" data-tr="channels_readonly"  ' + (acl == 4 ? 'selected' : '') + '>' + Utils.tr('channels_readonly')  + '</option>' +
+        '<option value="448" data-tr="channels_forbidden" ' + (acl == 0 ? 'selected' : '') + '>' + Utils.tr('channels_forbidden') + '</option>' +
+      '</select> ' +
     '</div>'
   );
 
@@ -351,23 +379,29 @@ Modal.create.options = function(event)
 };
 
 
-Modal.hidden.options = function()
-{
+Modal.hidden.options = function() {
   clearTimeout(Channels.timeout.visibility);
   clearTimeout(Channels.timeout.pin);
 };
+
+
+Modal.shown.options = function() {
+  Utils.adjustWidth($('.options-label'));
+  Utils.adjustWidth($('.options-select'));
+}
 
 
 $(document).ready(function() {
   $('#page-header').append('<div id="channel-title"><div id="channel-title-text"></div></div>');
 
   var modal = $('#modal-body');
-  modal.on('click.title',       '#title-ok',   Channels.setTitle);
-  modal.on('change.visibility', '#visibility', Channels.setVisibility);
-  modal.on('change.pinned',     '#pin',        Channels.pinChannel);
-  modal.on('change.logging',    '#logging',    Channels.logging);
+  modal.on('click.title',        '#title-ok',    Channels.setTitle);
+  modal.on('change.visibility',  '#visibility',  Channels.setVisibility);
+  modal.on('change.permissions', '#permissions', Channels.setDefaultAcl);
+  modal.on('change.pinned',      '#pin',         Channels.pinChannel);
+  modal.on('change.logging',     '#logging',     Channels.logging);
 
-  modal.on('change.acl',        '#acl',        Channels.setAcl);
+  modal.on('change.acl',         '#acl',         Channels.setAcl);
 
   Channels.online();
 });

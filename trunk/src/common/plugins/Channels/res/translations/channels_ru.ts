@@ -41,7 +41,7 @@
 <context>
     <name>ChannelsPluginImpl</name>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="206"/>
+        <location filename="../../ChannelsPlugin.cpp" line="207"/>
         <source>Channels</source>
         <translation>Каналы</translation>
     </message>
@@ -118,41 +118,46 @@
     </message>
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="69"/>
+        <source>Default permissions</source>
+        <translation>Права доступа по умолчанию</translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="70"/>
         <source>Owner</source>
         <translation>Владелец</translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="70"/>
+        <location filename="../../ChannelsPlugin.cpp" line="71"/>
         <source>Read only</source>
         <translation>Только чтение</translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="71"/>
+        <location filename="../../ChannelsPlugin.cpp" line="72"/>
         <source>Moderator</source>
         <translation>Модератор</translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="72"/>
+        <location filename="../../ChannelsPlugin.cpp" line="73"/>
         <source>Read write</source>
         <translation>Чтение и запись</translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="73"/>
+        <location filename="../../ChannelsPlugin.cpp" line="74"/>
         <source>No access</source>
         <translation>Нет доступа</translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="74"/>
+        <location filename="../../ChannelsPlugin.cpp" line="75"/>
         <source>Logging messages</source>
         <translation>Журналирование сообщений</translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="75"/>
+        <location filename="../../ChannelsPlugin.cpp" line="76"/>
         <source>Accept invitation</source>
         <translation>Принять приглашение</translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="76"/>
+        <location filename="../../ChannelsPlugin.cpp" line="77"/>
         <source>Reject</source>
         <translation>Отказаться</translation>
     </message>
