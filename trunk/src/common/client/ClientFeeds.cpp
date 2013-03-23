@@ -114,23 +114,28 @@ bool ClientFeeds::request(const QByteArray &id, const QString &command, const QS
 
 
 /*!
- * Проверка прав доступа.
+ * Проверка прав доступа пользователя \p user в канале \p channel с учётом глобальных прав доступа.
  *
- * \return -1 если произошла ошибка или права доступа.
+ * \return -1 если произошла ошибка или результирующие права доступа.
  */
 int ClientFeeds::match(ClientChannel channel, ClientChannel user)
 {
+  if (!channel)
+    return -1;
+
   FeedPtr feed = channel->feed(FEED_NAME_ACL, false);
   if (!feed)
     return -1;
 
-  int acl = AclValue::match(feed.data(), user.data());
-  if (channel->type() != SimpleID::ServerId) {
+  int acl = AclValue::match(feed.data(), user ? user.data() : 0);
+  if (user && channel->type() != SimpleID::ServerId) {
     feed = ChatClient::server()->feed(FEED_NAME_ACL, false);
     if (feed) {
       const int serverAcl = AclValue::match(feed.data(), user.data());
-      if (serverAcl & Acl::Edit)
+      if (serverAcl & Acl::Edit) {
         acl |= Acl::Edit;
+        acl |= Acl::Write;
+      }
 
       if (serverAcl & Acl::SpecialEdit)
         acl |= Acl::SpecialEdit;
