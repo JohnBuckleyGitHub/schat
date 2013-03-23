@@ -16,6 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+var ACL_DEFAULT   = -1;
+var ACL_OWNER     = 15; // rwX
+var ACL_MODERATOR = 22; // rW-
+var ACL_READWRITE = 6;  // rw-
+var ACL_READONLY  = 4;  // r--
+var ACL_FORBIDDEN = 0;  // ---
+
 var Channels = {
   acl: -1,     // Права доступа к каналу.
   timeout: {
@@ -148,10 +155,12 @@ var Channels = {
         '<div id="acl-row" class="row">' +
           '<label for="acl" data-tr="channels_permissions">' + Utils.tr('channels_permissions') + '</label> ' +
           '<select id="acl" data-user="' + id + '">' +
-            '<option value="6" data-tr="channels_default">'    + Utils.tr('channels_default')   + '</option>' +
+            '<option value="-1" data-tr="channels_default">'   + Utils.tr('channels_default')   + '</option>' +
             '<option value="15" data-tr="channels_owner">'     + Utils.tr('channels_owner')     + '</option>' +
             '<option value="22" data-tr="channels_moderator">' + Utils.tr('channels_moderator') + '</option>' +
+            '<option value="6" data-tr="channels_readwrite">'  + Utils.tr('channels_readwrite') + '</option>' +
             '<option value="4" data-tr="channels_readonly">'   + Utils.tr('channels_readonly')  + '</option>' +
+            '<option value="0" data-tr="channels_forbidden">'  + Utils.tr('channels_forbidden') + '</option>' +
           '</select> ' +
           '<i id="acl-spinner" class="icon-spinner hide"></i>' +
           '<i id="acl-error" class="icon-error hide"></i>' +
@@ -159,8 +168,7 @@ var Channels = {
       '</form>'
     );
 
-    if (SimpleChat.feed(Settings.getId(), FEED_NAME_ACL, 3) !== false)
-      $('#acl').val(Channels.value(SimpleChat.match(Settings.getId(), id)));
+    $('#acl').val(Channels.value(id));
 
     Modal.current = 'acl';
     $('#modal').modal();
@@ -170,17 +178,23 @@ var Channels = {
   /*
    * Определение выбранного пункта в комбобоксе редактирования расширенных прав доступа.
    */
-  value: function(acl) {
+  value: function(id) {
+    var acl = SimpleChat.match(Settings.getId(), id);
+
     if (acl & 9)
-      return 15;
+      return ACL_OWNER;
+
+    var feed = SimpleChat.feed(Settings.getId(), FEED_NAME_ACL, 3);
+    if (feed === false || !feed.hasOwnProperty(id))
+      return -1;
 
     if (acl & 16)
-      return 22;
+      return ACL_MODERATOR;
 
-    else if (!(acl & 2))
-      return 4;
+    else if (acl == ACL_READWRITE || acl == ACL_READONLY || acl == ACL_FORBIDDEN)
+      return acl;
 
-    return 6;
+    return -1;
   },
 
 
@@ -231,14 +245,12 @@ var Channels = {
     var user  = $(this).attr('data-user');
     var id    = Settings.getId();
 
-    if (value == 15)
+    if (value == ACL_OWNER)
       SimpleChat.request(id, FEED_METHOD_POST,   ACL_FEED_HEAD_OWNER_REQ, {'value':user,'options':6});
-    else if (value == 6)
+    else if (value == ACL_DEFAULT)
       SimpleChat.request(id, FEED_METHOD_DELETE, ACL_FEED_HEAD_OTHER_REQ + '/' + user, {'options':6});
-    else if (value == 4)
-      SimpleChat.request(id, FEED_METHOD_POST,   ACL_FEED_HEAD_OTHER_REQ + '/' + user, {'value':4,'options':6});
-    else if (value == 22)
-      SimpleChat.request(id, FEED_METHOD_POST,   ACL_FEED_HEAD_OTHER_REQ + '/' + user, {'value':22,'options':6});
+    else
+      SimpleChat.request(id, FEED_METHOD_POST,   ACL_FEED_HEAD_OTHER_REQ + '/' + user, {'value':value,'options':6});
 
     Channels.startSpinner('acl');
   }

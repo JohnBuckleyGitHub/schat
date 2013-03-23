@@ -5,7 +5,7 @@
 <context>
     <name>ChannelsCmd</name>
     <message>
-        <location filename="../../ChannelsCmd.cpp" line="128"/>
+        <location filename="../../ChannelsCmd.cpp" line="131"/>
         <source>%1 invites you to channel %2</source>
         <translation>%1 приглашает вас в канал %2</translation>
     </message>
@@ -41,7 +41,7 @@
 <context>
     <name>ChannelsPluginImpl</name>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="203"/>
+        <location filename="../../ChannelsPlugin.cpp" line="206"/>
         <source>Channels</source>
         <translation>Каналы</translation>
     </message>
@@ -133,16 +133,26 @@
     </message>
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="72"/>
+        <source>Read write</source>
+        <translation>Чтение и запись</translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="73"/>
+        <source>No access</source>
+        <translation>Нет доступа</translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="74"/>
         <source>Logging messages</source>
         <translation>Журналирование сообщений</translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="73"/>
+        <location filename="../../ChannelsPlugin.cpp" line="75"/>
         <source>Accept invitation</source>
         <translation>Принять приглашение</translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="74"/>
+        <location filename="../../ChannelsPlugin.cpp" line="76"/>
         <source>Reject</source>
         <translation>Отказаться</translation>
     </message>
