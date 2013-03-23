@@ -48,28 +48,20 @@ ChannelsMenuImpl::ChannelsMenuImpl(QObject *parent)
 bool ChannelsMenuImpl::triggerImpl(QAction *action)
 {
   if (action == m_ignore) {
-    QByteArray id = action->data().toByteArray();
-
-    if (action->isChecked())
-      ChannelsPluginImpl::ignore(id);
-    else
-      ChannelsPluginImpl::unignore(id);
-
-    return true;
+    ChannelsPluginImpl::ignore(action->data().toByteArray(), action->isChecked());
   }
   else if (action == m_ro) {
-    if (action->isChecked())
-      ClientFeeds::post(ChatCore::currentId(), ACL_FEED_HEAD_OTHER_REQ + LC('/') + SimpleID::encode(action->data().toByteArray()), Acl::Read, Feed::Share | Feed::Broadcast);
-    else
-      ClientFeeds::del(ChatCore::currentId(),  ACL_FEED_HEAD_OTHER_REQ + LC('/') + SimpleID::encode(action->data().toByteArray()), Feed::Share | Feed::Broadcast);
+    ChannelsPluginImpl::ro(action->data().toByteArray(), ChatCore::currentId(), action->isChecked());
   }
   else if (action == m_advanced) {
     ChannelBaseTab *tab = TabWidget::i()->channelTab(ChatCore::currentId());
     if (tab)
       tab->chatView()->evaluateJavaScript(LS("Channels.editAcl(\"") + SimpleID::encode(action->data().toByteArray()) + LS("\");"));
   }
+  else
+    return false;
 
-  return false;
+  return true;
 }
 
 
@@ -110,12 +102,8 @@ void ChannelsMenuImpl::cleanupImpl()
 
 void ChannelsMenuImpl::invite(QAction *action)
 {
-  if (!action)
-    return;
-
-  const QVariantList data = action->data().toList();
-  if (data.size() == 2)
-    ChannelsPluginImpl::inviteTo(data.at(0).toByteArray(), data.at(1).toByteArray());
+  if (action)
+    ChannelsPluginImpl::inviteTo(action->data().toByteArray(), ChatCore::currentId());
 }
 
 
@@ -143,7 +131,7 @@ void ChannelsMenuImpl::invite(QMenu *menu, ClientChannel user)
 
   m_invite = menu->addMenu(ChatIcons::icon(ChatIcons::icon(user, ChatIcons::NoOptions), LS(":/images/add-small.png")), tr("Invite to"));
   foreach (const ClientChannel &channel, list) {
-    m_invite->addAction(SCHAT_ICON(Channel), channel->name())->setData(QVariantList() << user->id() << channel->id());
+    m_invite->addAction(SCHAT_ICON(Channel), channel->name())->setData(user->id());
   }
 
   connect(m_invite, SIGNAL(triggered(QAction*)), SLOT(invite(QAction*)));
@@ -179,7 +167,8 @@ void ChannelsMenuImpl::permissions(QMenu *menu, ClientChannel user)
     }
 
     if (adv) {
-      m_advanced = m_permissions->addAction(tr("Advanced..."));
+      m_permissions->addSeparator();
+      m_advanced = m_permissions->addAction(SCHAT_ICON(Gear), tr("Advanced..."));
       m_advanced->setData(user->id());
     }
   }

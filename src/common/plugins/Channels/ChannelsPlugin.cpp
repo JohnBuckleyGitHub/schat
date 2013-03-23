@@ -32,6 +32,7 @@
 #include "client/ClientChannels.h"
 #include "client/ClientFeeds.h"
 #include "client/SimpleClient.h"
+#include "feeds/AclFeed.h"
 #include "feeds/FeedStrings.h"
 #include "hooks/ChatViewHooks.h"
 #include "JSON.h"
@@ -109,16 +110,27 @@ ChannelsPluginImpl::~ChannelsPluginImpl()
 
 /*!
  * Игнорирование пользователя.
+ *
+ * \param id     Идентификатор пользователя.
+ * \param ignore \b true если нужно игнорировать пользователя, иначе он будет удалён из списка игнорирования.
  */
-void ChannelsPluginImpl::ignore(const QByteArray &id)
+void ChannelsPluginImpl::ignore(const QByteArray &id, bool ignore)
 {
   if (SimpleID::typeOf(id) != SimpleID::UserId)
     return;
 
-  ClientFeeds::post(ChatClient::id(), LS("acl/head/other/") + SimpleID::encode(id), Acl::Read, Feed::Share | Feed::Broadcast);
+  if (ignore)
+    ClientFeeds::post(ChatClient::id(), LS("acl/head/other/") + SimpleID::encode(id), Acl::Read, Feed::Share | Feed::Broadcast);
+  else
+    ClientFeeds::del(ChatClient::id(), LS("acl/head/other/") + SimpleID::encode(id), Feed::Share | Feed::Broadcast);
 }
 
 
+/*!
+ * Приглашение пользователя \p userId в канал \p channelId.
+ *
+ * Функция отправляет сообщение пользователю с типом \b invite.
+ */
 void ChannelsPluginImpl::inviteTo(const QByteArray &userId, const QByteArray &channelId)
 {
   if (SimpleID::typeOf(userId) != SimpleID::UserId || SimpleID::typeOf(channelId) != SimpleID::ChannelId)
@@ -136,24 +148,22 @@ void ChannelsPluginImpl::inviteTo(const QByteArray &userId, const QByteArray &ch
 }
 
 
+void ChannelsPluginImpl::ro(const QByteArray &userId, const QByteArray &channelId, bool ro)
+{
+  int acl = Acl::Read;
+  if (!ro)
+    acl |= Acl::Write;
+
+  ClientFeeds::post(channelId, ACL_FEED_HEAD_OTHER_REQ + LC('/') + SimpleID::encode(userId), acl, Feed::Share | Feed::Broadcast);
+}
+
+
 /*!
  * Показ списка каналов.
  */
 void ChannelsPluginImpl::show()
 {
   TabWidget::i()->tab(LIST_TAB);
-}
-
-
-/*!
- * Отмена игнорирования пользователя.
- */
-void ChannelsPluginImpl::unignore(const QByteArray &id)
-{
-  if (SimpleID::typeOf(id) != SimpleID::UserId)
-    return;
-
-  ClientFeeds::del(ChatClient::id(), LS("acl/head/other/") + SimpleID::encode(id), Feed::Share | Feed::Broadcast);
 }
 
 

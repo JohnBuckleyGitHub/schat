@@ -69,7 +69,7 @@ bool ChannelsCmd::command(const QByteArray &dest, const ClientCmd &cmd)
   }
   else if (command == LS("unignore")) {
     if (isTalk(dest, command))
-      ChannelsPluginImpl::unignore(dest);
+      ChannelsPluginImpl::ignore(dest, false);
   }
   else if (command == LS("list")) {
     ChannelsPluginImpl::show();

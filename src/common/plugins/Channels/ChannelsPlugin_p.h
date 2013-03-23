@@ -34,10 +34,10 @@ class ChannelsPluginImpl : public ChatPlugin
 public:
   ChannelsPluginImpl(QObject *parent);
   ~ChannelsPluginImpl();
-  static void ignore(const QByteArray &id);
+  static void ignore(const QByteArray &id, bool ignore = true);
   static void inviteTo(const QByteArray &userId, const QByteArray &channelId);
+  static void ro(const QByteArray &userId, const QByteArray &channelId, bool ro = true);
   static void show();
-  static void unignore(const QByteArray &id);
 
 private slots:
   inline void list() { show(); }

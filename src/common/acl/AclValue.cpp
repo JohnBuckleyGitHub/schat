@@ -94,7 +94,7 @@ int AclValue::match(const Feed *feed, Channel *channel)
     if (channel && channel->type() == SimpleID::ServerId)
       return 077;
 
-    if (channel->account() && channel->account()->groups.contains(LS("master")))
+    if (channel && channel->account() && channel->account()->groups.contains(LS("master")))
       return 077;
 
     if (!feed->data().contains(FEED_WILDCARD_ASTERISK))
