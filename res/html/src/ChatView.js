@@ -50,6 +50,7 @@ var INFO_FEED_VISIBILITY_REQ  = 'info/visibility';
 
 var ACL_FEED_HEAD_OTHER_REQ   = 'acl/head/other';
 var ACL_FEED_HEAD_OWNER_REQ   = 'acl/head/owner';
+var ACL_FEED_HEAD_MASK_REQ    = 'acl/head/mask';
 
 var Settings = {
   id: '',
@@ -905,7 +906,8 @@ if (typeof SimpleChat === 'undefined') {
     traffic: function()                    { return {tx:0, rx:0}; },
     translate: function(key)               { return key; },
     value: function(key)                   { return null; },
-    pinTab: function(id)                   {}
+    pinTab: function(id)                   {},
+    aclToInt: function(acl)                { return 6; }
   };
 }
 else {

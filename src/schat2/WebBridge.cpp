@@ -23,6 +23,7 @@
 #include <QSslCipher>
 #include <QSslConfiguration>
 
+#include "acl/AclValue.h"
 #include "ChatCore.h"
 #include "ChatNotify.h"
 #include "ChatSettings.h"
@@ -122,6 +123,12 @@ WebBridge::~WebBridge()
 bool WebBridge::isOnline() const
 {
   return ChatClient::state() == ChatClient::Online;
+}
+
+
+int WebBridge::aclToInt(const QString &acl) const
+{
+  return AclValue::toInt(acl.toLatin1());
 }
 
 

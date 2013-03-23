@@ -53,6 +53,10 @@ label {
   margin: 6px 0;
 }
 
+.options-label {
+  display: inline-block;
+}
+
 #visibility-row, #acl-row {
   margin-top: 0;
 }

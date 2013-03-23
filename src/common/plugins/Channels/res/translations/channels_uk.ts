@@ -41,7 +41,7 @@
 <context>
     <name>ChannelsPluginImpl</name>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="206"/>
+        <location filename="../../ChannelsPlugin.cpp" line="207"/>
         <source>Channels</source>
         <translation type="unfinished"></translation>
     </message>
@@ -118,41 +118,46 @@
     </message>
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="69"/>
-        <source>Owner</source>
+        <source>Default permissions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="70"/>
-        <source>Read only</source>
+        <source>Owner</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="71"/>
-        <source>Moderator</source>
+        <source>Read only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="72"/>
-        <source>Read write</source>
+        <source>Moderator</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="73"/>
-        <source>No access</source>
+        <source>Read write</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="74"/>
-        <source>Logging messages</source>
+        <source>No access</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="75"/>
-        <source>Accept invitation</source>
+        <source>Logging messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="76"/>
+        <source>Accept invitation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="77"/>
         <source>Reject</source>
         <translation type="unfinished"></translation>
     </message>
