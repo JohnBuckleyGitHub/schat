@@ -69,6 +69,8 @@ protected:
     else if (key == LS("owner"))          return tr("Owner");
     else if (key == LS("readonly"))       return tr("Read only");
     else if (key == LS("moderator"))      return tr("Moderator");
+    else if (key == LS("readwrite"))      return tr("Read write");
+    else if (key == LS("forbidden"))      return tr("No access");
     else if (key == LS("logging"))        return tr("Logging messages");
     else if (key == LS("accept"))         return tr("Accept invitation");
     else if (key == LS("reject"))         return tr("Reject");
