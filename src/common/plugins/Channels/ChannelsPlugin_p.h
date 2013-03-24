@@ -36,7 +36,7 @@ public:
   ~ChannelsPluginImpl();
   static void ignore(const QByteArray &id, bool ignore = true);
   static void inviteTo(const QByteArray &userId, const QByteArray &channelId);
-  static void ro(const QByteArray &userId, const QByteArray &channelId, bool ro = true);
+  static void setAcl(const QByteArray &userId, const QByteArray &channelId, int acl);
   static void show();
 
 private slots:
