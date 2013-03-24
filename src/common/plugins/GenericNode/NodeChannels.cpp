@@ -174,7 +174,15 @@ bool NodeChannels::join()
 
   SCHAT_LOG_DEBUG_STR("[GenericNode/Channels] join, id:" + SimpleID::encode(channel->id()) + ", name:" + channel->name().toUtf8())
 
-  bool notify = !channel->channels().all().contains(m_user->id());
+  if (channel->type() == SimpleID::ChannelId) {
+    FeedPtr feed = channel->feed(FEED_NAME_ACL, false);
+    if (feed && !feed->can(m_user.data(), Acl::Read)) {
+      m_core->send(m_user->sockets(), ChannelNotice::channel(channel, m_user));
+      return false;
+    }
+  }
+
+  const bool notify = !channel->channels().all().contains(m_user->id());
   channel->addChannel(m_user->id());
   m_user->addChannel(channel->id());
 
