@@ -319,13 +319,8 @@ ClientChannel ClientChannels::add()
   channel->gender() = m_packet->gender();
   channel->status() = m_packet->channelStatus();
 
-  if (channel->type() == SimpleID::ChannelId) {
-    const int status = m_packet->status();
-    channel->data()[LS("status")] = status;
-
-    if (status != Notice::OK)
-      info.setOption(ChannelInfo::Forbidden);
-  }
+  if (channel->type() == SimpleID::ChannelId)
+    channel->data()[LS("status")] = m_packet->status();
 
   m_synced += channel->id();
   m_hooks->add(channel, info, m_packet->json());
