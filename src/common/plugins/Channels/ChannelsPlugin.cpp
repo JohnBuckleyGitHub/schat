@@ -183,7 +183,7 @@ void ChannelsPluginImpl::init(ChatView *view)
 {
   if (SimpleID::typeOf(view->id()) == SimpleID::ChannelId) {
     view->addJS(LS("qrc:/js/Channels/bootstrap-dropdown.js"));
-    view->addJS(LS("qrc:/js/Channels/Channels.js"));
+//    view->addJS(LS("qrc:/js/Channels/Channels.js"));
   }
   else if (SimpleID::typeOf(view->id()) == SimpleID::UserId)
     view->addJS(LS("qrc:/js/Channels/ChannelsUser.js"));

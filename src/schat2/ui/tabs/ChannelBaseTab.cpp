@@ -111,6 +111,9 @@ void ChannelBaseTab::copy()
 void ChannelBaseTab::setOnline(bool online)
 {
   if (online) {
+    if (isForbidden())
+      AlertMessage::show(tr("<b>Access denied!</b> You cannot join into this channel."), ALERT_MESSAGE_ERROR, id());
+
     AbstractTab::setOnline(online);
     return;
   }
@@ -194,6 +197,12 @@ void ChannelBaseTab::setup()
 {
   if (m_serverId != ChatClient::serverId())
     m_tabs->closeTab(m_tabs->indexOf(this));
+}
+
+
+bool ChannelBaseTab::isForbidden()
+{
+  return (SimpleID::typeOf(id()) == SimpleID::ChannelId && c()->data().value(LS("status"), Notice::OK) != Notice::OK);
 }
 
 
