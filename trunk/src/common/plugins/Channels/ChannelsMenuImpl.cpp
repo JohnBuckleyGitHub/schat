@@ -162,7 +162,7 @@ void ChannelsMenuImpl::permissions(QMenu *menu, ClientChannel user)
       const int acl = ClientFeeds::match(channel, user);
       m_ro = m_permissions->addAction(tr("Read only"));
       m_ro->setCheckable(true);
-      m_ro->setChecked(!(acl & Acl::Write));
+      m_ro->setChecked(!(acl & Acl::Write) && (acl & Acl::Read));
       m_ro->setData(user->id());
     }
 
