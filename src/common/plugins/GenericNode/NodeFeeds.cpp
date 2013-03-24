@@ -318,7 +318,11 @@ NodeFeeds::CheckResult NodeFeeds::check(int acl)
  */
 void NodeFeeds::broadcast(FeedPtr feed, bool echo)
 {
-  QVariantMap json = Feed::merge(FEED_KEY_F, feed->head().f());
+  Channel *channel = 0;
+  if (feed->head().name() == FEED_NAME_ACL)
+    channel = Ch::server().data();
+
+  const QVariantMap json = Feed::merge(FEED_KEY_F, feed->head().f(channel));
   if (json.isEmpty())
     return;
 
