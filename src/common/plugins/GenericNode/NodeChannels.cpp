@@ -250,7 +250,6 @@ bool NodeChannels::part()
   channel->removeChannel(m_user->id());
 
   Ch::gc(channel);
-
   return false;
 }
 

@@ -18,6 +18,7 @@
 
 #include <QtPlugin>
 
+#include "feeds/AutoKick.h"
 #include "feeds/FeedStorage.h"
 #include "feeds/NodeInfoFeed.h"
 #include "feeds/NodeListFeed.h"
@@ -37,6 +38,7 @@ NodeChannelsImpl::NodeChannelsImpl(QObject *parent)
   m_index = new NodeChannelIndex(this);
 
   new NodeChannelsCh(this);
+  new AutoKick(this);
 
   FeedStorage::add(new NodeInfoFeedCreator());
   FeedStorage::add(new NodeListFeedCreator());

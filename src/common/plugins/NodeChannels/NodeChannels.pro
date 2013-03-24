@@ -20,6 +20,7 @@ QT = core network
 OTHER_FILES += NodeChannels.json
 
 HEADERS  = \
+   feeds/AutoKick.h \
    feeds/NodeInfoFeed.h \
    feeds/NodeListFeed.h \
    feeds/NodeUsersFeed.h \
@@ -29,6 +30,7 @@ HEADERS  = \
    NodeChannelsPlugin_p.h \
 
 SOURCES  = \
+   feeds/AutoKick.cpp \
    feeds/NodeInfoFeed.cpp \
    feeds/NodeListFeed.cpp \
    feeds/NodeUsersFeed.cpp \
