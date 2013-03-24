@@ -291,7 +291,7 @@ void ClientChannels::setup()
  */
 ClientChannel ClientChannels::add()
 {
-  QByteArray id = m_packet->channelId();
+  const QByteArray id = m_packet->channelId();
   if (!Channel::isCompatibleId(id))
     return ClientChannel();
 
@@ -306,7 +306,7 @@ ClientChannel ClientChannels::add()
   else
     info.setOption(ChannelInfo::Updated);
 
-  if (m_packet->text() == LS("*")) {
+  if (m_packet->text() == FEED_WILDCARD_ASTERISK) {
     if (channel->setName(ChatClient::io()->url().host()))
       info.setOption(ChannelInfo::Renamed);
   }
@@ -318,6 +318,14 @@ ClientChannel ClientChannels::add()
 
   channel->gender() = m_packet->gender();
   channel->status() = m_packet->channelStatus();
+
+  if (channel->type() == SimpleID::ChannelId) {
+    const int status = m_packet->status();
+    channel->data()[LS("status")] = status;
+
+    if (status != Notice::OK)
+      info.setOption(ChannelInfo::Forbidden);
+  }
 
   m_synced += channel->id();
   m_hooks->add(channel, info, m_packet->json());

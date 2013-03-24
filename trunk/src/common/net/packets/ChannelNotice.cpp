@@ -42,9 +42,9 @@ ChannelNotice::ChannelNotice(quint16 type, PacketReader *reader)
   else
     m_channelId = reader->dest();
 
-  m_gender   = reader->get<quint8>();
-  m_channelStatus   = reader->get<quint8>();
-  m_channels = reader->idList();
+  m_gender        = reader->get<quint8>();
+  m_channelStatus = reader->get<quint8>();
+  m_channels      = reader->idList();
 }
 
 
@@ -71,10 +71,17 @@ ChannelPacket ChannelNotice::channel(ClientChannel channel, ClientChannel user, 
   packet->setText(channel->name());
   packet->m_gender        = channel->gender().raw();
   packet->m_channelStatus = channel->status().value();
-  packet->setData(channel->feeds().f(user.data()));
 
-  if (channel->type() == SimpleID::ChannelId)
-    packet->m_channels = channel->channels().all();
+  if (channel->type() == SimpleID::ChannelId) {
+    FeedPtr feed = channel->feed(FEED_NAME_ACL, false);
+    if (feed && feed->can(user.data(), Acl::Read))
+      packet->m_channels = channel->channels().all();
+    else
+      packet->setStatus(Notice::Forbidden);
+  }
+
+  if (packet->status() == Notice::OK)
+    packet->setData(channel->feeds().f(user.data()));
 
   return packet;
 }
