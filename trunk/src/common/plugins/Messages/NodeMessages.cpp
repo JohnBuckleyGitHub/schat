@@ -58,6 +58,8 @@ bool NodeMessages::read(PacketReader *reader)
     event->status = Notice::NotFound;
   else if (m_dest->type() == SimpleID::ServerId)
     event->status = Notice::BadRequest;
+  else if (m_dest->type() == SimpleID::ChannelId && !m_dest->channels().contains(reader->sender()))
+    event->status = Notice::BadRequest;
   else if (!m_dest->canWrite(m_sender))
     event->status = Notice::Forbidden;
 
