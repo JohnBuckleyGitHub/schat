@@ -148,12 +148,8 @@ void ChannelsPluginImpl::inviteTo(const QByteArray &userId, const QByteArray &ch
 }
 
 
-void ChannelsPluginImpl::ro(const QByteArray &userId, const QByteArray &channelId, bool ro)
+void ChannelsPluginImpl::setAcl(const QByteArray &userId, const QByteArray &channelId, int acl)
 {
-  int acl = Acl::Read;
-  if (!ro)
-    acl |= Acl::Write;
-
   ClientFeeds::post(channelId, ACL_FEED_HEAD_OTHER_REQ + LC('/') + SimpleID::encode(userId), acl, Feed::Share | Feed::Broadcast);
 }
 

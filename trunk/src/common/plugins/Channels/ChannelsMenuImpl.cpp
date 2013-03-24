@@ -48,10 +48,10 @@ ChannelsMenuImpl::ChannelsMenuImpl(QObject *parent)
 bool ChannelsMenuImpl::triggerImpl(QAction *action)
 {
   if (action == m_ignore) {
-    ChannelsPluginImpl::ignore(action->data().toByteArray(), action->isChecked());
+    ChannelsPluginImpl::ignore(m_id, action->isChecked());
   }
-  else if (action == m_ro) {
-    ChannelsPluginImpl::ro(action->data().toByteArray(), ChatCore::currentId(), action->isChecked());
+  else if (action == m_ro || action == m_rw || action == m_forbidden) {
+    ChannelsPluginImpl::setAcl(m_id, ChatCore::currentId(), action->data().toInt());
   }
   else if (action == m_advanced) {
     ChannelBaseTab *tab = TabWidget::i()->channelTab(ChatCore::currentId());
@@ -70,7 +70,8 @@ void ChannelsMenuImpl::bindImpl(QMenu *menu, ClientChannel channel, Hooks::Scope
   if (channel->type() != SimpleID::UserId)
     return;
 
-  m_self = channel->id() == ChatClient::id();
+  m_id   = channel->id();
+  m_self = m_id == ChatClient::id();
 
   if (scope == Hooks::UserViewScope || scope == Hooks::ChatViewScope)
     permissions(menu, channel);
@@ -85,7 +86,6 @@ void ChannelsMenuImpl::bindImpl(QMenu *menu, ClientChannel channel, Hooks::Scope
     m_ignore = menu->addAction(SCHAT_ICON(Prohibition), tr("Ignore"));
     m_ignore->setCheckable(true);
     m_ignore->setChecked(Hooks::MessagesImpl::ignored(channel));
-    m_ignore->setData(channel->id());
   }
 }
 
@@ -97,6 +97,9 @@ void ChannelsMenuImpl::cleanupImpl()
   m_permissions = 0;
   m_invite = 0;
   m_ro = 0;
+  m_rw = 0;
+  m_forbidden = 0;
+  m_id.clear();
 }
 
 
@@ -151,22 +154,38 @@ void ChannelsMenuImpl::permissions(QMenu *menu, ClientChannel user)
   if (acl == -1)
     return;
 
-  const bool ro  = !m_self && (acl & Acl::Edit || acl & Acl::SpecialWrite);
-  const bool adv = acl & Acl::Edit;
+  const bool moderator = !m_self && (acl & Acl::Edit || acl & Acl::SpecialWrite);
+  const bool advanced  = acl & Acl::Edit;
 
-  if (ro || adv) {
+  if (moderator || advanced) {
     menu->addSeparator();
     m_permissions = menu->addMenu(SCHAT_ICON(Key), tr("Permissions"));
 
-    if (ro) {
+    if (moderator) {
+      QActionGroup *group = new QActionGroup(m_permissions);
       const int acl = ClientFeeds::match(channel, user);
+
+      m_rw = m_permissions->addAction(tr("Read write"));
+      m_rw->setCheckable(true);
+      m_rw->setChecked(acl == (Acl::Read | Acl::Write));
+      m_rw->setData(Acl::Read | Acl::Write);
+
       m_ro = m_permissions->addAction(tr("Read only"));
       m_ro->setCheckable(true);
-      m_ro->setChecked(!(acl & Acl::Write) && (acl & Acl::Read));
-      m_ro->setData(user->id());
+      m_ro->setChecked(acl == Acl::Read);
+      m_ro->setData(Acl::Read);
+
+      m_forbidden = m_permissions->addAction(tr("No access"));
+      m_forbidden->setCheckable(true);
+      m_forbidden->setChecked(acl == 0);
+      m_forbidden->setData(0);
+
+      group->addAction(m_rw);
+      group->addAction(m_ro);
+      group->addAction(m_forbidden);
     }
 
-    if (adv) {
+    if (advanced) {
       m_permissions->addSeparator();
       m_advanced = m_permissions->addAction(SCHAT_ICON(Gear), tr("Advanced..."));
       m_advanced->setData(user->id());

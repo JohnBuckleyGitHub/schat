@@ -41,9 +41,12 @@ private:
   void permissions(QMenu *menu, ClientChannel user);
 
   bool m_self;          ///< \b true если пользователь совершает действия над собой.
-  QAction *m_advanced;  ///< Расширенная настройка правд доступа.
+  QAction *m_advanced;  ///< Расширенная настройка прав доступа.
+  QAction *m_forbidden; ///< Бан пользователя в канале.
   QAction *m_ignore;    ///< Действие для игнорирования пользователя.
   QAction *m_ro;        ///< Права только для чтения.
+  QAction *m_rw;        ///< Права на чтение и запись.
+  QByteArray m_id;      ///< Идентификатор канала.
   QMenu *m_invite;      ///< Меню приглашения в канал.
   QMenu *m_permissions; ///< Меню управления правами пользователя в канале.
 };
