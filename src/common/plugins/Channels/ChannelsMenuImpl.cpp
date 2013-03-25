@@ -110,6 +110,21 @@ void ChannelsMenuImpl::invite(QAction *action)
 }
 
 
+bool ChannelsMenuImpl::canInviteTo(ClientChannel user, ClientChannel channel)
+{
+  if (SimpleID::typeOf(channel->id()) == SimpleID::ChannelId && channel->channels().contains(ChatClient::id()) && !channel->channels().contains(user->id()) && user->status() != Status::Offline) {
+    if (!ClientFeeds::match(channel)) {
+      const int acl = ClientFeeds::match(channel, ChatClient::channel());
+      return ((acl & Acl::Edit) || (acl & Acl::SpecialWrite));
+    }
+
+    return true;
+  }
+
+  return false;
+}
+
+
 /*!
  * Формирование меню приглашения в канал.
  */
@@ -117,16 +132,13 @@ void ChannelsMenuImpl::invite(QMenu *menu, ClientChannel user)
 {
   QList<ClientChannel> list;
   const QMap<QByteArray, ClientChannel>& channels = ChatClient::channels()->channels();
-  const QByteArray id                             = ChatClient::id();
-  const QByteArray& userId                        = user->id();
 
   QMapIterator<QByteArray, ClientChannel> i(channels);
   while (i.hasNext()) {
     i.next();
 
-    ClientChannel channel = i.value();
-    if (SimpleID::typeOf(i.value()->id()) == SimpleID::ChannelId && channel->channels().contains(id) && !channel->channels().contains(userId) && user->status() != Status::Offline)
-      list.append(channel);
+    if (canInviteTo(user, i.value()))
+      list.append(i.value());
   }
 
   if (list.isEmpty())
