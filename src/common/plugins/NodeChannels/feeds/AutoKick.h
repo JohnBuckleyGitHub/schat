@@ -21,6 +21,8 @@
 
 #include <QObject>
 
+#include "ServerChannel.h"
+
 class FeedEvent;
 
 class AutoKick : public QObject
@@ -34,7 +36,8 @@ private slots:
   void notify(const FeedEvent &event);
 
 private:
-  void kick(const QByteArray &channelId, const QByteArray &userId);
+  void kick(ChatChannel channel, const QByteArray &userId);
+  void kickAll(ChatChannel channel);
 };
 
 #endif /* AUTOKICK_H_ */
