@@ -183,6 +183,9 @@ void ChannelBaseTab::notify(const Notify &notify)
   else if (notify.type() == Notify::FindPrevious && notify.data().toByteArray() == id()) {
     find(m_findWidget->text(), false);
   }
+  else if (notify.type() == Notify::UpdateChannelIcon) {
+    setIcon(channelIcon());
+  }
 }
 
 
@@ -221,7 +224,7 @@ ClientChannel ChannelBaseTab::c()
 
 QIcon ChannelBaseTab::channelIcon()
 {
-  int alerts = ChatAlerts::count(id());
+ const int alerts = ChatAlerts::count(id());
   ClientChannel channel = c();
 
   if (alerts)

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ QIcon ChatIcons::icon(ClientChannel channel, int options)
 {
   QString file = LS(":/images/channel.png");
 
-  if (channel->type() != SimpleID::ChannelId) {
+  if (channel->type() == SimpleID::UserId) {
     file = LS(":/images/user");
     int gender = channel->gender().value();
     int color  = channel->gender().color();
@@ -54,6 +54,9 @@ QIcon ChatIcons::icon(ClientChannel channel, int options)
       file += LS("-female");
 
     file += LS(".png");
+  }
+  else if (channel->type() == SimpleID::ChannelId && channel->gender().color() == Gender::Green) {
+    file = LS(":/images/secure.png");
   }
 
   const Status& status = channel->status();

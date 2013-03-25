@@ -122,8 +122,12 @@ FeedReply NodeAclFeed::put(const QString &path, const QVariantMap &json, Channel
 {
   if (path.startsWith(LS("head/"))) {
     const FeedReply reply = Feed::put(path, json, channel);
-    if (reply.status == Notice::OK)
-      m_data[FEED_WILDCARD_ASTERISK] = AclValue::toByteArray(head().acl().mask() & ~0770);
+    if (reply.status == Notice::OK) {
+      const int acl = (head().acl().mask() & ~0770);
+      m_data[FEED_WILDCARD_ASTERISK] = AclValue::toByteArray(acl);
+
+      head().channel()->gender().setColor(acl ? Gender::Default : Gender::Green);
+    }
 
     return reply;
   }
@@ -142,11 +146,15 @@ void NodeAclFeed::setChannel(Channel *channel)
   if (!channel)
     return;
 
-  if (channel->type() == SimpleID::UserId)
+  const int type = channel->type();
+  if (type == SimpleID::UserId)
     m_data[SimpleID::encode(channel->id())] = AclValue::toByteArray(head().acl().mask() >> 6 | Acl::SpecialEdit);
 
-  if (channel->type() == SimpleID::ServerId)
+  if (type == SimpleID::ServerId)
     FeedsCore::sub(FEED_NAME_ACL);
+
+  if (type == SimpleID::ChannelId)
+    head().channel()->gender().setColor(head().acl().mask() & ~0770 ? Gender::Default : Gender::Green);
 }
 
 

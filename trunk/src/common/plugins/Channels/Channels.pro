@@ -24,6 +24,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webkitwidgets
 
 HEADERS  = \
    ChannelsCmd.h \
+   ChannelsFeedListener.h \
    ChannelsMenuImpl.h \
    ChannelsPlugin.h \
    ChannelsPlugin_p.h \
@@ -33,6 +34,7 @@ HEADERS  = \
 
 SOURCES  = \
    ChannelsCmd.cpp \
+   ChannelsFeedListener.cpp \
    ChannelsMenuImpl.cpp \
    ChannelsPlugin.cpp \
    ChannelsSettings.cpp \
