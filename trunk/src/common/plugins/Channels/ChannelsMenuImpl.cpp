@@ -105,8 +105,14 @@ void ChannelsMenuImpl::cleanupImpl()
 
 void ChannelsMenuImpl::invite(QAction *action)
 {
-  if (action)
-    ChannelsPluginImpl::inviteTo(action->data().toByteArray(), ChatCore::currentId());
+  if (!action)
+    return;
+
+  const QVariantList data = action->data().toList();
+  if (data.size() != 2)
+    return;
+
+  ChannelsPluginImpl::inviteTo(data.at(0).toByteArray(), data.at(1).toByteArray());
 }
 
 
@@ -146,7 +152,7 @@ void ChannelsMenuImpl::invite(QMenu *menu, ClientChannel user)
 
   m_invite = menu->addMenu(ChatIcons::icon(ChatIcons::icon(user, ChatIcons::NoOptions), LS(":/images/add-small.png")), tr("Invite to"));
   foreach (const ClientChannel &channel, list) {
-    m_invite->addAction(SCHAT_ICON(Channel), channel->name())->setData(user->id());
+    m_invite->addAction(SCHAT_ICON(Channel), channel->name())->setData(QVariantList() << user->id() << channel->id());
   }
 
   connect(m_invite, SIGNAL(triggered(QAction*)), SLOT(invite(QAction*)));

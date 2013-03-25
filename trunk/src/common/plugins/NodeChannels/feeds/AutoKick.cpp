@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "acl/AclValue.h"
 #include "feeds/AutoKick.h"
 #include "feeds/FeedEvents.h"
 #include "feeds/FeedStrings.h"
@@ -41,9 +42,20 @@ void AutoKick::notify(const FeedEvent &event)
     return;
 
   const QVariant value = event.request.value(FEED_KEY_VALUE);
+  ChatChannel channel  = Ch::channel(event.channel, SimpleID::ChannelId, false);
+  if (!channel)
+    return;
 
   if (event.method == FEED_METHOD_POST && event.path.startsWith(LS("head/other/")) && value == 0) {
-    kick(event.channel, SimpleID::decode(event.path.mid(11)));
+    kick(channel, SimpleID::decode(event.path.mid(11)));
+  }
+  else if (event.method == FEED_METHOD_DELETE && event.path.startsWith(LS("head/other/"))) {
+    FeedPtr feed = channel->feed(FEED_NAME_ACL, false);
+    if (feed && !AclValue::match(feed.data(), 0))
+      kick(channel, SimpleID::decode(event.path.mid(11)));
+  }
+  else if (event.method == FEED_METHOD_PUT && event.path == LS("head/mask")) {
+    kickAll(channel);
   }
 }
 
@@ -51,22 +63,45 @@ void AutoKick::notify(const FeedEvent &event)
 /*!
  * Отключение одиночного пользователя.
  */
-void AutoKick::kick(const QByteArray &channelId, const QByteArray &userId)
+void AutoKick::kick(ChatChannel channel, const QByteArray &userId)
 {
-  ChatChannel channel = Ch::channel(channelId, SimpleID::ChannelId, false);
-  if (!channel)
-    return;
-
-  ChatChannel user = Ch::channel(channelId, SimpleID::UserId, false);
+  ChatChannel user = Ch::channel(userId, SimpleID::UserId, false);
   if (!user)
     return;
 
-  user->removeChannel(channelId);
+  user->removeChannel(channel->id());
   if (!channel->channels().all().contains(userId))
     return;
 
-  Core::i()->send(Sockets::channel(channel), ChannelNotice::request(userId, channelId, CHANNELS_PART_CMD));
+  Core::i()->send(Sockets::channel(channel), ChannelNotice::request(userId, channel->id(), CHANNELS_PART_CMD));
   channel->removeChannel(userId);
 
+  Ch::gc(channel);
+}
+
+
+/*!
+ * Отключение всех пользователей, которые не могут находиться в этом канале.
+ */
+void AutoKick::kickAll(ChatChannel channel)
+{
+  FeedPtr feed = channel->feed(FEED_NAME_ACL, false);
+  if (!feed || AclValue::match(feed.data(), 0))
+    return;
+
+  const QList<QByteArray>& channels = channel->channels().all();
+  const QList<quint64> sockets      = Sockets::channel(channel);
+  QList<QByteArray> packets;
+
+  foreach (const QByteArray &id, channels) {
+    ChatChannel user = Ch::channel(id, SimpleID::UserId, false);
+    if (user && !AclValue::match(feed.data(), user.data())) {
+      user->removeChannel(channel->id());
+      packets.append(ChannelNotice::request(user->id(), channel->id(), CHANNELS_PART_CMD)->data(Core::stream()));
+      channel->removeChannel(user->id());
+    }
+  }
+
+  Core::i()->send(sockets, packets);
   Ch::gc(channel);
 }
