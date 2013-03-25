@@ -319,8 +319,8 @@ ClientChannel ClientChannels::add()
   channel->gender() = m_packet->gender();
   channel->status() = m_packet->channelStatus();
 
-  if (channel->type() == SimpleID::ChannelId)
-    channel->data()[LS("status")] = m_packet->status();
+  if (channel->type() == SimpleID::ChannelId && m_packet->status() != Notice::OK)
+    channel->gender().setColor(Gender::Green);
 
   m_synced += channel->id();
   m_hooks->add(channel, info, m_packet->json());

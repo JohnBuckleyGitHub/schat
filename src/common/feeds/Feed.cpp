@@ -170,7 +170,7 @@ FeedReply Feed::put(const QString &path, const QVariantMap &json, Channel *chann
     if (!can(channel, Acl::Edit | Acl::SpecialEdit))
       return Notice::Forbidden;
 
-    int status = head().put(path.mid(5), value);
+    const int status = head().put(path.mid(5), value);
     if (status == Notice::OK)
       return FeedReply(status, DateTime::utc());
 

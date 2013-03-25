@@ -22,6 +22,7 @@
 #include <QtPlugin>
 
 #include "ChannelsCmd.h"
+#include "ChannelsFeedListener.h"
 #include "ChannelsMenuImpl.h"
 #include "ChannelsPlugin.h"
 #include "ChannelsPlugin_p.h"
@@ -88,6 +89,7 @@ ChannelsPluginImpl::ChannelsPluginImpl(QObject *parent)
   m_tr = new ChannelsTr();
   new ChannelsCmd(this);
   new ChannelsMenuImpl(this);
+  new ChannelsFeedListener(this);
 
   connect(ChatClient::i(), SIGNAL(ready()), SLOT(ready()));
   connect(ChatClient::channels(), SIGNAL(channel(QByteArray)), SLOT(channel(QByteArray)));

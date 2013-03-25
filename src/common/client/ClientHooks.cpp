@@ -162,7 +162,7 @@ void Channels::add(ClientChannel channel, const ChannelInfo &info, const QVarian
     ChatClient::io()->setNick(ChatClient::channel()->name());
 
   channel->setSynced(true);
-  if (channel->type() == SimpleID::ChannelId && channel->data().value(LS("status"), Notice::OK) == Notice::OK)
+  if (channel->type() == SimpleID::ChannelId)
     channel->status() = Status::Online;
 
   ChatClient::feeds()->hooks()->add(channel, info, json);
