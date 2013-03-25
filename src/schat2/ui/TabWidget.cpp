@@ -547,8 +547,11 @@ void TabWidget::notify(const Notify &notify)
 
   if (type == Notify::OpenChannel || type == Notify::OpenInfo) {
     const QByteArray id = notify.data().toByteArray();
-    if (SimpleID::typeOf(id) == SimpleID::ChannelId && !TabWidget::i()->channelTab(id, false, false))
-      ChatClient::channels()->join(id);
+    if (SimpleID::typeOf(id) == SimpleID::ChannelId) {
+      ChannelBaseTab *tab = channelTab(id, false, false);
+      if (!tab || !tab->isActive())
+        ChatClient::channels()->join(id);
+    }
 
     ChannelBaseTab *tab = channelTab(id);
     if (!tab)

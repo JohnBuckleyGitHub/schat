@@ -44,6 +44,7 @@ private:
   bool m_bold;             ///< Жирный шрифт.
   bool m_italic;           ///< Курсивный шрифт.
   bool m_self;             ///< \b true если это собственный итем пользователя.
+  bool m_underline;        ///< Подчёркнутый шрифт.
   ClientChannel m_channel; ///< Канал.
   ClientChannel m_user;    ///< Пользователь.
 };
@@ -63,6 +64,7 @@ public:
   bool remove(const QByteArray &id);
   inline bool contains(const QByteArray &id) const { return m_channels.contains(id); }
   inline bool sortable() const                     { return m_sortable; }
+  inline int count() const                         { return m_channels.size(); }
   inline void setSortable(bool sortable)           { m_sortable = sortable; }
   void clear();
   void sort();

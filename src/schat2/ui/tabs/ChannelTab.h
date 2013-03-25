@@ -35,6 +35,7 @@ public:
   ChannelTab(ClientChannel channel, TabWidget *parent);
   inline UserView *userView() { return m_userView; }
 
+  bool isActive() const;
   void setOnline(bool online = true);
 
 private slots:

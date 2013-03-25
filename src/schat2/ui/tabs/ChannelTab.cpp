@@ -76,6 +76,12 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
 }
 
 
+bool ChannelTab::isActive() const
+{
+  return m_userView->count();
+}
+
+
 void ChannelTab::setOnline(bool online)
 {
   if (!online) {
@@ -140,6 +146,9 @@ void ChannelTab::part(const QByteArray &channel, const QByteArray &user)
 
   m_userView->remove(user);
   m_chatView->add(ServiceMessage::part(user));
+
+  if (ChatClient::id() == user)
+    m_userView->clear();
 }
 
 
