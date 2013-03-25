@@ -41,6 +41,7 @@ UserItem::UserItem(ClientChannel user, ClientChannel channel)
   , m_bold(false)
   , m_italic(false)
   , m_self(false)
+  , m_underline(false)
   , m_channel(channel)
   , m_user(user)
 {
@@ -62,11 +63,13 @@ bool UserItem::reload()
   if (acl != -1) {
     QFont font = this->font();
 
-    m_bold   = acl & Acl::Edit || acl & Acl::SpecialWrite;
-    m_italic = !(acl & Acl::Write) || Hooks::MessagesImpl::ignored(m_user);
+    m_bold      = acl & Acl::Edit || acl & Acl::SpecialWrite;
+    m_italic    = !(acl & Acl::Write) || Hooks::MessagesImpl::ignored(m_user);
+    m_underline = acl & Acl::SpecialEdit;
 
     font.setBold(m_bold);
     font.setItalic(m_italic);
+    font.setUnderline(m_underline);
     setFont(font);
   }
 
@@ -84,6 +87,9 @@ int UserItem::weight() const
 {
   if (m_self)
     return 0;
+
+  else if (m_underline)
+    return 1;
 
   else if (m_bold)
     return 2;
