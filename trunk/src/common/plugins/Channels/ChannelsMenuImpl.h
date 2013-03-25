@@ -37,6 +37,7 @@ private slots:
   void invite(QAction *action);
 
 private:
+  bool canInviteTo(ClientChannel user, ClientChannel channel);
   void invite(QMenu *menu, ClientChannel user);
   void permissions(QMenu *menu, ClientChannel user);
 
