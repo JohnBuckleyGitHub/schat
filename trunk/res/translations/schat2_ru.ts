@@ -124,14 +124,6 @@
     </message>
 </context>
 <context>
-    <name>ChannelBaseTab</name>
-    <message>
-        <location filename="../../src/schat2/ui/tabs/ChannelBaseTab.cpp" line="115"/>
-        <source>&lt;b&gt;Access denied!&lt;/b&gt; You cannot join into this channel.</source>
-        <translation>&lt;b&gt;В доступе отказано!&lt;/b&gt; Вы не можете войти в этот канал.</translation>
-    </message>
-</context>
-<context>
     <name>ChannelMenuImpl</name>
     <message>
         <location filename="../../src/schat2/hooks/ChannelMenuImpl.cpp" line="48"/>

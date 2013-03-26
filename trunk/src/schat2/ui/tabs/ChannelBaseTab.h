@@ -60,7 +60,6 @@ private slots:
   void setup();
 
 protected:
-  bool isForbidden();
   ClientChannel c();
   QIcon channelIcon();
   QString page() const;
