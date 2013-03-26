@@ -18,12 +18,13 @@
 
 #include "ChannelsFeedListener.h"
 #include "ChatNotify.h"
-#include "feeds/FeedStrings.h"
-#include "net/SimpleID.h"
 #include "client/ChatClient.h"
-#include "client/ClientFeeds.h"
 #include "client/ClientChannels.h"
+#include "client/ClientFeeds.h"
+#include "feeds/FeedStrings.h"
+#include "messages/AlertMessage.h"
 #include "net/packets/Notice.h"
+#include "net/SimpleID.h"
 
 ChannelsFeedListener::ChannelsFeedListener(QObject *parent)
   : QObject(parent)
@@ -38,10 +39,10 @@ void ChannelsFeedListener::notify(const Notify &notify)
 
   if (type == Notify::FeedData || type == Notify::FeedReply) {
     const FeedNotify &n = static_cast<const FeedNotify &>(notify);
-    if (SimpleID::typeOf(n.channel()) != SimpleID::ChannelId)
+    if (SimpleID::typeOf(n.channel()) != SimpleID::ChannelId || n.command() != FEED_METHOD_GET)
       return;
 
-    if (n.feed() == FEED_NAME_ACL && type == Notify::FeedData) {
+    if (n.feed() == FEED_NAME_ACL && (type == Notify::FeedData || (type == Notify::FeedReply && n.status() == Notice::Forbidden))) {
       reload(n.channel(), n.status());
     }
   }
@@ -62,4 +63,7 @@ void ChannelsFeedListener::reload(const QByteArray &channelId, int status)
     channel->gender().setColor(color);
     ChatNotify::start(Notify::UpdateChannelIcon, channelId, true);
   }
+
+  if (status == Notice::Forbidden)
+    AlertMessage::show(tr("<b>Access denied!</b> You cannot be in this channel."), ALERT_MESSAGE_ERROR, channelId);
 }

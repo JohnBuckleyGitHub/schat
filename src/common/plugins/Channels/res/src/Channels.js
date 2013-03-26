@@ -123,7 +123,7 @@ var Channels = {
     Channels.acl = SimpleChat.match(Settings.getId(), SimpleChat.id());
     var dropdown = $('#settings-dropdown');
 
-    if (Channels.acl & 9) {
+    if (Channels.acl != -1 && (Channels.acl & 9)) {
       if (!dropdown.length)
         $('#channel-buttons').append('<div id="settings-dropdown" class="dropdown pull-right"><a id="channel-settings" data-toggle="dropdown" href="#"></a>' + Channels.menu() + '</div>');
     }

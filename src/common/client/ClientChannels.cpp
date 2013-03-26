@@ -319,8 +319,10 @@ ClientChannel ClientChannels::add()
   channel->gender() = m_packet->gender();
   channel->status() = m_packet->channelStatus();
 
-  if (channel->type() == SimpleID::ChannelId && m_packet->status() != Notice::OK)
+  if (channel->type() == SimpleID::ChannelId && m_packet->status() == Notice::Forbidden) {
     channel->gender().setColor(Gender::Green);
+    channel->feeds().remove(FEED_NAME_ACL);
+  }
 
   m_synced += channel->id();
   m_hooks->add(channel, info, m_packet->json());
