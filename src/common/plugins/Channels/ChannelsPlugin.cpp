@@ -142,7 +142,7 @@ void ChannelsPluginImpl::inviteTo(const QByteArray &userId, const QByteArray &ch
   if (!channel)
     return;
 
-  if (ClientFeeds::match(channel) != (Acl::Read | Acl::Write))
+  if (ClientFeeds::match(channel, ChatClient::channels()->get(userId)) != (Acl::Read | Acl::Write))
     setAcl(userId, channelId, Acl::Read | Acl::Write);
 
   QVariantMap data;
