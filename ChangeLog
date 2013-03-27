@@ -1,3 +1,11 @@
+2.0.4
+-----
+ + Added configuration option "History/AutoLoad".
+ + Added support for private channels and channels with read-only access.
+ + Added support for invitations to the channels.
+ * Extended list of permissions that can be set via the user interface.
+ * Fixed a bug you can send a message to the channel, but do not be in it.
+
 2.0.3
 -----
  + Fixed a bug on generating a unique identifier of a computer.
