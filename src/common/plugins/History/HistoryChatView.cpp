@@ -18,7 +18,9 @@
 
 #include <QWebFrame>
 
+#include "ChatCore.h"
 #include "ChatNotify.h"
+#include "ChatSettings.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
 #include "client/ClientFeeds.h"
@@ -34,8 +36,20 @@
 HistoryChatView::HistoryChatView(QObject *parent)
   : ChatViewHooks(parent)
 {
+  m_autoLoad = ChatCore::settings()->value(SETTINGS_HISTORY_AUTO_LOAD).toBool();
+
   connect(ChatClient::io(), SIGNAL(ready()), SLOT(ready()));
   connect(ChatNotify::i(), SIGNAL(notify(Notify)), SLOT(notify(Notify)));
+  connect(ChatCore::settings(), SIGNAL(changed(QString,QVariant)), SLOT(settingsChanged(QString,QVariant)));
+}
+
+
+bool HistoryChatView::isAutoLoad(const QString &id) const
+{
+  if (!m_autoLoad && SimpleID::typeOf(SimpleID::decode(id)) == SimpleID::UserId)
+    return false;
+
+  return true;
 }
 
 
@@ -98,12 +112,19 @@ void HistoryChatView::ready()
 }
 
 
+void HistoryChatView::settingsChanged(const QString &key, const QVariant &value)
+{
+  if (key == SETTINGS_HISTORY_AUTO_LOAD)
+    m_autoLoad = value.toBool();
+}
+
+
 /*!
  * Возвращает \b true если идентификатор является идентификатором обычного канала или пользователя.
  */
 bool HistoryChatView::compatible(const QByteArray &id) const
 {
-  int type = SimpleID::typeOf(id);
+  const int type = SimpleID::typeOf(id);
   if (type == SimpleID::ChannelId || type == SimpleID::UserId)
     return true;
 
@@ -131,6 +152,9 @@ bool HistoryChatView::sync(const QByteArray &id, qint64 date)
   const QString tag = HistoryDB::tag(id);
   if (!tag.isEmpty())
     json[MESSAGES_FEED_TAG_KEY] = tag;
+
+  if (!m_autoLoad && SimpleID::typeOf(id) == SimpleID::UserId)
+    return false;
 
   return ClientFeeds::request(id, FEED_METHOD_GET, MESSAGES_FEED_LAST_REQ, json);
 }

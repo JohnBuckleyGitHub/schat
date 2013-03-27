@@ -248,16 +248,18 @@ var History = {
   reload: function() {
     History.message = null;
     History.date    = 0;
+    History.top     = true;
 
-    History.top = false;
     History.done();
-    alignChat();
+    History.top = false;
   }
 };
 
 
 if (typeof HistoryView === 'undefined') {
-  HistoryView = {}
+  HistoryView = {
+    isAutoLoad: function(id) { return true; }
+  }
 }
 else {
   HistoryView.loading.connect(History.loading);
@@ -271,8 +273,10 @@ Messages.unhandled.push(History.unhandledMessage);
 $(document).ready(function() {
   $('body').on('click.history', '#history a', History.click);
 
-  if (SimpleChat.isOnline())
-    History.loading(Settings.id);
+  if (SimpleChat.isOnline()) {
+    if (HistoryView.isAutoLoad(Settings.getId()))
+      History.loading(Settings.id);
+  }
   else
     History.done();
 });

@@ -29,6 +29,7 @@ class HistoryChatView : public ChatViewHooks
 
 public:
   HistoryChatView(QObject *parent = 0);
+  Q_INVOKABLE bool isAutoLoad(const QString &id) const;
 
 signals:
   void loading(const QString &id);
@@ -41,11 +42,14 @@ protected:
 private slots:
   void notify(const Notify &notify);
   void ready();
+  void settingsChanged(const QString &key, const QVariant &value);
 
 private:
   bool compatible(const QByteArray &id) const;
   bool sync(const QByteArray &id, qint64 date = 0);
   void emulateLast(const QByteArray &channelId, const QList<QByteArray> &ids);
+
+  bool m_autoLoad; /// Опция SETTINGS_HISTORY_AUTO_LOAD.
 };
 
 #endif /* HISTORYCHATVIEW_H_ */

@@ -19,14 +19,22 @@
     </message>
 </context>
 <context>
+    <name>HistorySettings</name>
+    <message>
+        <location filename="../../ui/HistorySettings.cpp" line="60"/>
+        <source>Automatically display last 20 private messages</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ProfilePluginTr</name>
     <message>
-        <location filename="../../HistoryPlugin.cpp" line="53"/>
+        <location filename="../../HistoryPlugin.cpp" line="56"/>
         <source>Loading messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../HistoryPlugin.cpp" line="54"/>
+        <location filename="../../HistoryPlugin.cpp" line="57"/>
         <source>More messages</source>
         <translation type="unfinished"></translation>
     </message>
