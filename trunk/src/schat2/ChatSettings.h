@@ -34,6 +34,7 @@ class Notify;
 #define SETTINGS_DEFAULT_SERVER          QLatin1String("DefaultServer")
 #define SETTINGS_DISPLAY_SECONDS         QLatin1String("Display/Seconds")
 #define SETTINGS_DISPLAY_SERVICE         QLatin1String("Display/Service")
+#define SETTINGS_HISTORY_AUTO_LOAD       QLatin1String("History/AutoLoad")
 #define SETTINGS_LABS_DEVELOPER_EXTRAS   QLatin1String("Labs/DeveloperExtras")
 #define SETTINGS_LABS_DISABLE_UI         QLatin1String("Labs/DisableUI")
 #define SETTINGS_LABS_STATIC_TRAY_ALERTS QLatin1String("Labs/StaticTrayAlerts")

@@ -19,6 +19,20 @@
 #ifndef INFOFEED_H_
 #define INFOFEED_H_
 
-#define MESSAGES_FEED_LOGGING_KEY QLatin1String("logging")
+#define MESSAGES_FEED_BEFORE_KEY   QLatin1String("before")
+#define MESSAGES_FEED_COUNT_KEY    QLatin1String("count")
+#define MESSAGES_FEED_DATE_KEY     QLatin1String("date")
+#define MESSAGES_FEED_EMULATED_KEY QLatin1String("emulated")
+#define MESSAGES_FEED_FETCH_KEY    QLatin1String("fetch")
+#define MESSAGES_FEED_FETCH_REQ    QLatin1String("messages/fetch")
+#define MESSAGES_FEED_LAST_KEY     QLatin1String("last")
+#define MESSAGES_FEED_LAST_REQ     QLatin1String("messages/last")
+#define MESSAGES_FEED_LOGGING_KEY  QLatin1String("logging")
+#define MESSAGES_FEED_MESSAGES_KEY QLatin1String("messages")
+#define MESSAGES_FEED_OFFLINE_KEY  QLatin1String("offline")
+#define MESSAGES_FEED_OFFLINE_REQ  QLatin1String("messages/offline")
+#define MESSAGES_FEED_SINCE_KEY    QLatin1String("since")
+#define MESSAGES_FEED_SINCE_REQ    QLatin1String("messages/since")
+#define MESSAGES_FEED_TAG_KEY      QLatin1String("tag")
 
 #endif /* INFOFEED_H_ */

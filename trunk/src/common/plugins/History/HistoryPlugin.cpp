@@ -23,9 +23,11 @@
 
 #include "ChatCore.h"
 #include "ChatNotify.h"
+#include "ChatSettings.h"
 #include "client/ChatClient.h"
 #include "client/ClientFeeds.h"
 #include "client/ClientMessages.h"
+#include "feeds/MessagesFeed.h"
 #include "HistoryButton.h"
 #include "HistoryChatView.h"
 #include "HistoryDB.h"
@@ -37,6 +39,7 @@
 #include "sglobal.h"
 #include "Tr.h"
 #include "Translation.h"
+#include "ui/HistorySettings.h"
 #include "ui/SendWidget.h"
 #include "ui/tabs/PrivateTab.h"
 
@@ -70,6 +73,7 @@ HistoryImpl::HistoryImpl(QObject *parent)
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 
   ChatCore::translation()->addOther(LS("history"));
+  ChatCore::settings()->setDefault(SETTINGS_HISTORY_AUTO_LOAD, true);
 
   QTimer::singleShot(0, this, SLOT(start()));
 }
@@ -84,8 +88,8 @@ HistoryImpl::~HistoryImpl()
 bool HistoryImpl::fetch(const QByteArray &id, const QList<QByteArray> &messages)
 {
   QVariantMap data;
-  data[LS("messages")] = MessageNotice::encode(messages);
-  return ClientFeeds::request(id, FEED_METHOD_GET, LS("messages/fetch"), data);
+  data[MESSAGES_FEED_MESSAGES_KEY] = MessageNotice::encode(messages);
+  return ClientFeeds::request(id, FEED_METHOD_GET, MESSAGES_FEED_FETCH_REQ, data);
 }
 
 
@@ -108,8 +112,8 @@ bool HistoryImpl::get(const QByteArray &id, const QList<QByteArray> &messages)
 bool HistoryImpl::since(const QByteArray &id, qint64 date)
 {
   QVariantMap data;
-  data[LS("date")] = date;
-  return ClientFeeds::request(id, FEED_METHOD_GET, LS("messages/since"), data);
+  data[MESSAGES_FEED_DATE_KEY] = date;
+  return ClientFeeds::request(id, FEED_METHOD_GET, MESSAGES_FEED_SINCE_REQ, data);
 }
 
 
@@ -143,8 +147,8 @@ void HistoryImpl::notify(const Notify &notify)
 {
   if (notify.type() == Notify::FeedReply) {
     const FeedNotify &n = static_cast<const FeedNotify &>(notify);
-    if ((n.name() == LS("messages/last") || n.name() == LS("messages/since")) && !n.json().value(LS("emulated")).toBool())
-      get(n.channel(), MessageNotice::decode(n.json().value(LS("messages")).toStringList()));
+    if ((n.name() == MESSAGES_FEED_LAST_REQ || n.name() == MESSAGES_FEED_SINCE_REQ) && !n.json().value(MESSAGES_FEED_EMULATED_KEY).toBool())
+      get(n.channel(), MessageNotice::decode(n.json().value(MESSAGES_FEED_MESSAGES_KEY).toStringList()));
   }
   else if (notify.type() == Notify::ClearCache) {
     HistoryDB::clear();
@@ -170,6 +174,12 @@ ChatPlugin *HistoryPlugin::create()
 {
   m_plugin = new HistoryImpl(this);
   return m_plugin;
+}
+
+
+QWidget *HistoryPlugin::settings(QWidget *parent)
+{
+  return new HistorySettings(parent);
 }
 
 #if QT_VERSION < 0x050000

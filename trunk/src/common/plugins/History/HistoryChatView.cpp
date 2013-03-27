@@ -23,6 +23,7 @@
 #include "client/ClientChannels.h"
 #include "client/ClientFeeds.h"
 #include "client/SimpleClient.h"
+#include "feeds/MessagesFeed.h"
 #include "HistoryChatView.h"
 #include "HistoryDB.h"
 #include "HistoryPlugin_p.h"
@@ -66,14 +67,14 @@ void HistoryChatView::notify(const Notify &notify)
 {
   if (notify.type() == Notify::FeedReply) {
     const FeedNotify &n = static_cast<const FeedNotify &>(notify);
-    if (n.feed() == FEED_NAME_MESSAGES && n.path() == LS("last")) {
+    if (n.feed() == FEED_NAME_MESSAGES && n.path() == MESSAGES_FEED_LAST_KEY) {
       if (n.status() == Notice::NotModified) {
         const QList<QByteArray> messages = HistoryDB::last(n.channel());
         HistoryImpl::get(n.channel(), messages);
         emulateLast(n.channel(), messages);
       }
-      else if (n.status() == Notice::OK && !n.json().contains(LS("before")) && !n.json().contains(LS("emulated")))
-        HistoryDB::add(n.channel(), n.json().value(LS("messages")).toStringList());
+      else if (n.status() == Notice::OK && !n.json().contains(MESSAGES_FEED_BEFORE_KEY) && !n.json().contains(MESSAGES_FEED_EMULATED_KEY))
+        HistoryDB::add(n.channel(), n.json().value(MESSAGES_FEED_MESSAGES_KEY).toStringList());
     }
   }
 }
@@ -93,7 +94,7 @@ void HistoryChatView::ready()
     }
   }
 
-  ClientFeeds::request(ChatClient::id(), FEED_METHOD_GET, LS("messages/offline"));
+  ClientFeeds::request(ChatClient::id(), FEED_METHOD_GET, MESSAGES_FEED_OFFLINE_REQ);
 }
 
 
@@ -129,9 +130,9 @@ bool HistoryChatView::sync(const QByteArray &id, qint64 date)
   QVariantMap json;
   const QString tag = HistoryDB::tag(id);
   if (!tag.isEmpty())
-    json[LS("tag")] = tag;
+    json[MESSAGES_FEED_TAG_KEY] = tag;
 
-  return ClientFeeds::request(id, FEED_METHOD_GET, LS("messages/last"), json);
+  return ClientFeeds::request(id, FEED_METHOD_GET, MESSAGES_FEED_LAST_REQ, json);
 }
 
 
@@ -144,10 +145,10 @@ bool HistoryChatView::sync(const QByteArray &id, qint64 date)
 void HistoryChatView::emulateLast(const QByteArray &channelId, const QList<QByteArray> &ids)
 {
   QVariantMap data;
-  data[LS("count")]    = ids.size();
-  data[LS("messages")] = MessageNotice::encode(ids);
-  data[LS("emulated")] = true;
+  data[MESSAGES_FEED_COUNT_KEY]    = ids.size();
+  data[MESSAGES_FEED_MESSAGES_KEY] = MessageNotice::encode(ids);
+  data[MESSAGES_FEED_EMULATED_KEY] = true;
 
-  FeedNotify *notify = new FeedNotify(Notify::FeedReply, channelId, LS("messages/last"), data);
+  FeedNotify *notify = new FeedNotify(Notify::FeedReply, channelId, MESSAGES_FEED_LAST_REQ, data);
   ChatNotify::start(notify);
 }

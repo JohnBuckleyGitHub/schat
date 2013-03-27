@@ -29,6 +29,7 @@ HEADERS  = \
    HistoryMessages.h \
    HistoryPlugin.h \
    HistoryPlugin_p.h \
+   ui/HistorySettings.h \
 
 SOURCES  = \
    HistoryButton.cpp \
@@ -36,6 +37,7 @@ SOURCES  = \
    HistoryDB.cpp \
    HistoryMessages.cpp \
    HistoryPlugin.cpp \
+   ui/HistorySettings.cpp \
 
 RESOURCES += History.qrc
 
