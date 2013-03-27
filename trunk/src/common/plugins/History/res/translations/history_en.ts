@@ -17,6 +17,13 @@
     </message>
 </context>
 <context>
+    <name>HistorySettings</name>
+    <message>
+        <source>Automatically display last 20 private messages</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ProfilePluginTr</name>
     <message>
         <source>Loading messages</source>

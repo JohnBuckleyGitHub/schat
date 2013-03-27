@@ -17,6 +17,13 @@
     </message>
 </context>
 <context>
+    <name>HistorySettings</name>
+    <message>
+        <source>Automatically display last 20 private messages</source>
+        <translation>Автоматически отображать 20 последних личных сообщений</translation>
+    </message>
+</context>
+<context>
     <name>ProfilePluginTr</name>
     <message>
         <source>Loading messages</source>
