@@ -43,6 +43,7 @@ private slots:
   void notify(const Notify &notify);
   void ready();
   void settingsChanged(const QString &key, const QVariant &value);
+  void synced();
 
 private:
   bool compatible(const QByteArray &id) const;

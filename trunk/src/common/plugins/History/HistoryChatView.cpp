@@ -36,11 +36,12 @@
 HistoryChatView::HistoryChatView(QObject *parent)
   : ChatViewHooks(parent)
 {
-  m_autoLoad = ChatCore::settings()->value(SETTINGS_HISTORY_AUTO_LOAD).toBool();
+  synced();
 
   connect(ChatClient::io(), SIGNAL(ready()), SLOT(ready()));
   connect(ChatNotify::i(), SIGNAL(notify(Notify)), SLOT(notify(Notify)));
   connect(ChatCore::settings(), SIGNAL(changed(QString,QVariant)), SLOT(settingsChanged(QString,QVariant)));
+  connect(ChatCore::settings(), SIGNAL(synced()), SLOT(synced()));
 }
 
 
@@ -116,6 +117,12 @@ void HistoryChatView::settingsChanged(const QString &key, const QVariant &value)
 {
   if (key == SETTINGS_HISTORY_AUTO_LOAD)
     m_autoLoad = value.toBool();
+}
+
+
+void HistoryChatView::synced()
+{
+  m_autoLoad = ChatCore::settings()->value(SETTINGS_HISTORY_AUTO_LOAD).toBool();
 }
 
 
