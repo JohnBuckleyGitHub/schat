@@ -31,7 +31,17 @@ public:
   NodeChannelFeed(const QString &name, const QVariantMap &data);
   NodeChannelFeed(const QString &name = FEED_NAME_CHANNEL, qint64 date = 0);
 
+  bool can(Channel *channel, int acl) const;
+  FeedReply del(const QString &path, Channel *channel = 0);
+  FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0);
+  FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0);
   void setChannel(Channel *channel);
+
+  static bool isReservedKey(const QString &key);
+
+private:
+  bool isValidName(const QString &name) const;
+  FeedReply update(const QString &path, const QVariantMap &json, Channel *user = 0);
 };
 
 
