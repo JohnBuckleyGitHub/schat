@@ -21,6 +21,7 @@
 #include "DataBase.h"
 #include "DateTime.h"
 #include "feeds/NodeAclFeed.h"
+#include "feeds/NodeChannelFeed.h"
 #include "feeds/NodeFeedStorage.h"
 #include "feeds/NodeHostsFeed.h"
 #include "feeds/NodeProfileFeed.h"
@@ -39,6 +40,7 @@ NodeFeedStorage::NodeFeedStorage(QObject *parent)
   add(new NodeUserFeedCreator());
   add(new NodeProfileFeedCreator());
   add(new NodeServerFeedCreator());
+  add(new NodeChannelFeedCreator());
 
   start();
 }

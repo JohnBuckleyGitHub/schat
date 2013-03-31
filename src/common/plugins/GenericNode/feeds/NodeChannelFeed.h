@@ -16,22 +16,31 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GENERICCH_H_
-#define GENERICCH_H_
+#ifndef NODECHANNELFEED_H_
+#define NODECHANNELFEED_H_
 
-#include "ChHook.h"
+#include "feeds/Feed.h"
+#include "feeds/FeedCreator.h"
 
-class GenericCh : public ChHook
+/*!
+ * Серверная реализация фида \b channel.
+ */
+class NodeChannelFeed : public Feed
 {
-  Q_OBJECT
-
 public:
-  GenericCh(QObject *parent = 0);
-  void newChannel(ChatChannel channel, ChatChannel user = ChatChannel());
-  void rename(ChatChannel channel);
-  void server(ChatChannel channel, bool created);
-  void sync(ChatChannel channel, ChatChannel user = ChatChannel());
-  void userChannel(ChatChannel channel);
+  NodeChannelFeed(const QString &name, const QVariantMap &data);
+  NodeChannelFeed(const QString &name = FEED_NAME_CHANNEL, qint64 date = 0);
+
+  void setChannel(Channel *channel);
 };
 
-#endif /* GENERICCH_H_ */
+
+class NodeChannelFeedCreator : public FeedCreator
+{
+public:
+  Feed* create(const QString &name) const;
+  Feed* load(const QString &name, const QVariantMap &data) const;
+  inline QString name() const { return FEED_NAME_CHANNEL; }
+};
+
+#endif /* NODECHANNELFEED_H_ */

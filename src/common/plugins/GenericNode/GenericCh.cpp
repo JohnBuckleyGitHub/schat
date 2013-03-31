@@ -33,6 +33,7 @@ GenericCh::GenericCh(QObject *parent)
 void GenericCh::newChannel(ChatChannel channel, ChatChannel user)
 {
   Ch::addNewFeedIfNotExist(channel, FEED_NAME_ACL, user);
+  Ch::addNewFeedIfNotExist(channel, FEED_NAME_CHANNEL, user);
 }
 
 
@@ -49,6 +50,13 @@ void GenericCh::server(ChatChannel channel, bool created)
 
   channel->feed(FEED_NAME_ACL);
   channel->feed(FEED_NAME_SERVER);
+  channel->feed(FEED_NAME_CHANNEL);
+}
+
+
+void GenericCh::sync(ChatChannel channel, ChatChannel user)
+{
+  Ch::addNewFeedIfNotExist(channel, FEED_NAME_CHANNEL, user);
 }
 
 
@@ -57,8 +65,7 @@ void GenericCh::userChannel(ChatChannel channel)
   if (!channel->account())
     channel->createAccount();
 
-  channel->feed(LS("account"));
-
   Ch::addNewUserFeedIfNotExist(channel, FEED_NAME_ACL);
   Ch::addNewUserFeedIfNotExist(channel, FEED_NAME_PROFILE);
+  Ch::addNewUserFeedIfNotExist(channel, FEED_NAME_CHANNEL);
 }

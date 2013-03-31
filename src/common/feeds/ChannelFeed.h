@@ -16,22 +16,12 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef GENERICCH_H_
-#define GENERICCH_H_
+#ifndef CHANNELFEED_H_
+#define CHANNELFEED_H_
 
-#include "ChHook.h"
+#define CHANNEL_FEED_GENDER_KEY QLatin1String("gender")
+#define CHANNEL_FEED_NAME_KEY   QLatin1String("name")
+#define CHANNEL_FEED_STATUS_KEY QLatin1String("status")
+#define CHANNEL_FEED_TYPE_KEY   QLatin1String("type")
 
-class GenericCh : public ChHook
-{
-  Q_OBJECT
-
-public:
-  GenericCh(QObject *parent = 0);
-  void newChannel(ChatChannel channel, ChatChannel user = ChatChannel());
-  void rename(ChatChannel channel);
-  void server(ChatChannel channel, bool created);
-  void sync(ChatChannel channel, ChatChannel user = ChatChannel());
-  void userChannel(ChatChannel channel);
-};
-
-#endif /* GENERICCH_H_ */
+#endif /* CHANNELFEED_H_ */

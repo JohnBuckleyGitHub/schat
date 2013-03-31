@@ -26,6 +26,7 @@
 #define FEED_METHOD_FEED   QLatin1String("feed")
 
 #define FEED_NAME_ACL      QLatin1String("acl")
+#define FEED_NAME_CHANNEL  QLatin1String("channel")
 #define FEED_NAME_CONSOLE  QLatin1String("console")
 #define FEED_NAME_HOSTS    QLatin1String("hosts")
 #define FEED_NAME_INFO     QLatin1String("info")
