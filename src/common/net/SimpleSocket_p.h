@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -40,8 +40,8 @@ public:
   SimpleSocketPrivate();
   virtual ~SimpleSocketPrivate();
   bool readTransport();
-  bool transmit(const QByteArray &packet, quint8 options = 0x0, quint8 type = Protocol::GenericTransport, quint8 subversion = Protocol::V4_0);
-  bool transmit(const QList<QByteArray> &packets, quint8 options = 0x0, quint8 type = Protocol::GenericTransport, quint8 subversion = Protocol::V4_0);
+  bool transmit(const QByteArray &packet, quint8 options = 0);
+  bool transmit(const QList<QByteArray> &packets, quint8 options = 0);
   void releaseSocket();
   void setTimerState(TimerState state);
   void sslHandshake(int option);

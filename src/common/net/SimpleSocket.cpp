@@ -142,9 +142,9 @@ bool SimpleSocketPrivate::readTransport()
 }
 
 
-bool SimpleSocketPrivate::transmit(const QByteArray &packet, quint8 options, quint8 type, quint8 subversion)
+bool SimpleSocketPrivate::transmit(const QByteArray &packet, quint8 options)
 {
-  return transmit(QList<QByteArray>() += packet, options, type, subversion);
+  return transmit(QList<QByteArray>() += packet, options);
 }
 
 
@@ -158,11 +158,11 @@ bool SimpleSocketPrivate::transmit(const QByteArray &packet, quint8 options, qui
  *
  * \return true если данные были записаны в сокет.
  */
-bool SimpleSocketPrivate::transmit(const QList<QByteArray> &packets, quint8 options, quint8 type, quint8 subversion)
+bool SimpleSocketPrivate::transmit(const QList<QByteArray> &packets, quint8 options)
 {
   Q_Q(SimpleSocket);
   SCHAT_DEBUG_STREAM(this << "transmit(...)")
-  SCHAT_DEBUG_STREAM(this << "  >> seq:" << txSeq << "opt:" << options << "type:" << type << "sv:" << subversion << "r. size:" << deliveryConfirm.size());
+  SCHAT_DEBUG_STREAM(this << "  >> txSeq:" << txSeq << "options:" << options << "r. size:" << deliveryConfirm.size());
 
   if (!q->isReady())
     return false;
@@ -174,7 +174,7 @@ bool SimpleSocketPrivate::transmit(const QList<QByteArray> &packets, quint8 opti
   if (serverSide && options != Protocol::ContainsInternalPacket)
     ts = date;
 
-  TransportWriter tp(txStream, packets, txSeq, ts, options, type, subversion);
+  TransportWriter tp(txStream, packets, txSeq, ts, options, Protocol::GenericTransport, Protocol::V4_0);
   QByteArray packet = tp.data();
 
   if (!serverSide && options != Protocol::ContainsInternalPacket) {
@@ -390,16 +390,14 @@ bool SimpleSocket::isAuthorized() const
 }
 
 
+/*!
+ * Отправка виртуального пакета.
+ */
 bool SimpleSocket::send(const QByteArray &packet)
 {
   SCHAT_DEBUG_STREAM(this << "send(...)")
 
-  Q_D(SimpleSocket);
-
-  if (packet.size() > 65535)
-    return d->transmit(packet, Protocol::HugePackets);
-
-  return d->transmit(packet);
+  return d_func()->transmit(packet, packet.size() > 65535 ? Protocol::HugePackets : Protocol::NoOptions);
 }
 
 
@@ -410,20 +408,15 @@ bool SimpleSocket::send(const QList<QByteArray> &packets)
 {
   SCHAT_DEBUG_STREAM(this << "send(...)" << packets.size());
 
-  bool huge = false;
+  int options = Protocol::NoOptions;
   for (int i = 0; i < packets.size(); ++i) {
     if (packets.at(i).size() > 65535) {
-      huge = true;
+      options = Protocol::HugePackets;
       break;
     }
   }
 
-  Q_D(SimpleSocket);
-
-  if (huge)
-    return d->transmit(packets, Protocol::HugePackets);
-
-  return d->transmit(packets);
+  return d_func()->transmit(packets, options);
 }
 
 
@@ -436,20 +429,20 @@ bool SimpleSocket::setSocketDescriptor(int socketDescriptor)
 
   if (QSslSocket::setSocketDescriptor(socketDescriptor)) {
     d->serverSide = true;
-    #if QT_VERSION >= 0x040600
+#   if QT_VERSION >= 0x040600
     setSocketOption(QAbstractSocket::KeepAliveOption, 1);
     setSocketOption(QAbstractSocket::LowDelayOption, 1);
-    #endif
+#   endif
     d->setTimerState(SimpleSocketPrivate::WaitingHandshake);
 
-    #if !defined(SCHAT_NO_SSL)
+#   if !defined(SCHAT_NO_SSL)
     if (d->sslAvailable) {
       setSslConfiguration(QSslConfiguration::defaultConfiguration());
       if (sslConfiguration().localCertificate().isNull() || sslConfiguration().privateKey().isNull()) {
         d->sslAvailable = false;
       }
     }
-    #endif
+#   endif
 
     return true;
   }
