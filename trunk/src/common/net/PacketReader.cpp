@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,16 +25,19 @@ PacketReader::PacketReader(QDataStream *stream)
     m_device(stream->device())
 {
   m_device->seek(0);
-  *stream >> m_type >> m_subtype >> m_option;
+  quint8 subtype;
+  *stream >> m_type >> subtype >> m_option;
 
-  if (m_option & Protocol::SenderField)
+  if (is(Protocol::SenderField))
     m_sender = id();
 
-  if (m_option & Protocol::ChannelField)
+  if (is(Protocol::ChannelField))
     m_channel = id();
 
-  if (m_option & Protocol::DestinationField)
-    m_dest = idList();
+  if (is(Protocol::DestinationField)) {
+    get<quint32>();
+    m_dest = id();
+  }
 }
 
 

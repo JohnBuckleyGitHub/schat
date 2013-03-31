@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -51,14 +51,14 @@ public:
   /*!
    * Создание виртуального пакета и запись заголовка.
    *
-   * \param stream   output stream.
+   * \param stream   Поток записи.
    * \param type     Тип пакета.
    * \param sender   Идентификатор отправителя.
-   * \param dest     Идентификатор получателя, специальное значение "bc" устанавливает опцию Protocol::Broadcast.
+   * \param dest     Идентификатор получателя.
    * \param channel  Идентификатор канала.
    * \param echo     true для включения опции Protocol::EnableEcho.
    */
-  inline PacketWriter(QDataStream *stream, quint16 type, const QByteArray &sender, const QByteArray &dest = QByteArray(), const QByteArray &channel = QByteArray(), bool echo = false)
+  inline PacketWriter(QDataStream *stream, quint16 type, const QByteArray &sender, const QByteArray &dest = QByteArray(), bool echo = false, const QByteArray &channel = QByteArray())
     : m_stream(stream)
     , m_option(Protocol::BasicHeader)
   {
@@ -68,11 +68,8 @@ public:
     if (!sender.isEmpty())
       m_option |= Protocol::SenderField;
 
-    if (!dest.isEmpty()) {
+    if (!dest.isEmpty())
       m_option |= Protocol::DestinationField;
-      if (dest.size() > 1 || SimpleID::typeOf(dest) == SimpleID::ChannelId)
-        m_option |= Protocol::Multicast;
-    }
 
     if (!channel.isEmpty())
       m_option |= Protocol::ChannelField;
@@ -90,38 +87,6 @@ public:
 
     if (m_option & Protocol::DestinationField)
       putId(QList<QByteArray>() << dest);
-  }
-
-  /*!
-   * Создание виртуального пакета и запись заголовка.
-   *
-   * \param stream   output stream.
-   * \param type     Тип пакета.
-   * \param sender   Идентификатор отправителя.
-   * \param dest     Идентификатор получателя, специальное значение "bc" устанавливает опцию Protocol::Broadcast.
-   * \param echo     true для включения опции Protocol::EnableEcho.
-   */
-  inline PacketWriter(QDataStream *stream, quint16 type, const QByteArray &sender, const QList<QByteArray> &dest = QList<QByteArray>(), bool echo = false)
-    : m_stream(stream)
-    , m_option(Protocol::SenderField)
-  {
-    m_device = stream->device();
-    m_device->seek(0);
-
-    if (!dest.isEmpty()) {
-      m_option |= Protocol::DestinationField;
-      if (dest.size() > 1 || SimpleID::typeOf(dest.at(0)) == SimpleID::ChannelId)
-        m_option |= Protocol::Multicast;
-    }
-
-    if (echo)
-      m_option |= Protocol::EnableEcho;
-
-    *stream << type << quint8(0) << m_option;
-     putId(sender);
-
-    if (m_option & Protocol::DestinationField)
-      putId(dest);
   }
 
   /*!
