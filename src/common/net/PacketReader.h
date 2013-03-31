@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -27,14 +27,12 @@ class SCHAT_EXPORT PacketReader
 {
 public:
   PacketReader(QDataStream *stream);
-  inline bool is(int option) const  { return m_option & option; }
-  inline int option() const         { return m_option; }
-  inline int subtype() const        { return m_subtype; }
-  inline int type() const           { return m_type; }
-  inline QByteArray channel() const { return m_channel; }
-  inline QByteArray dest() const    { if (m_dest.size()) return m_dest.at(0); else return QByteArray(); }
-  inline QByteArray sender() const  { return m_sender; }
-  inline QList<QByteArray> destinations() const { return m_dest; }
+  inline bool is(int option) const         { return m_option & option; }
+  inline const QByteArray& channel() const { return m_channel; }
+  inline const QByteArray& dest() const    { return m_dest; }
+  inline const QByteArray& sender() const  { return m_sender; }
+  inline int option() const                { return m_option; }
+  inline int type() const                  { return m_type; }
   QVariant json() const;
 
   inline QString text() const {
@@ -70,14 +68,13 @@ public:
   }
 
 private:
-  quint16 m_type;
-  quint8 m_subtype;
-  quint16 m_option;
-  QByteArray m_sender;
-  QByteArray m_channel;
-  QList<QByteArray> m_dest;
-  QDataStream *m_stream;
-  QIODevice *m_device;
+  quint16 m_type;        ///< Тип пакета.
+  quint16 m_option;      ///< Опции заголовка.
+  QByteArray m_sender;   ///< Идентификатор отправителя.
+  QByteArray m_channel;  ///< Идентификатор канала.
+  QByteArray m_dest;     ///< Идентификатор получателя.
+  QDataStream *m_stream; ///< Поток чтения.
+  QIODevice *m_device;   ///< Устройство чтения.
 };
 
 #endif /* PACKETREADER_H_ */

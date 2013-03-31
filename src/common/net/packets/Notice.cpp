@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,30 +24,6 @@
  * Базовый конструктор.
  */
 Notice::Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 date, const QByteArray &id, const QVariantMap &data)
-  : m_sender(sender)
-  , m_dest(QList<QByteArray>() << dest)
-  , m_type(GenericType)
-  , m_direction(Client2Server)
-  , m_fields(0)
-  , m_version(0)
-  , m_status(OK)
-  , m_date(date)
-  , m_id(id)
-  , m_command(command)
-  , m_data(data)
-{
-  if (SimpleID::typeOf(m_id) == SimpleID::MessageId)
-    m_fields |= IdField;
-
-  if (!data.isEmpty())
-    m_fields |= JSonField;
-}
-
-
-/*!
- * Базовый конструктор.
- */
-Notice::Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QString &command, quint64 date, const QByteArray &id, const QVariantMap &data)
   : m_sender(sender)
   , m_dest(dest)
   , m_type(GenericType)
@@ -73,15 +49,15 @@ Notice::Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QS
  */
 Notice::Notice(quint16 type, PacketReader *reader)
   : m_sender(reader->sender())
-  , m_dest(reader->destinations())
+  , m_dest(reader->dest())
   , m_type(type)
   , m_fields(0)
 {
   m_direction = reader->get<quint8>();
-  m_fields = reader->get<quint8>();
-  m_version = reader->get<quint8>();
-  m_status = reader->get<quint16>();
-  m_date = reader->get<qint64>();
+  m_fields    = reader->get<quint8>();
+  m_version   = reader->get<quint8>();
+  m_status    = reader->get<quint16>();
+  m_date      = reader->get<qint64>();
 
   if (m_fields & IdField)
     m_id = reader->id();
@@ -164,9 +140,6 @@ QString Notice::status(int status)
 
     case Found:
       return QObject::tr("Found");
-
-//    case Undelivered:
-//      return QObject::tr("Undelivered");
 
     case NotModified:
       return QObject::tr("Not Modified");

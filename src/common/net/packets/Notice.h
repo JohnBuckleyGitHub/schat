@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -82,7 +82,6 @@ public:
   };
 
   Notice(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 date = 0, const QByteArray &id = QByteArray(), const QVariantMap &data = QVariantMap());
-  Notice(const QByteArray &sender, const QList<QByteArray> &dest, const QString &command, quint64 date = 0, const QByteArray &id = QByteArray(), const QVariantMap &data = QVariantMap());
   Notice(quint16 type, PacketReader *reader);
   virtual ~Notice() {}
 
@@ -91,7 +90,6 @@ public:
   inline const QByteArray& id() const      { return m_id; }
   inline const QByteArray& raw() const     { return m_raw; }
   inline const QByteArray& sender() const  { return m_sender; }
-  inline const QList<QByteArray>& destinations() const { return m_dest; }
   inline const QString& command() const    { return m_command; }
   inline const QString& text() const       { return m_text; }
   inline const QVariantMap& json() const   { return m_data; }
@@ -100,7 +98,7 @@ public:
   inline int status() const                { return m_status; }
   inline int type() const                  { return m_type; }
   inline int version() const               { return m_version; }
-  inline QByteArray dest() const           { if (m_dest.size()) return m_dest.at(0); else return QByteArray(); }
+  inline QByteArray dest() const           { return m_dest; }
   inline qint64 date() const               { return m_date; }
   inline QVariantMap& json()               { return m_data; }
   QByteArray data(QDataStream *stream, bool echo = false) const;
@@ -110,8 +108,7 @@ public:
   inline void setCommand(const QString &command)     { m_command = command; }
   inline void setData(const QVariantMap &data)       { m_data = data; }
   inline void setDate(qint64 date)                   { m_date = date; }
-  inline void setDest(const QByteArray &dest)        { m_dest = QList<QByteArray>() << dest; }
-  inline void setDest(const QList<QByteArray> &dest) { m_dest = dest; }
+  inline void setDest(const QByteArray &dest)        { m_dest = dest; }
   inline void setDirection(int direction)            { m_direction = direction; }
   inline void setId(const QByteArray &id)            { m_id = id; }
   inline void setStatus(int status)                  { m_status = status; }
@@ -120,19 +117,19 @@ public:
 protected:
   virtual void write(PacketWriter *writer) const { Q_UNUSED(writer) }
 
-  QByteArray m_sender;      ///< Идентификатор отправителя.
-  QList<QByteArray> m_dest; ///< Идентификаторы получателей.
-  quint16 m_type;           ///< Тип пакета Notice::Type.
+  QByteArray m_sender;        ///< Идентификатор отправителя.
+  QByteArray m_dest;          ///< Идентификаторы получателей.
+  quint16 m_type;             ///< Тип пакета Notice::Type.
   mutable quint8 m_direction; ///< Направление пакета.
-  mutable quint8 m_fields;  ///< Дополнительные поля данных.
-  quint8 m_version;         ///< Версия пакета, обязательное поле.
-  quint16 m_status;         ///< Статус \sa StatusCodes, обязательное поле.
-  qint64 m_date;            ///< Отметка времени, обязательное поле.
-  QByteArray m_id;          ///< Идентификатор сообщения, не обязательное поле.
-  QString m_command;        ///< Текстовая команда, обязательное поле.
-  QVariantMap m_data;       ///< JSON данные пакета, не обязательное поле.
-  QByteArray m_raw;         ///< Сырые JSON данные.
-  QString m_text;           ///< Сырой текст, не обязательное поле.
+  mutable quint8 m_fields;    ///< Дополнительные поля данных.
+  quint8 m_version;           ///< Версия пакета, обязательное поле.
+  quint16 m_status;           ///< Статус \sa StatusCodes, обязательное поле.
+  qint64 m_date;              ///< Отметка времени, обязательное поле.
+  QByteArray m_id;            ///< Идентификатор сообщения, не обязательное поле.
+  QString m_command;          ///< Текстовая команда, обязательное поле.
+  QVariantMap m_data;         ///< JSON данные пакета, не обязательное поле.
+  QByteArray m_raw;           ///< Сырые JSON данные.
+  QString m_text;             ///< Сырой текст, не обязательное поле.
 };
 
 typedef QSharedPointer<Notice> Packet;
