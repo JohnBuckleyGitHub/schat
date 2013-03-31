@@ -16,22 +16,69 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Channel.h"
+#include "Ch.h"
+#include "DataBase.h"
 #include "DateTime.h"
 #include "feeds/ChannelFeed.h"
 #include "feeds/NodeChannelFeed.h"
+#include "net/packets/Notice.h"
 #include "net/SimpleID.h"
+#include "ServerChannel.h"
 
 NodeChannelFeed::NodeChannelFeed(const QString &name, const QVariantMap &data)
   : Feed(name, data)
 {
+  m_header.acl().setMask(0744);
 }
 
 
 NodeChannelFeed::NodeChannelFeed(const QString &name, qint64 date)
   : Feed(name, date)
 {
-  m_header.acl().setMask(0644);
+  m_header.acl().setMask(0744);
+}
+
+
+
+/*!
+ * Для записи фида в обычных каналах используется проверка на владельца фида acl.
+ */
+bool NodeChannelFeed::can(Channel *channel, int acl) const
+{
+  if (head().channel()->type() == SimpleID::ChannelId && acl == Acl::Write) {
+    FeedPtr feed = m_header.channel()->feed(FEED_NAME_ACL, false, false);
+    if (feed)
+      return feed->can(channel, Acl::Edit);
+  }
+
+  return Feed::can(channel, acl);
+}
+
+
+FeedReply NodeChannelFeed::del(const QString &path, Channel *channel)
+{
+  if (isReservedKey(path) || path == FEED_WILDCARD_ASTERISK)
+    return Notice::BadRequest;
+
+  return Feed::del(path, channel);
+}
+
+
+FeedReply NodeChannelFeed::post(const QString &path, const QVariantMap &json, Channel *channel)
+{
+  if (isReservedKey(path))
+    return update(path, json, channel);
+
+  return Feed::post(path, json, channel);
+}
+
+
+FeedReply NodeChannelFeed::put(const QString &path, const QVariantMap &json, Channel *channel)
+{
+  if (isReservedKey(path))
+    return update(path, json, channel);
+
+  return Feed::put(path, json, channel);
 }
 
 
@@ -43,6 +90,63 @@ void NodeChannelFeed::setChannel(Channel *channel)
   m_data[CHANNEL_FEED_GENDER_KEY] = channel->gender().raw();
   m_data[CHANNEL_FEED_STATUS_KEY] = channel->status().value();
   m_data[CHANNEL_FEED_TYPE_KEY]   = SimpleID::typeOf(channel->id());
+}
+
+
+/*!
+ * Возвращает \b true если имя ключа является зарезервированным для полей канала.
+ */
+bool NodeChannelFeed::isReservedKey(const QString &key)
+{
+  return (key == CHANNEL_FEED_GENDER_KEY || key == CHANNEL_FEED_NAME_KEY || key == CHANNEL_FEED_STATUS_KEY || key == CHANNEL_FEED_TYPE_KEY);
+}
+
+
+bool NodeChannelFeed::isValidName(const QString &name) const
+{
+  if (SimpleID::typeOf(head().channel()->id()) == SimpleID::ServerId && name.isEmpty())
+    return true;
+
+  return Channel::isValidName(name);
+}
+
+
+/*!
+ * Обновление канала.
+ */
+FeedReply NodeChannelFeed::update(const QString &key, const QVariantMap &json, Channel *user)
+{
+  if (!json.contains(FEED_KEY_VALUE))
+    return Notice::BadRequest;
+
+  ChatChannel channel = Ch::channel(head().channel()->id(), head().channel()->type());
+  if (!channel)
+    return Notice::InternalError;
+
+  const QVariant& value = json[FEED_KEY_VALUE];
+
+  if (key == CHANNEL_FEED_NAME_KEY) {
+    const QString name = value.toString();
+    if (!isValidName(name))
+      return Notice::BadRequest;
+
+    if (channel->name() == name)
+      return Notice::NotModified;
+
+    const int status = Ch::rename(channel, name);
+    if (status != Notice::OK)
+      return status;
+
+    const qint64 date = DateTime::utc();
+
+    m_data[CHANNEL_FEED_NAME_KEY] = channel->name();
+    channel->setDate(date);
+    DataBase::add(channel);
+
+    return FeedReply(Notice::OK, date);
+  }
+
+  return Notice::NotModified;
 }
 
 
