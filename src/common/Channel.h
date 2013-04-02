@@ -114,7 +114,7 @@ public:
   /// Ограничения.
   enum Limits {
     MinNameLengh = 3,     ///< Минимальная длина имени.
-    MaxNameLength = 20,   ///< Максимальная длина имени.
+    MaxNameLength = 64,   ///< Максимальная длина имени.
   };
 
   Channel();
