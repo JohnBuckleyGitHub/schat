@@ -20,6 +20,8 @@
 #include "cores/Core.h"
 #include "DataBase.h"
 #include "events.h"
+#include "feeds/FeedEvents.h"
+#include "feeds/NodeChannelFeed.h"
 #include "net/Channels.h"
 #include "net/PacketReader.h"
 #include "net/packets/ChannelNotice.h"
@@ -32,9 +34,11 @@
 #include "Storage.h"
 
 NodeChannels::NodeChannels(Core *core)
-  : NodeNoticeReader(Notice::ChannelType, core)
+  : QObject(core)
+  , NodeNoticeReader(Notice::ChannelType, core)
   , m_packet(0)
 {
+  connect(FeedEvents::i(), SIGNAL(notify(FeedEvent)), SLOT(notify(FeedEvent)));
 }
 
 
@@ -121,6 +125,23 @@ void NodeChannels::releaseImpl(ChatChannel user, quint64 socket)
 
 
 /*!
+ * Обработка изменений фида FEED_NAME_CHANNEL.
+ */
+void NodeChannels::notify(const FeedEvent &event)
+{
+  if (event.status != Notice::OK || event.name != FEED_NAME_CHANNEL || !(event.method == FEED_METHOD_PUT || event.method == FEED_METHOD_POST) || !NodeChannelFeed::isReservedKey(event.path))
+    return;
+
+  ChatChannel channel = Ch::channel(event.channel, SimpleID::typeOf(event.channel));
+  if (!channel)
+    return;
+
+  const QList<quint64> sockets = channel->type() == SimpleID::UserId ? Sockets::all(channel, true) : Sockets::channel(channel);
+  m_core->send(sockets, ChannelNotice::info(channel, event.date));
+}
+
+
+/*!
  * Обработка запроса пользователем информации о канале.
  */
 bool NodeChannels::info()
@@ -201,8 +222,8 @@ bool NodeChannels::join()
  */
 int NodeChannels::name()
 {
-  if (!isValidName())
-    return Notice::BadRequest;
+//  if (!isValidName())
+//    return Notice::BadRequest;
 
   ChatChannel channel = Ch::channel(m_packet->channelId(), SimpleID::typeOf(m_packet->channelId()));
   if (!channel)
@@ -302,18 +323,6 @@ int NodeChannels::update()
 
   m_core->send(Sockets::all(m_user, true), ChannelNotice::info(m_user));
   return Notice::OK;
-}
-
-
-/*!
- * Проверка имени канала на корректность.
- */
-bool NodeChannels::isValidName() const
-{
-  if (SimpleID::typeOf(m_packet->channelId()) == SimpleID::ServerId && m_packet->text().isEmpty())
-    return true;
-
-  return Channel::isValidName(m_packet->text());
 }
 
 
