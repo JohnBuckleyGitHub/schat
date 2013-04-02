@@ -23,10 +23,13 @@
 
 class ChannelNotice;
 class Core;
+class FeedEvent;
 class Storage;
 
-class NodeChannels : public NodeNoticeReader
+class NodeChannels : public QObject, NodeNoticeReader
 {
+  Q_OBJECT
+
 public:
   NodeChannels(Core *core);
 
@@ -36,6 +39,9 @@ protected:
   void addImpl(ChatChannel user);
   void releaseImpl(ChatChannel user, quint64 socket);
 
+private slots:
+  void notify(const FeedEvent &event);
+
 private:
   bool info();
   bool join();
@@ -44,7 +50,6 @@ private:
   bool quit();
   int update();
 
-  bool isValidName() const;
   void reply(int status);
 
   ChannelNotice *m_packet;

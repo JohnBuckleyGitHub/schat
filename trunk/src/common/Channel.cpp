@@ -158,12 +158,8 @@ void Channel::setDate(qint64 date)
  */
 bool Channel::isValidName(const QString &name)
 {
-  const QString tmp = name.simplified();
-
-  if (tmp.size() > MaxNameLength)
-    return false;
-
-  if (tmp.size() < MinNameLengh)
+  const int size = name.simplified().size();
+  if (size > MaxNameLength || size < MinNameLengh)
     return false;
 
   return true;
@@ -178,7 +174,7 @@ bool Channel::isValidName(const QString &name)
  */
 int Channel::isCompatibleId(const QByteArray &id)
 {
-  int type = SimpleID::typeOf(id);
+  const int type = SimpleID::typeOf(id);
   if (type == SimpleID::ChannelId || type == SimpleID::UserId || type == SimpleID::ServerId)
     return type;
 

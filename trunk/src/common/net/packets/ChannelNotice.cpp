@@ -110,9 +110,9 @@ ChannelPacket ChannelNotice::channel(ClientChannel channel, const QByteArray &de
 }
 
 
-ChannelPacket ChannelNotice::info(ClientChannel channel)
+ChannelPacket ChannelNotice::info(ClientChannel channel, qint64 date)
 {
-  ChannelPacket packet(new ChannelNotice(channel->id(), channel->id(), CHANNELS_INFO_CMD, DateTime::utc()));
+  ChannelPacket packet(new ChannelNotice(channel->id(), channel->id(), CHANNELS_INFO_CMD, date ? date : DateTime::utc()));
   packet->setDirection(Server2Client);
   packet->setText(channel->name());
   packet->m_gender        = channel->gender().raw();

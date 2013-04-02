@@ -54,14 +54,11 @@ void NodeFeedLogImpl::notify(const FeedEvent &event)
   m_stream << date((event.method != FEED_METHOD_GET && event.status == Notice::OK) ? event.date : 0)
            << LC(' ') << event.status
            << LC(' ') << SimpleID::encode(event.sender)
-           << LC('/') << event.socket
-           << LC(' ') << event.method
+           << LC('/') << qSetFieldWidth(10) << event.socket << qSetFieldWidth(0)
+           << LC(' ') << qSetFieldWidth(6)  << event.method << qSetFieldWidth(0)
            << LC(' ') << event.date
            << LC(' ') << SimpleID::encode(event.channel)
-           << LC('/') << event.name;
-
-  if (!event.path.isEmpty())
-    m_stream << LC('/') << event.path;
+           << LC('/') << qSetFieldWidth(40) << (event.name + (!event.path.isEmpty() ? LC('/') + event.path : QString())) << qSetFieldWidth(0) << qSetFieldWidth(0);
 
   if (event.diffTo && event.diffTo != event.date)
     m_stream << LS(" diffTo:") << event.diffTo;
@@ -122,6 +119,7 @@ void NodeFeedLogImpl::openLog(const QString &file)
   m_stream.setDevice(&m_file);
   m_stream.setGenerateByteOrderMark(bom);
   m_stream.setCodec("UTF-8");
+  m_stream.setFieldAlignment(QTextStream::AlignLeft);
 }
 
 

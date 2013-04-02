@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ public:
 
   static ChannelPacket channel(ClientChannel channel, ClientChannel user, const QString &command = "channel");
   static ChannelPacket channel(ClientChannel channel, const QByteArray &dest, const QString &command = "channel");
-  static ChannelPacket info(ClientChannel channel);
+  static ChannelPacket info(ClientChannel channel, qint64 date = 0);
   static ChannelPacket info(const QByteArray &user, const QList<QByteArray> &channels);
   static ChannelPacket reply(const ChannelNotice &source, int status);
   static ChannelPacket request(const QByteArray &user, const QByteArray &channel, const QString &command, const QString &text = QString());
