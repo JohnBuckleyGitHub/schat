@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 
 class Alert;
 class QLabel;
-class QTextBrowser;
+class QTextEdit;
 
 class PopupWindow : public QFrame
 {
@@ -38,9 +38,7 @@ public:
   };
 
   PopupWindow(const Alert &alert, int timeout, const QString &css);
-
-protected:
-  void mouseReleaseEvent(QMouseEvent *event);
+  bool eventFilter(QObject *watched, QEvent *event);
 
 private slots:
   void removed(const QByteArray &alertId);
@@ -51,7 +49,7 @@ private:
   QLabel *m_date;       ///< Время уведомления.
   QLabel *m_icon;       ///< Иконка уведомления.
   QLabel *m_title;      ///< Заголовок уведомления.
-  QTextBrowser *m_text; ///< Виджет отображения текста.
+  QTextEdit *m_text;    ///< Виджет отображения текста.
 };
 
 #endif /* POPUPWINDOW_H_ */

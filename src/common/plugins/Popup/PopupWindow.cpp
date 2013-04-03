@@ -19,7 +19,7 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QMouseEvent>
-#include <QTextBrowser>
+#include <QTextEdit>
 #include <QTimer>
 
 #include "alerts/AlertType.h"
@@ -45,21 +45,28 @@ PopupWindow::PopupWindow(const Alert &alert, int timeout, const QString &css)
 
   m_icon = new QLabel(this);
   m_icon->setObjectName(LS("IconLabel"));
+  m_icon->installEventFilter(this);
+
   AlertType *type = ChatAlerts::type(alert);
   if (type)
     m_icon->setPixmap(type->icon().pixmap(16, 16));
 
   m_title = new QLabel(this);
   m_title->setObjectName(LS("TitleLabel"));
+  m_title->installEventFilter(this);
 
   m_date = new QLabel(DateTime::toDateTime(alert.date()).toString(LS("hh:mm:ss")), this);
   m_date->setObjectName(LS("DateLabel"));
+  m_date->installEventFilter(this);
 
-  m_text = new QTextBrowser(this);
+  m_text = new QTextEdit(this);
   m_text->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   m_text->setContextMenuPolicy(Qt::NoContextMenu);
-  m_text->setAttribute(Qt::WA_TransparentForMouseEvents);
   m_text->document()->setDefaultStyleSheet(css);
+  m_text->installEventFilter(this);
+  m_text->setTextInteractionFlags(Qt::NoTextInteraction);
+  m_text->setFrameShape(QFrame::NoFrame);
+  m_text->setFrameShadow(QFrame::Plain);
 
   QVariantMap popup = alert.data().value(LS("popup")).toMap();
   m_text->setHtml(popup.value(LS("text")).toString());
@@ -83,17 +90,24 @@ PopupWindow::PopupWindow(const Alert &alert, int timeout, const QString &css)
 }
 
 
-void PopupWindow::mouseReleaseEvent(QMouseEvent *event)
+bool PopupWindow::eventFilter(QObject *watched, QEvent *event)
 {
-  if (event->button() == Qt::LeftButton) {
-    ChatNotify::start(Notify::OpenChannel, m_tab);
-    ChatNotify::start(Notify::ShowChat);
-    close();
+  if (event->type() == QEvent::MouseButtonRelease) {
+    QMouseEvent *e = static_cast<QMouseEvent*>(event);
+    if (e->button() == Qt::LeftButton) {
+      ChatNotify::start(Notify::OpenChannel, m_tab);
+      ChatNotify::start(Notify::ShowChat);
+      close();
+    }
+    else if (e->button() == Qt::RightButton) {
+      ChatAlerts::remove(m_tab, m_id);
+      close();
+    }
+
+    return true;
   }
-  else if (event->button() == Qt::RightButton) {
-    ChatAlerts::remove(m_tab, m_id);
-    close();
-  }
+
+  return QFrame::eventFilter(watched, event);
 }
 
 
