@@ -20,8 +20,10 @@
 #include "cores/Core.h"
 #include "DataBase.h"
 #include "events.h"
+#include "feeds/ChannelFeed.h"
 #include "feeds/FeedEvents.h"
 #include "feeds/NodeChannelFeed.h"
+#include "feeds/FeedsCore.h"
 #include "net/Channels.h"
 #include "net/PacketReader.h"
 #include "net/packets/ChannelNotice.h"
@@ -219,37 +221,21 @@ bool NodeChannels::join()
 
 /*!
  * Установка имени канала.
+ *
+ * \deprecated Этот метод изменения имени канала является устаревшим с версии 2.0.5.
+ * Рекомендуется использовать \b put запрос к полю \b name фида \b channel.
  */
 int NodeChannels::name()
 {
-//  if (!isValidName())
-//    return Notice::BadRequest;
-
   ChatChannel channel = Ch::channel(m_packet->channelId(), SimpleID::typeOf(m_packet->channelId()));
   if (!channel)
     return Notice::NotFound;
 
-  if (!channel->canEdit(m_user))
-    return Notice::Forbidden;
+  FeedPtr feed = channel->feed(FEED_NAME_CHANNEL, false);
+  if (!feed)
+    return Notice::InternalError;
 
-  if (channel->name() == m_packet->text())
-    return Notice::BadRequest;
-
-  int status = Ch::rename(channel, m_packet->text());
-  if (status != Notice::OK)
-    return status;
-
-  channel->setDate();
-  DataBase::add(channel);
-
-  QList<quint64> sockets;
-  if (channel->type() == SimpleID::UserId)
-    sockets = Sockets::all(channel, true);
-  else
-    sockets = Sockets::channel(channel);
-
-  m_core->send(sockets, ChannelNotice::info(channel));
-  return Notice::OK;
+  return FeedsCore::put(channel.data(), CHANNEL_FEED_NAME_REQ, m_user.data(), m_packet->text(), Feed::Echo | Feed::Share | Feed::Broadcast).status;
 }
 
 
@@ -284,44 +270,33 @@ bool NodeChannels::quit()
 
 /*!
  * Обработка получения обновлённой информации о пользователе.
+ *
+ * \deprecated Этот метод изменения информации о пользователе является устаревшим с версии 2.0.5.
  */
 int NodeChannels::update()
 {
-  if (!Channel::isValidName(m_packet->text()))
-    return Notice::BadRequest;
+  if (m_user->id() != m_packet->sender())
+    return Notice::Forbidden;
 
-  if (m_packet->channelStatus() == Status::Offline) {
-    m_core->send(QList<quint64>() << m_core->packetsEvent()->socket(), QByteArray(), NewPacketsEvent::KillSocketOption);
-    return Notice::OK;
-  }
+  FeedPtr feed = m_user->feed(FEED_NAME_CHANNEL, false);
+  if (!feed)
+    return Notice::InternalError;
 
-  int updates = 0;
+  int updates       = 0;
+  const int options = Feed::Echo | Feed::Share | Feed::Broadcast;
 
-  if (m_user->name() != m_packet->text()) {
-    int result = Ch::rename(m_user, m_packet->text());
-    if (result != Notice::OK)
-      return result;
-
+  if (m_user->name() != m_packet->text() && FeedsCore::put(m_user.data(), CHANNEL_FEED_NAME_REQ, m_user.data(), m_packet->text(), options).status == Notice::OK)
     updates++;
-  }
 
-  if (m_user->gender().raw() != m_packet->gender()) {
-    m_user->gender() = m_packet->gender();
+  if (m_user->gender().raw() != m_packet->gender() && FeedsCore::put(m_user.data(), CHANNEL_FEED_GENDER_REQ, m_user.data(), m_packet->gender(), options).status == Notice::OK)
     updates++;
-  }
 
-  if (m_user->status().value() != m_packet->channelStatus()) {
-    m_user->status() = m_packet->channelStatus();
+  if (m_user->status().value() != m_packet->channelStatus() && FeedsCore::put(m_user.data(), CHANNEL_FEED_STATUS_REQ, m_user.data(), m_packet->channelStatus(), options).status == Notice::OK)
     updates++;
-  }
 
   if (!updates)
-    return Notice::BadRequest;
+    return Notice::NotModified;
 
-  m_user->setDate();
-  DataBase::add(m_user);
-
-  m_core->send(Sockets::all(m_user, true), ChannelNotice::info(m_user));
   return Notice::OK;
 }
 

@@ -17,8 +17,10 @@
  */
 
 #include "Ch.h"
+#include "cores/Core.h"
 #include "DataBase.h"
 #include "DateTime.h"
+#include "events.h"
 #include "feeds/ChannelFeed.h"
 #include "feeds/NodeChannelFeed.h"
 #include "net/packets/Notice.h"
@@ -116,7 +118,9 @@ bool NodeChannelFeed::isValidName(const QString &name) const
  */
 FeedReply NodeChannelFeed::update(const QString &key, const QVariantMap &json, Channel *user)
 {
-  if (!json.contains(FEED_KEY_VALUE))
+  Q_UNUSED(user)
+
+  if (!json.contains(FEED_KEY_VALUE) || key == CHANNEL_FEED_TYPE_KEY)
     return Notice::BadRequest;
 
   ChatChannel channel = Ch::channel(head().channel()->id(), head().channel()->type());
@@ -124,6 +128,7 @@ FeedReply NodeChannelFeed::update(const QString &key, const QVariantMap &json, C
     return Notice::InternalError;
 
   const QVariant& value = json[FEED_KEY_VALUE];
+  const qint64 date     = DateTime::utc();
 
   if (key == CHANNEL_FEED_NAME_KEY) {
     const QString name = value.toString();
@@ -137,16 +142,36 @@ FeedReply NodeChannelFeed::update(const QString &key, const QVariantMap &json, C
     if (status != Notice::OK)
       return status;
 
-    const qint64 date = DateTime::utc();
-
     m_data[CHANNEL_FEED_NAME_KEY] = channel->name();
-    channel->setDate(date);
-    DataBase::add(channel);
-
-    return FeedReply(Notice::OK, date);
   }
+  else if (key == CHANNEL_FEED_GENDER_KEY) {
+    const int gender = value.toInt();
+    if (channel->gender().raw() == gender)
+      return Notice::NotModified;
 
-  return Notice::NotModified;
+    channel->gender() = gender;
+    m_data[CHANNEL_FEED_GENDER_KEY] = channel->gender().raw();
+  }
+  else if (key == CHANNEL_FEED_STATUS_KEY) {
+    const int status = value.toInt();
+    if (status == Status::Offline) {
+      Core::i()->send(QList<quint64>() << Core::socket(), QByteArray(), NewPacketsEvent::KillSocketOption);
+      return Notice::NotModified;
+    }
+
+    if (channel->status().value() == status)
+      return Notice::NotModified;
+
+    channel->status() = status;
+    m_data[CHANNEL_FEED_STATUS_KEY] = channel->status().value();
+  }
+  else
+    return Notice::NotModified;
+
+  channel->setDate(date);
+  DataBase::add(channel);
+
+  return FeedReply(Notice::OK, date);
 }
 
 
