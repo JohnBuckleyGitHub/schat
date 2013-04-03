@@ -10,8 +10,12 @@ h3 {
   background-image: url(qrc:/images/channel.png);
 }
 
-#channels-list {
-  margin-left: 10px;
+.icon-secure {
+  background-image: url(qrc:/images/secure.png);
+}
+
+.icon-pin {
+  background-image: url(qrc:/images/pin.png);
 }
 
 #join-form {

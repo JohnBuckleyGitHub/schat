@@ -18,6 +18,7 @@
 
 #include <QTimer>
 
+#include "acl/AclValue.h"
 #include "Ch.h"
 #include "DateTime.h"
 #include "feeds/FeedEvents.h"
@@ -50,6 +51,10 @@ ChannelIndexData::ChannelIndexData(ChatChannel channel)
 
   if (feed->data().value(LS("pinned"), false).toBool())
     options |= Pinned;
+
+  FeedPtr acl = channel->feed(FEED_NAME_ACL, false);
+  if (acl && AclValue::match(acl.data(), 0) == 0)
+    options |= Private;
 }
 
 
