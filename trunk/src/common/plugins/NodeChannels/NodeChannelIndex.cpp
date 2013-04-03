@@ -21,6 +21,8 @@
 #include "acl/AclValue.h"
 #include "Ch.h"
 #include "DateTime.h"
+#include "feeds/AclFeed.h"
+#include "feeds/ChannelFeed.h"
 #include "feeds/FeedEvents.h"
 #include "feeds/FeedsCore.h"
 #include "net/packets/Notice.h"
@@ -131,13 +133,19 @@ void NodeChannelIndex::notify(const FeedEvent &event)
 
 bool NodeChannelIndex::isDirty(const FeedEvent &event) const
 {
-  if (event.status != Notice::OK || event.method == FEED_METHOD_GET)
+  if (event.status != Notice::OK || event.method == FEED_METHOD_GET || SimpleID::typeOf(event.channel) != SimpleID::ChannelId)
     return false;
 
   if (event.name == FEED_NAME_INFO)
     return true;
 
-  if (event.name == FEED_NAME_USERS && event.path.size() == 34 && SimpleID::typeOf(event.channel) == SimpleID::ChannelId)
+  if (event.name == FEED_NAME_USERS && event.path.size() == 34)
+    return true;
+
+  if (event.name == FEED_NAME_CHANNEL && event.path == CHANNEL_FEED_NAME_KEY)
+    return true;
+
+  if (event.name == FEED_NAME_ACL && event.path == ACL_FEED_HEAD_MASK_KEY)
     return true;
 
   return false;

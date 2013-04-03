@@ -19,6 +19,9 @@
 #ifndef ACLFEED_H_
 #define ACLFEED_H_
 
+#define ACL_FEED_HEAD_MASK_KEY  QLatin1String("head/mask")
+#define ACL_FEED_HEAD_MASK_REQ  QLatin1String("acl/head/mask")
+#define ACL_FEED_HEAD_OTHER_KEY QLatin1String("head/other")
 #define ACL_FEED_HEAD_OTHER_REQ QLatin1String("acl/head/other")
 
 #endif /* ACLFEED_H_ */
