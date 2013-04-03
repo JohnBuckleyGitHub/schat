@@ -20,8 +20,11 @@
 #define CHANNELFEED_H_
 
 #define CHANNEL_FEED_GENDER_KEY QLatin1String("gender")
+#define CHANNEL_FEED_GENDER_REQ QLatin1String("channel/gender")
 #define CHANNEL_FEED_NAME_KEY   QLatin1String("name")
+#define CHANNEL_FEED_NAME_REQ   QLatin1String("channel/name")
 #define CHANNEL_FEED_STATUS_KEY QLatin1String("status")
+#define CHANNEL_FEED_STATUS_REQ QLatin1String("channel/status")
 #define CHANNEL_FEED_TYPE_KEY   QLatin1String("type")
 
 #endif /* CHANNELFEED_H_ */
