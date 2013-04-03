@@ -36,7 +36,8 @@ public:
   enum Options {
     NoOptions = 0, ///< Нет опций.
     Permanent = 1, ///< Постоянный канал.
-    Pinned    = 2  ///< Закреплённый канал.
+    Pinned    = 2, ///< Закреплённый канал.
+    Private   = 4  ///< Приватный канал.
   };
 
   ChannelIndexData(ChatChannel channel);
