@@ -19,9 +19,13 @@
 #include "acl/AclValue.h"
 #include "Ch.h"
 #include "Channel.h"
+#include "cores/Core.h"
 #include "DateTime.h"
+#include "feeds/AclFeed.h"
 #include "feeds/FeedsCore.h"
 #include "feeds/NodeAclFeed.h"
+#include "JSON.h"
+#include "net/packets/MessageNotice.h"
 #include "net/packets/Notice.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
@@ -80,8 +84,12 @@ FeedReply NodeAclFeed::del(const QString &path, Channel *channel)
  */
 FeedReply NodeAclFeed::post(const QString &path, const QVariantMap &json, Channel *channel)
 {
-  if (!path.startsWith(LS("head/")))
+  if (!path.startsWith(LS("head/"))) {
+    if (path == ACL_FEED_INVITE_KEY)
+      return invite(json, channel);
+
     return Notice::Forbidden;
+  }
 
   const int acl = AclValue::match(this, channel);
   FeedReply reply(Notice::Forbidden);
@@ -177,6 +185,47 @@ bool NodeAclFeed::isGenericUser(const QByteArray &id) const
     return false;
 
   return true;
+}
+
+
+/*!
+ * Приглашение пользователя в канал.
+ */
+FeedReply NodeAclFeed::invite(const QVariantMap &json, Channel *channel)
+{
+  const QByteArray id = SimpleID::decode(json.value(FEED_KEY_VALUE).toString());
+  if (!channel || SimpleID::typeOf(id) != SimpleID::UserId)
+    return Notice::BadRequest;
+
+  if (head().channel()->channels().contains(id))
+    return Notice::NotModified;
+
+  ChatChannel user = Ch::channel(id, SimpleID::UserId);
+  if (!user)
+    return Notice::NotFound;
+
+  if (user->status() == Status::Offline)
+    return Notice::ChannelOffline;
+
+  const int acl = AclValue::match(this, user.data());
+  if (acl != (Acl::Read | Acl::Write)) {
+    const QString request = ACL_FEED_HEAD_OTHER_REQ + LC('/') + json.value(FEED_KEY_VALUE).toString();
+    const int status      = FeedsCore::post(static_cast<ServerChannel*>(head().channel()), request, static_cast<ServerChannel*>(channel), Acl::Read | Acl::Write, Feed::Share | Feed::Broadcast).status;
+    if (status != Notice::OK)
+      return status;
+  }
+
+  QVariantMap data;
+  data[LS("id")]   = SimpleID::encode(head().channel()->id());
+  data[LS("name")] = head().channel()->name();
+
+  MessagePacket packet(new MessageNotice(channel->id(), user->id(), JSON::generate(data), 0, SimpleID::randomId(SimpleID::MessageId)));
+  packet->setCommand(LS("invite"));
+  packet->setDirection(Notice::Internal);
+  packet->setStatus(Notice::Found);
+
+  Core::i()->send(user->sockets(), packet);
+  return Notice::NotModified;
 }
 
 

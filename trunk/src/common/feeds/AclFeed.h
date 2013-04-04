@@ -23,5 +23,7 @@
 #define ACL_FEED_HEAD_MASK_REQ  QLatin1String("acl/head/mask")
 #define ACL_FEED_HEAD_OTHER_KEY QLatin1String("head/other")
 #define ACL_FEED_HEAD_OTHER_REQ QLatin1String("acl/head/other")
+#define ACL_FEED_INVITE_KEY     QLatin1String("invite")
+#define ACL_FEED_INVITE_REQ     QLatin1String("acl/invite")
 
 #endif /* ACLFEED_H_ */
