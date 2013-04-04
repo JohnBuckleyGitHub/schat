@@ -38,6 +38,7 @@ public:
 
 private:
   bool isGenericUser(const QByteArray &id) const;
+  FeedReply invite(const QVariantMap &json, Channel *channel);
   void init();
 };
 

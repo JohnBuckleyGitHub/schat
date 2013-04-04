@@ -138,22 +138,7 @@ void ChannelsPluginImpl::inviteTo(const QByteArray &userId, const QByteArray &ch
   if (SimpleID::typeOf(userId) != SimpleID::UserId || SimpleID::typeOf(channelId) != SimpleID::ChannelId)
     return;
 
-  ClientChannel channel = ChatClient::channels()->get(channelId);
-  if (!channel)
-    return;
-
-  if (ClientFeeds::match(channel, ChatClient::channels()->get(userId)) != (Acl::Read | Acl::Write))
-    setAcl(userId, channelId, Acl::Read | Acl::Write);
-
-  QVariantMap data;
-  data[LS("id")]   = SimpleID::encode(channelId);
-  data[LS("name")] = channel->name();
-
-  MessagePacket packet(new MessageNotice(ChatClient::id(), userId, JSON::generate(data), 0, ChatCore::randomId()));
-  packet->setCommand(LS("invite"));
-  packet->setDirection(Notice::Internal);
-  packet->setStatus(Notice::Found);
-  ChatClient::io()->send(packet, false);
+  ClientFeeds::post(channelId, ACL_FEED_INVITE_REQ, SimpleID::encode(userId));
 }
 
 
