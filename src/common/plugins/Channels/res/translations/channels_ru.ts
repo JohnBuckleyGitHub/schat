@@ -21,37 +21,37 @@
 <context>
     <name>ChannelsMenuImpl</name>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="86"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="87"/>
         <source>Ignore</source>
         <translation>Игнорировать</translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="153"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="158"/>
         <source>Invite to</source>
         <translation>Пригласить в</translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="180"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="185"/>
         <source>Permissions</source>
         <translation>Права доступа</translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="186"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="191"/>
         <source>Read write</source>
         <translation>Чтение и запись</translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="191"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="196"/>
         <source>Read only</source>
         <translation>Только чтение</translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="196"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="201"/>
         <source>No access</source>
         <translation>Нет доступа</translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="208"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="213"/>
         <source>Advanced...</source>
         <translation>Расширенные...</translation>
     </message>
@@ -59,7 +59,7 @@
 <context>
     <name>ChannelsPluginImpl</name>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="222"/>
+        <location filename="../../ChannelsPlugin.cpp" line="208"/>
         <source>Channels</source>
         <translation>Каналы</translation>
     </message>
@@ -178,6 +178,11 @@
         <location filename="../../ChannelsPlugin.cpp" line="79"/>
         <source>Reject</source>
         <translation>Отказаться</translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="80"/>
+        <source>Anyone can invite to channel</source>
+        <translation>Любой может пригласить в канал</translation>
     </message>
 </context>
 <context>

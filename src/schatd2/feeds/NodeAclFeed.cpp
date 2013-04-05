@@ -239,7 +239,8 @@ int NodeAclFeed::setAcl(const QString &encodedId, int acl, bool sudo)
     if (!feed || !feed->data().value(INFO_FEED_SUDO_KEY).toBool())
       return Notice::Forbidden;
 
-    if (!(m_data.value(FEED_WILDCARD_ASTERISK) == LS("---") && !m_data.contains(encodedId)))
+    const QString asterisk = m_data.value(FEED_WILDCARD_ASTERISK).toString();
+    if (!((asterisk == LS("---") || asterisk == LS("r--")) && !m_data.contains(encodedId)))
       return Notice::Forbidden;
   }
 
