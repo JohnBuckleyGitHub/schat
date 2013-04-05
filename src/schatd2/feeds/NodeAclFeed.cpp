@@ -201,10 +201,10 @@ FeedReply NodeAclFeed::invite(const QVariantMap &json, Channel *channel)
     return Notice::ChannelOffline;
 
   const int acl = AclValue::match(this, user.data());
-  if (acl != (Acl::Read | Acl::Write)) {
+  if (!(acl & Acl::Write)) {
     const QString request = ACL_FEED_HEAD_OTHER_REQ + LC('/') + json.value(FEED_KEY_VALUE).toString();
     const int status      = FeedsCore::post(static_cast<ServerChannel*>(head().channel()), request, static_cast<ServerChannel*>(channel), Acl::Read | Acl::Write, Feed::Share | Feed::Broadcast).status;
-    if (status != Notice::OK)
+    if (status != Notice::OK && !(AclValue::match(this, user.data()) & Acl::Read))
       return status;
   }
 
