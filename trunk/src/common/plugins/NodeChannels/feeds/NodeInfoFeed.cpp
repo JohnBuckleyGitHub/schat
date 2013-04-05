@@ -19,6 +19,7 @@
 #include "Ch.h"
 #include "Channel.h"
 #include "DateTime.h"
+#include "feeds/InfoFeed.h"
 #include "feeds/NodeInfoFeed.h"
 #include "net/packets/Notice.h"
 #include "net/SimpleID.h"
@@ -83,22 +84,22 @@ FeedReply NodeInfoFeed::post(const QString &path, const QVariantMap &json, Chann
   const qint64 date = DateTime::utc();
 
   // Установка текстового заголовка канала.
-  if (path == LS("title")) {
+  if (path == INFO_FEED_TITLE_KEY) {
     QVariantMap data;
-    data[LS("text")]   = value.toString().left(200);
-    data[LS("author")] = SimpleID::encode(channel->id());
-    data[LS("date")]   = date;
+    data[INFO_FEED_TEXT_KEY]   = value.toString().left(200);
+    data[INFO_FEED_AUTHOR_KEY] = SimpleID::encode(channel->id());
+    data[INFO_FEED_DATE_KEY]   = date;
 
     m_data[path] = data;
     return FeedReply(Notice::OK, date);
   }
 
-  if (path == LS("visibility")) {
+  if (path == INFO_FEED_VISIBILITY_KEY) {
     visibility(value.toInt());
     return FeedReply(Notice::OK, date);
   }
 
-  if (path == LS("pinned")) {
+  if (path == INFO_FEED_PINNED_KEY) {
     if (!Ch::server()->feed(FEED_NAME_ACL)->can(channel, Acl::Edit))
       return Notice::Forbidden;
 
@@ -153,7 +154,7 @@ void NodeInfoFeed::visibility(int value)
   }
 
   static_cast<ServerChannel *>(m_header.channel())->setPermanent(value > 0);
-  m_data[LS("visibility")] = value;
+  m_data[INFO_FEED_VISIBILITY_KEY] = value;
 }
 
 

@@ -26,6 +26,7 @@
 #include "client/ClientChannels.h"
 #include "client/ClientFeeds.h"
 #include "feeds/AclFeed.h"
+#include "feeds/InfoFeed.h"
 #include "hooks/MessagesImpl.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
@@ -121,7 +122,11 @@ bool ChannelsMenuImpl::canInviteTo(ClientChannel user, ClientChannel channel)
   if (SimpleID::typeOf(channel->id()) == SimpleID::ChannelId && channel->channels().contains(ChatClient::id()) && !channel->channels().contains(user->id()) && user->status() != Status::Offline) {
     if (!ClientFeeds::match(channel, user)) {
       const int acl = ClientFeeds::match(channel, ChatClient::channel());
-      return ((acl & Acl::Edit) || (acl & Acl::SpecialWrite));
+      if ((acl & Acl::Edit) || (acl & Acl::SpecialWrite))
+        return true;
+
+      FeedPtr feed = channel->feed(FEED_NAME_INFO, false);
+      return (feed && feed->data().value(INFO_FEED_SUDO_KEY).toBool());
     }
 
     return true;
