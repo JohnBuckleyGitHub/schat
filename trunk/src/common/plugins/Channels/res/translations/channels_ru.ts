@@ -26,32 +26,32 @@
         <translation>Игнорировать</translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="158"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="162"/>
         <source>Invite to</source>
         <translation>Пригласить в</translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="185"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="189"/>
         <source>Permissions</source>
         <translation>Права доступа</translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="191"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="195"/>
         <source>Read write</source>
         <translation>Чтение и запись</translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="196"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="200"/>
         <source>Read only</source>
         <translation>Только чтение</translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="201"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="205"/>
         <source>No access</source>
         <translation>Нет доступа</translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="213"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="217"/>
         <source>Advanced...</source>
         <translation>Расширенные...</translation>
     </message>
@@ -59,7 +59,7 @@
 <context>
     <name>ChannelsPluginImpl</name>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="208"/>
+        <location filename="../../ChannelsPlugin.cpp" line="214"/>
         <source>Channels</source>
         <translation>Каналы</translation>
     </message>
@@ -183,6 +183,36 @@
         <location filename="../../ChannelsPlugin.cpp" line="80"/>
         <source>Anyone can invite to channel</source>
         <translation>Любой может пригласить в канал</translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="81"/>
+        <source>Create</source>
+        <translation>Создать</translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="82"/>
+        <source>Create new channel</source>
+        <translation>Создать новый канал</translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="83"/>
+        <source>Name:</source>
+        <translation>Имя канала:</translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="84"/>
+        <source>Access:</source>
+        <translation>Доступ:</translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="85"/>
+        <source>This channel is private</source>
+        <translation>Этот канал приватный</translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="86"/>
+        <source>Cancel</source>
+        <translation>Отмена</translation>
     </message>
 </context>
 <context>

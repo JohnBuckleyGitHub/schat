@@ -97,11 +97,38 @@ ChannelsList.feed = {
 };
 
 
+/*
+ * Создание модального диалога для создания канала.
+ */
+Modal.create.create = function(event) {
+  var h3 = $('#modal-header h3');
+  h3.text(Utils.tr('channels_create_title'));
+  h3.attr('data-tr', 'channels_create_title');
+
+  $.ajax({
+    url: 'create.html',
+    isLocal: true,
+    dataType: 'html',
+    success: function(data) {
+      $('#modal-body').html(data);
+
+      $('#channel-create [data-tr]').each(function() {
+        Utils.TR($(this).attr('data-tr'));
+      });
+
+      Utils.adjustWidth($('#channel-create .create-label'));
+      $('#create-name').focus();
+    }
+  });
+}
+
+
 $(document).ready(function() {
   Utils.retranslate();
   ChannelsList.retranslate();
 
   ChannelsList.online();
+  Modal.init();
 
   /*
    * Обработка нажатия на кнопку входа в канал.

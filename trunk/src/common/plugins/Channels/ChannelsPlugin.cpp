@@ -78,6 +78,12 @@ protected:
     else if (key == LS("accept"))         return tr("Accept invitation");
     else if (key == LS("reject"))         return tr("Reject");
     else if (key == LS("sudo_invite"))    return tr("Anyone can invite to channel");
+    else if (key == LS("create"))         return tr("Create");
+    else if (key == LS("create_title"))   return tr("Create new channel");
+    else if (key == LS("name_label"))     return tr("Name:");
+    else if (key == LS("access_label"))   return tr("Access:");
+    else if (key == LS("access_checkbox"))return tr("This channel is private");
+    else if (key == LS("cancel"))         return tr("Cancel");
     return QString();
   }
 };

@@ -120,7 +120,11 @@ void ChannelsMenuImpl::invite(QAction *action)
 bool ChannelsMenuImpl::canInviteTo(ClientChannel user, ClientChannel channel)
 {
   if (SimpleID::typeOf(channel->id()) == SimpleID::ChannelId && channel->channels().contains(ChatClient::id()) && !channel->channels().contains(user->id()) && user->status() != Status::Offline) {
-    if (!(ClientFeeds::match(channel, user) & Acl::Write)) {
+    const int match = ClientFeeds::match(channel, user);
+    if (match & Acl::Read)
+      return true;
+
+    if (!(match & Acl::Write)) {
       const int acl = ClientFeeds::match(channel, ChatClient::channel());
       if ((acl & Acl::Edit) || (acl & Acl::SpecialWrite))
         return true;

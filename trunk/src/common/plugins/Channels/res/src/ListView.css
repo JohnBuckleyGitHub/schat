@@ -18,6 +18,11 @@ h3 {
   background-image: url(qrc:/images/pin.png);
 }
 
+.icon-add {
+  background-image: url(qrc:/images/add-gray.png);
+  opacity: 0.8;
+}
+
 #join-form {
   -webkit-box-flex: 1;
 }
@@ -65,4 +70,21 @@ h3 {
   margin-left: 0;
   border-radius: 0 4px 4px 0;
   border-left: 0;
+}
+
+#channel-create .btn-group {
+  margin-bottom: 6px;
+}
+
+#create-name {
+  margin-right: 0;
+  border-radius: 4px 0 0 4px;
+}
+
+#create-submit {
+  margin-right: 0;
+}
+
+#channel-create .btn-group > .btn {
+  float: inherit;
 }
