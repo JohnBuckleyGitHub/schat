@@ -23,6 +23,7 @@
 #include "DateTime.h"
 #include "feeds/AclFeed.h"
 #include "feeds/FeedsCore.h"
+#include "feeds/InfoFeed.h"
 #include "feeds/NodeAclFeed.h"
 #include "JSON.h"
 #include "net/packets/MessageNotice.h"
@@ -97,16 +98,8 @@ FeedReply NodeAclFeed::post(const QString &path, const QVariantMap &json, Channe
   if (acl & (Acl::Edit | Acl::SpecialEdit) || path == LS("head/owner")) {
     reply = Feed::post(path, json, channel);
   }
-  else if (acl & Acl::SpecialWrite && path.startsWith(LS("head/other/"))) {
-    const QByteArray id = SimpleID::decode(path.mid(11));
-    if (SimpleID::typeOf(id) != SimpleID::UserId)
-      return Notice::BadRequest;
-
-    if (isGenericUser(id)) {
-      reply.status = head().post(path.mid(5), json[FEED_KEY_VALUE]);
-      if (reply.status != Notice::OK)
-        return reply;
-    }
+  else if ((acl & Acl::Write) && path.startsWith(LS("head/other/"))) {
+    reply.status = setAcl(path.mid(11), json.value(FEED_KEY_VALUE).toInt(), !(acl & Acl::SpecialWrite));
   }
 
   if (reply.status == Notice::OK) {
@@ -226,6 +219,34 @@ FeedReply NodeAclFeed::invite(const QVariantMap &json, Channel *channel)
 
   Core::i()->send(user->sockets(), packet);
   return Notice::NotModified;
+}
+
+
+/*!
+ * Установка прав доступа.
+ */
+int NodeAclFeed::setAcl(const QString &encodedId, int acl, bool sudo)
+{
+  const QByteArray id = SimpleID::decode(encodedId);
+  if (SimpleID::typeOf(id) != SimpleID::UserId)
+    return Notice::BadRequest;
+
+  if (sudo) {
+    if (head().channel()->type() != SimpleID::ChannelId)
+      return Notice::Forbidden;
+
+    FeedPtr feed = head().channel()->feed(FEED_NAME_INFO, false);
+    if (!feed || !feed->data().value(INFO_FEED_SUDO_KEY).toBool())
+      return Notice::Forbidden;
+
+    if (!(m_data.value(FEED_WILDCARD_ASTERISK) == LS("---") && !m_data.contains(encodedId)))
+      return Notice::Forbidden;
+  }
+
+  if (isGenericUser(id))
+    return head().post(LS("other/") + encodedId, acl);
+
+  return Notice::Forbidden;
 }
 
 
