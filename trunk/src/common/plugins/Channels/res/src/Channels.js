@@ -232,6 +232,17 @@ var Channels = {
   setDefaultAcl: function(event) {
     var value = $(this).find('option:selected').attr('value');
     SimpleChat.request(Settings.getId(), FEED_METHOD_PUT, ACL_FEED_HEAD_MASK_REQ, {'value':value,'options':6});
+
+    if (value == ACL_CHANNEL_READWRITE)
+      $('.sudo-control').fadeOut('fast')
+    else
+      $('.sudo-control').fadeIn('fast');
+  },
+
+
+
+  setSudoInvite: function(event) {
+    SimpleChat.request(Settings.getId(), FEED_METHOD_POST, INFO_FEED_SUDO_REQ, {'value':$(this).is(':checked'), 'options':7});
   },
 
 
@@ -322,8 +333,10 @@ Modal.create.options = function(event)
   h3.attr('data-tr', 'channels_options');
 
   var feed = SimpleChat.feed(Settings.getId(), FEED_NAME_INFO, 4);
-  if (feed !== false)
+  if (feed !== false) {
     var visibility = feed.visibility || 0;
+    var sudo       = feed.sudo       || false;
+  }
 
   var body = $('#modal-body');
   body.append('<form>');
@@ -352,6 +365,8 @@ Modal.create.options = function(event)
         '<option value="484" data-tr="channels_readonly"  ' + (acl == 4 ? 'selected' : '') + '>' + Utils.tr('channels_readonly')  + '</option>' +
         '<option value="448" data-tr="channels_forbidden" ' + (acl == 0 ? 'selected' : '') + '>' + Utils.tr('channels_forbidden') + '</option>' +
       '</select> ' +
+      '<input class="sudo-control" id="sudo" type="checkbox"' + (sudo === false ? '' : 'checked') + '> ' +
+      '<label class="sudo-control" for="sudo" data-tr="channels_sudo_invite">' + Utils.tr('channels_sudo_invite') + '</label> ' +
     '</div>'
   );
 
@@ -376,6 +391,9 @@ Modal.create.options = function(event)
   }
 
   body.append('</form>');
+
+  if (acl == 6)
+    $('.sudo-control').hide();
 };
 
 
@@ -400,6 +418,7 @@ $(document).ready(function() {
   modal.on('change.permissions', '#permissions', Channels.setDefaultAcl);
   modal.on('change.pinned',      '#pin',         Channels.pinChannel);
   modal.on('change.logging',     '#logging',     Channels.logging);
+  modal.on('change.sudo',        '#sudo',        Channels.setSudoInvite);
 
   modal.on('change.acl',         '#acl',         Channels.setAcl);
 

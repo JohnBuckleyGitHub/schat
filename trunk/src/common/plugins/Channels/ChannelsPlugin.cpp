@@ -77,6 +77,7 @@ protected:
     else if (key == LS("logging"))        return tr("Logging messages");
     else if (key == LS("accept"))         return tr("Accept invitation");
     else if (key == LS("reject"))         return tr("Reject");
+    else if (key == LS("sudo_invite"))    return tr("Anyone can invite to channel");
     return QString();
   }
 };
