@@ -53,6 +53,8 @@ var ACL_FEED_HEAD_OTHER_REQ   = 'acl/head/other';
 var ACL_FEED_HEAD_OWNER_REQ   = 'acl/head/owner';
 var ACL_FEED_HEAD_MASK_REQ    = 'acl/head/mask';
 
+var LIST_FEED_ID_REQ          = 'list/id';
+
 var Settings = {
   id: '',
   status: '',

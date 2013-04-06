@@ -21,21 +21,26 @@
 #include <QMenu>
 
 #include "ChatNotify.h"
+#include "ChatUrls.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
+#include "client/ClientFeeds.h"
+#include "feeds/AclFeed.h"
+#include "feeds/InfoFeed.h"
+#include "hooks/ChannelMenu.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
 #include "ui/ChannelsView.h"
-#include "WebBridge.h"
 #include "ui/tabs/ChatView.h"
-#include "ChatUrls.h"
-#include "hooks/ChannelMenu.h"
+#include "ui/TabWidget.h"
+#include "WebBridge.h"
 
 ChannelsView::ChannelsView(QWidget *parent)
   : WebView(parent)
 {
   connect(page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), SLOT(populateJavaScriptWindowObject()));
-  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+  connect(ChatNotify::i(), SIGNAL(notify(Notify)), SLOT(notify(Notify)));
+  connect(ChatClient::channels(), SIGNAL(channel(QByteArray)), SLOT(channel(QByteArray)));
 
   retranslateUi();
 }
@@ -44,6 +49,17 @@ ChannelsView::ChannelsView(QWidget *parent)
 QString ChannelsView::toUrl(const QString &id, const QString &name) const
 {
   return LS("chat://channel/") + id + LS("/open?name=") + SimpleID::toBase32(name.toUtf8()) + LS("&gender=0");
+}
+
+
+void ChannelsView::create(const QString &id, const QString &name, bool _private)
+{
+  const QByteArray channelId = SimpleID::decode(id);
+  if (SimpleID::typeOf(channelId) != SimpleID::ChannelId)
+    return;
+
+  m_channels[channelId] = _private;
+  ChatClient::channels()->join(name);
 }
 
 
@@ -70,6 +86,23 @@ void ChannelsView::contextMenu(QMenu *menu, const QWebHitTestResult &result)
     menu->removeAction(pageAction(QWebPage::SelectAll));
     menu->addAction(pageAction(QWebPage::SelectAll));
   }
+}
+
+
+void ChannelsView::channel(const QByteArray &id)
+{
+  if (!m_channels.contains(id))
+    return;
+
+  if (m_channels.value(id)) {
+    ChatClientLocker locker(ChatClient::io());
+    ClientFeeds::post(id, INFO_FEED_SUDO_REQ,       true, Feed::NoOptions);
+    ClientFeeds::post(id, INFO_FEED_VISIBILITY_REQ, -1,   Feed::NoOptions);
+    ClientFeeds::put(id,  ACL_FEED_HEAD_MASK_REQ,   448,  Feed::Share | Feed::Broadcast);
+  }
+
+  m_channels.remove(id);
+  TabWidget::pin(id);
 }
 
 
