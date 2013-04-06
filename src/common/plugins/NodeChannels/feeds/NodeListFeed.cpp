@@ -19,11 +19,13 @@
 #include "Ch.h"
 #include "DateTime.h"
 #include "feeds/FeedsCore.h"
+#include "feeds/ListFeed.h"
 #include "feeds/NodeListFeed.h"
 #include "net/packets/Notice.h"
 #include "net/SimpleID.h"
 #include "NodeChannelIndex.h"
 #include "NodeChannelsPlugin_p.h"
+#include "Normalize.h"
 #include "sglobal.h"
 
 NodeListFeed::NodeListFeed(const QString &name, const QVariantMap &data)
@@ -51,6 +53,18 @@ FeedReply NodeListFeed::del(const QString &path, Channel *channel)
 }
 
 
+FeedReply NodeListFeed::get(const QString &path, const QVariantMap &json, Channel *channel) const
+{
+  if (path.isEmpty())
+    return Notice::BadRequest;
+
+  if (path == LIST_FEED_ID_KEY)
+    return id(json.value(FEED_KEY_VALUE).toString());
+
+  return Feed::get(path, json, channel);
+}
+
+
 /*!
  * Переопределение запроса \b post.
  */
@@ -72,7 +86,7 @@ FeedReply NodeListFeed::put(const QString &path, const QVariantMap &json, Channe
   Q_UNUSED(json)
   Q_UNUSED(channel)
 
-  if (path == LS("channels") && Ch::server() == channel) {
+  if (path == LIST_FEED_CHANNELS_KEY && Ch::server() == channel) {
     const QList<ChannelIndexData> &list = NodeChannelsImpl::index()->list();
     QVariantList channels;
 
@@ -88,10 +102,35 @@ FeedReply NodeListFeed::put(const QString &path, const QVariantMap &json, Channe
 }
 
 
+FeedReply NodeListFeed::id(const QString &name) const
+{
+  if (!Channel::isValidName(name))
+    return Notice::BadRequest;
+
+  FeedReply reply(Notice::NotFound);
+  const QByteArray normalized = Normalize::toId(SimpleID::ChannelId, name);
+  ChatChannel channel         = Ch::channel(normalized);
+
+  if (!channel) {
+    const QByteArray id = Ch::makeId(normalized);
+    channel = Ch::channel(id);
+    reply.json[FEED_KEY_VALUE] = SimpleID::encode(id);
+  }
+
+  if (channel) {
+    reply.status               = Notice::OK;
+    reply.json[FEED_KEY_VALUE] = SimpleID::encode(channel->id());
+    reply.date                 = head().date();
+  }
+
+  return reply;
+}
+
+
 void NodeListFeed::init()
 {
   m_header.acl().setMask(0444);
-  m_data[LS("format")] = QVariantList() << LS("id") << LS("name") << LS("count") << LS("title") << LS("options");
+  m_data[LIST_FEED_FORMAT_KEY] = QVariantList() << LS("id") << LS("name") << LS("count") << LS("title") << LS("options");
 
   FeedsCore::sub(FEED_NAME_LIST);
 }

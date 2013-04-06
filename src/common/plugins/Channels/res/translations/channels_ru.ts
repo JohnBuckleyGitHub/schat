@@ -59,7 +59,7 @@
 <context>
     <name>ChannelsPluginImpl</name>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="214"/>
+        <location filename="../../ChannelsPlugin.cpp" line="216"/>
         <source>Channels</source>
         <translation>Каналы</translation>
     </message>
@@ -207,12 +207,22 @@
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="85"/>
         <source>This channel is private</source>
-        <translation>Этот канал приватный</translation>
+        <translation>Приватный канал</translation>
     </message>
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="86"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="87"/>
+        <source>Invalid channel name. Please choose another name.</source>
+        <translation>Неправильное имя канала. Пожалуйста, выберите другое имя.</translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="88"/>
+        <source>That channel already exists. Please choose another name.</source>
+        <translation>Такой канал уже существует. Пожалуйста, выберите другое имя.</translation>
     </message>
 </context>
 <context>

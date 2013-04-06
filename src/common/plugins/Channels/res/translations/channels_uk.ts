@@ -59,7 +59,7 @@
 <context>
     <name>ChannelsPluginImpl</name>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="214"/>
+        <location filename="../../ChannelsPlugin.cpp" line="216"/>
         <source>Channels</source>
         <translation type="unfinished"></translation>
     </message>
@@ -212,6 +212,16 @@
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="86"/>
         <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="87"/>
+        <source>Invalid channel name. Please choose another name.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="88"/>
+        <source>That channel already exists. Please choose another name.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

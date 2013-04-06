@@ -84,6 +84,8 @@ protected:
     else if (key == LS("access_label"))   return tr("Access:");
     else if (key == LS("access_checkbox"))return tr("This channel is private");
     else if (key == LS("cancel"))         return tr("Cancel");
+    else if (key == LS("bad_name"))       return tr("Invalid channel name. Please choose another name.");
+    else if (key == LS("already_exists")) return tr("That channel already exists. Please choose another name.");
     return QString();
   }
 };

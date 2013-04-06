@@ -46,9 +46,13 @@ ChannelsList.feed = {
    * Чтение новых данных.
    */
   read: function(json) {
-    if (json.type == 'body') {
-      if (json.feed == FEED_NAME_LIST)
+    if (json.feed == FEED_NAME_LIST) {
+      if (json.type == 'body') {
         ChannelsList.feed.list(json.data, json.status);
+      }
+      else if (json.type == 'reply' && json.path == 'id') {
+        CreateWindow.feed(json.data, json.status);
+      }
     }
   },
 
@@ -98,6 +102,95 @@ ChannelsList.feed = {
 
 
 /*
+ * Диалог создания канала.
+ */
+var CreateWindow = {
+  text: null,
+
+
+  /*
+   * Загрузка диалога создания канала.
+   */
+  load: function(html) {
+    $('#modal-body').html(html);
+
+    $('#channel-create [data-tr]').each(function() {
+      Utils.TR($(this).attr('data-tr'));
+    });
+
+    Utils.adjustWidth($('#channel-create .control-label'));
+
+    var nameEdit = $('#create-name');
+    nameEdit.focus();
+
+    $('#create-submit').on('click.create', function(event) {
+      event.preventDefault();
+
+      CreateWindow.text = nameEdit.val().replace(/\s{2,}/g, ' ').trim();
+      var text = CreateWindow.text;
+
+      if (text.length == 0)
+        return;
+
+      if (text.length < 3) {
+        CreateWindow.setError('channels_bad_name');
+        return;
+      }
+
+      SimpleChat.request(SimpleChat.serverId(), FEED_METHOD_GET, LIST_FEED_ID_REQ, {'value':text});
+    });
+
+    nameEdit.on('input',function(e){
+      CreateWindow.clearError();
+    });
+  },
+
+
+  /*
+   * Очистка состояния ошибки.
+   */
+  clearError: function() {
+    $('#create-name-row').removeClass('error');
+    $('.alert').hide();
+  },
+
+
+  /*
+   * Установка состояния ошибки.
+   */
+  setError: function(text) {
+    var createError = $('#create-error');
+    createError.text(Utils.tr(text));
+    createError.attr('data-tr', text);
+
+    $('#create-name-row').addClass('error');
+    $('.alert').show();
+    $('#create-name').focus();
+  },
+
+
+  /*
+   * Чтение ответа на запрос LIST_FEED_ID_REQ.
+   */
+  feed: function(json, status) {
+    if (!('#channel-create').length)
+      return;
+
+    if (status == 403) {
+      ChannelsView.create(json.value, CreateWindow.text, $('#access-checkbox').is(':checked'));
+      $('#modal').modal('hide');
+    }
+    else if (status == 400)
+      CreateWindow.setError('channels_bad_name');
+    else if (status == 200)
+      CreateWindow.setError('channels_already_exists');
+
+
+  }
+}
+
+
+/*
  * Создание модального диалога для создания канала.
  */
 Modal.create.create = function(event) {
@@ -109,16 +202,7 @@ Modal.create.create = function(event) {
     url: 'create.html',
     isLocal: true,
     dataType: 'html',
-    success: function(data) {
-      $('#modal-body').html(data);
-
-      $('#channel-create [data-tr]').each(function() {
-        Utils.TR($(this).attr('data-tr'));
-      });
-
-      Utils.adjustWidth($('#channel-create .create-label'));
-      $('#create-name').focus();
-    }
+    success: CreateWindow.load
   });
 }
 
@@ -164,8 +248,9 @@ if (typeof SimpleChat !== 'undefined') {
 
 if (typeof ChannelsView === 'undefined') {
   ChannelsView = {
-    join: function(name) {},
-    toUrl: function(id, name) { return '#'; }
+    join:   function(name)               {},
+    create: function(id, name, _private) {},
+    toUrl:  function(id, name)           { return '#'; }
   }
 }
 else {

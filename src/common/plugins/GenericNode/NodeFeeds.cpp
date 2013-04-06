@@ -197,10 +197,10 @@ int NodeFeeds::get()
 int NodeFeeds::get(FeedPtr feed, const QString &request)
 {
   const FeedReply reply = feed->get(request, m_packet->json(), m_user.data());
-  if (reply.status != Notice::OK)
-    return reply.status;
+  m_event->status       = reply.status;
 
   FeedPacket packet = FeedNotice::reply(*m_packet, reply.json);
+  packet->setStatus(m_event->status);
   if (reply.date)
     packet->setDate(reply.date);
 
