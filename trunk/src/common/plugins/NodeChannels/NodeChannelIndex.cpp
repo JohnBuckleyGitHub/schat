@@ -25,6 +25,7 @@
 #include "feeds/ChannelFeed.h"
 #include "feeds/FeedEvents.h"
 #include "feeds/FeedsCore.h"
+#include "feeds/InfoFeed.h"
 #include "net/packets/Notice.h"
 #include "net/SimpleID.h"
 #include "NodeChannelIndex.h"
@@ -40,7 +41,7 @@ ChannelIndexData::ChannelIndexData(ChatChannel channel)
   if (!feed)
     return;
 
-  visibility = feed->data().value(LS("visibility"), 0).toInt();
+  visibility = feed->data().value(INFO_FEED_VISIBILITY_KEY, 0).toInt();
   if (visibility < 0)
     return;
 
@@ -49,9 +50,9 @@ ChannelIndexData::ChannelIndexData(ChatChannel channel)
 
   id    = channel->id();
   count = channel->channels().size();
-  title = feed->data().value(LS("title")).toMap().value(LS("text")).toString();
+  title = feed->data().value(INFO_FEED_TITLE_KEY).toMap().value(INFO_FEED_TEXT_KEY).toString();
 
-  if (feed->data().value(LS("pinned"), false).toBool())
+  if (feed->data().value(INFO_FEED_PINNED_KEY, false).toBool())
     options |= Pinned;
 
   FeedPtr acl = channel->feed(FEED_NAME_ACL, false);
@@ -71,7 +72,10 @@ bool ChannelIndexData::isValid() const
 
 bool ChannelIndexData::operator<(const ChannelIndexData &other) const
 {
-  if (other.options & Pinned && !(options & Pinned))
+  if ((options & Pinned) && !(other.options & Pinned))
+    return true;
+
+  if ((other.options & Pinned) && !(options & Pinned))
     return false;
 
   if (other.count == count)
