@@ -31,7 +31,6 @@ var Channels = {
   acl: -1,     // Права доступа к каналу.
   timeout: {
     visibility: null,
-    pin: null,
     acl: null,
     logging: null
   },
@@ -61,8 +60,8 @@ var Channels = {
       Loader.spinner.remove('loading/info');
 
     Channels.stopSpinner('visibility', status);
-    Channels.stopSpinner('pin',        status);
     Channels.stopSpinner('logging',    status);
+    Channels.stopSpinner('acl',        status);
   },
 
 
@@ -82,7 +81,7 @@ var Channels = {
     if (status != 200 && status != 303) {
       var error = $('#' + id + '-error');
       error.removeClass('hide');
-      error.attr('title', SimpleChat.statusText(status));
+      error.text(SimpleChat.statusText(status));
     }
   },
 
@@ -158,7 +157,7 @@ var Channels = {
       '<form>' +
         '<div id="acl-row" class="row">' +
           '<label for="acl" data-tr="channels_permissions">' + Utils.tr('channels_permissions') + '</label> ' +
-          '<select id="acl" data-user="' + id + '">' +
+          '<select id="acl" data-user="' + id + '" class="btn">' +
             '<option value="-1" data-tr="channels_default">'   + Utils.tr('channels_default')   + '</option>' +
             '<option value="15" data-tr="channels_owner">'     + Utils.tr('channels_owner')     + '</option>' +
             '<option value="22" data-tr="channels_moderator">' + Utils.tr('channels_moderator') + '</option>' +
@@ -167,7 +166,7 @@ var Channels = {
             '<option value="0" data-tr="channels_forbidden">'  + Utils.tr('channels_forbidden') + '</option>' +
           '</select> ' +
           '<i id="acl-spinner" class="icon-spinner hide"></i>' +
-          '<i id="acl-error" class="icon-error hide"></i>' +
+          '<div id="acl-error" class="alert alert-error hide"></div>' +
         '</div>' +
       '</form>'
     );
@@ -213,54 +212,6 @@ var Channels = {
 
     if ($('#channel-title-text').text() != text)
       SimpleChat.request(Settings.getId(), FEED_METHOD_POST, INFO_FEED_TITLE_REQ, {'value':text, 'options':7});
-  },
-
-
-  /*
-   * Обработка изменения видимости канала.
-   */
-  setVisibility: function(event) {
-    var value = $(this).find('option:selected').attr('value');
-    SimpleChat.request(Settings.getId(), FEED_METHOD_POST, INFO_FEED_VISIBILITY_REQ, {'value':value, 'options':7});
-    Channels.startSpinner('visibility');
-  },
-
-
-  /*
-   * Установка прав доступа по умолчанию.
-   */
-  setDefaultAcl: function(event) {
-    var value = $(this).find('option:selected').attr('value');
-    SimpleChat.request(Settings.getId(), FEED_METHOD_PUT, ACL_FEED_HEAD_MASK_REQ, {'value':value,'options':6});
-
-    if (value == ACL_CHANNEL_READWRITE)
-      $('.sudo-control').fadeOut('fast')
-    else
-      $('.sudo-control').fadeIn('fast');
-  },
-
-
-
-  setSudoInvite: function(event) {
-    SimpleChat.request(Settings.getId(), FEED_METHOD_POST, INFO_FEED_SUDO_REQ, {'value':$(this).is(':checked'), 'options':7});
-  },
-
-
-  /*
-   * Обработка изменения закрепления канала.
-   */
-  pinChannel: function(event) {
-    SimpleChat.request(Settings.getId(), FEED_METHOD_POST, INFO_FEED_PINNED_REQ, {'value':$(this).is(':checked'), 'options':7});
-    Channels.startSpinner('pin');
-  },
-
-
-  /*
-   * Обработка изменения журналирования канала.
-   */
-  logging: function(event) {
-    SimpleChat.request(Settings.getId(), FEED_METHOD_POST, INFO_FEED_LOGGING_REQ, {'value':$(this).is(':checked'), 'options':7});
-    Channels.startSpinner('logging');
   },
 
 
@@ -324,89 +275,159 @@ Modal.hidden.title = function()
 
 
 /*
- * Изменение опций канала.
+ * Диалог редактирования опций канала.
  */
-Modal.create.options = function(event)
-{
-  var h3 = $('#modal-header h3');
-  h3.text(event.target.innerText);
-  h3.attr('data-tr', 'channels_options');
+var OptionsWindow = {
+  /*
+   * Загрузка диалога редактирования опций канала.
+   */
+  load: function(event) {
+    var h3 = $('#modal-header h3');
+    h3.text(event.target.innerText);
+    h3.attr('data-tr', 'channels_options');
 
-  var feed = SimpleChat.feed(Settings.getId(), FEED_NAME_INFO, 4);
-  if (feed !== false) {
-    var visibility = feed.visibility || 0;
-    var sudo       = feed.sudo       || false;
+    SimpleChat.feed(Settings.getId(), FEED_NAME_INFO, 1);
+
+    $.ajax({
+      url: 'channel_options.html',
+      isLocal: true,
+      dataType: 'html',
+      success: function(html) {
+        $('#modal-body').html(html);
+
+        $('#channel-options [data-tr]').each(function() {
+          Utils.TR($(this).attr('data-tr'));
+        });
+
+        var self = OptionsWindow;
+        self.retranslate();
+        self.reload();
+
+        $('#visibility').on('change',  self.setVisibility);
+        $('#permissions').on('change', self.setPermissions);
+        $('#logging').on('change',     self.setLogging);
+        $('#pin-button').on('click',   self.pin);
+        $('#sudo-button').on('click',  self.sudo);
+      }
+    });
+  },
+
+
+  /*
+   * Обновление состояния диалога в зависимости от текущих настроек.
+   */
+  reload: function() {
+    var feed = SimpleChat.feed(Settings.getId(), FEED_NAME_INFO, 3);
+    if (feed !== false) {
+      var visibility = feed.visibility || 0;
+      var sudo       = feed.sudo       || false;
+    }
+
+    $('#visibility').val(visibility);
+    $('#visibility-row').toggleClass('pinnable', OptionsWindow.isPinnable(visibility));
+
+    var acl = SimpleChat.match(Settings.getId(), '');
+    var permissions = ACL_CHANNEL_READWRITE;
+    if (acl == 4)
+      permissions = ACL_CHANNEL_READONLY;
+    else if (acl == 0)
+      permissions = ACL_CHANNEL_FORBIDDEN;
+
+    $('#permissions').val(permissions);
+    $('#permissions-row').toggleClass('strict-access', permissions != ACL_CHANNEL_READWRITE);
+    $('#pin-button').toggleClass('active', feed[INFO_FEED_PINNED_KEY] == true);
+    $('#sudo-button').toggleClass('active', sudo !== false);
+    $('#logging').attr('checked', feed[INFO_FEED_LOGGING_KEY] !== false)
+  },
+
+
+  /*
+   * Установка видимости канала.
+   */
+  setVisibility: function () {
+    var value = $(this).val();
+    $('#visibility-row').toggleClass('pinnable', OptionsWindow.isPinnable(value));
+
+    SimpleChat.request(Settings.getId(), FEED_METHOD_POST, INFO_FEED_VISIBILITY_REQ, {'value':value, 'options':7});
+    Channels.startSpinner('visibility');
+  },
+
+
+  /*
+   * Установка прав доступа по умолчанию.
+   */
+  setPermissions: function() {
+    var value = $(this).val();
+    SimpleChat.request(Settings.getId(), FEED_METHOD_PUT, ACL_FEED_HEAD_MASK_REQ, {'value':value,'options':6});
+
+    $('#permissions-row').toggleClass('strict-access', value != ACL_CHANNEL_READWRITE);
+    Channels.startSpinner('acl');
+  },
+
+
+  /*
+   * Обработка изменения журналирования канала.
+   */
+  setLogging: function() {
+    SimpleChat.request(Settings.getId(), FEED_METHOD_POST, INFO_FEED_LOGGING_REQ, {'value':$(this).is(':checked'), 'options':7});
+    Channels.startSpinner('logging');
+  },
+
+
+  /*
+   * Обработка изменения закрепления канала.
+   */
+  pin: function() {
+    $(this).toggleClass('active');
+    SimpleChat.request(Settings.getId(), FEED_METHOD_POST, INFO_FEED_PINNED_REQ, {'value':$(this).hasClass('active'), 'options':7});
+    Channels.startSpinner('visibility');
+  },
+
+
+  /*
+   * Обработка изменения режима приглашения в канал.
+   */
+  sudo: function() {
+    $(this).toggleClass('active');
+    SimpleChat.request(Settings.getId(), FEED_METHOD_POST, INFO_FEED_SUDO_REQ, {'value':$(this).hasClass('active'), 'options':7});
+    Channels.startSpinner('acl');
+  },
+
+
+  /*
+   * Возвращает true если пользователь может закрепить канал.
+   *
+   * \param visibility Текущие настройки видимости канала.
+   */
+  isPinnable: function(visibility) {
+    return (visibility >= 0 && SimpleChat.match(SimpleChat.serverId(), SimpleChat.id()) & 9) > 0;
+  },
+
+
+  /*
+   * Динамический перевод интерфейса.
+   */
+  retranslate: function() {
+    if (!$('#channel-options').length)
+      return;
+
+    Utils.adjustWidth($('.options-label'));
+    Utils.adjustWidth($('.options-select'));
+    $('#visibility').addClass('btn');
+
+    $('#pin-button').attr('title', Utils.tr('channels_pin'));
+    $('#sudo-button').attr('title', Utils.tr('channels_sudo_invite'));
   }
-
-  var body = $('#modal-body');
-  body.append('<form>');
-  body.append(
-    '<div id="visibility-row" class="row">' +
-      '<label for="visibility" data-tr="channels_visibility" class="options-label">' + Utils.tr('channels_visibility') + '</label> ' +
-      '<select id="visibility" class="options-select">' +
-        '<option value="0"  data-tr="channels_default">'                                                   + Utils.tr('channels_default')        + '</option>' +
-        '<option value="1"  ' + (visibility > 0 ? 'selected' : '') + ' data-tr="channels_always_visible">' + Utils.tr('channels_always_visible') + '</option>' +
-        '<option value="-1" ' + (visibility < 0 ? 'selected' : '') + ' data-tr="channels_hidden">'         + Utils.tr('channels_hidden')         + '</option>' +
-      '</select> ' +
-      '<i id="visibility-spinner" class="icon-spinner hide"></i>' +
-      '<i id="visibility-error" class="icon-error hide"></i>' +
-    '</div>'
-  );
-
-  var aclFeed = SimpleChat.feed(Settings.getId(), FEED_NAME_ACL, 3);
-  if (aclFeed !== false)
-    var acl = SimpleChat.aclToInt(aclFeed['*']);
-
-  body.append(
-    '<div id="permissions-row" class="row">' +
-      '<label for="permissions" data-tr="channels_default_acl" class="options-label">' + Utils.tr('channels_default_acl') + '</label> ' +
-      '<select id="permissions" class="options-select">' +
-        '<option value="502" data-tr="channels_readwrite" ' + (acl == 6 ? 'selected' : '') + '>' + Utils.tr('channels_readwrite') + '</option>' +
-        '<option value="484" data-tr="channels_readonly"  ' + (acl == 4 ? 'selected' : '') + '>' + Utils.tr('channels_readonly')  + '</option>' +
-        '<option value="448" data-tr="channels_forbidden" ' + (acl == 0 ? 'selected' : '') + '>' + Utils.tr('channels_forbidden') + '</option>' +
-      '</select> ' +
-      '<input class="sudo-control" id="sudo" type="checkbox"' + (sudo === false ? '' : 'checked') + '> ' +
-      '<label class="sudo-control" for="sudo" data-tr="channels_sudo_invite">' + Utils.tr('channels_sudo_invite') + '</label> ' +
-    '</div>'
-  );
-
-  body.append(
-    '<div id="logging-row" class="row">' +
-      '<input id="logging" type="checkbox" ' + (feed[INFO_FEED_LOGGING_KEY] === false ? '' : 'checked') + '> ' +
-      '<label for="logging" data-tr="channels_logging">' + Utils.tr('channels_logging') + '</label> ' +
-      '<i id="logging-spinner" class="icon-spinner hide"></i>' +
-      '<i id="logging-error" class="icon-error hide"></i>' +
-    '</div>'
-  );
-
-  if (SimpleChat.match(SimpleChat.serverId(), SimpleChat.id()) & 9) {
-    body.append(
-      '<div id="pin-row" class="row">' +
-        '<input id="pin" type="checkbox" ' + (feed.pinned == true ? 'checked' : '') + '> ' +
-        '<label for="pin" data-tr="channels_pin">' + Utils.tr('channels_pin') + '</label> ' +
-        '<i id="pin-spinner" class="icon-spinner hide"></i>' +
-        '<i id="pin-error" class="icon-error hide"></i>' +
-      '</div>'
-    );
-  }
-
-  body.append('</form>');
-
-  if (acl == 6)
-    $('.sudo-control').hide();
 };
+
+
+Modal.create.options = OptionsWindow.load;
 
 
 Modal.hidden.options = function() {
   clearTimeout(Channels.timeout.visibility);
-  clearTimeout(Channels.timeout.pin);
+  clearTimeout(Channels.timeout.acl);
 };
-
-
-Modal.shown.options = function() {
-  Utils.adjustWidth($('.options-label'));
-  Utils.adjustWidth($('.options-select'));
-}
 
 
 $(document).ready(function() {
@@ -414,12 +435,6 @@ $(document).ready(function() {
 
   var modal = $('#modal-body');
   modal.on('click.title',        '#title-ok',    Channels.setTitle);
-  modal.on('change.visibility',  '#visibility',  Channels.setVisibility);
-  modal.on('change.permissions', '#permissions', Channels.setDefaultAcl);
-  modal.on('change.pinned',      '#pin',         Channels.pinChannel);
-  modal.on('change.logging',     '#logging',     Channels.logging);
-  modal.on('change.sudo',        '#sudo',        Channels.setSudoInvite);
-
   modal.on('change.acl',         '#acl',         Channels.setAcl);
 
   Channels.online();
@@ -434,4 +449,5 @@ if (typeof ChatView !== 'undefined') {
 
 if (typeof SimpleChat !== 'undefined') {
   SimpleChat.online.connect(Channels.online);
+  SimpleChat.retranslated.connect(OptionsWindow.retranslate);
 }

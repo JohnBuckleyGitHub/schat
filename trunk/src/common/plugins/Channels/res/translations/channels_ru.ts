@@ -181,8 +181,8 @@
     </message>
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="80"/>
-        <source>Anyone can invite to channel</source>
-        <translation>Любой может пригласить в канал</translation>
+        <source>Only owners and moderators can invite to channel</source>
+        <translation>Только владельцы и модераторы могут приглашать в канал</translation>
     </message>
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="81"/>
