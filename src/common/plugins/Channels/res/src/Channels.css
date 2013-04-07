@@ -96,3 +96,49 @@ input[type="text"]:focus {
   border-radius: 0 4px 4px 0;
   border-left: 0;
 }
+
+/* Окно редактирования опций канала */
+.btn-icon-pin, .btn-icon-pin.active, .btn-icon-pin:active {
+  background-image: url(qrc:/images/pin.png), -webkit-linear-gradient(#ffffff, #ffffff 25%, #e6e6e6);
+  background-position: center;
+  display: none;
+}
+
+.btn-icon-pin:hover, .btn-icon-pin.active {
+  background-position: center, 0 -15px;
+}
+
+.btn-icon-sudo, .btn-icon-sudo.active, .btn-icon-sudo:active {
+  background-image: url(qrc:/images/secure.png), -webkit-linear-gradient(#ffffff, #ffffff 25%, #e6e6e6);
+  background-position: center;
+  display: none;
+}
+
+.btn-icon-sudo:hover, .btn-icon-sudo.active {
+  background-position: center, 0 -15px;
+}
+
+.pinnable #visibility, .strict-access #permissions {
+  margin-right: 0;
+  border-radius: 4px 0 0 4px;
+}
+
+.pinnable #pin-button, .strict-access #sudo-button {
+  margin-left: 0;
+  border-left: 0;
+  border-radius: 0 4px 4px 0;
+  display: inline-block;
+}
+
+#channel-options .alert {
+  display: inline-block;
+  padding: 4px 14px 4px 4px;
+}
+
+#channel-options .alert.hide {
+  display: none;
+}
+
+#channel-options .row {
+  margin: 0;
+}

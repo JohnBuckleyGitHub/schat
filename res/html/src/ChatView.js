@@ -44,6 +44,7 @@ var CONSOLE_FEED_ME_REQ       = 'console/me';
 
 var INFO_FEED_LOGGING_KEY     = 'logging';
 var INFO_FEED_LOGGING_REQ     = 'info/logging';
+var INFO_FEED_PINNED_KEY      = 'pinned';
 var INFO_FEED_PINNED_REQ      = 'info/pinned';
 var INFO_FEED_SUDO_REQ        = 'info/sudo';
 var INFO_FEED_TITLE_REQ       = 'info/title';
