@@ -1,3 +1,14 @@
+2.0.5
+-----
+ + Added a dialog to create a new channel.
+ + Added support for the possibility of inviting in private channels, without the rights of the owner or moderator.
+ + Added display private and pinned channels in the channel list.
+ + Added feed "channel".
+ * Improved user interface for channel options dialog.
+ * Fixed channel list is not updated when renaming a channel or change access mode.
+ * Fixed in some cases, pinned channels can not correctly sorted in the channel list.
+ * Fixed in Windows 8 a popup windows does not fully respond to mouse clicks.
+
 2.0.4
 -----
  + Added configuration option "History/AutoLoad".
