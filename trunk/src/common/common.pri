@@ -30,7 +30,7 @@ INCLUDEPATH += \
     ../common \
     ../3rdparty \
 
-!win32:VERSION = 2.0.5
+!win32:VERSION = 2.0.6
 
 CONFIG(debug, debug|release) { 
   RCC_DIR = ../../tmp/$${TEMPLATE}/$${TARGET}/debug/rcc
