@@ -19,7 +19,7 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QMouseEvent>
-#include <QTextEdit>
+#include <QTextBrowser>
 #include <QTimer>
 
 #include "alerts/AlertType.h"
@@ -59,7 +59,7 @@ PopupWindow::PopupWindow(const Alert &alert, int timeout, const QString &css)
   m_date->setObjectName(LS("DateLabel"));
   m_date->installEventFilter(this);
 
-  m_text = new QTextEdit(this);
+  m_text = new QTextBrowser(this);
   m_text->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
   m_text->setContextMenuPolicy(Qt::NoContextMenu);
   m_text->document()->setDefaultStyleSheet(css);
