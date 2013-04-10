@@ -39,6 +39,7 @@ public:
 
   inline bool permanent() const                { return m_permanent; }
   inline const Channels& channels() const      { return m_channels; }
+  inline const Channels& offline() const       { return m_offline; }
   inline const QByteArray& normalized() const  { return m_normalized; }
   inline Hosts* hosts() const                  { return m_hosts; }
   inline QList<quint64> sockets() const        { if (m_hosts) return m_hosts->sockets(); return QList<quint64>(); }
@@ -59,6 +60,7 @@ private:
   void normalize();
 
   bool m_permanent;         ///< \b true если канал не будет удалятся если он не нужен.
+  Channels m_offline;       ///< Список офлайн каналов.
   Hosts *m_hosts;           ///< Информация о хостах.
   QByteArray m_normalized;  ///< Нормализованное имя канала.
   User *m_user;             ///< Профиль пользователя.

@@ -19,14 +19,11 @@
 #include "Channel.h"
 #include "DateTime.h"
 #include "feeds/NodeUsersFeed.h"
+#include "feeds/UsersFeed.h"
 #include "net/packets/Notice.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
 #include "Storage.h"
-
-#define USERS_FEED_COUNT QLatin1String("count")
-#define USERS_FEED_PEAK  QLatin1String("peak")
-#define USERS_FEED_DATE  QLatin1String("date")
 
 NodeUsersFeed::NodeUsersFeed(const QString &name, const QVariantMap &data)
   : Feed(name, data)
@@ -48,10 +45,10 @@ FeedReply NodeUsersFeed::del(const QString &path, Channel *channel)
     return Notice::Forbidden;
 
   if (path.size() == 34) {
-    int count = m_data.value(USERS_FEED_COUNT).toInt();
     if (SimpleID::typeOf(SimpleID::decode(path)) == SimpleID::UserId) {
-      --count;
-      m_data[USERS_FEED_COUNT] = count;
+      ServerChannel *channel = static_cast<ServerChannel*>(head().channel());
+      m_data[USERS_FEED_COUNT_KEY]   = channel->channels().size();
+      m_data[USERS_FEED_OFFLINE_KEY] = channel->offline().size();
       return FeedReply(Notice::OK, DateTime::utc());
     }
   }
@@ -60,23 +57,26 @@ FeedReply NodeUsersFeed::del(const QString &path, Channel *channel)
 }
 
 
-FeedReply NodeUsersFeed::post(const QString &path, const QVariantMap &json, Channel *channel)
+FeedReply NodeUsersFeed::post(const QString &path, const QVariantMap &json, Channel *user)
 {
   Q_UNUSED(json)
 
-  if (!can(channel, Acl::Edit | Acl::SpecialEdit))
+  if (!can(user, Acl::Edit | Acl::SpecialEdit))
     return Notice::Forbidden;
 
   if (path.size() == 34) {
-    int count = m_data.value(USERS_FEED_COUNT).toInt();
     if (SimpleID::typeOf(SimpleID::decode(path)) == SimpleID::UserId) {
-      ++count;
-      m_data[USERS_FEED_COUNT] = count;
+      ServerChannel *channel = static_cast<ServerChannel*>(head().channel());
+
+      const int count   = channel->channels().size();
       const qint64 date = DateTime::utc();
-      const int peak    = m_data.value(USERS_FEED_PEAK).toMap().value(USERS_FEED_COUNT).toInt();
+
+      const int peak = m_data.value(USERS_FEED_PEAK_KEY).toMap().value(USERS_FEED_COUNT_KEY).toInt();
       if (count >= peak)
         setPeak(count, date);
 
+      m_data[USERS_FEED_COUNT_KEY]   = count;
+      m_data[USERS_FEED_OFFLINE_KEY] = channel->offline().size();
       return FeedReply(Notice::OK, date);
     }
   }
@@ -92,12 +92,12 @@ void NodeUsersFeed::setChannel(Channel *channel)
   if (channel->type() != SimpleID::ServerId)
     return;
 
-  if (!m_data.contains(USERS_FEED_PEAK)) {
+  if (!m_data.contains(USERS_FEED_PEAK_KEY)) {
     const QVariantMap peak = Storage::value(STORAGE_PEAK_USERS).toMap();
     if (peak.isEmpty())
       setPeak(0, head().date());
     else
-      m_data[USERS_FEED_PEAK] = peak;
+      m_data[USERS_FEED_PEAK_KEY] = peak;
   }
 }
 
@@ -105,16 +105,16 @@ void NodeUsersFeed::setChannel(Channel *channel)
 void NodeUsersFeed::init()
 {
   m_header.acl().setMask(0444);
-  m_data[USERS_FEED_COUNT] = 0;
+  m_data[USERS_FEED_COUNT_KEY] = 0;
 }
 
 
 void NodeUsersFeed::setPeak(int count, qint64 date)
 {
   QVariantMap peak;
-  peak[USERS_FEED_COUNT]  = count;
-  peak[USERS_FEED_DATE]   = date;
-  m_data[USERS_FEED_PEAK] = peak;
+  peak[USERS_FEED_COUNT_KEY]  = count;
+  peak[USERS_FEED_DATE_KEY]   = date;
+  m_data[USERS_FEED_PEAK_KEY] = peak;
 }
 
 
