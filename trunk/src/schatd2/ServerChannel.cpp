@@ -70,9 +70,14 @@ ServerChannel::~ServerChannel()
 }
 
 
+/*!
+ * Добавление канала в список каналов.
+ */
 bool ServerChannel::addChannel(const QByteArray &id)
 {
   if (m_channels.add(id)) {
+    m_offline.remove(id);
+
     if (SimpleID::typeOf(id) == SimpleID::UserId)
       FeedsCore::post(this, FEED_NAME_USERS + LC('/') + SimpleID::encode(id), Ch::server().data(), QVariant(), Feed::Broadcast);
 
@@ -83,10 +88,15 @@ bool ServerChannel::addChannel(const QByteArray &id)
 }
 
 
+/*!
+ * Удаление канала из списка каналов.
+ */
 bool ServerChannel::removeChannel(const QByteArray &id)
 {
   if (m_channels.contains(id)) {
     m_channels.remove(id);
+    m_offline.add(id);
+
     if (SimpleID::typeOf(id) == SimpleID::UserId)
       FeedsCore::del(this, FEED_NAME_USERS + LC('/') + SimpleID::encode(id), Ch::server().data(), Feed::Broadcast);
 
