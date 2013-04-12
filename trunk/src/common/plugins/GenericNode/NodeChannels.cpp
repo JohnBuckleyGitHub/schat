@@ -19,15 +19,15 @@
 #include "Ch.h"
 #include "cores/Core.h"
 #include "DataBase.h"
+#include "DateTime.h"
 #include "events.h"
 #include "feeds/ChannelFeed.h"
 #include "feeds/FeedEvents.h"
-#include "feeds/NodeChannelFeed.h"
 #include "feeds/FeedsCore.h"
+#include "feeds/NodeChannelFeed.h"
+#include "feeds/ServerFeed.h"
 #include "net/Channels.h"
 #include "net/PacketReader.h"
-#include "net/packets/ChannelNotice.h"
-#include "net/packets/Notice.h"
 #include "NodeChannels.h"
 #include "NodeLog.h"
 #include "Normalize.h"
@@ -61,7 +61,7 @@ bool NodeChannels::read(PacketReader *reader)
 
   SCHAT_LOG_DEBUG_STR("[GenericNode/Channels] read channel request, socket:" + QByteArray::number(Core::socket()) +
       ", id:" + SimpleID::encode(m_user->id()) +
-      ", channelId:" + SimpleID::encode(m_packet->channelId()) +
+      ", channelId:" + SimpleID::encode(m_packet->channelId) +
       ", cmd:" + cmd.toUtf8() +
       ", text:" + m_packet->text().toUtf8() +
       ", user:" + m_user->name().toUtf8())
@@ -94,8 +94,9 @@ bool NodeChannels::read(PacketReader *reader)
 
 void NodeChannels::acceptImpl(ChatChannel user, const AuthResult & /*result*/, QList<QByteArray> &packets)
 {
-  packets.append(ChannelNotice::channel(Ch::server(), user)->data(Core::stream()));
-  packets.append(ChannelNotice::channel(user, user)->data(Core::stream()));
+  m_user = user;
+  packets.append(reply(Ch::server())->data(Core::stream()));
+  packets.append(reply(m_user)->data(Core::stream()));
 }
 
 
@@ -112,13 +113,13 @@ void NodeChannels::releaseImpl(ChatChannel user, quint64 socket)
   if (user->sockets().size())
     return;
 
-  m_core->send(Sockets::all(user), ChannelNotice::request(user->id(), user->id(), LS("quit")));
+  m_core->send(Sockets::all(user), ChannelNotice::request(user->id(), user->id(), CHANNELS_QUIT_CMD));
 
   QList<QByteArray> channels = user->channels().all();
-  foreach (QByteArray id, channels) {
+  foreach (const QByteArray &id, channels) {
     ChatChannel channel = Ch::channel(id);
     if (channel && channel->type() == SimpleID::ChannelId) {
-      channel->removeChannel(user->id());
+      channel->removeChannel(user->id(), Ch::server()->feed(FEED_NAME_SERVER)->data().value(SERVER_FEED_OFFLINE_KEY).toBool());
       user->removeChannel(channel->id());
       Ch::gc(channel);
     }
@@ -148,13 +149,13 @@ void NodeChannels::notify(const FeedEvent &event)
  */
 bool NodeChannels::info()
 {
-  if (m_packet->channels().isEmpty())
+  if (m_packet->channels.isEmpty())
     return false;
 
-  SCHAT_LOG_DEBUG_STR("[GenericNode/Channels] info, count:" + QByteArray::number(m_packet->channels().size()))
+  SCHAT_LOG_DEBUG_STR("[GenericNode/Channels] info, count:" + QByteArray::number(m_packet->channels.size()))
 
   QList<QByteArray> packets;
-  foreach (QByteArray id, m_packet->channels()) {
+  foreach (const QByteArray &id, m_packet->channels) {
     ChatChannel channel = Ch::channel(id, SimpleID::typeOf(id));
     if (channel) {
       SCHAT_LOG_DEBUG_STR("[GenericNode/Channels] info, id:" + SimpleID::encode(channel->id()) + ", name:" + channel->name().toUtf8())
@@ -164,7 +165,7 @@ bool NodeChannels::info()
         m_user->addChannel(channel->id());
       }
 
-      packets += ChannelNotice::channel(channel, m_user, CHANNELS_INFO_CMD)->data(Core::stream());
+      packets += reply(channel, isForbidden(channel), CHANNELS_INFO_CMD)->data(Core::stream());
     }
   }
 
@@ -184,9 +185,9 @@ bool NodeChannels::join()
   ChatChannel channel;
 
   /// Если идентификатор канала корректный, функция пытается получить его по этому идентификатору.
-  int type = SimpleID::typeOf(m_packet->channelId());
+  const int type = SimpleID::typeOf(m_packet->channelId);
   if (type != SimpleID::InvalidId)
-    channel = Ch::channel(m_packet->channelId(), type);
+    channel = Ch::channel(m_packet->channelId, type);
 
   /// Если канал не удалось получить по идентификатору, будет произведена попытка создать обычный канал по имени.
   if (!channel && (type == SimpleID::InvalidId || type == SimpleID::ChannelId))
@@ -197,19 +198,16 @@ bool NodeChannels::join()
 
   SCHAT_LOG_DEBUG_STR("[GenericNode/Channels] join, id:" + SimpleID::encode(channel->id()) + ", name:" + channel->name().toUtf8())
 
-  if (channel->type() == SimpleID::ChannelId) {
-    FeedPtr feed = channel->feed(FEED_NAME_ACL, false);
-    if (feed && !feed->can(m_user.data(), Acl::Read)) {
-      m_core->send(m_user->sockets(), ChannelNotice::channel(channel, m_user));
-      return false;
-    }
+  if (channel->type() == SimpleID::ChannelId && isForbidden(channel)) {
+    m_core->send(m_user->sockets(), reply(channel, true));
+    return false;
   }
 
   const bool notify = !channel->channels().all().contains(m_user->id());
   channel->addChannel(m_user->id());
   m_user->addChannel(channel->id());
 
-  m_core->send(m_user->sockets(), ChannelNotice::channel(channel, m_user));
+  m_core->send(m_user->sockets(), reply(channel));
 
   /// В случае необходимости всем пользователям в канале будет разослано уведомление в входе нового пользователя.
   if (notify && channel->channels().all().size() > 1 && channel->type() == SimpleID::ChannelId)
@@ -227,7 +225,7 @@ bool NodeChannels::join()
  */
 int NodeChannels::name()
 {
-  ChatChannel channel = Ch::channel(m_packet->channelId(), SimpleID::typeOf(m_packet->channelId()));
+  ChatChannel channel = Ch::channel(m_packet->channelId, SimpleID::typeOf(m_packet->channelId));
   if (!channel)
     return Notice::NotFound;
 
@@ -244,7 +242,7 @@ int NodeChannels::name()
  */
 bool NodeChannels::part()
 {
-  ChatChannel channel = Ch::channel(m_packet->channelId(), SimpleID::typeOf(m_packet->channelId()));
+  ChatChannel channel = Ch::channel(m_packet->channelId, SimpleID::typeOf(m_packet->channelId));
   if (!channel)
     return false;
 
@@ -288,16 +286,54 @@ int NodeChannels::update()
   if (m_user->name() != m_packet->text() && FeedsCore::put(m_user.data(), CHANNEL_FEED_NAME_REQ, m_user.data(), m_packet->text(), options).status == Notice::OK)
     updates++;
 
-  if (m_user->gender().raw() != m_packet->gender() && FeedsCore::put(m_user.data(), CHANNEL_FEED_GENDER_REQ, m_user.data(), m_packet->gender(), options).status == Notice::OK)
+  if (m_user->gender().raw() != m_packet->gender && FeedsCore::put(m_user.data(), CHANNEL_FEED_GENDER_REQ, m_user.data(), m_packet->gender, options).status == Notice::OK)
     updates++;
 
-  if (m_user->status().value() != m_packet->channelStatus() && FeedsCore::put(m_user.data(), CHANNEL_FEED_STATUS_REQ, m_user.data(), m_packet->channelStatus(), options).status == Notice::OK)
+  if (m_user->status().value() != m_packet->channelStatus && FeedsCore::put(m_user.data(), CHANNEL_FEED_STATUS_REQ, m_user.data(), m_packet->channelStatus, options).status == Notice::OK)
     updates++;
 
   if (!updates)
     return Notice::NotModified;
 
   return Notice::OK;
+}
+
+
+/*!
+ * Возвращает \b true если пользователю запрещён доступ в канала \p channel.
+ */
+bool NodeChannels::isForbidden(ChatChannel channel) const
+{
+  FeedPtr feed = channel->feed(FEED_NAME_ACL, false);
+  return (feed && !feed->can(m_user.data(), Acl::Read));
+}
+
+
+/*!
+ * Отправка информации о канале.
+ */
+ChannelPacket NodeChannels::reply(ChatChannel channel, bool forbidden, const QString &command) const
+{
+  ChannelPacket packet(new ChannelNotice(channel->id(), m_user->id(), command, DateTime::utc()));
+  packet->setDirection(Notice::Server2Client);
+  packet->setText(channel->name());
+  packet->gender        = channel->gender().raw();
+  packet->channelStatus = channel->status().value();
+
+  if (channel->type() == SimpleID::ChannelId) {
+    if (!forbidden) {
+      packet->channels = channel->channels().all();
+      if (Ch::server()->feed(FEED_NAME_SERVER)->data().value(SERVER_FEED_OFFLINE_KEY).toBool())
+        packet->channels.append(channel->offline().all());
+    }
+    else
+      packet->setStatus(Notice::Forbidden);
+  }
+
+  if (packet->status() == Notice::OK)
+    packet->setData(channel->feeds().f(m_user.data()));
+
+  return packet;
 }
 
 

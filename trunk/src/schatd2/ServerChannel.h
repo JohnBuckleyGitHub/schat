@@ -47,7 +47,7 @@ public:
   inline void setPermanent(bool permanent)     { m_permanent = permanent; }
 
   bool addChannel(const QByteArray &id);
-  bool removeChannel(const QByteArray &id);
+  bool removeChannel(const QByteArray &id, bool offline = false);
   bool setName(const QString &name);
   void createAccount();
   void setKey(qint64 key);

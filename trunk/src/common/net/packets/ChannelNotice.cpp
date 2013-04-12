@@ -25,8 +25,8 @@
 
 ChannelNotice::ChannelNotice(const QByteArray &sender, const QByteArray &dest, const QString &command, quint64 time)
   : Notice(sender, dest, command, time)
-  , m_gender(0)
-  , m_channelStatus(0)
+  , gender(0)
+  , channelStatus(0)
 {
   m_type = ChannelType;
 }
@@ -34,56 +34,25 @@ ChannelNotice::ChannelNotice(const QByteArray &sender, const QByteArray &dest, c
 
 ChannelNotice::ChannelNotice(quint16 type, PacketReader *reader)
   : Notice(type, reader)
-  , m_gender(0)
-  , m_channelStatus(0)
+  , gender(0)
+  , channelStatus(0)
 {
   if (m_direction == Server2Client)
-    m_channelId = reader->sender();
+    channelId = reader->sender();
   else
-    m_channelId = reader->dest();
+    channelId = reader->dest();
 
-  m_gender        = reader->get<quint8>();
-  m_channelStatus = reader->get<quint8>();
-  m_channels      = reader->idList();
+  gender        = reader->get<quint8>();
+  channelStatus = reader->get<quint8>();
+  channels      = reader->idList();
 }
 
 
 void ChannelNotice::write(PacketWriter *writer) const
 {
-  writer->put(m_gender);
-  writer->put(m_channelStatus);
-  writer->putId(m_channels);
-}
-
-
-/*!
- * Формирование пакета для отправки клиенту заголовка канала.
- * Также будут отосланы заголовки фидов в соответствии с правами \p user.
- *
- * \param channel Канал.
- * \param user    Получатель.
- * \param command Команда.
- */
-ChannelPacket ChannelNotice::channel(ClientChannel channel, ClientChannel user, const QString &command)
-{
-  ChannelPacket packet(new ChannelNotice(channel->id(), user->id(), command, DateTime::utc()));
-  packet->setDirection(Server2Client);
-  packet->setText(channel->name());
-  packet->m_gender        = channel->gender().raw();
-  packet->m_channelStatus = channel->status().value();
-
-  if (channel->type() == SimpleID::ChannelId) {
-    FeedPtr feed = channel->feed(FEED_NAME_ACL, false);
-    if (feed && feed->can(user.data(), Acl::Read))
-      packet->m_channels = channel->channels().all();
-    else
-      packet->setStatus(Notice::Forbidden);
-  }
-
-  if (packet->status() == Notice::OK)
-    packet->setData(channel->feeds().f(user.data()));
-
-  return packet;
+  writer->put(gender);
+  writer->put(channelStatus);
+  writer->putId(channels);
 }
 
 
@@ -99,12 +68,12 @@ ChannelPacket ChannelNotice::channel(ClientChannel channel, const QByteArray &de
   ChannelPacket packet(new ChannelNotice(channel->id(), dest, command, DateTime::utc()));
   packet->setDirection(Server2Client);
   packet->setText(channel->name());
-  packet->m_gender        = channel->gender().raw();
-  packet->m_channelStatus = channel->status().value();
+  packet->gender        = channel->gender().raw();
+  packet->channelStatus = channel->status().value();
 //  packet.setData(channel->feeds().headers(0));
 
   if (channel->type() == SimpleID::ChannelId)
-    packet->m_channels = channel->channels().all();
+    packet->channels = channel->channels().all();
 
   return packet;
 }
@@ -115,8 +84,8 @@ ChannelPacket ChannelNotice::info(ClientChannel channel, qint64 date)
   ChannelPacket packet(new ChannelNotice(channel->id(), channel->id(), CHANNELS_INFO_CMD, date ? date : DateTime::utc()));
   packet->setDirection(Server2Client);
   packet->setText(channel->name());
-  packet->m_gender        = channel->gender().raw();
-  packet->m_channelStatus = channel->status().value();
+  packet->gender        = channel->gender().raw();
+  packet->channelStatus = channel->status().value();
   return packet;
 }
 
@@ -130,7 +99,7 @@ ChannelPacket ChannelNotice::info(ClientChannel channel, qint64 date)
 ChannelPacket ChannelNotice::info(const QByteArray &user, const QList<QByteArray> &channels)
 {
   ChannelPacket packet(new ChannelNotice(user, user, CHANNELS_INFO_CMD, DateTime::utc()));
-  packet->m_channels = channels;
+  packet->channels = channels;
   return packet;
 }
 
@@ -166,7 +135,7 @@ ChannelPacket ChannelNotice::update(ClientChannel channel)
 {
   ChannelPacket packet(new ChannelNotice(channel->id(), channel->id(), CHANNELS_UPDATE_CMD, DateTime::utc()));
   packet->setText(channel->name());
-  packet->m_gender        = channel->gender().raw();
-  packet->m_channelStatus = channel->status().value();
+  packet->gender        = channel->gender().raw();
+  packet->channelStatus = channel->status().value();
   return packet;
 }

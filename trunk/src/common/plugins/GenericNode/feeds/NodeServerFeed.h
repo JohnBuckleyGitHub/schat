@@ -36,6 +36,7 @@ public:
 
 private:
   void init();
+  void setDefault(const QString &key, const QVariant &value);
 
   qint64 m_startupTime; ///< Время запуска сервера.
 };

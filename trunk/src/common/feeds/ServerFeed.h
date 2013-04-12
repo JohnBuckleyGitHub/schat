@@ -27,6 +27,7 @@
 #define SERVER_FEED_NAME_KEY    QLatin1String("name")
 #define SERVER_FEED_NAME_REQ    QLatin1String("server/name")
 #define SERVER_FEED_OAUTH_KEY   QLatin1String("oauth")
+#define SERVER_FEED_OFFLINE_KEY QLatin1String("offline")
 #define SERVER_FEED_OS_KEY      QLatin1String("os")
 #define SERVER_FEED_POLICY_KEY  QLatin1String("policy")
 #define SERVER_FEED_SECONDS_KEY QLatin1String("seconds")

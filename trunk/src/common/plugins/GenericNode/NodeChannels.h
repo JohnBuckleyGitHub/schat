@@ -20,6 +20,8 @@
 #define NODECHANNELS_H_
 
 #include "NodeNoticeReader.h"
+#include "net/Channels.h"
+#include "net/packets/ChannelNotice.h"
 
 class ChannelNotice;
 class Core;
@@ -50,6 +52,8 @@ private:
   bool quit();
   int update();
 
+  bool isForbidden(ChatChannel channel) const;
+  ChannelPacket reply(ChatChannel channel, bool forbidden = false, const QString &command = CHANNELS_CHANNEL_CMD) const;
   void reply(int status);
 
   ChannelNotice *m_packet;

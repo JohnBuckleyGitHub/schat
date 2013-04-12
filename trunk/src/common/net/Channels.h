@@ -19,14 +19,14 @@
 #ifndef CHANNELS_H_
 #define CHANNELS_H_
 
-#define CHANNELS_INFO_CMD LS("info")
-#define CHANNELS_JOIN_CMD LS("join")
-#define CHANNELS_PART_CMD LS("-")
-#define CHANNELS_QUIT_CMD LS("quit")
-#define CHANNELS_NAME_CMD LS("name")
+#define CHANNELS_INFO_CMD QLatin1String("info")
+#define CHANNELS_JOIN_CMD QLatin1String("join")
+#define CHANNELS_PART_CMD QLatin1String("-")
+#define CHANNELS_QUIT_CMD QLatin1String("quit")
+#define CHANNELS_NAME_CMD QLatin1String("name")
 
-#define CHANNELS_UPDATE_CMD  LS("update")
-#define CHANNELS_JOINED_CMD  LS("+")
-#define CHANNELS_CHANNEL_CMD LS("channel")
+#define CHANNELS_UPDATE_CMD  QLatin1String("update")
+#define CHANNELS_JOINED_CMD  QLatin1String("+")
+#define CHANNELS_CHANNEL_CMD QLatin1String("channel")
 
 #endif /* CHANNELS_H_ */
