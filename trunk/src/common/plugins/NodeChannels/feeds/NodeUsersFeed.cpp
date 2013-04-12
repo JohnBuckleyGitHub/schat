@@ -16,9 +16,12 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Ch.h"
 #include "Channel.h"
+#include "DataBase.h"
 #include "DateTime.h"
 #include "feeds/NodeUsersFeed.h"
+#include "feeds/ServerFeed.h"
 #include "feeds/UsersFeed.h"
 #include "net/packets/Notice.h"
 #include "net/SimpleID.h"
@@ -77,6 +80,8 @@ FeedReply NodeUsersFeed::post(const QString &path, const QVariantMap &json, Chan
 
       m_data[USERS_FEED_COUNT_KEY]   = count;
       m_data[USERS_FEED_OFFLINE_KEY] = channel->offline().size();
+
+      dump();
       return FeedReply(Notice::OK, date);
     }
   }
@@ -99,6 +104,33 @@ void NodeUsersFeed::setChannel(Channel *channel)
     else
       m_data[USERS_FEED_PEAK_KEY] = peak;
   }
+}
+
+
+/*!
+ * Запись дампа списка пользователей в базу данных.
+ */
+void NodeUsersFeed::dump() const
+{
+  ServerChannel *channel = static_cast<ServerChannel*>(head().channel());
+  if (channel->type() != SimpleID::ChannelId)
+    return;
+
+  if (!Ch::server()->feed(FEED_NAME_SERVER)->data().value(SERVER_FEED_OFFLINE_KEY, true).toBool())
+    return;
+
+  QByteArray data;
+  const QList<QByteArray> &channels = channel->channels().all();
+  const QList<QByteArray> &offline  = channel->offline().all();
+  data.reserve((channels.size() + offline.size()) * SimpleID::DefaultSize);
+
+  foreach (const QByteArray &id, channels)
+    data.append(id);
+
+  foreach (const QByteArray &id, offline)
+    data.append(id);
+
+  DataBase::setValue(SimpleID::encode(channel->id()) + LS("/users"), data);
 }
 
 

@@ -37,6 +37,7 @@ public:
   void setChannel(Channel *channel);
 
 private:
+  void dump() const;
   void init();
   void setPeak(int count, qint64 date);
 };
