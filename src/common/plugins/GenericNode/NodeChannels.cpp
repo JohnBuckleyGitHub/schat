@@ -339,6 +339,5 @@ ChannelPacket NodeChannels::reply(ChatChannel channel, bool forbidden, const QSt
 
 void NodeChannels::reply(int status)
 {
-  qDebug() << status;
   m_core->send(m_user->sockets(), ChannelNotice::reply(*m_packet, status));
 }

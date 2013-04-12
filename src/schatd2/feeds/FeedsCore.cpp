@@ -152,10 +152,10 @@ FeedReply FeedsCore::request(ServerChannel *channel, const QString &method, cons
   event->date      = feed->head().date();
 
   if (!feed->can(sender, Acl::Read))
-    done(event, Notice::Forbidden);
+    return done(event, Notice::Forbidden);
 
   if (cmd != Get && !feed->can(sender, Acl::Write))
-    done(event, Notice::Forbidden);
+    return done(event, Notice::Forbidden);
 
   switch (cmd) {
     case Get:

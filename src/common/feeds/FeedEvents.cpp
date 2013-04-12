@@ -31,13 +31,17 @@ FeedEvents::FeedEvents(QObject *parent)
 
 FeedEvents::~FeedEvents()
 {
+  qDeleteAll(m_queue);
   m_self = 0;
 }
 
 
 void FeedEvents::start(FeedEvent *event)
 {
-  m_self->m_queue.enqueue(FeedEventPtr(event));
+  if (m_self->m_queue.contains(event))
+    return;
+
+  m_self->m_queue.enqueue(event);
   if (m_self->m_queue.size() == 1)
     QTimer::singleShot(0, m_self, SLOT(start()));
 }
@@ -45,6 +49,9 @@ void FeedEvents::start(FeedEvent *event)
 
 void FeedEvents::start()
 {
-  while (!m_queue.isEmpty())
-    emit notify(*m_queue.dequeue());
+  while (!m_queue.isEmpty()) {
+    FeedEvent *event = m_queue.dequeue();
+    emit notify(*event);
+    delete event;
+  }
 }
