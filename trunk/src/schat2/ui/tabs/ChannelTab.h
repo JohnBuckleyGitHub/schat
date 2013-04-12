@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -43,13 +43,10 @@ private slots:
   void channels(const QList<QByteArray> &channels);
   void joined(const QByteArray &channel, const QByteArray &user);
   void part(const QByteArray &channel, const QByteArray &user);
-  void quit(const QByteArray &user);
-  void settingsChanged(const QString &key, const QVariant &value);
+  void quit(const QByteArray &user, bool offline);
 
 private:
-  void displayUserCount();
 
-//  bool m_userCount;
   QSplitter *m_splitter;
   QVBoxLayout *m_leftLayout;
   UserView *m_userView;

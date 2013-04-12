@@ -391,8 +391,10 @@ void ClientChannels::quit()
   if (!user)
     return;
 
+  const bool offline = ChatClient::server()->feed(FEED_NAME_SERVER)->data().value(SERVER_FEED_OFFLINE_KEY).toBool();
   user->setSynced(false);
-  emit quit(user->id());
+  user->status() = Status::Offline;
+  emit quit(user->id(), offline);
 
   QMapIterator<QByteArray, ClientChannel> i(m_channels);
   while (i.hasNext()) {
@@ -413,7 +415,7 @@ void ClientChannels::sync(ClientChannel channel)
     return;
 
   QList<QByteArray> channels = channel->channels().all();
-  foreach (QByteArray id, channels) {
+  foreach (const QByteArray &id, channels) {
     ClientChannel exist = get(id);
     if (exist && exist->isSynced())
       m_synced += id;

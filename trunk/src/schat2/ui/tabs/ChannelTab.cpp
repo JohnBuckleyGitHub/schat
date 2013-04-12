@@ -56,8 +56,6 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   m_splitter->setStretchFactor(1, 1);
   m_splitter->setOpaqueResize(false);
 
-//  m_userCount = SCHAT_OPTION("ChannelUserCount").toBool();
-
   QVBoxLayout *mainLay = new QVBoxLayout(this);
   mainLay->addWidget(m_splitter);
   mainLay->setMargin(0);
@@ -65,11 +63,10 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
 
   setText(channel->name());
 
-  connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
   connect(ChatClient::channels(), SIGNAL(channels(const QList<QByteArray> &)), SLOT(channels(const QList<QByteArray> &)));
   connect(ChatClient::channels(), SIGNAL(joined(const QByteArray &, const QByteArray &)), SLOT(joined(const QByteArray &, const QByteArray &)));
   connect(ChatClient::channels(), SIGNAL(part(const QByteArray &, const QByteArray &)), SLOT(part(const QByteArray &, const QByteArray &)));
-  connect(ChatClient::channels(), SIGNAL(quit(const QByteArray &)), SLOT(quit(const QByteArray &)));
+  connect(ChatClient::channels(), SIGNAL(quit(QByteArray,bool)), SLOT(quit(QByteArray,bool)));
   connect(ChatClient::channels(), SIGNAL(channel(const QByteArray &)), SLOT(channel(const QByteArray &)));
 
   m_chatView->add(ServiceMessage::joined(ChatClient::id()));
@@ -84,10 +81,8 @@ bool ChannelTab::isActive() const
 
 void ChannelTab::setOnline(bool online)
 {
-  if (!online) {
+  if (!online)
     m_userView->clear();
-    displayUserCount();
-  }
 
   ChannelBaseTab::setOnline(online);
 }
@@ -152,34 +147,15 @@ void ChannelTab::part(const QByteArray &channel, const QByteArray &user)
 }
 
 
-void ChannelTab::quit(const QByteArray &user)
+void ChannelTab::quit(const QByteArray &user, bool offline)
 {
   if (!c()->channels().all().contains(user))
     return;
 
-  m_userView->remove(user);
+  if (offline)
+    m_userView->reload(user);
+  else
+    m_userView->remove(user);
+
   m_chatView->add(ServiceMessage::quit(user));
-  m_joined = false;
-}
-
-
-void ChannelTab::settingsChanged(const QString &key, const QVariant & /*value*/)
-{
-  if (key == QLatin1String("ChannelUserCount")) {
-//    m_userCount = value.toBool();
-    displayUserCount();
-  }
-}
-
-
-void ChannelTab::displayUserCount()
-{
-//  int index = m_tabs->indexOf(this);
-//  if (index == -1)
-//    return;
-//
-//  if (m_userCount && m_userView->userCount() > 1)
-//    m_tabs->setTabText(index, QString("%1 (%2)").arg(m_channel->name()).arg(m_userView->userCount()));
-//  else
-//    m_tabs->setTabText(index, m_channel->name());
 }

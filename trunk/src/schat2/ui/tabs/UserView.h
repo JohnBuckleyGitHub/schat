@@ -60,7 +60,7 @@ class UserView : public QListView
 public:
   UserView(ClientChannel channel, QWidget *parent = 0);
   bool add(ClientChannel user);
-  bool reload(ClientChannel user);
+  bool reload(const QByteArray &id);
   bool remove(const QByteArray &id);
   inline bool contains(const QByteArray &id) const { return m_channels.contains(id); }
   inline bool sortable() const                     { return m_sortable; }
