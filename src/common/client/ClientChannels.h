@@ -86,7 +86,7 @@ signals:
   void joined(const QByteArray &channel, const QByteArray &user); ///< Команда "+".
   void notice(const ChannelNotice &notice);                       ///< Сырой пакет.
   void part(const QByteArray &channel, const QByteArray &user);   ///< Команда "-".
-  void quit(const QByteArray &user);                              ///< Команда "quit".
+  void quit(const QByteArray &user, bool offline = false);        ///< Команда "quit".
 
 private slots:
   void clientStateChanged(int state, int previousState);

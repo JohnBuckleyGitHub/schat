@@ -63,9 +63,13 @@ bool UserItem::reload()
   if (acl != -1) {
     QFont font = this->font();
 
-    m_bold      = acl & Acl::Edit || acl & Acl::SpecialWrite;
-    m_italic    = !(acl & Acl::Write) || Hooks::MessagesImpl::ignored(m_user);
-    m_underline = acl & Acl::SpecialEdit;
+    if (m_user->status() != Status::Offline) {
+      m_bold      = acl & Acl::Edit || acl & Acl::SpecialWrite;
+      m_italic    = !(acl & Acl::Write) || Hooks::MessagesImpl::ignored(m_user);
+      m_underline = acl & Acl::SpecialEdit;
+    }
+    else
+      m_italic = true;
 
     font.setBold(m_bold);
     font.setItalic(m_italic);
@@ -88,6 +92,9 @@ int UserItem::weight() const
   if (m_self)
     return 0;
 
+  else if (m_user->status() == Status::Offline)
+    return 9;
+
   else if (m_underline)
     return 1;
 
@@ -95,12 +102,12 @@ int UserItem::weight() const
     return 2;
 
   else if (m_italic)
-    return 9;
+    return 8;
 
   else if (m_user->gender().value() == Gender::Bot)
     return 4;
 
-  else if (m_user->status().value() == Status::FreeForChat)
+  else if (m_user->status() == Status::FreeForChat)
     return 5;
 
   return 7;
@@ -170,7 +177,7 @@ bool UserView::add(ClientChannel user)
     return false;
 
   if (m_channels.contains(user->id()))
-    return reload(user);
+    return reload(user->id());
 
   UserItem *item = new UserItem(user, m_channel);
 
@@ -184,9 +191,12 @@ bool UserView::add(ClientChannel user)
 }
 
 
-bool UserView::reload(ClientChannel channel)
+/*!
+ * Обновление информации о пользователе.
+ */
+bool UserView::reload(const QByteArray &id)
 {
-  UserItem *item = m_channels.value(channel->id());
+  UserItem *item = m_channels.value(id);
   if (!item)
     return false;
 
