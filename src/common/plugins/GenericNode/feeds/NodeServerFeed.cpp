@@ -90,8 +90,15 @@ void NodeServerFeed::init()
     m_data[SERVER_FEED_OAUTH_KEY] = LS("https://auth.schat.me");
   }
 
-  if (!m_data.contains(SERVER_FEED_POLICY_KEY))
-    m_data[SERVER_FEED_POLICY_KEY] = ServerFeed::MainChannelPolicy | ServerFeed::ForcedJoinPolicy;
+  setDefault(SERVER_FEED_POLICY_KEY,  ServerFeed::MainChannelPolicy | ServerFeed::ForcedJoinPolicy);
+  setDefault(SERVER_FEED_OFFLINE_KEY, false);
+}
+
+
+void NodeServerFeed::setDefault(const QString &key, const QVariant &value)
+{
+  if (!m_data.contains(key))
+    m_data[key] = value;
 }
 
 

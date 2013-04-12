@@ -291,7 +291,7 @@ void ClientChannels::setup()
  */
 ClientChannel ClientChannels::add()
 {
-  const QByteArray id = m_packet->channelId();
+  const QByteArray id = m_packet->channelId;
   if (!Channel::isCompatibleId(id))
     return ClientChannel();
 
@@ -316,8 +316,8 @@ ClientChannel ClientChannels::add()
       info.setOption(ChannelInfo::Renamed);
   }
 
-  channel->gender() = m_packet->gender();
-  channel->status() = m_packet->channelStatus();
+  channel->gender() = m_packet->gender;
+  channel->status() = m_packet->channelStatus;
 
   if (channel->type() == SimpleID::ChannelId && m_packet->status() == Notice::Forbidden) {
     channel->gender().setColor(Gender::Green);
@@ -349,7 +349,7 @@ void ClientChannels::channel()
   emit this->channel(channel->id());
 
   if (channel->type() == SimpleID::ChannelId) {
-    channel->channels() = m_packet->channels();
+    channel->channels() = m_packet->channels;
     sync(channel);
   }
 }

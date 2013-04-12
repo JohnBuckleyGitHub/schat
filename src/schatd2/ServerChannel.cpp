@@ -91,11 +91,13 @@ bool ServerChannel::addChannel(const QByteArray &id)
 /*!
  * Удаление канала из списка каналов.
  */
-bool ServerChannel::removeChannel(const QByteArray &id)
+bool ServerChannel::removeChannel(const QByteArray &id, bool offline)
 {
   if (m_channels.contains(id)) {
     m_channels.remove(id);
-    m_offline.add(id);
+
+    if (offline)
+      m_offline.add(id);
 
     if (SimpleID::typeOf(id) == SimpleID::UserId)
       FeedsCore::del(this, FEED_NAME_USERS + LC('/') + SimpleID::encode(id), Ch::server().data(), Feed::Broadcast);
