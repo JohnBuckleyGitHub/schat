@@ -391,7 +391,7 @@ void ClientChannels::quit()
   if (!user)
     return;
 
-  const bool offline = ChatClient::server()->feed(FEED_NAME_SERVER)->data().value(SERVER_FEED_OFFLINE_KEY).toBool();
+  const bool offline = ChatClient::server()->feed(FEED_NAME_SERVER)->data().value(SERVER_FEED_OFFLINE_KEY, true).toBool();
   user->setSynced(false);
   user->status() = Status::Offline;
   emit quit(user->id(), offline);

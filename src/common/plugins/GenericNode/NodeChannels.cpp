@@ -119,7 +119,7 @@ void NodeChannels::releaseImpl(ChatChannel user, quint64 socket)
   foreach (const QByteArray &id, channels) {
     ChatChannel channel = Ch::channel(id);
     if (channel && channel->type() == SimpleID::ChannelId) {
-      channel->removeChannel(user->id(), Ch::server()->feed(FEED_NAME_SERVER)->data().value(SERVER_FEED_OFFLINE_KEY).toBool());
+      channel->removeChannel(user->id(), Ch::server()->feed(FEED_NAME_SERVER)->data().value(SERVER_FEED_OFFLINE_KEY, true).toBool());
       user->removeChannel(channel->id());
       Ch::gc(channel);
     }
@@ -339,5 +339,6 @@ ChannelPacket NodeChannels::reply(ChatChannel channel, bool forbidden, const QSt
 
 void NodeChannels::reply(int status)
 {
+  qDebug() << status;
   m_core->send(m_user->sockets(), ChannelNotice::reply(*m_packet, status));
 }
