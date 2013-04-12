@@ -48,6 +48,4 @@ public:
   QVariantMap request;      ///< Тело запроса к фиду.
 };
 
-typedef QSharedPointer<FeedEvent> FeedEventPtr;
-
 #endif /* FEEDEVENT_H_ */

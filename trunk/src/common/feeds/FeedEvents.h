@@ -41,8 +41,8 @@ private slots:
   void start();
 
 private:
-  QQueue<FeedEventPtr> m_queue; ///< Очередь отправки.
-  static FeedEvents *m_self;    ///< Указатель на себя.
+  QQueue<FeedEvent*> m_queue; ///< Очередь отправки.
+  static FeedEvents *m_self;  ///< Указатель на себя.
 };
 
 #endif /* FEEDEVENTS_H_ */
