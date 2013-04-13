@@ -93,6 +93,7 @@ FeedReply NodeUsersFeed::post(const QString &path, const QVariantMap &json, Chan
 void NodeUsersFeed::setChannel(Channel *channel)
 {
   Feed::setChannel(channel);
+  restore();
 
   if (channel->type() != SimpleID::ServerId)
     return;
@@ -108,17 +109,23 @@ void NodeUsersFeed::setChannel(Channel *channel)
 
 
 /*!
+ * Возвращает \b true если этот канал поддерживает список офлайн пользователей.
+ */
+bool NodeUsersFeed::isSupportOfflineUsers() const
+{
+  return (head().channel()->type() == SimpleID::ChannelId && Ch::server()->feed(FEED_NAME_SERVER)->data().value(SERVER_FEED_OFFLINE_KEY, true).toBool());
+}
+
+
+/*!
  * Запись дампа списка пользователей в базу данных.
  */
 void NodeUsersFeed::dump() const
 {
+  if (!isSupportOfflineUsers())
+    return;
+
   ServerChannel *channel = static_cast<ServerChannel*>(head().channel());
-  if (channel->type() != SimpleID::ChannelId)
-    return;
-
-  if (!Ch::server()->feed(FEED_NAME_SERVER)->data().value(SERVER_FEED_OFFLINE_KEY, true).toBool())
-    return;
-
   QByteArray data;
   const QList<QByteArray> &channels = channel->channels().all();
   const QList<QByteArray> &offline  = channel->offline().all();
@@ -138,6 +145,23 @@ void NodeUsersFeed::init()
 {
   m_header.acl().setMask(0444);
   m_data[USERS_FEED_COUNT_KEY] = 0;
+}
+
+
+/*!
+ * Восстановление списка пользователей из базы данных.
+ */
+void NodeUsersFeed::restore()
+{
+  if (!isSupportOfflineUsers())
+    return;
+
+  ServerChannel *channel = static_cast<ServerChannel*>(head().channel());
+  const QByteArray data  = DataBase::value(SimpleID::encode(channel->id()) + LS("/users")).toByteArray();
+
+  channel->offline().restore(data);
+  m_data[USERS_FEED_COUNT_KEY]   = 0;
+  m_data[USERS_FEED_OFFLINE_KEY] = channel->offline().size();
 }
 
 
