@@ -42,6 +42,20 @@ bool Channels::add(const QByteArray &id)
 }
 
 
+void Channels::restore(const QByteArray &channels)
+{
+  if (channels.size() > SimpleID::DefaultSize) {
+    const int size = channels.size() / SimpleID::DefaultSize;
+    m_channels.reserve(size * SimpleID::DefaultSize);
+    for (int i = 0; i < size; ++i) {
+      add(channels.mid(i * SimpleID::DefaultSize, SimpleID::DefaultSize));
+    }
+  }
+  else
+    add(channels);
+}
+
+
 Channels& Channels::operator+=(const QByteArray &id)
 {
   add(id);

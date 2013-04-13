@@ -37,8 +37,10 @@ public:
   void setChannel(Channel *channel);
 
 private:
+  bool isSupportOfflineUsers() const;
   void dump() const;
   void init();
+  void restore();
   void setPeak(int count, qint64 date);
 };
 

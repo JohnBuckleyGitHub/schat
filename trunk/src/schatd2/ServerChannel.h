@@ -38,6 +38,7 @@ public:
   ~ServerChannel();
 
   inline bool permanent() const                { return m_permanent; }
+  inline Channels& offline()                   { return m_offline; }
   inline const Channels& channels() const      { return m_channels; }
   inline const Channels& offline() const       { return m_offline; }
   inline const QByteArray& normalized() const  { return m_normalized; }
