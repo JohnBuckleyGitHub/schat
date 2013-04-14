@@ -70,13 +70,12 @@ void AutoKick::kick(ChatChannel channel, const QByteArray &userId)
     return;
 
   user->removeChannel(channel->id());
-  if (!channel->channels().all().contains(userId))
-    return;
+  if (channel->channels().contains(userId) || channel->offline().contains(userId)) {
+    Core::i()->send(Sockets::channel(channel), ChannelNotice::request(userId, channel->id(), CHANNELS_PART_CMD));
+    channel->removeChannel(userId);
 
-  Core::i()->send(Sockets::channel(channel), ChannelNotice::request(userId, channel->id(), CHANNELS_PART_CMD));
-  channel->removeChannel(userId);
-
-  Ch::gc(channel);
+    Ch::gc(channel);
+  }
 }
 
 
