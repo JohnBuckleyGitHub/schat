@@ -103,6 +103,8 @@ NodeChannelIndex::NodeChannelIndex(QObject *parent)
   , m_date(0)
 {
   connect(FeedEvents::i(), SIGNAL(notify(FeedEvent)), SLOT(notify(FeedEvent)));
+
+  QTimer::singleShot(0, this, SLOT(build()));
 }
 
 
