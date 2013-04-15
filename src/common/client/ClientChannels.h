@@ -65,6 +65,7 @@ class SCHAT_EXPORT ClientChannels : public QObject
 public:
   ClientChannels(QObject *parent = 0);
   inline const QByteArray& mainId() const                         { return m_mainId; }
+  inline const QList<QByteArray>& joined() const                  { return m_joined; }
   inline const QMap<QByteArray, ClientChannel>& channels() const  { return m_channels; }
   inline Hooks::Channels *hooks() const                           { return m_hooks; }
   inline int policy() const                                       { return m_policy; }
@@ -99,7 +100,7 @@ private:
   ClientChannel add();
   void channel();
   void info();
-  void joined();
+  void join();
   void part();
   void quit();
   void sync(ClientChannel channel);

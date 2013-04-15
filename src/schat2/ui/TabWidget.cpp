@@ -585,7 +585,7 @@ void TabWidget::openTab()
 
 void TabWidget::addChannel(const QByteArray &id)
 {
-  int type = SimpleID::typeOf(id);
+  const int type = SimpleID::typeOf(id);
 
   if (type == SimpleID::ChannelId || m_prefetch.contains(id)) {
     m_prefetch.removeAll(id);
@@ -673,7 +673,7 @@ int TabWidget::tabAt(const QPoint &pos) const
  */
 void TabWidget::addImpl(const Message &message, bool create)
 {
-  QByteArray id = message.tab();
+  const QByteArray& id = message.tab();
   if (!Channel::isCompatibleId(id))
     return;
 
@@ -683,7 +683,7 @@ void TabWidget::addImpl(const Message &message, bool create)
   else if (SimpleID::typeOf(id) == SimpleID::ServerId) {
     m_serverTab->chatView()->add(message);
   }
-  else if (SimpleID::typeOf(id) == SimpleID::UserId) {
+  else {
     ChannelBaseTab *tab = channelTab(id, create, false);
     if (tab)
       tab->add(message);

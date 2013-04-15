@@ -65,7 +65,7 @@ private:
   void sent(MessagePacket packet);
 
   QByteArray m_destId;                                ///< Текущий получатель сообщения.
-  QHash<QByteArray, QList<MessagePacket> > m_pending; ///< Сообщения отображение которых отложена, т.к. не известна информация об отправителе.
+  QMap<QByteArray, QList<MessagePacket> > m_pending;  ///< Сообщения отображение которых отложена, т.к. не известна информация об отправителе.
   QList<Hooks::Messages*> m_hooks;                    ///< Хуки.
   SimpleClient *m_client;                             ///< Клиент чата.
 };

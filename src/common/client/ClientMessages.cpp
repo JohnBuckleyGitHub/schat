@@ -228,6 +228,9 @@ void ClientMessages::read(MessagePacket packet)
 }
 
 
+/*!
+ * Чтение текстового сообщения.
+ */
 void ClientMessages::readText(MessagePacket packet)
 {
   if (!packet->isValid())
@@ -242,23 +245,34 @@ void ClientMessages::readText(MessagePacket packet)
     }
   }
 
-  /// В случае если отправитель сообщения неизвестен клиенту, то будет произведён вход в канал
-  /// этого пользователя для получения информации о нём, само сообщения будет добавлено в очередь
-  /// до момента получения информации об отправителе.
-  ClientChannel user = ChatClient::channels()->get(packet->sender());
+  ClientChannels *channels = ChatClient::channels();
+  ClientChannel sender     = channels->get(packet->sender());
+  ClientChannel dest       = channels->get(packet->dest());
+  const int destType       = SimpleID::typeOf(packet->dest());
 
   if (ChatClient::state() == ChatClient::Online) {
-    if (user && user->isSynced()) {
-      read(packet);
-      return;
+    // Если информация о каналах отправителя и получателя имеется и синхронизирована, сообщение обрабатывается без задержки.
+    // В случае если получатель обычный канал, но вход в него не выполнен, производится вход в этот канал.
+    if (sender && sender->isSynced() && dest && dest->isSynced()) {
+      if (destType == SimpleID::ChannelId && !channels->joined().contains(dest->id()))
+        channels->join(dest->id());
+
+      return read(packet);
     }
 
     if (!m_pending.contains(packet->sender()))
-      ChatClient::channels()->join(packet->sender());
+      channels->join(packet->sender());
 
-    m_pending[packet->sender()].append(packet);
+    if (destType == SimpleID::ChannelId) {
+      if (!m_pending.contains(packet->dest()))
+        channels->join(packet->dest());
+
+      m_pending[packet->dest()].append(packet);
+    }
+    else
+      m_pending[packet->sender()].append(packet);
   }
-  else if (user)
+  else if (sender && dest)
     read(packet);
 }
 

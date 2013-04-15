@@ -68,8 +68,11 @@ bool UserItem::reload()
       m_italic    = !(acl & Acl::Write) || Hooks::MessagesImpl::ignored(m_user);
       m_underline = acl & Acl::SpecialEdit;
     }
-    else
-      m_italic = true;
+    else {
+      m_bold      = false;
+      m_italic    = true;
+      m_underline = false;
+    }
 
     font.setBold(m_bold);
     font.setItalic(m_italic);
