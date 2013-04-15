@@ -84,8 +84,10 @@ QList<quint64> Sockets::channel(ServerChannel *channel)
     return out;
 
   QList<QByteArray> channels = channel->channels().all();
+  channels.append(channel->offline().all());
+
   for (int i = 0; i < channels.size(); ++i) {
-    ChatChannel channel = Ch::channel(channels.at(i), SimpleID::UserId);
+    ChatChannel channel = Ch::channel(channels.at(i), SimpleID::UserId, false);
     if (!channel)
       continue;
 

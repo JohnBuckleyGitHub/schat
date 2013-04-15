@@ -249,7 +249,7 @@ void ClientChannels::notice(int type)
     add();
 
   else if (cmd == CHANNELS_JOINED_CMD)
-    joined();
+    join();
 
   else if (cmd == CHANNELS_PART_CMD)
     part();
@@ -358,7 +358,7 @@ void ClientChannels::channel()
 /*!
  * Обработка входа пользователя в канал.
  */
-void ClientChannels::joined()
+void ClientChannels::join()
 {
   ClientChannel user = add();
   ClientChannel channel = get(m_packet->dest());
