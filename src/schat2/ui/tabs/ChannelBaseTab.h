@@ -69,6 +69,7 @@ protected:
   ChatView *m_chatView;     ///< Виджет отображающий текст чата.
   FindWidget *m_findWidget; ///< Виджета поиска текста в окне чата.
   QByteArray m_serverId;    ///< Идентификатор сервера.
+  QByteArray m_userId;      ///< Идентификатор пользователя.
 
 private:
   ClientChannel m_channel; ///< Канал.
