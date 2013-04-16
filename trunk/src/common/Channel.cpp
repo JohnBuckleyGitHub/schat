@@ -42,11 +42,25 @@ bool Channels::add(const QByteArray &id)
 }
 
 
+QList<QByteArray> Channels::all(int type) const
+{
+  QList<QByteArray> out;
+  foreach (const QByteArray &id, m_channels) {
+    if (SimpleID::typeOf(id) == type)
+      out.append(id);
+  }
+
+  return out;
+}
+
+
 void Channels::restore(const QByteArray &channels)
 {
   if (channels.size() > SimpleID::DefaultSize) {
     const int size = channels.size() / SimpleID::DefaultSize;
+#   if QT_VERSION >= 0x040700
     m_channels.reserve(size * SimpleID::DefaultSize);
+#   endif
     for (int i = 0; i < size; ++i) {
       add(channels.mid(i * SimpleID::DefaultSize, SimpleID::DefaultSize));
     }
@@ -117,7 +131,7 @@ bool Channel::isValid() const
  */
 bool Channel::setId(const QByteArray &id)
 {
-  int type = Channel::isCompatibleId(id);
+  const int type = Channel::isCompatibleId(id);
   if (type == 0)
     return false;
 
