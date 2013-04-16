@@ -414,14 +414,19 @@ void ClientChannels::sync(ClientChannel channel)
   if (channel->type() != SimpleID::ChannelId)
     return;
 
-  QList<QByteArray> channels = channel->channels().all();
+  const QList<QByteArray>& channels = channel->channels().all();
+  QList<QByteArray> unsynced;
+
   foreach (const QByteArray &id, channels) {
     ClientChannel exist = get(id);
-    if (exist && exist->isSynced())
-      m_synced += id;
-    else
-      m_unsynced += id;
+    if (exist && exist->isSynced()) {
+      if (!m_synced.contains(id))
+        m_synced += id;
+    }
+    else if (!m_unsynced.contains(id))
+      unsynced += id;
   }
 
-  info(m_unsynced);
+  m_unsynced.append(unsynced);
+  info(unsynced);
 }
