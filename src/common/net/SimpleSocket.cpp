@@ -201,9 +201,8 @@ void SimpleSocketPrivate::releaseSocket()
   Q_Q(SimpleSocket);
   release = true;
 
-  if (timerState == Leaving) {
+  if (timerState == Leaving)
     q->setErrorString(SimpleSocket::tr("Time out"));
-  }
 
   if (timer->isActive())
     timer->stop();
@@ -258,6 +257,9 @@ void SimpleSocketPrivate::setTimerState(TimerState state)
       break;
 
     case Leaving:
+      if (serverSide)
+        timer->start(Protocol::ReplyTime, q);
+
       break;
   }
 }
@@ -305,8 +307,11 @@ void SimpleSocketPrivate::timerEvent()
 
   if (timerState == WaitingConnect || (timerState == WaitingHandshake && !authorized) || (timerState == Idling && serverSide) || timerState == WaitingReply) {
     setTimerState(Leaving);
-    q->leave();
-    return;
+    return q->leave();
+  }
+  else if (timerState == Leaving) {
+    q->setSocketState(QSslSocket::UnconnectedState);
+    return q->leave();
   }
 
   // Отправка пустого транспортного пакета, сервер должен ответить на него таким же пустым пакетом.
