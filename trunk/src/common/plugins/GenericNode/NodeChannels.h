@@ -57,8 +57,8 @@ private:
   ChannelPacket reply(ChatChannel channel, bool forbidden = false, const QString &command = CHANNELS_CHANNEL_CMD) const;
   void reply(int status);
 
-  ChannelNotice *m_packet; ///< Текущий пакет.
-  ChatChannel m_user;      ///< Текущий пользователь.
+  ChannelNotice *m_packet;      ///< Текущий пакет.
+  ChatChannel m_user;           ///< Текущий пользователь.
   QList<ChatChannel> m_pending; ///< Список для отложенного входа в обычные каналы.
 };
 

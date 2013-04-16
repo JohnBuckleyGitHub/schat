@@ -99,7 +99,6 @@ private slots:
 private:
   ClientChannel add();
   void channel();
-  void info();
   void join();
   void part();
   void quit();
