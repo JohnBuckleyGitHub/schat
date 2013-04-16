@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QTimer>
+
 #include "Ch.h"
 #include "cores/Core.h"
 #include "DataBase.h"
@@ -70,7 +72,7 @@ bool NodeChannels::read(PacketReader *reader)
     return info();
 
   else if (cmd == CHANNELS_JOIN_CMD)
-    return join();
+    return join(m_packet->channelId, m_packet->text());
 
   else if (cmd == CHANNELS_PART_CMD)
     return part();
@@ -97,6 +99,14 @@ void NodeChannels::acceptImpl(ChatChannel user, const AuthResult & /*result*/, Q
   m_user = user;
   packets.append(reply(Ch::server())->data(Core::stream()));
   packets.append(reply(m_user)->data(Core::stream()));
+
+  m_user->channels().restore(DataBase::value(SimpleID::encode(m_user->id()) + LS("/channels")).toByteArray());
+
+  if (m_user->channels().size())
+    m_pending.append(user);
+
+  if (m_pending.size() == 1)
+    QTimer::singleShot(0, this, SLOT(join()));
 }
 
 
@@ -106,6 +116,9 @@ void NodeChannels::addImpl(ChatChannel user)
 }
 
 
+/*!
+ * Обработка отключения пользователя.
+ */
 void NodeChannels::releaseImpl(ChatChannel user, quint64 socket)
 {
   Q_UNUSED(socket);
@@ -116,12 +129,29 @@ void NodeChannels::releaseImpl(ChatChannel user, quint64 socket)
   m_core->send(Sockets::all(user), ChannelNotice::request(user->id(), user->id(), CHANNELS_QUIT_CMD));
 
   QList<QByteArray> channels = user->channels().all();
+  QByteArray data;
+
   foreach (const QByteArray &id, channels) {
     ChatChannel channel = Ch::channel(id);
     if (channel && channel->type() == SimpleID::ChannelId) {
       channel->removeChannel(user->id(), Ch::server()->feed(FEED_NAME_SERVER)->data().value(SERVER_FEED_OFFLINE_KEY, true).toBool());
       user->removeChannel(channel->id());
+      data.append(channel->id());
       Ch::gc(channel);
+    }
+  }
+
+  DataBase::setValue(SimpleID::encode(user->id()) + LS("/channels"), data);
+}
+
+
+void NodeChannels::join()
+{
+  while (!m_pending.isEmpty()) {
+    m_user = m_pending.takeFirst();
+    const QList<QByteArray> channels = m_user->channels().all(SimpleID::ChannelId);
+    foreach (const QByteArray &id, channels) {
+      join(id);
     }
   }
 }
@@ -180,18 +210,18 @@ bool NodeChannels::info()
 /*!
  * Обработка запроса пользователя подключения к каналу.
  */
-bool NodeChannels::join()
+bool NodeChannels::join(const QByteArray &channelId, const QString &name)
 {
   ChatChannel channel;
 
   /// Если идентификатор канала корректный, функция пытается получить его по этому идентификатору.
-  const int type = SimpleID::typeOf(m_packet->channelId);
+  const int type = SimpleID::typeOf(channelId);
   if (type != SimpleID::InvalidId)
-    channel = Ch::channel(m_packet->channelId, type);
+    channel = Ch::channel(channelId, type);
 
   /// Если канал не удалось получить по идентификатору, будет произведена попытка создать обычный канал по имени.
   if (!channel && (type == SimpleID::InvalidId || type == SimpleID::ChannelId))
-    channel = Ch::channel(m_packet->text(), m_user);
+    channel = Ch::channel(name, m_user);
 
   if (!channel)
     return false;
@@ -203,7 +233,7 @@ bool NodeChannels::join()
     return false;
   }
 
-  const bool notify = !channel->channels().all().contains(m_user->id());
+  const bool notify = !channel->channels().contains(m_user->id());
   channel->addChannel(m_user->id());
   m_user->addChannel(channel->id());
 

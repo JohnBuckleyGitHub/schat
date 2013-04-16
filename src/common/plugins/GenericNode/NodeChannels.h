@@ -42,11 +42,12 @@ protected:
   void releaseImpl(ChatChannel user, quint64 socket);
 
 private slots:
+  void join();
   void notify(const FeedEvent &event);
 
 private:
   bool info();
-  bool join();
+  bool join(const QByteArray &channelId, const QString &name = QString());
   int name();
   bool part();
   bool quit();
@@ -56,8 +57,9 @@ private:
   ChannelPacket reply(ChatChannel channel, bool forbidden = false, const QString &command = CHANNELS_CHANNEL_CMD) const;
   void reply(int status);
 
-  ChannelNotice *m_packet;
-  ChatChannel m_user;
+  ChannelNotice *m_packet; ///< Текущий пакет.
+  ChatChannel m_user;      ///< Текущий пользователь.
+  QList<ChatChannel> m_pending; ///< Список для отложенного входа в обычные каналы.
 };
 
 #endif /* NODECHANNELS_H_ */
