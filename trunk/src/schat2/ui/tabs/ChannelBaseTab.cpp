@@ -61,6 +61,7 @@ ChannelBaseTab::ChannelBaseTab(ClientChannel channel, const QString &type, TabWi
   setIcon(channelIcon());
 
   m_serverId = ChatClient::serverId();
+  m_userId   = ChatClient::id();
 
   connect(ChatClient::channels(), SIGNAL(channel(const ChannelInfo &)), SLOT(channel(const ChannelInfo &)));
   connect(ChatClient::io(), SIGNAL(setup()), SLOT(setup()));
@@ -195,7 +196,7 @@ void ChannelBaseTab::offline()
 
 void ChannelBaseTab::setup()
 {
-  if (m_serverId != ChatClient::serverId())
+  if (m_serverId != ChatClient::serverId() || m_userId != ChatClient::id())
     m_tabs->closeTab(m_tabs->indexOf(this));
 }
 
