@@ -17,17 +17,20 @@
  */
 
 #include "acl/AclValue.h"
+#include "Ch.h"
+#include "cores/Core.h"
+#include "feeds/AclFeed.h"
 #include "feeds/AutoKick.h"
 #include "feeds/FeedEvents.h"
 #include "feeds/FeedStrings.h"
+#include "net/Channels.h"
+#include "net/packets/ChannelNotice.h"
 #include "net/packets/Notice.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
-#include "Ch.h"
-#include "net/Channels.h"
-#include "cores/Core.h"
 #include "Sockets.h"
-#include "net/packets/ChannelNotice.h"
+#include "feeds/ServerFeed.h"
+#include "DataBase.h"
 
 AutoKick::AutoKick(QObject *parent)
   : QObject(parent)
@@ -46,8 +49,12 @@ void AutoKick::notify(const FeedEvent &event)
   if (!channel)
     return;
 
-  if (event.method == FEED_METHOD_POST && event.path.startsWith(LS("head/other/")) && value == 0) {
-    kick(channel, SimpleID::decode(event.path.mid(11)));
+  if (event.method == FEED_METHOD_POST) {
+    if (event.path.startsWith(LS("head/other/")) && value == 0)
+      kick(channel, SimpleID::decode(event.path.mid(11)));
+    else if (event.path == ACL_FEED_KICK_KEY) {
+      kick(channel, SimpleID::decode(event.request.value(FEED_KEY_VALUE).toString()));
+    }
   }
   else if (event.method == FEED_METHOD_DELETE && event.path.startsWith(LS("head/other/"))) {
     FeedPtr feed = channel->feed(FEED_NAME_ACL, false);
@@ -57,6 +64,13 @@ void AutoKick::notify(const FeedEvent &event)
   else if (event.method == FEED_METHOD_PUT && event.path == LS("head/mask")) {
     kickAll(channel);
   }
+}
+
+
+void AutoKick::dump(ChatChannel channel) const
+{
+  if (Ch::server()->feed(FEED_NAME_SERVER)->data().value(SERVER_FEED_OFFLINE_KEY, true).toBool())
+    DataBase::setValue(SimpleID::encode(channel->id()) + LS("/users"), channel->channels().join() + channel->offline().join());
 }
 
 
@@ -74,6 +88,7 @@ void AutoKick::kick(ChatChannel channel, const QByteArray &userId)
     Core::i()->send(Sockets::channel(channel), ChannelNotice::request(userId, channel->id(), CHANNELS_PART_CMD));
     channel->removeChannel(userId);
 
+    dump(channel);
     Ch::gc(channel);
   }
 }
@@ -101,6 +116,7 @@ void AutoKick::kickAll(ChatChannel channel)
     }
   }
 
+  dump(channel);
   Core::i()->send(sockets, packets);
   Ch::gc(channel);
 }

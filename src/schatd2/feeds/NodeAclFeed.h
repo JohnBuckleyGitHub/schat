@@ -39,6 +39,7 @@ public:
 private:
   bool isGenericUser(const QByteArray &id) const;
   FeedReply invite(const QVariantMap &json, Channel *channel);
+  FeedReply kick(const QVariantMap &json, Channel *user);
   int setAcl(const QString &encodedId, int acl, bool sudo = false);
   void init();
 };

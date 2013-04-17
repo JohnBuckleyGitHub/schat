@@ -42,6 +42,21 @@ bool Channels::add(const QByteArray &id)
 }
 
 
+QByteArray Channels::join() const
+{
+  if (m_channels.isEmpty())
+    return QByteArray();
+
+  QByteArray out;
+  out.reserve(m_channels.size() * SimpleID::DefaultSize);
+
+  foreach (const QByteArray &id, m_channels)
+    out.append(id);
+
+  return out;
+}
+
+
 QList<QByteArray> Channels::all(int type) const
 {
   QList<QByteArray> out;

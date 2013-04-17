@@ -39,6 +39,7 @@ ChannelsMenuImpl::ChannelsMenuImpl(QObject *parent)
   : ChannelMenu(parent)
   , m_advanced(0)
   , m_ignore(0)
+  , m_kick(0)
   , m_ro(0)
   , m_permissions(0)
 {
@@ -58,6 +59,9 @@ bool ChannelsMenuImpl::triggerImpl(QAction *action)
     ChannelBaseTab *tab = TabWidget::i()->channelTab(ChatCore::currentId());
     if (tab)
       tab->chatView()->evaluateJavaScript(LS("Channels.editAcl(\"") + SimpleID::encode(action->data().toByteArray()) + LS("\");"));
+  }
+  else if (action == m_kick) {
+    ClientFeeds::post(ChatCore::currentId(), ACL_FEED_KICK_REQ, SimpleID::encode(m_id));
   }
   else
     return false;
@@ -100,6 +104,7 @@ void ChannelsMenuImpl::cleanupImpl()
   m_ro = 0;
   m_rw = 0;
   m_forbidden = 0;
+  m_kick = 0;
   m_id.clear();
 }
 
@@ -217,5 +222,8 @@ void ChannelsMenuImpl::permissions(QMenu *menu, ClientChannel user)
       m_advanced = m_permissions->addAction(SCHAT_ICON(Gear), tr("Advanced..."));
       m_advanced->setData(user->id());
     }
+
+    if (moderator && user->status() == Status::Offline)
+      m_kick = menu->addAction(SCHAT_ICON(Remove), tr("Remove"));
   }
 }
