@@ -1,3 +1,10 @@
+2.0.6
+-----
+ + Added support for displaying offline users in user list.
+ * Fixed redundant requests for information about the channels.
+ * Fixed critical errors in internal implementation of server feeds.
+ * Fixed a regression in popup windows are no longer displayed emoticons.
+
 2.0.5
 -----
  + Added a dialog to create a new channel.
