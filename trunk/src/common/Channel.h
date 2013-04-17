@@ -96,6 +96,7 @@ public:
   inline void clear()                                { m_channels.clear(); }
   inline void remove(const QByteArray &id)           { m_channels.removeAll(id); }
   inline void set(const QList<QByteArray> &channels) { m_channels = channels; }
+  QByteArray join() const;
   QList<QByteArray> all(int type) const;
   void restore(const QByteArray &channels);
 

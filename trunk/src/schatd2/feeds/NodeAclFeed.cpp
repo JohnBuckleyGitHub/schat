@@ -88,6 +88,8 @@ FeedReply NodeAclFeed::post(const QString &path, const QVariantMap &json, Channe
   if (!path.startsWith(LS("head/"))) {
     if (path == ACL_FEED_INVITE_KEY)
       return invite(json, channel);
+    else if (path == ACL_FEED_KICK_KEY)
+      return kick(json, channel);
 
     return Notice::Forbidden;
   }
@@ -219,6 +221,24 @@ FeedReply NodeAclFeed::invite(const QVariantMap &json, Channel *channel)
 
   Core::i()->send(user->sockets(), packet);
   return Notice::NotModified;
+}
+
+
+FeedReply NodeAclFeed::kick(const QVariantMap &json, Channel *user)
+{
+  const QByteArray id = SimpleID::decode(json.value(FEED_KEY_VALUE).toString());
+  if (!user || SimpleID::typeOf(id) != SimpleID::UserId)
+    return Notice::BadRequest;
+
+  ServerChannel *channel = static_cast<ServerChannel*>(head().channel());
+  if (!channel->channels().contains(id) && !channel->offline().contains(id))
+    return Notice::NotFound;
+
+  const int acl = AclValue::match(this, user);
+  if ((acl & (Acl::Edit | Acl::SpecialEdit)) || (acl & Acl::SpecialWrite))
+    return FeedReply(Notice::OK, DateTime::utc());
+
+  return Notice::Forbidden;
 }
 
 

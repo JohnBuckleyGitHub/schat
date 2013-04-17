@@ -105,6 +105,9 @@ bool ServerChannel::removeChannel(const QByteArray &id, bool offline)
     return true;
   }
 
+  if (!offline)
+    m_offline.remove(id);
+
   return false;
 }
 

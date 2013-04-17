@@ -126,18 +126,7 @@ void NodeUsersFeed::dump() const
     return;
 
   ServerChannel *channel = static_cast<ServerChannel*>(head().channel());
-  QByteArray data;
-  const QList<QByteArray> &channels = channel->channels().all();
-  const QList<QByteArray> &offline  = channel->offline().all();
-  data.reserve((channels.size() + offline.size()) * SimpleID::DefaultSize);
-
-  foreach (const QByteArray &id, channels)
-    data.append(id);
-
-  foreach (const QByteArray &id, offline)
-    data.append(id);
-
-  DataBase::setValue(SimpleID::encode(channel->id()) + LS("/users"), data);
+  DataBase::setValue(SimpleID::encode(channel->id()) + LS("/users"), channel->channels().join() + channel->offline().join());
 }
 
 

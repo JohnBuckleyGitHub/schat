@@ -21,39 +21,44 @@
 <context>
     <name>ChannelsMenuImpl</name>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="87"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="91"/>
         <source>Ignore</source>
         <translation>Игнорировать</translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="162"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="167"/>
         <source>Invite to</source>
         <translation>Пригласить в</translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="189"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="194"/>
         <source>Permissions</source>
         <translation>Права доступа</translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="195"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="200"/>
         <source>Read write</source>
         <translation>Чтение и запись</translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="200"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="205"/>
         <source>Read only</source>
         <translation>Только чтение</translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="205"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="210"/>
         <source>No access</source>
         <translation>Нет доступа</translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="217"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="222"/>
         <source>Advanced...</source>
         <translation>Расширенные...</translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsMenuImpl.cpp" line="227"/>
+        <source>Remove</source>
+        <translation>Удалить</translation>
     </message>
 </context>
 <context>

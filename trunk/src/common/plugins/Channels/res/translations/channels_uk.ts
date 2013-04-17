@@ -21,38 +21,43 @@
 <context>
     <name>ChannelsMenuImpl</name>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="87"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="91"/>
         <source>Ignore</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="162"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="167"/>
         <source>Invite to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="189"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="194"/>
         <source>Permissions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="195"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="200"/>
         <source>Read write</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="200"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="205"/>
         <source>Read only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="205"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="210"/>
         <source>No access</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ChannelsMenuImpl.cpp" line="217"/>
+        <location filename="../../ChannelsMenuImpl.cpp" line="222"/>
         <source>Advanced...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsMenuImpl.cpp" line="227"/>
+        <source>Remove</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

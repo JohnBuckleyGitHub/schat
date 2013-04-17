@@ -36,6 +36,7 @@ private slots:
   void notify(const FeedEvent &event);
 
 private:
+  void dump(ChatChannel channel) const;
   void kick(ChatChannel channel, const QByteArray &userId);
   void kickAll(ChatChannel channel);
 };
