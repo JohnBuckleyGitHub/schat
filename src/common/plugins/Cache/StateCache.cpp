@@ -207,6 +207,10 @@ QString StateCache::encode(const QByteArray &id) const
 }
 
 
+/*!
+ * \deprecated Начиная с версии 2.0.6 нет необходимости отправлять запрос на вход в обычный канал,
+ * т.к. сервер теперь делает это автоматически без запроса от клиента.
+ */
 void StateCache::join(const QByteArray &id)
 {
   TabWidget *tabs = TabWidget::i();
