@@ -128,20 +128,16 @@ void NodeChannels::releaseImpl(ChatChannel user, quint64 socket)
 
   m_core->send(Sockets::all(user), ChannelNotice::request(user->id(), user->id(), CHANNELS_QUIT_CMD));
 
-  QList<QByteArray> channels = user->channels().all();
-  QByteArray data;
+  const QList<QByteArray> channels = user->channels().all(SimpleID::ChannelId);
 
   foreach (const QByteArray &id, channels) {
     ChatChannel channel = Ch::channel(id);
-    if (channel && channel->type() == SimpleID::ChannelId) {
+    if (channel) {
       channel->removeChannel(user->id(), Ch::server()->feed(FEED_NAME_SERVER)->data().value(SERVER_FEED_OFFLINE_KEY, true).toBool());
-      user->removeChannel(channel->id());
-      data.append(channel->id());
+      user->removeChannel(id);
       Ch::gc(channel);
     }
   }
-
-  DataBase::setValue(SimpleID::encode(user->id()) + LS("/channels"), data);
 }
 
 
@@ -237,6 +233,9 @@ bool NodeChannels::join(const QByteArray &channelId, const QString &name)
   channel->addChannel(m_user->id());
   m_user->addChannel(channel->id());
 
+  if (notify && channel->type() == SimpleID::ChannelId)
+    dump();
+
   m_core->send(m_user->sockets(), reply(channel));
 
   /// В случае необходимости всем пользователям в канале будет разослано уведомление в входе нового пользователя.
@@ -283,6 +282,9 @@ bool NodeChannels::part()
 
   m_core->send(Sockets::channel(channel), ChannelNotice::request(m_user->id(), channel->id(), CHANNELS_PART_CMD));
   channel->removeChannel(m_user->id());
+
+  if (channel->type() == SimpleID::ChannelId)
+    dump();
 
   Ch::gc(channel);
   return false;
@@ -364,6 +366,19 @@ ChannelPacket NodeChannels::reply(ChatChannel channel, bool forbidden, const QSt
     packet->setData(channel->feeds().f(m_user.data()));
 
   return packet;
+}
+
+
+void NodeChannels::dump() const
+{
+  const QList<QByteArray> channels = m_user->channels().all(SimpleID::ChannelId);
+  QByteArray data;
+  data.resize(channels.size() * SimpleID::DefaultSize);
+
+  foreach (const QByteArray &id, channels)
+    data.append(id);
+
+  DataBase::setValue(SimpleID::encode(m_user->id()) + LS("/channels"), data);
 }
 
 
