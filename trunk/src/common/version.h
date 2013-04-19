@@ -21,8 +21,8 @@
 
 #include "revision.h"
 
-#define SCHAT_VERSION      "2.0.6"
-#define SCHAT_VERSION_RC   2,0,6,SCHAT_REVISION
+#define SCHAT_VERSION      "2.0.7"
+#define SCHAT_VERSION_RC   2,0,7,SCHAT_REVISION
 #define SCHAT_NAME         "Simple Chat"
 #define SCHAT_ORGANIZATION "Alexander Sedov"
 #define SCHAT_DOMAIN       "schat.me"
