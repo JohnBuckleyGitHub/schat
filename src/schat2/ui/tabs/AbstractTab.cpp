@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #include <QAction>
 #include <QEvent>
 
+#include "sglobal.h"
 #include "ui/TabBar.h"
 #include "ui/tabs/AbstractTab.h"
 #include "ui/TabWidget.h"
@@ -42,7 +43,7 @@ void AbstractTab::setOnline(bool online)
 {
   m_online = online;
 
-  int index = m_tabs->indexOf(this);
+  const int index = m_tabs->indexOf(this);
   if (index == -1)
     return;
 
@@ -51,10 +52,13 @@ void AbstractTab::setOnline(bool online)
     m_action->setIcon(m_icon);
   }
   else {
-    QIcon offline = QIcon(m_icon.pixmap(16, 16, QIcon::Disabled));
+    const QIcon offline = QIcon(m_icon.pixmap(16, 16, QIcon::Disabled));
     m_tabs->setTabIcon(index, offline);
     m_action->setIcon(offline);
   }
+
+  if (!m_text.isEmpty())
+    setText(m_text);
 }
 
 
@@ -65,7 +69,7 @@ void AbstractTab::pin()
 {
   m_options |= Pinned;
 
-  int index = m_tabs->indexOf(this);
+  const int index = m_tabs->indexOf(this);
   if (index == -1)
     return;
 
@@ -85,7 +89,7 @@ void AbstractTab::pin()
   if (index == pos || pos > index)
     return;
 
-  bool show = m_tabs->currentIndex() == index;
+  const bool show = m_tabs->currentIndex() == index;
   m_tabs->tabBar()->moveTab(index, pos);
 
   if (show) {
@@ -109,7 +113,7 @@ void AbstractTab::setIcon(const QIcon &icon)
   m_icon = icon;
   m_action->setIcon(icon);
 
-  int index = m_tabs->indexOf(this);
+  const int index = m_tabs->indexOf(this);
   if (index != -1)
     m_tabs->setTabIcon(index, m_icon);
 }
@@ -123,11 +127,11 @@ void AbstractTab::setText(const QString &text)
   m_text = text;
   m_action->setText(text);
 
-  int index = m_tabs->indexOf(this);
+  const int index = m_tabs->indexOf(this);
   if (index == -1)
     return;
 
-  m_tabs->setTabText(index, text);
+  m_tabs->setTabText(index, QString(text).replace(LC('&'), LS("&&")));
   m_tabs->setTabToolTip(index, m_text);
 }
 
@@ -137,11 +141,11 @@ void AbstractTab::unpin()
   if (m_options & Pinned)
     m_options ^= Pinned;
 
-  int index = m_tabs->indexOf(this);
+  const int index = m_tabs->indexOf(this);
   if (index == -1)
     return;
 
-  m_tabs->setTabText(index, m_text);
+  m_tabs->setTabText(index, QString(m_text).replace(LC('&'), LS("&&")));
 
   if (m_tabs->count() > 1)
     m_tabs->tabBar()->setTabButton(index, m_tabs->tabBar()->closeButtonPosition(), m_closeButton);

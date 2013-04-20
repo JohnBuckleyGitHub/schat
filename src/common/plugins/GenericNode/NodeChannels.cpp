@@ -355,7 +355,7 @@ ChannelPacket NodeChannels::reply(ChatChannel channel, bool forbidden, const QSt
   if (channel->type() == SimpleID::ChannelId) {
     if (!forbidden) {
       packet->channels = channel->channels().all();
-      if (Ch::server()->feed(FEED_NAME_SERVER)->data().value(SERVER_FEED_OFFLINE_KEY).toBool())
+      if (Ch::server()->feed(FEED_NAME_SERVER)->data().value(SERVER_FEED_OFFLINE_KEY, true).toBool())
         packet->channels.append(channel->offline().all());
     }
     else

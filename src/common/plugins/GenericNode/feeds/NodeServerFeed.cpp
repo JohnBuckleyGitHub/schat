@@ -82,6 +82,9 @@ void NodeServerFeed::init()
   m_header.acl().setMask(0444);
   m_header.setDate(m_startupTime);
 
+  if (m_data.value(SERVER_FEED_VERSION_KEY) == LS("2.0.6"))
+    m_data.remove(SERVER_FEED_OFFLINE_KEY);
+
   m_data[SERVER_FEED_VERSION_KEY] = QCoreApplication::applicationVersion();
   m_data[SERVER_FEED_OS_KEY]      = OsInfo::type();
 
@@ -90,8 +93,7 @@ void NodeServerFeed::init()
     m_data[SERVER_FEED_OAUTH_KEY] = LS("https://auth.schat.me");
   }
 
-  setDefault(SERVER_FEED_POLICY_KEY,  ServerFeed::MainChannelPolicy | ServerFeed::ForcedJoinPolicy);
-  setDefault(SERVER_FEED_OFFLINE_KEY, false);
+  setDefault(SERVER_FEED_POLICY_KEY, ServerFeed::MainChannelPolicy | ServerFeed::ForcedJoinPolicy);
 }
 
 
