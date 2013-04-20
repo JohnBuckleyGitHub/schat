@@ -122,20 +122,10 @@ int UserItem::weight() const
  */
 QBrush UserItem::color() const
 {
-  if (m_italic)
+  if (m_user->status() == Status::Offline)
     return QColor(0x90a4b3);
 
-  switch (m_user->status().value()) {
-    case Status::Away:
-    case Status::AutoAway:
-    case Status::DnD:
-      return QColor(0x90a4b3);
-      break;
-
-    default:
-      return QPalette().brush(QPalette::WindowText);
-      break;
-  }
+  return QPalette().brush(QPalette::WindowText);
 }
 
 
