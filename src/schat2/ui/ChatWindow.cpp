@@ -301,8 +301,19 @@ void ChatWindow::setAppIcon()
 {
 # if defined(Q_OS_LINUX)
   QIcon icon;
-  icon.addFile(LS(":/images/schat16.png"), QSize(16, 16));
-  setWindowIcon(icon);
+  QList<int> sizes;
+  sizes << 16 << 22 << 24 << 32 << 36 << 48 << 64 << 72 << 96 << 128;
+
+  foreach (const int size, sizes) {
+    const QString file = QString(LS("/usr/share/icons/hicolor/%1x%1/apps/schat2.png")).arg(size);
+    if (QFile::exists(file))
+      icon.addFile(file, QSize(size, size));
+  }
+
+  if (icon.availableSizes().isEmpty())
+    setWindowIcon(QIcon(LS(":/images/icons/48x48/schat2.png")));
+  else
+    setWindowIcon(icon);
 # endif
 }
 
