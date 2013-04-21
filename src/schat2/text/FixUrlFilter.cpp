@@ -28,6 +28,8 @@ FixUrlFilter::FixUrlFilter()
 
 bool FixUrlFilter::filter(QList<HtmlToken> &tokens, int options) const
 {
+  Q_UNUSED(options)
+
   QList<HtmlToken> out;
   QString name;
   bool remove = false;

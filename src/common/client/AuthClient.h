@@ -51,6 +51,7 @@ protected:
   void timerEvent(QTimerEvent *event);
 
 private slots:
+  void clientStateChanged(int state);
   void getState();
   void providersReady();
   void sslErrors();

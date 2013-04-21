@@ -203,6 +203,8 @@ bool UserView::reload(const QByteArray &id)
 
 /*!
  * Удаление пользователя из списка.
+ *
+ * \return \b false если id не найден или пользователь офлайн.
  */
 bool UserView::remove(const QByteArray &id)
 {
@@ -213,7 +215,7 @@ bool UserView::remove(const QByteArray &id)
 
   m_model.removeRow(m_model.indexFromItem(item).row());
   m_channels.remove(id);
-  return true;
+  return item->user()->status() != Status::Offline;
 }
 
 

@@ -25,6 +25,8 @@
 #include <QTimerEvent>
 
 #include "client/AuthClient.h"
+#include "client/ChatClient.h"
+#include "client/SimpleClient.h"
 #include "JSON.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
@@ -36,6 +38,7 @@ AuthClient::AuthClient(QObject *parent)
 {
   m_timer = new QBasicTimer();
   m_manager = new QNetworkAccessManager(this);
+  connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
 }
 
 
@@ -84,6 +87,13 @@ void AuthClient::timerEvent(QTimerEvent *event)
   }
 
   QObject::timerEvent(event);
+}
+
+
+void AuthClient::clientStateChanged(int state)
+{
+  if (state == ChatClient::Online)
+    cancel();
 }
 
 
