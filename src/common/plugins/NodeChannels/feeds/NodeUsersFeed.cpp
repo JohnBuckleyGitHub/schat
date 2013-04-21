@@ -71,7 +71,7 @@ FeedReply NodeUsersFeed::post(const QString &path, const QVariantMap &json, Chan
     if (SimpleID::typeOf(SimpleID::decode(path)) == SimpleID::UserId) {
       ServerChannel *channel = static_cast<ServerChannel*>(head().channel());
 
-      const int count   = channel->channels().size();
+      const int count   = channel->channels().all(SimpleID::UserId).size();
       const qint64 date = DateTime::utc();
 
       const int peak = m_data.value(USERS_FEED_PEAK_KEY).toMap().value(USERS_FEED_COUNT_KEY).toInt();
