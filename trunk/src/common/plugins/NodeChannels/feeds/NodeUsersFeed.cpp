@@ -52,6 +52,8 @@ FeedReply NodeUsersFeed::del(const QString &path, Channel *channel)
       ServerChannel *channel = static_cast<ServerChannel*>(head().channel());
       m_data[USERS_FEED_COUNT_KEY]   = channel->channels().size();
       m_data[USERS_FEED_OFFLINE_KEY] = channel->offline().size();
+
+      dump();
       return FeedReply(Notice::OK, DateTime::utc());
     }
   }
