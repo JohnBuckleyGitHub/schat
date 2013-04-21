@@ -32,7 +32,7 @@ QIcon ChatIcons::icon(ClientChannel channel, int options)
 {
   QString file = LS(":/images/channel.png");
 
-  if (channel->type() == SimpleID::UserId) {
+  if (channel->type() == SimpleID::UserId || channel->id().isEmpty()) {
     file = LS(":/images/user");
     int gender = channel->gender().value();
     int color  = channel->gender().color();
