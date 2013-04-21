@@ -31,6 +31,7 @@
 #include "ChatCore.h"
 #include "ChatNotify.h"
 #include "sglobal.h"
+#include "text/FixUrlFilter.h"
 #include "text/HtmlFilter.h"
 #include "text/PlainTextFilter.h"
 #include "text/TokenFilter.h"
@@ -65,6 +66,7 @@ InputWidget::InputWidget(QWidget *parent)
   setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
   TokenFilter::add(LS("input"), new UrlFilter());
+  TokenFilter::add(LS("send"),  new FixUrlFilter());
 
   connect(this, SIGNAL(textChanged()), SLOT(textChanged()));
   connect(this, SIGNAL(cursorPositionChanged()), SLOT(cursorPositionChanged()));
@@ -167,11 +169,7 @@ void InputWidget::focusOutEvent(QFocusEvent *event)
 void InputWidget::insertFromMimeData(const QMimeData *source)
 {
   if (source->hasHtml()) {
-    QVariantHash options;
-    options[LS("span")] = true;
-    options[LS("img")] = true;
-
-    QString html = TokenFilter::filter(LS("input"), source->html(), options);
+    const QString html = TokenFilter::filter(LS("input"), source->html(), HtmlFilter::AllowSpanTag | HtmlFilter::AllowImgTag);
     if (!html.isEmpty())
       insertHtml(html + QChar(QChar::Nbsp));
 
@@ -304,11 +302,14 @@ void InputWidget::paste()
 
 void InputWidget::send()
 {
-  QString html = toHtml();
+  const QString html = toHtml();
   HtmlFilter filter(HtmlFilter::ConvertSpacesToNbsp | HtmlFilter::AllowSpanTag);
 
-  QString out = filter.filter(html);
+  QString out = filter.filter(html).trimmed();
   clear();
+
+  if (out.contains(LS("<a href=\"chat://channel/")))
+    out = TokenFilter::filter("send", out, HtmlFilter::ConvertSpacesToNbsp | HtmlFilter::AllowSpanTag);
 
   if (PlainTextFilter::filter(out).isEmpty())
     return;

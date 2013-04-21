@@ -39,7 +39,7 @@ public:
 
   virtual ~AbstractFilter() {}
   inline int weight() const { return m_weight; }
-  virtual bool filter(QList<HtmlToken> &tokens, const QVariantHash &options = QVariantHash()) const = 0;
+  virtual bool filter(QList<HtmlToken> &tokens, int options = 0) const = 0;
 
 private:
   int m_weight;
@@ -54,7 +54,7 @@ class SCHAT_CORE_EXPORT TokenFilter
   TokenFilter() {}
 
 public:
-  static QString filter(const QString &type, const QString &text, const QVariantHash &options = QVariantHash());
+  static QString filter(const QString &type, const QString &text, int options = 0);
   static void add(const QString &type, AbstractFilter *filter);
   static void clear();
 

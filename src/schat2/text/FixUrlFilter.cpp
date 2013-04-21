@@ -16,53 +16,56 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QUrl>
-
 #include "ChatUrls.h"
-#include "net/SimpleID.h"
-#include "QtEscape.h"
 #include "sglobal.h"
-#include "text/UrlFilter.h"
+#include "text/FixUrlFilter.h"
 
-UrlFilter::UrlFilter()
+FixUrlFilter::FixUrlFilter()
   : AbstractFilter(100)
 {
 }
 
 
-bool UrlFilter::filter(QList<HtmlToken> &tokens, int options) const
+bool FixUrlFilter::filter(QList<HtmlToken> &tokens, int options) const
 {
-  Q_UNUSED(options)
-
+  QList<HtmlToken> out;
   QString name;
+  bool remove = false;
 
-  for (int i = 0; i < tokens.size(); ++i) {
-    const HtmlToken &token = tokens.at(i);
+  foreach (const HtmlToken &token, tokens) {
     if (token.type == HtmlToken::StartTag && token.tag == LS("a")) {
-      HtmlATag tag(tokens.at(i));
-
+      HtmlATag tag(token);
       if (tag.url.startsWith(LS("chat://channel/"))) {
-        tag.classes = LS("nick");
         ClientChannel user = ChatUrls::channel(QUrl(tag.url));
-        if (user) {
-          tag.classes += LC(' ') + SimpleID::encode(user->id());
+        if (user)
           name = user->name();
-
-          tag.classes += LS(" color-") + Gender::colorToString(user->gender().color());
-        }
-
-        tokens[i].text = tag.toText();
       }
-      else if (tag.title.isEmpty()) {
-        tag.title = tag.url;
-        tokens[i].text = tag.toText();
-      }
+
+      out.append(token);
     }
-    else if (token.type == HtmlToken::Text && !name.isEmpty()) {
-      tokens[i].text = Qt::escape(name);
+    else if (!name.isEmpty()) {
+      if (name != token.text) {
+        out.append(HtmlToken(name));
+        out.append(HtmlToken(HtmlToken::Tag, LS("</a>")));
+        remove = true;
+
+        if (token.text.startsWith(name))
+          out.append(HtmlToken(LC(' ') + token.text.mid(name.size())));
+        else
+          out.append(LC(' ') + token.text);
+      }
+      else
+        out.append(token);
+
       name.clear();
     }
+    else if (token.type == HtmlToken::EndTag && token.tag == LS("a") && remove) {
+      remove = false;
+    }
+    else
+      out.append(token);
   }
 
+  tokens = out;
   return true;
 }

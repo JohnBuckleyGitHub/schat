@@ -16,23 +16,16 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef LINKSFILTER_H_
-#define LINKSFILTER_H_
+#ifndef FIXURLFILTER_H_
+#define FIXURLFILTER_H_
 
 #include "text/TokenFilter.h"
 
-class LinksFilter : public AbstractFilter
+class FixUrlFilter : public AbstractFilter
 {
 public:
-  LinksFilter();
+  FixUrlFilter();
   bool filter(QList<HtmlToken> &tokens, int options = 0) const;
-
-private:
-  QString url(const QString &text, int index, int &last) const;
-  void makeUrl(QList<HtmlToken> &tokens, const QString &url, const QString &text) const;
-  void parse(QList<HtmlToken> &tokens, const QString &text) const;
-
-  QStringList m_scheme;
 };
 
-#endif /* LINKSFILTER_H_ */
+#endif /* FIXURLFILTER_H_ */
