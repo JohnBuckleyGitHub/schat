@@ -8,8 +8,8 @@
   <file alias="css/server.css">html/css/server.min.css</file>
   <file alias="css/user.css">html/css/user.min.css</file>
   <file alias="images/add.png">images/diagona/103.png</file>
-  <file alias="images/add-small.png">images/diagona/10/103.png</file>
   <file alias="images/add-gray.png">images/add.png</file>
+  <file alias="images/add-small.png">images/diagona/10/103.png</file>
   <file alias="images/arrow-right.png">images/silk/resultset_next.png</file>
   <file alias="images/away-small.png">images/diagona/10/087.png</file>
   <file alias="images/balloon.png">images/fugue/balloon.png</file>
@@ -116,6 +116,7 @@
   <file>images/color-map.png</file>
   <file>images/find_next.png</file>
   <file>images/find_previous.png</file>
+  <file>images/icons/48x48/schat2.png</file>
   <file>images/icons/96x96/schat2.png</file>
   <file>images/minus-small.png</file>
   <file>images/os.png</file>
