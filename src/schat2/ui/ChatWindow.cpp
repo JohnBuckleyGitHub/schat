@@ -84,6 +84,8 @@ ChatWindow::ChatWindow(QWidget *parent)
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 
   setWindowTitle(QApplication::applicationName());
+
+  setAppIcon();
 }
 
 
@@ -292,6 +294,16 @@ void ChatWindow::saveGeometry()
   data.append(width());
   data.append(height());
   m_settings->setValue(LS("Geometry/") + geometryKey(), data, false, true);
+}
+
+
+void ChatWindow::setAppIcon()
+{
+# if defined(Q_OS_LINUX)
+  QIcon icon;
+  icon.addFile(LS(":/images/schat16.png"), QSize(16, 16));
+  setWindowIcon(icon);
+# endif
 }
 
 

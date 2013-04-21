@@ -50,7 +50,7 @@ FeedReply NodeUsersFeed::del(const QString &path, Channel *channel)
   if (path.size() == 34) {
     if (SimpleID::typeOf(SimpleID::decode(path)) == SimpleID::UserId) {
       ServerChannel *channel = static_cast<ServerChannel*>(head().channel());
-      m_data[USERS_FEED_COUNT_KEY]   = channel->channels().size();
+      m_data[USERS_FEED_COUNT_KEY]   = channel->channels().all(SimpleID::UserId).size();
       m_data[USERS_FEED_OFFLINE_KEY] = channel->offline().size();
 
       dump();

@@ -68,6 +68,7 @@ private:
   void restoreGeometry();
   void retranslateUi();
   void saveGeometry();
+  void setAppIcon();
 
   #if defined(Q_OS_WIN32) && QT_VERSION < 0x050000
   void setWindowsAero();
