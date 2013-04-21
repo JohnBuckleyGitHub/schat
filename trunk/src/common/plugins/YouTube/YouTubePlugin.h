@@ -37,7 +37,7 @@ public:
     QVariantMap out            = CoreApi::header();
     out[CORE_API_ID]           = "YouTube";
     out[CORE_API_NAME]         = "YouTube";
-    out[CORE_API_VERSION]      = "0.1.4";
+    out[CORE_API_VERSION]      = "0.1.5";
     out[CORE_API_SITE]         = "http://wiki.schat.me/Plugin/YouTube";
     out[CORE_API_DESC]         = "Adds support for embedding YouTube videos in messages";
     out[CORE_API_DESC_RU]      = "Добавляет поддержку встраивания видео c YouTube в сообщения";

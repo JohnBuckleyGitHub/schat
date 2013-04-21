@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -41,8 +41,7 @@ public:
     AllowImgTag = 4          ///< Добавляет поддержку img тега, он будет преобразован в текст равный атрибуту alt.
   };
 
-  HtmlFilter(const QVariantHash &options);
-  HtmlFilter(int options = NoOptions, int sizeLimit = 8000, int breaksLimit = 20);
+  HtmlFilter(int options = NoOptions, int sizeLimit = 8000, int breaksLimit = 30);
   QList<HtmlToken> tokenize(const QString &text) const;
   QString filter(const QString &text) const;
   static QString build(const QList<HtmlToken> &tokens);

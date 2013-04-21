@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,23 +21,6 @@
 #include "sglobal.h"
 #include "text/HtmlFilter.h"
 #include "text/PlainTextFilter.h"
-
-HtmlFilter::HtmlFilter(const QVariantHash &options)
-  : m_options(NoOptions)
-{
-  m_sizeLimit = options.value(LS("size"), 8000).toInt();
-  m_breaksLimit = options.value(LS("breaks"), 20).toInt();
-
-  if (options.value(LS("nbsp"), false) == true)
-    m_options |= ConvertSpacesToNbsp;
-
-  if (options.value(LS("span"), false) == true)
-    m_options |= AllowSpanTag;
-
-  if (options.value(LS("img"), false) == true)
-    m_options |= AllowImgTag;
-}
-
 
 HtmlFilter::HtmlFilter(int options, int sizeLimit, int breaksLimit)
   : m_breaksLimit(breaksLimit)
@@ -165,7 +148,7 @@ QString HtmlFilter::prepare(const QString &text) const
   QString out;
   if (m_options & ConvertSpacesToNbsp) {
     out = text;
-//    out.replace(QLatin1String("  "), QLatin1String("&nbsp; "));
+    out.replace(LS("  "), LS("&nbsp; "));
     out = out.simplified();
   }
   else

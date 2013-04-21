@@ -67,6 +67,7 @@ HEADERS = \
     Profile.h \
     QProgressIndicator/QProgressIndicator.h \
     schat.h \
+    text/FixUrlFilter.h \
     text/LinksFilter.h \
     text/TokenFilter.h \
     text/UrlFilter.h \
@@ -156,6 +157,7 @@ SOURCES = \
     plugins/PluginsView.cpp \
     Profile.cpp \
     QProgressIndicator/QProgressIndicator.cpp \
+    text/FixUrlFilter.cpp \
     text/LinksFilter.cpp \
     text/TokenFilter.cpp \
     text/UrlFilter.cpp \
