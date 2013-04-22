@@ -17,9 +17,10 @@
  */
 
 #include <QApplication>
+#include <QDesktopWidget>
+#include <QFile>
 #include <QKeyEvent>
 #include <QTimer>
-#include <QDesktopWidget>
 #include <QVBoxLayout>
 
 #include "ChatAlerts.h"

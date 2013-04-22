@@ -124,14 +124,21 @@ void ClientMessages::insert(MessageNotice *notice)
 
 void ClientMessages::channels(const QList<QByteArray> &channels)
 {
-  foreach (QByteArray id, channels) {
+  foreach (const QByteArray &id, channels) {
     if (m_pending.contains(id)) {
-      QList<MessagePacket> packets = m_pending.value(id);
+      const QList<MessagePacket> packets = m_pending.values(id);
 
-      for (int i = 0; i < packets.size(); ++i)
-        read(packets.at(i));
+      foreach (MessagePacket packet, packets) {
+        if (SimpleID::typeOf(packet->dest()) == SimpleID::ChannelId) {
+          if (ChatClient::channels()->get(packet->sender()) && ChatClient::channels()->get(packet->dest()))
+            m_pending.remove(packet->dest(), packet);
+          else
+            continue;
+        }
 
-      m_pending.remove(id);
+        read(packet);
+        m_pending.remove(packet->sender(), packet);
+      }
     }
   }
 }
@@ -263,14 +270,14 @@ void ClientMessages::readText(MessagePacket packet)
     if (!m_pending.contains(packet->sender()))
       channels->join(packet->sender());
 
+    m_pending.insert(packet->sender(), packet);
+
     if (destType == SimpleID::ChannelId) {
       if (!m_pending.contains(packet->dest()))
         channels->join(packet->dest());
 
-      m_pending[packet->dest()].append(packet);
+      m_pending.insert(packet->dest(), packet);
     }
-    else
-      m_pending[packet->sender()].append(packet);
   }
   else if (sender && dest)
     read(packet);
