@@ -64,10 +64,10 @@ private:
   void readText(MessagePacket packet);
   void sent(MessagePacket packet);
 
-  QByteArray m_destId;                                ///< Текущий получатель сообщения.
-  QMap<QByteArray, QList<MessagePacket> > m_pending;  ///< Сообщения отображение которых отложена, т.к. не известна информация об отправителе.
-  QList<Hooks::Messages*> m_hooks;                    ///< Хуки.
-  SimpleClient *m_client;                             ///< Клиент чата.
+  QByteArray m_destId;                             ///< Текущий получатель сообщения.
+  QList<Hooks::Messages*> m_hooks;                 ///< Хуки.
+  QMultiMap<QByteArray, MessagePacket> m_pending;  ///< Сообщения отображение которых отложена, т.к. не известна информация об отправителе.
+  SimpleClient *m_client;                          ///< Клиент чата.
 };
 
 #endif /* CLIENTMESSAGES_H_ */
