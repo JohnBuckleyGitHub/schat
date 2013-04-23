@@ -48,6 +48,7 @@ protected:
     else if (key == LS("site"))  return tr("Site");
     else if (key == LS("email")) return tr("E-Mail");
     else if (key == LS("isp"))   return tr("ISP");
+    else if (key == LS("tz"))    return tr("Time");
     return QString();
   }
 };

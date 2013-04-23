@@ -89,8 +89,7 @@ var ProfilePlugin = {
     if (country.length != 2)
       return;
 
-    $(id).append(' <span><i class="flag-' + country + '" data-original-title="' + Utils.tr('country-' + country) + '"></i></span>');
-    $(id + ' .flag-' + country).tooltip();
+    $(id).append(' <span><i class="flag-' + country + '" title="' + Utils.tr('country-' + country) + '"></i></span>');
   },
 
 
@@ -100,25 +99,28 @@ var ProfilePlugin = {
    * Добавляется отображение гео информации.
    */
   connection: function(json) {
-    if (!json.hasOwnProperty('geo'))
-      return;
-
-    var country = json.geo.country.toLowerCase();
-    if (country.length != 2)
-      return;
-
     var modal = $('#modal-body');
 
-    modal.append(Utils.row('field-country', '<i class="flag-' + country + '"></i> '
-      + '<span data-tr="country-' + country + '">' + Utils.tr('country-' + country) + '</span>'));
+    if (typeof json.tz === "number") {
+      var date = new Date();
+      date = new Date(date.getTime() + date.getTimezoneOffset() * 60000 + json.tz * 1000);
 
-    if (json.geo.org != '') {
-      var org = json.geo.org;
-      var index = org.indexOf(' ');
-        if (index == -1)
-          return;
+      modal.append(Utils.row('field-tz', DateTime.time(date)));
+    }
 
-      modal.append(Utils.row('field-isp', Utils.left(org.slice(index), 100)));
+    if (json.hasOwnProperty('geo')) {
+      var country = json.geo.country.toLowerCase();
+      if (country.length == 2) {
+        modal.append(Utils.row('field-country', '<i class="flag-' + country + '"></i> '
+          + '<span data-tr="country-' + country + '">' + Utils.tr('country-' + country) + '</span>'));
+      }
+
+      if (json.geo.org != '') {
+        var org = json.geo.org;
+        var index = org.indexOf(' ');
+        if (index != -1)
+          modal.append(Utils.row('field-isp', Utils.left(org.slice(index), 100)));
+      }
     }
   }
 };
