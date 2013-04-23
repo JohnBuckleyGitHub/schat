@@ -167,7 +167,7 @@ var Connections = {
   process: function(key, json) {
     $('#connections').append(
         '<div class="connection-row bottom-line" id="' + key + '">' +
-          '<i data-original-title="' + htmlspecialchars(json.osName) + '" class="icon-os os-' + Pages.os(json.os) + '"></i> ' +
+          '<i title="' + htmlspecialchars(json.osName) + '" class="icon-os os-' + Pages.os(json.os) + '"></i> ' +
           '<a href="#" class="connection-host modal-toggle" data-handler="connection">' + json.host + '</a>' +
         '</div>'
     );
@@ -198,10 +198,9 @@ var Connections = {
       Connections.process(key, connections[key]);
     }
 
-    if (count > 0) {
+    if (count > 0)
       $('#user-offline').hide();
-      $('.icon-os').tooltip();
-    } else
+    else
       Connections.offline();
   },
 

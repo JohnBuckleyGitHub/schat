@@ -37,7 +37,7 @@ public:
     QVariantMap out        = CoreApi::header();
     out[CORE_API_ID]       = "Profile";
     out[CORE_API_NAME]     = "Profile";
-    out[CORE_API_VERSION]  = "0.2.3";
+    out[CORE_API_VERSION]  = "0.2.4";
     out[CORE_API_SITE]     = "http://wiki.schat.me/Plugin/Profile";
     out[CORE_API_DESC]     = "Adds support for additional profile fields";
     out[CORE_API_DESC_RU]  = "Добавляет поддержку дополнительных полей профиля";
