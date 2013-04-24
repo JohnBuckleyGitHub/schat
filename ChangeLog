@@ -1,3 +1,13 @@
+2.0.7
+-----
+ * #98 Fixed a bug when deleting a space after nick.
+ + #99 Added support for displaying local time of the user.
+ * #100 Fixed, chat icon is not displayed in Xfce.
+ * Fixed a bug when anonymous registration.
+ * Fixed a regression server does not correctly display count of online users.
+ * Displaying offline users were enabled by default.
+ * Fixed, the ampersand symbol not correctly displayed in tabs header.
+
 2.0.6
 -----
  + Added support for displaying offline users in user list.
