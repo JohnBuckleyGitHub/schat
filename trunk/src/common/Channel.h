@@ -116,7 +116,7 @@ class SCHAT_EXPORT Channel
 public:
   /// Ограничения.
   enum Limits {
-    MinNameLengh  = 3,     ///< Минимальная длина имени.
+    MinNameLength = 3,    ///< Минимальная длина имени.
     MaxNameLength = 64,   ///< Максимальная длина имени.
   };
 

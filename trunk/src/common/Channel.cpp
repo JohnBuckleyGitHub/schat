@@ -157,6 +157,12 @@ bool Channel::setId(const QByteArray &id)
 }
 
 
+/*!
+ * Установка имени канала.
+ *
+ * \param name Имя канала.
+ * \return \b true если имя было установлено.
+ */
 bool Channel::setName(const QString &name)
 {
   if (name.isEmpty() || name == LS("*")) {
@@ -169,7 +175,7 @@ bool Channel::setName(const QString &name)
   }
 
   const QString tmp = name.simplified().left(MaxNameLength);
-  if (tmp.size() < MinNameLengh)
+  if (tmp.size() < MinNameLength)
     return false;
 
   m_name = tmp;
@@ -202,7 +208,7 @@ void Channel::setDate(qint64 date)
 bool Channel::isValidName(const QString &name)
 {
   const int size = name.simplified().size();
-  if (size > MaxNameLength || size < MinNameLengh)
+  if (size > MaxNameLength || size < MinNameLength)
     return false;
 
   return true;
