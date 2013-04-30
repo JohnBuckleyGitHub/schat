@@ -960,138 +960,150 @@
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="70"/>
-        <source>Offline since</source>
+        <source>Was online</source>
+        <comment>Male</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="71"/>
+        <source>Was online</source>
+        <comment>Female</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="72"/>
         <source>Version</source>
         <translation>Версія</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="72"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="73"/>
         <source>OS</source>
         <translation>ОС</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="73"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="74"/>
         <source>kB</source>
         <translation>КБ</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="74"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="75"/>
         <source>MB</source>
         <translation>МБ</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="75"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="76"/>
         <source>Enabled</source>
         <translation>Увімкнено</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="76"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="77"/>
         <source>Enable</source>
         <translation>Увімкнути</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="77"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="78"/>
         <source>Settings</source>
         <translation>Налаштування</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="78"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="79"/>
         <source>Restart now</source>
         <translation>Перезапустити зараз</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="79"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="80"/>
         <source>✔ Plugin will be enabled after you restart Simple Chat.</source>
         <translation>✔ Плагін буде увімкнено після перезапуску Simple Chat.</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="80"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="81"/>
         <source>Plugin will be disabled after you restart Simple Chat.</source>
         <translation>Плагін буде вимкнено після перезапуску Simple Chat.</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="81"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="82"/>
         <source>Sign in using your account with</source>
         <translation>Звйти в чат через свій аккаунт у</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="82"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="83"/>
         <source>Or connect anonymously</source>
         <translation>або під&apos;єднатись анонімно</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="83"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="84"/>
         <source>anonymous user</source>
         <translation>анонімний користувач</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="84"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="85"/>
         <source>Online</source>
         <translation>В мережі</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="85"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="86"/>
         <source>Away</source>
         <translation>Мене немає</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="86"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="87"/>
         <source>Do not disturb</source>
         <translation>Не турбувати</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="87"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="88"/>
         <source>Free for Chat</source>
         <translation>Вільний для чату</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="88"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="89"/>
         <source>Offline</source>
         <translation>Поза мережею</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="89"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="90"/>
         <source>Thanks</source>
         <translation>Подяки</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="90"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="91"/>
         <source>Loading...</source>
         <translation>Завантаження...</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="91"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="92"/>
         <source>Activity</source>
         <translation>Активність</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="92"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="93"/>
         <source>Sent:</source>
         <translation>Відправити:</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="93"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="94"/>
         <source>Receved:</source>
         <translation>Отримано:</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="94"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="95"/>
         <source>Server version:</source>
         <translation>Версія сервера:</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="95"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="96"/>
         <source>Encryption:</source>
         <translation>Шифрування:</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/WebBridge.cpp" line="96"/>
+        <location filename="../../src/schat2/WebBridge.cpp" line="97"/>
         <source>no</source>
         <translation>відсутньо</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="98"/>
+        <source>en</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

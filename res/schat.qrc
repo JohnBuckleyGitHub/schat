@@ -102,6 +102,9 @@
   <file alias="js/bootstrap-tooltip.js">html/js/bootstrap-tooltip.min.js</file>
   <file alias="js/ChatView.js">html/js/ChatView.min.js</file>
   <file alias="js/jquery.js">html/js/jquery-1.9.1.min.js</file>
+  <file alias="js/jquery.timeago.en.js">html/js/jquery.timeago.en.min.js</file>
+  <file alias="js/jquery.timeago.js">html/js/jquery.timeago.min.js</file>
+  <file alias="js/jquery.timeago.ru.js">html/js/jquery.timeago.ru.min.js</file>
   <file alias="js/PluginsView.js">html/js/PluginsView.min.js</file>
   <file alias="js/server.js">html/js/server.min.js</file>
   <file alias="js/user.js">html/js/user.min.js</file>

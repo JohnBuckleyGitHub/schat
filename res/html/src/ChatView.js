@@ -582,13 +582,16 @@ var Loader = {
     document.getElementsByTagName("head")[0].appendChild(e);
   },
 
-  loadJS: function(jsfile) {
+  loadJS: function(jsfile, success) {
     $.ajax({
       url: jsfile,
       dataType: "script",
       isLocal: true,
       success: function() {
         Loader.remove(jsfile);
+
+        if (typeof success == 'function')
+          success();
       },
       error: function() {
         Loader.remove(jsfile);

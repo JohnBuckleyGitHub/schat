@@ -963,137 +963,149 @@
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="70"/>
-        <source>Offline since</source>
+        <source>Was online</source>
+        <comment>Male</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="71"/>
-        <source>Version</source>
+        <source>Was online</source>
+        <comment>Female</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="72"/>
-        <source>OS</source>
+        <source>Version</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="73"/>
-        <source>kB</source>
+        <source>OS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="74"/>
-        <source>MB</source>
+        <source>kB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="75"/>
-        <source>Enabled</source>
+        <source>MB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="76"/>
-        <source>Enable</source>
+        <source>Enabled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="77"/>
-        <source>Settings</source>
+        <source>Enable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="78"/>
-        <source>Restart now</source>
+        <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="79"/>
-        <source>✔ Plugin will be enabled after you restart Simple Chat.</source>
+        <source>Restart now</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="80"/>
-        <source>Plugin will be disabled after you restart Simple Chat.</source>
+        <source>✔ Plugin will be enabled after you restart Simple Chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="81"/>
-        <source>Sign in using your account with</source>
+        <source>Plugin will be disabled after you restart Simple Chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="82"/>
-        <source>Or connect anonymously</source>
+        <source>Sign in using your account with</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="83"/>
-        <source>anonymous user</source>
+        <source>Or connect anonymously</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="84"/>
-        <source>Online</source>
+        <source>anonymous user</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="85"/>
-        <source>Away</source>
+        <source>Online</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="86"/>
-        <source>Do not disturb</source>
+        <source>Away</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="87"/>
-        <source>Free for Chat</source>
+        <source>Do not disturb</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="88"/>
-        <source>Offline</source>
+        <source>Free for Chat</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="89"/>
-        <source>Thanks</source>
+        <source>Offline</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="90"/>
-        <source>Loading...</source>
+        <source>Thanks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="91"/>
-        <source>Activity</source>
+        <source>Loading...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="92"/>
-        <source>Sent:</source>
+        <source>Activity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="93"/>
-        <source>Receved:</source>
+        <source>Sent:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="94"/>
-        <source>Server version:</source>
+        <source>Receved:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="95"/>
-        <source>Encryption:</source>
+        <source>Server version:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/schat2/WebBridge.cpp" line="96"/>
+        <source>Encryption:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="97"/>
         <source>no</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="98"/>
+        <source>en</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
