@@ -43,24 +43,27 @@ var Hosts = {
   {
     var id = "#" + key;
     if (!$(id).length) {
-      var out = '<tr class="host-row" id="' + key + '"><td class="os-cell"><i class="icon-status-offline host-status"></i><a class="host-os" rel="tooltip"><i class="icon-os"></i></a></td><td class="host-name"></td>' +
-        '<td><a class="host-info" rel="tooltip"><i class="icon-info"></i></a> <span class="last-activity"></span></td><td><a onclick="" class="btn btn-small btn-unlink" data-tr="unlink">Unlink</a></td></tr>';
-      $("#account-table > tbody").append(out);
+      var out = '<tr class="host-row" id="' + key + '">' +
+                  '<td class="os-cell">' +
+                    '<i class="' + ((json.online === true ? "icon-status" : "icon-status-offline")) + ' host-status"></i>' +
+                    '<a class="host-os" title="' +  htmlspecialchars(json.osName) + '"><i class="icon-os os-' + Pages.os(json.os) + '"></i></a>' +
+                  '</td>' +
+                  '<td class="host-name">' +
+                    htmlspecialchars(json.name) +
+                  '</td>' +
+                  '<td>' +
+                    '<a class="host-info" rel="tooltip" data-original-title="' + Utils.table({'version': json.version, 'last_ip': json.host}) + '">' +
+                    '<i class="icon-info"></i></a> <span class="last-activity timeago" title="' + json.date + '">' + DateTime.template(json.date, true) + '</span>' +
+                  '</td>' +
+                  '<td>' +
+                    '<a onclick="" class="btn btn-small btn-unlink" data-tr="unlink" data-id="' + key + '">Unlink</a>' +
+                  '</td>' +
+                '</tr>';
+
+      $('#account-table > tbody').append(out);
     }
     else
       $(id).show();
-
-    $(id + " > .host-name").text(json.name);
-    $(id + " .icon-os").attr("class", "icon-os os-" + Pages.os(json.os));
-    $(id + " .host-os").attr("data-original-title", htmlspecialchars(json.osName));
-    $(id + " .host-info").attr("data-original-title", Utils.table({'version': json.version, 'last_ip': json.host}));
-    $(id + " .host-status").attr("class", (json.online === true ? "icon-status" : "icon-status-offline") + " host-status");
-    $(id + " .last-activity").html(DateTime.template(json.date, true));
-
-    var unlink = $(id + " .btn-unlink");
-    unlink.attr("data-id", key);
-    unlink.off("click");
-    unlink.on("click", Hosts.unlink);
   },
 
 
@@ -75,6 +78,10 @@ var Hosts = {
     for (var key in json) if (json.hasOwnProperty(key) && key.length == 34) {
       Hosts.processSingleHost(key, json[key]);
     }
+
+    Loader.loadJS('qrc:/js/jquery.timeago.' + Utils.tr('lang') + '.js', function() {
+      $('.timeago').timeago();
+    });
 
     $('#hosts-content p').show();
     $('#hosts-content #fieldset').show();
@@ -100,13 +107,6 @@ var Hosts = {
 
     Utils.TR('my_computers');
     Hosts.read(SimpleChat.feed(FEED_NAME_HOSTS, 1));
-  },
-
-
-  unlink: function()
-  {
-    SimpleChat.request(SimpleChat.id(), FEED_METHOD_DELETE, FEED_NAME_HOSTS + '/' + $(this).attr('data-id'), {'options':2});
-    return false;
   },
 
   progress: false
@@ -346,6 +346,12 @@ $(document).ready(function() {
     event.preventDefault();
 
     Auth.retry();
+  });
+
+  $('body').on('click', '.btn-unlink', function(event) {
+    event.preventDefault();
+
+    SimpleChat.request(SimpleChat.id(), FEED_METHOD_DELETE, FEED_NAME_HOSTS + '/' + $(this).attr('data-id'), {'options':2});
   });
 });
 
