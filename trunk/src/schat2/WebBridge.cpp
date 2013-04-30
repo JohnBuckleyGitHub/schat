@@ -67,7 +67,8 @@ protected:
     else if (key == LS("profile"))           return tr("Profile");
     else if (key == LS("connections"))       return tr("Connections");
     else if (key == LS("user_offline"))      return tr("User offline");
-    else if (key == LS("offline_since"))     return tr("Offline since");
+    else if (key == LS("was_online_m"))      return tr("Was online", "Male");
+    else if (key == LS("was_online_f"))      return tr("Was online", "Female");
     else if (key == LS("chat_version"))      return tr("Version");
     else if (key == LS("os_name"))           return tr("OS");
     else if (key == LS("kB"))                return tr("kB");
@@ -94,6 +95,7 @@ protected:
     else if (key == LS("server_version"))    return tr("Server version:");
     else if (key == LS("encryption"))        return tr("Encryption:");
     else if (key == LS("no-encryption"))     return tr("no");
+    else if (key == LS("lang"))              return tr("en");
     return QString();
   }
 };

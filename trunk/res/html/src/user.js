@@ -229,15 +229,19 @@ var Connections = {
 
     if (mdate && SimpleChat.isOnline()) {
       block.removeAttr('data-tr');
-      var html = '<div id="offline-since"><span data-tr="offline_since">' + Utils.tr('offline_since') + '</span> ';
+      var tr = SimpleChat.channel(Settings.getId()).Gender == 100 ? 'was_online_f' : 'was_online_m';
+
+      var html = '<div id="offline-since"><span data-tr="' + tr + '">' + Utils.tr(tr) + '</span> ';
       var feed = SimpleChat.feed(Settings.getId(), FEED_NAME_USER, 3);
 
       if (feed !== false && feed.hasOwnProperty('last'))
-        html += '<a href="#" class="modal-toggle" data-handler="connection">' + DateTime.template(mdate, true) + '</a>';
+        html += '<a href="#" class="modal-toggle timeago" data-handler="connection" title="' + mdate + '">' + DateTime.template(mdate, true) + '</a>';
       else
-        html += DateTime.template(mdate, true);
+        html += '<span class="timeago" title="' + mdate + '">' + DateTime.template(mdate, true) + '</span>';
 
       block.html(html +'</div>');
+
+      Connections.retranslate();
     }
     else {
       block.attr('data-tr', 'user_offline');
@@ -259,6 +263,13 @@ var Connections = {
   {
     Connections.read(SimpleChat.feed(Settings.getId(), FEED_NAME_USER, 3), 302);
     SimpleChat.feed(Settings.getId(), FEED_NAME_USER, 1);
+  },
+
+
+  retranslate: function() {
+    Loader.loadJS('qrc:/js/jquery.timeago.' + Utils.tr('lang') + '.js', function() {
+      $('.timeago').timeago();
+    });
   }
 };
 
@@ -308,6 +319,7 @@ if (typeof ChatView !== 'undefined') {
   ChatView.feed.connect(Profile.feed);
   ChatView.reload.connect(Profile.reload);
   SimpleChat.retranslated.connect(Profile.retranslate);
+  SimpleChat.retranslated.connect(Connections.retranslate);
   SimpleChat.statusChanged.connect(Profile.updateStatus);
   SimpleChat.offline.connect(Profile.offline);
   SimpleChat.offline.connect(Connections.offline);
