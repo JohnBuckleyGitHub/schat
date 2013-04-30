@@ -291,7 +291,7 @@ void ClientChannels::setup()
  */
 ClientChannel ClientChannels::add()
 {
-  const QByteArray id = m_packet->channelId;
+  const QByteArray &id = m_packet->channelId;
   if (!Channel::isCompatibleId(id))
     return ClientChannel();
 

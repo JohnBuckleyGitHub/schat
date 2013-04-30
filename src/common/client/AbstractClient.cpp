@@ -65,13 +65,7 @@ AbstractClientPrivate::~AbstractClientPrivate()
  */
 bool AbstractClientPrivate::isSetup(const AuthReply &reply)
 {
-  if (server->id() != reply.serverId)
-    return true;
-
-  if (channel->id() != reply.userId)
-    return true;
-
-  return false;
+  return (server->id() != reply.serverId) || (channel->id() != reply.userId);
 }
 
 
@@ -128,7 +122,7 @@ AbstractClientPrivate::AuthReplyAction AbstractClientPrivate::authReply(const Au
   server->setName(serverName(reply));
 
   if (reply.status == Notice::OK) {
-    bool setup = isSetup(reply);
+    const bool setup = isSetup(reply);
     collisions = 0;
     q->setAuthorized(reply.userId);
     channel->setId(reply.userId);
