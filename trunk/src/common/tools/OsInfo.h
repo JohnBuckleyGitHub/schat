@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -36,7 +36,8 @@ public:
     Gentoo   = 42, ///< Gentoo Linux.
     Debian   = 43, ///< Debian GNU/Linux.
     OpenSUSE = 44, ///< openSUSE.
-    Fedora   = 45  ///< Fedora.
+    Fedora   = 45, ///< Fedora.
+    Android  = 79  ///< Android.
   };
 
   static int type();

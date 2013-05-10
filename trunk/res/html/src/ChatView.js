@@ -192,6 +192,9 @@ var Pages = {
     if (code == 45)
       return "fedora";
 
+    if (code == 79)
+      return "android";
+
     if (code >= 40)
       return "linux";
 
