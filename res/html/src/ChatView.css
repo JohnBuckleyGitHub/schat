@@ -442,6 +442,10 @@ hr {
   background-position: -112px 0;
 }
 
+.os-android {
+  background-position: -128px 0;
+}
+
 .os-unknown {
   background:none;
 }
