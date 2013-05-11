@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@ class SCHAT_CORE_EXPORT Networks : public Client
 public:
   Networks(QObject *parent = 0);
   bool openId(const QByteArray &id, bool &matched);
-  QByteArray id();
-  QByteArray serverId();
+  QByteArray id() const;
+  QByteArray serverId() const;
 };
 
 } // namespace Hooks

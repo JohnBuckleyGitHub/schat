@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ bool Networks::openId(const QByteArray &id, bool &matched)
  * Получение идентификатора пользователя из менеджера сетей
  * и установка базовых данных из настроек.
  */
-QByteArray Networks::id()
+QByteArray Networks::id() const
 {
   ClientChannel channel = ChatClient::channel();
   channel->setName(ChatCore::settings()->value("Profile/Nick").toString());
@@ -68,7 +68,7 @@ QByteArray Networks::id()
 /*!
  * Получение идентификатора сервера из менеджера сетей.
  */
-QByteArray Networks::serverId()
+QByteArray Networks::serverId() const
 {
   return SimpleID::decode(ChatCore::networks()->selected());
 }
