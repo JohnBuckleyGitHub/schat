@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -32,6 +32,12 @@ public:
   ClientImpl(QObject *parent = 0);
 
   void setup();
+
+private slots:
+  void channel(const QByteArray &id);
+
+private:
+  bool m_setup; ///< \b true если необходимо выполнить работы по установке соединения после того как получен профиль пользователя.
 };
 
 } // namespace Hooks

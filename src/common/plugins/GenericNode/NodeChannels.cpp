@@ -97,10 +97,11 @@ bool NodeChannels::read(PacketReader *reader)
 void NodeChannels::acceptImpl(ChatChannel user, const AuthResult & /*result*/, QList<QByteArray> &packets)
 {
   m_user = user;
+  if (user->sockets().size() <= 1)
+    m_user->channels().restore(DataBase::value(SimpleID::encode(m_user->id()) + LS("/channels")).toByteArray());
+
   packets.append(reply(Ch::server())->data(Core::stream()));
   packets.append(reply(m_user)->data(Core::stream()));
-
-  m_user->channels().restore(DataBase::value(SimpleID::encode(m_user->id()) + LS("/channels")).toByteArray());
 
   if (m_user->channels().size())
     m_pending.append(user);
@@ -361,6 +362,8 @@ ChannelPacket NodeChannels::reply(ChatChannel channel, bool forbidden, const QSt
     else
       packet->setStatus(Notice::Forbidden);
   }
+  else if (m_user == channel)
+    packet->channels = channel->channels().all(SimpleID::ChannelId);
 
   if (packet->status() == Notice::OK)
     packet->setData(channel->feeds().f(m_user.data()));

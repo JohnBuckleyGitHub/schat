@@ -31,26 +31,32 @@ namespace Hooks
 
 ClientImpl::ClientImpl(QObject *parent)
   : Client(parent)
+  , m_setup(false)
 {
   ChatClient::i()->hooks()->add(this);
+
+  connect(ChatClient::channels(), SIGNAL(channel(QByteArray)), SLOT(channel(QByteArray)));
 }
 
 
-/*!
- * \deprecated Вход в главный канал по имени а не по идентификатору, является устаревшим и нужен для совместимости с серверами версии ниже 1.99.56.
- */
 void ClientImpl::setup()
 {
-  const int policy = ChatClient::channels()->policy();
+  m_setup = true;
+}
 
-  if (policy & ServerFeed::MainChannelPolicy && policy & ServerFeed::ForcedJoinPolicy) {
-    const QByteArray id = ChatClient::channels()->mainId();
-    if (id.isEmpty()) {
-      const QStringList path = ChatUrls::path(ChatClient::io()->url());
-      ChatClient::channels()->join(path.isEmpty() ? LS("Main") : path.at(0));
+
+void ClientImpl::channel(const QByteArray &id)
+{
+  if (m_setup && ChatClient::id() == id) {
+    m_setup                  = false;
+    ClientChannels *channels = ChatClient::channels();
+    const int policy         = channels->policy();
+
+    if (policy & ServerFeed::MainChannelPolicy && policy & ServerFeed::ForcedJoinPolicy) {
+      const QByteArray id = channels->mainId();
+      if (!channels->joined().contains(id))
+        channels->join(id);
     }
-    else
-      ChatClient::channels()->join(id);
   }
 }
 

@@ -334,17 +334,20 @@ ClientChannel ClientChannels::add()
 
 /*!
  * Чтение заголовка канала.
- *
- * \deprecated Способ определения главного канала, на основе того данные какого канала были получены первыми является устаревшим и нужен для совместимости с серверами версии ниже 1.99.56.
  */
 void ClientChannels::channel()
 {
   ClientChannel channel = add();
-  if (channel->type() == SimpleID::ChannelId && m_mainId.isEmpty())
-    m_mainId = channel->id();
 
   if (!m_joined.contains(channel->id()))
     m_joined += channel->id();
+
+  if (ChatClient::id() == channel->id()) {
+    foreach (const QByteArray &id, m_packet->channels) {
+      if (!m_joined.contains(id))
+        m_joined.append(id);
+    }
+  }
 
   emit this->channel(channel->id());
 

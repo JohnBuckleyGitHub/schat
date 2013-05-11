@@ -86,8 +86,8 @@ public:
   inline void remove(Client *hook) { m_hooks.removeAll(hook); }
 
   virtual bool openId(const QByteArray &id, bool &matched);
-  virtual QByteArray id();
-  virtual QByteArray serverId();
+  virtual QByteArray id() const;
+  virtual QByteArray serverId() const;
   virtual void restore();
   virtual void setup();
 

@@ -199,13 +199,13 @@ bool Client::openId(const QByteArray &id, bool &matched)
  * Эта функция будет вызвана только если не удалось получить
  * идентификатор пользователя стандартым методом.
  */
-QByteArray Client::id()
+QByteArray Client::id() const
 {
   if (m_hooks.isEmpty())
     return QByteArray();
 
   foreach (Client *hook, m_hooks) {
-    QByteArray id = hook->id();
+    const QByteArray id = hook->id();
     if (!id.isEmpty())
       return id;
   }
@@ -219,7 +219,7 @@ QByteArray Client::id()
  * Эта функция будет вызвана только если не удалось получить
  * идентификатор сервера стандартым методом.
  */
-QByteArray Client::serverId()
+QByteArray Client::serverId() const
 {
   if (m_hooks.isEmpty())
     return QByteArray();
