@@ -112,7 +112,7 @@ void ChatWindow::showChat()
 {
   SCHAT_DEBUG_STREAM(this << "showChat()")
 
-  if (!SCHAT_OPTION("Maximized").toBool()) {
+  if (!m_settings->value(SETTINGS_MAXIMIZED).toBool()) {
     setWindowState(windowState() & ~Qt::WindowMinimized);
     show();
   }
@@ -158,27 +158,29 @@ void ChatWindow::keyPressEvent(QKeyEvent *event)
 
 void ChatWindow::moveEvent(QMoveEvent *event)
 {
-  saveGeometry();
-
   QMainWindow::moveEvent(event);
+
+  saveGeometry();
 }
 
 
 void ChatWindow::resizeEvent(QResizeEvent *event)
 {
-  saveGeometry();
-
   QMainWindow::resizeEvent(event);
+
+  saveGeometry();
 }
 
 
 void ChatWindow::showEvent(QShowEvent *event)
 {
-  QRect geometry    = frameGeometry();
-  QRect available   = m_desktop->availableGeometry(this);
-  QRect intersected = available.intersected(geometry);
-  if (intersected != geometry)
-    resize(intersected.width() - (geometry.width() - width()), intersected.height() - (geometry.height() - height()));
+  if (!m_settings->value(SETTINGS_MAXIMIZED).toBool()) {
+    const QRect geometry    = frameGeometry();
+    const QRect available   = m_desktop->availableGeometry(this);
+    const QRect intersected = available.intersected(geometry);
+    if (intersected != geometry)
+      resize(intersected.width() - (geometry.width() - width()), intersected.height() - (geometry.height() - height()));
+  }
 
   QMainWindow::showEvent(event);
 }
@@ -234,7 +236,7 @@ void ChatWindow::pageChanged(AbstractTab *tab)
 
 void ChatWindow::settingsChanged(const QString &key, const QVariant &value)
 {
-  if (key == LS("Maximized")) {
+  if (key == SETTINGS_MAXIMIZED) {
     if (value.toBool())
       showMaximized();
     else
@@ -245,7 +247,7 @@ void ChatWindow::settingsChanged(const QString &key, const QVariant &value)
 
 QString ChatWindow::geometryKey() const
 {
-  int count = m_desktop->screenCount();
+  const int count = m_desktop->screenCount();
   QString out;
   for (int i = 0; i < count; ++i) {
     QRect r = m_desktop->screenGeometry(i);
@@ -262,7 +264,8 @@ QString ChatWindow::geometryKey() const
 void ChatWindow::hideChat()
 {
   SCHAT_DEBUG_STREAM(this << "hideChat()")
-  m_settings->setValue(LS("Maximized"), isMaximized(), false);
+
+  m_settings->setValue(SETTINGS_MAXIMIZED, isMaximized(), false);
   hide();
 }
 
@@ -274,7 +277,7 @@ void ChatWindow::retranslateUi()
 
 void ChatWindow::restoreGeometry()
 {
-  QVariantList data = m_settings->value(LS("Geometry/") + geometryKey()).toList();
+  const QVariantList data = m_settings->value(LS("Geometry/") + geometryKey()).toList();
 
   if (data.size() == 4) {
     move(data.at(0).toInt(), data.at(1).toInt());
@@ -286,7 +289,7 @@ void ChatWindow::restoreGeometry()
 
 void ChatWindow::saveGeometry()
 {
-  if (SCHAT_OPTION("Maximized").toBool())
+  if (isMaximized() || m_settings->value(SETTINGS_MAXIMIZED).toBool())
     return;
 
   QVariantList data;
@@ -294,6 +297,7 @@ void ChatWindow::saveGeometry()
   data.append(pos().y());
   data.append(width());
   data.append(height());
+
   m_settings->setValue(LS("Geometry/") + geometryKey(), data, false, true);
 }
 
