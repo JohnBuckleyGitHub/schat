@@ -154,9 +154,17 @@ void MessagesImpl::ready()
   }
 
   SimpleClient *client = ChatClient::io();
-  foreach (MessagePacket packet, m_undelivered) {
+  QMap<qint64, MessagePacket> sorted;
+
+  foreach (MessagePacket packet, m_undelivered)
+    sorted.insert(packet->date(), packet);
+
+  if (sorted.isEmpty())
+    return;
+
+  ChatClientLocker locker(client);
+  foreach (MessagePacket packet, sorted)
     client->send(packet, true);
-  }
 }
 
 
