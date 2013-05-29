@@ -128,9 +128,6 @@ public:
 
   /// Запись Id.
   inline void putId(const QList<QByteArray> &data) {
-    if (data.isEmpty())
-      return;
-
     put<quint32>(data.size());
     for (int i = 0; i < data.size(); ++i) {
       putId(data.at(i));
