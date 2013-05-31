@@ -213,9 +213,11 @@ bool UserView::remove(const QByteArray &id)
   if (!item)
     return false;
 
+  const int status = item->user()->status().value();
   m_model.removeRow(m_model.indexFromItem(item).row());
   m_channels.remove(id);
-  return item->user()->status() != Status::Offline;
+
+  return status != Status::Offline;
 }
 
 
