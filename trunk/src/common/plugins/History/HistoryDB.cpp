@@ -206,7 +206,7 @@ void HistoryDB::create()
   query.exec(LS(
     "CREATE TABLE IF NOT EXISTS messages ( "
     "  id         INTEGER PRIMARY KEY,"
-    "  messageId  BLOB,"
+    "  messageId  BLOB NOT NULL UNIQUE,"
     "  senderId   BLOB,"
     "  destId     BLOB,"
     "  status     INTEGER DEFAULT ( 300 ),"
