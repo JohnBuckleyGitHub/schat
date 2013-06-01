@@ -153,8 +153,8 @@ AbstractTab *TabWidget::tab(const QByteArray &name, int options, const QVariant 
     tab     = m_creators.value(name)->create(data, this);
 
     m_pages[name] = tab;
-    addTab(tab, tab->text());
     tab->setOnline();
+    addTab(tab, tab->icon(), tab->text());
 
     ChatNotify::start(Notify::PageOpen, name);
   }
@@ -237,8 +237,8 @@ ChannelBaseTab *TabWidget::channelTab(const QByteArray &id, bool create, bool sh
 
     if (tab) {
       m_channels[id] = tab;
-      addTab(tab, channel->name());
       tab->setOnline();
+      addTab(tab, tab->icon(), channel->name());
       connect(tab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
 
       if (channel->type() == SimpleID::ChannelId && isAutoPin(channel->id()))
@@ -653,8 +653,8 @@ int TabWidget::addChatTab(AbstractTab *tab)
 
   int index = indexOf(tab);
   if (index == -1) {
-    index = addTab(tab, tab->text());
     tab->setOnline();
+    index = addTab(tab, tab->icon(), tab->text());
   }
 
   setCurrentIndex(index);
