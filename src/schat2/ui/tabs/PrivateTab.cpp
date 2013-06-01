@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -32,7 +32,6 @@ PrivateTab::PrivateTab(ClientChannel channel, TabWidget *parent)
   : ChannelBaseTab(channel, LS("talk"), parent)
 {
   QVBoxLayout *mainLay = new QVBoxLayout(this);
-  mainLay->addWidget(m_findWidget);
   mainLay->addWidget(m_chatView);
   mainLay->setMargin(0);
   mainLay->setSpacing(0);
@@ -44,6 +43,14 @@ PrivateTab::PrivateTab(ClientChannel channel, TabWidget *parent)
   connect(ChatClient::channels(), SIGNAL(channel(const ChannelInfo &)), SLOT(channel(const ChannelInfo &)));
   connect(ChatClient::channels(), SIGNAL(quit(const QByteArray &)), SLOT(quit(const QByteArray &)));
   connect(ChatClient::i(), SIGNAL(online()), SLOT(online()));
+}
+
+
+void PrivateTab::layoutFindWidget()
+{
+  QVBoxLayout *mainLay = qobject_cast<QVBoxLayout *>(layout());
+  if (mainLay)
+    mainLay->insertWidget(0, m_findWidget);
 }
 
 

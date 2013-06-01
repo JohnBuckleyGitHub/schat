@@ -44,6 +44,7 @@
 ChannelBaseTab::ChannelBaseTab(ClientChannel channel, const QString &type, TabWidget *parent)
   : AbstractTab(channel->id(), type, parent)
   , m_joined(true)
+  , m_findWidget(0)
   , m_channel(channel)
 {
   m_options |= CanSendMessage;
@@ -56,8 +57,6 @@ ChannelBaseTab::ChannelBaseTab(ClientChannel channel, const QString &type, TabWi
     file = "qrc:/html/" + page();
 
   m_chatView = new ChatView(channel->id(), file, this);
-  m_findWidget = new FindWidget(this);
-  m_findWidget->setVisible(false);
   setIcon(channelIcon());
 
   m_serverId = ChatClient::serverId();
@@ -68,8 +67,6 @@ ChannelBaseTab::ChannelBaseTab(ClientChannel channel, const QString &type, TabWi
   connect(ChatClient::i(), SIGNAL(offline()), SLOT(offline()));
   connect(ChatAlerts::i(), SIGNAL(countChanged(int,int,QByteArray)), SLOT(countChanged(int,int,QByteArray)));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
-  connect(m_findWidget, SIGNAL(find(QString,bool)), SLOT(find(QString,bool)));
-  connect(m_findWidget, SIGNAL(hidden()), SLOT(hidden()));
 
   ChatNotify::start(Notify::ChannelTabCreated, id(), true);
 }
@@ -153,6 +150,15 @@ void ChannelBaseTab::countChanged(int total, int count, const QByteArray &channe
 
 void ChannelBaseTab::find(const QString &text, bool forward)
 {
+  if (!m_findWidget) {
+    m_findWidget = new FindWidget(this);
+
+    connect(m_findWidget, SIGNAL(find(QString,bool)), SLOT(find(QString,bool)));
+    connect(m_findWidget, SIGNAL(hidden()), SLOT(hidden()));
+
+    layoutFindWidget();
+  }
+
   m_findWidget->setPalette(m_chatView->find(text, forward));
 
   if (!m_findWidget->isVisible())
@@ -176,10 +182,10 @@ void ChannelBaseTab::notify(const Notify &notify)
       AlertMessage::show(LS("<b>Id:</b> ") + SimpleID::encode(id()), ALERT_MESSAGE_INFO, id());
   }
   else if (notify.type() == Notify::Find && notify.data().toByteArray() == id()) {
-    find(m_findWidget->text());
+    find(m_findWidget ? m_findWidget->text(): QString());
   }
   else if (notify.type() == Notify::FindPrevious && notify.data().toByteArray() == id()) {
-    find(m_findWidget->text(), false);
+    find(m_findWidget ? m_findWidget->text(): QString(), false);
   }
   else if (notify.type() == Notify::UpdateChannelIcon) {
     setIcon(channelIcon());
