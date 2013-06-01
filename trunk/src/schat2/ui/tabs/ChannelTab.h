@@ -38,6 +38,9 @@ public:
   bool isActive() const;
   void setOnline(bool online = true);
 
+protected:
+  void layoutFindWidget();
+
 private slots:
   void channel(const QByteArray &id);
   void channels(const QList<QByteArray> &channels);

@@ -41,7 +41,6 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
   m_userView = new UserView(channel, this);
 
   m_leftLayout = new QVBoxLayout(this);
-  m_leftLayout->addWidget(m_findWidget);
   m_leftLayout->addWidget(m_chatView);
   m_leftLayout->setMargin(0);
   m_leftLayout->setSpacing(0);
@@ -85,6 +84,12 @@ void ChannelTab::setOnline(bool online)
     m_userView->clear();
 
   ChannelBaseTab::setOnline(online);
+}
+
+
+void ChannelTab::layoutFindWidget()
+{
+  m_leftLayout->insertWidget(0, m_findWidget);
 }
 
 
