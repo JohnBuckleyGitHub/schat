@@ -57,7 +57,7 @@ public:
 
 signals:
   void feed(const QVariantMap &data);
-  void message(const QVariantMap &data);
+  void messages(const QVariantList &messages);
   void reload();
 
 protected:
@@ -73,6 +73,7 @@ private slots:
   void populateJavaScriptWindowObject();
   void settingsChanged(const QString &key, const QVariant &value);
   void start();
+  void startTasks();
 
 private:
   QVariantMap addHint(const Message &message);
@@ -91,7 +92,7 @@ private:
   QMap<QString, QMap<qint64, QByteArray> > m_messages; ///< Сортированные по времени сообщения.
   QQueue<QString> m_pendingJs;                         ///< Очередь JavaScript кода ожидающего загрузки документа.
   QQueue<QVariantMap> m_pendingFeeds;                  ///< Очередь данных фидов ожидающих загрузки документа.
-  QQueue<QVariantMap> m_pendingMessages;               ///< Очередь сообщений ожидающих загрузки документа.
+  QVariantList m_messagesQueue;                        ///< Очередь сообщений ожидающих загрузки документа.
   QStringList m_jsfiles;                               ///< Дополнительные динамически загружаемые JavaScript скрипты.
 };
 
