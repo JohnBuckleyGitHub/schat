@@ -16,12 +16,18 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+//#define DEBUG_PERFORMANCE
+
 #include <QAction>
 #include <QContextMenuEvent>
 #include <QEvent>
 #include <QMenu>
 #include <QTimer>
 #include <QWebFrame>
+
+#if defined(DEBUG_PERFORMANCE)
+# include <QDebug>
+#endif
 
 #include "ChatCore.h"
 #include "ChatNotify.h"
@@ -101,10 +107,9 @@ void ChatView::add(const Message &msg)
   QVariantMap data = msg.data();
   data[LS("Hint")] = addHint(msg);
 
-  if (!m_loaded)
-    m_pendingMessages.enqueue(data);
-  else
-    emit message(data);
+  m_messagesQueue.append(data);
+  if (m_loaded && m_messagesQueue.size() == 1)
+    QTimer::singleShot(0, this, SLOT(startTasks()));
 }
 
 
@@ -184,8 +189,7 @@ void ChatView::loadFinished()
   while (!m_pendingJs.isEmpty())
     page()->mainFrame()->evaluateJavaScript(m_pendingJs.dequeue());
 
-  while (!m_pendingMessages.isEmpty())
-    emit message(m_pendingMessages.dequeue());
+  QTimer::singleShot(0, this, SLOT(startTasks()));
 
   while (!m_pendingFeeds.isEmpty())
     emit feed(m_pendingFeeds.dequeue());
@@ -342,6 +346,31 @@ void ChatView::settingsChanged(const QString &key, const QVariant &value)
 void ChatView::start()
 {
   ChatViewHooks::add(this);
+}
+
+
+void ChatView::startTasks()
+{
+# if defined(DEBUG_PERFORMANCE)
+  QTime t;
+  if (!m_messagesQueue.isEmpty())
+    qDebug() << "ChatView::startTasks()" << SimpleID::encode(m_id);
+# endif
+
+  if (!m_messagesQueue.isEmpty()) {
+#   if defined(DEBUG_PERFORMANCE)
+    t.start();
+#   endif
+
+    emit messages(m_messagesQueue);
+
+#   if defined(DEBUG_PERFORMANCE)
+    const int elapsed = t.elapsed();
+    qDebug() << "ChatView::m_messagesQueue" << m_messagesQueue.size() << "items" << elapsed << "ms";
+#   endif
+
+    m_messagesQueue.clear();
+  }
 }
 
 

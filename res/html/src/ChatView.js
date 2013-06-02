@@ -332,6 +332,13 @@ var Messages = {
   },
 
 
+  addMessages: function(messages)
+  {
+    for (var i = 0; i < messages.length; i++)
+      Messages.addMessage(messages[i]);
+  },
+
+
   /*
    * Добавление сырого сообщения.
    *
@@ -939,5 +946,5 @@ if (typeof ChatView === 'undefined') {
 }
 else {
   ChatView.reload.connect(Messages.reload);
-  ChatView.message.connect(Messages.addMessage);
+  ChatView.messages.connect(Messages.addMessages);
 }
