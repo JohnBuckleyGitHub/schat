@@ -54,6 +54,7 @@ private:
   static QList<QByteArray> ids(QSqlQuery &query);
   static qint64 V2();
   static qint64 V3();
+  static qint64 V4();
   static void version();
 
   QList<QRunnable*> m_tasks;     ///< Задачи для выполнения в отдельном потоке.

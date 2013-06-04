@@ -64,15 +64,15 @@ bool NodeMessagesDB::open()
   query.exec(LS(
     "CREATE TABLE IF NOT EXISTS messages ( "
     "  id         INTEGER PRIMARY KEY,"
-    "  messageId  BLOB,"
-    "  senderId   BLOB,"
-    "  destId     BLOB,"
+    "  messageId  BLOB NOT NULL UNIQUE,"
+    "  senderId   BLOB NOT NULL,"
+    "  destId     BLOB NOT NULL,"
     "  status     INTEGER DEFAULT ( 200 ),"
     "  date       INTEGER,"
     "  command    TEXT,"
     "  text       TEXT,"
-    "  plain      TEXT,"
-    "  data       BLOB"
+    "  data       BLOB,"
+    "  blob       BLOB"
     ");"));
 
   version();
@@ -325,8 +325,8 @@ void NodeMessagesDB::version()
 
   qint64 version = query.value(0).toLongLong();
   if (!version) {
-    query.exec(LS("PRAGMA user_version = 3"));
-    version = 3;
+    query.exec(LS("PRAGMA user_version = 4"));
+    version = 4;
     return;
   }
 
@@ -334,6 +334,7 @@ void NodeMessagesDB::version()
 
   if (version == 1) version = V2();
   if (version == 2) version = V3();
+  if (version == 3) version = V4();
 }
 
 
@@ -389,6 +390,37 @@ qint64 NodeMessagesDB::V3()
 }
 
 
+qint64 NodeMessagesDB::V4()
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.exec(LS("BEGIN TRANSACTION;"));
+  query.exec(LS("ALTER TABLE messages RENAME TO messages_tmp;"));
+  query.exec(LS(
+    "CREATE TABLE messages ( "
+    "  id         INTEGER PRIMARY KEY,"
+    "  messageId  BLOB NOT NULL UNIQUE,"
+    "  senderId   BLOB NOT NULL,"
+    "  destId     BLOB NOT NULL,"
+    "  status     INTEGER DEFAULT ( 200 ),"
+    "  date       INTEGER,"
+    "  command    TEXT,"
+    "  text       TEXT,"
+    "  data       BLOB,"
+    "  blob       BLOB"
+    ");"
+  ));
+
+  query.exec(LS("INSERT INTO messages (messageId, senderId, destId, status, date, command, text, data) SELECT messageId, senderId, destId, status, date, command, text, data FROM messages_tmp;"));
+  query.exec(LS("DROP TABLE messages_tmp;"));
+  query.exec(LS("PRAGMA user_version = 4"));
+  query.exec(LS("COMMIT;"));
+
+  query.exec(LS("VACUUM;"));
+
+  return 4;
+}
+
+
 AddMessageTask::AddMessageTask(const MessageNotice &packet, int status)
   : QRunnable()
   , m_status(status)
@@ -400,8 +432,8 @@ AddMessageTask::AddMessageTask(const MessageNotice &packet, int status)
 void AddMessageTask::run()
 {
   QSqlQuery query(QSqlDatabase::database(NodeMessagesDB::id()));
-  query.prepare(LS("INSERT INTO messages (messageId,  senderId,  destId,  status,  date,  command,  text,  plain,  data) "
-                                 "VALUES (:messageId, :senderId, :destId, :status, :date, :command, :text, :plain, :data);"));
+  query.prepare(LS("INSERT INTO messages (messageId,  senderId,  destId,  status,  date,  command,  text,  data) "
+                                 "VALUES (:messageId, :senderId, :destId, :status, :date, :command, :text, :data);"));
 
   query.bindValue(LS(":messageId"), SimpleID::encode(m_packet.id()));
   query.bindValue(LS(":senderId"),  SimpleID::encode(m_packet.sender()));
@@ -410,7 +442,6 @@ void AddMessageTask::run()
   query.bindValue(LS(":date"),      m_packet.date());
   query.bindValue(LS(":command"),   m_packet.command());
   query.bindValue(LS(":text"),      m_packet.text());
-  query.bindValue(LS(":plain"),     PlainTextFilter::filter(m_packet.text()));
   query.bindValue(LS(":data"),      m_packet.raw());
   query.exec();
 }
