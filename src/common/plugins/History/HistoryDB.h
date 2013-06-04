@@ -57,6 +57,7 @@ private:
 
   static qint64 V2();
   static qint64 V3();
+  static qint64 V4();
 
   QList<QRunnable*> m_tasks; ///< Задачи для выполнения в отдельном потоке.
   static HistoryDB *m_self;  ///< Указатель на себя.

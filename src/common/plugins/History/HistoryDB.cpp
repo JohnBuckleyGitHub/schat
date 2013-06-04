@@ -207,14 +207,14 @@ void HistoryDB::create()
     "CREATE TABLE IF NOT EXISTS messages ( "
     "  id         INTEGER PRIMARY KEY,"
     "  messageId  BLOB NOT NULL UNIQUE,"
-    "  senderId   BLOB,"
-    "  destId     BLOB,"
+    "  senderId   BLOB NOT NULL,"
+    "  destId     BLOB NOT NULL,"
     "  status     INTEGER DEFAULT ( 300 ),"
     "  date       INTEGER,"
     "  command    TEXT,"
     "  text       TEXT,"
-    "  plain      TEXT,"
-    "  data       BLOB"
+    "  data       BLOB,"
+    "  blob       BLOB"
     ");"
   ));
 
@@ -243,8 +243,8 @@ void HistoryDB::version()
 
   qint64 version = query.value(0).toLongLong();
   if (!version) {
-    query.exec(LS("PRAGMA user_version = 3"));
-    version = 3;
+    query.exec(LS("PRAGMA user_version = 4"));
+    version = 4;
     return;
   }
 
@@ -252,6 +252,7 @@ void HistoryDB::version()
 
   if (version == 1) version = V2();
   if (version == 2) version = V3();
+  if (version == 3) version = V4();
 }
 
 
@@ -291,6 +292,35 @@ qint64 HistoryDB::V3()
 }
 
 
+qint64 HistoryDB::V4()
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.exec(LS("BEGIN TRANSACTION;"));
+  query.exec(LS("DROP TABLE IF EXISTS messages;"));
+  query.exec(LS(
+    "CREATE TABLE messages ( "
+    "  id         INTEGER PRIMARY KEY,"
+    "  messageId  BLOB NOT NULL UNIQUE,"
+    "  senderId   BLOB NOT NULL,"
+    "  destId     BLOB NOT NULL,"
+    "  status     INTEGER DEFAULT ( 300 ),"
+    "  date       INTEGER,"
+    "  command    TEXT,"
+    "  text       TEXT,"
+    "  data       BLOB,"
+    "  blob       BLOB"
+    ");"
+  ));
+
+  query.exec(LS("PRAGMA user_version = 4"));
+  query.exec(LS("COMMIT;"));
+
+  query.exec(LS("VACUUM;"));
+
+  return 4;
+}
+
+
 history::AddMessage::AddMessage(MessagePacket packet)
   : QRunnable()
   , m_packet(*packet)
@@ -310,8 +340,8 @@ void history::AddMessage::run()
   if (query.first() && query.value(0).toLongLong() > 0)
     return;
 
-  query.prepare(LS("INSERT INTO messages (messageId, senderId, destId, status, date, command, text, plain, data) "
-                     "VALUES (:messageId, :senderId, :destId, :status, :date, :command, :text, :plain, :data);"));
+  query.prepare(LS("INSERT INTO messages (messageId, senderId, destId, status, date, command, text, data) "
+                     "VALUES (:messageId, :senderId, :destId, :status, :date, :command, :text, :data);"));
 
   query.bindValue(LS(":messageId"), id);
   query.bindValue(LS(":senderId"),  SimpleID::encode(m_packet.sender()));
@@ -320,7 +350,6 @@ void history::AddMessage::run()
   query.bindValue(LS(":date"),      m_packet.date());
   query.bindValue(LS(":command"),   m_packet.command());
   query.bindValue(LS(":text"),      m_packet.text());
-  query.bindValue(LS(":plain"),     PlainTextFilter::filter(m_packet.text()));
   query.bindValue(LS(":data"),      m_packet.raw());
   query.exec();
 }
