@@ -73,7 +73,8 @@ bool NodeMessagesDB::open()
     "  text       TEXT,"
     "  data       BLOB,"
     "  blob       BLOB"
-    ");"));
+    ");"
+  ));
 
   version();
   return true;
