@@ -76,6 +76,13 @@ bool NodeMessagesDB::open()
     ");"
   ));
 
+  query.exec(LS(
+    "CREATE INDEX IF NOT EXISTS idx_messages ON messages ( "
+    "  senderId,"
+    "  destId"
+    ");"
+  ));
+
   version();
   return true;
 }
