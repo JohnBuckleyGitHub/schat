@@ -334,8 +334,21 @@ var Messages = {
 
   addMessages: function(messages)
   {
-    for (var i = 0; i < messages.length; i++)
-      Messages.addMessage(messages[i]);
+    if (!messages.length)
+      return;
+
+    if (messages.length > 1) {
+      var scroll = Settings.scroll;
+      Settings.scroll = false;
+
+      for (var i = 0; i < messages.length; i++)
+        Messages.addMessage(messages[i]);
+
+      Settings.scroll = scroll;
+      alignChat();
+    }
+    else
+      Messages.addMessage(messages[0]);
   },
 
 
