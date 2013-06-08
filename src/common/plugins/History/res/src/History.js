@@ -40,7 +40,6 @@ function HistoryScroll(type, data) {
 
     if (this.id != '') {
       Settings.scrollTo = this.id;
-      document.getElementById(this.id).scrollIntoView();
     }
   }
   else
