@@ -241,18 +241,13 @@ Pages.onInfo.push(function() {
 var Messages = {
   onAdd: [],
   unhandled: [],
+  added: [],    // Список идентификаторов добавленных сообщений.
 
   /*
    * Вызов хуков добавления сообщения.
    */
   add: function(id) {
-    for (var i = 0; i < Messages.onAdd.length; i++)
-      Messages.onAdd[i](id);
-
-    alignChat();
-
-    if (Settings.scrollTo !== null)
-      document.getElementById(Settings.scrollTo).scrollIntoView();
+    Messages.added.push(id);
   },
 
 
@@ -329,7 +324,6 @@ var Messages = {
     if (func == undefined)
       return;
 
-    Settings.scrollTo = null;
     if (!Messages.hasOwnProperty(func))
       return;
 
@@ -350,20 +344,33 @@ var Messages = {
     if (!messages.length)
       return;
 
-    if (messages.length > 1) {
-      var scroll = Settings.scroll;
-      Settings.scroll = false;
+    var self     = Messages;
+    var scroll   = Settings.scroll;
+    var scrollTo = Settings.scrollTo;
 
-      for (var i = 0; i < messages.length; i++)
-        Messages.addMessage(messages[i]);
+    Settings.scroll   = false;
+    Settings.scrollTo = null;
 
-      Settings.scroll = scroll;
+    for (var i = 0; i < messages.length; i++)
+      self.addMessage(messages[i]);
 
-      if (Settings.scrollTo === null)
-        alignChat();
+    for (i = 0; i < self.added.length; i++) {
+      for (var j = 0; j < self.onAdd.length; j++)
+        self.onAdd[j](self.added[i]);
     }
-    else
-      Messages.addMessage(messages[0]);
+
+    Settings.scroll = scroll;
+
+    if (self.added.length) {
+      self.added.length = 0;
+    }
+    else if (Settings.scrollTo === null)
+      Settings.scrollTo = scrollTo;
+
+    alignChat();
+
+    if (Settings.scrollTo !== null)
+      document.getElementById(Settings.scrollTo).scrollIntoView();
   },
 
 
