@@ -31,7 +31,7 @@ Messages.day = function(day) {
              '  <div class="day-close"><a class="close" href="#">&times;</a></div>' +
              '  <div class="day-badge">0</div>' +
              '</div>' +
-             '<div class="day-body"></div></div>';
+             '<div class="day-body" id="day-body-' + day + '"></div></div>';
 
   if (Messages.days.indexOf(day) == -1) {
     Messages.days.push(day);
@@ -102,16 +102,9 @@ Messages.day = function(day) {
 };
 
 
-/*
- * Добавление сырого сообщения.
- *
- * \param html HTML текст сообщения.
- * \param id   Идентификатор сообщения.
- * \param day  День сообщения.
- */
-Messages.addRawMessage = function(html, id, day) {
-  $('#day-' + day + ' .day-body').append(html);
-  Messages.add(id);
+Messages.addRawMessage = function(block, day) {
+  document.getElementById('day-body-' + day).appendChild(block);
+  Messages.add(block.id);
 };
 
 

@@ -269,8 +269,12 @@ var Messages = {
       return;
     }
 
-    var html = '<div class="container ' + json.Type + '-type" id="' + json.Id + '" data-time="' + json.Date + '">';
-    html += '<div class="blocks ';
+    var block = document.createElement('div');
+    block.id = json.Id;
+    block.setAttribute('class', 'container ' + json.Type + '-type');
+    block.setAttribute('data-time', json.Date);
+
+    var html = '<div class="blocks ';
     html += json.Direction;
 
     if (json.Status !== undefined)
@@ -286,9 +290,10 @@ var Messages = {
     html += '<span class="msg-body-block">' + json.Text + '</span>';
 
     html += '</div>';
-    html += '</div>';
 
-    Messages.addHintedRawMessage(html, json.Hint, json.Id);
+    block.innerHTML = html;
+
+    Messages.addHintedRawMessage(block, json.Hint);
 
     if (json.hasOwnProperty('Status') && json.Status == 'undelivered')
       return;
@@ -297,15 +302,21 @@ var Messages = {
   },
 
 
-  // Добавление сырого сообщения, с подсказкой по размещению.
-  addHintedRawMessage: function(html, hint, id)
+  /*
+   * Добавление сырого сообщения, с подсказкой по размещению.
+   */
+  addHintedRawMessage: function(block, hint)
   {
-    if (hint.Hint == 'before' && document.getElementById(hint.Id) !== null) {
-      $('#' + hint.Id).before(html);
-      Messages.add(id);
+    if (hint.Hint == 'before') {
+      var before = document.getElementById(hint.Id);
+      if (before !== null) {
+        before.parentNode.insertBefore(block, before);
+        Messages.add(block.id);
+        return;
+      }
     }
-    else
-      Messages.addRawMessage(html, id, hint.Day);
+
+    Messages.addRawMessage(block, hint.Day);
   },
 
 
@@ -328,7 +339,9 @@ var Messages = {
 
       Messages[func](json);
     }
-    catch (e) {}
+    catch (e) {
+      console.log(e);
+    }
   },
 
 
@@ -345,7 +358,9 @@ var Messages = {
         Messages.addMessage(messages[i]);
 
       Settings.scroll = scroll;
-      alignChat();
+
+      if (Settings.scrollTo === null)
+        alignChat();
     }
     else
       Messages.addMessage(messages[0]);
@@ -354,30 +369,27 @@ var Messages = {
 
   /*
    * Добавление сырого сообщения.
-   *
-   * \param html HTML текст сообщения.
-   * \param id   Идентификатор сообщения.
-   * \param day  День сообщения.
    */
-  addRawMessage: function (html, id, day)
+  addRawMessage: function (block, day)
   {
-    $('#Chat').append(html);
-    Messages.add(id);
+    document.getElementById('Chat').appendChild(block);
+    Messages.add(block.id);
   },
 
 
   // Добавление сервисного сообщения.
   addServiceMessage: function(json)
   {
-    var html = '<div class="container ' + json.Type + '-type" id="' + json.Id + '">' +
-                 '<div class="blocks ' + (json.Extra !== undefined ? json.Extra : '') + '">' +
-                   DateTime.template(json.Date, false) +
-                   Messages.nameBlock(json.Author) +
-                   '<span class="msg-body-block">' + json.Text + '</span>' +
-                 '</div>' +
-               '</div>';
+    var block = document.createElement('div');
+    block.id = json.Id;
+    block.setAttribute('class', 'container ' + json.Type + '-type');
+    block.innerHTML = '<div class="blocks ' + (json.Extra !== undefined ? json.Extra : '') + '">' +
+                        DateTime.template(json.Date, false) +
+                        Messages.nameBlock(json.Author) +
+                        '<span class="msg-body-block">' + json.Text + '</span>' +
+                      '</div>';
 
-    Messages.addRawMessage(html, json.Id, json.Hint.Day);
+    Messages.addRawMessage(block, json.Hint.Day);
   },
 
 
@@ -385,19 +397,20 @@ var Messages = {
    * Добавление нового уведомления.
    */
   addAlertMessage: function(json) {
-    var html = '<div class="container ' + json.Type + '-type" id="' + json.Id + '">' +
-                 '<div class="blocks ' + (json.Extra !== undefined ? json.Extra : '') + '">' +
-                   '<div class="alert-box">' +
-                     '<div class="alert-box-icon"></div>' +
-                     '<div class="alert-box-body">' + json.Text + '</div>' +
-                     '<div class="alert-box-buttons">' +
-                       '<a class="alert-box-close" href="#" data-id="' + json.Id + '"></a>' +
-                     '</div>' +
-                   '</div>' +
-                 '</div>' +
-               '</div>';
+    var block = document.createElement('div');
+    block.id = json.Id;
+    block.setAttribute('class', 'container ' + json.Type + '-type');
+    block.innerHTML = '<div class="blocks ' + (json.Extra !== undefined ? json.Extra : '') + '">' +
+                        '<div class="alert-box">' +
+                          '<div class="alert-box-icon"></div>' +
+                          '<div class="alert-box-body">' + json.Text + '</div>' +
+                          '<div class="alert-box-buttons">' +
+                            '<a class="alert-box-close" href="#" data-id="' + json.Id + '"></a>' +
+                          '</div>' +
+                        '</div>' +
+                      '</div>';
 
-    Messages.addRawMessage(html, json.Id, json.Hint.Day);
+    Messages.addRawMessage(block, json.Hint.Day);
   },
 
 

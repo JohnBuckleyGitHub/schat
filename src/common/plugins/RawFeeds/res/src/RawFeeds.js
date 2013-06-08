@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright (c) 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright (c) 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -81,8 +81,11 @@ RawFeeds = {
 
 Messages.addRawFeedsMessage = function(json)
 {
-  var html = '<div class="container ' + json.Type + '-type" id="' + json.Id + '">';
-  html += '<div class="blocks ';
+  var block = document.createElement('div');
+  block.id = json.Id;
+  block.setAttribute('class', 'container ' + json.Type + '-type');
+
+  var html = '<div class="blocks ';
   if (json.Extra !== undefined)
     html += json.Extra;
 
@@ -106,9 +109,10 @@ Messages.addRawFeedsMessage = function(json)
 
   html += '</div>';
   html += '</div>';
-  html += '</div>';
 
-  Messages.addRawMessage(html, json.Id, json.Hint.Day);
+  block.innerHTML = html;
+
+  Messages.addRawMessage(block, json.Hint.Day);
   RawFeeds.raw(json);
 
   if (command == 'feed')

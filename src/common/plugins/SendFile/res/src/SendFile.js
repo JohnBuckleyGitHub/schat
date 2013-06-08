@@ -142,22 +142,27 @@ Messages.addFileMessage = function(json)
 
   var imageId = SimpleChat.randomId();
 
-  var html = '<div class="container ' + json.Type + '-type" id="' + json.Id + '" data-time="' + json.Date + '">';
-  html += '<div class="blocks ' + json.Direction + '">';
+  var block = document.createElement('div');
+  block.id = json.Id;
+  block.setAttribute('class', 'container ' + json.Type + '-type');
+  block.setAttribute('data-time', json.Date);
+
+  var html = '<div class="blocks ' + json.Direction + '">';
   html += '<div class="file-sender">' + DateTime.template(json.Date, json.Day) + Messages.nameBlock(json.Author) + '</div>';
   html += '<div class="file-icon"><img id="' + imageId + '" src="" width="16" height="16" alt="" /></div>';
   html += '<div class="file-block"><span class="file-name file-only-name">' + json.File + '</span><br><span class="file-state file-state-inactive">&nbsp;</span></div>';
   html += '<div class="file-buttons btn-group"></div>';
   html += '<div class="file-progress"><div class="bar"></div></div><div style="clear:both;"></div>';
-  html += '</div></div>';
+  html += '</div>';
 
-  var id = json.Id;
-  Messages.addHintedRawMessage(html, json.Hint, id);
+  block.innerHTML = html;
+
+  Messages.addHintedRawMessage(block, json.Hint);
   if (json.WeakId === false)
     ChatView.setLastMessage(json.Date);
 
-  $('#' + id).data('imageId', imageId);
-  SendFileUtils.setFileIcon(id);
+  $('#' + json.Id).data('imageId', imageId);
+  SendFileUtils.setFileIcon(json.Id);
 };
 
 
