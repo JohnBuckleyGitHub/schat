@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ ${Section}
   File "${SCHAT_SOURCE}\QtWebKit4.dll"
   File "${SCHAT_SOURCE}\ssleay32.dll"
   File "${SCHAT_SOURCE}\zlib.dll"
+  File "${SCHAT_SOURCE}\qt.conf"
 
   !if ${SCHAT_VC100} == 1
     File "${SCHAT_SOURCE}\msvcp100.dll"
@@ -45,6 +46,9 @@ ${Section}
 
   SetOutPath "$INSTDIR\plugins\qt\sqldrivers"
   File "${SCHAT_SOURCE}\plugins\qt\sqldrivers\qsqlite4.dll"
+
+  SetOutPath "$INSTDIR\plugins\qt\bearer"
+  File "${SCHAT_SOURCE}\plugins\qt\bearer\qgenericbearer4.dll"
 ${SectionEnd}
 ${BodyEnd}
 
@@ -60,15 +64,18 @@ ${Uninstall}
   Delete "$INSTDIR\ssleay32.dll"
   Delete "$INSTDIR\zlib1.dll"
   Delete "$INSTDIR\zlib.dll"
+  Delete "$INSTDIR\qt.conf"
   Delete "$INSTDIR\msvcp100.dll"
   Delete "$INSTDIR\msvcr100.dll"
   Delete "$INSTDIR\plugins\qt\imageformats\qgif4.dll"
   Delete "$INSTDIR\plugins\qt\imageformats\qico4.dll"
   Delete "$INSTDIR\plugins\qt\imageformats\qjpeg4.dll"
   Delete "$INSTDIR\plugins\qt\sqldrivers\qsqlite4.dll"
+  Delete "$INSTDIR\plugins\qt\bearer\qgenericbearer4.dll"
 
   RMDir "$INSTDIR\plugins\qt\imageformats"
   RMDir "$INSTDIR\plugins\qt\sqldrivers"
+  RMDir "$INSTDIR\plugins\qt\bearer"
   RMDir "$INSTDIR\plugins\qt"
   RMDir "$INSTDIR\plugins"
 ${UninstallEnd}
