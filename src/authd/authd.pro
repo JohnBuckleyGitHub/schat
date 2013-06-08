@@ -47,17 +47,15 @@ unix:!macx {
   js.files += ../../res/www/js/html5.js
   js.files += ../../res/www/js/main.js
   js.files += ../../res/www/js/result.js
+  js.files += ../../res/www/js/jquery.min.js
   js.path = $${PREFIX}/share/schatd2/www/js
-
-  jquery.files += ../../res/html/js/jquery-1.9.1.min.js
-  jquery.path = $${PREFIX}/share/schatd2/www/js
 
   other.files += ../../res/www/receiver.html
   other.files += ../../res/www/favicon.ico
   other.path = $${PREFIX}/share/schatd2/www
 
   target.path += $${PREFIX}/sbin
-  INSTALLS += target css img js other jquery
+  INSTALLS += target css img js other
 }
 
 win32 {
@@ -75,17 +73,15 @@ win32 {
   js.files += ../../res/www/js/html5.js
   js.files += ../../res/www/js/main.js
   js.files += ../../res/www/js/result.js
+  js.files += ../../res/www/js/jquery.min.js
   js.path = ../../os/win32/schatd2/www/js
-
-  jquery.files += ../../res/html/js/jquery-1.9.1.min.js
-  jquery.path = ../../os/win32/schatd2/www/js
 
   other.files += ../../res/www/receiver.html
   other.files += ../../res/www/favicon.ico
   other.path = ../../os/win32/schatd2/www
 
   target.path += ../../os/win32/schatd2/
-  INSTALLS += target css img js other jquery
+  INSTALLS += target css img js other
 }
 
 HEADERS = \

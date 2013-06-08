@@ -149,7 +149,7 @@ Section
 
   SetOutPath "$INSTDIR\www\js"
   File "${SCHAT_SOURCE}\www\js\html5.js"
-  File "${SCHAT_SOURCE}\www\js\jquery-1.9.1.min.js"
+  File "${SCHAT_SOURCE}\www\js\jquery.min.js"
   File "${SCHAT_SOURCE}\www\js\main.js"
   File "${SCHAT_SOURCE}\www\js\result.js"
 
