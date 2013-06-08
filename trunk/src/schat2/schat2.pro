@@ -160,6 +160,7 @@ win32 {
     qt.files += $$[QT_INSTALL_PREFIX]/bin/QtNetwork4.dll
     qt.files += $$[QT_INSTALL_PREFIX]/bin/QtSql4.dll
     qt.files += $$[QT_INSTALL_PREFIX]/bin/QtWebKit4.dll
+    qt.files += ../../os/win32/qt.conf
   }
 
   qt.path += ../../os/win32/schat2/
@@ -182,13 +183,20 @@ win32 {
   }
   sqldrivers.path += ../../os/win32/schat2/plugins/qt/sqldrivers
 
+  greaterThan(QT_MAJOR_VERSION, 4) {
+    bearer.files += $$[QT_INSTALL_PREFIX]/plugins/bearer/qgenericbearer.dll
+  } else {
+    bearer.files += $$[QT_INSTALL_PREFIX]/plugins/bearer/qgenericbearer4.dll
+  }
+  bearer.path += ../../os/win32/schat2/plugins/qt/bearer
+
   doc.files += ../../res/doc/ChangeLog.html
   doc.path += ../../os/win32/schat2/doc/
 
   sounds.path += ../../os/win32/schat2/sounds/
 
   target.path += ../../os/win32/schat2/
-  INSTALLS += target translations qt imageformats sqldrivers doc sounds
+  INSTALLS += target translations qt imageformats sqldrivers bearer doc sounds
 
   greaterThan(QT_MAJOR_VERSION, 4) {
     platforms.files += $$[QT_INSTALL_PREFIX]/plugins/platforms/qwindows.dll
