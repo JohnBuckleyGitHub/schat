@@ -24,6 +24,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webkitwidgets
 
 HEADERS  = \
    SendFileAction.h \
+   SendFileChatView.h \
    SendFileDB.h \
    SendFileMessages.h \
    SendFilePage.h \
@@ -37,6 +38,7 @@ HEADERS  = \
 
 SOURCES  = \
    SendFileAction.cpp \
+   SendFileChatView.cpp \
    SendFileDB.cpp \
    SendFileMessages.cpp \
    SendFilePage.cpp \
