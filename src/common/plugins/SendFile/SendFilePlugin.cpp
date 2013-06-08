@@ -45,6 +45,7 @@
 #include "Path.h"
 #include "QtEscape.h"
 #include "SendFileAction.h"
+#include "SendFileChatView.h"
 #include "SendFileDB.h"
 #include "SendFileMessages.h"
 #include "SendFilePage.h"
@@ -125,14 +126,12 @@ SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
   QDesktopServices::setUrlHandler(LS("chat-sendfile"), this, "openUrl");
   SettingsTabHook::add(new SendFilePageCreator(this));
   ChatAlerts::add(new IncomingFileAlertType(400));
+  new SendFileChatView(this);
 
   m_thread = new SendFile::Thread(m_port);
   connect(m_thread, SIGNAL(finished(QByteArray, qint64)), SLOT(finished(QByteArray)));
   connect(m_thread, SIGNAL(progress(QByteArray, qint64, qint64, int)), SLOT(progress(QByteArray, qint64, qint64, int)));
   connect(m_thread, SIGNAL(started(QByteArray, qint64)), SLOT(started(QByteArray)));
-
-  connect(ChatViewHooks::i(), SIGNAL(initHook(ChatView*)), SLOT(init(ChatView*)));
-  connect(ChatViewHooks::i(), SIGNAL(loadFinishedHook(ChatView*)), SLOT(loadFinished(ChatView*)));
 
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
   connect(ChatClient::i(), SIGNAL(online()), SLOT(openDB()));
@@ -328,23 +327,6 @@ QVariantMap SendFilePluginImpl::progressInfo(const QString &id) const
 void SendFilePluginImpl::sendFile()
 {
   sendFile(ChatCore::currentId());
-}
-
-
-void SendFilePluginImpl::init(ChatView *view)
-{
-  if (SimpleID::typeOf(view->id()) != SimpleID::UserId)
-    return;
-
-  view->addJS(LS("qrc:/js/SendFile/SendFile.js"));
-  view->page()->mainFrame()->addToJavaScriptWindowObject(LS("SendFile"), this);
-}
-
-
-void SendFilePluginImpl::loadFinished(ChatView *view)
-{
-  if (SimpleID::typeOf(view->id()) == SimpleID::UserId)
-    view->addCSS(LS("qrc:/css/SendFile/SendFile.css"));
 }
 
 
