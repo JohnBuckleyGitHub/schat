@@ -383,7 +383,9 @@ void ChatView::startTasks()
 
     if (m_messagesQueue.size() > MAX_MESSAGES_AT_ONCE) {
       QVariantList query;
+#     if QT_VERSION >= 0x040700
       query.reserve(MAX_MESSAGES_AT_ONCE);
+#     endif
 
       for (int i = 0; i < MAX_MESSAGES_AT_ONCE; ++i)
         query.append(m_messagesQueue.takeFirst());
