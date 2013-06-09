@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright (c) 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright (c) 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -25,13 +25,15 @@ Messages.day = function(day) {
   if (document.getElementById('day-' + day) !== null)
     return;
 
-  var html = '<div class="day" id="day-' + day + '">' +
-             '<div class="day-header expanded">' +
-             '  <div class="day-day"><a href="#" data-day="' + day + '">' + SimpleChat.day(day) + '</a></div>' +
-             '  <div class="day-close"><a class="close" href="#">&times;</a></div>' +
-             '  <div class="day-badge">0</div>' +
+  var block = document.createElement('div');
+  block.id = 'day-' + day;
+  block.innerHTML =
+             '<div class="day-header expanded" id="day-header-' + day + '">' +
+               '<div class="day-day"><a href="#" data-day="' + day + '">' + SimpleChat.day(day) + '</a></div>' +
+               '<div class="day-close"><a class="close" href="#">&times;</a></div>' +
+               '<div class="day-badge">0</div>' +
              '</div>' +
-             '<div class="day-body" id="day-body-' + day + '"></div></div>';
+             '<div class="day-body" id="day-body-' + day + '"></div>';
 
   if (Messages.days.indexOf(day) == -1) {
     Messages.days.push(day);
@@ -39,66 +41,13 @@ Messages.day = function(day) {
   }
 
   var index = Messages.days.indexOf(day);
-  if (index == Messages.days.length - 1)
-    $('#Chat').append(html);
-  else
-    $('#day-' + Messages.days[index + 1]).before(html);
-
-  var dayDay =  $('.day-day');
-  var prefix = '#day-' + day;
-
-  if (dayDay.width() > 100)
-    Utils.adjustWidth(dayDay);
-
-  /*
-   * Сворачивание или разворачивание блока сообщений.
-   */
-  $(prefix + ' .day-day a').on('click', function(event) {
-    event.preventDefault();
-
-    var header = $(prefix + ' .day-header');
-    if (header.hasClass('expanded')) {
-      header.removeClass('expanded');
-      $(prefix + ' .day-body').hide();
-    }
-    else {
-      header.addClass('expanded');
-      $(prefix + ' .day-body').show();
-      $(prefix + ' .day-badge').text(0);
-      $(prefix + ' .day-badge').hide();
-    }
-
-    alignChat();
-  });
-
-  /*
-   * Удаление блока сообщений.
-   */
-  $(prefix + ' .day-close a').on('click', function(event) {
-    event.preventDefault();
-    $(prefix).remove();
-    ChatView.removeDay(day);
-
-    var index = Messages.days.indexOf(day);
-    if (index != -1)
-      Messages.days.splice(index, 1);
-
-    alignChat();
-  });
-
-  /*
-   * Показ кнопки закрытия.
-   */
-  $('#day-' + day + ' .day-day').on('mouseenter', function() {
-    $('#day-' + day + ' .day-close').fadeIn('fast');
-  });
-
-  /*
-   * Сокрытие кнопки закрытия.
-   */
-  $('#day-' + day + ' .day-header').on('mouseleave', function() {
-    $('#day-' + day + ' .day-close').fadeOut('fast');
-  });
+  if (index == Messages.days.length - 1) {
+    document.getElementById('Chat').appendChild(block);
+  }
+  else {
+    var before = document.getElementById('day-' + Messages.days[index + 1]);
+    before.parentNode.insertBefore(block, before);
+  }
 };
 
 
@@ -152,16 +101,70 @@ Messages.retranslate = function() {
   $('[data-day]').each(function() {
     $(this).text(SimpleChat.day($(this).attr('data-day')));
   });
-
-  Utils.adjustWidth($('.day-day'));
 };
 
-if (typeof ChatView !== 'undefined')
-  ChatView.reload.connect(Messages.reload);
+(function(){
+  if (typeof ChatView !== 'undefined')
+    ChatView.reload.connect(Messages.reload);
 
-if (typeof SimpleChat !== 'undefined')
-  SimpleChat.retranslated.connect(Messages.retranslate);
+  if (typeof SimpleChat !== 'undefined')
+    SimpleChat.retranslated.connect(Messages.retranslate);
+})();
 
-Pages.onMessages.push(function() {
-  Utils.adjustWidth($('.day-day'));
+$(document).ready(function() {
+  var body = $('body');
+
+  /*
+   * Сворачивание или разворачивание блока сообщений.
+   */
+  body.on('click', '.day-day a', function(event) {
+    event.preventDefault();
+    var prefix = '#day-' + $(this).attr('data-day');
+
+    var header = $(prefix + ' .day-header');
+    if (header.hasClass('expanded')) {
+      header.removeClass('expanded');
+      $(prefix + ' .day-body').hide();
+    }
+    else {
+      header.addClass('expanded');
+      $(prefix + ' .day-body').show();
+      $(prefix + ' .day-badge').text(0);
+      $(prefix + ' .day-badge').hide();
+    }
+
+    alignChat();
+  });
+
+  /*
+   * Удаление блока сообщений.
+   */
+  body.on('click', '.day-close a', function(event) {
+    event.preventDefault();
+
+    var day = $(this).parent().parent().attr('id').substring(11);
+    var block = document.getElementById('day-' + day);
+    block.parentNode.removeChild(block);
+    ChatView.removeDay(day);
+
+    var index = Messages.days.indexOf(day);
+    if (index != -1)
+      Messages.days.splice(index, 1);
+
+    alignChat();
+  });
+
+  /*
+   * Показ кнопки закрытия.
+   */
+  body.on('mouseenter', '.day-day', function(event) {
+    $('#day-' + $(this).parent().attr('id').substring(11) + ' .day-close').fadeIn('fast');
+  });
+
+  /*
+   * Сокрытие кнопки закрытия.
+   */
+  body.on('mouseleave', '.day-header', function(event) {
+    $('#day-' + $(this).parent().attr('id').substring(4) + ' .day-close').fadeOut('fast');
+  });
 });

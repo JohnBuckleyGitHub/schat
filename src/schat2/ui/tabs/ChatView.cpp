@@ -17,6 +17,7 @@
  */
 
 //#define DEBUG_PERFORMANCE
+#define MAX_MESSAGES_AT_ONCE 200
 
 #include <QAction>
 #include <QContextMenuEvent>
@@ -27,6 +28,13 @@
 
 #if defined(DEBUG_PERFORMANCE)
 # include <QDebug>
+# define DEBUG_TIME_START t.start();
+# define DEBUG_TIME_ELAPSED(x) qDebug() << x << t.elapsed() << "ms";
+# define DEBUG_TIME_ELAPSED_MQ qDebug() << "ChatView::m_messagesQueue" << m_messagesQueue.size() << "items" << t.elapsed() << "ms";
+#else
+# define DEBUG_TIME_START
+# define DEBUG_TIME_ELAPSED(x)
+# define DEBUG_TIME_ELAPSED_MQ
 #endif
 
 #include "ChatCore.h"
@@ -371,18 +379,26 @@ void ChatView::startTasks()
 # endif
 
   if (!m_messagesQueue.isEmpty()) {
-#   if defined(DEBUG_PERFORMANCE)
-    t.start();
-#   endif
+    DEBUG_TIME_START
 
-    emit messages(m_messagesQueue);
+    if (m_messagesQueue.size() > MAX_MESSAGES_AT_ONCE) {
+      QVariantList query;
+      query.reserve(MAX_MESSAGES_AT_ONCE);
 
-#   if defined(DEBUG_PERFORMANCE)
-    const int elapsed = t.elapsed();
-    qDebug() << "ChatView::m_messagesQueue" << m_messagesQueue.size() << "items" << elapsed << "ms";
-#   endif
+      for (int i = 0; i < MAX_MESSAGES_AT_ONCE; ++i)
+        query.append(m_messagesQueue.takeFirst());
 
-    m_messagesQueue.clear();
+      emit messages(query);
+      DEBUG_TIME_ELAPSED_MQ
+
+      QTimer::singleShot(0, this, SLOT(startTasks()));
+    }
+    else {
+      emit messages(m_messagesQueue);
+      DEBUG_TIME_ELAPSED_MQ
+
+      m_messagesQueue.clear();
+    }
   }
 }
 

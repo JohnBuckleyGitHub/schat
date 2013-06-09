@@ -240,6 +240,7 @@ Pages.onInfo.push(function() {
  */
 var Messages = {
   onAdd: [],
+  onBulkAdd: [],
   unhandled: [],
   added: [],    // Список идентификаторов добавленных сообщений.
 
@@ -357,6 +358,10 @@ var Messages = {
     for (i = 0; i < self.added.length; i++) {
       for (var j = 0; j < self.onAdd.length; j++)
         self.onAdd[j](self.added[i]);
+    }
+
+    for (i = 0; i < self.onBulkAdd.length; i++) {
+      self.onBulkAdd[i](self.added);
     }
 
     Settings.scroll = scroll;
