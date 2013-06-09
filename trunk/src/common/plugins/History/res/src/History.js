@@ -22,7 +22,8 @@
  */
 function HistoryScroll(type, data) {
   this.id       = '';
-  this.messages = [];
+  this.messages = {};
+  this.count    = 0;
 
   if (type == 'since' && data.hasOwnProperty('day'))
     this.id = 'day-' + data.day;
@@ -30,11 +31,14 @@ function HistoryScroll(type, data) {
     this.id = 'Chat';
 
   for (var i = 0; i < data.messages.length; i++) {
-    if (document.getElementById(data.messages[i]) === null && History.unhandled.indexOf(data.messages[i]) == -1)
-      this.messages.push(data.messages[i]);
+    var id = data.messages[i];
+    if (document.getElementById(id) === null && History.unhandled.indexOf(id) == -1 && this.messages[id] !== true) {
+      this.messages[id] = true;
+      this.count++;
+    }
   }
 
-  if (!this.messages.length) {
+  if (this.count == 0) {
     History.done();
     History.unhandled = [];
 
@@ -45,21 +49,23 @@ function HistoryScroll(type, data) {
   else
     History.scroll = this;
 
-  this.remove = function(id) {
-    var index = this.messages.indexOf(id);
-    if (index != -1) {
-      this.messages.splice(index, 1);
-
-      if (!this.messages.length) {
-        History.scroll = null;
-        History.unhandled = [];
-        History.done();
-
-        if (this.id != '')
-          Settings.scrollTo = this.id;
+  this.removeAll = function(ids) {
+    for (var i = 0; i < ids.length; i++) {
+      if (this.messages.hasOwnProperty(ids[i])) {
+        delete this.messages[ids[i]];
+        this.count--;
       }
     }
-  }
+
+    if (this.count == 0) {
+      History.scroll = null;
+      History.unhandled = [];
+      History.done();
+
+      if (this.id != '')
+        Settings.scrollTo = this.id;
+    }
+  };
 }
 
 
@@ -74,10 +80,15 @@ var History = {
    * Показ виджета истории.
    */
   show: function() {
-    if (!$('#history').length)
-      $('#Chat').prepend('<div id="history-bar"><div id="history"></div></div>');
+    if (document.getElementById('history') === null) {
+      var chat  = document.getElementById('Chat');
+      var block = document.createElement('div');
+      block.id = 'history-bar';
+      block.innerHTML = '<div id="history"></div>';
+      chat.insertBefore(block, chat.firstChild);
+    }
 
-    $('#history-bar').show();
+    document.getElementById('history-bar').style.display = 'block';
   },
 
 
@@ -174,10 +185,10 @@ var History = {
   done: function() {
     if (!History.top) {
       History.show();
-      $('#history').html('<a class="history-more btn btn-small" href="#"><i class="icon-history-more"></i> <span data-tr="history_more">' + Utils.tr('history_more') + '</span></a>');
+      document.getElementById('history').innerHTML = '<a class="history-more btn btn-small" href="#"><i class="icon-history-more"></i> <span data-tr="history_more">' + Utils.tr('history_more') + '</span></a>';
     }
     else
-      $('#history-bar').hide();
+      document.getElementById('history-bar').style.display = 'none';
 
     alignChat();
     Loader.spinner.remove('history_loading');
@@ -188,15 +199,19 @@ var History = {
    * Обработка добавления сообщения.
    */
   onAdd: function(id) {
-    if (History.message !== null && History.message == id) {
-      History.date    = $('#' + id).attr('data-time');
-      History.message = null;
+//    History.count(id);
+  },
+
+  onBulkAdd: function(added) {
+    for (var i = 0; i < added.length; i++) {
+      if (History.message !== null && History.message == added[i]) {
+        History.date    = document.getElementById(added[i]).getAttribute('data-time');
+        History.message = null;
+      }
     }
 
     if (History.scroll instanceof HistoryScroll)
-      History.scroll.remove(id);
-
-    History.count(id);
+      History.scroll.removeAll(added);
   },
 
 
@@ -234,7 +249,8 @@ var History = {
   unhandledMessage: function(json) {
     var id = json.Id;
     if (History.scroll instanceof HistoryScroll) {
-      History.scroll.remove(id);
+      var ids = [id];
+      History.scroll.removeAll(ids);
     }
     else if (History.unhandled.indexOf(id) == -1)
       History.unhandled.push(id);
@@ -267,6 +283,7 @@ else {
 }
 
 Messages.onAdd.push(History.onAdd);
+Messages.onBulkAdd.push(History.onBulkAdd);
 Messages.unhandled.push(History.unhandledMessage);
 
 $(document).ready(function() {
