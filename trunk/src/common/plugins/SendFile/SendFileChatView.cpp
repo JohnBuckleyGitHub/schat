@@ -79,7 +79,7 @@ QStringList SendFileChatView::getFiles(const QList<QUrl> &urls) const
 {
   QStringList out;
   foreach (const QUrl &url, urls) {
-    if (url.isLocalFile()) {
+    if (url.scheme() == LS("file")) {
       const QString file = url.toLocalFile();
 
       if (QFile::exists(file) && QFileInfo(file).isFile())
