@@ -258,9 +258,9 @@ var Messages = {
   addChannelMessage: function(json)
   {
     if (json.hasOwnProperty('InternalId'))
-      $('#' + json.InternalId).attr('id', json.Id);
+      document.getElementById(json.InternalId).id = json.Id;
 
-    if ($('#' + json.Id).length) {
+    if (document.getElementById(json.Id) !== null) {
       Messages.updateChannelMessage(json);
       return;
     }
@@ -481,10 +481,15 @@ var Messages = {
       if (json.Command == 'me')
       classes += ' me-action';
 
-    $('#' + json.Id + ' > div.blocks').attr('class', 'blocks ' + classes);
+    var container = document.getElementById(json.Id);
+    var block     = container.firstChild;
+    block.setAttribute('class', 'blocks ' + classes);
 
-    if (json.Date > 0 && $('#' + json.Id).attr('data-time') != json.Date) {
-      DateTime.update(json);
+    if (json.Date > 0 && container.getAttribute('data-time') != json.Date) {
+      var date = new Date(json.Date);
+
+      block.firstChild.innerHTML = '<span class="time">' + DateTime.time(date) + '</span><span class="seconds">' + DateTime.seconds(date) + '</span> ';
+      container.setAttribute('data-time', json.Date);
       ChatView.setLastMessage(json.Date);
     }
   },
@@ -573,24 +578,6 @@ var DateTime = {
     }
 
     return '';
-  },
-
-
-  /*
-   * Обновление отметки времени.
-   *
-   * \param json  Данные сообщения.
-   */
-  update: function(json) {
-    var date  = new Date(json.Date);
-    var block = $('#' + json.Id + ' .date-time-block');
-
-    if (json.Day === true)
-      block.children('.day').text(DateTime.day(date));
-
-    block.children('.time').text(DateTime.time(date));
-    block.children('.seconds').text(DateTime.seconds(date));
-    $('#' + json.Id).attr('data-time', json.Date);
   },
 
 
