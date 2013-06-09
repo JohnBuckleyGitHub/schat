@@ -19,6 +19,8 @@
 #ifndef SENDFILECHATVIEW_H_
 #define SENDFILECHATVIEW_H_
 
+#include <QUrl>
+
 #include "hooks/ChatViewHooks.h"
 
 class SendFilePluginImpl;
@@ -31,10 +33,14 @@ public:
   SendFileChatView(SendFilePluginImpl *plugin);
 
 protected:
+  bool onDragEnterEvent(ChatView *view, QDragEnterEvent *event);
+  bool onDropEvent(ChatView *view, QDropEvent *event);
   void initImpl(ChatView *view);
   void loadFinishedImpl(ChatView *view);
 
 private:
+  QStringList getFiles(const QList<QUrl> &urls) const;
+
   SendFilePluginImpl *m_plugin;
 };
 

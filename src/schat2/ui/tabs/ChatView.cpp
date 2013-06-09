@@ -66,6 +66,7 @@ ChatView::ChatView(const QByteArray &id, const QString &url, QWidget *parent)
   connect(this, SIGNAL(linkClicked(const QUrl &)), SLOT(openUrl(const QUrl &)));
   connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
 
+  setAcceptDrops(true);
   setIcons();
   createActions();
   retranslateUi();
@@ -246,6 +247,18 @@ void ChatView::contextMenu(QMenu *menu, const QWebHitTestResult &result)
   menu->removeAction(pageAction(QWebPage::InspectElement));
 
   connect(menu, SIGNAL(triggered(QAction*)), SLOT(menuTriggered(QAction*)));
+}
+
+
+void ChatView::dragEnterEvent(QDragEnterEvent *event)
+{
+  ChatViewHooks::dragEnterEvent(this, event);
+}
+
+
+void ChatView::dropEvent(QDropEvent *event)
+{
+  ChatViewHooks::dropEvent(this, event);
 }
 
 

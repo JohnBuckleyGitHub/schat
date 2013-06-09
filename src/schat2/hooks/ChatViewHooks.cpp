@@ -38,6 +38,50 @@ ChatViewHooks::~ChatViewHooks()
 }
 
 
+bool ChatViewHooks::dragEnterEvent(ChatView *view, QDragEnterEvent *event)
+{
+  if (m_self) {
+    foreach (ChatViewHooks *hook, m_self->m_hooks) {
+      if (hook->onDragEnterEvent(view, event))
+        return true;
+    }
+  }
+
+  return false;
+}
+
+
+bool ChatViewHooks::dropEvent(ChatView *view, QDropEvent *event)
+{
+  if (m_self) {
+    foreach (ChatViewHooks *hook, m_self->m_hooks) {
+      if (hook->onDropEvent(view, event))
+        return true;
+    }
+  }
+
+  return false;
+}
+
+
+bool ChatViewHooks::onDragEnterEvent(ChatView *view, QDragEnterEvent *event)
+{
+  Q_UNUSED(view);
+  Q_UNUSED(event);
+
+  return false;
+}
+
+
+bool ChatViewHooks::onDropEvent(ChatView *view, QDropEvent *event)
+{
+  Q_UNUSED(view);
+  Q_UNUSED(event);
+
+  return false;
+}
+
+
 void ChatViewHooks::addImpl(ChatView *view)
 {
   if (m_self != this)

@@ -62,6 +62,8 @@ signals:
 
 protected:
   void contextMenu(QMenu *menu, const QWebHitTestResult &result);
+  void dragEnterEvent(QDragEnterEvent *event);
+  void dropEvent(QDropEvent *event);
   void retranslateUi();
   void showEvent(QShowEvent *event);
 

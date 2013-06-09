@@ -25,6 +25,8 @@
 #include "schat.h"
 
 class ChatView;
+class QDragEnterEvent;
+class QDropEvent;
 
 class SCHAT_CORE_EXPORT ChatViewHooks : public QObject
 {
@@ -43,6 +45,9 @@ public:
   inline static void remove(ChatView *view)          { m_self->removeImpl(view); }
   inline static void remove(ChatViewHooks *hook)     { m_self->m_hooks.removeAll(hook); }
 
+  static bool dragEnterEvent(ChatView *view, QDragEnterEvent *event);
+  static bool dropEvent(ChatView *view, QDropEvent *event);
+
 signals:
   void addHook(ChatView *view);
   void initHook(ChatView *view);
@@ -50,6 +55,8 @@ signals:
   void removeHook(ChatView *view);
 
 protected:
+  virtual bool onDragEnterEvent(ChatView *view, QDragEnterEvent *event);
+  virtual bool onDropEvent(ChatView *view, QDropEvent *event);
   virtual void addImpl(ChatView *view);
   virtual void initImpl(ChatView *view);
   virtual void loadFinishedImpl(ChatView *view);

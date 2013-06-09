@@ -17,6 +17,8 @@
  */
 
 #include <QWebFrame>
+#include <QDragEnterEvent>
+#include <QFileInfo>
 
 #include "net/SimpleID.h"
 #include "SendFileChatView.h"
@@ -29,6 +31,32 @@ SendFileChatView::SendFileChatView(SendFilePluginImpl *plugin)
   , m_plugin(plugin)
 {
 }
+
+
+bool SendFileChatView::onDragEnterEvent(ChatView *view, QDragEnterEvent *event)
+{
+  if (SimpleID::typeOf(view->id()) != SimpleID::UserId || !event->mimeData()->hasUrls() || getFiles(event->mimeData()->urls()).isEmpty())
+    return false;
+
+  event->acceptProposedAction();
+  return true;
+}
+
+
+bool SendFileChatView::onDropEvent(ChatView *view, QDropEvent *event)
+{
+  if (SimpleID::typeOf(view->id()) != SimpleID::UserId || !event->mimeData()->hasUrls())
+    return false;
+
+  event->acceptProposedAction();
+  const QByteArray &id = view->id();
+  const QStringList files = getFiles(event->mimeData()->urls());
+  foreach (const QString &file, files)
+    m_plugin->sendFile(id, file);
+
+  return true;
+}
+
 
 void SendFileChatView::initImpl(ChatView *view)
 {
@@ -44,4 +72,20 @@ void SendFileChatView::loadFinishedImpl(ChatView *view)
 {
   if (SimpleID::typeOf(view->id()) == SimpleID::UserId)
     view->addCSS(LS("qrc:/css/SendFile/SendFile.css"));
+}
+
+
+QStringList SendFileChatView::getFiles(const QList<QUrl> &urls) const
+{
+  QStringList out;
+  foreach (const QUrl &url, urls) {
+    if (url.isLocalFile()) {
+      const QString file = url.toLocalFile();
+
+      if (QFile::exists(file) && QFileInfo(file).isFile())
+        out.append(url.toLocalFile());
+    }
+  }
+
+  return out;
 }
