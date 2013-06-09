@@ -154,7 +154,7 @@ bool SendFilePluginImpl::sendFile(const QByteArray &dest)
   if (SimpleID::typeOf(dest) != SimpleID::UserId)
     return false;
 
-  QString fileName = QFileDialog::getOpenFileName(TabWidget::i(), tr("Open"), getDir(LS("SendFile/SendDir")), LS("*.*"));
+  const QString fileName = QFileDialog::getOpenFileName(TabWidget::i(), tr("Open"), getDir(LS("SendFile/SendDir")), LS("*.*"));
   if (fileName.isEmpty())
     return false;
 
@@ -624,7 +624,7 @@ void SendFilePluginImpl::incomingFile(const MessagePacket &packet)
   message.data()[LS("WeakId")]    = false;
   TabWidget::add(message);
 
-  if (packet->status() != Notice::OK)
+  if (packet->status() != Notice::OK || !transaction->role())
     return;
 
   Alert alert = Alert(LS("file"), packet->id(), packet->date());
