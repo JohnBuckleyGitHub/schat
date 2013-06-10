@@ -257,10 +257,14 @@ var Messages = {
    */
   addChannelMessage: function(json)
   {
-    if (json.hasOwnProperty('InternalId'))
-      document.getElementById(json.InternalId).id = json.Id;
+    var container = null;
+    if (json.hasOwnProperty('InternalId')) {
+      container = document.getElementById(json.InternalId);
+      if (container !== null)
+        container.id = json.Id;
+    }
 
-    if (document.getElementById(json.Id) !== null) {
+    if (container !== null || document.getElementById(json.Id) !== null) {
       Messages.updateChannelMessage(json);
       return;
     }
