@@ -53,11 +53,9 @@ echo > debian/source/format "3.0 (quilt)"
 rm debian/changelog.in
 rm debian/changelog.ppa
 
+upload "saucy"
 upload "raring"
 upload "quantal"
 upload "precise"
-upload "oneiric"
-upload "natty"
-upload "maverick"
 upload "lucid"
 

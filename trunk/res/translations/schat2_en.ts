@@ -162,37 +162,37 @@
 <context>
     <name>ChatView</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="225"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="234"/>
         <source>Display</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="256"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="428"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="277"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="459"/>
         <source>Autoscroll</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="257"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="431"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="278"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="462"/>
         <source>Clear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="258"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="432"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="279"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="463"/>
         <source>Reload</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="259"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="434"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="280"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="465"/>
         <source>Seconds</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="260"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="437"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="281"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="468"/>
         <source>Service messages</source>
         <translation type="unfinished"></translation>
     </message>
