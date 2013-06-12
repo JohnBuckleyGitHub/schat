@@ -446,7 +446,7 @@ void QDnsLookup::abort()
         d->runnable = 0;
         d->reply = QDnsLookupReply();
         d->reply.error = QDnsLookup::OperationCancelledError;
-        d->reply.errorString = tr("Operation cancelled");
+        d->reply.errorString = "Operation cancelled";
         d->isFinished = true;
         emit finished();
     }
@@ -930,7 +930,7 @@ void QDnsLookupRunnable::run()
     // Validate input.
     if (requestName.isEmpty()) {
         reply.error = QDnsLookup::InvalidRequestError;
-        reply.errorString = tr("Invalid domain name");
+        reply.errorString = "Invalid domain name";
         emit finished(reply);
         return;
     }

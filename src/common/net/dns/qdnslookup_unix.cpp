@@ -116,7 +116,7 @@ void QDnsLookupRunnable::query(const int requestType, const QByteArray &requestN
     // If dn_expand, res_ninit or res_nquery is missing, fail.
     if (!local_dn_expand || !local_res_nclose || !local_res_ninit || !local_res_nquery) {
         reply->error = QDnsLookup::ResolverError;
-        reply->errorString = tr("Resolver functions not found");
+        reply->errorString = "Resolver functions not found";
         return;
     }
 
@@ -125,7 +125,7 @@ void QDnsLookupRunnable::query(const int requestType, const QByteArray &requestN
     memset(&state, 0, sizeof(state));
     if (local_res_ninit(&state) < 0) {
         reply->error = QDnsLookup::ResolverError;
-        reply->errorString = tr("Resolver initialization failed");
+        reply->errorString = "Resolver initialization failed";
         return;
     }
 #ifdef QDNSLOOKUP_DEBUG
@@ -146,30 +146,30 @@ void QDnsLookupRunnable::query(const int requestType, const QByteArray &requestN
         break;
     case FORMERR:
         reply->error = QDnsLookup::InvalidRequestError;
-        reply->errorString = tr("Server could not process query");
+        reply->errorString = "Server could not process query";
         return;
     case SERVFAIL:
         reply->error = QDnsLookup::ServerFailureError;
-        reply->errorString = tr("Server failure");
+        reply->errorString = "Server failure";
         return;
     case NXDOMAIN:
         reply->error = QDnsLookup::NotFoundError;
-        reply->errorString = tr("Non existent domain");
+        reply->errorString = "Non existent domain";
         return;
     case REFUSED:
         reply->error = QDnsLookup::ServerRefusedError;
-        reply->errorString = tr("Server refused to answer");
+        reply->errorString = "Server refused to answer";
         return;
     default:
         reply->error = QDnsLookup::InvalidReplyError;
-        reply->errorString = tr("Invalid reply received");
+        reply->errorString = "Invalid reply received";
         return;
     }
 
     // Check the reply is valid.
     if (responseLength < int(sizeof(HEADER))) {
         reply->error = QDnsLookup::InvalidReplyError;
-        reply->errorString = tr("Invalid reply received");
+        reply->errorString = "Invalid reply received";
         return;
     }
 
@@ -179,7 +179,7 @@ void QDnsLookupRunnable::query(const int requestType, const QByteArray &requestN
     int status = local_dn_expand(response, response + responseLength, p, host, sizeof(host));
     if (status < 0) {
         reply->error = QDnsLookup::InvalidReplyError;
-        reply->errorString = tr("Could not expand domain name");
+        reply->errorString = "Could not expand domain name";
         return;
     }
     p += status + 4;
@@ -190,7 +190,7 @@ void QDnsLookupRunnable::query(const int requestType, const QByteArray &requestN
         status = local_dn_expand(response, response + responseLength, p, host, sizeof(host));
         if (status < 0) {
             reply->error = QDnsLookup::InvalidReplyError;
-            reply->errorString = tr("Could not expand domain name");
+            reply->errorString = "Could not expand domain name";
             return;
         }
         const QString name = fromAce(host);
@@ -207,7 +207,7 @@ void QDnsLookupRunnable::query(const int requestType, const QByteArray &requestN
         if (type == QDnsLookup::A) {
             if (size != 4) {
                 reply->error = QDnsLookup::InvalidReplyError;
-                reply->errorString = tr("Invalid IPv4 address record");
+                reply->errorString = "Invalid IPv4 address record";
                 return;
             }
             const quint32 addr = (p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3];
@@ -219,7 +219,7 @@ void QDnsLookupRunnable::query(const int requestType, const QByteArray &requestN
         } else if (type == QDnsLookup::AAAA) {
             if (size != 16) {
                 reply->error = QDnsLookup::InvalidReplyError;
-                reply->errorString = tr("Invalid IPv6 address record");
+                reply->errorString = "Invalid IPv6 address record";
                 return;
             }
             QDnsHostAddressRecord record;
@@ -231,7 +231,7 @@ void QDnsLookupRunnable::query(const int requestType, const QByteArray &requestN
             status = local_dn_expand(response, response + responseLength, p, answer, sizeof(answer));
             if (status < 0) {
                 reply->error = QDnsLookup::InvalidReplyError;
-                reply->errorString = tr("Invalid canonical name record");
+                reply->errorString = "Invalid canonical name record";
                 return;
             }
             QDnsDomainNameRecord record;
@@ -243,7 +243,7 @@ void QDnsLookupRunnable::query(const int requestType, const QByteArray &requestN
             status = local_dn_expand(response, response + responseLength, p, answer, sizeof(answer));
             if (status < 0) {
                 reply->error = QDnsLookup::InvalidReplyError;
-                reply->errorString = tr("Invalid name server record");
+                reply->errorString = "Invalid name server record";
                 return;
             }
             QDnsDomainNameRecord record;
@@ -255,7 +255,7 @@ void QDnsLookupRunnable::query(const int requestType, const QByteArray &requestN
             status = local_dn_expand(response, response + responseLength, p, answer, sizeof(answer));
             if (status < 0) {
                 reply->error = QDnsLookup::InvalidReplyError;
-                reply->errorString = tr("Invalid pointer record");
+                reply->errorString = "Invalid pointer record";
                 return;
             }
             QDnsDomainNameRecord record;
@@ -268,7 +268,7 @@ void QDnsLookupRunnable::query(const int requestType, const QByteArray &requestN
             status = local_dn_expand(response, response + responseLength, p + 2, answer, sizeof(answer));
             if (status < 0) {
                 reply->error = QDnsLookup::InvalidReplyError;
-                reply->errorString = tr("Invalid mail exchange record");
+                reply->errorString = "Invalid mail exchange record";
                 return;
             }
             QDnsMailExchangeRecord record;
@@ -284,7 +284,7 @@ void QDnsLookupRunnable::query(const int requestType, const QByteArray &requestN
             status = local_dn_expand(response, response + responseLength, p + 6, answer, sizeof(answer));
             if (status < 0) {
                 reply->error = QDnsLookup::InvalidReplyError;
-                reply->errorString = tr("Invalid service record");
+                reply->errorString = "Invalid service record";
                 return;
             }
             QDnsServiceRecord record;
@@ -305,7 +305,7 @@ void QDnsLookupRunnable::query(const int requestType, const QByteArray &requestN
                 txt++;
                 if (txt + length > p + size) {
                     reply->error = QDnsLookup::InvalidReplyError;
-                    reply->errorString = tr("Invalid text record");
+                    reply->errorString = "Invalid text record";
                     return;
                 }
                 record.d->values << QByteArray((char*)txt, length);

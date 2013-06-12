@@ -60,23 +60,23 @@ void QDnsLookupRunnable::query(const int requestType, const QByteArray &requestN
         break;
     case DNS_ERROR_RCODE_FORMAT_ERROR:
         reply->error = QDnsLookup::InvalidRequestError;
-        reply->errorString = tr("Server could not process query");
+        reply->errorString = "Server could not process query";
         return;
     case DNS_ERROR_RCODE_SERVER_FAILURE:
         reply->error = QDnsLookup::ServerFailureError;
-        reply->errorString = tr("Server failure");
+        reply->errorString = "Server failure";
         return;
     case DNS_ERROR_RCODE_NAME_ERROR:
         reply->error = QDnsLookup::NotFoundError;
-        reply->errorString = tr("Non existent domain");
+        reply->errorString = "Non existent domain";
         return;
     case DNS_ERROR_RCODE_REFUSED:
         reply->error = QDnsLookup::ServerRefusedError;
-        reply->errorString = tr("Server refused to answer");
+        reply->errorString = "Server refused to answer";
         return;
     default:
         reply->error = QDnsLookup::InvalidReplyError;
-        reply->errorString = tr("Invalid reply received");
+        reply->errorString = "Invalid reply received";
         return;
     }
 
