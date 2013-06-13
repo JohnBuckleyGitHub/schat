@@ -51,6 +51,9 @@
       <Component Id="zlib.dll" Guid="{4C49D73F-870C-4A5F-B1D4-D40A8447C927}">
         <File Id="zlib.dll" KeyPath="yes" Source="..\schat2\zlib.dll" />
       </Component>
+      <Component Id="qt.conf" Guid="{6FEEAB69-A89A-456B-99A3-C84C4A159518}">
+        <File Id="qt.conf" KeyPath="yes" Source="..\schat2\qt.conf" />
+      </Component>
       <Directory Id="doc" Name="doc">
         <Component Id="ChangeLog.Cache.html" Guid="{30B1CEC8-D05E-4B6A-AA58-89F68F188EED}">
           <File Id="ChangeLog.Cache.html" KeyPath="yes" Source="..\schat2\doc\ChangeLog.Cache.html" />
@@ -165,6 +168,11 @@
               <File Id="qsqlite4.dll" KeyPath="yes" Source="..\schat2\plugins\qt\sqldrivers\qsqlite4.dll" />
             </Component>
           </Directory>
+          <Directory Id="bearer" Name="bearer">
+            <Component Id="qgenericbearer4.dll" Guid="{DCE901C7-6E8A-4053-B0BA-614EBE482802}">
+              <File Id="qgenericbearer4.dll" KeyPath="yes" Source="..\schat2\plugins\qt\bearer\qgenericbearer4.dll" />
+            </Component>
+          </Directory>
         </Directory>
       </Directory>
       <Directory Id="translations" Name="translations">
@@ -247,6 +255,8 @@
       <ComponentRef Id="qico4.dll" />
       <ComponentRef Id="qjpeg4.dll" />
       <ComponentRef Id="qsqlite4.dll" />
+      <ComponentRef Id="qgenericbearer4.dll" />
+      <ComponentRef Id="qt.conf" />
     </ComponentGroup>
     <ComponentGroup Id="Cache">
       <ComponentRef Id="Cache.dll" />
