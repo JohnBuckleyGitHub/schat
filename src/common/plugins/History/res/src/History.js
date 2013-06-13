@@ -183,12 +183,13 @@ var History = {
    * Показ ссылки для загрузки сообщений.
    */
   done: function() {
+    var bar = document.getElementById('history-bar');
     if (!History.top) {
       History.show();
       document.getElementById('history').innerHTML = '<a class="history-more btn btn-small" href="#"><i class="icon-history-more"></i> <span data-tr="history_more">' + Utils.tr('history_more') + '</span></a>';
     }
-    else
-      document.getElementById('history-bar').style.display = 'none';
+    else if (bar !== null)
+      bar.style.display = 'none';
 
     alignChat();
     Loader.spinner.remove('history_loading');

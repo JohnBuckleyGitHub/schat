@@ -142,7 +142,7 @@ UserView::UserView(ClientChannel channel, QWidget *parent)
 
   setTextElideMode(Qt::ElideMiddle);
   setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-  setStyleSheet(LS("QScrollBar:vertical{background:transparent;width:6px}QScrollBar::handle:vertical{background:#ccc;border-radius:3px}QScrollBar::sub-line:vertical,QScrollBar::add-line:vertical{height:0}"));
+  setStyleSheet(LS("QScrollBar:vertical{background:#fff;width:8px}QScrollBar::handle:vertical{background:#ccc;border-radius:3px}QScrollBar::sub-line:vertical,QScrollBar::add-line:vertical{height:0}QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical{background:none;}"));
 
   QPalette p = palette();
   if (p.color(QPalette::Base) == Qt::white) {
