@@ -128,14 +128,13 @@ void ChatSettings::ready()
 
   if (!feed) {
     const QByteArray id = ChatClient::id();
-    ChatClient::io()->lock();
-    ClientFeeds::post(id, LS("settings"));
+    ChatClientLocker locker(ChatClient::io());
+    ClientFeeds::post(id, FEED_NAME_SETTINGS);
     ClientFeeds::put(id, LS("settings/head/mask"), 0700);
-    ClientFeeds::request(id, FEED_METHOD_GET, LS("settings"));
-    ChatClient::io()->unlock();
+    ClientFeeds::request(id, FEED_METHOD_GET, FEED_NAME_SETTINGS);
   }
   else if (!m_synced)
-    ClientFeeds::request(ChatClient::channel(), FEED_METHOD_GET, LS("settings"));
+    ClientFeeds::request(ChatClient::channel(), FEED_METHOD_GET, FEED_NAME_SETTINGS);
 }
 
 
@@ -146,7 +145,7 @@ void ChatSettings::ready()
  */
 void ChatSettings::set(bool offline)
 {
-  FeedPtr feed = ChatClient::channel()->feed(LS("settings"), false);
+  FeedPtr feed = ChatClient::channel()->feed(FEED_NAME_SETTINGS, false);
   if (!feed)
     return;
 

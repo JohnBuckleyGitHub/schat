@@ -262,6 +262,23 @@ ChannelBaseTab *TabWidget::channelTab(const QByteArray &id, bool create, bool sh
 }
 
 
+int TabWidget::channelsCount(int type) const
+{
+  if (!type)
+    return m_channels.size();
+
+  int count = 0;
+  QMapIterator<QByteArray, ChannelBaseTab*> i(m_channels);
+  while (i.hasNext()) {
+    i.next();
+    if (SimpleID::typeOf(i.key()) == type)
+      count++;
+  }
+
+  return count;
+}
+
+
 /*!
  * Добавление нового сообщения.
  *

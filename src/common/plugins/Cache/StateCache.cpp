@@ -150,7 +150,9 @@ void StateCache::synced()
   if (policy & ServerFeed::ForcedJoinPolicy)
     return;
 
-  tabs->tab("list");
+  if (!tabs->channelsCount())
+    tabs->tab("list");
+
   tabs->closePage("progress");
   tabs->closePage("welcome");
 }
