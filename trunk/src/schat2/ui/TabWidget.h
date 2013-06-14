@@ -70,6 +70,7 @@ public:
   void closePage(const QByteArray &name);
 
   ChannelBaseTab *channelTab(const QByteArray &id, bool create = true, bool show = true);
+  int channelsCount(int type = 0) const;
   static bool isActive(const QByteArray &id);
   static bool isActiveChatWindow();
   static bool isCurrent(AbstractTab *tab);
