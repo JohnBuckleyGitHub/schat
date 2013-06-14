@@ -46,10 +46,10 @@ private slots:
   void unpinned(AbstractTab *tab);
 
 private:
+  bool restoreLastTalk();
   QByteArray decode(const QString &id) const;
   QString encode(const QByteArray &id) const;
   void join(const QByteArray &id);
-  void restoreLastTalk();
 
   ChatSettings *m_settings; ///< Настройки.
   const QString m_key;      ///< Ключ настроек.
