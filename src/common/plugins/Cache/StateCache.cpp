@@ -142,10 +142,8 @@ void StateCache::synced()
       join(id);
   }
 
-  if (!m_tabs.isEmpty()) {
-    restoreLastTalk();
+  if (!m_tabs.isEmpty() && restoreLastTalk())
     return;
-  }
 
   if (policy & ServerFeed::ForcedJoinPolicy)
     return;
@@ -188,6 +186,27 @@ void StateCache::unpinned(AbstractTab *tab)
 
     save();
   }
+}
+
+
+/*!
+ * Установка последнего разговора в качестве текущей вкладки.
+ *
+ * Функция вызывается после синхронизации настроек с сервером и открытия закреплённых вкладок,
+ * если разговор не был кэширован, ничего не происходит.
+ */
+bool StateCache::restoreLastTalk()
+{
+  const QString encoded = m_settings->value(m_prefix + LS("LastTalk")).toString();
+  if (!m_tabs.contains(encoded))
+    return false;
+
+  const QByteArray id = SimpleID::decode(encoded);
+  if (!Channel::isCompatibleId(id))
+    return false;
+
+  TabWidget::i()->channelTab(id, false, true);
+  return true;
 }
 
 
@@ -235,20 +254,4 @@ void StateCache::join(const QByteArray &id)
 
   if (!tab || SimpleID::typeOf(id) == SimpleID::ChannelId)
     ChatClient::channels()->join(id);
-}
-
-
-/*!
- * Установка последнего разговора в качестве текущей вкладки.
- *
- * Функция вызывается после синхронизации настроек с сервером и открытия закреплённых вкладок,
- * если разговор не был кэширован, ничего не происходит.
- */
-void StateCache::restoreLastTalk()
-{
-  const QByteArray id = SimpleID::decode(m_settings->value(m_prefix + LS("LastTalk")).toString());
-  if (!Channel::isCompatibleId(id))
-    return;
-
-  TabWidget::i()->channelTab(id, false, true);
 }
