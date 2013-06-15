@@ -18,9 +18,88 @@
 
 #include <QStringList>
 
+#include "HtmlFilter_p.h"
 #include "sglobal.h"
 #include "text/HtmlFilter.h"
 #include "text/PlainTextFilter.h"
+
+static inline int h2i(char hex)
+{
+  if (hex >= '0' && hex <= '9')
+    return hex - '0';
+  if (hex >= 'a' && hex <= 'f')
+    return hex - 'a' + 10;
+  if (hex >= 'A' && hex <= 'F')
+    return hex - 'A' + 10;
+  return -1;
+}
+
+
+static inline int hex2int(const char *s)
+{
+  return (h2i(s[0]) << 4) | h2i(s[1]);
+}
+
+
+static inline int hex2int(char s)
+{
+  int h = h2i(s);
+  return (h << 4) | h;
+}
+
+
+bool HtmlFilterPrivate::get_hex_rgb(const char *name, int *r, int *g, int *b)
+{
+  if (name[0] != '#')
+    return false;
+
+  name++;
+  const int len = qstrlen(name);
+  if (len == 12) {
+    *r = hex2int(name);
+    *g = hex2int(name + 4);
+    *b = hex2int(name + 8);
+  }
+  else if (len == 9) {
+    *r = hex2int(name);
+    *g = hex2int(name + 3);
+    *b = hex2int(name + 6);
+  }
+  else if (len == 6) {
+    *r = hex2int(name);
+    *g = hex2int(name + 2);
+    *b = hex2int(name + 4);
+  }
+  else if (len == 3) {
+    *r = hex2int(name[0]);
+    *g = hex2int(name[1]);
+    *b = hex2int(name[2]);
+  }
+  else
+    *r = *g = *b = -1;
+
+  if ((uint) *r > 255 || (uint) *g > 255 || (uint) *b > 255) {
+    *r = *g = *b = -1;
+    return false;
+  }
+
+  return true;
+}
+
+
+bool HtmlFilterPrivate::get_hex_rgb(const QChar *str, int len, int *r, int *g, int *b)
+{
+  if (len > 13)
+    return false;
+
+  char tmp[16];
+  for (int i = 0; i < len; ++i)
+    tmp[i] = str[i].toLatin1();
+
+  tmp[len] = 0;
+  return get_hex_rgb(tmp, r, g, b);
+}
+
 
 HtmlFilter::HtmlFilter(int options, int sizeLimit, int breaksLimit)
   : m_breaksLimit(breaksLimit)
@@ -83,6 +162,68 @@ QString HtmlFilter::build(const QList<HtmlToken> &tokens)
     return QString();
 
   return out;
+}
+
+
+bool HtmlFilter::colorValue(QString &value) const
+{
+  int r = -1;
+  int g = -1;
+  int b = -1;
+
+  if (value.startsWith(LC('#')) && !HtmlFilterPrivate::get_hex_rgb(value.constData(), value.length(), &r, &g, &b))
+    return false;
+
+  if (value.startsWith(LS("rgb(")) ) {
+    const QStringList rgb = value.mid(4, value.size() - 5).remove(LC(' ')).split(LC(','));
+    if (rgb.size() == 3) {
+      r = rgb.at(0).toInt();
+      g = rgb.at(1).toInt();
+      b = rgb.at(2).toInt();
+    }
+  }
+
+  if (r == -1 && g == -1 && b == -1)
+    return false;
+
+  if (r > 210 && g > 210 && b > 210)
+    return false;
+
+  value.sprintf("#%02x%02x%02x", r, g, b);
+  return true;
+}
+
+
+bool HtmlFilter::cssValue(const QString &property, const QString &tag, const Range &range, QString &value) const
+{
+  int start = -1;
+  int end = range.second;
+
+  forever {
+    start = tag.lastIndexOf(property + LC(':'), end);
+    if (start == -1 || start < range.first)
+      return false;
+
+    if (range.first == start)
+      break;
+
+    const QChar c = tag.at(start - 1);
+    if (c == LC(' ') || c == LC(';'))
+      break;
+
+    end = start - 1;
+  }
+
+  start = start + property.size() + 1;
+  end = tag.indexOf(';', start);
+  if (end == -1)
+    end = range.second;
+
+  if (start == end)
+    return false;
+
+  value = tag.mid(start, end - start).simplified();
+  return true;
 }
 
 
@@ -164,6 +305,32 @@ QString HtmlFilter::prepare(const QString &text) const
   PlainTextFilter::removeTag(out, LS("script"));
 
   return out;
+}
+
+
+/*!
+ * Получение начального и конечного положения тела атрибута \p attr в входящей строке \p tag.
+ */
+HtmlFilter::Range HtmlFilter::attrBody(const QString &attr, const QString &tag) const
+{
+  Range body(-1, -1);
+  body.first = tag.indexOf(attr + LC('='));
+  if (body.first == -1) // атрибут не найден.
+    return body;
+
+  body.first = body.first + attr.size() + 2;
+  if (tag.size() == body.first) // пустое тело атрибута.
+    return Range(-1, -1);
+
+  const QChar c = tag.at(body.first - 1);
+  if (c != LC('\'') && c != LC('"')) // не допустимый символ начала тела.
+    return Range(-1, -1);
+
+  body.second = tag.indexOf(c, body.first);
+  if (body.second == -1 || body.first == body.second) // конец тела не найден или пустое тело.
+    return Range(-1, -1);
+
+  return body;
 }
 
 
@@ -262,28 +429,28 @@ void HtmlFilter::optimize(QList<HtmlToken> &tokens) const
   /// и полностью удаляется из текста. Тег font используется для установки цвета элемента.
   else if (token.tag == LS("span")) {
     QList<HtmlToken> tags;
+    const Range range = attrBody(LS("style"), token.text);
 
-    if (token.text.contains(LS("font-weight:600;")))
-      tags.append(HtmlToken(HtmlToken::Tag, LS("<b>")));
+    if (range.first != -1) {
+      QString value;
 
-    if (token.text.contains(LS("font-style:italic;")))
-      tags.append(HtmlToken(HtmlToken::Tag, LS("<i>")));
+      if (cssValue(LS("font-weight"), token.text, range, value) && (value == LS("bold") || value == LS("bolder") || value == LS("600") || value == LS("700") || value == LS("800") || value == LS("900")))
+        tags.append(HtmlToken(HtmlToken::Tag, LS("<b>")));
 
-    if (token.text.contains(LS("underline")))
-      tags.append(HtmlToken(HtmlToken::Tag, LS("<u>")));
+      if (cssValue(LS("font-style"), token.text, range, value) && value == LS("italic"))
+        tags.append(HtmlToken(HtmlToken::Tag, LS("<i>")));
 
-    if (token.text.contains(LS("line-through")))
-      tags.append(HtmlToken(HtmlToken::Tag, LS("<s>")));
+      if (cssValue(LS("text-decoration"), token.text, range, value)) {
+        if (value == LS("underline"))
+          tags.append(HtmlToken(HtmlToken::Tag, LS("<u>")));
+        else if (value == LS("line-through"))
+          tags.append(HtmlToken(HtmlToken::Tag, LS("<s>")));
+      }
 
-    if (token.text.contains(LS("color:"))) {
-      int at = token.text.indexOf(LS("color:"));
-      if (at != -1) {
-        QString color = token.text.mid(at + 6, 7);
-        if (color.startsWith(LC('#'))) {
-          HtmlToken token(HtmlToken::Tag, LS("<font color=\"") + color + LS("\">"));
-          token.simple = true;
-          tags.append(token);
-        }
+      if (cssValue(LS("color"), token.text, range, value) && colorValue(value)) {
+        HtmlToken token(HtmlToken::Tag, LS("<font color=\"") + value + LS("\">"));
+        token.simple = true;
+        tags.append(token);
       }
     }
 

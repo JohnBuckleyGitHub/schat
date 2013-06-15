@@ -41,16 +41,21 @@ public:
     AllowImgTag = 4          ///< Добавляет поддержку img тега, он будет преобразован в текст равный атрибуту alt.
   };
 
+  typedef QPair<int, int> Range;
+
   HtmlFilter(int options = NoOptions, int sizeLimit = 8000, int breaksLimit = 30);
   QList<HtmlToken> tokenize(const QString &text) const;
   QString filter(const QString &text) const;
   static QString build(const QList<HtmlToken> &tokens);
 
 private:
+  bool colorValue(QString &value) const;
+  bool cssValue(const QString &property, const QString &tag, const Range &range, QString &value) const;
   bool isLastIsBreak(const QList<HtmlToken> &tokens) const;
   bool isSpace(const HtmlToken &token) const;
   int endTag(const QString &tag, QList<HtmlToken> &tokens, int pos = 0) const;
   QString prepare(const QString &text) const;
+  Range attrBody(const QString &attr, const QString &tag) const;
   void makeTextToken(QList<HtmlToken> &tokens, const QString &text) const;
   void optimize(QList<HtmlToken> &tokens) const;
   void tokenize(const QString &text, QList<HtmlToken> &tokens) const;
