@@ -72,7 +72,7 @@ void WebView::contextMenuEvent(QContextMenuEvent *event)
   }
 
   const QUrl url = r.linkUrl();
-  if (!url.isEmpty() && url.scheme() != LS("chat") && url.scheme() != LS("qrc"))
+  if (!url.isEmpty() && url.scheme() != LS("chat") && url.scheme() != LS("qrc") && url.scheme() != LS("emoticon"))
     menu.addAction(pageAction(QWebPage::CopyLinkToClipboard));
 
   if (editable && canPaste())
