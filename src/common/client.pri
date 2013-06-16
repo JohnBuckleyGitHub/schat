@@ -55,6 +55,7 @@ HEADERS += \
     Settings.h \
     sglobal.h \
     text/HtmlFilter.h \
+    text/HtmlFilter_p.h \
     text/HtmlToken.h \
     text/PlainTextFilter.h \
     tools/OsInfo.h \

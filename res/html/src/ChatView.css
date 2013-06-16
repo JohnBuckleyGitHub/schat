@@ -83,7 +83,7 @@ hr {
   -webkit-transition: background 200ms linear, border 200ms linear;
 }
 
-.date-time-block {
+.date-time-block, .time, .seconds {
   color:#a5b2c3;
   font-size:x-small;
 }
