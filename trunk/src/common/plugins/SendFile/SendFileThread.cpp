@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -79,11 +79,11 @@ void Thread::run()
 
 void Thread::workerReady()
 {
-  connect(this, SIGNAL(addTask(const QVariantMap &)), m_worker, SLOT(addTask(const QVariantMap &)));
+  connect(this, SIGNAL(addTask(QVariantMap)), m_worker, SLOT(addTask(QVariantMap)));
   connect(this, SIGNAL(removeTask(QByteArray)), m_worker, SLOT(removeTask(QByteArray)));
-  connect(m_worker, SIGNAL(finished(QByteArray, qint64)), SIGNAL(finished(QByteArray, qint64)));
-  connect(m_worker, SIGNAL(progress(QByteArray, qint64, qint64, int)), SIGNAL(progress(QByteArray, qint64, qint64, int)));
-  connect(m_worker, SIGNAL(started(QByteArray, qint64)), SIGNAL(started(QByteArray, qint64)));
+  connect(m_worker, SIGNAL(finished(QByteArray,qint64)), SIGNAL(finished(QByteArray,qint64)));
+  connect(m_worker, SIGNAL(progress(QByteArray,qint64,qint64,int)), SIGNAL(progress(QByteArray,qint64,qint64,int)));
+  connect(m_worker, SIGNAL(started(QByteArray,qint64)), SIGNAL(started(QByteArray,qint64)));
 
   while (!m_pending.isEmpty())
     emit addTask(m_pending.takeFirst()->toMap());

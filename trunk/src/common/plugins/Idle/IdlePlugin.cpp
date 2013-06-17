@@ -39,7 +39,7 @@ IdlePluginImpl::IdlePluginImpl(QObject *parent)
   m_idle = new Idle(this);
 
   connect(m_idle, SIGNAL(secondsIdle(int)), SLOT(idle(int)));
-  connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
+  connect(ChatCore::settings(), SIGNAL(changed(QString,QVariant)), SLOT(settingsChanged(QString,QVariant)));
 
   QTimer::singleShot(0, this, SLOT(start()));
 }

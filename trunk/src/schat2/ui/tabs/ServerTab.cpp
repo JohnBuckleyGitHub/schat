@@ -67,9 +67,9 @@ ServerTab::ServerTab(TabWidget *parent)
   setIcon(SCHAT_ICON(Globe));
 
   connect(ChatClient::i(), SIGNAL(online()), SLOT(online()));
-  connect(ChatAlerts::i(), SIGNAL(alert(const Alert &)), SLOT(alert(const Alert &)));
-  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
-  connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
+  connect(ChatAlerts::i(), SIGNAL(alert(Alert)), SLOT(alert(Alert)));
+  connect(ChatNotify::i(), SIGNAL(notify(Notify)), SLOT(notify(Notify)));
+  connect(ChatClient::io(), SIGNAL(clientStateChanged(int,int)), SLOT(clientStateChanged(int)));
   connect(chatView()->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), SLOT(populateJavaScriptWindowObject()));
 
   retranslateUi();

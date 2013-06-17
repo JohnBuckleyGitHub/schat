@@ -81,7 +81,7 @@ NetworkWidget::NetworkWidget(QWidget *parent, int options)
   m_combo->load();
 
   connect(m_combo, SIGNAL(currentIndexChanged(int)), SLOT(indexChanged(int)));
-  connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(reload()));
+  connect(ChatClient::io(), SIGNAL(clientStateChanged(int,int)), SLOT(reload()));
 
   reload();
 }
@@ -259,7 +259,7 @@ void NetworkWidget::createActionsButton()
   m_actions->setToolTip(tr("Actions"));
 
   connect(m_menu, SIGNAL(aboutToShow()), SLOT(showMenu()));
-  connect(m_menu, SIGNAL(triggered(QAction *)), SLOT(menuTriggered(QAction *)));
+  connect(m_menu, SIGNAL(triggered(QAction*)), SLOT(menuTriggered(QAction*)));
 }
 
 

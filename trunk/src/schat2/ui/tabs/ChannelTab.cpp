@@ -62,11 +62,11 @@ ChannelTab::ChannelTab(ClientChannel channel, TabWidget *parent)
 
   setText(channel->name());
 
-  connect(ChatClient::channels(), SIGNAL(channels(const QList<QByteArray> &)), SLOT(channels(const QList<QByteArray> &)));
-  connect(ChatClient::channels(), SIGNAL(joined(const QByteArray &, const QByteArray &)), SLOT(joined(const QByteArray &, const QByteArray &)));
-  connect(ChatClient::channels(), SIGNAL(part(const QByteArray &, const QByteArray &)), SLOT(part(const QByteArray &, const QByteArray &)));
+  connect(ChatClient::channels(), SIGNAL(channels(QList<QByteArray>)), SLOT(channels(QList<QByteArray>)));
+  connect(ChatClient::channels(), SIGNAL(joined(QByteArray,QByteArray)), SLOT(joined(QByteArray,QByteArray)));
+  connect(ChatClient::channels(), SIGNAL(part(QByteArray,QByteArray)), SLOT(part(QByteArray,QByteArray)));
   connect(ChatClient::channels(), SIGNAL(quit(QByteArray,bool)), SLOT(quit(QByteArray,bool)));
-  connect(ChatClient::channels(), SIGNAL(channel(const QByteArray &)), SLOT(channel(const QByteArray &)));
+  connect(ChatClient::channels(), SIGNAL(channel(QByteArray)), SLOT(channel(QByteArray)));
 
   m_chatView->add(ServiceMessage::joined(ChatClient::id()));
 }

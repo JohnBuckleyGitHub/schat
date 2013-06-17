@@ -127,7 +127,7 @@ ChatAlerts::ChatAlerts(QObject *parent)
 
   connect(ChatClient::i(), SIGNAL(offline()), SLOT(offline()));
   connect(ChatClient::i(), SIGNAL(ready()), SLOT(online()));
-  connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
+  connect(m_settings, SIGNAL(changed(QString,QVariant)), SLOT(settingsChanged(QString,QVariant)));
 
   QTimer::singleShot(0, this, SLOT(loadSounds()));
 }

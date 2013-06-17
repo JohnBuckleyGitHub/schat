@@ -38,7 +38,7 @@ ClientChannels::ClientChannels(QObject *parent)
   connect(m_client, SIGNAL(idle()), SLOT(idle()));
   connect(m_client, SIGNAL(restore()), SLOT(restore()));
   connect(m_client, SIGNAL(setup()), SLOT(setup()));
-  connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
+  connect(m_client, SIGNAL(clientStateChanged(int,int)), SLOT(clientStateChanged(int,int)));
 }
 
 

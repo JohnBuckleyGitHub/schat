@@ -333,7 +333,7 @@ void UpdatePluginImpl::start()
   if (SCHAT_REVISION)
     QFile::remove(Path::cache() + LS("/schat2-") + QApplication::applicationVersion() + LS(".") + QString::number(SCHAT_REVISION) + LS(".exe"));
 
-  connect(BgOperationWidget::i(), SIGNAL(clicked(QString, QMouseEvent*)), SLOT(clicked(QString, QMouseEvent*)));
+  connect(BgOperationWidget::i(), SIGNAL(clicked(QString,QMouseEvent*)), SLOT(clicked(QString,QMouseEvent*)));
   connect(ChatClient::i(), SIGNAL(ready()), SLOT(online()));
   connect(ChatNotify::i(), SIGNAL(notify(Notify)), SLOT(notify(Notify)));
   check();

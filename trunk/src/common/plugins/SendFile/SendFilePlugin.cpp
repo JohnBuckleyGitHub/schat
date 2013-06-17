@@ -129,11 +129,11 @@ SendFilePluginImpl::SendFilePluginImpl(QObject *parent)
   new SendFileChatView(this);
 
   m_thread = new SendFile::Thread(m_port);
-  connect(m_thread, SIGNAL(finished(QByteArray, qint64)), SLOT(finished(QByteArray)));
-  connect(m_thread, SIGNAL(progress(QByteArray, qint64, qint64, int)), SLOT(progress(QByteArray, qint64, qint64, int)));
-  connect(m_thread, SIGNAL(started(QByteArray, qint64)), SLOT(started(QByteArray)));
+  connect(m_thread, SIGNAL(finished(QByteArray,qint64)), SLOT(finished(QByteArray)));
+  connect(m_thread, SIGNAL(progress(QByteArray,qint64,qint64,int)), SLOT(progress(QByteArray,qint64,qint64,int)));
+  connect(m_thread, SIGNAL(started(QByteArray,qint64)), SLOT(started(QByteArray)));
 
-  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+  connect(ChatNotify::i(), SIGNAL(notify(Notify)), SLOT(notify(Notify)));
   connect(ChatClient::i(), SIGNAL(online()), SLOT(openDB()));
 
   QTimer::singleShot(0, this, SLOT(start()));

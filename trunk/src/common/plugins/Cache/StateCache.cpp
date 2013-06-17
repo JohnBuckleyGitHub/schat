@@ -39,7 +39,7 @@ StateCache::StateCache(QObject *parent)
 {
   m_settings->setDefault(m_key, QStringList());
 
-  connect(m_settings, SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
+  connect(m_settings, SIGNAL(changed(QString,QVariant)), SLOT(settingsChanged(QString,QVariant)));
   connect(m_settings, SIGNAL(synced()), SLOT(synced()));
   connect(ChatClient::i(), SIGNAL(ready()), SLOT(ready()));
 

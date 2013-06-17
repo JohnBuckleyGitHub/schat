@@ -32,7 +32,7 @@ ConsoleCmd::ConsoleCmd(ConsolePluginImpl *plugin)
   : MessagesHook(plugin)
   , m_plugin(plugin)
 {
-  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+  connect(ChatNotify::i(), SIGNAL(notify(Notify)), SLOT(notify(Notify)));
 }
 
 

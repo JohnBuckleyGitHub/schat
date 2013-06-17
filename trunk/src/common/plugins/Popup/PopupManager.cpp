@@ -40,7 +40,7 @@ PopupManager::PopupManager(QObject *parent)
   m_timer   = new QBasicTimer();
 
   connect(ChatAlerts::i(), SIGNAL(popup(Alert)), SLOT(popup(Alert)));
-  connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
+  connect(ChatCore::settings(), SIGNAL(changed(QString,QVariant)), SLOT(settingsChanged(QString,QVariant)));
 }
 
 

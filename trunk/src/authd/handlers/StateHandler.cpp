@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ StateHandler::StateHandler(const QByteArray &cookie, const QByteArray &state, co
   , m_state(state)
   , m_response(response)
 {
-  connect(AuthCore::state(), SIGNAL(added(QByteArray, AuthStatePtr)), SLOT(added(QByteArray, AuthStatePtr)));
+  connect(AuthCore::state(), SIGNAL(added(QByteArray,AuthStatePtr)), SLOT(added(QByteArray,AuthStatePtr)));
 }
 
 

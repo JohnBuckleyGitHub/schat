@@ -43,9 +43,9 @@ NickEdit::NickEdit(QWidget *parent)
   m_spinner = new Spinner(this);
 
   connect(this, SIGNAL(editingFinished()), SLOT(editingFinished()));
-  connect(this, SIGNAL(textChanged(const QString &)), SLOT(textChanged()));
-  connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
-  connect(ChatClient::channels(), SIGNAL(notice(const ChannelNotice &)), SLOT(notice(const ChannelNotice &)));
+  connect(this, SIGNAL(textChanged(QString)), SLOT(textChanged()));
+  connect(ChatCore::settings(), SIGNAL(changed(QString,QVariant)), SLOT(settingsChanged(QString,QVariant)));
+  connect(ChatClient::channels(), SIGNAL(notice(ChannelNotice)), SLOT(notice(ChannelNotice)));
 }
 
 

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -46,8 +46,8 @@ ProfileLayout::ProfileLayout(QWidget *parent)
   m_layout->setColumnStretch(1, 1);
 
   connect(m_menu, SIGNAL(aboutToShow()), SLOT(menuAboutToShow()));
-  connect(m_menu, SIGNAL(triggered(QAction *)), SLOT(menuTriggered(QAction *)));
-  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+  connect(m_menu, SIGNAL(triggered(QAction*)), SLOT(menuTriggered(QAction*)));
+  connect(ChatNotify::i(), SIGNAL(notify(Notify)), SLOT(notify(Notify)));
 
   QTimer::singleShot(0, this, SLOT(reload()));
 }
