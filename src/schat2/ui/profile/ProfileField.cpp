@@ -32,7 +32,7 @@ ProfileField::ProfileField(const QString &field, QWidget *parent)
 {
   m_label = new QLabel(Profile::translate(field) + LC(':'), this);
 
-  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+  connect(ChatNotify::i(), SIGNAL(notify(Notify)), SLOT(notify(Notify)));
 
   QTimer::singleShot(0, this, SLOT(reload()));
 }

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -74,10 +74,10 @@ void Worker::addTask(const QVariantMap &data)
   if (!task->init())
     return;
 
-  connect(task.data(), SIGNAL(finished(QByteArray, qint64)), SIGNAL(finished(QByteArray, qint64)));
+  connect(task.data(), SIGNAL(finished(QByteArray,qint64)), SIGNAL(finished(QByteArray,qint64)));
   connect(task.data(), SIGNAL(released(QByteArray)), SLOT(removeTask(QByteArray)));
-  connect(task.data(), SIGNAL(progress(QByteArray, qint64, qint64, int)), SIGNAL(progress(QByteArray, qint64, qint64, int)));
-  connect(task.data(), SIGNAL(started(QByteArray, qint64)), SIGNAL(started(QByteArray, qint64)));
+  connect(task.data(), SIGNAL(progress(QByteArray,qint64,qint64,int)), SIGNAL(progress(QByteArray,qint64,qint64,int)));
+  connect(task.data(), SIGNAL(started(QByteArray,qint64)), SIGNAL(started(QByteArray,qint64)));
   m_tasks[id] = task;
 }
 
@@ -178,7 +178,7 @@ void Worker::incomingConnection(int socketDescriptor)
 
   connect(socket, SIGNAL(released()), SLOT(released()));
   connect(socket, SIGNAL(syncRequest()), SLOT(syncRequest()));
-  connect(socket, SIGNAL(handshake(QByteArray, char)), SLOT(handshake(QByteArray, char)));
+  connect(socket, SIGNAL(handshake(QByteArray,char)), SLOT(handshake(QByteArray,char)));
 }
 
 

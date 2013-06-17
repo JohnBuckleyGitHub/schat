@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -65,9 +65,9 @@ SendWidget::SendWidget(QWidget *parent)
   updateStyleSheet();
   refill();
 
-  connect(m_input, SIGNAL(send(const QString &)), SIGNAL(send(const QString &)));
-  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
-  connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
+  connect(m_input, SIGNAL(send(QString)), SIGNAL(send(QString)));
+  connect(ChatNotify::i(), SIGNAL(notify(Notify)), SLOT(notify(Notify)));
+  connect(ChatCore::settings(), SIGNAL(changed(QString,QVariant)), SLOT(settingsChanged(QString,QVariant)));
   connect(TabWidget::i(), SIGNAL(pageChanged(AbstractTab*)), SLOT(pageChanged(AbstractTab*)));
 }
 

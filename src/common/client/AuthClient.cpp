@@ -38,7 +38,7 @@ AuthClient::AuthClient(QObject *parent)
 {
   m_timer = new QBasicTimer();
   m_manager = new QNetworkAccessManager(this);
-  connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int)));
+  connect(ChatClient::io(), SIGNAL(clientStateChanged(int,int)), SLOT(clientStateChanged(int)));
 }
 
 

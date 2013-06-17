@@ -77,7 +77,7 @@ AboutTab::AboutTab(TabWidget *parent)
   m_layout->setMargin(0);
   m_layout->setSpacing(0);
 
-  connect(m_view, SIGNAL(linkClicked(const QUrl &)), SLOT(linkClicked(const QUrl &)));
+  connect(m_view, SIGNAL(linkClicked(QUrl)), SLOT(linkClicked(QUrl)));
 
   QString file = QApplication::applicationDirPath() + LS("/styles/test/html/about.html");
   if (QFile::exists(file))

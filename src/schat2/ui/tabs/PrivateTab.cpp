@@ -40,8 +40,8 @@ PrivateTab::PrivateTab(ClientChannel channel, TabWidget *parent)
 
   ChatClient::channels()->join(id());
 
-  connect(ChatClient::channels(), SIGNAL(channel(const ChannelInfo &)), SLOT(channel(const ChannelInfo &)));
-  connect(ChatClient::channels(), SIGNAL(quit(const QByteArray &)), SLOT(quit(const QByteArray &)));
+  connect(ChatClient::channels(), SIGNAL(channel(ChannelInfo)), SLOT(channel(ChannelInfo)));
+  connect(ChatClient::channels(), SIGNAL(quit(QByteArray)), SLOT(quit(QByteArray)));
   connect(ChatClient::i(), SIGNAL(online()), SLOT(online()));
 }
 

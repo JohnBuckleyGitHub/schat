@@ -70,7 +70,7 @@ HistoryImpl::HistoryImpl(QObject *parent)
 
   open();
   connect(ChatClient::i(), SIGNAL(online()), SLOT(open()));
-  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+  connect(ChatNotify::i(), SIGNAL(notify(Notify)), SLOT(notify(Notify)));
 
   ChatCore::translation()->addOther(LS("history"));
   ChatCore::settings()->setDefault(SETTINGS_HISTORY_AUTO_LOAD, true);

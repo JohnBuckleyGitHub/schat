@@ -70,9 +70,9 @@ ChatView::ChatView(const QByteArray &id, const QString &url, QWidget *parent)
 
   setFocusPolicy(Qt::NoFocus);
 
-  connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(settingsChanged(const QString &, const QVariant &)));
-  connect(this, SIGNAL(linkClicked(const QUrl &)), SLOT(openUrl(const QUrl &)));
-  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+  connect(ChatCore::settings(), SIGNAL(changed(QString,QVariant)), SLOT(settingsChanged(QString,QVariant)));
+  connect(this, SIGNAL(linkClicked(QUrl)), SLOT(openUrl(QUrl)));
+  connect(ChatNotify::i(), SIGNAL(notify(Notify)), SLOT(notify(Notify)));
 
   setAcceptDrops(true);
   setIcons();

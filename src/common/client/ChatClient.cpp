@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ ChatClient::ChatClient(QObject *parent)
   connect(m_client, SIGNAL(restore()), SLOT(restore()));
   connect(m_client, SIGNAL(setup()), SLOT(setup()));
   connect(m_client, SIGNAL(ready()), SIGNAL(ready()));
-  connect(m_client, SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
+  connect(m_client, SIGNAL(clientStateChanged(int,int)), SLOT(clientStateChanged(int,int)));
 }
 
 

@@ -305,7 +305,7 @@ void Task::start()
 {
   SCHAT_DEBUG_STREAM("[SendFile] Task::start(), socket:" << m_socket << this);
 
-  connect(m_socket, SIGNAL(progress(qint64, qint64)), SLOT(progress(qint64)));
+  connect(m_socket, SIGNAL(progress(qint64,qint64)), SLOT(progress(qint64)));
   connect(m_socket, SIGNAL(finished()), SLOT(finished()));
   m_socket->setFile(m_file, m_transaction->file().size);
 }

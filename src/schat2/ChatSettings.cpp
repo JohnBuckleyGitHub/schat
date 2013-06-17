@@ -70,7 +70,7 @@ void ChatSettings::init()
 {
   connect(ChatClient::i(), SIGNAL(ready()), SLOT(ready()));
   connect(ChatClient::i(), SIGNAL(offline()), SLOT(offline()));
-  connect(ChatNotify::i(), SIGNAL(notify(const Notify &)), SLOT(notify(const Notify &)));
+  connect(ChatNotify::i(), SIGNAL(notify(Notify)), SLOT(notify(Notify)));
 }
 
 

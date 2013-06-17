@@ -131,7 +131,7 @@ void NodeWorkerListener::add(NewConnectionEvent *event)
   if (socket->setSocketDescriptor(event->socketDescriptor)) {
     SCHAT_LOG_INFO_STR("new connection. ip:" + socket->peerAddress().toString().toUtf8() + ", socket:" + QByteArray::number(socket->id()))
 
-    connect(socket, SIGNAL(newPackets(quint64, const QList<QByteArray> &)), SLOT(packets(quint64, const QList<QByteArray> &)), Qt::DirectConnection);
+    connect(socket, SIGNAL(newPackets(quint64,QList<QByteArray>)), SLOT(packets(quint64,QList<QByteArray>)), Qt::DirectConnection);
     connect(socket, SIGNAL(released(quint64)), SLOT(released(quint64)), Qt::DirectConnection);
 
     m_lock.lockForWrite();

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -111,7 +111,7 @@ void Benchmark::connectToHost()
     else
       client = new BenchmarkClient(m_nickPrefix + QString::number(m_count), this);
 
-    connect(client->io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
+    connect(client->io(), SIGNAL(clientStateChanged(int,int)), SLOT(clientStateChanged(int,int)));
     client->open(m_serverAddr);
 
 //    client->setNick(m_nickPrefix + QString::number(m_count));
@@ -135,7 +135,7 @@ void Benchmark::connectToHost()
 //    connect(this, SIGNAL(finished()), service, SLOT(deleteLater()));
 
     #if !defined(BENCHMARK_NO_UI)
-//    connect(service, SIGNAL(accessGranted(const QString &, const QString &, quint16)), SLOT(accessGranted(const QString &, const QString &, quint16)));
+//    connect(service, SIGNAL(accessGranted(QString,QString,quint16)), SLOT(accessGranted(QString,QString,quint16)));
 //    connect(service, SIGNAL(accessDenied(quint16)), SLOT(accessDenied(quint16)));
 //    connect(service, SIGNAL(syncUsersEnd()), SLOT(syncUsersEnd()));
 //    connect(service, SIGNAL(unconnected(bool)), SLOT(unconnected()));

@@ -43,7 +43,7 @@ MessagesImpl::MessagesImpl(QObject *parent)
   TokenFilter::add(LS("channel"), new LinksFilter());
   TokenFilter::add(LS("channel"), new UrlFilter());
 
-  connect(ChatClient::io(), SIGNAL(clientStateChanged(int, int)), SLOT(clientStateChanged(int, int)));
+  connect(ChatClient::io(), SIGNAL(clientStateChanged(int,int)), SLOT(clientStateChanged(int,int)));
   connect(ChatClient::i(), SIGNAL(ready()), SLOT(ready()));
 }
 

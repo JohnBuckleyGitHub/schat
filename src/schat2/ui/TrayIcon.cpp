@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -60,10 +60,10 @@ TrayIcon::TrayIcon(QObject *parent)
 
   connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   connect(StatusMenu::i(), SIGNAL(updated()), SLOT(reload()));
-  connect(m_menu, SIGNAL(triggered(QAction *)), SLOT(triggered(QAction *)));
+  connect(m_menu, SIGNAL(triggered(QAction*)), SLOT(triggered(QAction*)));
   connect(ChatAlerts::i(), SIGNAL(alert(bool)), SLOT(alert(bool)));
-  connect(ChatCore::settings(), SIGNAL(changed(const QString &, const QVariant &)), SLOT(changed(const QString &, const QVariant &)));
-  connect(ChatAlerts::i(), SIGNAL(countChanged(int, int, QByteArray)), SLOT(reload()));
+  connect(ChatCore::settings(), SIGNAL(changed(QString,QVariant)), SLOT(changed(QString,QVariant)));
+  connect(ChatAlerts::i(), SIGNAL(countChanged(int,int,QByteArray)), SLOT(reload()));
 
   reload();
 

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -179,6 +179,6 @@ void Extensions::install(Extension *extension)
   }
 
   ExtensionInstaller *installer = extension->installer();
-  connect(installer, SIGNAL(installed(const QString &)), SIGNAL(installed(const QString &)));
+  connect(installer, SIGNAL(installed(QString)), SIGNAL(installed(QString)));
   m_pool->start(installer);
 }

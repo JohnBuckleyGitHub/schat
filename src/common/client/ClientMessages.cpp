@@ -33,7 +33,7 @@ ClientMessages::ClientMessages(QObject *parent)
   , m_client(ChatClient::io())
 {
   connect(m_client, SIGNAL(notice(int)), SLOT(notice(int)));
-  connect(ChatClient::channels(), SIGNAL(channels(const QList<QByteArray> &)), SLOT(channels(const QList<QByteArray> &)));
+  connect(ChatClient::channels(), SIGNAL(channels(QList<QByteArray>)), SLOT(channels(QList<QByteArray>)));
 }
 
 

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -128,7 +128,7 @@ void InputWidget::contextMenuEvent(QContextMenuEvent *event)
 {
   bool selection = textCursor().hasSelection();
   m_menu = new QMenu(this);
-  connect(m_menu, SIGNAL(triggered(QAction *)), SLOT(menuTriggered(QAction *)));
+  connect(m_menu, SIGNAL(triggered(QAction*)), SLOT(menuTriggered(QAction*)));
 
   m_menu->addAction(m_action);
   m_menu->addSeparator();
@@ -503,7 +503,7 @@ void InputWidget::createActions()
 
   m_color = new ColorButton(textColor(), this);
   m_color->setVisible(false);
-  connect(m_color, SIGNAL(newColor(const QColor &)), SLOT(setTextColor(const QColor &)));
+  connect(m_color, SIGNAL(newColor(QColor)), SLOT(setTextColor(QColor)));
 }
 
 

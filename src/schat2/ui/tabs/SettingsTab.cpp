@@ -55,7 +55,7 @@ SettingsTab::SettingsTab(const QUrl &url, TabWidget *parent)
   setIcon(SCHAT_ICON(Settings));
   setText(tr("Preferences"));
 
-  connect(m_contents, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this, SLOT(pageChanged(QListWidgetItem *, QListWidgetItem*)));
+  connect(m_contents, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)), this, SLOT(pageChanged(QListWidgetItem*,QListWidgetItem*)));
 
   openUrl(url);
 }
