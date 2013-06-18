@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -17,9 +17,14 @@
  */
 
 #include <QProxyStyle>
+#include <QMouseEvent>
 
 #include "sglobal.h"
 #include "ui/TabBar.h"
+
+#if defined(Q_OS_WIN32)
+# include <qt_windows.h>
+#endif
 
 class TabStyle : public QProxyStyle
 {
@@ -65,4 +70,17 @@ TabBar::TabBar(QWidget *parent)
 TabBar::ButtonPosition TabBar::closeButtonPosition() const
 {
   return static_cast<TabBar::ButtonPosition>(style()->styleHint(QStyle::SH_TabBar_CloseButtonPosition));
+}
+
+
+void TabBar::mousePressEvent(QMouseEvent *event)
+{
+# if defined(Q_OS_WIN32) && QT_VERSION < 0x050000
+  if (event->button() == Qt::LeftButton && tabAt(event->pos()) == -1) {
+    ReleaseCapture();
+    PostMessage(parentWidget()->parentWidget()->parentWidget()->winId(), WM_SYSCOMMAND, SC_MOVE | HTCAPTION, 0);
+  }
+# endif
+
+  QTabBar::mousePressEvent(event);
 }
