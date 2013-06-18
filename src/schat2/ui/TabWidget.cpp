@@ -434,7 +434,7 @@ void TabWidget::changeEvent(QEvent *event)
  */
 void TabWidget::contextMenuEvent(QContextMenuEvent *event)
 {
-  int index = tabAt(event->pos());
+  const int index = tabAt(event->globalPos());
   if (index == -1) {
     QTabWidget::contextMenuEvent(event);
     return;
@@ -505,7 +505,7 @@ void TabWidget::keyPressEvent(QKeyEvent *event)
  */
 void TabWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-  int index = tabAt(event->pos());
+  const int index = tabAt(event->globalPos());
   if (index != -1 && count() > 1 && event->button() == Qt::MidButton) {
     AbstractTab *tab = widget(index);
     if (isCloseable(tab->id())) {
@@ -681,7 +681,7 @@ int TabWidget::addChatTab(AbstractTab *tab)
 
 int TabWidget::tabAt(const QPoint &pos) const
 {
-  return m_tabBar->tabAt(QPoint(pos.x() - m_tabsToolBar->width(), pos.y()));
+  return m_tabBar->tabAt(m_tabBar->mapFromGlobal(pos));
 }
 
 
