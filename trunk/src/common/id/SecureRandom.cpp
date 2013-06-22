@@ -21,6 +21,7 @@
 # include <errno.h>
 # include <windows.h>
 #else
+# include <cstdlib>
 # include <fstream>
 #endif
 
