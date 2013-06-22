@@ -23,6 +23,7 @@
 #include "client/SimpleClient.h"
 #include "messages/AlertMessage.h"
 #include "net/packets/auth.h"
+#include "net/SimpleID.h"
 #include "sglobal.h"
 #include "ui/tabs/ChatView.h"
 #include "ui/tabs/ServerTab.h"
