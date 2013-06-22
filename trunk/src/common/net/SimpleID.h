@@ -25,6 +25,8 @@
 
 /*!
  * Работка с идентификаторами.
+ *
+ * \deprecated Этот класс должен быть заменён на ChatId.
  */
 class SCHAT_EXPORT SimpleID
 {

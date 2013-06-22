@@ -22,9 +22,9 @@
 #include <QByteArray>
 #include <QDataStream>
 
+#include "id/ChatId.h"
 #include "JSON.h"
 #include "net/Protocol.h"
-#include "net/SimpleID.h"
 
 /*!
  * Класс выполняющий запись виртуального пакета.
@@ -58,20 +58,20 @@ public:
    * \param channel  Идентификатор канала.
    * \param echo     true для включения опции Protocol::EnableEcho.
    */
-  inline PacketWriter(QDataStream *stream, quint16 type, const QByteArray &sender, const QByteArray &dest = QByteArray(), bool echo = false, const QByteArray &channel = QByteArray())
+  inline PacketWriter(QDataStream *stream, quint16 type, const ChatId &sender, const ChatId &dest = ChatId(), bool echo = false, const ChatId &channel = ChatId())
     : m_stream(stream)
     , m_option(Protocol::BasicHeader)
   {
     m_device = stream->device();
     m_device->seek(0);
 
-    if (!sender.isEmpty())
+    if (!sender.isNull())
       m_option |= Protocol::SenderField;
 
-    if (!dest.isEmpty())
+    if (!dest.isNull())
       m_option |= Protocol::DestinationField;
 
-    if (!channel.isEmpty())
+    if (!channel.isNull())
       m_option |= Protocol::ChannelField;
 
     if (echo)
@@ -80,36 +80,33 @@ public:
     *stream << type << quint8(0) << m_option;
 
     if (m_option & Protocol::SenderField)
-      putId(sender);
+      put(sender);
 
     if (m_option & Protocol::ChannelField)
-      putId(channel);
+      put(channel);
 
     if (m_option & Protocol::DestinationField)
-      putId(QList<QByteArray>() << dest);
+      put(QList<ChatId>() << dest);
   }
 
   /*!
    * Возвращает результат работы класса, тело пакета.
    */
-  inline QByteArray data() const
-  {
-    int size = m_device->pos();
+  inline QByteArray data() const {
+    const int size = m_device->pos();
     m_device->seek(0);
     return m_device->peek(size);
   }
 
-  /// Запись UTF-8 строки.
-  inline void put(const QString &text) {
-    *m_stream << text.toUtf8();
-  }
+  inline void put(const ChatId &id)        { m_device->write(id.byteArray()); }
+  inline void put(const QString &text)     { *m_stream << text.toUtf8(); }
+  inline void put(const QVariant &data)    { *m_stream << JSON::generate(data); }
+  inline void put(const QVariantMap &data) { *m_stream << JSON::generate(data); }
 
-  inline void put(const QVariant &data) {
-    *m_stream << JSON::generate(data);
-  }
-
-  inline void put(const QVariantMap &data) {
-    *m_stream << JSON::generate(data);
+  inline void put(const QList<ChatId> &ids) {
+    put<quint32>(ids.size());
+    for (int i = 0; i < ids.size(); ++i)
+      put(ids.at(i));
   }
 
   template<class T>
@@ -118,20 +115,18 @@ public:
   }
 
   /// Запись Id.
+  /// \deprecated Запись идентификатора в виде QByteArray является устаревшая и должна быть заменена на ChatId.
   inline void putId(const QByteArray &data)
   {
-    if (data.size() == SimpleID::DefaultSize)
-      m_device->write(data);
-    else
-      m_device->write(SimpleID::make("", SimpleID::InvalidId));
+    put(ChatId(data));
   }
 
   /// Запись Id.
+  /// \deprecated Запись идентификатора в виде QByteArray является устаревшая и должна быть заменена на ChatId.
   inline void putId(const QList<QByteArray> &data) {
     put<quint32>(data.size());
-    for (int i = 0; i < data.size(); ++i) {
-      putId(data.at(i));
-    }
+    for (int i = 0; i < data.size(); ++i)
+      put(ChatId(data.at(i)));
   }
 
   inline bool is(int option) { return m_option & option; }
