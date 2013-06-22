@@ -34,6 +34,9 @@ HEADERS += \
     feeds/Feeds.h \
     feeds/FeedStorage.h \
     Gender.h \
+    id/ChatId.h \
+    id/ObjectId.h \
+    id/SecureRandom.h \
     JSON.h \
     k8json/k8json.h \
     net/dns/ChatDNS.h \
@@ -78,6 +81,9 @@ SOURCES += \
     feeds/Feeds.cpp \
     feeds/FeedStorage.cpp \
     Gender.cpp \
+    id/ChatId.cpp \
+    id/ObjectId.cpp \
+    id/SecureRandom.cpp \
     JSON.cpp \
     k8json/k8json.cpp \
     net/dns/ChatDNS.cpp \
@@ -104,6 +110,8 @@ SOURCES += \
 win32: SOURCES      += Path_win.cpp
 unix:!macx: SOURCES += Path_unix.cpp
 macx: SOURCES       += Path_mac.cpp
+
+win32-msvc*:DEFINES += _CRT_RAND_S
 
 !contains( SCHAT_LITTLE_CLIENT, 1 ) {
   HEADERS += \
