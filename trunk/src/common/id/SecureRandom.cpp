@@ -15,24 +15,22 @@
  *    limitations under the License.
  */
 
+#include "id/SecureRandom.h"
+
 #if defined(_WIN32)
-# define _CRT_RAND_S
-# ifndef NOMINMAX
-#  define NOMINMAX
-# endif
 # include <errno.h>
 # include <windows.h>
+#else
+# include <fstream>
 #endif
 
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
+#if defined(Q_OS_MAC)
+# include <iostream>
+#endif
 
-#include <cstdlib>
-#include <iostream>
-#include <fstream>
-
-#include "id/SecureRandom.h"
+#if !defined(_MSC_VER)
+# include <time.h>
+#endif
 
     // ---- PseudoRandom  -----
 
