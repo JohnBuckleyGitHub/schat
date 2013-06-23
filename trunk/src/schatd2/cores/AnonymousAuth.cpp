@@ -42,16 +42,17 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
   if (!Ch::server()->feed(FEED_NAME_SERVER)->data().value(SERVER_FEED_AUTH_KEY).toStringList().contains(AUTH_METHOD_ANONYMOUS))
     return AuthResult(Notice::NotImplemented, data.id);
 
-  const QByteArray id = Ch::userId(data.uniqueId);
-
-  AuthResult result = isCollision(id, data.nick, data.id);
-  if (result.action == AuthResult::Reject)
-    return result;
+  const QByteArray id  = Ch::userId(data.uniqueId);
+  AuthResult result    = isCollision(id, data.nick, data.id);
+  const bool collision = (result.action == AuthResult::Reject);
 
   ChatChannel channel = Ch::channel(id, SimpleID::UserId);
   bool created = false;
 
   if (!channel) {
+    if (collision)
+      return result;
+
     channel = ChatChannel(new ServerChannel(id, data.nick));
     created = true;
 
