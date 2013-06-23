@@ -112,7 +112,7 @@ QString AbstractClientPrivate::serverName(const AuthReply &reply)
  */
 AbstractClientPrivate::AuthReplyAction AbstractClientPrivate::authReply(const AuthReply &reply)
 {
-  SCHAT_DEBUG_STREAM(this << "AbstractClientPrivate::authReply" << reply.status << Notice::status(reply.status) << SimpleID::encode(reply.userId))
+  SCHAT_DEBUG_STREAM(this << "AbstractClientPrivate::authReply" << reply.status << Notice::status(reply.status) << ChatId(reply.userId).toString() << reply.userId.toHex())
 
   if (clientState == AbstractClient::ClientOnline)
     return Nothing;
@@ -258,7 +258,7 @@ AbstractClient::~AbstractClient()
 /*!
  * Установка подключения к серверу.
  */
-bool AbstractClient::openUrl(const QUrl &url, const QByteArray &cookie, OpenOptions options)
+bool AbstractClient::openUrl(const QUrl &url, const ChatId &cookie, OpenOptions options)
 {
   SCHAT_DEBUG_STREAM(this << "openUrl()" << url.toString())
   Q_D(AbstractClient);
@@ -266,8 +266,8 @@ bool AbstractClient::openUrl(const QUrl &url, const QByteArray &cookie, OpenOpti
   d->cookie = cookie;
   const QUrlQuery query(url);
   if (query.hasQueryItem(LS("cookie"))) {
-    const QByteArray id = SimpleID::decode(query.queryItemValue(LS("cookie")));
-    if (SimpleID::typeOf(id) == SimpleID::CookieId)
+    const ChatId id(query.queryItemValue(LS("cookie")));
+    if (id.type() == ChatId::CookieId)
       d->cookie = id;
   }
 
@@ -296,7 +296,7 @@ bool AbstractClient::openUrl(const QUrl &url, const QByteArray &cookie, OpenOpti
     return true;
   }
 
-  QUrl u = d->pool->current();
+  const QUrl u = d->pool->current();
   connectToHost(u.host(), u.port(Protocol::DefaultPort));
   return true;
 }
@@ -363,15 +363,15 @@ AbstractClient::ClientState AbstractClient::previousState() const
 }
 
 
-const QByteArray& AbstractClient::cookie() const
+const ChatId& AbstractClient::cookie() const
 {
   return d_func()->cookie;
 }
 
 
-const QByteArray AbstractClient::uniqueId() const
+const ChatId& AbstractClient::uniqueId() const
 {
-  return d_func()->uniqueId.byteArray();
+  return d_func()->uniqueId;
 }
 
 
@@ -419,7 +419,7 @@ void AbstractClient::lock()
 }
 
 
-void AbstractClient::setAuthId(const QByteArray &id)
+void AbstractClient::setAuthId(const ChatId &id)
 {
   d_func()->authId = id;
 }
@@ -433,12 +433,10 @@ void AbstractClient::setNick(const QString &nick)
 }
 
 
-void AbstractClient::setUniqueId(const QByteArray &id)
+void AbstractClient::setUniqueId(const ChatId &id)
 {
-  if (SimpleID::typeOf(id) != SimpleID::UniqueUserId)
-    return;
-
-  d_func()->uniqueId = id;
+  if (id.type() == ChatId::UniqueUserId)
+    d_func()->uniqueId = id;
 }
 
 

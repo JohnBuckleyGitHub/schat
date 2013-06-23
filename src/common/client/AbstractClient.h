@@ -53,7 +53,7 @@ public:
   explicit AbstractClient(QObject *parent = 0);
   ~AbstractClient();
 
-  bool openUrl(const QUrl &url, const QByteArray &cookie = QByteArray(), OpenOptions options = SaveUrl);
+  bool openUrl(const QUrl &url, const ChatId &cookie = ChatId(), OpenOptions options = SaveUrl);
 
   bool send(const QByteArray &packet);
   bool send(const QList<QByteArray> &packets);
@@ -64,18 +64,18 @@ public:
   ClientChannel server() const;
   ClientState clientState() const;
   ClientState previousState() const;
-  const QByteArray& cookie() const;
-  const QByteArray uniqueId() const;
+  const ChatId& cookie() const;
+  const ChatId& uniqueId() const;
   const QString& nick() const;
   const QString& serverName() const;
   const QUrl& url() const;
   const QVariantMap& json() const;
-  inline bool openUrl(const QString &url, const QByteArray &cookie = QByteArray(), OpenOptions options = SaveUrl) { return openUrl(QUrl(url), cookie, options); }
+  inline bool openUrl(const QString &url, const ChatId &cookie = ChatId(), OpenOptions options = SaveUrl) { return openUrl(QUrl(url), cookie, options); }
   PacketReader *reader();
   void lock();
-  void setAuthId(const QByteArray &id);
+  void setAuthId(const ChatId &id);
   void setNick(const QString &nick);
-  void setUniqueId(const QByteArray &id);
+  void setUniqueId(const ChatId &id);
   void unlock();
 
   virtual void leave();

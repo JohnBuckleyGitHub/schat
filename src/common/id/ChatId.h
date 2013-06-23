@@ -26,6 +26,8 @@
 #include "ObjectId.h"
 #include "schat.h"
 
+struct QUuid;
+
 #pragma pack(1)
 class SCHAT_EXPORT ChatId
 {

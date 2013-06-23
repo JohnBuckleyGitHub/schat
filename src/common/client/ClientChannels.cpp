@@ -236,7 +236,7 @@ void ClientChannels::notice(int type)
 
   m_packet = &packet;
   const QString cmd = m_packet->command();
-  SCHAT_DEBUG_STREAM(this << "notice()" << cmd << m_packet->text() << m_packet->status() << Notice::status(m_packet->status()) << SimpleID::encode(m_packet->channelId()));
+  SCHAT_DEBUG_STREAM(this << "notice()" << cmd << m_packet->text() << m_packet->status() << Notice::status(m_packet->status()));
 # if defined(SCHAT_DEBUG)
   qDebug() << "             JSON SIZE:" << m_packet->raw().size() << "bytes";
   qDebug() << "             JSON DATA:" << m_packet->raw();
