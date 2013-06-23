@@ -104,7 +104,7 @@ int ChannelsCmd::read(MessagePacket packet)
     message.setId(packet->id());
     message.setDate(date);
     message.data()[MESSAGE_FUNC]  = LS("addInviteMessage");
-    message.data()[LS("Url")]     = LS("chat://channel/") + SimpleID::encode(channelId) + LS("/open?name=") + SimpleID::toBase32(name.toUtf8()) + LS("&gender=0");
+    message.data()[LS("Url")]     = LS("chat://channel/") + SimpleID::encode(channelId) + LS("/open?name=") + ChatId::toBase32(name.toUtf8()) + LS("&gender=0");
     message.data()[LS("Channel")] = QString(SimpleID::encode(channelId));
     TabWidget::add(message);
 

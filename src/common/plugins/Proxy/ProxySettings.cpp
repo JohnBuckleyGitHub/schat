@@ -110,7 +110,7 @@ void ProxySettings::setProxy()
     proxy.setHostName(settings->value(LS("Proxy/")  + type + LS(".host")).toString());
     proxy.setPort(settings->value(LS("Proxy/")      + type + LS(".port")).toInt());
     proxy.setUser(settings->value(LS("Proxy/")      + type + LS(".name")).toString());
-    proxy.setPassword(SimpleID::fromBase32(settings->value(LS("Proxy/") + type + LS(".password")).toString().toLatin1()));
+    proxy.setPassword(ChatId::fromBase32(settings->value(LS("Proxy/") + type + LS(".password")).toString().toLatin1()));
   }
 
   QNetworkProxy::setApplicationProxy(proxy);
@@ -169,7 +169,7 @@ void ProxySettings::reload(const QString &type)
   m_addressEdit->setText(settings->value(LS("Proxy/")  + t + LS(".host")).toString());
   m_portBox->setValue(settings->value(LS("Proxy/")     + t + LS(".port")).toInt());
   m_nameEdit->setText(settings->value(LS("Proxy/")     + t + LS(".name")).toString());
-  m_passwordEdit->setText(SimpleID::fromBase32(settings->value(LS("Proxy/") + t + LS(".password")).toString().toLatin1()));
+  m_passwordEdit->setText(ChatId::fromBase32(settings->value(LS("Proxy/") + t + LS(".password")).toString().toLatin1()));
 }
 
 
@@ -182,7 +182,7 @@ void ProxySettings::save()
   settings->setValue(prefix + LS("host"), m_addressEdit->text());
   settings->setValue(prefix + LS("port"), m_portBox->value());
   settings->setValue(prefix + LS("name"), m_nameEdit->text());
-  settings->setValue(prefix + LS("password"), QString(SimpleID::toBase32(m_passwordEdit->text().toUtf8())));
+  settings->setValue(prefix + LS("password"), QString(ChatId::toBase32(m_passwordEdit->text().toUtf8())));
 
   setProxy();
 }

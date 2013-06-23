@@ -16,23 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QByteArray>
-#include <QCoreApplication>
-#include <QCryptographicHash>
-#include <QFile>
-#include <QNetworkInterface>
-#include <QSettings>
-#include <QSysInfo>
-#include <QUuid>
-
-#if defined(SCHAT_WEBKIT)
-#include <qwebkitversion.h>
-#endif
-
-//#define SCHAT_RANDOM_CLIENT_ID
-
-#include "base32/base32.h"
-#include "net/Protocol.h"
+#include "id/ChatId.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
 
@@ -41,10 +25,7 @@
  */
 int SimpleID::typeOf(const QByteArray &id)
 {
-  if (id.size() != DefaultSize)
-    return InvalidId;
-
-  return quint8(id.at(DefaultSize - 1));
+  return ChatId(id).type();
 }
 
 
@@ -56,14 +37,7 @@ int SimpleID::typeOf(const QByteArray &id)
  */
 QByteArray SimpleID::decode(const QByteArray &id)
 {
-  if (id.size() != EncodedSize)
-    return QByteArray();
-
-  char outbuf[DefaultSize + 1];
-  if (base32_decode(reinterpret_cast<const uchar *>(id.constData()), reinterpret_cast<uchar *>(outbuf)) != DefaultSize)
-    return QByteArray();
-
-  return QByteArray(outbuf, DefaultSize);
+  return ChatId(id).toByteArray();
 }
 
 
@@ -83,30 +57,7 @@ QByteArray SimpleID::decode(const QString &id)
  */
 QByteArray SimpleID::encode(const QByteArray &id)
 {
-  int size = id.size();
-
-  if (size == 34)
-    return id;
-  else if (size != DefaultSize)
-    return QByteArray();
-
-  char outbuf[41];
-  base32_encode(reinterpret_cast<const uchar *>(id.constData()), DefaultSize, reinterpret_cast<uchar *>(outbuf));
-
-  return QByteArray(outbuf, EncodedSize);
-}
-
-
-QByteArray SimpleID::fromBase32(const QByteArray &base32)
-{
-  int size = UNBASE32_LEN(base32.size()) + 9;
-  char *outbuf = new char[size];
-
-  int len = base32_decode(reinterpret_cast<const uchar *>(base32.constData()), reinterpret_cast<uchar *>(outbuf));
-
-  QByteArray out = QByteArray(outbuf, len);
-  delete [] outbuf;
-  return out;
+  return ChatId(id).toBase32();
 }
 
 
@@ -118,30 +69,7 @@ QByteArray SimpleID::fromBase32(const QByteArray &base32)
  */
 QByteArray SimpleID::make(const QByteArray &data, Types type)
 {
-  return QCryptographicHash::hash(data, QCryptographicHash::Sha1) += type;
-}
-
-
-QByteArray SimpleID::setType(int type, const QByteArray &id)
-{
-  if (id.size() != DefaultSize)
-    return id;
-
-  return id.left(DefaultSize - 1) += type;
-}
-
-
-QByteArray SimpleID::toBase32(const QByteArray &data)
-{
-  int size = BASE32_LEN(data.size()) + 1;
-  char *outbuf = new char[size];
-
-  base32_encode(reinterpret_cast<const uchar *>(data.constData()), data.size(), reinterpret_cast<uchar *>(outbuf));
-
-  QByteArray out = QByteArray(outbuf, size - 1);
-  out.replace('=', "");
-  delete [] outbuf;
-  return out;
+  return ChatId(data, static_cast<ChatId::Type>(type)).toByteArray();
 }
 
 

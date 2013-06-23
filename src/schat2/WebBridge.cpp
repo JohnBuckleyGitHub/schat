@@ -262,7 +262,7 @@ QString WebBridge::statusText(int status) const
 
 QString WebBridge::toBase32(const QString &text)
 {
-  return SimpleID::toBase32(text.toUtf8());
+  return ChatId::toBase32(text.toUtf8());
 }
 
 

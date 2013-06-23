@@ -83,7 +83,7 @@ ClientChannel ChatUrls::channel(const QUrl &url)
   if (channel)
     return channel;
 
-  channel = ClientChannel(new Channel(id, SimpleID::fromBase32(QUrlQuery(url).queryItemValue(LS("name")).toLatin1())));
+  channel = ClientChannel(new Channel(id, ChatId::fromBase32(QUrlQuery(url).queryItemValue(LS("name")).toLatin1())));
   channel->gender().setRaw(QUrlQuery(url).queryItemValue(LS("gender")).toInt());
   if (!channel->isValid())
     return ClientChannel();
@@ -151,7 +151,7 @@ QUrl ChatUrls::toUrl(ClientChannel channel, const QString &action)
   out.setPath(SimpleID::encode(channel->id()) + (action.isEmpty() ? QString() : "/" + action));
 
   QList<QPair<QString, QString> > queries;
-  queries.append(QPair<QString, QString>(LS("name"),   SimpleID::toBase32(channel->name().toUtf8())));
+  queries.append(QPair<QString, QString>(LS("name"),   ChatId::toBase32(channel->name().toUtf8())));
   queries.append(QPair<QString, QString>(LS("gender"), QString::number(channel->gender().raw())));
 
 # if QT_VERSION >= 0x050000
