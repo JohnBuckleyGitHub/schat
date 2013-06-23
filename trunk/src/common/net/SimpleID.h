@@ -56,10 +56,7 @@ public:
   static QByteArray decode(const QByteArray &id);
   static QByteArray decode(const QString &id);
   static QByteArray encode(const QByteArray &id);
-  static QByteArray fromBase32(const QByteArray &base32);
   static QByteArray make(const QByteArray &data, Types type);
-  static QByteArray setType(int type, const QByteArray &id);
-  static QByteArray toBase32(const QByteArray &data);
   static QString typeName(int type);
 };
 

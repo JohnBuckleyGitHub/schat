@@ -48,7 +48,7 @@ ChannelsView::ChannelsView(QWidget *parent)
 
 QString ChannelsView::toUrl(const QString &id, const QString &name) const
 {
-  return LS("chat://channel/") + id + LS("/open?name=") + SimpleID::toBase32(name.toUtf8()) + LS("&gender=0");
+  return LS("chat://channel/") + id + LS("/open?name=") + ChatId::toBase32(name.toUtf8()) + LS("&gender=0");
 }
 
 

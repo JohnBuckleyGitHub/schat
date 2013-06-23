@@ -20,6 +20,7 @@
 
 #include "Emoticons.h"
 #include "EmoticonsFilter.h"
+#include "id/ChatId.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
 
@@ -60,7 +61,7 @@ void EmoticonsFilter::make(QList<HtmlToken> &tokens, const QString &text) const
   }
 
   m_count++;
-  HtmlToken a(HtmlToken::Tag, HtmlATag(LS("emoticon:") + SimpleID::toBase32(text.toUtf8()), text).toText());
+  HtmlToken a(HtmlToken::Tag, HtmlATag(LS("emoticon:") + ChatId::toBase32(text.toUtf8()), text).toText());
   tokens.append(a);
 
   QString img = QString(LS("<img class=\"emoticon\" title=\"%1\" alt=\"%1\" src=\"%2\" width=\"%3\" height=\"%4\" />"))

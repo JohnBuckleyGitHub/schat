@@ -111,8 +111,7 @@ QString NetworkItem::auth()
   if (!isValid())
     return QString();
 
-  QByteArray auth = NetworkManager::decode(m_id) + m_userId + m_cookie;
-  return SimpleID::toBase32(auth);
+  return ChatId::toBase32(NetworkManager::decode(m_id) + m_userId + m_cookie);
 }
 
 
@@ -121,7 +120,7 @@ QString NetworkItem::auth()
  */
 void NetworkItem::setAuth(const QString &auth)
 {
-  QByteArray data = SimpleID::fromBase32(auth.toLatin1());
+  QByteArray data = ChatId::fromBase32(auth.toLatin1());
   if (data.size() != SimpleID::DefaultSize * 3)
     return;
 
