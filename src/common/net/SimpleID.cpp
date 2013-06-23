@@ -122,18 +122,6 @@ QByteArray SimpleID::make(const QByteArray &data, Types type)
 }
 
 
-QByteArray SimpleID::password(const QString &password, const QByteArray &salt)
-{
-  return make(password.toUtf8() + salt, PasswordId);
-}
-
-
-QByteArray SimpleID::randomId(Types type, const QByteArray &salt)
-{
-  return make(salt + QUuid::createUuid().toString().toLatin1(), type);
-}
-
-
 QByteArray SimpleID::setType(int type, const QByteArray &id)
 {
   if (id.size() != DefaultSize)

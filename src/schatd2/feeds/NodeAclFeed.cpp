@@ -214,7 +214,8 @@ FeedReply NodeAclFeed::invite(const QVariantMap &json, Channel *channel)
   data[LS("id")]   = SimpleID::encode(head().channel()->id());
   data[LS("name")] = head().channel()->name();
 
-  MessagePacket packet(new MessageNotice(channel->id(), user->id(), JSON::generate(data), 0, SimpleID::randomId(SimpleID::MessageId)));
+  /// \deprecated Этот способ приглашения в канал является устаревшим.
+  MessagePacket packet(new MessageNotice(channel->id(), user->id(), JSON::generate(data), 0, ChatId(ChatId::MessageId).toByteArray()));
   packet->setCommand(LS("invite"));
   packet->setDirection(Notice::Internal);
   packet->setStatus(Notice::Found);

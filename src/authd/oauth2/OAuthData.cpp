@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  */
 
 #include "AuthCore.h"
-#include "net/SimpleID.h"
+#include "id/ChatId.h"
 #include "oauth2/OAuthData.h"
 #include "Settings.h"
 #include "sglobal.h"
@@ -54,18 +54,14 @@ bool OAuthData::read()
 
 QVariantMap OAuthData::toJSON(const QByteArray &state) const
 {
-  QByteArray s;
-  s.reserve(34);
-
-  if (SimpleID::typeOf(SimpleID::decode(state)) == SimpleID::MessageId)
-    s = state;
-  else
-    s = SimpleID::encode(SimpleID::randomId(SimpleID::MessageId));
+  ChatId s(state);
+  if (s.isNull())
+    s.init(ChatId::MessageId);
 
   QVariantMap data;
   data[LS("name")]     = name;
   data[LS("htmlName")] = htmlName;
-  data[LS("url")]      = toUrl(s);
+  data[LS("url")]      = toUrl(s.toBase32());
   data[LS("type")]     = type;
   return data;
 }

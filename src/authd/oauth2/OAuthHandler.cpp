@@ -23,7 +23,7 @@
 #include "AuthCore.h"
 #include "AuthHandler.h"
 #include "AuthState.h"
-#include "net/SimpleID.h"
+#include "id/ChatId.h"
 #include "NodeLog.h"
 #include "oauth2/OAuthData.h"
 #include "oauth2/OAuthHandler.h"
@@ -150,8 +150,9 @@ void OAuthHandler::serveOk()
  */
 void OAuthHandler::setState(const QByteArray &state)
 {
-  if (SimpleID::typeOf(SimpleID::decode(state)) == SimpleID::MessageId)
-    m_state = state;
-  else
-    m_state = SimpleID::encode(SimpleID::randomId(SimpleID::MessageId));
+  ChatId s(state);
+  if (s.isNull())
+    s.init(ChatId::MessageId);
+
+  m_state = s.toBase32();
 }

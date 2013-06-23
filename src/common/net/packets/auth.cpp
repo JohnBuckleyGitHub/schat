@@ -199,9 +199,6 @@ QByteArray AuthRequest::data(QDataStream *stream) const
   if (!json.isEmpty())
     fields |= JSonField;
 
-  if (id.isEmpty())
-    id = SimpleID::randomId(SimpleID::MessageId);
-
   PacketWriter writer(stream, Protocol::AuthRequestPacket);
 
   writer.put(fields);
