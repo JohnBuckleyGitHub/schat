@@ -65,7 +65,7 @@ public:
   ClientState clientState() const;
   ClientState previousState() const;
   const QByteArray& cookie() const;
-  const QByteArray& uniqueId() const;
+  const QByteArray uniqueId() const;
   const QString& nick() const;
   const QString& serverName() const;
   const QUrl& url() const;

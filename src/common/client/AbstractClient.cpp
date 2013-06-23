@@ -369,9 +369,9 @@ const QByteArray& AbstractClient::cookie() const
 }
 
 
-const QByteArray& AbstractClient::uniqueId() const
+const QByteArray AbstractClient::uniqueId() const
 {
-  return d_func()->uniqueId;
+  return d_func()->uniqueId.byteArray();
 }
 
 

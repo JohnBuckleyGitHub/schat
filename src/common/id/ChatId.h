@@ -64,13 +64,14 @@ public:
   ChatId &init(const QByteArray &id);
   ChatId &init(Type type, const QByteArray &salt = QByteArray());
 
+  inline bool isNull() const                { return !a && !b && !c && !d; }
   inline const QByteArray byteArray() const { return QByteArray::fromRawData(reinterpret_cast<const char *>(m_data), kIdSize); }
   inline const uchar *data() const          { return m_data; }
   inline ObjectId oid() const               { return ObjectId(m_oid); }
+  inline QByteArray toByteArray() const     { return QByteArray(reinterpret_cast<const char *>(m_data), kIdSize); }
   inline QString toString() const           { return toBase32(); }
   inline uchar type() const                 { return m_type; }
   inline void clear()                       { a = 0; b = 0; c = 0; d = 0; }
-  inline bool isNull() const                { return !a && !b && !c && !d; }
 
   inline bool operator!=(const ChatId& other) const { return a != other.a || b != other.b || c != other.c || d != other.d; }
   inline bool operator<(const ChatId& other) const  { return memcmp(m_data , other.m_data , kIdSize ) < 0; }

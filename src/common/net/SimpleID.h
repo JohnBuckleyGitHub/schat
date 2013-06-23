@@ -62,7 +62,6 @@ public:
   static QByteArray randomId(Types type, const QByteArray &salt = QByteArray());
   static QByteArray setType(int type, const QByteArray &id);
   static QByteArray toBase32(const QByteArray &data);
-  static QByteArray uniqueId(const QByteArray &salt = QByteArray());
   static QString typeName(int type);
 };
 
