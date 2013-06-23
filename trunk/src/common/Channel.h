@@ -25,6 +25,7 @@
 
 #include "feeds/Feeds.h"
 #include "Gender.h"
+#include "id/ChatId.h"
 
 class Account;
 

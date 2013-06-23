@@ -43,7 +43,7 @@ SimpleClientPrivate::AuthReplyAction SimpleClientPrivate::authReply(const AuthRe
     return Nothing;
 
   AuthReplyAction action = AbstractClientPrivate::authReply(reply);
-  json[CLIENT_PROP_ID]      = SimpleID::encode(reply.serverId);
+  json[CLIENT_PROP_ID]      = ChatId(reply.serverId).toBase32();
   json[CLIENT_PROP_HOST]    = reply.host;
   json[CLIENT_PROP_HOST_ID] = reply.hostId;
   json[CLIENT_PROP_CHANNEL] = reply.channel;
@@ -139,16 +139,19 @@ void SimpleClient::requestAuth()
 {
   Q_D(SimpleClient);
 
-  if (d->authType == AuthRequest::Cookie && SimpleID::typeOf(d->cookie) != SimpleID::CookieId)
+  if (d->authType == AuthRequest::Cookie && d->cookie.type() != ChatId::CookieId)
     d->authType = AuthRequest::Discovery;
 
   if (d->uniqueId.isNull())
-    d->uniqueId = ChatId(ChatId::UniqueUserId, Channel::defaultName().toUtf8());
+    d->uniqueId.init(ChatId::UniqueUserId, Channel::defaultName().toUtf8());
+
+  if (d->authId.isNull())
+    d->authId.init(ChatId::MessageId);
 
   AuthRequest data(d->authType, d->url.toString(), d->channel.data());
   data.uniqueId = d->uniqueId.byteArray();
-  data.cookie   = d->cookie;
-  data.id       = d->authId;
+  data.cookie   = d->cookie.byteArray();
+  data.id       = d->authId.byteArray();
   send(data.data(d->sendStream));
 }
 

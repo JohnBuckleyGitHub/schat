@@ -70,7 +70,7 @@ NetworkItem* NetworkItem::item(const QByteArray &id)
 
   item->m_name   = ChatClient::serverName();
   item->m_url    = client->url().toString();
-  item->m_cookie = client->cookie();
+  item->m_cookie = client->cookie().toByteArray();
   item->m_userId = client->channelId();
 
   return item;

@@ -30,7 +30,7 @@ MessageNotice::MessageNotice()
 
 
 MessageNotice::MessageNotice(const MessageRecord &record, bool parse)
-: Notice(record.senderId, record.destId, record.command, record.date, record.messageId)
+  : Notice(record.senderId, record.destId, record.command, record.date, record.messageId)
 {
   m_type = MessageType;
   setText(record.text);

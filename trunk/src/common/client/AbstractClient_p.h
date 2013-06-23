@@ -60,6 +60,8 @@ public:
   AbstractClient::ClientState previousState; ///< Предыдущее состояние клиента.
   bool sendLock;                             ///< Блокировка отправки пакетов, пакеты будут добавлены в очередь и будут отправлены после снятия блокировки.
   ChatDNS *dns;                              ///< Объект для DNS запросов.
+  ChatId authId;                             ///< Идентификатор авторизации.
+  ChatId cookie;                             ///< Cookie.
   ChatId uniqueId;                           ///< Уникальный идентификатор пользователя.
   ClientChannel channel;                     ///< Канал пользователя.
   ClientChannel server;                      ///< Канал сервера.
@@ -68,8 +70,6 @@ public:
   NetworkPool *pool;                         ///< Пул адресов серверов.
   PacketReader *reader;                      ///< Текущий объект PacketReader выполняющий чтение пакета.
   QBasicTimer *reconnectTimer;               ///< Таймер управляющий попытками переподключения.
-  QByteArray authId;                         ///< Идентификатор авторизации.
-  QByteArray cookie;                         ///< Cookie.
   QList<QByteArray> sendQueue;               ///< Список виртуальных пакетов, ожидающих отправки если установлена блокировка на отправку.
   QString nick;                              ///< Оригинальный ник пользователя.
   QUrl url;                                  ///< Адрес, к которому будет подключен клиент.
