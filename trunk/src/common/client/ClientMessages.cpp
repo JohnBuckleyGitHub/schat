@@ -23,6 +23,7 @@
 #include "client/ClientMessages.h"
 #include "client/SimpleClient.h"
 #include "DateTime.h"
+#include "id/ChatId.h"
 #include "net/Channels.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
@@ -37,9 +38,12 @@ ClientMessages::ClientMessages(QObject *parent)
 }
 
 
+/**
+ * \deprecated Такой способ генерации идентификатора сообщений является устаревшим.
+ */
 QByteArray ClientMessages::randomId() const
 {
-  return SimpleID::randomId(SimpleID::MessageId, m_client->channelId());
+  return ChatId(ChatId::MessageId, m_client->channelId()).toByteArray();
 }
 
 

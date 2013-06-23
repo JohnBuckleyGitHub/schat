@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  */
 
 #include "AuthState.h"
-#include "net/SimpleID.h"
+#include "id/ChatId.h"
 
 AuthStateData::AuthStateData(const QByteArray &state, const QByteArray &error)
   : error(error)
@@ -33,7 +33,7 @@ AuthStateData::AuthStateData(const QByteArray &state, const QByteArray &provider
   , raw(raw)
   , user(user)
 {
-  cookie = SimpleID::encode(SimpleID::randomId(SimpleID::CookieId));
+  cookie = ChatId(ChatId::CookieId).toBase32();
 }
 
 

@@ -67,8 +67,8 @@ void AuthClient::start(const QString &url)
 
   m_retry = 1;
   m_url    = url;
-  m_secret = SimpleID::encode(SimpleID::randomId(SimpleID::PasswordId));
-  m_state  = SimpleID::encode(SimpleID::make(QUrl(url).host().toUtf8() + m_secret, SimpleID::MessageId));
+  m_secret = ChatId(ChatId::PasswordId).toBase32();
+  m_state  = ChatId(QUrl(url).host().toUtf8() + m_secret, ChatId::MessageId).toBase32();
 
   QNetworkRequest request(QUrl(url + LS("/providers?state=") + m_state));
 

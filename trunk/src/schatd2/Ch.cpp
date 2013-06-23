@@ -203,7 +203,7 @@ int Ch::rename(ChatChannel channel, const QString &name)
  */
 QByteArray Ch::cookie()
 {
-  return SimpleID::randomId(SimpleID::CookieId, Storage::privateId());
+  return ChatId(ChatId::CookieId, Storage::privateId()).toByteArray();
 }
 
 

@@ -132,7 +132,7 @@ ChatCore::~ChatCore()
 
 QByteArray ChatCore::randomId()
 {
-  return SimpleID::randomId(SimpleID::MessageId, ChatClient::id());
+  return ChatId(ChatId::MessageId, ChatClient::id()).toByteArray();
 }
 
 

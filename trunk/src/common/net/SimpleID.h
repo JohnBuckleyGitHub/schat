@@ -58,8 +58,6 @@ public:
   static QByteArray encode(const QByteArray &id);
   static QByteArray fromBase32(const QByteArray &base32);
   static QByteArray make(const QByteArray &data, Types type);
-  static QByteArray password(const QString &password, const QByteArray &salt = QByteArray());
-  static QByteArray randomId(Types type, const QByteArray &salt = QByteArray());
   static QByteArray setType(int type, const QByteArray &id);
   static QByteArray toBase32(const QByteArray &data);
   static QString typeName(int type);
