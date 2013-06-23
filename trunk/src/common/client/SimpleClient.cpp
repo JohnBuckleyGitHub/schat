@@ -142,11 +142,11 @@ void SimpleClient::requestAuth()
   if (d->authType == AuthRequest::Cookie && SimpleID::typeOf(d->cookie) != SimpleID::CookieId)
     d->authType = AuthRequest::Discovery;
 
-  if (d->uniqueId.isEmpty())
-    d->uniqueId = SimpleID::uniqueId(Channel::defaultName().toUtf8());
+  if (d->uniqueId.isNull())
+    d->uniqueId = ChatId(ChatId::UniqueUserId, Channel::defaultName().toUtf8());
 
   AuthRequest data(d->authType, d->url.toString(), d->channel.data());
-  data.uniqueId = d->uniqueId;
+  data.uniqueId = d->uniqueId.byteArray();
   data.cookie   = d->cookie;
   data.id       = d->authId;
   send(data.data(d->sendStream));

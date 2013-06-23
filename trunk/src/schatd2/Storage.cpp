@@ -232,7 +232,7 @@ int Storage::start()
     m_privateId = value(STORAGE_PRIVATE_ID).toByteArray();
 
     if (m_privateId.isEmpty())
-      m_privateId = SimpleID::encode(SimpleID::uniqueId());
+      m_privateId = ChatId(ChatId::UniqueUserId).toBase32();
   }
 
   m_id = SimpleID::make(m_privateId, SimpleID::ServerId);
