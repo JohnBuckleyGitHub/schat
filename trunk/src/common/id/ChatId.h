@@ -72,6 +72,7 @@ public:
   inline QString toString() const           { return toBase32(); }
   inline uchar type() const                 { return m_type; }
   inline void clear()                       { a = 0; b = 0; c = 0; d = 0; }
+  inline void setDate(qint64 date)          { m_date = date; }
 
   inline bool operator!=(const ChatId& other) const { return a != other.a || b != other.b || c != other.c || d != other.d; }
   inline bool operator<(const ChatId& other) const  { return memcmp(m_data , other.m_data , kIdSize ) < 0; }
