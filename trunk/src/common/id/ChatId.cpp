@@ -46,14 +46,19 @@ ChatId &ChatId::init(const QByteArray &data, Type type)
 ChatId &ChatId::init(const QByteArray &id)
 {
   if (id.size() == kEncodedSize) {
-    if (base32_decode(reinterpret_cast<const uchar *>(id.constData()), m_data) != kIdSize)
-      clear();
+    char outbuf[kIdSize + 1];
+    if (base32_decode(reinterpret_cast<const uchar *>(id.constData()), reinterpret_cast<uchar *>(outbuf)) == kIdSize) {
+      memcpy(m_data, outbuf, kIdSize);
+      return *this;
+    }
   }
-  else if (id.size() == kIdSize)
-    memcpy(m_data, id.constData(), kIdSize);
-  else
-    clear();
 
+  if (id.size() == kIdSize) {
+    memcpy(m_data, id.constData(), kIdSize);
+    return *this;
+  }
+
+  clear();
   return *this;
 }
 
