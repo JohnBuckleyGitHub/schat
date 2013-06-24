@@ -26,6 +26,16 @@
 #include "SecureRandom.h"
 #include "sglobal.h"
 
+
+ChatId &ChatId::init(const ObjectId &oid, qint64 modified, const uchar type)
+{
+  memcpy(m_oid, oid.data(), ObjectId::kOIDSize);
+  m_date = modified;
+  m_type = type;
+  return *this;
+}
+
+
 /*!
  * Создание идентификатора на основе SHA1 хеша исходных данных.
  *
