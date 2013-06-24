@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,8 +20,9 @@
 #define CLIENTMESSAGES_H_
 
 #include <QObject>
-#include <QHash>
+#include <QMultiMap>
 
+#include "id/ChatId.h"
 #include "net/packets/MessageNotice.h"
 
 class ClientCmd;
@@ -46,7 +47,6 @@ public:
   ClientMessages(QObject *parent = 0);
   inline void add(Hooks::Messages *hook)    { if (!m_hooks.contains(hook)) m_hooks.append(hook); }
   inline void remove(Hooks::Messages *hook) { m_hooks.removeAll(hook); }
-  QByteArray randomId() const;
   static bool isClientDate(int status);
 
   bool send(const QByteArray &dest, const QString &text);
@@ -64,6 +64,7 @@ private:
   void readText(MessagePacket packet);
   void sent(MessagePacket packet);
 
+  ChatId m_randomId;                               ///< Случайный идентификатор для сообщений.
   QByteArray m_destId;                             ///< Текущий получатель сообщения.
   QList<Hooks::Messages*> m_hooks;                 ///< Хуки.
   QMultiMap<QByteArray, MessagePacket> m_pending;  ///< Сообщения отображение которых отложена, т.к. не известна информация об отправителе.

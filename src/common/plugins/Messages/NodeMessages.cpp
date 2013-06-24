@@ -32,6 +32,7 @@
 
 NodeMessages::NodeMessages(Core *core)
   : NodeNoticeReader(Notice::MessageType, core)
+  , m_version(V1)
   , m_packet(0)
 {
 }
@@ -108,16 +109,26 @@ bool NodeMessages::read(PacketReader *reader)
  */
 FeedEvent *NodeMessages::createEvent()
 {
+  m_id.init(m_packet->id());
+  m_version = m_id.date() == 0 ? V2 : V1;
   m_packet->setDate(Core::date());
-  m_packet->setInternalId(m_packet->id());
-  m_packet->setId(m_packet->toId());
+
+  if (m_version == V2) {
+    m_id.setDate(m_packet->date());
+  }
+  else {
+    m_packet->setInternalId(m_id.toByteArray());
+    m_id.init(m_packet->toId());
+  }
+
+  m_packet->setId(m_id.toByteArray());
 
   FeedEvent *event = new FeedEvent(m_packet->dest(), m_packet->sender(), FEED_METHOD_POST);
   event->name      = FEED_NAME_MESSAGES;
   event->request   = m_packet->json();
   event->socket    = Core::socket();
   event->status    = Notice::OK;
-  event->path      = SimpleID::encode(m_packet->id());
+  event->path      = m_id.toString();
 
   m_dest = Ch::channel(m_packet->dest(), SimpleID::typeOf(m_packet->dest()));
   if (m_dest)

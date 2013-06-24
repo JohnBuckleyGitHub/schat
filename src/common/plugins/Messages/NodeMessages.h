@@ -27,6 +27,12 @@ class MessageNotice;
 class NodeMessages : public NodeNoticeReader
 {
 public:
+  /// Версия сообщений.
+  enum Version {
+    V1, /// Первоначальная версия, не поддерживает редактирование или удаление сообщений, поддерживается для обеспечения обратной совместимости.
+    V2  /// \since 2.1.0 Новая версия.
+  };
+
   NodeMessages(Core *core);
 
 protected:
@@ -37,9 +43,11 @@ private:
   void pong(qint64 date);
   void reject(int status);
 
-  MessageNotice *m_packet; ///< Прочитанный пакет.
   ChatChannel m_dest;      ///< Канал получателя.
   ChatChannel m_sender;    ///< Канал отправителя.
+  ChatId m_id;             ///< Идентификатор сообщения.
+  int m_version;           ///< Версия для определения схемы обработки сообщений.
+  MessageNotice *m_packet; ///< Прочитанный пакет.
 };
 
 #endif /* NODEMESSAGES_H_ */
