@@ -57,11 +57,9 @@ public:
   inline ChatId(const QByteArray &id)                             { init(id); }
   inline ChatId(const QString &id)                                { init(id.toLatin1()); }
   inline ChatId(Type type, const QByteArray &salt = QByteArray()) { init(type, salt); }
-  inline ChatId(const ObjectId &oid, qint64 modified = 0, const uchar type = MessageId )
-  : m_date(modified), m_type(type) {
-    memcpy(m_oid, oid.data(), ObjectId::kOIDSize);
-  }
+  inline ChatId(const ObjectId &oid, qint64 modified = 0, const uchar type = MessageId ) { init(oid, modified, type); }
 
+  ChatId &init(const ObjectId &oid, qint64 modified = 0, const uchar type = MessageId);
   ChatId &init(const QByteArray &data, Type type);
   ChatId &init(const QByteArray &id);
   ChatId &init(Type type, const QByteArray &salt = QByteArray());

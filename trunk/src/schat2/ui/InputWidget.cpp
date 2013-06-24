@@ -315,13 +315,13 @@ void InputWidget::send()
     return;
 
   if (m_history.isEmpty() || m_history.last() != html) {
-    if (m_history.size() == 10)
+    if (m_history.size() == 20)
       m_history.takeFirst();
 
     m_history << html;
-    m_current = m_history.count();
   }
 
+  m_current = m_history.count();
   emit send(out);
 }
 
