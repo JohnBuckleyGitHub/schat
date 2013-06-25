@@ -214,6 +214,30 @@ bool ClientMessages::command(const QByteArray &dest, const QString &text, const 
 }
 
 
+void ClientMessages::prepare(MessagePacket packet)
+{
+  ChatId id = packet->id();
+
+  if (isClientDate(packet->status())) {
+    packet->setDate(ChatClient::date());
+
+    if (packet->direction() != Notice::Internal) {
+      packet->setInternalId(id.toByteArray());
+
+      if (id.hasOid())
+        id.setDate(packet->date());
+      else
+        id.init(packet->toId());
+
+      packet->setId(id.toByteArray());
+    }
+  }
+
+  if (id.hasOid())
+    packet->oid = id.oid();
+}
+
+
 void ClientMessages::read(MessagePacket packet)
 {
   int matches = 0;
@@ -238,14 +262,7 @@ void ClientMessages::readText(MessagePacket packet)
   if (!packet->isValid())
     return;
 
-  if (isClientDate(packet->status())) {
-    packet->setDate(ChatClient::date());
-
-    if (packet->direction() != Notice::Internal) {
-      packet->setInternalId(packet->id());
-      packet->setId(packet->toId());
-    }
-  }
+  prepare(packet);
 
   ClientChannels *channels = ChatClient::channels();
   ClientChannel sender     = channels->get(packet->sender());

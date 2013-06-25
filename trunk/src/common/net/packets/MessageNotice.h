@@ -21,6 +21,7 @@
 
 #include <QStringList>
 
+#include "id/ChatId.h"
 #include "net/packets/Notice.h"
 
 struct SCHAT_EXPORT MessageRecord
@@ -57,6 +58,8 @@ public:
   static QList<QByteArray> decode(const QStringList &ids);
   static QStringList encode(const QList<QByteArray> &ids);
   static QByteArray toTag(const QStringList &messages);
+
+  ObjectId oid;
 
 private:
   QByteArray m_internalId; ///< Внутренний идентификатор сообщения.

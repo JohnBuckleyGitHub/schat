@@ -46,7 +46,7 @@ Message::Message(const QByteArray &id, const QByteArray &tab, const QString &typ
  */
 QByteArray Message::detectTab(const QByteArray &sender, const QByteArray &dest)
 {
-  if (SimpleID::typeOf(dest) == SimpleID::ChannelId || sender == ChatClient::id())
+  if (ChatId(dest).type() == ChatId::ChannelId || sender == ChatClient::id())
     return dest;
 
   return sender;
@@ -79,5 +79,5 @@ void Message::setDate(qint64 date)
  */
 void Message::setId(const QByteArray &id)
 {
-  m_data[MESSAGE_ID] = QString(SimpleID::encode(id));
+  m_data[MESSAGE_ID] = ChatId(id).toString();
 }

@@ -107,6 +107,19 @@ ChatId &ChatId::init(Type type, const QByteArray &salt)
 }
 
 
+bool ChatId::hasOid() const
+{
+  if (m_type != MessageId)
+    return false;
+
+  if (m_date == 0)
+    return true;
+
+  const qint64 time = oid().time();
+  return (time >= 946659600 && m_date >= (time * 1000) && m_date < Q_INT64_C(2147483648000));
+}
+
+
 QByteArray ChatId::toBase32() const
 {
   char outbuf[41];
