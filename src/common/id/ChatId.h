@@ -84,6 +84,7 @@ public:
     return date;
   }
 
+  bool hasOid() const;
   QByteArray toBase32() const;
 
   static QByteArray fromBase32(const QByteArray &base32);

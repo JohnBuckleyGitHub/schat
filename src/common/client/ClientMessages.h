@@ -60,6 +60,7 @@ private slots:
 private:
   bool command(const QByteArray &dest, const ClientCmd &cmd);
   bool command(const QByteArray &dest, const QString &text, const QString &plain);
+  void prepare(MessagePacket packet);
   void read(MessagePacket packet);
   void readText(MessagePacket packet);
   void sent(MessagePacket packet);
