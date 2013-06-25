@@ -23,6 +23,14 @@
 #include "sglobal.h"
 #include "WebBridge.h"
 
+const QString Message::kAuthor = QLatin1String("Author");
+const QString Message::kDate   = QLatin1String("Date");
+const QString Message::kExtra  = QLatin1String("Extra");
+const QString Message::kFunc   = QLatin1String("Func");
+const QString Message::kId     = QLatin1String("Id");
+const QString Message::kText   = QLatin1String("Text");
+const QString Message::kType   = QLatin1String("Type");
+
 Message::Message()
 {
 }
@@ -34,10 +42,10 @@ Message::Message(const QByteArray &id, const QByteArray &tab, const QString &typ
   setId(id);
 
   if (!type.isEmpty())
-    m_data[MESSAGE_TYPE] = type;
+    m_data.insert(kType, type);
 
   if (!func.isEmpty())
-    m_data[MESSAGE_FUNC] = func;
+    m_data.insert(kFunc, func);
 }
 
 
@@ -61,7 +69,7 @@ void Message::setAuthor(const QByteArray &id)
   const QVariantMap data = WebBridge::channel(id);
 
   if (!data.isEmpty())
-    m_data[MESSAGE_AUTHOR] = data;
+    m_data.insert(kAuthor, data);
 }
 
 
@@ -70,7 +78,7 @@ void Message::setDate(qint64 date)
   if (!date)
     date = DateTime::utc();
 
-  m_data[MESSAGE_DATE] = date;
+  m_data.insert(kDate, date);
 }
 
 
@@ -79,5 +87,5 @@ void Message::setDate(qint64 date)
  */
 void Message::setId(const QByteArray &id)
 {
-  m_data[MESSAGE_ID] = ChatId(id).toString();
+  m_data.insert(kId, ChatId(id).toString());
 }
