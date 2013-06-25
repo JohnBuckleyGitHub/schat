@@ -28,8 +28,8 @@
 AlertMessage::AlertMessage(const QString &text, const QString &extra)
   : Message(ChatCore::randomId(), ChatCore::currentId(), LS("alert"), LS("addAlertMessage"))
 {
-  m_data[MESSAGE_TEXT] = text;
-  m_data[MESSAGE_EXTRA] = LS("alert-box-") + extra;
+  m_data.insert(kText, text);
+  m_data.insert(kExtra, LS("alert-box-") + extra);
 }
 
 

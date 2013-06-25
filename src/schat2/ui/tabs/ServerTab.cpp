@@ -104,15 +104,15 @@ void ServerTab::alert(const Alert &alert)
 {
   if (alert.type() == LS("online")) {
     ServiceMessage message(alert.data().value(LS("popup")).toMap().value(LS("text")).toString());
-    message.data()[MESSAGE_TYPE]  = LS("info");
-    message.data()[MESSAGE_EXTRA] = LS("green-text");
+    message.data().insert(Message::kType,  LS("info"));
+    message.data().insert(Message::kExtra, LS("green-text"));
 
     m_chatView->add(message);
   }
   else if (alert.type() == LS("offline")) {
     ServiceMessage message(alert.data().value(LS("popup")).toMap().value(LS("text")).toString());
-    message.data()[MESSAGE_TYPE]  = LS("info");
-    message.data()[MESSAGE_EXTRA] = LS("red-text");
+    message.data().insert(Message::kType,  LS("info"));
+    message.data().insert(Message::kExtra, LS("red-text"));
 
     m_chatView->add(message);
   }

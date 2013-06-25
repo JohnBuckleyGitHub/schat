@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,6 +23,17 @@
 #include "sglobal.h"
 #include "text/TokenFilter.h"
 
+const QString ChannelMessage::kInternalId = QLatin1String("InternalId");
+const QString ChannelMessage::kCommand    = QLatin1String("Command");
+const QString ChannelMessage::kDirection  = QLatin1String("Direction");
+const QString ChannelMessage::kStatus     = QLatin1String("Status");
+const QString ChannelMessage::kOID        = QLatin1String("OID");
+
+const QString ChannelMessage::kOutgoing   = QLatin1String("outgoing");
+const QString ChannelMessage::kIncoming   = QLatin1String("incoming");
+const QString ChannelMessage::kOffline    = QLatin1String("offline");
+const QString ChannelMessage::kRejected   = QLatin1String("rejected");
+
 ChannelMessage::ChannelMessage(MessagePacket packet)
   : Message(packet->id(), QByteArray(), LS("channel"), LS("addChannelMessage"))
   , m_packet(packet)
@@ -32,19 +43,23 @@ ChannelMessage::ChannelMessage(MessagePacket packet)
   m_tab = detectTab(m_packet->sender(), m_packet->dest());
 
   if (!m_packet->internalId().isEmpty())
-    m_data[LS("InternalId")] = QString(SimpleID::encode(m_packet->internalId()));
+    m_data.insert(kInternalId, ChatId(m_packet->internalId()).toString());
 
-  m_data[LS("Command")]   = packet->command();
-  m_data[LS("Text")]      = TokenFilter::filter(LS("channel"), packet->text());
-  m_data[LS("Direction")] = m_packet->sender() == ChatClient::id() ? LS("outgoing") : LS("incoming");
+  m_data.insert(kCommand,   packet->command());
+  m_data.insert(kText,      TokenFilter::filter(LS("channel"), packet->text()));
+  m_data.insert(kDirection, m_packet->sender() == ChatClient::id() ? kOutgoing : kIncoming);
 
   /// Если это собственное сообщение, то для него при необходимости устанавливается
   /// статус "offline" или "rejected".
-  int status = packet->status();
+  const int status = packet->status();
   if (isOffline(status))
-    m_data[LS("Status")] = LS("offline");
+    m_data.insert(kStatus, kOffline);
   else if (status != Notice::OK && status != Notice::Found)
-    m_data[LS("Status")] = LS("rejected");
+    m_data.insert(kStatus, kRejected);
+
+  if (!packet->oid.isNull()) {
+    m_data.insert(kOID, QString(ChatId::toBase32(packet->oid.byteArray())));
+  }
 }
 
 

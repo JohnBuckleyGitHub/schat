@@ -23,27 +23,27 @@
 
 #include "schat.h"
 
-#define MESSAGE_AUTHOR QLatin1String("Author")
-#define MESSAGE_DATE   QLatin1String("Date")
-#define MESSAGE_EXTRA  QLatin1String("Extra")
-#define MESSAGE_FUNC   QLatin1String("Func")
-#define MESSAGE_ID     QLatin1String("Id")
-#define MESSAGE_TEXT   QLatin1String("Text")
-#define MESSAGE_TYPE   QLatin1String("Type")
-
 /*!
  * Базовый класс для текстовых сообщений.
  */
 class SCHAT_CORE_EXPORT Message
 {
 public:
+  static const QString kAuthor;
+  static const QString kDate;
+  static const QString kExtra;
+  static const QString kFunc;
+  static const QString kId;
+  static const QString kText;
+  static const QString kType;
+
   Message();
   Message(const QByteArray &id, const QByteArray &tab = QByteArray(), const QString &type = QString(), const QString &func = QString());
   virtual ~Message() {}
 
   inline const QByteArray& tab() const      { return m_tab; }
   inline const QVariantMap& data() const    { return m_data; };
-  inline QString id() const                 { return m_data.value(MESSAGE_ID).toString(); }
+  inline QString id() const                 { return m_data.value(kId).toString(); }
   inline QVariantMap& data()                { return m_data; };
   inline virtual bool isValid() const       { return true; }
   inline void setTab(const QByteArray &tab) { m_tab = tab; }

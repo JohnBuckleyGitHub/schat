@@ -30,10 +30,10 @@
 ServiceMessage::ServiceMessage(const QString &text, const QByteArray &user)
   : Message(ChatCore::randomId())
 {
-  m_data[MESSAGE_TYPE] = LS("service");
-  m_data[MESSAGE_TEXT] = text;
-  m_data[MESSAGE_DATE] = ChatClient::date();
-  m_data[MESSAGE_FUNC] = LS("addServiceMessage");
+  m_data.insert(kType, LS("service"));
+  m_data.insert(kText, text);
+  m_data.insert(kDate, ChatClient::date());
+  m_data.insert(kFunc, LS("addServiceMessage"));
 
   setAuthor(user);
 }
@@ -41,7 +41,7 @@ ServiceMessage::ServiceMessage(const QString &text, const QByteArray &user)
 
 bool ServiceMessage::isValid() const
 {
-  return !m_data.value(MESSAGE_TEXT).toString().isEmpty();
+  return !m_data.value(kText).toString().isEmpty();
 }
 
 
