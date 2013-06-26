@@ -60,6 +60,7 @@ public:
   static QByteArray toTag(const QStringList &messages);
 
   ObjectId oid;
+  qint64 mdate;
 
 private:
   QByteArray m_internalId; ///< Внутренний идентификатор сообщения.
