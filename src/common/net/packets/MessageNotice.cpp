@@ -24,6 +24,7 @@
 
 MessageNotice::MessageNotice()
   : Notice(QByteArray(), QByteArray(), LS("m"))
+  , mdate(0)
 {
   m_type = MessageType;
 }
@@ -31,6 +32,7 @@ MessageNotice::MessageNotice()
 
 MessageNotice::MessageNotice(const MessageRecord &record, bool parse)
   : Notice(record.senderId, record.destId, record.command, record.date, record.messageId)
+  , mdate(0)
 {
   m_type = MessageType;
   setText(record.text);
@@ -50,6 +52,7 @@ MessageNotice::MessageNotice(const MessageRecord &record, bool parse)
 
 MessageNotice::MessageNotice(const QByteArray &sender, const QByteArray &dest, const QString &text, quint64 date, const QByteArray &id)
   : Notice(sender, dest, LS("m"), date, id)
+  , mdate(0)
 {
   m_type = MessageType;
   setText(text);
@@ -64,6 +67,7 @@ MessageNotice::MessageNotice(const QByteArray &sender, const QByteArray &dest, c
 
 MessageNotice::MessageNotice(quint16 type, PacketReader *reader)
   : Notice(type, reader)
+  , mdate(0)
 {
 }
 

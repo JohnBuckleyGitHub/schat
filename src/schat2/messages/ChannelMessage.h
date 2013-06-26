@@ -32,6 +32,7 @@ public:
   static const QString kDirection;
   static const QString kStatus;
   static const QString kOID;
+  static const QString kMDate;
 
   static const QString kOutgoing;
   static const QString kIncoming;

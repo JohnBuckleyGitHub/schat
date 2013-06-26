@@ -28,6 +28,7 @@ const QString ChannelMessage::kCommand    = QLatin1String("Command");
 const QString ChannelMessage::kDirection  = QLatin1String("Direction");
 const QString ChannelMessage::kStatus     = QLatin1String("Status");
 const QString ChannelMessage::kOID        = QLatin1String("OID");
+const QString ChannelMessage::kMDate      = QLatin1String("MDate");
 
 const QString ChannelMessage::kOutgoing   = QLatin1String("outgoing");
 const QString ChannelMessage::kIncoming   = QLatin1String("incoming");
@@ -59,6 +60,7 @@ ChannelMessage::ChannelMessage(MessagePacket packet)
 
   if (!packet->oid.isNull()) {
     m_data.insert(kOID, QString(ChatId::toBase32(packet->oid.byteArray())));
+    m_data.insert(kMDate, packet->mdate);
   }
 }
 

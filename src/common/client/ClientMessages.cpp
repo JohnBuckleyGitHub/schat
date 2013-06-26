@@ -235,8 +235,10 @@ void ClientMessages::prepare(MessagePacket packet)
     }
   }
 
-  if (id.hasOid())
-    packet->oid = id.oid();
+  if (m_version >= Protocol::V4_1 && id.hasOid()) {
+    packet->oid   = id.oid();
+    packet->mdate = id.date();
+  }
 }
 
 
