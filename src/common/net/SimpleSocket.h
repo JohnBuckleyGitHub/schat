@@ -56,6 +56,7 @@ public:
   bool setSocketDescriptor(int socketDescriptor);
   const QByteArray& channelId() const;
   inline bool isReady() const { if (state() == ConnectedState) return true; return false; }
+  int version() const;
   QByteArray readBuffer() const;
   QDataStream *sendStream();
   qint64 date() const;

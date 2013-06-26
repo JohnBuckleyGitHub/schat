@@ -57,6 +57,7 @@ int TransportReader::readHeader()
 
   if (m_options & Protocol::TimeStamp) {
     *m_stream >> m_timestamp;
+    ((short *) &m_timestamp)[3] = 0; /// \since 2.1.0 2 старших байт отметки времени зарезервированы для будущего использования.
     m_available -= 8;
   }
 

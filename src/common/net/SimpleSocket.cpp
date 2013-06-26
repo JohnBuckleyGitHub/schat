@@ -36,6 +36,7 @@ SimpleSocketPrivate::SimpleSocketPrivate()
   , release(false)
   , serverSide(false)
   , sslAvailable(false)
+  , version(Protocol::V4_0)
   , rxStream(0)
   , date(0)
   , nextBlockSize(0)
@@ -78,7 +79,10 @@ bool SimpleSocketPrivate::readTransport()
 
   rx += nextBlockSize + 4;
   TransportReader reader(nextBlockSize, rxStream);
-  int type = reader.readHeader();
+  const int type = reader.readHeader();
+  if (reader.subversion() > version)
+    version = reader.subversion();
+
   nextBlockSize = reader.available();
 
   if (type == Protocol::GenericTransport) {
@@ -174,7 +178,7 @@ bool SimpleSocketPrivate::transmit(const QList<QByteArray> &packets, quint8 opti
   if (serverSide && options != Protocol::ContainsInternalPacket)
     ts = date;
 
-  TransportWriter tp(txStream, packets, txSeq, ts, options, Protocol::GenericTransport, Protocol::V4_0);
+  TransportWriter tp(txStream, packets, txSeq, ts, options, Protocol::GenericTransport, Protocol::V4_1);
   QByteArray packet = tp.data();
 
   if (!serverSide && options != Protocol::ContainsInternalPacket) {
@@ -463,6 +467,12 @@ const QByteArray& SimpleSocket::channelId() const
 }
 
 
+int SimpleSocket::version() const
+{
+  return d_func()->version;
+}
+
+
 QByteArray SimpleSocket::readBuffer() const
 {
   return d_func()->readBuffer;
@@ -600,6 +610,7 @@ void SimpleSocket::connected()
   SCHAT_DEBUG_STREAM(this << "connected()")
 
   Q_D(SimpleSocket);
+  d->version = 0;
 
   #if QT_VERSION >= 0x040600
   setSocketOption(QAbstractSocket::KeepAliveOption, 1);

@@ -66,6 +66,7 @@ private:
   void sent(MessagePacket packet);
 
   ChatId m_randomId;                               ///< Случайный идентификатор для сообщений.
+  int m_version;                                   ///< Версия протокола.
   QByteArray m_destId;                             ///< Текущий получатель сообщения.
   QList<Hooks::Messages*> m_hooks;                 ///< Хуки.
   QMultiMap<QByteArray, MessagePacket> m_pending;  ///< Сообщения отображение которых отложена, т.к. не известна информация об отправителе.

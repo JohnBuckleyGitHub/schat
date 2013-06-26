@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -28,10 +28,11 @@ class TransportReader
 {
 public:
   TransportReader(quint32 size, QDataStream *stream);
-  inline int options() const { return m_options; }
-  inline qint64 timestamp() const { return m_timestamp; }
+  inline int options() const       { return m_options; }
+  inline qint64 timestamp() const  { return m_timestamp; }
   inline quint32 available() const { return m_available; }
-  inline quint64 sequence() const { return m_sequence; }
+  inline quint64 sequence() const  { return m_sequence; }
+  inline quint8 subversion() const { return m_subversion; }
   int readHeader();
   QByteArray readOne();
   QList<QByteArray> read();
