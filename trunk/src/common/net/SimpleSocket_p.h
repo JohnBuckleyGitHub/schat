@@ -51,11 +51,12 @@ public:
   bool release;                        ///< true если сокет находится в состоянии закрытия.
   bool serverSide;                     ///< true если сокет работает на стороне сервера, иначе на строне клиента.
   bool sslAvailable;                   ///< true если доступна поддержка SSL.
+  int version;                         ///< Версия протокола.
   QBasicTimer *timer;                  ///< Таймер обслуживающий соединение.
+  QByteArray channelId;                ///< Идентификатор клиента.
   QByteArray readBuffer;               ///< Буфер чтения виртуальных пакетов.
   QByteArray sendBuffer;               ///< Буфер отправки виртуальных пакетов.
   QByteArray txBuffer;                 ///< Буфер отправки транспортных пакетов.
-  QByteArray channelId;                ///< Идентификатор клиента.
   QDataStream *readStream;             ///< Поток чтения виртуальных пакетов.
   QDataStream *rxStream;               ///< Поток чтения транспортных пакетов.
   QDataStream *sendStream;             ///< Поток отправки виртуальных пакетов.

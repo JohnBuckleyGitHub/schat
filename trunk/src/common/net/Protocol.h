@@ -26,7 +26,8 @@ public:
   enum Version {
     V3   = 0x3,  ///< Version 3 (obsolete).
     V4   = 0x4,  ///< Version 4.
-    V4_0 = 0x0   ///< Version 4.0.
+    V4_0 = 0x0,  ///< Version 4.0.
+    V4_1 = 0x1   ///< Version 4.1. \since 2.1.0.
   };
 
   /// Значения по умолчанию.

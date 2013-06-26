@@ -31,6 +31,7 @@
 
 ClientMessages::ClientMessages(QObject *parent)
   : QObject(parent)
+  , m_version(Protocol::V4_0)
   , m_client(ChatClient::io())
 {
   connect(m_client, SIGNAL(notice(int)), SLOT(notice(int)));
@@ -216,6 +217,7 @@ bool ClientMessages::command(const QByteArray &dest, const QString &text, const 
 
 void ClientMessages::prepare(MessagePacket packet)
 {
+  m_version = m_client->version();
   ChatId id = packet->id();
 
   if (isClientDate(packet->status())) {
@@ -224,7 +226,7 @@ void ClientMessages::prepare(MessagePacket packet)
     if (packet->direction() != Notice::Internal) {
       packet->setInternalId(id.toByteArray());
 
-      if (id.hasOid())
+      if (m_version >= Protocol::V4_1 && id.hasOid())
         id.setDate(packet->date());
       else
         id.init(packet->toId());
