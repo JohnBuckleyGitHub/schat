@@ -251,26 +251,34 @@ var Messages = {
     Messages.added.push(id);
   },
 
+  /*
+   * Установка идентификатора сообщения.
+   */
+  setMessageId: function(container, json) {
+    if (json.hasOwnProperty('OID')) {
+      container.id = json.OID;
+      container.setAttribute('data-mdate', json.MDate);
+    }
+    else
+      container.id = json.Id;
+  },
+
 
   /*
    * Добавление сообщения пользователя.
    */
   addChannelMessage: function(json)
   {
-    var container = null;
     if (json.hasOwnProperty('InternalId')) {
-      container = document.getElementById(json.InternalId);
-      if (container !== null)
-        container.id = json.Id;
-    }
-
-    if (container !== null || document.getElementById(json.Id) !== null) {
-      Messages.updateChannelMessage(json);
-      return;
+      var container = document.getElementById(json.InternalId);
+      if (container !== null) {
+        Messages.updateChannelMessage(container, json);
+        return;
+      }
     }
 
     var block = document.createElement('div');
-    block.id = json.Id;
+    Messages.setMessageId(block, json);
     block.setAttribute('class', 'container ' + json.Type + '-type');
     block.setAttribute('data-time', json.Date);
 
@@ -476,8 +484,10 @@ var Messages = {
   /*
    * Обновление сообщения.
    */
-  updateChannelMessage: function(json)
+  updateChannelMessage: function(container, json)
   {
+    Messages.setMessageId(container, json);
+
     var classes = json.Direction;
     if (json.Status !== undefined)
       classes += ' ' + json.Status;
@@ -485,8 +495,7 @@ var Messages = {
       if (json.Command == 'me')
       classes += ' me-action';
 
-    var container = document.getElementById(json.Id);
-    var block     = container.firstChild;
+    var block = container.firstChild;
     block.setAttribute('class', 'blocks ' + classes);
 
     if (json.Date > 0 && container.getAttribute('data-time') != json.Date) {

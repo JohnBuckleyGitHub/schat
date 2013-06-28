@@ -123,7 +123,7 @@ var History = {
     if (Settings.id != id)
       return;
 
-    Loader.spinner.add('history_loading');
+    //Loader.spinner.add('history_loading');
   },
 
 
