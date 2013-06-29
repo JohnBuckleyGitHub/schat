@@ -40,7 +40,7 @@ private:
   FeedReply logging() const;
   FeedReply offline(Channel *user) const;
   FeedReply since(const QVariantMap &json, Channel *user) const;
-  void toPackets(QList<QByteArray> &out, const QList<MessageRecord> &records) const;
+  void toPackets(QList<QByteArray> &out, const QList<MessageRecordV2> &records) const;
 };
 
 

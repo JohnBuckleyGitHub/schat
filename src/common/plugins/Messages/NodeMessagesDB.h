@@ -35,18 +35,16 @@ class NodeMessagesDB : public QObject
 public:
   NodeMessagesDB(QObject *parent = 0);
   ~NodeMessagesDB();
-  inline static QString id() { return m_id;}
   static bool open();
   static int status(int status);
-  static QList<MessageRecord> get(const QList<QByteArray> &ids, const QByteArray &userId);
-  static QList<MessageRecord> messages(QSqlQuery &query);
-  static QList<MessageRecord> offline(const QByteArray &user);
-  static QList<QByteArray> last(const QByteArray &channel, int limit, qint64 before);
-  static QList<QByteArray> last(const QByteArray &user1, const QByteArray &user2, int limit, qint64 before);
-  static QList<QByteArray> since(const QByteArray &channel, qint64 start, qint64 end);
-  static QList<QByteArray> since(const QByteArray &user1, const QByteArray &user2, qint64 start, qint64 end);
+  static QList<MessageRecordV2> get(const QList<ChatId> &ids, const ChatId &userId);
+  static QList<MessageRecordV2> offline(const ChatId &userId);
+  static QList<ChatId> last(const ChatId &channel, const int limit, const qint64 before);
+  static QList<ChatId> last(const ChatId &user1, const ChatId &user2, const int limit, const qint64 before);
+  static QList<ChatId> since(const ChatId &channel, const qint64 start, const qint64 end);
+  static QList<ChatId> since(const ChatId &user1, const ChatId &user2, const qint64 start, const qint64 end);
   static void add(const MessageNotice &packet, int status = 300);
-  static void markAsRead(const QList<MessageRecord> &records);
+  static void markAsRead(const QList<MessageRecordV2> &records);
 
 private slots:
   void startTasks();
@@ -58,21 +56,25 @@ private:
   public:
     ChannelsCache() {}
 
+    ChatId get(qint64 key);
     qint64 get(const ChatId &id);
 
   private:
-    qint64 add(const ChatId &key, qint64 value);
+    qint64 add(const ChatId &id, qint64 value);
 
     QMap<ChatId, qint64> m_forward;  ///< Прямая таблица поиска для преобразования идентификатора канала в id в базе.
     QMap<qint64, ChatId> m_backward; ///< Обратная таблица поиска для преобразования id в базе в идентификатор канала.
     QMutex m_mutex;                  ///< Мьютекс для защиты доступа к данным.
   };
 
-  static QList<QByteArray> ids(QSqlQuery &query);
+  friend class AddMessageTask;
+
   static qint64 V2();
   static qint64 V3();
   static qint64 V4();
   static qint64 V5();
+  static QList<ChatId> ids(QSqlQuery &query);
+  static QList<MessageRecordV2> messages(QSqlQuery &query);
   static void version();
 
   ChannelsCache m_channels;      ///< Кэш каналов.
