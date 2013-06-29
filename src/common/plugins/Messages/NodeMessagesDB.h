@@ -19,6 +19,7 @@
 #ifndef NODEMESSAGESDB_H_
 #define NODEMESSAGESDB_H_
 
+#include <QMutex>
 #include <QObject>
 #include <QRunnable>
 
@@ -51,12 +52,30 @@ private slots:
   void startTasks();
 
 private:
+  /// Кэш каналов.
+  class ChannelsCache
+  {
+  public:
+    ChannelsCache() {}
+
+    qint64 get(const ChatId &id);
+
+  private:
+    qint64 add(const ChatId &key, qint64 value);
+
+    QMap<ChatId, qint64> m_forward;  ///< Прямая таблица поиска для преобразования идентификатора канала в id в базе.
+    QMap<qint64, ChatId> m_backward; ///< Обратная таблица поиска для преобразования id в базе в идентификатор канала.
+    QMutex m_mutex;                  ///< Мьютекс для защиты доступа к данным.
+  };
+
   static QList<QByteArray> ids(QSqlQuery &query);
   static qint64 V2();
   static qint64 V3();
   static qint64 V4();
+  static qint64 V5();
   static void version();
 
+  ChannelsCache m_channels;      ///< Кэш каналов.
   QList<QRunnable*> m_tasks;     ///< Задачи для выполнения в отдельном потоке.
   static NodeMessagesDB *m_self; ///< Указатель на себя.
   static QString m_id;           ///< Идентификатор сооединения с базой, это строка всегда равна "messages".

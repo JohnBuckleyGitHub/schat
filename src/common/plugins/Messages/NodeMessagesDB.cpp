@@ -83,6 +83,13 @@ bool NodeMessagesDB::open()
     ");"
   ));
 
+  query.exec(LS(
+    "CREATE TABLE IF NOT EXISTS channels ( "
+    "  id         INTEGER PRIMARY KEY,"
+    "  channel    BLOB NOT NULL UNIQUE"
+    ");"
+  ));
+
   version();
   return true;
 }
@@ -322,6 +329,54 @@ void NodeMessagesDB::startTasks()
 
 
 /*!
+ * Поиск ключа в таблице \p channels для идентификатора канала \p id.
+ *
+ * Если ключ не найден в кэше, произойдёт запрос к базе данных для поиска ключа.
+ * Если ключ не будет найден в базе, то идентификатор будет вставлен в базу.
+ *
+ * Эта функция потокобезопасна.
+ */
+qint64 NodeMessagesDB::ChannelsCache::get(const ChatId &id)
+{
+  if (id.type() != ChatId::ChannelId && id.type() != ChatId::UserId)
+    return 0;
+
+  m_mutex.lock();
+  qint64 result = m_forward.value(id, 0);
+  m_mutex.unlock();
+
+  if (result)
+    return result;
+
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.prepare(LS("SELECT id FROM channels WHERE channel = :channel LIMIT 1;"));
+  query.bindValue(LS(":channel"), id.toBase32());
+  query.exec();
+
+  if (query.first())
+    return add(id, query.value(0).toLongLong());
+
+  query.prepare(LS("INSERT INTO channels (channel) VALUES (:channel);"));
+  query.bindValue(LS(":channel"), id.toBase32());
+  query.exec();
+
+  return add(id, query.lastInsertId().toLongLong());
+}
+
+
+qint64 NodeMessagesDB::ChannelsCache::add(const ChatId &key, qint64 value)
+{
+  if (!value)
+    return 0;
+
+  QMutexLocker locker(&m_mutex);
+  m_forward.insert(key, value);
+  m_backward.insert(value, key);
+  return value;
+}
+
+
+/*!
  * Добавление в базу информации о версии, в будущем эта информация может быть использована для автоматического обновления схемы базы данных.
  */
 void NodeMessagesDB::version()
@@ -333,8 +388,8 @@ void NodeMessagesDB::version()
 
   qint64 version = query.value(0).toLongLong();
   if (!version) {
-    query.exec(LS("PRAGMA user_version = 4"));
-    version = 4;
+    query.exec(LS("PRAGMA user_version = 5"));
+    version = 5;
     return;
   }
 
@@ -343,6 +398,7 @@ void NodeMessagesDB::version()
   if (version == 1) version = V2();
   if (version == 2) version = V3();
   if (version == 3) version = V4();
+  if (version == 4) version = V5();
 }
 
 
@@ -426,6 +482,34 @@ qint64 NodeMessagesDB::V4()
   query.exec(LS("VACUUM;"));
 
   return 4;
+}
+
+
+qint64 NodeMessagesDB::V5()
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  ChannelsCache &cache = m_self->m_channels;
+
+  {
+    query.prepare(LS("SELECT senderId, destId FROM messages"));
+    query.exec();
+
+    ChatId id;
+    QList<ChatId> channels;
+
+    while (query.next()) {
+      for (int i = 0; i < 2; ++i) {
+        id.init(query.value(i).toByteArray());
+        if (!channels.contains(id))
+          channels.append(id);
+      }
+    }
+
+    foreach (const ChatId &id, channels)
+      cache.get(id);
+  }
+
+  return 5;
 }
 
 

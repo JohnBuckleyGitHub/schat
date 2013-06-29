@@ -242,10 +242,11 @@ QList<Network> NetworkManager::items() const
  */
 QString NetworkManager::root(const QByteArray &id) const
 {
-  if (id.isEmpty())
+  const ChatId _id(id.left(ChatId::kEncodedSize));
+  if (_id.isNull())
     return QString();
 
-  QString out = Path::cache() + LC('/') + id.left(34);
+  const QString out = Path::cache() + LC('/') + _id.toString();
   if (!QFile::exists(out))
     QDir().mkpath(out);
 
