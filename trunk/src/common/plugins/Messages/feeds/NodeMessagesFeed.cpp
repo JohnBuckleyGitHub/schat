@@ -42,13 +42,13 @@ NodeMessagesFeed::NodeMessagesFeed(const QString &name, qint64 date)
 
 FeedReply NodeMessagesFeed::get(const QString &path, const QVariantMap &json, Channel *channel) const
 {
-  if (path == LS("fetch"))
+  if (path == MESSAGES_FEED_FETCH_KEY)
     return fetch(json, channel);
-  else if (path == LS("last"))
+  else if (path == MESSAGES_FEED_LAST_KEY)
     return last(json, channel);
-  else if (path == LS("offline"))
+  else if (path == MESSAGES_FEED_OFFLINE_KEY)
     return offline(channel);
-  else if (path == LS("since"))
+  else if (path == MESSAGES_FEED_SINCE_KEY)
     return since(json, channel);
   else if (path == MESSAGES_FEED_LOGGING_KEY)
     return logging();
@@ -65,18 +65,30 @@ FeedReply NodeMessagesFeed::fetch(const QVariantMap &json, Channel *user) const
   if (!user)
     return Notice::BadRequest;
 
-  QList<QByteArray> ids = MessageNotice::decode(json.value(LS("messages")).toStringList());
+  QList<ChatId> ids;
+
+  if (json.contains(MESSAGES_FEED_MESSAGES_KEY)) {
+    ChatId messageId;
+    const QStringList messages = json.value(MESSAGES_FEED_MESSAGES_KEY).toStringList();
+
+    foreach (const QString &id, messages) {
+      messageId.init(id.toLatin1());
+      if (messageId.type() == ChatId::MessageId)
+        ids.append(messageId);
+    }
+  }
+
   if (ids.isEmpty())
     return Notice::BadRequest;
 
-  QList<MessageRecord> records = NodeMessagesDB::get(ids, head().channel()->type() == SimpleID::UserId ? user->id() : QByteArray());
+  QList<MessageRecordV2> records = NodeMessagesDB::get(ids, head().channel()->type() == ChatId::UserId ? user->id() : QByteArray());
   if (records.isEmpty())
     return FeedReply(Notice::NotFound);
 
   FeedReply reply(Notice::OK);
   toPackets(reply.packets, records);
 
-  reply.json[LS("count")] = reply.packets.size();
+  reply.json[MESSAGES_FEED_COUNT_KEY] = reply.packets.size();
   return reply;
 }
 
@@ -89,18 +101,18 @@ FeedReply NodeMessagesFeed::fetch(const QVariantMap &json, Channel *user) const
  */
 FeedReply NodeMessagesFeed::last(const QVariantMap &json, Channel *user) const
 {
-  int count = json.value(LS("count"), 20).toInt();
+  const int count = json.value(MESSAGES_FEED_COUNT_KEY, 20).toInt();
   if (count <= 0)
     return Notice::BadRequest;
 
-  qint64 before = json.value(LS("before"), 0).toLongLong();
+  qint64 before = json.value(MESSAGES_FEED_BEFORE_KEY, 0).toLongLong();
   QStringList messages;
   Channel *channel = head().channel();
 
-  if (channel->type() == SimpleID::ChannelId) {
+  if (channel->type() == ChatId::ChannelId) {
     messages = MessageNotice::encode(NodeMessagesDB::last(channel->id(), count, before));
   }
-  else if (channel->type() == SimpleID::UserId) {
+  else if (channel->type() == ChatId::UserId) {
     if (!user)
       return Notice::BadRequest;
 
@@ -110,13 +122,13 @@ FeedReply NodeMessagesFeed::last(const QVariantMap &json, Channel *user) const
   if (messages.isEmpty())
     return Notice::NotFound;
 
-  if (json.contains(LS("tag")) && json.value(LS("tag")) == MessageNotice::toTag(messages))
+  if (json.contains(MESSAGES_FEED_TAG_KEY) && json.value(MESSAGES_FEED_TAG_KEY) == MessageNotice::toTag(messages))
     return Notice::NotModified;
 
   FeedReply reply(Notice::OK);
   reply.json = json;
-  reply.json[LS("count")]    = messages.size();
-  reply.json[LS("messages")] = messages;
+  reply.json[MESSAGES_FEED_COUNT_KEY]    = messages.size();
+  reply.json[MESSAGES_FEED_MESSAGES_KEY] = messages;
   return reply;
 }
 
@@ -148,7 +160,7 @@ FeedReply NodeMessagesFeed::offline(Channel *user) const
   if (head().channel()->id() != user->id())
     return FeedReply(Notice::Forbidden);
 
-  QList<MessageRecord> records = NodeMessagesDB::offline(user->id());
+  QList<MessageRecordV2> records = NodeMessagesDB::offline(user->id());
   if (records.isEmpty())
     return Notice::NotFound;
 
@@ -157,19 +169,19 @@ FeedReply NodeMessagesFeed::offline(Channel *user) const
   FeedReply reply(Notice::OK);
   toPackets(reply.packets, records);
 
-  reply.json[LS("count")] = reply.packets.size();
+  reply.json[MESSAGES_FEED_COUNT_KEY] = reply.packets.size();
   return reply;
 }
 
 
 FeedReply NodeMessagesFeed::since(const QVariantMap &json, Channel *user) const
 {
-  qint64 date = json.value(LS("date"), 0).toLongLong();
+  const qint64 date = json.value(MESSAGES_FEED_DATE_KEY, 0).toLongLong();
   if (date <= 0)
     return Notice::BadRequest;
 
-  qint64 end = json.value(LS("end"), DateTime::utc()).toLongLong();
-  QList<QByteArray> messages;
+  qint64 end = json.value(MESSAGES_FEED_END_KEY, DateTime::utc()).toLongLong();
+  QList<ChatId> messages;
   Channel *channel = head().channel();
 
   if (channel->type() == SimpleID::ChannelId) {
@@ -187,17 +199,17 @@ FeedReply NodeMessagesFeed::since(const QVariantMap &json, Channel *user) const
 
   FeedReply reply(Notice::OK);
   reply.json = json;
-  reply.json[LS("count")]    = messages.size();
-  reply.json[LS("messages")] = MessageNotice::encode(messages);
+  reply.json[MESSAGES_FEED_COUNT_KEY]    = messages.size();
+  reply.json[MESSAGES_FEED_MESSAGES_KEY] = MessageNotice::encode(messages);
 
   return reply;
 }
 
 
-void NodeMessagesFeed::toPackets(QList<QByteArray> &out, const QList<MessageRecord> &records) const
+void NodeMessagesFeed::toPackets(QList<QByteArray> &out, const QList<MessageRecordV2> &records) const
 {
   for (int i = 0; i < records.size(); ++i) {
-    const MessageRecord& record = records.at(i);
+    const MessageRecordV2& record = records.at(i);
     if (!record.id)
       continue;
 

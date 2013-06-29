@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -43,6 +43,26 @@ MessageNotice::MessageNotice(const MessageRecord &record, bool parse)
     m_data = JSON::parse(m_raw).toMap();
 
   if (SimpleID::typeOf(record.destId) == SimpleID::UserId)
+    m_direction = Client2Client;
+
+  if (m_date == 0)
+    m_date = DateTime::utc();
+}
+
+
+MessageNotice::MessageNotice(const MessageRecordV2 &record, bool parse)
+  : Notice(record.sender.toByteArray(), record.dest.toByteArray(), record.cmd, record.date, record.oid.toByteArray())
+  , mdate(0)
+{
+  m_type = MessageType;
+  setText(record.text);
+  setStatus(record.status);
+  m_raw = record.data;
+
+  if (parse)
+    m_data = JSON::parse(m_raw).toMap();
+
+  if (record.dest.type() == ChatId::UserId)
     m_direction = Client2Client;
 
   if (m_date == 0)
@@ -93,21 +113,6 @@ QList<QByteArray> MessageNotice::decode(const QStringList &ids)
 }
 
 
-QStringList MessageNotice::encode(const QList<QByteArray> &ids)
-{
-  QStringList out;
-# if QT_VERSION >= 0x040700
-  out.reserve(ids.size());
-# endif
-
-  foreach (const QByteArray &id, ids) {
-    out.append(SimpleID::encode(id));
-  }
-
-  return out;
-}
-
-
 /*!
  * Преобразование списка сообщений в кодированный идентификатор списка.
  */
@@ -119,4 +124,32 @@ QByteArray MessageNotice::toTag(const QStringList &messages)
     raw.append(SimpleID::decode(id));
 
   return SimpleID::encode(SimpleID::make(raw, SimpleID::MessageId));
+}
+
+
+QStringList MessageNotice::encode(const QList<ChatId> &ids)
+{
+  QStringList out;
+# if QT_VERSION >= 0x040700
+  out.reserve(ids.size());
+# endif
+
+  foreach (const ChatId &id, ids)
+    out.append(id.toString());
+
+  return out;
+}
+
+
+QStringList MessageNotice::encode(const QList<QByteArray> &ids)
+{
+  QStringList out;
+# if QT_VERSION >= 0x040700
+  out.reserve(ids.size());
+# endif
+
+  foreach (const QByteArray &id, ids)
+    out.append(SimpleID::encode(id));
+
+  return out;
 }

@@ -23,6 +23,7 @@
 #define MESSAGES_FEED_COUNT_KEY    QLatin1String("count")
 #define MESSAGES_FEED_DATE_KEY     QLatin1String("date")
 #define MESSAGES_FEED_EMULATED_KEY QLatin1String("emulated")
+#define MESSAGES_FEED_END_KEY      QLatin1String("end")
 #define MESSAGES_FEED_FETCH_KEY    QLatin1String("fetch")
 #define MESSAGES_FEED_FETCH_REQ    QLatin1String("messages/fetch")
 #define MESSAGES_FEED_LAST_KEY     QLatin1String("last")
