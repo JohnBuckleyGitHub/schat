@@ -40,12 +40,23 @@ public:
     TraceLevel
   };
 
+  enum OutFlag {
+    NoOut   = 0,
+    FileOut = 1,
+    StdOut  = 2
+  };
+
+  Q_DECLARE_FLAGS(OutFlags, OutFlag)
+
   NodeLog();
   bool open(const QString &file, Level level);
-  inline static Level level() { return m_level; }
-  inline static NodeLog *i()  { return m_self; }
-  void add(Level level, const QString &message);
+  inline static Level level()                     { return m_level; }
+  inline static NodeLog *i()                      { return m_self; }
+  inline static void setColors(bool colors)       { m_colors = colors; }
+  inline static void setLevel(Level level)        { m_level = level; }
+  inline static void setOutFlags(OutFlags output) { m_output = output; }
   void add(Level level, const QString &code, const QString &tag, const QString &message);
+  void add(Level level, const QString &message);
 
   class SCHAT_EXPORT Stream : public QTextStream
   {
@@ -91,13 +102,18 @@ public:
 private:
   QString time() const;
 
-  QFile m_file;           ///< Файл журнала.
-  QMutex m_mutex;         ///< Мьютекс защищающий запись.
-  QStringList m_levels;   ///< Текстовые обозначения уровней журналирования.
-  QTextStream m_stream;   ///< Текстовый поток для записи в журнал.
-  static Level m_level;   ///< Уровень ведения журнала.
-  static NodeLog *m_self; ///< Указатель на себя.
+  QFile m_file;             ///< Файл журнала.
+  QMutex m_mutex;           ///< Мьютекс защищающий запись.
+  QStringList m_levels;     ///< Текстовые обозначения уровней журналирования.
+  QTextStream m_stdout;     ///< Текстовый поток для вывода в stdout;
+  QTextStream m_stream;     ///< Текстовый поток для записи в журнал.
+  static bool m_colors;     ///< \b true если используется цвета для вывода в stdout;
+  static Level m_level;     ///< Уровень ведения журнала.
+  static NodeLog *m_self;   ///< Указатель на себя.
+  static OutFlags m_output; ///< Битовая маска каналов для вывода логов.
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(NodeLog::OutFlags)
 
 #define LOG_FATAL(code, tag, x) if (NodeLog::level() >= NodeLog::FatalLevel) NodeLog::Stream(NodeLog::FatalLevel, QLatin1String(code), QLatin1String(tag)) << x ;
 #define LOG_ERROR(code, tag, x) if (NodeLog::level() >= NodeLog::ErrorLevel) NodeLog::Stream(NodeLog::ErrorLevel, QLatin1String(code), QLatin1String(tag)) << x ;

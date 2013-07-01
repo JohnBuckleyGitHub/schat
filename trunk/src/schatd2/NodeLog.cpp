@@ -23,10 +23,17 @@
 #include "NodeLog.h"
 #include "sglobal.h"
 
-NodeLog::Level NodeLog::m_level = NodeLog::FatalLevel;
-NodeLog *NodeLog::m_self = 0;
+#if defined(Q_OS_WIN32)
+# include "qt_windows.h"
+#endif
+
+bool NodeLog::m_colors              = false;
+NodeLog *NodeLog::m_self            = 0;
+NodeLog::Level NodeLog::m_level     = NodeLog::FatalLevel;
+NodeLog::OutFlags NodeLog::m_output = NodeLog::FileOut | StdOut;
 
 NodeLog::NodeLog()
+  : m_stdout(stdout)
 {
   m_self = this;
   m_levels += LS("fatal");
@@ -71,7 +78,8 @@ void NodeLog::add(Level level, const QString &message)
     return;
 
   QMutexLocker lock(&m_mutex);
-  m_stream << time() << " [" << m_levels.at(level) << "] " << message << endl;
+  if ((m_output & FileOut) && m_file.isOpen())
+    m_stream << time() << " [" << m_levels.at(level) << "] " << message << endl;
 }
 
 
@@ -83,7 +91,51 @@ void NodeLog::add(Level level, const QString &code, const QString &tag, const QS
   const QString t = time();
 
   QMutexLocker lock(&m_mutex);
-  m_stream << QString(LS("%1 [%2] %3 [%4] %5")).arg(t, m_levels.at(level), code, tag, message) << endl;
+
+  if ((m_output & FileOut) && m_file.isOpen())
+    m_stream << QString(LS("%1 [%2] %3 [%4] %5")).arg(t, m_levels.at(level), code, tag, message) << endl;
+
+  if (!(m_output & StdOut))
+    return;
+
+  if (!m_colors) {
+    m_stdout << QString(LS("%1 [%2] %3 [%4] %5")).arg(t, m_levels.at(level), code, tag, message) << endl;
+    return;
+  }
+
+# if defined(Q_OS_WIN32)
+  HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+  SetConsoleTextAttribute(hConsole, 8);
+  m_stdout << t;
+  m_stdout.flush();
+
+  int color = 9;
+  if (level == FatalLevel || level == ErrorLevel)
+    color = 12;
+  else if (level == WarnLevel)
+    color = 14;
+  else if (level == InfoLevel)
+    color = 13;
+
+  SetConsoleTextAttribute(hConsole, color);
+  m_stdout << LS(" [") << m_levels.at(level) << "] ";
+  m_stdout.flush();
+
+  SetConsoleTextAttribute(hConsole, 10);
+  m_stdout << code;
+  m_stdout.flush();
+
+  SetConsoleTextAttribute(hConsole, 11);
+  m_stdout << LS(" [") << tag << "] ";
+  m_stdout.flush();
+
+  SetConsoleTextAttribute(hConsole, 7);
+  m_stdout << message << endl;
+  m_stdout.flush();
+
+# else
+  m_stdout << QString(LS("%1 [%2] %3 [%4] %5")).arg(t, m_levels.at(level), code, tag, message) << endl;
+# endif
 }
 
 

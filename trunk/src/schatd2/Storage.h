@@ -32,7 +32,6 @@ class StorageHook;
 
 #define STORAGE_CERTIFICATE    QLatin1String("Certificate")
 #define STORAGE_LISTEN         QLatin1String("Listen")
-#define STORAGE_LOG_LEVEL      QLatin1String("LogLevel")
 #define STORAGE_MAX_OPEN_FILES QLatin1String("MaxOpenFiles")
 #define STORAGE_NICK_OVERRIDE  QLatin1String("NickOverride")
 #define STORAGE_PASSWORD       QLatin1String("password")
@@ -46,6 +45,10 @@ class SCHAT_EXPORT Storage : public QObject
   Q_OBJECT
 
 public:
+  static const QString kLogColor;
+  static const QString kLogLevel;
+  static const QString kLogOutput;
+
   Storage(const QString &app, QObject *parent = 0);
   ~Storage();
   inline static QByteArray privateId()     { return m_self->m_privateId; }
