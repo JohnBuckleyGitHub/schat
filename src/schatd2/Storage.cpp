@@ -47,6 +47,9 @@
 QStringList Storage::m_features;
 Storage *Storage::m_self = 0;
 
+const QString Storage::kLogColor  = QLatin1String("LogLevel");
+const QString Storage::kLogLevel  = QLatin1String("LogLevel");
+const QString Storage::kLogOutput = QLatin1String("LogOutput");
 
 Storage::Storage(const QString &app, QObject *parent)
   : QObject(parent)
@@ -64,7 +67,6 @@ Storage::Storage(const QString &app, QObject *parent)
   m_settings = new Settings(etc() + LC('/') + Path::app() + LS(".conf"), this);
   m_settings->setDefault(STORAGE_CERTIFICATE,    LS(":/server.crt"));
   m_settings->setDefault(STORAGE_LISTEN,         QStringList(LS("0.0.0.0:7667")));
-  m_settings->setDefault(STORAGE_LOG_LEVEL,      2);
   m_settings->setDefault(STORAGE_MAX_OPEN_FILES, 0);
   m_settings->setDefault(STORAGE_NICK_OVERRIDE,  true);
   m_settings->setDefault(STORAGE_PRIVATE_ID,     QString());
@@ -141,6 +143,14 @@ int Storage::setValue(const QString &key, const QVariant &value)
 
   if (cache) {
     m_self->m_cache[key] = value;
+
+    if (key == kLogLevel)
+      NodeLog::setLevel(static_cast<NodeLog::Level>(value.toInt()));
+    else if (key == kLogOutput)
+      NodeLog::setOutFlags(static_cast<NodeLog::OutFlags>(value.toInt()));
+    else if (key == kLogColor)
+      NodeLog::setColors(value.toBool());
+
     emit m_self->valueChanged(key, value);
   }
 
@@ -217,7 +227,7 @@ int Storage::start()
     logPath = LS("/var/log/") + Path::app();
 # endif
 
-  m_log->open(logPath + LC('/') + Path::app() + LS(".log"), static_cast<NodeLog::Level>(m_settings->value(STORAGE_LOG_LEVEL).toInt()));
+  m_log->open(logPath + LC('/') + Path::app() + LS(".log"), NodeLog::ErrorLevel);
 
   setDefaultSslConf();
 
@@ -226,6 +236,9 @@ int Storage::start()
 # endif
 
   DataBase::start();
+  NodeLog::setLevel(static_cast<NodeLog::Level>(value(kLogLevel, NodeLog::ErrorLevel).toInt()));
+  NodeLog::setOutFlags(static_cast<NodeLog::OutFlags>(value(kLogOutput, NodeLog::FileOut).toInt()));
+  NodeLog::setColors(value(kLogColor, false).toBool());
 
   m_privateId = m_settings->value(STORAGE_PRIVATE_ID).toString().toUtf8();
   if (m_privateId.isEmpty()) {
