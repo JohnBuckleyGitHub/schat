@@ -115,6 +115,7 @@ FeedEvent *NodeMessages::createEvent()
 
   if (m_version == V2) {
     m_id.setDate(m_packet->date());
+    m_packet->mdate = m_packet->date();
   }
   else {
     m_packet->setInternalId(m_id.toByteArray());

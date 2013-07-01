@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -45,6 +45,30 @@ public:
   inline static Level level() { return m_level; }
   inline static NodeLog *i()  { return m_self; }
   void add(Level level, const QString &message);
+  void add(Level level, const QString &code, const QString &tag, const QString &message);
+
+  class SCHAT_EXPORT Stream : public QTextStream
+  {
+  public:
+    explicit Stream(Level level, const QString &code, const QString &tag)
+      : QTextStream()
+      , m_code(code)
+      , m_tag(tag)
+      , m_level(level)
+    {
+      setString(&m_buffer);
+    }
+
+    ~Stream() {
+      NodeLog::i()->add(m_level, m_code, m_tag, m_buffer);
+    }
+
+  private:
+    const QString &m_code;
+    const QString &m_tag;
+    Level m_level;
+    QString m_buffer;
+  };
 
   class SCHAT_EXPORT Helper
   {
@@ -59,8 +83,6 @@ public:
     inline QDebug& stream() { return m_debug; }
 
   private:
-    void write();
-
     Level m_level;
     QDebug m_debug;
     QString m_buffer;
@@ -77,6 +99,12 @@ private:
   static NodeLog *m_self; ///< Указатель на себя.
 };
 
+#define LOG_FATAL(code, tag, x) if (NodeLog::level() >= NodeLog::FatalLevel) NodeLog::Stream(NodeLog::FatalLevel, QLatin1String(code), QLatin1String(tag)) << x ;
+#define LOG_ERROR(code, tag, x) if (NodeLog::level() >= NodeLog::ErrorLevel) NodeLog::Stream(NodeLog::ErrorLevel, QLatin1String(code), QLatin1String(tag)) << x ;
+#define LOG_WARN(code, tag, x)  if (NodeLog::level() >= NodeLog::WarnLevel)  NodeLog::Stream(NodeLog::WarnLevel,  QLatin1String(code), QLatin1String(tag)) << x ;
+#define LOG_INFO(code, tag, x)  if (NodeLog::level() >= NodeLog::InfoLevel)  NodeLog::Stream(NodeLog::InfoLevel,  QLatin1String(code), QLatin1String(tag)) << x ;
+#define LOG_DEBUG(code, tag, x) if (NodeLog::level() >= NodeLog::DebugLevel) NodeLog::Stream(NodeLog::DebugLevel, QLatin1String(code), QLatin1String(tag)) << x ;
+#define LOG_TRACE(code, tag, x) if (NodeLog::level() >= NodeLog::TraceLevel) NodeLog::Stream(NodeLog::TraceLevel, QLatin1String(code), QLatin1String(tag)) << x ;
 
 #define SCHAT_LOG_FATAL(x)  \
   if (NodeLog::level() < NodeLog::FatalLevel) {} \
