@@ -68,6 +68,20 @@ ChatId &ChatId::init(const QByteArray &id)
     return *this;
   }
 
+  if (id.size() == ObjectId::kEncodedSize) {
+    memcpy(m_oid, fromBase32(id).constData(), ObjectId::kOIDSize);
+    m_date = 0;
+    m_type = MessageId;
+    return *this;
+  }
+
+  if (id.size() == ObjectId::kOIDSize) {
+    memcpy(m_oid, id.constData(), ObjectId::kOIDSize);
+    m_date = 0;
+    m_type = MessageId;
+    return *this;
+  }
+
   clear();
   return *this;
 }

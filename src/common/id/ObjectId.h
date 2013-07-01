@@ -32,6 +32,7 @@ class SCHAT_EXPORT ObjectId
 public:
   enum {
     kOIDSize = 12,
+    kEncodedSize = 20
   };
 
   inline ObjectId() : a(0), b(0) {}

@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2011 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include <QMutexLocker>
 
 #include "NodeLog.h"
+#include "sglobal.h"
 
 NodeLog::Level NodeLog::m_level = NodeLog::FatalLevel;
 NodeLog *NodeLog::m_self = 0;
@@ -28,12 +29,12 @@ NodeLog *NodeLog::m_self = 0;
 NodeLog::NodeLog()
 {
   m_self = this;
-  m_levels += "fatal";
-  m_levels += "error";
-  m_levels += "warn";
-  m_levels += "info";
-  m_levels += "debug";
-  m_levels += "trace";
+  m_levels += LS("fatal");
+  m_levels += LS("error");
+  m_levels += LS("warn ");
+  m_levels += LS("info ");
+  m_levels += LS("debug");
+  m_levels += LS("trace");
 }
 
 
@@ -74,13 +75,19 @@ void NodeLog::add(Level level, const QString &message)
 }
 
 
-NodeLog::Helper::~Helper()
+void NodeLog::add(Level level, const QString &code, const QString &tag, const QString &message)
 {
-  write();
+  if (level == Disable)
+    return;
+
+  const QString t = time();
+
+  QMutexLocker lock(&m_mutex);
+  m_stream << QString(LS("%1 [%2] %3 [%4] %5")).arg(t, m_levels.at(level), code, tag, message) << endl;
 }
 
 
-void NodeLog::Helper::write()
+NodeLog::Helper::~Helper()
 {
   NodeLog::i()->add(m_level, m_buffer);
 }
