@@ -19,6 +19,7 @@
 #include <QDateTime>
 #include <QDir>
 #include <QMutexLocker>
+#include <QSqlError>
 
 #include "NodeLog.h"
 #include "sglobal.h"
@@ -36,6 +37,13 @@ NodeLog::NodeLog()
   : m_stdout(stdout)
 {
   m_self = this;
+
+# if defined(Q_OS_WIN32)
+  m_stdout.setCodec("CP" + QByteArray::number(GetConsoleOutputCP()));
+# else
+  m_stdout.setCodec("UTF-8");
+# endif
+
   m_levels += LS("fatal");
   m_levels += LS("error");
   m_levels += LS("warn ");
@@ -83,6 +91,12 @@ void NodeLog::add(Level level, const QString &message)
 }
 
 
+QString NodeLog::toString(const QSqlError &error)
+{
+  return QString(LS("QSqlError(%1, %2, \"%3\", \"%4\")")).arg(error.type()).arg(error.number()).arg(error.driverText()).arg(error.databaseText());
+}
+
+
 void NodeLog::add(Level level, const QString &code, const QString &tag, const QString &message)
 {
   if (level == Disable)
@@ -109,13 +123,15 @@ void NodeLog::add(Level level, const QString &code, const QString &tag, const QS
   m_stdout << t;
   m_stdout.flush();
 
-  int color = 9;
+  int color = 13;
   if (level == FatalLevel || level == ErrorLevel)
     color = 12;
   else if (level == WarnLevel)
     color = 14;
   else if (level == InfoLevel)
-    color = 13;
+    color = 15;
+  else if (level == TraceLevel)
+    color = 9;
 
   SetConsoleTextAttribute(hConsole, color);
   m_stdout << LS(" [") << m_levels.at(level) << "] ";
