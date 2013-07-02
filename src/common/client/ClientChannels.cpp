@@ -73,36 +73,6 @@ ClientChannel ClientChannels::get(const QByteArray &id)
 
 
 /*!
- * Запрос информации о каналах.
- *
- * \param channels Список идентификаторов каналов.
- */
-bool ClientChannels::info(const QList<QByteArray> &channels)
-{
-  if (channels.isEmpty())
-    return false;
-
-  if (channels.size() > 256) {
-    bool result = false;
-    int size = channels.size();
-    int pos = 0;
-
-    do {
-      result = m_client->send(ChannelNotice::info(ChatClient::id(), channels.mid(pos, 256)));
-      if (!result)
-        return result;
-
-      pos += 256;
-    } while (pos < size);
-
-    return true;
-  }
-
-  return m_client->send(ChannelNotice::info(ChatClient::id(), channels));
-}
-
-
-/*!
  * Вход в канал по идентификатору.
  *
  * \param id Идентификатор канала.
@@ -175,8 +145,10 @@ bool ClientChannels::sync(const QList<QByteArray> &channels)
 {
   QList<QByteArray> ids;
   foreach (const QByteArray &id, channels) {
-    if (!m_unsynced.contains(id) && !ids.contains(id))
+    if (!m_unsynced.contains(id) && !ids.contains(id)) {
+      m_unsynced.append(id);
       ids.append(id);
+    }
   }
 
   return info(ids);
@@ -272,7 +244,7 @@ void ClientChannels::restore()
   }
 
   channels.removeAll(m_client->channelId());
-  info(channels);
+  sync(channels);
   m_client->unlock();
 }
 
@@ -283,6 +255,36 @@ void ClientChannels::setup()
   m_synced.clear();
   m_unsynced.clear();
   m_joined.clear();
+}
+
+
+/*!
+ * Запрос информации о каналах.
+ *
+ * \param channels Список идентификаторов каналов.
+ */
+bool ClientChannels::info(const QList<QByteArray> &channels)
+{
+  if (channels.isEmpty())
+    return false;
+
+  if (channels.size() > 256) {
+    bool result = false;
+    int size = channels.size();
+    int pos = 0;
+
+    do {
+      result = m_client->send(ChannelNotice::info(ChatClient::id(), channels.mid(pos, 256)));
+      if (!result)
+        return result;
+
+      pos += 256;
+    } while (pos < size);
+
+    return true;
+  }
+
+  return m_client->send(ChannelNotice::info(ChatClient::id(), channels));
 }
 
 
