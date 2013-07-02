@@ -70,7 +70,6 @@ public:
   inline Hooks::Channels *hooks() const                           { return m_hooks; }
   inline int policy() const                                       { return m_policy; }
 
-  bool info(const QList<QByteArray> &channels);
   bool join(const QByteArray &id);
   bool join(const QString &name);
   bool name(const QByteArray &id, const QString &name);
@@ -97,6 +96,7 @@ private slots:
   void setup();
 
 private:
+  bool info(const QList<QByteArray> &channels);
   ClientChannel add();
   void channel();
   void join();
