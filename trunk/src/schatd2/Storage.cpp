@@ -51,6 +51,8 @@ const QString Storage::kLogColor  = QLatin1String("LogColor");
 const QString Storage::kLogLevel  = QLatin1String("LogLevel");
 const QString Storage::kLogOutput = QLatin1String("LogOutput");
 
+#define LOG_N8010 LOG_INFO("N8010", "Core/Storage", "Max open files limit: " << limit.rlim_cur << " " << limit.rlim_max)
+
 Storage::Storage(const QString &app, QObject *parent)
   : QObject(parent)
 {
@@ -318,7 +320,7 @@ void Storage::setMaxOpenFiles(int max)
   }
 
   if (getrlimit(RLIMIT_NOFILE, &limit) == 0) {
-    SCHAT_LOG_INFO("Max open files limit:" << limit.rlim_cur << limit.rlim_max);
+    LOG_N8010
   }
 # else
   Q_UNUSED(max)
