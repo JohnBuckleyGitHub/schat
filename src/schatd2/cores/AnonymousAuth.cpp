@@ -70,7 +70,7 @@ AuthResult AnonymousAuth::auth(const AuthRequest &data)
   Core::add(channel);
   Ch::userChannel(channel, data, m_core->packetsEvent()->address.toString(), created);
 
-  SCHAT_LOG_INFO_STR("ANONYMOUS AUTH: " + channel->name().toUtf8() + '@' + m_core->packetsEvent()->address.toString().toUtf8() + '/' + SimpleID::encode(channel->id()) + ", " + data.host.toUtf8());
+  LOG_INFO("N1010", "Core/AnonymousAuth", "s:" << Core::socket() << ". " << channel->name() << "@" << m_core->packetsEvent()->address.toString() + "/" + ChatId(channel->id()).toString() << ", " << data.host)
   return AuthResult(id, data.id);
 }
 

@@ -47,7 +47,7 @@
 QStringList Storage::m_features;
 Storage *Storage::m_self = 0;
 
-const QString Storage::kLogColor  = QLatin1String("LogLevel");
+const QString Storage::kLogColor  = QLatin1String("LogColor");
 const QString Storage::kLogLevel  = QLatin1String("LogLevel");
 const QString Storage::kLogOutput = QLatin1String("LogOutput");
 

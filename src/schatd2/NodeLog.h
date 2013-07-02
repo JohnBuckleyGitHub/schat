@@ -84,6 +84,7 @@ public:
     QString m_buffer;
   };
 
+  /// \deprecated Этот класс должен быть заменён на NodeLog::Stream.
   class SCHAT_EXPORT Helper
   {
   public:
@@ -124,43 +125,5 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(NodeLog::OutFlags)
 #define LOG_INFO(code, tag, x)  if (NodeLog::level() >= NodeLog::InfoLevel)  NodeLog::Stream(NodeLog::InfoLevel,  QLatin1String(code), QLatin1String(tag)) << x ;
 #define LOG_DEBUG(code, tag, x) if (NodeLog::level() >= NodeLog::DebugLevel) NodeLog::Stream(NodeLog::DebugLevel, QLatin1String(code), QLatin1String(tag)) << x ;
 #define LOG_TRACE(code, tag, x) if (NodeLog::level() >= NodeLog::TraceLevel) NodeLog::Stream(NodeLog::TraceLevel, QLatin1String(code), QLatin1String(tag)) << x ;
-
-#define SCHAT_LOG_FATAL(x)  \
-  if (NodeLog::level() < NodeLog::FatalLevel) {} \
-  else NodeLog::Helper(NodeLog::FatalLevel).stream() << x ;
-#define SCHAT_LOG_ERROR(x)  \
-  if (NodeLog::level() < NodeLog::ErrorLevel) {} \
-  else NodeLog::Helper(NodeLog::ErrorLevel).stream() << x ;
-#define SCHAT_LOG_WARN(x)  \
-  if (NodeLog::level() < NodeLog::WarnLevel) {} \
-  else NodeLog::Helper(NodeLog::WarnLevel).stream() << x ;
-#define SCHAT_LOG_INFO(x)  \
-  if (NodeLog::level() < NodeLog::InfoLevel) {} \
-  else NodeLog::Helper(NodeLog::InfoLevel).stream() << x ;
-# define SCHAT_LOG_DEBUG(x)  \
-  if (NodeLog::level() < NodeLog::DebugLevel) {} \
-  else NodeLog::Helper(NodeLog::DebugLevel).stream() << x ;
-# define SCHAT_LOG_TRACE(x)  \
-  if (NodeLog::level() < NodeLog::TraceLevel) {} \
-  else NodeLog::Helper(NodeLog::TraceLevel).stream() << x ;
-
-#define SCHAT_LOG_FATAL_STR(x)  \
-  if (NodeLog::level() < NodeLog::FatalLevel) {} \
-  else NodeLog::Helper(NodeLog::FatalLevel).stream() << (x).constData(); ;
-#define SCHAT_LOG_ERROR_STR(x)  \
-  if (NodeLog::level() < NodeLog::ErrorLevel) {} \
-  else NodeLog::Helper(NodeLog::ErrorLevel).stream() << (x).constData(); ;
-#define SCHAT_LOG_WARN_STR(x)  \
-  if (NodeLog::level() < NodeLog::WarnLevel) {} \
-  else NodeLog::Helper(NodeLog::WarnLevel).stream() << (x).constData(); ;
-#define SCHAT_LOG_INFO_STR(x)  \
-  if (NodeLog::level() < NodeLog::InfoLevel) {} \
-  else NodeLog::Helper(NodeLog::InfoLevel).stream() << (x).constData();
-# define SCHAT_LOG_DEBUG_STR(x)  \
-  if (NodeLog::level() < NodeLog::DebugLevel) {} \
-  else NodeLog::Helper(NodeLog::DebugLevel).stream() << (x).constData(); ;
-# define SCHAT_LOG_TRACE_STR(x)  \
-  if (NodeLog::level() < NodeLog::TraceLevel) {} \
-  else NodeLog::Helper(NodeLog::TraceLevel).stream() << (x).constData(); ;
 
 #endif /* NODELOG_H_ */
