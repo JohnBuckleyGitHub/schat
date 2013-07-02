@@ -55,7 +55,7 @@ bool NodeMessagesDB::open()
   QSqlDatabase db = QSqlDatabase::addDatabase(LS("QSQLITE"), m_id);
   db.setDatabaseName(Storage::var() + LS("/messages.sqlite"));
   if (!db.open()) {
-    SCHAT_LOG_FATAL("Could not open DataBase file" << db.databaseName() << ":" << db.lastError());
+    LOG_FATAL("M1010", "Messages/DB", "Could not open DataBase file \"" << db.databaseName() << "\". " << NodeLog::toString(db.lastError()))
     return false;
   }
 

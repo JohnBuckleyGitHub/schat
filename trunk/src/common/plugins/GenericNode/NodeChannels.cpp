@@ -37,6 +37,14 @@
 #include "Sockets.h"
 #include "Storage.h"
 
+#define LOG_TAG "GenericNode/Channels"
+#define LOG_G1010  LOG_INFO("G1010", LOG_TAG, "s:" << Core::socket() << ". Channel request:" << " id:"  << ChatId(m_user->id()).toString() << ", cid:" << ChatId(m_packet->channelId).toString() << ", cmd:" << cmd << ", txt:" << m_packet->text() << ", usr:" << m_user->name() )
+#define LOG_G1011 LOG_DEBUG("G1011", LOG_TAG, "s:" << Core::socket() << ". info: count:" << m_packet->channels.size())
+#define LOG_G1012 LOG_TRACE("G1012", LOG_TAG, "s:" << Core::socket() << ". info: id:" << ChatId(channel->id()).toString() << ", name:" << channel->name())
+#define LOG_G1013 LOG_DEBUG("G1013", LOG_TAG, "s:" << Core::socket() << ". join: id:" << channelId.toString() << ", name:" << name)
+#define LOG_G1014 LOG_ERROR("G1014", LOG_TAG, "s:" << Core::socket() << ". Could not get or create channel: id:" << channelId.toString() << ", name:" << name)
+#define LOG_G1015  LOG_WARN("G1015", LOG_TAG, "s:" << Core::socket() << ". Forbidden: id:" << ChatId(channel->id()).toString() << ", name:" << channel->name())
+
 NodeChannels::NodeChannels(Core *core)
   : QObject(core)
   , NodeNoticeReader(Notice::ChannelType, core)
@@ -61,12 +69,7 @@ bool NodeChannels::read(PacketReader *reader)
   const QString cmd = m_packet->command();
   int status  = Notice::NotImplemented;
 
-  SCHAT_LOG_DEBUG_STR("[GenericNode/Channels] read channel request, socket:" + QByteArray::number(Core::socket()) +
-      ", id:" + SimpleID::encode(m_user->id()) +
-      ", channelId:" + SimpleID::encode(m_packet->channelId) +
-      ", cmd:" + cmd.toUtf8() +
-      ", text:" + m_packet->text().toUtf8() +
-      ", user:" + m_user->name().toUtf8())
+  LOG_G1010
 
   if (cmd == CHANNELS_INFO_CMD)
     return info();
@@ -179,13 +182,13 @@ bool NodeChannels::info()
   if (m_packet->channels.isEmpty())
     return false;
 
-  SCHAT_LOG_DEBUG_STR("[GenericNode/Channels] info, count:" + QByteArray::number(m_packet->channels.size()))
+  LOG_G1011
 
   QList<QByteArray> packets;
   foreach (const QByteArray &id, m_packet->channels) {
     ChatChannel channel = Ch::channel(id, SimpleID::typeOf(id));
     if (channel) {
-      SCHAT_LOG_DEBUG_STR("[GenericNode/Channels] info, id:" + SimpleID::encode(channel->id()) + ", name:" + channel->name().toUtf8())
+      LOG_G1012
 
       if (channel->type() == SimpleID::UserId) {
         channel->addChannel(m_user->id());
@@ -207,25 +210,28 @@ bool NodeChannels::info()
 /*!
  * Обработка запроса пользователя подключения к каналу.
  */
-bool NodeChannels::join(const QByteArray &channelId, const QString &name)
+bool NodeChannels::join(const ChatId &channelId, const QString &name)
 {
+  LOG_G1013
+
   ChatChannel channel;
 
   /// Если идентификатор канала корректный, функция пытается получить его по этому идентификатору.
-  const int type = SimpleID::typeOf(channelId);
-  if (type != SimpleID::InvalidId)
-    channel = Ch::channel(channelId, type);
+  const int type = channelId.type();
+  if (type != ChatId::InvalidId)
+    channel = Ch::channel(channelId.toByteArray(), type);
 
   /// Если канал не удалось получить по идентификатору, будет произведена попытка создать обычный канал по имени.
-  if (!channel && (type == SimpleID::InvalidId || type == SimpleID::ChannelId))
+  if (!channel && (type == ChatId::InvalidId || type == ChatId::ChannelId))
     channel = Ch::channel(name, m_user);
 
-  if (!channel)
+  if (!channel) {
+    LOG_G1014
     return false;
+  }
 
-  SCHAT_LOG_DEBUG_STR("[GenericNode/Channels] join, id:" + SimpleID::encode(channel->id()) + ", name:" + channel->name().toUtf8())
-
-  if (channel->type() == SimpleID::ChannelId && isForbidden(channel)) {
+  if (channel->type() == ChatId::ChannelId && isForbidden(channel)) {
+    LOG_G1015
     m_core->send(m_user->sockets(), reply(channel, true));
     return false;
   }
@@ -234,13 +240,13 @@ bool NodeChannels::join(const QByteArray &channelId, const QString &name)
   channel->addChannel(m_user->id());
   m_user->addChannel(channel->id());
 
-  if (notify && channel->type() == SimpleID::ChannelId)
+  if (notify && channel->type() == ChatId::ChannelId)
     dump();
 
   m_core->send(m_user->sockets(), reply(channel));
 
   /// В случае необходимости всем пользователям в канале будет разослано уведомление в входе нового пользователя.
-  if (notify && channel->channels().all().size() > 1 && channel->type() == SimpleID::ChannelId)
+  if (notify && channel->channels().all().size() > 1 && channel->type() == ChatId::ChannelId)
     m_core->send(Sockets::channel(channel), ChannelNotice::channel(m_user, channel->id(), CHANNELS_JOINED_CMD));
 
   return false;

@@ -47,7 +47,7 @@ private slots:
 
 private:
   bool info();
-  bool join(const QByteArray &channelId, const QString &name = QString());
+  bool join(const ChatId &channelId, const QString &name = QString());
   int name();
   bool part();
   bool quit();

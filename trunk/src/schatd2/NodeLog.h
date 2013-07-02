@@ -27,6 +27,8 @@
 
 #include "schat.h"
 
+class QSqlError;
+
 class SCHAT_EXPORT NodeLog
 {
 public:
@@ -55,6 +57,7 @@ public:
   inline static void setColors(bool colors)       { m_colors = colors; }
   inline static void setLevel(Level level)        { m_level = level; }
   inline static void setOutFlags(OutFlags output) { m_output = output; }
+  static QString toString(const QSqlError &error);
   void add(Level level, const QString &code, const QString &tag, const QString &message);
   void add(Level level, const QString &message);
 
