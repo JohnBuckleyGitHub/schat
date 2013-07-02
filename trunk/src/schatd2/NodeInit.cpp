@@ -121,6 +121,4 @@ void NodeInit::start()
   m_pool->start();
 
   m_storage->load();
-
-  SCHAT_DEBUG_STREAM("NODE STARTED");
 }

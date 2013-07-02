@@ -227,7 +227,7 @@ void Core::reject(const AuthRequest &request, const AuthResult &result, quint64 
     socket = m_socket;
 
   if (result.status != Notice::Found) {
-    SCHAT_LOG_WARN_STR("auth rejected. status:\"" + QByteArray::number(result.status) + ' ' + Notice::status(result.status).toUtf8() + "\", socket:" + QByteArray::number(socket))
+    LOG_WARN("N5010", "Core", "s:" << socket << ". auth rejected. status:\"" << result.status << ' ' << Notice::status(result.status) << "\"")
   }
 
   NodeAuthReply reply(request, result);

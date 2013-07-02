@@ -24,6 +24,10 @@
 #include "net/SimpleSocket.h"
 #include "NodeLog.h"
 
+#define LOG_N4010  LOG_INFO("N4010", "Core/Worker", "s:" << socket->id() << ". new connection: ip:" << socket->peerAddress().toString())
+#define LOG_N4011  LOG_INFO("N4011", "Core/Worker", "s:" << socket->id() << ". released: ip:" << socket->peerAddress().toString() << ", authorized:" << socket->isAuthorized())
+#define LOG_N4012 LOG_DEBUG("N4012", "Core/Worker", "released:" << id)
+
 NodeWorker::NodeWorker(QObject *core)
   : QThread()
   , m_core(core)
@@ -102,10 +106,10 @@ void NodeWorkerListener::released(quint64 id)
   m_lock.lockForRead();
   SimpleSocket *socket = m_sockets.value(id);
   m_lock.unlock();
-  SCHAT_LOG_DEBUG("released" << id)
+  LOG_N4012
 
   if (socket) {
-    SCHAT_LOG_INFO_STR("released. ip:" + socket->peerAddress().toString().toUtf8() + ", socket:" + QByteArray::number(socket->id()) + ", authorized:" + QByteArray::number((int) socket->isAuthorized()))
+    LOG_N4011
 
     if (socket->isAuthorized()) {
       SocketReleaseEvent *event = new SocketReleaseEvent(id, socket->errorString(), socket->channelId());
@@ -129,7 +133,7 @@ void NodeWorkerListener::add(NewConnectionEvent *event)
   socket->setId(event->socket());
 
   if (socket->setSocketDescriptor(event->socketDescriptor)) {
-    SCHAT_LOG_INFO_STR("new connection. ip:" + socket->peerAddress().toString().toUtf8() + ", socket:" + QByteArray::number(socket->id()))
+    LOG_N4010
 
     connect(socket, SIGNAL(newPackets(quint64,QList<QByteArray>)), SLOT(packets(quint64,QList<QByteArray>)), Qt::DirectConnection);
     connect(socket, SIGNAL(released(quint64)), SLOT(released(quint64)), Qt::DirectConnection);

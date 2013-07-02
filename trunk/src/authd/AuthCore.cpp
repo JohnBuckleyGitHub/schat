@@ -46,6 +46,14 @@
 
 AuthCore *AuthCore::m_self = 0;
 
+#define LOG_A1010 LOG_FATAL("A1010", "AuthCore", "Configuration option \"BaseUrl\" is not set")
+#define LOG_A1011 LOG_FATAL("A1011", "AuthCore", "Providers list is empty")
+#define LOG_A1012 LOG_FATAL("A1012", "AuthCore", "Failed to open ports for incoming connections")
+#define LOG_A1013  LOG_INFO("A1013", "AuthCore", "Server successfully started")
+#define LOG_A1014  LOG_INFO("A1014", "AuthCore", "Added url: " << url.toString())
+#define LOG_A1015 LOG_ERROR("A1015", "AuthCore", "Failed to open port for incoming connections: " << url.toString())
+#define LOG_A1016  LOG_INFO("A1016", "AuthCore", "Added authorization provider: " << name)
+
 AuthCore::AuthCore(QObject *parent)
   : QObject(parent)
 {
@@ -55,11 +63,13 @@ AuthCore::AuthCore(QObject *parent)
   m_log = new NodeLog();
 
   m_settings = new Settings(defaultConf(), this);
-  m_settings->setDefault(LS("Listen"),   QStringList(LS("http://0.0.0.0:7668")));
-  m_settings->setDefault(LS("Root"),     defaultRoot());
-  m_settings->setDefault(LS("Order"),    QStringList() << LS("facebook") << LS("vkontakte") << LS("google") << LS("live") << LS("github") << LS("stackoverflow") << LS("yandex") << LS("odnoklassniki") << LS("mail_ru"));
-  m_settings->setDefault(LS("LogLevel"), 2);
-  m_settings->setDefault(LS("BaseUrl"),  QString());
+  m_settings->setDefault(LS("BaseUrl"),   QString());
+  m_settings->setDefault(LS("Listen"),    QStringList(LS("http://0.0.0.0:7668")));
+  m_settings->setDefault(LS("LogColor"),  true);
+  m_settings->setDefault(LS("LogLevel"),  NodeLog::WarnLevel);
+  m_settings->setDefault(LS("LogOutput"), NodeLog::FileOut);
+  m_settings->setDefault(LS("Order"),     QStringList() << LS("facebook") << LS("vkontakte") << LS("google") << LS("live") << LS("github") << LS("stackoverflow") << LS("yandex") << LS("odnoklassniki") << LS("mail_ru"));
+  m_settings->setDefault(LS("Root"),      defaultRoot());
 
   openLog();
 
@@ -116,7 +126,7 @@ void AuthCore::start()
 {
   m_baseUrl = m_settings->value(LS("BaseUrl")).toByteArray();
   if (m_baseUrl.isEmpty()) {
-    SCHAT_LOG_FATAL("Configuration option \"BaseUrl\" is not set")
+    LOG_A1010
     QCoreApplication::exit(1);
     return;
   }
@@ -132,7 +142,8 @@ void AuthCore::start()
   add(new StackOverflowAuthData());
 
   if (m_providers.isEmpty()) {
-    SCHAT_LOG_FATAL("Providers list is empty")
+    LOG_A1011
+
     QCoreApplication::exit(2);
     return;
   }
@@ -143,12 +154,13 @@ void AuthCore::start()
   }
 
   if (m_servers.isEmpty()) {
-    SCHAT_LOG_FATAL("Failed to open ports for incoming connections")
+    LOG_A1012
+
     QCoreApplication::exit(3);
     return;
   }
 
-  SCHAT_LOG_INFO("Server successfully started")
+  LOG_A1013
 }
 
 
@@ -183,11 +195,11 @@ void AuthCore::add(const QUrl &url)
   connect(server, SIGNAL(requestReady(Tufao::HttpServerRequest*,Tufao::HttpServerResponse*)), m_handler, SLOT(handleRequest(Tufao::HttpServerRequest*,Tufao::HttpServerResponse*)));
 
   if (server->listen(QHostAddress(url.host()), url.port())) {
-    SCHAT_LOG_INFO("Added url:" << url.toString())
+    LOG_A1014
     m_servers.append(server);
   }
   else {
-    SCHAT_LOG_ERROR("Failed to open port for incoming connections")
+    LOG_A1015
     server->deleteLater();
   }
 }
@@ -205,7 +217,7 @@ void AuthCore::add(OAuthData *data)
 
   if (!m_providers.contains(name) && data->read()) {
     m_providers[name] = data;
-    SCHAT_LOG_INFO("Added authorization provider:" << name)
+    LOG_A1016
   }
   else
     delete data;
@@ -221,4 +233,6 @@ void AuthCore::openLog()
 # endif
 
   m_log->open(path + LC('/') + Path::app() + LS(".log"), static_cast<NodeLog::Level>(m_settings->value(LS("LogLevel")).toInt()));
+  m_log->setOutFlags(static_cast<NodeLog::OutFlags>(m_settings->value(LS("LogOutput")).toInt()));
+  m_log->setColors(m_settings->value(LS("LogColor")).toBool());
 }

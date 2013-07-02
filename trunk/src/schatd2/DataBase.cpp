@@ -42,6 +42,9 @@
 
 DataBase *DataBase::m_self = 0;
 
+#define LOG_N6010 LOG_FATAL("N6010", "Core/DataBase", "Could not open DataBase file \"" << db.databaseName() << "\". " << NodeLog::toString(db.lastError()))
+#define LOG_N6011 LOG_ERROR("N6011", "Core/DataBase", "Could not add channel: " << NodeLog::toString(query.lastError()))
+
 AddHostTask::AddHostTask(Host *host)
   : QRunnable()
   , m_host(*host)
@@ -197,7 +200,7 @@ int DataBase::start()
 
   db.setDatabaseName(Storage::var() + LC('/') + Path::app() + LS(".sqlite"));
   if (!db.open()) {
-    SCHAT_LOG_FATAL("Could not open DataBase file" << db.databaseName() << ":" << db.lastError())
+    LOG_N6010
     QCoreApplication::exit(-1);
     return -1;
   }
@@ -360,7 +363,7 @@ qint64 DataBase::add(ChatChannel channel)
   query.exec();
 
   if (query.numRowsAffected() <= 0) {
-    SCHAT_LOG_ERROR("Could not add channel:" << query.lastError())
+    LOG_N6011
     return -1;
   }
 

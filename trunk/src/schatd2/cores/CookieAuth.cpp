@@ -63,7 +63,7 @@ AuthResult CookieAuth::auth(const AuthRequest &data, ChatChannel channel)
   Core::add(channel);
   Ch::userChannel(channel, data, m_core->packetsEvent()->address.toString());
 
-  SCHAT_LOG_INFO_STR("COOKIE AUTH: " + channel->name().toUtf8() + '@' + m_core->packetsEvent()->address.toString().toUtf8() + '/' + SimpleID::encode(channel->id()) + ", " + data.host.toUtf8());
+  LOG_INFO("N2010", "Core/CookieAuth", "s:" << Core::socket() << ". " << channel->name() << "@" << m_core->packetsEvent()->address.toString() + "/" + ChatId(channel->id()).toString() << ", " << data.host)
   return AuthResult(channel->id(), data.id);
 }
 

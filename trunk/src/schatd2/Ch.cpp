@@ -141,7 +141,7 @@ ChatChannel Ch::channel(const QByteArray &id, int type, bool db)
 ChatChannel Ch::channel(const QString &name, ChatChannel user)
 {
   if (!Channel::isValidName(name)) {
-    SCHAT_LOG_ERROR("Bad channel name:" << name)
+    LOG_ERROR("N7010", "Core/Ch", "Bad channel name: " << name)
     return ChatChannel();
   }
 

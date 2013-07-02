@@ -93,10 +93,10 @@ void RestApiCore::start()
   QStringList listen = m_settings->value(LS("RestApi/Listen")).toStringList();
   foreach (const QString &url, listen) {
     if (add(QUrl(url))) {
-      SCHAT_LOG_INFO_STR("[REST] listen:" + url.toLatin1())
+      LOG_INFO("R1010", "REST/Core", "listen:" << url);
     }
     else {
-      SCHAT_LOG_ERROR_STR("[REST] failed to listen:" + url.toLatin1())
+      LOG_INFO("R1011", "REST/Core", "failed to listen:" << url);
     }
   }
 }
