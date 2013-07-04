@@ -35,6 +35,17 @@
 NodeMessagesDB *NodeMessagesDB::m_self = 0;
 QString NodeMessagesDB::m_id;
 
+#define LOG_M1010 LOG_FATAL("M1010", "Messages/DB", "Could not open DataBase file \"" << db.databaseName() << "\". " << NodeLog::toString(db.lastError()))
+#define LOG_M1011 LOG_TRACE("M1011", "Messages/DB", "Adding new message: id:" << oid.toString() << ", status:" << m_packet.status() << ", sender:" << ChatId(m_packet.sender()).toString() << ", dest:" << ChatId(m_packet.dest()).toString() << ", date:" << m_packet.date() << ", mdate:" << m_packet.mdate << ", cmd:" << m_packet.command())
+#define LOG_M1012 LOG_ERROR("M1012", "Messages/DB", "Failed add message: id:" << oid.toString() << ", status:" << m_packet.status() << ", sender:" << ChatId(m_packet.sender()).toString() << ", dest:" << ChatId(m_packet.dest()).toString() << " " << NodeLog::toString(query.lastError()))
+#define LOG_M1013 LOG_TRACE("M1013", "Messages/DB", "Getting the latest messages: ch:" << channel.toString() << ", limit:" << limit << ", before:" << before)
+#define LOG_M1014  LOG_WARN("M1014", "Messages/DB", "Id: " << channel.toString() << " is not channel id")
+#define LOG_M1015 LOG_TRACE("M1015", "Messages/DB", "Getting latest messages: u1:" << user1.toString() << ", u2" << user2.toString() << ", limit:" << limit << ", before:" << before)
+#define LOG_M1016  LOG_WARN("M1016", "Messages/DB", "Id: " << user1.toString() << " or " << user2.toString() << " is invalid")
+#define LOG_M1017 LOG_TRACE("M1017", "Messages/DB", "Received " << out.size() << " IDs")
+#define LOG_M1018 LOG_TRACE("M1018", "Messages/DB", "Get messages: count:" << ids.size() << ", userId:" << userId.toString())
+#define LOG_M1019  LOG_WARN("M1019", "Messages/DB", "Failed get message: id:" << id.toString() << " " << NodeLog::toString(query.lastError()))
+
 NodeMessagesDB::NodeMessagesDB(QObject *parent)
   : QObject(parent)
 {
@@ -55,7 +66,7 @@ bool NodeMessagesDB::open()
   QSqlDatabase db = QSqlDatabase::addDatabase(LS("QSQLITE"), m_id);
   db.setDatabaseName(Storage::var() + LS("/messages.sqlite"));
   if (!db.open()) {
-    LOG_FATAL("M1010", "Messages/DB", "Could not open DataBase file \"" << db.databaseName() << "\". " << NodeLog::toString(db.lastError()))
+    LOG_M1010
     return false;
   }
 
@@ -119,6 +130,8 @@ QList<MessageRecordV2> NodeMessagesDB::get(const QList<ChatId> &ids, const ChatI
   if (ids.isEmpty())
     return QList<MessageRecordV2>();
 
+  LOG_M1018
+
   QSqlQuery query(QSqlDatabase::database(m_id));
   query.prepare(LS("SELECT id, sender, dest, status, date, mdate, cmd, text, data, blob FROM messages WHERE oid = :oid LIMIT 1;"));
 
@@ -127,15 +140,19 @@ QList<MessageRecordV2> NodeMessagesDB::get(const QList<ChatId> &ids, const ChatI
   out.reserve(ids.size());
 # endif
 
+  MessageRecordV2 record;
+
   for (int i = 0; i < ids.size(); ++i) {
     const ChatId &id = ids.at(i);
-    query.bindValue(LS(":oid"), id.toBase32());
+
+    query.bindValue(LS(":oid"), id.hasOid() ? ChatId::toBase32(id.oid().byteArray()) : id.toBase32());
     query.exec();
 
-    if (!query.first())
+    if (!query.first()) {
+      LOG_M1019
       continue;
+    }
 
-    MessageRecordV2 record;
     record.id        = query.value(0).toLongLong();
     record.oid       = id;
     record.sender    = m_self->m_channels.get(query.value(1).toLongLong());
@@ -150,6 +167,7 @@ QList<MessageRecordV2> NodeMessagesDB::get(const QList<ChatId> &ids, const ChatI
     record.text      = query.value(7).toString();
     record.data      = query.value(8).toByteArray();
     record.blob      = query.value(9).toByteArray();
+
     out.append(record);
   }
 
@@ -177,8 +195,12 @@ QList<MessageRecordV2> NodeMessagesDB::offline(const ChatId &userId)
  */
 QList<ChatId> NodeMessagesDB::last(const ChatId &channel, const int limit, const qint64 before)
 {
-  if (channel.type() != ChatId::ChannelId)
+  LOG_M1013
+
+  if (channel.type() != ChatId::ChannelId) {
+    LOG_M1014
     return QList<ChatId>();
+  }
 
   const qint64 dest = m_self->m_channels.get(channel);
   if (!dest)
@@ -211,10 +233,14 @@ QList<ChatId> NodeMessagesDB::last(const ChatId &channel, const int limit, const
  */
 QList<ChatId> NodeMessagesDB::last(const ChatId &user1, const ChatId &user2, const int limit, const qint64 before)
 {
+  LOG_M1015
+
   const qint64 u1 = m_self->m_channels.get(user1);
   const qint64 u2 = m_self->m_channels.get(user2);
-  if (!u1 || !u2)
+  if (!u1 || !u2) {
+    LOG_M1016
     return QList<ChatId>();
+  }
 
   QSqlQuery query(QSqlDatabase::database(m_id));
   if (before) {
@@ -566,15 +592,20 @@ qint64 NodeMessagesDB::V5()
 
 QList<ChatId> NodeMessagesDB::ids(QSqlQuery &query)
 {
-  if (!query.isActive())
-    return QList<ChatId>();
-
   QList<ChatId> out;
+  ChatId id;
+  qint64 mdate = 0;
 
   while (query.next()) {
-    out.prepend(query.value(0).toByteArray());
+    id.init(query.value(0).toByteArray());
+    mdate = query.value(1).toLongLong();
+    if (mdate)
+      id.setDate(mdate);
+
+    out.prepend(id);
   }
 
+  LOG_M1017
   return out;
 }
 
@@ -642,17 +673,24 @@ AddMessageTask::AddMessageTask(const MessageNotice &packet, int status)
 
 void AddMessageTask::run()
 {
-  QSqlQuery query(QSqlDatabase::database(NodeMessagesDB::m_id));
-  query.prepare(LS("INSERT INTO messages (oid,  sender,  dest,  status,  date,  cmd,  text,  data) "
-                                "VALUES (:oid, :sender, :dest, :status, :date, :cmd, :text, :data);"));
+  const ChatId oid(m_packet.id());
+  LOG_M1011
 
-  query.bindValue(LS(":oid"),       ChatId(m_packet.id()).toBase32());
+  QSqlQuery query(QSqlDatabase::database(NodeMessagesDB::m_id));
+  query.prepare(LS("INSERT INTO messages (oid,  sender,  dest,  status,  date,  mdate,  cmd,  text,  data) "
+                                "VALUES (:oid, :sender, :dest, :status, :date, :mdate, :cmd, :text, :data);"));
+
+  query.bindValue(LS(":oid"),       m_packet.mdate ? ChatId::toBase32(oid.oid().byteArray()) : oid.toBase32());
   query.bindValue(LS(":sender"),    NodeMessagesDB::m_self->m_channels.get(ChatId(m_packet.sender())));
   query.bindValue(LS(":dest"),      NodeMessagesDB::m_self->m_channels.get(ChatId(m_packet.dest())));
   query.bindValue(LS(":status"),    NodeMessagesDB::status(m_status));
   query.bindValue(LS(":date"),      m_packet.date());
+  query.bindValue(LS(":mdate"),     m_packet.mdate);
   query.bindValue(LS(":cmd"),       m_packet.command());
   query.bindValue(LS(":text"),      m_packet.text());
   query.bindValue(LS(":data"),      m_packet.raw());
   query.exec();
+
+  if (query.numRowsAffected() < 1)
+    LOG_M1012
 }
