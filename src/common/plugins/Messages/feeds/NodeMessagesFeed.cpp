@@ -81,7 +81,7 @@ FeedReply NodeMessagesFeed::fetch(const QVariantMap &json, Channel *user) const
   if (ids.isEmpty())
     return Notice::BadRequest;
 
-  QList<MessageRecordV2> records = NodeMessagesDB::get(ids, head().channel()->type() == ChatId::UserId ? user->id() : QByteArray());
+  const QList<MessageRecordV2> records = NodeMessagesDB::get(ids, head().channel()->type() == ChatId::UserId ? user->id() : ChatId());
   if (records.isEmpty())
     return FeedReply(Notice::NotFound);
 
