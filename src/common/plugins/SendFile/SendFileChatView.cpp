@@ -19,6 +19,7 @@
 #include <QWebFrame>
 #include <QDragEnterEvent>
 #include <QFileInfo>
+#include <QMimeData>
 
 #include "net/SimpleID.h"
 #include "SendFileChatView.h"
