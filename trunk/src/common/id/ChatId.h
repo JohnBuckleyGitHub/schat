@@ -26,7 +26,11 @@
 #include "ObjectId.h"
 #include "schat.h"
 
+#if QT_VERSION >= 0x050000
+class QUuid;
+#else
 struct QUuid;
+#endif
 
 #pragma pack(1)
 class SCHAT_EXPORT ChatId
