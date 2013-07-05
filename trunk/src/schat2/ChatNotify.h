@@ -89,6 +89,18 @@ typedef QSharedPointer<Notify> NotifyPtr;
 class SCHAT_CORE_EXPORT FeedNotify : public Notify
 {
 public:
+  static const QString kCmd;
+  static const QString kData;
+  static const QString kFeed;
+  static const QString kId;
+  static const QString kName;
+  static const QString kOwn;
+  static const QString kPath;
+  static const QString kStatus;
+  static const QString kType;
+  static const QString kTypeBody;
+  static const QString kTypeReply;
+
   FeedNotify(const QByteArray &channel, const FeedNotice *packet);
   FeedNotify(int type, const QByteArray &channel, const QString &name, const QVariantMap &json = QVariantMap(), int status = 200, const QString &command = QLatin1String("get"));
   bool match(const QByteArray &id, const QString &name) const;

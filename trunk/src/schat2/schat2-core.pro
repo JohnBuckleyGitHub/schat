@@ -49,6 +49,7 @@ HEADERS = \
     hooks/ClientFeedsImpl.h \
     hooks/ClientImpl.h \
     hooks/CommandsImpl.h \
+    hooks/FeedHook.h \
     hooks/MessagesHook.h \
     hooks/MessagesImpl.h \
     hooks/PluginsPage.h \

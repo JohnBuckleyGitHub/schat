@@ -24,6 +24,18 @@
 
 ChatNotify *ChatNotify::m_self = 0;
 
+const QString FeedNotify::kCmd       = QLatin1String("cmd");
+const QString FeedNotify::kData      = QLatin1String("data");
+const QString FeedNotify::kFeed      = QLatin1String("feed");
+const QString FeedNotify::kId        = QLatin1String("id");
+const QString FeedNotify::kName      = QLatin1String("name");
+const QString FeedNotify::kOwn       = QLatin1String("own");
+const QString FeedNotify::kPath      = QLatin1String("path");
+const QString FeedNotify::kStatus    = QLatin1String("status");
+const QString FeedNotify::kType      = QLatin1String("type");
+const QString FeedNotify::kTypeBody  = QLatin1String("body");
+const QString FeedNotify::kTypeReply = QLatin1String("reply");
+
 
 FeedNotify::FeedNotify(const QByteArray &channel, const FeedNotice *packet)
   : Notify(FeedReply)

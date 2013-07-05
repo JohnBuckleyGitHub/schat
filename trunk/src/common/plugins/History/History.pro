@@ -26,6 +26,7 @@ HEADERS  = \
    HistoryButton.h \
    HistoryChatView.h \
    HistoryDB.h \
+   HistoryFeedHook.h \
    HistoryMessages.h \
    HistoryPlugin.h \
    HistoryPlugin_p.h \
@@ -35,6 +36,7 @@ SOURCES  = \
    HistoryButton.cpp \
    HistoryChatView.cpp \
    HistoryDB.cpp \
+   HistoryFeedHook.cpp \
    HistoryMessages.cpp \
    HistoryPlugin.cpp \
    ui/HistorySettings.cpp \
