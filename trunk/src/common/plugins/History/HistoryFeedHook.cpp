@@ -38,7 +38,10 @@ bool HistoryFeedHook::hook(const FeedNotify &notify, QVariantMap &out)
     return false;
 
   QStringList list;
+# if QT_VERSION >= 0x040700
   list.reserve(messages.size());
+# endif
+
   ChatId id;
 
   foreach (const QString &message, messages) {
