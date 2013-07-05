@@ -32,6 +32,7 @@
 #include "client/ClientChannels.h"
 #include "client/ClientFeeds.h"
 #include "client/SimpleClient.h"
+#include "hooks/FeedHook.h"
 #include "JSON.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
@@ -475,21 +476,25 @@ QVariantMap WebBridge::feed(const FeedNotify &notify)
     if (!feed)
       return out;
 
-    out[LS("data")] = feed->data();
-    out[LS("type")] = LS("body");
+    out[FeedNotify::kData] = feed->data();
+    out[FeedNotify::kType] = FeedNotify::kTypeBody;
   }
   else {
-    out[LS("data")] = notify.json();
-    out[LS("type")] = LS("reply");
+    out[FeedNotify::kData] = notify.json();
+    out[FeedNotify::kType] = FeedNotify::kTypeReply;
   }
 
-  out[LS("status")] = notify.status();
-  out[LS("name")]   = notify.name();
-  out[LS("own")]    = notify.channel() == ChatClient::id();
-  out[LS("cmd")]    = notify.command();
-  out[LS("feed")]   = notify.feed();
-  out[LS("path")]   = notify.path();
-  out[LS("id")]     = QString(SimpleID::encode(notify.channel()));
+  out[FeedNotify::kStatus] = notify.status();
+  out[FeedNotify::kName]   = notify.name();
+  out[FeedNotify::kOwn]    = notify.channel() == ChatClient::id();
+  out[FeedNotify::kCmd]    = notify.command();
+  out[FeedNotify::kFeed]   = notify.feed();
+  out[FeedNotify::kPath]   = notify.path();
+  out[FeedNotify::kId]     = ChatId(notify.channel()).toString();
+
+  foreach (FeedHook *hook, m_self->m_feedHooks)
+    hook->hook(notify, out);
+
   return out;
 }
 

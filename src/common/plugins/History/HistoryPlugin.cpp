@@ -31,6 +31,7 @@
 #include "HistoryButton.h"
 #include "HistoryChatView.h"
 #include "HistoryDB.h"
+#include "HistoryFeedHook.h"
 #include "HistoryMessages.h"
 #include "HistoryPlugin.h"
 #include "HistoryPlugin_p.h"
@@ -42,6 +43,7 @@
 #include "ui/HistorySettings.h"
 #include "ui/SendWidget.h"
 #include "ui/tabs/PrivateTab.h"
+#include "WebBridge.h"
 
 class HistoryPluginTr : public Tr
 {
@@ -166,6 +168,7 @@ void HistoryImpl::open()
 
 void HistoryImpl::start()
 {
+  WebBridge::add(new HistoryFeedHook());
   SendWidget::add(new HistoryAction());
 }
 

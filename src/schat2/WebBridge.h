@@ -25,6 +25,7 @@
 #include "Channel.h"
 
 class ChannelInfo;
+class FeedHook;
 class FeedNotify;
 class WebBridgeTr;
 
@@ -35,7 +36,8 @@ class SCHAT_CORE_EXPORT WebBridge : public QObject
 public:
   WebBridge(QObject *parent = 0);
   ~WebBridge();
-  inline static WebBridge *i() { return m_self; }
+  inline static void add(FeedHook *hook) { if (m_self) m_self->m_feedHooks.append(hook); }
+  inline static WebBridge *i()           { return m_self; }
 
   Q_INVOKABLE bool isOnline() const;
   Q_INVOKABLE int aclToInt(const QString &acl) const;
@@ -85,8 +87,9 @@ private slots:
   void quit(const QByteArray &user);
 
 private:
-  static WebBridge *m_self; ///< Указатель на себя.
-  WebBridgeTr *m_tr;        ///< Класс перевода строк.
+  QList<FeedHook*> m_feedHooks; ///< Хуки фидов.
+  static WebBridge *m_self;     ///< Указатель на себя.
+  WebBridgeTr *m_tr;            ///< Класс перевода строк.
 };
 
 #endif /* WEBBRIDGE_H_ */
