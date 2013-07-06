@@ -55,5 +55,5 @@ bool HistoryFeedHook::hook(const FeedNotify &notify, QVariantMap &out)
   data.insert(MESSAGES_FEED_MESSAGES_KEY, list);
   out.insert(FeedNotify::kData, data);
 
-  return false;
+  return true;
 }
