@@ -269,12 +269,24 @@ var Messages = {
    */
   addChannelMessage: function(json)
   {
+    var container = null;
+
     if (json.hasOwnProperty('InternalId')) {
-      var container = document.getElementById(json.InternalId);
+      container = document.getElementById(json.InternalId);
       if (container !== null) {
         Messages.updateChannelMessage(container, json);
         return;
       }
+    }
+
+    if (json.hasOwnProperty('OID'))
+      container = document.getElementById(json.OID);
+    else
+      container =  document.getElementById(json.Id);
+
+    if (container !== null) {
+      Messages.updateChannelMessage(container, json);
+      return;
     }
 
     var block = document.createElement('div');
