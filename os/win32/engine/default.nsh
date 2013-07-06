@@ -27,7 +27,7 @@
 !macroend
 
 ${def} SCHAT_VERSION       "2.1.0"
-${def} SCHAT_QT_VERSION    "4.8.4"
+${def} SCHAT_QT_VERSION    "4.8.5"
 ${def} SCHAT_NAME          "Simple Chat 2"
 ${def} SCHAT_NAME_SHORT    "Simple Chat 2"
 ${def} SCHAT_PREFIX        ""
