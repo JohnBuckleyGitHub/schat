@@ -51,7 +51,7 @@ QString CmdLine::pidFile(const QString &base)
 
 # if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
   if (file.isEmpty())
-    return LS("/var/run/") + Path::app() + LS(".pid");
+    return LS("/var/run/") + base + LS(".pid");
 # endif
 
   return file;
