@@ -43,7 +43,7 @@ void ServiceApp::start()
   app->setOrganizationName(LS("IMPOMEZIA"));
   app->setOrganizationDomain(SCHAT_DOMAIN);
 
-  m_init = new NodeInit(LS("schatd2"), app);
+  m_init = new NodeInit(app->arguments(), LS("schatd2"), app);
 }
 
 

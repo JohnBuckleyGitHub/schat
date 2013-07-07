@@ -20,6 +20,7 @@
 #define NODEINIT_H_
 
 #include <QObject>
+#include <QStringList>
 
 class Core;
 class NodePlugins;
@@ -34,9 +35,12 @@ class NodeInit : public QObject
   Q_OBJECT
 
 public:
-  NodeInit(const QString &app = QString(), QObject *parent = 0);
-  static bool version(const QStringList &arguments);
-  static QString base(const QStringList &arguments);
+  NodeInit(const QStringList &args, const QString &app = QString(), QObject *parent = 0);
+  ~NodeInit();
+  static bool version(const QStringList &args);
+  static QString base(const QStringList &args);
+  static QVariant value(const QString &key, const QStringList &args);
+  static QVariant value(const QStringList &keys, const QStringList &args);
   static void version();
   void quit();
 
@@ -44,9 +48,13 @@ public slots:
   void start();
 
 private:
+  QString pidFile() const;
+  void pid();
+
   Core *m_core;           ///< Указатель на объект Core.
   NodePlugins *m_plugins; ///< Загрузчик плагинов.
   NodePool *m_pool;       ///< Пул обслуживающий подключения.
+  QStringList m_args;     ///< Ключи командной строки.
   Storage *m_storage;     ///< Хранилище данных.
 };
 
