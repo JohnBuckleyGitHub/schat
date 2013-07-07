@@ -42,8 +42,10 @@ NodeUsersFeed::NodeUsersFeed(const QString &name, qint64 date)
 }
 
 
-FeedReply NodeUsersFeed::del(const QString &path, Channel *channel)
+FeedReply NodeUsersFeed::del(const QString &path, Channel *channel, const QByteArray &blob)
 {
+  Q_UNUSED(blob)
+
   if (!can(channel, Acl::Edit | Acl::SpecialEdit))
     return Notice::Forbidden;
 
@@ -62,9 +64,10 @@ FeedReply NodeUsersFeed::del(const QString &path, Channel *channel)
 }
 
 
-FeedReply NodeUsersFeed::post(const QString &path, const QVariantMap &json, Channel *user)
+FeedReply NodeUsersFeed::post(const QString &path, const QVariantMap &json, Channel *user, const QByteArray &blob)
 {
   Q_UNUSED(json)
+  Q_UNUSED(blob)
 
   if (!can(user, Acl::Edit | Acl::SpecialEdit))
     return Notice::Forbidden;

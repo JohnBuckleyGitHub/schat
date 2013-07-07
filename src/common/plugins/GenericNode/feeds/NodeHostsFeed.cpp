@@ -43,9 +43,10 @@ NodeHostsFeed::NodeHostsFeed(const QString &name, qint64 date)
 }
 
 
-FeedReply NodeHostsFeed::del(const QString &path, Channel *channel)
+FeedReply NodeHostsFeed::del(const QString &path, Channel *channel, const QByteArray &blob)
 {
   Q_UNUSED(channel)
+  Q_UNUSED(blob)
 
   const QByteArray id = SimpleID::decode(path);
   if (SimpleID::typeOf(id) != SimpleID::HostId)
@@ -61,20 +62,22 @@ FeedReply NodeHostsFeed::del(const QString &path, Channel *channel)
 }
 
 
-FeedReply NodeHostsFeed::post(const QString &path, const QVariantMap &json, Channel *channel)
+FeedReply NodeHostsFeed::post(const QString &path, const QVariantMap &json, Channel *channel, const QByteArray &blob)
 {
   Q_UNUSED(path)
   Q_UNUSED(json)
   Q_UNUSED(channel)
+  Q_UNUSED(blob)
   return Notice::Forbidden;
 }
 
 
-FeedReply NodeHostsFeed::put(const QString &path, const QVariantMap &json, Channel *channel)
+FeedReply NodeHostsFeed::put(const QString &path, const QVariantMap &json, Channel *channel, const QByteArray &blob)
 {
   Q_UNUSED(path)
   Q_UNUSED(json)
   Q_UNUSED(channel)
+  Q_UNUSED(blob)
   return Notice::Forbidden;
 }
 

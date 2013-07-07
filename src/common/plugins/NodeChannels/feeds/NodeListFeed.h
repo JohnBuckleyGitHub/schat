@@ -31,10 +31,10 @@ public:
   NodeListFeed(const QString &name, const QVariantMap &data);
   NodeListFeed(const QString &name = FEED_NAME_LIST, qint64 date = 0);
 
-  FeedReply del(const QString &path, Channel *channel = 0);
-  FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0) const;
-  FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0);
-  FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0);
+  FeedReply del(const QString &path, Channel *channel = 0, const QByteArray &blob = QByteArray());
+  FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0, const QByteArray &blob = QByteArray()) const;
+  FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0, const QByteArray &blob = QByteArray());
+  FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0, const QByteArray &blob = QByteArray());
 
 private:
   FeedReply id(const QString &name) const;

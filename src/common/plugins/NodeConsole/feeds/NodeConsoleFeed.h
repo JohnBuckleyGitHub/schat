@@ -32,8 +32,8 @@ public:
   NodeConsoleFeed(const QString &name, const QVariantMap &data);
   NodeConsoleFeed(const QString &name = FEED_NAME_CONSOLE, qint64 date = 0);
 
-  FeedReply del(const QString &path, Channel *channel = 0);
-  FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0) const;
+  FeedReply del(const QString &path, Channel *channel = 0, const QByteArray &blob = QByteArray());
+  FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0, const QByteArray &blob = QByteArray()) const;
 
 private:
   bool master(Channel *user) const;

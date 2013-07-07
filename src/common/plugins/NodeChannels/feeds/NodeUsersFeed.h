@@ -31,8 +31,8 @@ public:
   NodeUsersFeed(const QString &name, const QVariantMap &data);
   NodeUsersFeed(const QString &name = FEED_NAME_USERS, qint64 date = 0);
 
-  FeedReply del(const QString &path, Channel *channel = 0);
-  FeedReply post(const QString &path, const QVariantMap &json, Channel *user = 0);
+  FeedReply del(const QString &path, Channel *channel = 0, const QByteArray &blob = QByteArray());
+  FeedReply post(const QString &path, const QVariantMap &json, Channel *user = 0, const QByteArray &blob = QByteArray());
 
   void setChannel(Channel *channel);
 

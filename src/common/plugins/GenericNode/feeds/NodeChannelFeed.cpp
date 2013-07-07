@@ -57,8 +57,10 @@ bool NodeChannelFeed::can(Channel *channel, int acl) const
 }
 
 
-FeedReply NodeChannelFeed::del(const QString &path, Channel *channel)
+FeedReply NodeChannelFeed::del(const QString &path, Channel *channel, const QByteArray &blob)
 {
+  Q_UNUSED(blob)
+
   if (isReservedKey(path) || path == FEED_WILDCARD_ASTERISK)
     return Notice::BadRequest;
 
@@ -66,8 +68,10 @@ FeedReply NodeChannelFeed::del(const QString &path, Channel *channel)
 }
 
 
-FeedReply NodeChannelFeed::post(const QString &path, const QVariantMap &json, Channel *channel)
+FeedReply NodeChannelFeed::post(const QString &path, const QVariantMap &json, Channel *channel, const QByteArray &blob)
 {
+  Q_UNUSED(blob)
+
   if (isReservedKey(path))
     return update(path, json, channel);
 
@@ -75,8 +79,10 @@ FeedReply NodeChannelFeed::post(const QString &path, const QVariantMap &json, Ch
 }
 
 
-FeedReply NodeChannelFeed::put(const QString &path, const QVariantMap &json, Channel *channel)
+FeedReply NodeChannelFeed::put(const QString &path, const QVariantMap &json, Channel *channel, const QByteArray &blob)
 {
+  Q_UNUSED(blob)
+
   if (isReservedKey(path))
     return update(path, json, channel);
 

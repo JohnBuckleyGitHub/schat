@@ -61,9 +61,10 @@ bool Feed::isValid() const
 /*!
  * Обработка \b delete запроса к фиду.
  */
-FeedReply Feed::del(const QString &path, Channel *channel)
+FeedReply Feed::del(const QString &path, Channel *channel, const QByteArray &blob)
 {
   Q_UNUSED(channel)
+  Q_UNUSED(blob)
 
   if (path.isEmpty())
     return Notice::BadRequest;
@@ -102,9 +103,10 @@ FeedReply Feed::del(const QString &path, Channel *channel)
  * \param json Опциональные JSON данные запроса.
  * \param channel Пользователь совершивший запрос, если такой есть, функция не проверяет правда доступа.
  */
-FeedReply Feed::get(const QString &path, const QVariantMap &json, Channel *channel) const
+FeedReply Feed::get(const QString &path, const QVariantMap &json, Channel *channel, const QByteArray &blob) const
 {
   Q_UNUSED(json)
+  Q_UNUSED(blob)
 
   if (path.isEmpty())
     return Notice::BadRequest;
@@ -125,9 +127,10 @@ FeedReply Feed::get(const QString &path, const QVariantMap &json, Channel *chann
 /*!
  * Обработка \b post запроса к фиду.
  */
-FeedReply Feed::post(const QString &path, const QVariantMap &json, Channel *channel)
+FeedReply Feed::post(const QString &path, const QVariantMap &json, Channel *channel, const QByteArray &blob)
 {
   Q_UNUSED(channel)
+  Q_UNUSED(blob)
 
   if (path.isEmpty() || path.contains(FEED_WILDCARD_ASTERISK) || !json.contains(FEED_KEY_VALUE))
     return Notice::BadRequest;
@@ -157,9 +160,10 @@ FeedReply Feed::post(const QString &path, const QVariantMap &json, Channel *chan
 /*!
  * Обработка \b put запроса к фиду.
  */
-FeedReply Feed::put(const QString &path, const QVariantMap &json, Channel *channel)
+FeedReply Feed::put(const QString &path, const QVariantMap &json, Channel *channel, const QByteArray &blob)
 {
   Q_UNUSED(channel)
+  Q_UNUSED(blob)
 
   if (path.isEmpty() || !json.contains(FEED_KEY_VALUE))
     return Notice::BadRequest;

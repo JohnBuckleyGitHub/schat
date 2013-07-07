@@ -32,7 +32,7 @@ public:
   NodeMessagesFeed(const QString &name, const QVariantMap &data);
   NodeMessagesFeed(const QString &name = FEED_NAME_MESSAGES, qint64 date = 0);
 
-  FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0) const;
+  FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0, const QByteArray &blob = QByteArray()) const;
 
 private:
   FeedReply fetch(const QVariantMap &json, Channel *user) const;

@@ -45,16 +45,19 @@ NodeListFeed::NodeListFeed(const QString &name, qint64 date)
 /*!
  * Переопределение запроса \b delete.
  */
-FeedReply NodeListFeed::del(const QString &path, Channel *channel)
+FeedReply NodeListFeed::del(const QString &path, Channel *channel, const QByteArray &blob)
 {
   Q_UNUSED(path)
   Q_UNUSED(channel)
+  Q_UNUSED(blob)
   return Notice::Forbidden;
 }
 
 
-FeedReply NodeListFeed::get(const QString &path, const QVariantMap &json, Channel *channel) const
+FeedReply NodeListFeed::get(const QString &path, const QVariantMap &json, Channel *channel, const QByteArray &blob) const
 {
+  Q_UNUSED(blob)
+
   if (path.isEmpty())
     return Notice::BadRequest;
 
@@ -68,11 +71,12 @@ FeedReply NodeListFeed::get(const QString &path, const QVariantMap &json, Channe
 /*!
  * Переопределение запроса \b post.
  */
-FeedReply NodeListFeed::post(const QString &path, const QVariantMap &json, Channel *channel)
+FeedReply NodeListFeed::post(const QString &path, const QVariantMap &json, Channel *channel, const QByteArray &blob)
 {
   Q_UNUSED(path)
   Q_UNUSED(json)
   Q_UNUSED(channel)
+  Q_UNUSED(blob)
   return Notice::Forbidden;
 }
 
@@ -80,11 +84,12 @@ FeedReply NodeListFeed::post(const QString &path, const QVariantMap &json, Chann
 /*!
  * Переопределение запроса \b put.
  */
-FeedReply NodeListFeed::put(const QString &path, const QVariantMap &json, Channel *channel)
+FeedReply NodeListFeed::put(const QString &path, const QVariantMap &json, Channel *channel, const QByteArray &blob)
 {
   Q_UNUSED(path)
   Q_UNUSED(json)
   Q_UNUSED(channel)
+  Q_UNUSED(blob)
 
   if (path == LIST_FEED_CHANNELS_KEY && Ch::server() == channel) {
     const QList<ChannelIndexData> &list = NodeChannelsImpl::index()->list();

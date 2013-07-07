@@ -39,9 +39,10 @@ NodeProfileFeed::NodeProfileFeed(const QString &name, qint64 date)
 }
 
 
-FeedReply NodeProfileFeed::post(const QString &path, const QVariantMap &json, Channel *channel)
+FeedReply NodeProfileFeed::post(const QString &path, const QVariantMap &json, Channel *channel, const QByteArray &blob)
 {
   Q_UNUSED(channel);
+  Q_UNUSED(blob)
 
   if (path.isEmpty() || path.contains(LC('*')) || !json.contains(LS("value")))
     return Notice::BadRequest;
@@ -58,11 +59,12 @@ FeedReply NodeProfileFeed::post(const QString &path, const QVariantMap &json, Ch
 }
 
 
-FeedReply NodeProfileFeed::put(const QString &path, const QVariantMap &json, Channel *channel)
+FeedReply NodeProfileFeed::put(const QString &path, const QVariantMap &json, Channel *channel, const QByteArray &blob)
 {
   Q_UNUSED(path)
   Q_UNUSED(json)
   Q_UNUSED(channel)
+  Q_UNUSED(blob)
   return Notice::Forbidden;
 }
 

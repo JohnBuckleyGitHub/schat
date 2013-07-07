@@ -40,8 +40,10 @@ NodeMessagesFeed::NodeMessagesFeed(const QString &name, qint64 date)
 }
 
 
-FeedReply NodeMessagesFeed::get(const QString &path, const QVariantMap &json, Channel *channel) const
+FeedReply NodeMessagesFeed::get(const QString &path, const QVariantMap &json, Channel *channel, const QByteArray &blob) const
 {
+  Q_UNUSED(blob);
+
   if (path == MESSAGES_FEED_FETCH_KEY)
     return fetch(json, channel);
   else if (path == MESSAGES_FEED_LAST_KEY)
