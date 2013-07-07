@@ -22,6 +22,7 @@
 
 #include "AuthCore.h"
 #include "sglobal.h"
+#include "tools/CmdLine.h"
 #include "version.h"
 
 #if defined(Q_OS_LINUX)
@@ -50,13 +51,11 @@ int main(int argc, char *argv[])
   app.setOrganizationName(LS("IMPOMEZIA"));
   app.setOrganizationDomain(SCHAT_DOMAIN);
 
-  QStringList arguments = app.arguments();
-  if (arguments.contains(LS("--version"))) {
-    AuthCore::version();
-    return 0;
-  }
-
+  CmdLine::init(app.arguments());
   AuthCore::version();
+
+  if (CmdLine::has(QStringList() << LS("--version") << LS("-version")))
+    return 0;
 
   AuthCore core;
   return app.exec();

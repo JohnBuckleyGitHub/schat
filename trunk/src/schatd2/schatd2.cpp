@@ -22,6 +22,7 @@
 
 #include "NodeInit.h"
 #include "sglobal.h"
+#include "tools/CmdLine.h"
 #include "version.h"
 
 #if defined(Q_OS_LINUX)
@@ -50,13 +51,13 @@ int main(int argc, char *argv[])
   app.setOrganizationName(LS("IMPOMEZIA"));
   app.setOrganizationDomain(SCHAT_DOMAIN);
 
-  const QStringList arguments = app.arguments();
-  if (NodeInit::version(arguments))
-    return 0;
-
+  CmdLine::init(app.arguments());
   NodeInit::version();
 
-  NodeInit *init = new NodeInit(arguments, NodeInit::base(arguments));
+  if (NodeInit::hasVersionKey())
+    return 0;
+
+  NodeInit *init = new NodeInit(NodeInit::base());
   const int result = app.exec();
   init->quit();
 
