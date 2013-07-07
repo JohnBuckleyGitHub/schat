@@ -29,7 +29,6 @@
 #include <unistd.h>
 #endif
 
-
 int main(int argc, char *argv[])
 {
 # if defined(Q_OS_LINUX)
@@ -57,8 +56,8 @@ int main(int argc, char *argv[])
 
   NodeInit::version();
 
-  NodeInit *init = new NodeInit(NodeInit::base(arguments));
-  int result = app.exec();
+  NodeInit *init = new NodeInit(arguments, NodeInit::base(arguments));
+  const int result = app.exec();
   init->quit();
 
   delete init;
