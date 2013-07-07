@@ -71,6 +71,9 @@ Notice::Notice(quint16 type, PacketReader *reader)
 
   if (m_fields & TextField)
     m_text = reader->text();
+
+  if (m_fields & BlobField)
+    m_blob = reader->get<QByteArray>();
 }
 
 
@@ -88,6 +91,9 @@ bool Notice::isValid() const
   if (m_fields & TextField && m_text.isEmpty())
     return false;
 
+  if (m_fields & BlobField && m_blob.isEmpty())
+    return false;
+
   return true;
 }
 
@@ -102,6 +108,9 @@ QByteArray Notice::data(QDataStream *stream, bool echo) const
 
   if (!m_text.isEmpty())
     m_fields |= TextField;
+
+  if (!m_blob.isEmpty())
+    m_fields |= BlobField;
 
   PacketWriter writer(stream, Protocol::NoticePacket, m_sender, m_dest, echo);
   writer.put(m_type);
@@ -125,6 +134,9 @@ QByteArray Notice::data(QDataStream *stream, bool echo) const
 
   if (m_fields & TextField)
     writer.put(m_text);
+
+  if (m_fields & BlobField)
+    writer.put(m_blob);
 
   write(&writer);
 

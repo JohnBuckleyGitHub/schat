@@ -43,10 +43,11 @@ public:
 
   /// Дополнительные поля данных.
   enum Fields {
-    NoFields = 0,  ///< Нет дополнительных полей.
-    IdField = 1,   ///< Содержит идентификатор сообщения \sa m_id.
+    NoFields  = 0, ///< Нет дополнительных полей.
+    IdField   = 1, ///< Содержит идентификатор сообщения \sa m_id.
     JSonField = 2, ///< Содержит JSON данные \sa m_data, m_raw.
-    TextField = 4  ///< Содержит сырые текстовые данные \sa m_text.
+    TextField = 4, ///< Содержит сырые текстовые данные \sa m_text.
+    BlobField = 8  ///< Содержит бинарные данные. \sa m_blob.
   };
 
   ///< Коды состояния.
@@ -93,6 +94,7 @@ public:
   inline const QString& command() const    { return m_command; }
   inline const QString& text() const       { return m_text; }
   inline const QVariantMap& json() const   { return m_data; }
+  inline const QByteArray& blob() const    { return m_blob; }
   inline int direction() const             { return m_direction; }
   inline int fields() const                { return m_fields; }
   inline int status() const                { return m_status; }
@@ -113,6 +115,7 @@ public:
   inline void setId(const QByteArray &id)            { m_id = id; }
   inline void setStatus(int status)                  { m_status = status; }
   inline void setText(const QString &text)           { m_text = text; }
+  inline void setBlob(const QByteArray &blob)        { m_blob = blob; }
 
 protected:
   virtual void write(PacketWriter *writer) const { Q_UNUSED(writer) }
@@ -130,6 +133,7 @@ protected:
   QVariantMap m_data;         ///< JSON данные пакета, не обязательное поле.
   QByteArray m_raw;           ///< Сырые JSON данные.
   QString m_text;             ///< Сырой текст, не обязательное поле.
+  QByteArray m_blob;          ///< Сырые бинарные данные, не обязательное поле.
 };
 
 typedef QSharedPointer<Notice> Packet;
