@@ -48,8 +48,10 @@ NodeAclFeed::NodeAclFeed(const QString &name, qint64 date)
 /*!
  * Переопределение запросов "delete acl/owner/<id>" и "delete acl/other/<id>".
  */
-FeedReply NodeAclFeed::del(const QString &path, Channel *channel)
+FeedReply NodeAclFeed::del(const QString &path, Channel *channel, const QByteArray &blob)
 {
+  Q_UNUSED(blob)
+
   if (!path.startsWith(LS("head/")))
     return Notice::Forbidden;
 
@@ -83,8 +85,10 @@ FeedReply NodeAclFeed::del(const QString &path, Channel *channel)
 /*!
  * Переопределение запросов "post acl/head/owner" или "post acl/head/other/<id>".
  */
-FeedReply NodeAclFeed::post(const QString &path, const QVariantMap &json, Channel *channel)
+FeedReply NodeAclFeed::post(const QString &path, const QVariantMap &json, Channel *channel, const QByteArray &blob)
 {
+  Q_UNUSED(blob)
+
   if (!path.startsWith(LS("head/"))) {
     if (path == ACL_FEED_INVITE_KEY)
       return invite(json, channel);
@@ -121,8 +125,10 @@ FeedReply NodeAclFeed::post(const QString &path, const QVariantMap &json, Channe
  * Переопределение запроса "put acl/head/mask" для установки прав доступа для пользователей
  * права которых не установлены явно.
  */
-FeedReply NodeAclFeed::put(const QString &path, const QVariantMap &json, Channel *channel)
+FeedReply NodeAclFeed::put(const QString &path, const QVariantMap &json, Channel *channel, const QByteArray &blob)
 {
+  Q_UNUSED(blob)
+
   if (path.startsWith(LS("head/"))) {
     const FeedReply reply = Feed::put(path, json, channel);
     if (reply.status == Notice::OK) {

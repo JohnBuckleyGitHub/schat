@@ -31,7 +31,7 @@ public:
   NodeServerFeed(const QString &name, const QVariantMap &data);
   NodeServerFeed(const QString &name = FEED_NAME_SERVER, qint64 date = 0);
 
-  FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0) const;
+  FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0, const QByteArray &blob = QByteArray()) const;
   void setChannel(Channel *channel);
 
 private:

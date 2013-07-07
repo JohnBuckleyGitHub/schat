@@ -43,6 +43,7 @@ public:
   qint64 date;               ///< Дата модификации, если 0 будет определена автоматически.
   QList<QByteArray> packets; ///< Дополнительные пакеты с ответом на запрос.
   QVariantMap json;          ///< JSON ответ на запрос.
+  QByteArray blob;           ///< Дополнительные бинарные данные.
 };
 
 
@@ -65,10 +66,10 @@ public:
   virtual ~Feed() {}
 
   virtual bool isValid() const;
-  virtual FeedReply del(const QString &path, Channel *channel = 0);
-  virtual FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0) const;
-  virtual FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0);
-  virtual FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0);
+  virtual FeedReply del(const QString &path, Channel *channel = 0, const QByteArray &blob = QByteArray());
+  virtual FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0, const QByteArray &blob = QByteArray()) const;
+  virtual FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0, const QByteArray &blob = QByteArray());
+  virtual FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0, const QByteArray &blob = QByteArray());
   virtual QVariantMap feed(Channel *channel = 0) const;
   virtual QVariantMap save() const;
 

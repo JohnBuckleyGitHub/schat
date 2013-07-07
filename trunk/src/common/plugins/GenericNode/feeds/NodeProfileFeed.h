@@ -31,8 +31,8 @@ public:
   NodeProfileFeed(const QString &name, const QVariantMap &data);
   NodeProfileFeed(const QString &name = FEED_NAME_PROFILE, qint64 date = 0);
 
-  FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0);
-  FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0);
+  FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0, const QByteArray &blob = QByteArray());
+  FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0, const QByteArray &blob = QByteArray());
   QVariantMap feed(Channel *channel = 0) const;
 };
 

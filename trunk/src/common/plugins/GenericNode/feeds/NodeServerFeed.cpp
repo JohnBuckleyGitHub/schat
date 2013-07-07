@@ -51,10 +51,11 @@ NodeServerFeed::NodeServerFeed(const QString &name, qint64 date)
  * Поддерживаемые запросы:
  * - \b uptime информация о дате запуска сервера и количестве секунд с момента запуска.
  */
-FeedReply NodeServerFeed::get(const QString &path, const QVariantMap &json, Channel *channel) const
+FeedReply NodeServerFeed::get(const QString &path, const QVariantMap &json, Channel *channel, const QByteArray &blob) const
 {
   Q_UNUSED(json)
   Q_UNUSED(channel)
+  Q_UNUSED(blob)
 
   if (path == SERVER_FEED_UPTIME_KEY) {
     FeedReply reply(Notice::OK);

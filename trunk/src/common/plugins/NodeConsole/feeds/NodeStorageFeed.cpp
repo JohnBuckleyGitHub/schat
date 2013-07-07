@@ -36,9 +36,10 @@ NodeStorageFeed::NodeStorageFeed(const QString &name, qint64 date)
 }
 
 
-FeedReply NodeStorageFeed::get(const QString &path, const QVariantMap &json, Channel *channel) const
+FeedReply NodeStorageFeed::get(const QString &path, const QVariantMap &json, Channel *channel, const QByteArray &blob) const
 {
   Q_UNUSED(json)
+  Q_UNUSED(blob)
 
   if (path.isEmpty())
     return Notice::BadRequest;
@@ -59,9 +60,10 @@ FeedReply NodeStorageFeed::get(const QString &path, const QVariantMap &json, Cha
 /*!
  * Обработка \b post запроса к фиду.
  */
-FeedReply NodeStorageFeed::post(const QString &path, const QVariantMap &json, Channel *channel)
+FeedReply NodeStorageFeed::post(const QString &path, const QVariantMap &json, Channel *channel, const QByteArray &blob)
 {
   Q_UNUSED(channel)
+  Q_UNUSED(blob)
 
   if (path.isEmpty() || path.contains(LC('*')) || !json.contains(LS("value")))
     return Notice::BadRequest;
@@ -82,9 +84,10 @@ FeedReply NodeStorageFeed::post(const QString &path, const QVariantMap &json, Ch
 /*!
  * Обработка \b put запроса к фиду.
  */
-FeedReply NodeStorageFeed::put(const QString &path, const QVariantMap &json, Channel *channel)
+FeedReply NodeStorageFeed::put(const QString &path, const QVariantMap &json, Channel *channel, const QByteArray &blob)
 {
   Q_UNUSED(channel)
+  Q_UNUSED(blob)
 
   if (path.isEmpty() || path.contains(LC('*')) || !json.contains(LS("value")))
     return Notice::BadRequest;

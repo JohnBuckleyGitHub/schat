@@ -31,9 +31,9 @@ public:
   NodeHostsFeed(const QString &name, const QVariantMap &data);
   NodeHostsFeed(const QString &name = FEED_NAME_HOSTS, qint64 date = 0);
 
-  FeedReply del(const QString &path, Channel *channel = 0);
-  FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0);
-  FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0);
+  FeedReply del(const QString &path, Channel *channel = 0, const QByteArray &blob = QByteArray());
+  FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0, const QByteArray &blob = QByteArray());
+  FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0, const QByteArray &blob = QByteArray());
   QVariantMap feed(Channel *channel = 0) const;
 };
 

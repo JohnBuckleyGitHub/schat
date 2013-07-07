@@ -63,8 +63,10 @@ bool NodeInfoFeed::can(Channel *channel, int acl) const
  *
  * Для этой операции требуются права на редактирование.
  */
-FeedReply NodeInfoFeed::del(const QString &path, Channel *channel)
+FeedReply NodeInfoFeed::del(const QString &path, Channel *channel, const QByteArray &blob)
 {
+  Q_UNUSED(blob)
+
   if (!can(channel, Acl::Edit))
     return Notice::Forbidden;
 
@@ -72,8 +74,10 @@ FeedReply NodeInfoFeed::del(const QString &path, Channel *channel)
 }
 
 
-FeedReply NodeInfoFeed::post(const QString &path, const QVariantMap &json, Channel *channel)
+FeedReply NodeInfoFeed::post(const QString &path, const QVariantMap &json, Channel *channel, const QByteArray &blob)
 {
+  Q_UNUSED(blob)
+
   if (!can(channel, Acl::Edit))
     return Notice::Forbidden;
 
@@ -121,11 +125,12 @@ FeedReply NodeInfoFeed::post(const QString &path, const QVariantMap &json, Chann
  *
  * Этот фид не поддерживает такой запрос.
  */
-FeedReply NodeInfoFeed::put(const QString &path, const QVariantMap &json, Channel *channel)
+FeedReply NodeInfoFeed::put(const QString &path, const QVariantMap &json, Channel *channel, const QByteArray &blob)
 {
   Q_UNUSED(path)
   Q_UNUSED(json)
   Q_UNUSED(channel)
+  Q_UNUSED(blob);
   return Notice::Forbidden;
 }
 

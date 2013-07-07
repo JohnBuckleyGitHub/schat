@@ -43,8 +43,10 @@ NodeConsoleFeed::NodeConsoleFeed(const QString &name, qint64 date)
 }
 
 
-FeedReply NodeConsoleFeed::del(const QString &path, Channel *channel)
+FeedReply NodeConsoleFeed::del(const QString &path, Channel *channel, const QByteArray &blob)
 {
+  Q_UNUSED(blob)
+
   if (path.isEmpty() || !channel)
     return Notice::BadRequest;
 
@@ -76,8 +78,10 @@ FeedReply NodeConsoleFeed::del(const QString &path, Channel *channel)
 /*!
  * Обработка \b get запросов.
  */
-FeedReply NodeConsoleFeed::get(const QString &path, const QVariantMap &json, Channel *channel) const
+FeedReply NodeConsoleFeed::get(const QString &path, const QVariantMap &json, Channel *channel, const QByteArray &blob) const
 {
+  Q_UNUSED(blob)
+
   if (path.isEmpty())
     return Notice::BadRequest;
 
