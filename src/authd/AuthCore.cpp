@@ -41,6 +41,7 @@
 #include "Settings.h"
 #include "sglobal.h"
 #include "Storage.h"
+#include "tools/CmdLine.h"
 #include "Tufao/httpserver.h"
 #include "version.h"
 
@@ -59,6 +60,8 @@ AuthCore::AuthCore(QObject *parent)
 {
   m_self = this;
   Path::init();
+
+  CmdLine::createPid(Path::app());
 
   m_log = new NodeLog();
 
@@ -98,6 +101,8 @@ AuthCore::~AuthCore()
 {
   delete m_log;
   qDeleteAll(m_providers);
+
+  CmdLine::removePid(Path::app());
 }
 
 

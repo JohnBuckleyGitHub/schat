@@ -31,16 +31,16 @@
 #include "Settings.h"
 #include "sglobal.h"
 #include "Storage.h"
+#include "tools/CmdLine.h"
 #include "version.h"
 
 /*!
  * Инициализация сервера.
  */
-NodeInit::NodeInit(const QStringList &args, const QString &app, QObject *parent)
+NodeInit::NodeInit(const QString &app, QObject *parent)
   : QObject(parent)
   , m_core(0)
   , m_pool(0)
-  , m_args(args)
 {
   new FeedsCore(this);
 
@@ -48,71 +48,25 @@ NodeInit::NodeInit(const QStringList &args, const QString &app, QObject *parent)
   m_core = new Core(this);
   m_plugins = new NodePlugins(this);
 
-  pid();
+  CmdLine::createPid(Path::app());
 
   QTimer::singleShot(0, this, SLOT(start()));
 }
 
 NodeInit::~NodeInit()
 {
-  const QString pid = pidFile();
-  if (!pid.isEmpty())
-    QFile::remove(pid);
+  CmdLine::removePid(Path::app());
 }
 
-bool NodeInit::version(const QStringList &args)
+bool NodeInit::hasVersionKey()
 {
-  if (args.contains(LS("--version")) || args.contains(LS("-version"))) {
-    NodeInit::version();
-    return true;
-  }
-
-  return false;
+  return CmdLine::has(QStringList() << LS("--version") << LS("-version"));
 }
 
 
-QString NodeInit::base(const QStringList &args)
+QString NodeInit::base()
 {
-  return value(QStringList() << LS("--base") << LS("-base") << LS("-B"), args).toString();
-}
-
-
-QVariant NodeInit::value(const QString &key, const QStringList &args)
-{
-  if (key.isEmpty())
-    return QVariant();
-
-  int index = args.indexOf(key);
-  if (index + 1 == args.size())
-    return QVariant();
-
-  if (index == -1) {
-    if (key.size() > 2) {
-      index = args.indexOf(QRegExp(key + LS("=*"), Qt::CaseSensitive, QRegExp::Wildcard));
-      if (index != -1)
-        return args.at(index).mid(key.size() + 1);
-    }
-
-    return QVariant();
-  }
-
-  return args.at(index + 1);
-}
-
-
-QVariant NodeInit::value(const QStringList &keys, const QStringList &args)
-{
-  if (keys.isEmpty())
-    return QVariant();
-
-  QVariant out;
-  foreach (const QString &key, keys) {
-    out = value(key, args);
-    if (!out.isNull())
-      return out;
-  }
-
-  return out;
+  return CmdLine::value(QStringList() << LS("--base") << LS("-base") << LS("-B")).toString();
 }
 
 
@@ -155,28 +109,4 @@ void NodeInit::start()
   m_pool->start();
 
   m_storage->load();
-}
-
-
-QString NodeInit::pidFile() const
-{
-  const QString file = value(QStringList() << LS("--pid") << LS("-P"), m_args).toString();
-
-# if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
-  if (file.isEmpty())
-    return LS("/var/run/") + Path::app() + LS(".pid");
-# endif
-
-  return file;
-}
-
-
-void NodeInit::pid()
-{
-  const QString file = pidFile();
-  if (!file.isEmpty()) {
-    QFile pid(file);
-    if (pid.open(QIODevice::WriteOnly))
-      pid.write(QByteArray::number(QCoreApplication::applicationPid()));
-  }
 }

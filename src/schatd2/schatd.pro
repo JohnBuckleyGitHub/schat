@@ -55,6 +55,7 @@ HEADERS = \
     Sockets.h \
     Storage.h \
     StorageHook.h \
+    tools/CmdLine.h \
     User.h \
 
 SOURCES = \
@@ -86,6 +87,7 @@ SOURCES = \
     Sockets.cpp \
     Storage.cpp \
     StorageHook.cpp \
+    tools/CmdLine.cpp \
     User.cpp \
 
 include(../common/client.pri)

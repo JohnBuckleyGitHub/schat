@@ -140,8 +140,6 @@
 <pathentry base-path="C:/Qt/4.8.5/include" include="QtWebKit" kind="inc" path="" system="true"/>
 <pathentry base-path="C:/Qt/4.8.5/include" include="QtXml" kind="inc" path="" system="true"/>
 <pathentry base-path="C:/Qt/4.8.5/include" include="QtXmlPatterns" kind="inc" path="" system="true"/>
-<pathentry kind="mac" name="Q_OS_WIN32" path="" value=""/>
-<pathentry kind="mac" name="Q_CC_GNU" path="" value=""/>
 <pathentry kind="src" path=""/>
 <pathentry kind="out" path=""/>
 </storageModule>

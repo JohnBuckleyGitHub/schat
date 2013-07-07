@@ -16,40 +16,32 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NODEINIT_H_
-#define NODEINIT_H_
+#ifndef CMDLINE_H_
+#define CMDLINE_H_
 
-#include <QObject>
+#include <QVariant>
 #include <QStringList>
 
-class Core;
-class NodePlugins;
-class NodePool;
-class Storage;
+#include "schat.h"
 
-/*!
- * Загрузчик сервера.
- */
-class NodeInit : public QObject
+class SCHAT_EXPORT CmdLine
 {
-  Q_OBJECT
+private:
+  CmdLine() {}
 
 public:
-  NodeInit(const QString &app = QString(), QObject *parent = 0);
-  ~NodeInit();
-  static bool hasVersionKey();
-  static QString base();
-  static void version();
-  void quit();
-
-public slots:
-  void start();
+  static bool has(const QString &key);
+  static bool has(const QStringList &keys);
+  static inline QStringList& args()                { return m_args; }
+  static inline void init(const QStringList &args) { m_args = args; }
+  static QString pidFile(const QString &base);
+  static QVariant value(const QString &key);
+  static QVariant value(const QStringList &keys);
+  static void createPid(const QString &base);
+  static void removePid(const QString &base);
 
 private:
-  Core *m_core;           ///< Указатель на объект Core.
-  NodePlugins *m_plugins; ///< Загрузчик плагинов.
-  NodePool *m_pool;       ///< Пул обслуживающий подключения.
-  Storage *m_storage;     ///< Хранилище данных.
+  static QStringList m_args;
 };
 
-#endif /* NODEINIT_H_ */
+#endif /* CMDLINE_H_ */
