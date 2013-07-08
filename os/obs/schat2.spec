@@ -109,10 +109,8 @@ fi
 %{_libdir}/libschatd.so.*
 %{_libdir}/schatd2/
 %{_datadir}/schatd2/
-%if %{with systemd}
 %{_unitdir}/schatd2.service
 %{_unitdir}/schat-authd.service
-%endif
 %attr(0750, schatd2, schatd2) %{_sysconfdir}/schatd2
 %attr(0750, schatd2, schatd2) %{_var}/lib/schatd2
 %attr(0750, schatd2, schatd2) %{_var}/log/schatd2
