@@ -41,6 +41,7 @@ public:
     out[CORE_API_TYPE]     = "server";
     out[CORE_API_SITE]     = "http://wiki.schat.me/Plugin/NodeConsole";
     out[CORE_API_DESC]     = "Node Console";
+    out[CORE_API_ENABLED]  = false;
 
     return out;
   }
