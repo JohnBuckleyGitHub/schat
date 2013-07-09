@@ -29,17 +29,48 @@
 class NodeMessagesFeed : public Feed
 {
 public:
+  /// Опции редактирования сообщений.
+  enum EditFlags {
+    NoEdit          = 0, ///< Редактирование запрещено.
+    SelfEdit        = 1, ///< Пользователь может редактировать и удалять свои сообщения.
+    ModeratorRemove = 2, ///< Модераторы канала могут удалять сообщения.
+    ModeratorEdit   = 4  ///< Модераторы канала могут редактировать сообщения.
+  };
+
+  /// Опции по умолчанию.
+  enum Defaults {
+    DefaultEditFlags = SelfEdit | ModeratorRemove, ///< Пользователь может редактировать и удалять свои сообщения, модераторы только удалять.
+    DefaultTimeOut   = 3600                        ///< По прошествии 1 часа (3600 секунд) пользователь больше не может редактировать свои сообщения.
+  };
+
+  /// Права доступа для конкретного пользователя.
+  enum Permissions {
+    NoPermissions = 0,
+    Remove        = 1,
+    Modify        = 2
+  };
+
   NodeMessagesFeed(const QString &name, const QVariantMap &data);
   NodeMessagesFeed(const QString &name = FEED_NAME_MESSAGES, qint64 date = 0);
 
+  FeedReply del(const QString &path, Channel *channel = 0, const QByteArray &blob = QByteArray());
   FeedReply get(const QString &path, const QVariantMap &json = QVariantMap(), Channel *channel = 0, const QByteArray &blob = QByteArray()) const;
+  FeedReply post(const QString &path, const QVariantMap &json, Channel *channel = 0, const QByteArray &blob = QByteArray());
+  FeedReply put(const QString &path, const QVariantMap &json, Channel *channel = 0, const QByteArray &blob = QByteArray());
+  QVariantMap feed(Channel *channel = 0) const;
 
 private:
+  static const QString kEditable;
+  static const QString kTimeOut;
+
+  bool isTimeOut(qint64 date) const;
   FeedReply fetch(const QVariantMap &json, Channel *user) const;
   FeedReply last(const QVariantMap &json, Channel *user) const;
   FeedReply logging() const;
   FeedReply offline(Channel *user) const;
   FeedReply since(const QVariantMap &json, Channel *user) const;
+  int permissions(const MessageRecordV2 &record, Channel *user) const;
+  MessageRecordV2 fetch(const ChatId &id, Channel *user, int &status) const;
   void toPackets(QList<QByteArray> &out, const QList<MessageRecordV2> &records) const;
 };
 

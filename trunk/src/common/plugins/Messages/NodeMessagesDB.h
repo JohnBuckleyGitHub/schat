@@ -37,14 +37,15 @@ public:
   ~NodeMessagesDB();
   static bool open();
   static int status(int status);
-  static QList<MessageRecordV2> get(const QList<ChatId> &ids, const ChatId &userId);
-  static QList<MessageRecordV2> offline(const ChatId &userId);
   static QList<ChatId> last(const ChatId &channel, const int limit, const qint64 before);
   static QList<ChatId> last(const ChatId &user1, const ChatId &user2, const int limit, const qint64 before);
   static QList<ChatId> since(const ChatId &channel, const qint64 start, const qint64 end);
   static QList<ChatId> since(const ChatId &user1, const ChatId &user2, const qint64 start, const qint64 end);
+  static QList<MessageRecordV2> get(const QList<ChatId> &ids, const ChatId &userId);
+  static QList<MessageRecordV2> offline(const ChatId &userId);
   static void add(const MessageNotice &packet, int status = 300);
   static void markAsRead(const QList<MessageRecordV2> &records);
+  static void remove(qint64 id);
 
 private slots:
   void startTasks();
