@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,7 +19,11 @@
 #include <QComboBox>
 #include <QHBoxLayout>
 
+#include "client/ChatClient.h"
 #include "CountryField.h"
+#include "feeds/Feed.h"
+#include "feeds/UserFeed.h"
+#include "ProfilePlugin_p.h"
 #include "sglobal.h"
 #include "Tr.h"
 #include "ui/Spinner.h"
@@ -52,7 +56,7 @@ void CountryField::retranslateUi()
 
   int size = m_box->count();
   for (int i = 0; i < size; ++i) {
-    m_box->setItemText(i, Tr::value(LS("country-") + m_box->itemData(i).toString()));
+    m_box->setItemText(i, ProfilePluginImpl::Countries::name(m_box->itemData(i).toString()));
   }
 
   m_box->model()->sort(0);
@@ -129,285 +133,47 @@ QPoint CountryField::pos(const QString &code)
 
 void CountryField::load()
 {
-  QStringList countries; // ISO 3166-1 alpha-2, missed AQ, BL, BQ, CW, GG, IM, JR, MF, SS, SX
-  countries
-    << LS("ad")
-    << LS("ae")
-    << LS("af")
-    << LS("ag")
-    << LS("ai")
-    << LS("al")
-    << LS("am")
-    << LS("ao")
-//    << LS("aq")
-    << LS("ar")
-    << LS("as")
-    << LS("at")
-    << LS("aw")
-    << LS("ax")
-    << LS("az")
+  QStringList countries = ProfilePluginImpl::Countries::list();
+  countries.removeAll(LS("aq"));
+  countries.removeAll(LS("bl"));
+  countries.removeAll(LS("bq"));
+  countries.removeAll(LS("cw"));
+  countries.removeAll(LS("gg"));
+  countries.removeAll(LS("im"));
+  countries.removeAll(LS("je"));
+  countries.removeAll(LS("jr"));
+  countries.removeAll(LS("mf"));
+  countries.removeAll(LS("ss"));
+  countries.removeAll(LS("sx"));
 
-    << LS("ba")
-    << LS("bb")
-    << LS("bd")
-    << LS("be")
-    << LS("bf")
-    << LS("bg")
-    << LS("bh")
-    << LS("bi")
-    << LS("bj")
-//    << LS("bl")
-    << LS("bm")
-    << LS("bn")
-    << LS("bo")
-//    << LS("bq")
-    << LS("br")
-    << LS("bs")
-    << LS("bt")
-    << LS("bv")
-    << LS("bw")
-    << LS("by")
-    << LS("bz")
-
-    << LS("ca")
-    << LS("cd")
-    << LS("cf")
-    << LS("cg")
-    << LS("ch")
-    << LS("ci")
-    << LS("ck")
-    << LS("cl")
-    << LS("cm")
-    << LS("cn")
-    << LS("co")
-    << LS("cr")
-    << LS("cu")
-    << LS("cv")
-//    << LS("cw")
-    << LS("cx")
-    << LS("cy")
-    << LS("cz")
-
-    << LS("de")
-    << LS("dj")
-    << LS("dk")
-    << LS("dm")
-    << LS("do")
-    << LS("dz")
-
-    << LS("ec")
-    << LS("ee")
-    << LS("eg")
-    << LS("eh")
-    << LS("er")
-    << LS("es")
-    << LS("et")
-
-    << LS("fi")
-    << LS("fj")
-    << LS("fk")
-    << LS("fm")
-    << LS("fo")
-    << LS("fr")
-
-    << LS("ga")
-    << LS("gb")
-    << LS("gd")
-    << LS("ge")
-    << LS("gf")
-//    << LS("gg")
-    << LS("gh")
-    << LS("gi")
-    << LS("gl")
-    << LS("gm")
-    << LS("gn")
-    << LS("gp")
-    << LS("gq")
-    << LS("gr")
-    << LS("gs")
-    << LS("gt")
-    << LS("gu")
-    << LS("gw")
-    << LS("gy")
-
-    << LS("hk")
-    << LS("hm")
-    << LS("hn")
-    << LS("hr")
-    << LS("ht")
-    << LS("hu")
-
-    << LS("id")
-    << LS("ie")
-    << LS("il")
-//    << LS("im")
-    << LS("in")
-    << LS("io")
-    << LS("iq")
-    << LS("ir")
-    << LS("is")
-    << LS("it")
-
-//    << LS("je")
-    << LS("jm")
-    << LS("jo")
-    << LS("jp")
-
-    << LS("ke")
-    << LS("kg")
-    << LS("kh")
-    << LS("ki")
-    << LS("km")
-    << LS("kn")
-    << LS("kp")
-    << LS("kr")
-    << LS("kw")
-    << LS("ky")
-    << LS("kz")
-
-    << LS("la")
-    << LS("lb")
-    << LS("lc")
-    << LS("li")
-    << LS("lk")
-    << LS("lr")
-    << LS("ls")
-    << LS("lt")
-    << LS("lu")
-    << LS("lv")
-    << LS("ly")
-
-    << LS("ma")
-    << LS("mc")
-    << LS("md")
-    << LS("me")
-//    << LS("mf")
-    << LS("mg")
-    << LS("mh")
-    << LS("mk")
-    << LS("ml")
-    << LS("mm")
-    << LS("mn")
-    << LS("mo")
-    << LS("mp")
-    << LS("mq")
-    << LS("mr")
-    << LS("ms")
-    << LS("mt")
-    << LS("mu")
-    << LS("mv")
-    << LS("mw")
-    << LS("mx")
-    << LS("my")
-    << LS("mz")
-
-    << LS("na")
-    << LS("nc")
-    << LS("ne")
-    << LS("nf")
-    << LS("ng")
-    << LS("ni")
-    << LS("nl")
-    << LS("no")
-    << LS("np")
-    << LS("nr")
-    << LS("nu")
-    << LS("nz")
-
-    << LS("om")
-
-    << LS("pa")
-    << LS("pe")
-    << LS("pf")
-    << LS("pg")
-    << LS("ph")
-    << LS("pk")
-    << LS("pl")
-    << LS("pm")
-    << LS("pn")
-    << LS("pr")
-    << LS("ps")
-    << LS("pt")
-    << LS("pw")
-    << LS("py")
-
-    << LS("qa")
-    << LS("re")
-    << LS("ro")
-    << LS("rs")
-    << LS("ru")
-    << LS("rw")
-
-    << LS("sa")
-    << LS("sb")
-    << LS("sc")
-    << LS("sd")
-    << LS("se")
-    << LS("sg")
-    << LS("sh")
-    << LS("si")
-    << LS("sj")
-    << LS("sk")
-    << LS("sl")
-    << LS("sm")
-    << LS("sn")
-    << LS("so")
-    << LS("sr")
-//    << LS("ss")
-    << LS("st")
-    << LS("sv")
-//    << LS("sx")
-    << LS("sy")
-    << LS("sz")
-
-    << LS("tc")
-    << LS("tf")
-    << LS("th")
-    << LS("tj")
-    << LS("tk")
-    << LS("tl")
-    << LS("tm")
-    << LS("tn")
-    << LS("to")
-    << LS("tr")
-    << LS("tt")
-    << LS("tv")
-    << LS("tw")
-    << LS("tz")
-
-    << LS("ua")
-    << LS("ug")
-    << LS("um")
-    << LS("us")
-    << LS("uy")
-    << LS("uz")
-
-    << LS("va")
-    << LS("vc")
-    << LS("ve")
-    << LS("vg")
-    << LS("vi")
-    << LS("vn")
-    << LS("vu")
-
-    << LS("wf")
-    << LS("ws")
-
-    << LS("ye")
-    << LS("yt")
-
-    << LS("za")
-    << LS("zm")
-    << LS("zw");
-
-  QPixmap layout(LS(":/images/flags.png"));
+  const QPixmap layout(LS(":/images/flags.png"));
 
   foreach (QString code, countries) {
-    m_box->addItem(icon(code, layout), Tr::value(LS("country-") + code), code);
+    m_box->addItem(icon(code, layout), ProfilePluginImpl::Countries::name(code), code);
   }
 
   m_box->model()->sort(0);
 
+  QStringList list;
+  FeedPtr feed = ChatClient::channel()->feed(FEED_NAME_USER, false);
+  if (feed) {
+    QMapIterator<QString, QVariant> i(feed->data().value(USER_FEED_CONNECTIONS_KEY).toMap());
+    while (i.hasNext()) {
+      i.next();
+      const QString country = i.value().toMap().value(USER_FEED_GEO_KEY).toMap().value(USER_FEED_COUNTRY_KEY).toString().toLower();
+      if (!country.isEmpty() && !list.contains(country))
+        list.append(country);
+    }
+  }
+
   m_box->insertItem(0, icon(LS("zz"), layout), tr("Not selected"));
-  m_box->setCurrentIndex(0);
+
+  if (!list.isEmpty()) {
+    foreach (QString code, list)
+      m_box->insertItem(1, icon(code, layout), ProfilePluginImpl::Countries::name(code), code);
+
+    m_box->setCurrentIndex(1);
+  }
+  else
+    m_box->setCurrentIndex(0);
 }
