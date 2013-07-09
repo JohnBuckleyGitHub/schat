@@ -10,6 +10,10 @@ h3 {
   display: none;
 }
 
+.alert {
+  margin: 4px;
+}
+
 .navbar-inner {
   display: -webkit-box;
 }

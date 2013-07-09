@@ -30,7 +30,7 @@
     <name>ConsoleTr</name>
     <message>
         <location filename="../../ConsolePlugin.cpp" line="45"/>
-        <source>This server does not support remote management.</source>
+        <source>Remote management is disabled by default for security reasons.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
