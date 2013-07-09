@@ -25,18 +25,61 @@
 #include "NodeMessagesDB.h"
 #include "ServerChannel.h"
 #include "sglobal.h"
+#include "Storage.h"
+
+const QString NodeMessagesFeed::kEditable = QLatin1String("Messages/Editable");
+const QString NodeMessagesFeed::kTimeOut  = QLatin1String("Messages/TimeOut");
+
+#include <QDebug>
 
 NodeMessagesFeed::NodeMessagesFeed(const QString &name, const QVariantMap &data)
   : Feed(name, data)
 {
-  m_header.acl().setMask(0644);
+  m_header.acl().setMask(0666);
 }
 
 
 NodeMessagesFeed::NodeMessagesFeed(const QString &name, qint64 date)
   : Feed(name, date)
 {
-  m_header.acl().setMask(0644);
+  m_header.acl().setMask(0666);
+}
+
+
+FeedReply NodeMessagesFeed::del(const QString &path, Channel *channel, const QByteArray &blob)
+{
+  Q_UNUSED(blob)
+
+  if (!channel || feed(channel).value(MESSAGES_FEED_EDITABLE_KEY).toInt() == NoEdit)
+    return Notice::BadRequest;
+
+  ChatId id(path);
+  if (id.type() == ChatId::MessageId) {
+    int status = Notice::OK;
+    MessageRecordV2 record = fetch(id, channel, status);
+    if (status != Notice::OK)
+      return status;
+
+    if (!(permissions(record, channel) & Remove))
+      return Notice::Forbidden;
+
+    FeedReply reply(Notice::OK, DateTime::utc());
+    if (id.hasOid()) {
+      record.mdate  = reply.date;
+      record.status = Notice::NotFound;
+      record.text.clear();
+      record.data.clear();
+      record.blob.clear();
+
+      return Notice::InternalError;
+    }
+    else
+      NodeMessagesDB::remove(record.id);
+
+    return reply;
+  }
+
+  return Notice::NotImplemented;
 }
 
 
@@ -56,6 +99,45 @@ FeedReply NodeMessagesFeed::get(const QString &path, const QVariantMap &json, Ch
     return logging();
 
   return Notice::NotImplemented;
+}
+
+
+FeedReply NodeMessagesFeed::post(const QString &path, const QVariantMap &json, Channel *channel, const QByteArray &blob)
+{
+  Q_UNUSED(path)
+  Q_UNUSED(json)
+  Q_UNUSED(channel)
+  Q_UNUSED(blob)
+
+  return Notice::NotImplemented;
+}
+
+
+FeedReply NodeMessagesFeed::put(const QString &path, const QVariantMap &json, Channel *channel, const QByteArray &blob)
+{
+  Q_UNUSED(path)
+  Q_UNUSED(json)
+  Q_UNUSED(channel)
+  Q_UNUSED(blob)
+
+  return Notice::NotImplemented;
+}
+
+
+QVariantMap NodeMessagesFeed::feed(Channel *channel) const
+{
+  Q_UNUSED(channel);
+  QVariantMap out;
+  out.insert(MESSAGES_FEED_EDITABLE_KEY, Storage::value(kEditable, DefaultEditFlags));
+  out.insert(MESSAGES_FEED_TIMEOUT_KEY,  Storage::value(kTimeOut,  DefaultTimeOut));
+
+  return out;
+}
+
+
+bool NodeMessagesFeed::isTimeOut(qint64 date) const
+{
+  return (qAbs(DateTime::utc() - date) / 1000) > feed().value(MESSAGES_FEED_TIMEOUT_KEY).toInt();
 }
 
 
@@ -205,6 +287,41 @@ FeedReply NodeMessagesFeed::since(const QVariantMap &json, Channel *user) const
   reply.json[MESSAGES_FEED_MESSAGES_KEY] = MessageNotice::encode(messages);
 
   return reply;
+}
+
+
+int NodeMessagesFeed::permissions(const MessageRecordV2 &record, Channel *user) const
+{
+  const int flags    = feed(user).value(MESSAGES_FEED_EDITABLE_KEY).toInt();
+  const bool timeout = isTimeOut(record.date);
+
+  if (record.sender == ChatId(user->id()) && (flags & SelfEdit) && !timeout)
+    return Remove | Modify;
+
+  if (head().channel()->type() != ChatId::ChannelId || !head().channel()->feed(FEED_NAME_ACL)->can(user, Acl::SpecialWrite))
+    return NoPermissions;
+
+  int out = 0;
+  if (flags & ModeratorRemove) out |= Remove;
+  if (flags & ModeratorEdit)   out |= Modify;
+
+  return out;
+}
+
+
+MessageRecordV2 NodeMessagesFeed::fetch(const ChatId &id, Channel *user, int &status) const
+{
+  const QList<MessageRecordV2> records = NodeMessagesDB::get(QList<ChatId>() << id, head().channel()->type() == ChatId::UserId ? user->id() : ChatId());
+  if (records.isEmpty()) {
+    status = Notice::NotFound; // Сообщение не найдено.
+    return MessageRecordV2();
+  }
+
+  const MessageRecordV2 record = records.first();
+  if (record.dest != ChatId(head().channel()->id()))
+    status = Notice::BadRequest; // Сообщение не принадлежит каналу фида.
+
+  return record;
 }
 
 

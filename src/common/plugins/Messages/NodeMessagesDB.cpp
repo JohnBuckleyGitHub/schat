@@ -45,6 +45,8 @@ QString NodeMessagesDB::m_id;
 #define LOG_M1017 LOG_TRACE("M1017", "Messages/DB", "Received " << out.size() << " IDs")
 #define LOG_M1018 LOG_TRACE("M1018", "Messages/DB", "Get messages: count:" << ids.size() << ", userId:" << userId.toString())
 #define LOG_M1019  LOG_WARN("M1019", "Messages/DB", "Failed get message: id:" << id.toString() << " " << NodeLog::toString(query.lastError()))
+#define LOG_M1020 LOG_TRACE("M1020", "Messages/DB", "Permanently remove row: " << id)
+#define LOG_M1021  LOG_WARN("M1021", "Messages/DB", "Failed remove row:" << id)
 
 NodeMessagesDB::NodeMessagesDB(QObject *parent)
   : QObject(parent)
@@ -119,70 +121,6 @@ int NodeMessagesDB::status(int status)
     return Notice::Unread;
 
   return status;
-}
-
-
-/*!
- * Получения списка сообщений по их идентификаторам.
- */
-QList<MessageRecordV2> NodeMessagesDB::get(const QList<ChatId> &ids, const ChatId &userId)
-{
-  if (ids.isEmpty())
-    return QList<MessageRecordV2>();
-
-  LOG_M1018
-
-  QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(LS("SELECT id, sender, dest, status, date, mdate, cmd, text, data, blob FROM messages WHERE oid = :oid LIMIT 1;"));
-
-  QList<MessageRecordV2> out;
-# if QT_VERSION >= 0x040700
-  out.reserve(ids.size());
-# endif
-
-  MessageRecordV2 record;
-
-  for (int i = 0; i < ids.size(); ++i) {
-    const ChatId &id = ids.at(i);
-
-    query.bindValue(LS(":oid"), id.hasOid() ? ChatId::toBase32(id.oid().byteArray()) : id.toBase32());
-    query.exec();
-
-    if (!query.first()) {
-      LOG_M1019
-      continue;
-    }
-
-    record.id        = query.value(0).toLongLong();
-    record.oid       = id;
-    record.sender    = m_self->m_channels.get(query.value(1).toLongLong());
-    record.dest      = m_self->m_channels.get(query.value(2).toLongLong());
-    if (!userId.isNull() && (record.sender != userId && record.dest != userId))
-      continue;
-
-    record.status    = query.value(3).toLongLong();
-    record.date      = query.value(4).toLongLong();
-    record.mdate     = query.value(5).toLongLong();
-    record.cmd       = query.value(6).toString();
-    record.text      = query.value(7).toString();
-    record.data      = query.value(8).toByteArray();
-    record.blob      = query.value(9).toByteArray();
-
-    out.append(record);
-  }
-
-  return out;
-}
-
-
-QList<MessageRecordV2> NodeMessagesDB::offline(const ChatId &userId)
-{
-  QSqlQuery query(QSqlDatabase::database(m_id));
-  query.prepare(LS("SELECT id, oid, sender, dest, status, date, mdate, cmd, text, data, blob FROM messages WHERE dest = :dest AND status = 301 ORDER BY id DESC;"));
-  query.bindValue(LS(":dest"), m_self->m_channels.get(userId));
-  query.exec();
-
-  return messages(query);
 }
 
 
@@ -304,6 +242,70 @@ QList<ChatId> NodeMessagesDB::since(const ChatId &user1, const ChatId &user2, co
 }
 
 
+/*!
+ * Получения списка сообщений по их идентификаторам.
+ */
+QList<MessageRecordV2> NodeMessagesDB::get(const QList<ChatId> &ids, const ChatId &userId)
+{
+  if (ids.isEmpty())
+    return QList<MessageRecordV2>();
+
+  LOG_M1018
+
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.prepare(LS("SELECT id, sender, dest, status, date, mdate, cmd, text, data, blob FROM messages WHERE oid = :oid LIMIT 1;"));
+
+  QList<MessageRecordV2> out;
+# if QT_VERSION >= 0x040700
+  out.reserve(ids.size());
+# endif
+
+  MessageRecordV2 record;
+
+  for (int i = 0; i < ids.size(); ++i) {
+    const ChatId &id = ids.at(i);
+
+    query.bindValue(LS(":oid"), id.hasOid() ? ChatId::toBase32(id.oid().byteArray()) : id.toBase32());
+    query.exec();
+
+    if (!query.first()) {
+      LOG_M1019
+      continue;
+    }
+
+    record.id        = query.value(0).toLongLong();
+    record.oid       = id;
+    record.sender    = m_self->m_channels.get(query.value(1).toLongLong());
+    record.dest      = m_self->m_channels.get(query.value(2).toLongLong());
+    if (!userId.isNull() && (record.sender != userId && record.dest != userId))
+      continue;
+
+    record.status    = query.value(3).toLongLong();
+    record.date      = query.value(4).toLongLong();
+    record.mdate     = query.value(5).toLongLong();
+    record.cmd       = query.value(6).toString();
+    record.text      = query.value(7).toString();
+    record.data      = query.value(8).toByteArray();
+    record.blob      = query.value(9).toByteArray();
+
+    out.append(record);
+  }
+
+  return out;
+}
+
+
+QList<MessageRecordV2> NodeMessagesDB::offline(const ChatId &userId)
+{
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.prepare(LS("SELECT id, oid, sender, dest, status, date, mdate, cmd, text, data, blob FROM messages WHERE dest = :dest AND status = 301 ORDER BY id DESC;"));
+  query.bindValue(LS(":dest"), m_self->m_channels.get(userId));
+  query.exec();
+
+  return messages(query);
+}
+
+
 void NodeMessagesDB::add(const MessageNotice &packet, int status)
 {
   AddMessageTask *task = new AddMessageTask(packet, status);
@@ -333,6 +335,20 @@ void NodeMessagesDB::markAsRead(const QList<MessageRecordV2> &records)
   }
 
   db.commit();
+}
+
+
+void NodeMessagesDB::remove(qint64 id)
+{
+  LOG_M1020
+
+  QSqlQuery query(QSqlDatabase::database(m_id));
+  query.prepare(LS("DELETE FROM messages WHERE id = :id;"));
+  query.bindValue(LS(":id"), id);
+  query.exec();
+
+  if (query.numRowsAffected() < 1)
+    LOG_M1021
 }
 
 

@@ -15,6 +15,9 @@ BuildRequires:	GeoIP-devel
 %if 0%{?suse_version}
 BuildRequires:	update-desktop-files libGeoIP-devel
 %endif
+%if 0%{?suse_version} < 1230
+BuildRequires: systemd 
+%endif
 Requires:	hicolor-icon-theme
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-build
 
