@@ -35,6 +35,26 @@
 #include "Tr.h"
 #include "Translation.h"
 
+QString ProfilePluginImpl::Countries::m_lang;
+QVariantMap ProfilePluginImpl::Countries::m_cache;
+
+
+void ProfilePluginImpl::Countries::reload()
+{
+  const QString lang = ChatCore::translation()->name().left(2);
+  if (m_lang != lang) {
+    QFile file(LS(":/json/Profile/countries_") + lang + LS(".json"));
+    if (!file.open(QFile::ReadOnly)) {
+      file.setFileName(LS(":/json/Profile/countries_en.json"));
+      file.open(QFile::ReadOnly);
+    }
+
+    m_cache = JSON::parse(file.readAll()).toMap();
+    m_lang  = lang;
+  }
+}
+
+
 class ProfilePluginTr : public Tr
 {
   Q_DECLARE_TR_FUNCTIONS(ProfilePluginTr)
@@ -60,9 +80,6 @@ class CountryTr : public Tr
 {
   Q_DECLARE_TR_FUNCTIONS(CountryTr)
 
-  mutable QString m_lang;
-  mutable QVariantMap m_cache;
-
 public:
   CountryTr() : Tr() { m_prefix = LS("country-"); }
 
@@ -72,19 +89,7 @@ protected:
     if (key.size() != 2)
       return QString();
 
-    const QString lang = ChatCore::translation()->name().left(2);
-    if (m_lang != lang) {
-      QFile file(LS(":/json/Profile/countries_") + lang + LS(".json"));
-      if (!file.open(QFile::ReadOnly)) {
-        file.setFileName(LS(":/json/Profile/countries_en.json"));
-        file.open(QFile::ReadOnly);
-      }
-
-      m_cache = JSON::parse(file.readAll()).toMap();
-      m_lang  = lang;
-    }
-
-    return m_cache.value(key).toString();
+    return ProfilePluginImpl::Countries::name(key);
   }
 };
 

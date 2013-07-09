@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,6 +19,9 @@
 #ifndef PROFILEPLUGIN_P_H_
 #define PROFILEPLUGIN_P_H_
 
+#include <QVariant>
+#include <QStringList>
+
 #include "plugins/ChatPlugin.h"
 
 class CountryTr;
@@ -32,6 +35,19 @@ class ProfilePluginImpl : public ChatPlugin
 public:
   ProfilePluginImpl(QObject *parent);
   ~ProfilePluginImpl();
+
+  class Countries
+  {
+  public:
+    static inline QString name(const QString &lang) { reload(); return m_cache.value(lang).toString(); }
+    static inline QStringList list()                { reload(); return m_cache.keys(); }
+
+  private:
+    static void reload();
+
+    static QString m_lang;
+    static QVariantMap m_cache;
+  };
 
 private slots:
   void notify(const Notify &notify);
