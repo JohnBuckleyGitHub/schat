@@ -23,17 +23,20 @@
 #include "sglobal.h"
 #include "text/TokenFilter.h"
 
-const QString ChannelMessage::kInternalId = QLatin1String("InternalId");
-const QString ChannelMessage::kCommand    = QLatin1String("Command");
-const QString ChannelMessage::kDirection  = QLatin1String("Direction");
-const QString ChannelMessage::kStatus     = QLatin1String("Status");
-const QString ChannelMessage::kOID        = QLatin1String("OID");
-const QString ChannelMessage::kMDate      = QLatin1String("MDate");
+const QString ChannelMessage::kCommand     = QLatin1String("Command");
+const QString ChannelMessage::kDirection   = QLatin1String("Direction");
+const QString ChannelMessage::kInternalId  = QLatin1String("InternalId");
+const QString ChannelMessage::kJSON        = QLatin1String("JSON");
+const QString ChannelMessage::kMDate       = QLatin1String("MDate");
+const QString ChannelMessage::kOID         = QLatin1String("OID");
+const QString ChannelMessage::kStatus      = QLatin1String("Status");
 
-const QString ChannelMessage::kOutgoing   = QLatin1String("outgoing");
-const QString ChannelMessage::kIncoming   = QLatin1String("incoming");
-const QString ChannelMessage::kOffline    = QLatin1String("offline");
-const QString ChannelMessage::kRejected   = QLatin1String("rejected");
+const QString ChannelMessage::kIncoming    = QLatin1String("incoming");
+const QString ChannelMessage::kOffline     = QLatin1String("offline");
+const QString ChannelMessage::kOutgoing    = QLatin1String("outgoing");
+const QString ChannelMessage::kReferring   = QLatin1String("referring");
+const QString ChannelMessage::kRejected    = QLatin1String("rejected");
+const QString ChannelMessage::kUndelivered = QLatin1String("undelivered");
 
 ChannelMessage::ChannelMessage(MessagePacket packet)
   : Message(packet->id(), QByteArray(), LS("channel"), LS("addChannelMessage"))

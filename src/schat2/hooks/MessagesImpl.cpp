@@ -62,7 +62,7 @@ int MessagesImpl::read(MessagePacket packet)
 
   ChannelMessage message(packet);
   if (referring(message))
-    message.data()[LS("Status")] = LS("referring");
+    message.data()[ChannelMessage::kStatus] = ChannelMessage::kReferring;
 
   TabWidget::add(message, !(packet->sender() == ChatClient::id() && m_undelivered.contains(packet->internalId())));
 
@@ -108,7 +108,7 @@ void MessagesImpl::error(MessagePacket packet)
 void MessagesImpl::sent(MessagePacket packet)
 {
   ChannelMessage message(packet);
-  message.data()[LS("Status")] = LS("undelivered");
+  message.data()[ChannelMessage::kStatus] = ChannelMessage::kUndelivered;
 
   m_undelivered[packet->id()] = packet;
   TabWidget::add(message);
@@ -123,10 +123,10 @@ void MessagesImpl::unhandled(MessagePacket packet)
   Message message(packet->id(), Message::detectTab(packet->sender(), packet->dest()), LS("unhandled"), LS("addUnhandledMessage"));
   message.setAuthor(packet->sender());
   message.setDate(packet->date());
-  message.data()[LS("Command")] = packet->command();
-  message.data()[LS("Text")]    = packet->text();
-  message.data()[LS("Status")]  = packet->status();
-  message.data()[LS("JSON")]    = packet->json();
+  message.data()[ChannelMessage::kCommand] = packet->command();
+  message.data()[ChannelMessage::kText]    = packet->text();
+  message.data()[ChannelMessage::kStatus]  = packet->status();
+  message.data()[ChannelMessage::kJSON]    = packet->json();
   TabWidget::add(message);
 }
 
@@ -178,7 +178,7 @@ bool MessagesImpl::referring(const ChannelMessage &message) const
   if (SimpleID::typeOf(message.tab()) != SimpleID::ChannelId)
     return false;
 
-  if (!message.data().value(LS("Text")).toString().contains(LS("chat://channel/") + SimpleID::encode(ChatClient::id())))
+  if (!message.data().value(ChannelMessage::kText).toString().contains(LS("chat://channel/") + SimpleID::encode(ChatClient::id())))
     return false;
 
   return true;
@@ -189,7 +189,7 @@ void MessagesImpl::rejectAll()
 {
   foreach (MessagePacket packet, m_undelivered) {
     ChannelMessage message(packet);
-    message.data()[LS("Status")] = LS("rejected");
+    message.data().insert(ChannelMessage::kStatus, ChannelMessage::kRejected);
 
     TabWidget::add(message);
   }

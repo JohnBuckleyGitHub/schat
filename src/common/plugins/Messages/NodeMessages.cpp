@@ -164,7 +164,14 @@ void NodeMessages::pong(qint64 date)
 
 void NodeMessages::reject(int status)
 {
-  MessageNotice packet(m_packet->sender(), m_packet->dest(), m_packet->text(), m_packet->date(), m_packet->internalId());
+  ChatId id(m_packet->internalId());
+  if (id.isNull())
+    id.init(m_packet->id());
+
+  if (id.hasOid())
+    id.setDate(0);
+
+  MessageNotice packet(m_packet->sender(), m_packet->dest(), m_packet->text(), m_packet->date(), id.toByteArray());
   packet.setStatus(status);
   m_core->send(m_sender->sockets(), packet.data(Core::stream()));
 }

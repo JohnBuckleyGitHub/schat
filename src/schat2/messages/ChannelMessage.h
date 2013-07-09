@@ -27,17 +27,20 @@ class MessageNotice;
 class SCHAT_CORE_EXPORT ChannelMessage : public Message
 {
 public:
-  static const QString kInternalId;
   static const QString kCommand;
   static const QString kDirection;
-  static const QString kStatus;
-  static const QString kOID;
+  static const QString kInternalId;
+  static const QString kJSON;
   static const QString kMDate;
+  static const QString kOID;
+  static const QString kStatus;
 
-  static const QString kOutgoing;
   static const QString kIncoming;
   static const QString kOffline;
+  static const QString kOutgoing;
+  static const QString kReferring;
   static const QString kRejected;
+  static const QString kUndelivered;
 
   ChannelMessage(MessagePacket packet);
   inline MessagePacket packet() const { return m_packet; }
