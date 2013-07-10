@@ -58,7 +58,7 @@ ChannelMessage::ChannelMessage(MessagePacket packet)
   const int status = packet->status();
   if (isOffline(status))
     m_data.insert(kStatus, kOffline);
-  else if (status != Notice::OK && status != Notice::Found)
+  else if (status != Notice::OK && status != Notice::Found && status < Notice::UserStatus)
     m_data.insert(kStatus, kRejected);
 
   if (!packet->oid.isNull()) {

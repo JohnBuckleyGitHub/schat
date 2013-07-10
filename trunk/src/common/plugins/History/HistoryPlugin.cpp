@@ -35,6 +35,7 @@
 #include "HistoryMessages.h"
 #include "HistoryPlugin.h"
 #include "HistoryPlugin_p.h"
+#include "net/Protocol.h"
 #include "net/SimpleID.h"
 #include "NetworkManager.h"
 #include "sglobal.h"
@@ -90,7 +91,8 @@ HistoryImpl::~HistoryImpl()
 bool HistoryImpl::fetch(const QByteArray &id, const QList<QByteArray> &messages)
 {
   QVariantMap data;
-  data[MESSAGES_FEED_MESSAGES_KEY] = MessageNotice::encode(messages);
+  data.insert(MESSAGES_FEED_MESSAGES_KEY, MessageNotice::encode(messages));
+  data.insert(MESSAGES_FEED_V_KEY,        Protocol::V4_1);
   return ClientFeeds::request(id, FEED_METHOD_GET, MESSAGES_FEED_FETCH_REQ, data);
 }
 
@@ -160,7 +162,7 @@ void HistoryImpl::notify(const Notify &notify)
 
 void HistoryImpl::open()
 {
-  QByteArray id = ChatClient::serverId();
+  const QByteArray id = ChatClient::serverId();
   if (!id.isEmpty())
     HistoryDB::open(id, ChatCore::networks()->root(SimpleID::encode(id)));
 }

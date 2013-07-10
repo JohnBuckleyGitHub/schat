@@ -37,5 +37,6 @@
 #define MESSAGES_FEED_SINCE_REQ    QLatin1String("messages/since")
 #define MESSAGES_FEED_TAG_KEY      QLatin1String("tag")
 #define MESSAGES_FEED_TIMEOUT_KEY  QLatin1String("timeout")
+#define MESSAGES_FEED_V_KEY        QLatin1String("v")
 
 #endif /* INFOFEED_H_ */

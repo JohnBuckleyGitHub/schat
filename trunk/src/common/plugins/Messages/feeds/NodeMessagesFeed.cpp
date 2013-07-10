@@ -64,7 +64,7 @@ FeedReply NodeMessagesFeed::del(const QString &path, Channel *channel, const QBy
     FeedReply reply(Notice::OK, DateTime::utc());
     if (id.hasOid()) {
       record.mdate  = reply.date;
-      record.status = Notice::NotFound;
+      record.status = MessageNotice::Removed;
       record.text.clear();
       record.data.clear();
       record.blob.clear();
@@ -169,7 +169,7 @@ FeedReply NodeMessagesFeed::fetch(const QVariantMap &json, Channel *user) const
     return FeedReply(Notice::NotFound);
 
   FeedReply reply(Notice::OK);
-  toPackets(reply.packets, records);
+  toPackets(reply.packets, records, json.value(MESSAGES_FEED_V_KEY).toInt());
 
   reply.json[MESSAGES_FEED_COUNT_KEY] = reply.packets.size();
   return reply;
@@ -324,7 +324,7 @@ MessageRecordV2 NodeMessagesFeed::fetch(const ChatId &id, Channel *user, int &st
 }
 
 
-void NodeMessagesFeed::toPackets(QList<QByteArray> &out, const QList<MessageRecordV2> &records) const
+void NodeMessagesFeed::toPackets(QList<QByteArray> &out, const QList<MessageRecordV2> &records, int version) const
 {
   for (int i = 0; i < records.size(); ++i) {
     const MessageRecordV2& record = records.at(i);
@@ -332,6 +332,9 @@ void NodeMessagesFeed::toPackets(QList<QByteArray> &out, const QList<MessageReco
       continue;
 
     MessageNotice packet(record);
+    if (!version && packet.status() >= Notice::UserStatus)
+      packet.setStatus(Notice::Found);
+
     out.append(packet.data(Core::stream()));
   }
 }

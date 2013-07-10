@@ -70,7 +70,8 @@ public:
     NotImplemented      = 501, ///< Not Implemented.
     BadGateway          = 502, ///< Bad Gateway.
     ServiceUnavailable  = 503, ///< Service Unavailable.
-    GatewayTimeout      = 504  ///< Gateway Timeout.
+    GatewayTimeout      = 504, ///< Gateway Timeout.
+    UserStatus          = 600, ///< Начало диапазона пользовательских статусных кодов.
   };
 
   /// Направление пакета.
