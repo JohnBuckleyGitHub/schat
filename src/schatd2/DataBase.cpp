@@ -42,7 +42,7 @@
 
 DataBase *DataBase::m_self = 0;
 
-#define LOG_N6010 LOG_FATAL("N6010", "Core/DataBase", "Could not open DataBase file \"" << db.databaseName() << "\". " << NodeLog::toString(db.lastError()))
+#define LOG_N6010 LOG_FATAL("N6010", "Core/DataBase", "Unable to open database file: \"" << db.databaseName() << "\". " << NodeLog::toString(db.lastError()))
 #define LOG_N6011 LOG_ERROR("N6011", "Core/DataBase", "Could not add channel: " << NodeLog::toString(query.lastError()))
 
 AddHostTask::AddHostTask(Host *host)
@@ -201,8 +201,8 @@ int DataBase::start()
   db.setDatabaseName(Storage::var() + LC('/') + Path::app() + LS(".sqlite"));
   if (!db.open()) {
     LOG_N6010
-    QCoreApplication::exit(-1);
-    return -1;
+    QCoreApplication::exit(1);
+    return 1;
   }
 
   QSqlQuery query;

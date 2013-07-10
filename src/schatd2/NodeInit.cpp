@@ -97,7 +97,9 @@ void NodeInit::quit()
 
 void NodeInit::start()
 {
-  m_storage->start();
+  if (m_storage->start())
+    return;
+
   m_plugins->load();
 
   QStringList listen = Storage::settings()->value(STORAGE_LISTEN).toStringList();
