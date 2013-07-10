@@ -71,7 +71,7 @@ private:
   FeedReply since(const QVariantMap &json, Channel *user) const;
   int permissions(const MessageRecordV2 &record, Channel *user) const;
   MessageRecordV2 fetch(const ChatId &id, Channel *user, int &status) const;
-  void toPackets(QList<QByteArray> &out, const QList<MessageRecordV2> &records) const;
+  void toPackets(QList<QByteArray> &out, const QList<MessageRecordV2> &records, int version = 0) const;
 };
 
 

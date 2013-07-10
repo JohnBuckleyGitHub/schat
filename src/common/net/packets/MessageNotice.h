@@ -75,6 +75,10 @@ struct SCHAT_EXPORT MessageRecordV2
 class SCHAT_EXPORT MessageNotice : public Notice
 {
 public:
+  enum XStatusCodes {
+    Removed = 600
+  };
+
   MessageNotice();
   MessageNotice(const MessageRecord &record, bool parse = false);
   MessageNotice(const MessageRecordV2 &record, bool parse = false);
