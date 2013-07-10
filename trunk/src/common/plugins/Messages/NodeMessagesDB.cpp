@@ -47,6 +47,8 @@ QString NodeMessagesDB::m_id;
 #define LOG_M1019  LOG_WARN("M1019", "Messages/DB", "Failed get message: id:" << id.toString() << " " << NodeLog::toString(query.lastError()))
 #define LOG_M1020 LOG_TRACE("M1020", "Messages/DB", "Permanently remove row: " << id)
 #define LOG_M1021  LOG_WARN("M1021", "Messages/DB", "Failed remove row:" << id)
+#define LOG_M1022 LOG_TRACE("M1022", "Messages/DB", "Updating existing message: id:" << m_record.oid.toString() << ", status:" << m_record.status << ", sender:" << m_record.sender.toString() << ", dest:" << m_record.dest.toString() << ", date:" << m_record.date << ", mdate:" << m_record.mdate << ", cmd:" << m_record.cmd)
+#define LOG_M1023 LOG_ERROR("M1023", "Messages/DB", "Failed update message: id:" << m_record.oid.toString() << ", status:" << m_record.status << ", sender:" << m_record.sender.toString() << ", dest:" << m_record.dest.toString() << " " << NodeLog::toString(query.lastError()))
 
 NodeMessagesDB::NodeMessagesDB(QObject *parent)
   : QObject(parent)
@@ -349,6 +351,15 @@ void NodeMessagesDB::remove(qint64 id)
 
   if (query.numRowsAffected() < 1)
     LOG_M1021
+}
+
+
+void NodeMessagesDB::update(const MessageRecordV2 &record)
+{
+  UpdateMessageTask *task = new UpdateMessageTask(record);
+  m_self->m_tasks.append(task);
+  if (m_self->m_tasks.size() == 1)
+    QTimer::singleShot(0, m_self, SLOT(startTasks()));
 }
 
 
@@ -679,22 +690,14 @@ void NodeMessagesDB::version()
 }
 
 
-AddMessageTask::AddMessageTask(const MessageNotice &packet, int status)
-  : QRunnable()
-  , m_status(status)
-  , m_packet(packet)
-{
-}
-
-
 void AddMessageTask::run()
 {
   const ChatId oid(m_packet.id());
   LOG_M1011
 
   QSqlQuery query(QSqlDatabase::database(NodeMessagesDB::m_id));
-  query.prepare(LS("INSERT INTO messages (oid,  sender,  dest,  status,  date,  mdate,  cmd,  text,  data) "
-                                "VALUES (:oid, :sender, :dest, :status, :date, :mdate, :cmd, :text, :data);"));
+  query.prepare(LS("INSERT INTO messages (oid,  sender,  dest,  status,  date,  mdate,  cmd,  text,  data,  blob) "
+                                "VALUES (:oid, :sender, :dest, :status, :date, :mdate, :cmd, :text, :data, :blob);"));
 
   query.bindValue(LS(":oid"),       m_packet.mdate ? ChatId::toBase32(oid.oid().byteArray()) : oid.toBase32());
   query.bindValue(LS(":sender"),    NodeMessagesDB::m_self->m_channels.get(ChatId(m_packet.sender())));
@@ -705,8 +708,29 @@ void AddMessageTask::run()
   query.bindValue(LS(":cmd"),       m_packet.command());
   query.bindValue(LS(":text"),      m_packet.text());
   query.bindValue(LS(":data"),      m_packet.raw());
+  query.bindValue(LS(":blob"),      m_packet.blob());
   query.exec();
 
   if (query.numRowsAffected() < 1)
     LOG_M1012
+}
+
+
+void UpdateMessageTask::run()
+{
+  LOG_M1022
+
+  QSqlQuery query(QSqlDatabase::database(NodeMessagesDB::m_id));
+  query.prepare(LS("UPDATE messages SET status = :status, mdate = :mdate, text = :text, data = :data, blob = :blob WHERE id = :id;"));
+
+  query.bindValue(LS(":status"), m_record.status);
+  query.bindValue(LS(":mdate"),  m_record.mdate);
+  query.bindValue(LS(":text"),   m_record.text);
+  query.bindValue(LS(":data"),   m_record.data);
+  query.bindValue(LS(":blob"),   m_record.blob);
+  query.bindValue(LS(":id"),     m_record.id);
+  query.exec();
+
+  if (query.numRowsAffected() < 1)
+    LOG_M1023
 }

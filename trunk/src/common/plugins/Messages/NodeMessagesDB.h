@@ -46,6 +46,7 @@ public:
   static void add(const MessageNotice &packet, int status = 300);
   static void markAsRead(const QList<MessageRecordV2> &records);
   static void remove(qint64 id);
+  static void update(const MessageRecordV2 &record);
 
 private slots:
   void startTasks();
@@ -69,6 +70,7 @@ private:
   };
 
   friend class AddMessageTask;
+  friend class UpdateMessageTask;
 
   static qint64 V2();
   static qint64 V3();
@@ -94,12 +96,30 @@ public:
     JSonFormat,    ///< JSON формат.
   };
 
-  AddMessageTask(const MessageNotice &packet, int status = 300);
+  inline AddMessageTask(const MessageNotice &packet, int status = 300) : QRunnable()
+  , m_status(status)
+  , m_packet(packet)
+  {}
+
   void run();
 
 private:
-  int m_status;           ///< Статус сообщения.
-  MessageNotice m_packet; ///< Копия пакета.
+  const int m_status;           ///< Статус сообщения.
+  const MessageNotice m_packet; ///< Копия пакета.
+};
+
+
+class UpdateMessageTask : public QRunnable
+{
+public:
+  inline UpdateMessageTask(const MessageRecordV2 &record) : QRunnable()
+  , m_record(record)
+  {}
+
+  void run();
+
+private:
+  const MessageRecordV2 m_record;
 };
 
 #endif /* NODEMESSAGESDB_H_ */

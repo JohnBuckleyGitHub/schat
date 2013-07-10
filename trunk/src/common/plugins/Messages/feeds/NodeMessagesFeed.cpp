@@ -30,8 +30,6 @@
 const QString NodeMessagesFeed::kEditable = QLatin1String("Messages/Editable");
 const QString NodeMessagesFeed::kTimeOut  = QLatin1String("Messages/TimeOut");
 
-#include <QDebug>
-
 NodeMessagesFeed::NodeMessagesFeed(const QString &name, const QVariantMap &data)
   : Feed(name, data)
 {
@@ -70,8 +68,9 @@ FeedReply NodeMessagesFeed::del(const QString &path, Channel *channel, const QBy
       record.text.clear();
       record.data.clear();
       record.blob.clear();
+      NodeMessagesDB::update(record);
 
-      return Notice::InternalError;
+      return reply;
     }
     else
       NodeMessagesDB::remove(record.id);
