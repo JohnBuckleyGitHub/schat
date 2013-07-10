@@ -209,6 +209,8 @@ var Pages = {
     Pages.current = page;
 
     if (page == 0) {
+      $('#page-switcher-start').hide();
+      $('#page-switcher-end').show();
       $("#messages").addClass("active");
       $("#info").removeClass("active");
       alignChat();
@@ -217,6 +219,8 @@ var Pages = {
         Pages.onMessages[i]();
     }
     else if (page == 1) {
+      $('#page-switcher-start').show()
+      $('#page-switcher-end').hide();
       $("#messages").removeClass("active");
       $("#info").addClass("active");
 

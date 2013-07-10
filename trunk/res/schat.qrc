@@ -14,6 +14,8 @@
   <file alias="images/away-small.png">images/diagona/10/087.png</file>
   <file alias="images/balloon.png">images/fugue/balloon.png</file>
   <file alias="images/bell.png">images/fugue/bell.png</file>
+  <file alias="images/br-next.png">images/wireframe/br_next.png</file>
+  <file alias="images/br-prev.png">images/wireframe/br_prev.png</file>
   <file alias="images/channel.png">images/hypic/forum_16.png</file>
   <file alias="images/channel-alert.png">images/diagona/029.png</file>
   <file alias="images/computer.png">images/fugue/computer.png</file>
