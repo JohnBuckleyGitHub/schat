@@ -28,7 +28,7 @@
 # include "qt_windows.h"
 #endif
 
-bool NodeLog::m_colors              = false;
+bool NodeLog::m_colors              = true;
 NodeLog *NodeLog::m_self            = 0;
 NodeLog::Level NodeLog::m_level     = NodeLog::FatalLevel;
 NodeLog::OutFlags NodeLog::m_output = NodeLog::FileOut | StdOut;
@@ -69,8 +69,10 @@ bool NodeLog::open(const QString &file, Level level)
   if (!m_file.exists())
     bom = true;
 
-  if (!m_file.open(QFile::WriteOnly | QFile::Text | QFile::Append))
+  if (!m_file.open(QFile::WriteOnly | QFile::Text | QFile::Append)) {
+    m_output = StdOut;
     return false;
+  }
 
   m_stream.setDevice(&m_file);
   m_stream.setGenerateByteOrderMark(bom);
@@ -119,7 +121,7 @@ void NodeLog::add(Level level, const QString &code, const QString &tag, const QS
 
 # if defined(Q_OS_WIN32)
   HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-  SetConsoleTextAttribute(hConsole, 8);
+  SetConsoleTextAttribute(hConsole, 3);
   m_stdout << t;
   m_stdout.flush();
 
@@ -150,7 +152,17 @@ void NodeLog::add(Level level, const QString &code, const QString &tag, const QS
   m_stdout.flush();
 
 # else
-  m_stdout << QString(LS("%1 [%2] %3 [%4] %5")).arg(t, m_levels.at(level), code, tag, message) << endl;
+  QString color = LS("1;35");
+  if (level == FatalLevel || level == ErrorLevel)
+     color = LS("1;31");
+   else if (level == WarnLevel)
+     color = LS("1;33");
+   else if (level == InfoLevel)
+     color = LS("1;37");
+   else if (level == TraceLevel)
+     color = LS("1;34");
+
+  m_stdout << QString(LS("\033[0;36m%1 \033[%2m[%3] \033[1;32m%4 \033[1;36m[%5]\033[0m %6")).arg(t, color, m_levels.at(level), code, tag, message) << endl;
 # endif
 }
 

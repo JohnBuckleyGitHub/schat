@@ -52,6 +52,7 @@ const QString Storage::kLogLevel  = QLatin1String("LogLevel");
 const QString Storage::kLogOutput = QLatin1String("LogOutput");
 
 #define LOG_N8010 LOG_INFO("N8010", "Core/Storage", "Max open files limit: " << limit.rlim_cur << " " << limit.rlim_max)
+#define LOG_N8011 LOG_ERROR("N8011", "Core/Storage", "Unable to open log file: \"" << logFile << '"')
 
 Storage::Storage(const QString &app, QObject *parent)
   : QObject(parent)
@@ -223,13 +224,16 @@ int Storage::load()
  */
 int Storage::start()
 {
-  QString logPath = Path::cache();
+  QString logFile = Path::cache();
 # if defined(Q_OS_UNIX) && !defined(Q_OS_MAC)
   if (!Path::isPortable())
-    logPath = LS("/var/log/") + Path::app();
+    logFile = LS("/var/log/") + Path::app();
 # endif
+  logFile += LC('/') + Path::app() + LS(".log");
 
-  m_log->open(logPath + LC('/') + Path::app() + LS(".log"), NodeLog::ErrorLevel);
+  if (!m_log->open(logFile, NodeLog::ErrorLevel)) {
+    LOG_N8011
+  }
 
   setDefaultSslConf();
 
@@ -237,10 +241,12 @@ int Storage::start()
   setMaxOpenFiles(m_settings->value(STORAGE_MAX_OPEN_FILES).toInt());
 # endif
 
-  DataBase::start();
+  if (DataBase::start())
+    return 1;
+
   NodeLog::setLevel(static_cast<NodeLog::Level>(value(kLogLevel, NodeLog::ErrorLevel).toInt()));
   NodeLog::setOutFlags(static_cast<NodeLog::OutFlags>(value(kLogOutput, NodeLog::FileOut).toInt()));
-  NodeLog::setColors(value(kLogColor, false).toBool());
+  NodeLog::setColors(value(kLogColor, true).toBool());
 
   m_privateId = m_settings->value(STORAGE_PRIVATE_ID).toString().toUtf8();
   if (m_privateId.isEmpty()) {
