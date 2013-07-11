@@ -66,7 +66,7 @@ int MessagesImpl::read(MessagePacket packet)
 
   TabWidget::add(message, !(packet->sender() == ChatClient::id() && m_undelivered.contains(packet->internalId())));
 
-  if (packet->status() == Notice::Found || packet->status() == Notice::Read)
+  if (packet->status() == Notice::Found || packet->status() == Notice::Read || packet->status() >= Notice::UserStatus)
     return 1;
 
   if (packet->sender() != ChatClient::id() || !m_undelivered.contains(packet->internalId())) {
