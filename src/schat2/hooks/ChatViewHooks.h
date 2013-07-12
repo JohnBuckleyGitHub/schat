@@ -27,6 +27,8 @@
 class ChatView;
 class QDragEnterEvent;
 class QDropEvent;
+class QMenu;
+class QWebHitTestResult;
 
 class SCHAT_CORE_EXPORT ChatViewHooks : public QObject
 {
@@ -45,6 +47,7 @@ public:
   inline static void remove(ChatView *view)          { m_self->removeImpl(view); }
   inline static void remove(ChatViewHooks *hook)     { m_self->m_hooks.removeAll(hook); }
 
+  static bool contextMenu(ChatView *view, QMenu *menu, const QWebHitTestResult &result);
   static bool dragEnterEvent(ChatView *view, QDragEnterEvent *event);
   static bool dropEvent(ChatView *view, QDropEvent *event);
 
@@ -55,6 +58,7 @@ signals:
   void removeHook(ChatView *view);
 
 protected:
+  virtual bool onContextMenu(ChatView *view, QMenu *menu, const QWebHitTestResult &result);
   virtual bool onDragEnterEvent(ChatView *view, QDragEnterEvent *event);
   virtual bool onDropEvent(ChatView *view, QDropEvent *event);
   virtual void addImpl(ChatView *view);

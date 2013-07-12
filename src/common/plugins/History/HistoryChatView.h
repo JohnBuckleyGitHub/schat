@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "hooks/ChatViewHooks.h"
 
 class Notify;
+class QAction;
 
 class HistoryChatView : public ChatViewHooks
 {
@@ -35,6 +36,7 @@ signals:
   void loading(const QString &id);
 
 protected:
+  bool onContextMenu(ChatView *view, QMenu *menu, const QWebHitTestResult &result);
   void addImpl(ChatView *view);
   void initImpl(ChatView *view);
   void loadFinishedImpl(ChatView *view);
@@ -42,15 +44,18 @@ protected:
 private slots:
   void notify(const Notify &notify);
   void ready();
+  void remove();
   void settingsChanged(const QString &key, const QVariant &value);
   void synced();
 
 private:
   bool compatible(const QByteArray &id) const;
   bool sync(const QByteArray &id, qint64 date = 0);
+  QAction *removeAction(const QVariant &data);
   void emulateLast(const QByteArray &channelId, const QList<QByteArray> &ids);
 
-  bool m_autoLoad; /// Опция SETTINGS_HISTORY_AUTO_LOAD.
+  bool m_autoLoad;   ///< Опция SETTINGS_HISTORY_AUTO_LOAD.
+  QAction *m_remove; ///< Удаление сообщения.
 };
 
 #endif /* HISTORYCHATVIEW_H_ */

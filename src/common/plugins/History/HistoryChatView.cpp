@@ -16,7 +16,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QMenu>
 #include <QWebFrame>
+#include <QWebElement>
 
 #include "ChatCore.h"
 #include "ChatNotify.h"
@@ -31,10 +33,12 @@
 #include "HistoryPlugin_p.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
+#include "ui/ChatIcons.h"
 #include "ui/tabs/ChatView.h"
 
 HistoryChatView::HistoryChatView(QObject *parent)
   : ChatViewHooks(parent)
+  , m_remove(0)
 {
   synced();
 
@@ -51,6 +55,34 @@ bool HistoryChatView::isAutoLoad(const QString &id) const
     return false;
 
   return true;
+}
+
+
+bool HistoryChatView::onContextMenu(ChatView *view, QMenu *menu, const QWebHitTestResult &result)
+{
+  ChatId id(view->id());
+  if (id.type() != ChatId::ChannelId && id.type() != ChatId::UserId)
+    return false;
+
+  const QWebElement block = result.enclosingBlockElement();
+  if (!block.hasClass("blocks"))
+    return false;
+
+  const QWebElement container = block.parent();
+  const qint64 mdate          = container.attribute(LS("data-mdate")).toLongLong();
+
+  if (!mdate)
+    return false;
+
+  id.init(container.attribute(LS("id")).toLatin1());
+  if (id.type() != ChatId::MessageId)
+    return false;
+
+  QVariantList data;
+  data << view->id() << id.toString();
+
+  menu->insertAction(menu->actions().first(), removeAction(data));
+  return false;
 }
 
 
@@ -113,6 +145,16 @@ void HistoryChatView::ready()
 }
 
 
+void HistoryChatView::remove()
+{
+  const QVariantList data = m_remove->data().toList();
+  if (data.size() < 2)
+    return;
+
+  ClientFeeds::del(data.at(0).toByteArray(), FEED_NAME_MESSAGES + '/' + data.at(1).toString());
+}
+
+
 void HistoryChatView::settingsChanged(const QString &key, const QVariant &value)
 {
   if (key == SETTINGS_HISTORY_AUTO_LOAD)
@@ -164,6 +206,18 @@ bool HistoryChatView::sync(const QByteArray &id, qint64 date)
     return false;
 
   return ClientFeeds::request(id, FEED_METHOD_GET, MESSAGES_FEED_LAST_REQ, json);
+}
+
+
+QAction *HistoryChatView::removeAction(const QVariant &data)
+{
+  if (!m_remove) {
+    m_remove = new QAction(SCHAT_ICON(Remove), tr("Remove message"), this);
+    connect(m_remove, SIGNAL(triggered()), SLOT(remove()));
+  }
+
+  m_remove->setData(data);
+  return m_remove;
 }
 
 

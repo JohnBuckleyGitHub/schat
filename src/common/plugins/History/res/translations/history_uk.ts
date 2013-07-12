@@ -19,6 +19,14 @@
     </message>
 </context>
 <context>
+    <name>HistoryChatView</name>
+    <message>
+        <location filename="../../HistoryChatView.cpp" line="215"/>
+        <source>Remove message</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>HistorySettings</name>
     <message>
         <location filename="../../ui/HistorySettings.cpp" line="60"/>
@@ -29,12 +37,12 @@
 <context>
     <name>ProfilePluginTr</name>
     <message>
-        <location filename="../../HistoryPlugin.cpp" line="56"/>
+        <location filename="../../HistoryPlugin.cpp" line="59"/>
         <source>Loading messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../HistoryPlugin.cpp" line="57"/>
+        <location filename="../../HistoryPlugin.cpp" line="60"/>
         <source>More messages</source>
         <translation type="unfinished"></translation>
     </message>
