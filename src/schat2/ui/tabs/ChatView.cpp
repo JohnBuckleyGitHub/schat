@@ -48,6 +48,7 @@
 #include "hooks/ChannelMenu.h"
 #include "hooks/ChatViewHooks.h"
 #include "JSON.h"
+#include "messages/ChannelMessage.h"
 #include "messages/Message.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
@@ -413,37 +414,39 @@ void ChatView::startTasks()
 QVariantMap ChatView::addHint(const Message &message)
 {
   QVariantMap out;
-  out[LS("Hint")] = LS("end");
+  out.insert(Message::kHint, LS("end"));
 
   const QVariantMap &data = message.data();
-  qint64 date = data.value(LS("Date")).toLongLong();
+  const qint64 date       = data.value(Message::kDate).toLongLong();
   if (!date) {
-    out[LS("Day")] = QDateTime::currentDateTime().toString(LS("yyyy_MM_dd"));
+    out.insert(Message::kDay, QDateTime::currentDateTime().toString(LS("yyyy_MM_dd")));
     return out;
   }
 
   const QString day = DateTime::toDateTime(date).toString(LS("yyyy_MM_dd"));
-  out[LS("Day")] = day;
+  out.insert(Message::kDay, day);
 
-  if (data.value(LS("Status")) == LS("undelivered"))
+  if (data.value(ChannelMessage::kStatus) == ChannelMessage::kUndelivered)
     return out;
 
-  QByteArray id = data.value(LS("Id")).toByteArray();
-  if (id.isEmpty())
+  ChatId id(data.value(Message::kId).toByteArray());
+  if (id.isNull())
     return out;
 
-  QMap<qint64, QByteArray> &messages = m_messages[day];
+  QMap<qint64, ChatId> &messages = m_messages[day];
   messages[date] = id;
   if (messages.size() == 1)
     return out;
 
-  QList<qint64> dates = messages.keys();
-  int index = dates.indexOf(date);
+  const QList<qint64> dates = messages.keys();
+  const int index = dates.indexOf(date);
   if (index == dates.size() - 1)
     return out;
 
-  out[LS("Hint")] = LS("before");
-  out[LS("Id")]   = QString(messages.value(dates.at(index + 1)));
+  id = messages.value(dates.at(index + 1));
+
+  out.insert(Message::kHint, LS("before"));
+  out.insert(Message::kId,   id.hasOid() ? QString(ChatId::toBase32(id.oid().byteArray())) : id.toString());
 
   return out;
 }

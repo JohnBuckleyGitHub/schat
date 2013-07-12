@@ -151,7 +151,7 @@ void HistoryChatView::remove()
   if (data.size() < 2)
     return;
 
-  ClientFeeds::del(data.at(0).toByteArray(), FEED_NAME_MESSAGES + '/' + data.at(1).toString());
+  ClientFeeds::del(data.at(0).toByteArray(), FEED_NAME_MESSAGES + '/' + data.at(1).toString(), Feed::Echo | Feed::Share | Feed::Broadcast);
 }
 
 
