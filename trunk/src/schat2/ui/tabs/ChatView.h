@@ -23,6 +23,7 @@
 #include <QVariant>
 #include <QWebView>
 
+#include "id/ChatId.h"
 #include "ui/tabs/WebView.h"
 
 class FeedNotify;
@@ -92,7 +93,7 @@ private:
   QAction *m_service;                                  ///< Сервисные сообщения.
   QByteArray m_id;                                     ///< Идентификатор.
   qint64 m_lastMessage;                                ///< Время последнего сообщения.
-  QMap<QString, QMap<qint64, QByteArray> > m_messages; ///< Сортированные по времени сообщения.
+  QMap<QString, QMap<qint64, ChatId> > m_messages;     ///< Сортированные по времени сообщения.
   QQueue<QString> m_pendingJs;                         ///< Очередь JavaScript кода ожидающего загрузки документа.
   QQueue<QVariantMap> m_pendingFeeds;                  ///< Очередь данных фидов ожидающих загрузки документа.
   QStringList m_jsfiles;                               ///< Дополнительные динамически загружаемые JavaScript скрипты.

@@ -31,8 +31,10 @@ class SCHAT_CORE_EXPORT Message
 public:
   static const QString kAuthor;
   static const QString kDate;
+  static const QString kDay;
   static const QString kExtra;
   static const QString kFunc;
+  static const QString kHint;
   static const QString kId;
   static const QString kText;
   static const QString kType;

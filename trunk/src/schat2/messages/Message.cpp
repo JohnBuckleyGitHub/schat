@@ -25,8 +25,10 @@
 
 const QString Message::kAuthor = QLatin1String("Author");
 const QString Message::kDate   = QLatin1String("Date");
+const QString Message::kDay    = QLatin1String("Day");
 const QString Message::kExtra  = QLatin1String("Extra");
 const QString Message::kFunc   = QLatin1String("Func");
+const QString Message::kHint   = QLatin1String("Hint");
 const QString Message::kId     = QLatin1String("Id");
 const QString Message::kText   = QLatin1String("Text");
 const QString Message::kType   = QLatin1String("Type");

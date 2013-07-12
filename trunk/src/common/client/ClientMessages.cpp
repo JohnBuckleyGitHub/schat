@@ -47,7 +47,7 @@ ClientMessages::ClientMessages(QObject *parent)
  */
 bool ClientMessages::isClientDate(int status)
 {
-  if (status == Notice::Found || status == Notice::Unread || status == Notice::Read)
+  if (status == Notice::Found || status == Notice::Unread || status == Notice::Read || status >= Notice::UserStatus)
     return false;
 
   return true;
