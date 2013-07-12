@@ -16,6 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QWebHitTestResult>
+
 #include "hooks/ChatViewHooks.h"
 #include "ui/tabs/ChatView.h"
 
