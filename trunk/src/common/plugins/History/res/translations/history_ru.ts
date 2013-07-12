@@ -17,6 +17,13 @@
     </message>
 </context>
 <context>
+    <name>HistoryChatView</name>
+    <message>
+        <source>Remove message</source>
+        <translation>Удалить сообщение</translation>
+    </message>
+</context>
+<context>
     <name>HistorySettings</name>
     <message>
         <source>Automatically display last 20 private messages</source>

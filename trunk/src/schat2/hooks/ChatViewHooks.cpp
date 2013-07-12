@@ -38,6 +38,20 @@ ChatViewHooks::~ChatViewHooks()
 }
 
 
+bool ChatViewHooks::contextMenu(ChatView *view, QMenu *menu, const QWebHitTestResult &result)
+{
+  bool modified = false;
+  if (m_self) {
+    foreach (ChatViewHooks *hook, m_self->m_hooks) {
+      if (hook->onContextMenu(view, menu, result) && !modified)
+        modified = true;
+    }
+  }
+
+  return modified;
+}
+
+
 bool ChatViewHooks::dragEnterEvent(ChatView *view, QDragEnterEvent *event)
 {
   if (m_self) {
@@ -59,6 +73,16 @@ bool ChatViewHooks::dropEvent(ChatView *view, QDropEvent *event)
         return true;
     }
   }
+
+  return false;
+}
+
+
+bool ChatViewHooks::onContextMenu(ChatView *view, QMenu *menu, const QWebHitTestResult &result)
+{
+  Q_UNUSED(view)
+  Q_UNUSED(menu)
+  Q_UNUSED(result)
 
   return false;
 }

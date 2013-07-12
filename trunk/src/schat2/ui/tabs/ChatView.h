@@ -81,6 +81,7 @@ private:
   QVariantMap addHint(const Message &message);
   void clearPage();
   void createActions();
+  void messageEditorMenu(QMenu *menu);
   void reloadPage();
 
   bool m_loaded;                                       ///< true если документ загружен.
@@ -94,8 +95,8 @@ private:
   QMap<QString, QMap<qint64, QByteArray> > m_messages; ///< Сортированные по времени сообщения.
   QQueue<QString> m_pendingJs;                         ///< Очередь JavaScript кода ожидающего загрузки документа.
   QQueue<QVariantMap> m_pendingFeeds;                  ///< Очередь данных фидов ожидающих загрузки документа.
-  QVariantList m_messagesQueue;                        ///< Очередь сообщений ожидающих загрузки документа.
   QStringList m_jsfiles;                               ///< Дополнительные динамически загружаемые JavaScript скрипты.
+  QVariantList m_messagesQueue;                        ///< Очередь сообщений ожидающих загрузки документа.
 };
 
 #endif /* CHATVIEW_H_ */

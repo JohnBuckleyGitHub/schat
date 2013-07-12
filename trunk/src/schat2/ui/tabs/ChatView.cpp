@@ -255,6 +255,8 @@ void ChatView::contextMenu(QMenu *menu, const QWebHitTestResult &result)
   menu->removeAction(pageAction(QWebPage::InspectElement));
 
   connect(menu, SIGNAL(triggered(QAction*)), SLOT(menuTriggered(QAction*)));
+
+  ChatViewHooks::contextMenu(this, menu, result);
 }
 
 
