@@ -162,37 +162,37 @@
 <context>
     <name>ChatView</name>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="236"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="235"/>
         <source>Display</source>
         <translation>Отображать</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="281"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="463"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="280"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="464"/>
         <source>Autoscroll</source>
         <translation>Автопрокрутка</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="282"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="466"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="281"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="467"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="283"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="467"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="282"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="468"/>
         <source>Reload</source>
         <translation>Обновить</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="284"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="469"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="283"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="470"/>
         <source>Seconds</source>
         <translation>Секунды</translation>
     </message>
     <message>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="285"/>
-        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="472"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="284"/>
+        <location filename="../../src/schat2/ui/tabs/ChatView.cpp" line="473"/>
         <source>Service messages</source>
         <translation>Сервисные сообщения</translation>
     </message>
@@ -1098,6 +1098,11 @@
         <location filename="../../src/schat2/WebBridge.cpp" line="99"/>
         <source>en</source>
         <translation>ru</translation>
+    </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="100"/>
+        <source>This message has been removed.</source>
+        <translation>Сообщение удалено.</translation>
     </message>
 </context>
 <context>

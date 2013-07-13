@@ -97,6 +97,7 @@ protected:
     else if (key == LS("encryption"))        return tr("Encryption:");
     else if (key == LS("no-encryption"))     return tr("no");
     else if (key == LS("lang"))              return tr("en");
+    else if (key == LS("message-removed"))   return tr("This message has been removed.");
     return QString();
   }
 };
