@@ -255,6 +255,23 @@ var Messages = {
     Messages.added.push(id);
   },
 
+  feed: function(json) {
+    if (json.status == 200 && json.feed == FEED_NAME_MESSAGES && json.cmd == FEED_METHOD_DELETE) {
+      var path = json.name.split('/', 2);
+      if (path.length == 2) {
+        var container = document.getElementById(path[1]);
+        if (container !== null) {
+          try {
+            var block = container.firstChild;
+            block.classList.add('removed');
+            block.children[2].innerHTML = '<span class="message-removed" data-tr="message-removed">' + Utils.tr('message-removed') + '</span> <i class="message-trash"></i>';
+          }
+          catch (e) { console.log(e); }
+        }
+      }
+    }
+  },
+
   /*
    * Установка идентификатора сообщения.
    */
@@ -1001,4 +1018,5 @@ if (typeof ChatView === 'undefined') {
 else {
   ChatView.reload.connect(Messages.reload);
   ChatView.messages.connect(Messages.addMessages);
+  ChatView.feed.connect(Messages.feed);
 }
