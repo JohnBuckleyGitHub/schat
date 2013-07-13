@@ -119,6 +119,7 @@
   <file>images/close-hover.png</file>
   <file>images/color.png</file>
   <file>images/color-map.png</file>
+  <file>images/edit.png</file>
   <file>images/find_next.png</file>
   <file>images/find_previous.png</file>
   <file>images/icons/48x48/schat2.png</file>
@@ -137,6 +138,7 @@
   <file>images/spinner-small.gif</file>
   <file>images/spinner-yellow.gif</file>
   <file>images/stop.png</file>
+  <file>images/trash.png</file>
   <file>translations/en.png</file>
   <file>translations/unknown.png</file>
 </qresource>

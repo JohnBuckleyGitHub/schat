@@ -22,6 +22,7 @@
 #include "net/SimpleID.h"
 #include "sglobal.h"
 #include "text/TokenFilter.h"
+#include "WebBridge.h"
 
 const QString ChannelMessage::kCommand     = QLatin1String("Command");
 const QString ChannelMessage::kDirection   = QLatin1String("Direction");
@@ -36,6 +37,7 @@ const QString ChannelMessage::kOffline     = QLatin1String("offline");
 const QString ChannelMessage::kOutgoing    = QLatin1String("outgoing");
 const QString ChannelMessage::kReferring   = QLatin1String("referring");
 const QString ChannelMessage::kRejected    = QLatin1String("rejected");
+const QString ChannelMessage::kRemoved     = QLatin1String("removed");
 const QString ChannelMessage::kUndelivered = QLatin1String("undelivered");
 
 ChannelMessage::ChannelMessage(MessagePacket packet)
@@ -50,7 +52,6 @@ ChannelMessage::ChannelMessage(MessagePacket packet)
     m_data.insert(kInternalId, ChatId(m_packet->internalId()).toString());
 
   m_data.insert(kCommand,   packet->command());
-  m_data.insert(kText,      TokenFilter::filter(LS("channel"), packet->text()));
   m_data.insert(kDirection, m_packet->sender() == ChatClient::id() ? kOutgoing : kIncoming);
 
   /// Если это собственное сообщение, то для него при необходимости устанавливается
@@ -60,6 +61,13 @@ ChannelMessage::ChannelMessage(MessagePacket packet)
     m_data.insert(kStatus, kOffline);
   else if (status != Notice::OK && status != Notice::Found && status < Notice::UserStatus)
     m_data.insert(kStatus, kRejected);
+
+  if (status == MessageNotice::Removed) {
+    m_data.insert(kStatus, kRemoved);
+    m_data.insert(kText, QString(LS("<span class='message-removed' data-tr='message-removed'>%1</span> <i class='message-trash'></i>")).arg(WebBridge::i()->translate("message-removed")));
+  }
+  else
+    m_data.insert(kText, TokenFilter::filter(LS("channel"), packet->text()));
 
   if (!packet->oid.isNull()) {
     m_data.insert(kOID, QString(ChatId::toBase32(packet->oid.byteArray())));

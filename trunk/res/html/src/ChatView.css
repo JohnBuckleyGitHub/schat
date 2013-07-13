@@ -73,11 +73,6 @@ hr {
   box-shadow: 1px 1px 0px rgba(0,0,0,0.07);
 }
 
-.blocks {
-  padding-left:0;
-  padding-right: 20px;
-}
-
 .blocks:hover
 {
   -webkit-transition: background 200ms linear, border 200ms linear;
@@ -191,6 +186,26 @@ hr {
 
 .service-type .blocks, .info-type .blocks { border:1px solid #fff; color:#a5b2c3; }
 .service-type .nick, #topic-extra .nick { color:#a5b2c3; }
+
+.message-removed {
+  color: #8193ab;
+}
+
+.message-trash, .message-edit {
+  float: right;
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  opacity: .4;
+}
+
+.message-trash {
+  background: url(qrc:/images/trash.png) no-repeat;
+}
+
+.message-edit {
+  background: url(qrc:/images/edit.png) no-repeat;
+}
 
 .info-type .green-text, .green-text {
   color:#6bb521;

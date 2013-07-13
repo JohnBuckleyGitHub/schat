@@ -40,6 +40,7 @@ public:
   static const QString kOutgoing;
   static const QString kReferring;
   static const QString kRejected;
+  static const QString kRemoved;
   static const QString kUndelivered;
 
   ChannelMessage(MessagePacket packet);
