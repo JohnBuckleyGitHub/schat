@@ -79,7 +79,7 @@ bool HistoryChatView::onContextMenu(ChatView *view, QMenu *menu, const QWebHitTe
     return false;
 
   QVariantList data;
-  data << view->id() << id.toString();
+  data << view->id() << (id.hasOid() ? ChatId::toBase32(id.oid().byteArray()) : id.toString());
 
   menu->insertAction(menu->actions().first(), removeAction(data));
   return false;
@@ -151,7 +151,7 @@ void HistoryChatView::remove()
   if (data.size() < 2)
     return;
 
-  ClientFeeds::del(data.at(0).toByteArray(), FEED_NAME_MESSAGES + '/' + data.at(1).toString(), Feed::Echo | Feed::Share | Feed::Broadcast);
+  ClientFeeds::del(data.at(0).toByteArray(), FEED_NAME_MESSAGES + '/' + data.at(1).toString(), Feed::Share | Feed::ShareAll);
 }
 
 

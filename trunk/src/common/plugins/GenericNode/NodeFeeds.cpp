@@ -251,9 +251,9 @@ int NodeFeeds::query(const QString &verb)
   if (reply.date)
     FeedStorage::save(result.feed, reply.date);
 
-  int options = m_packet->json().value(FEED_KEY_OPTIONS).toInt();
-  if (options & Feed::Echo)
-    reply.json[FEED_KEY_VALUE] = m_packet->json().value(FEED_KEY_VALUE);
+  const int options = m_packet->json().value(FEED_KEY_OPTIONS).toInt();
+  if ((options & Feed::Echo) && m_packet->json().contains(FEED_KEY_VALUE))
+    reply.json.insert(FEED_KEY_VALUE, m_packet->json().value(FEED_KEY_VALUE));
 
   FeedPacket packet = FeedNotice::reply(*m_packet, reply.json);
   packet->setDate(reply.date);
@@ -262,12 +262,16 @@ int NodeFeeds::query(const QString &verb)
   m_event->diffTo = m_event->date;
   m_event->date   = reply.date;
 
-  if (options & Feed::Share)
-    m_core->send(m_user->sockets(), packet);
+  if (options & Feed::Share) {
+    if (reply.date && (options && Feed::ShareAll))
+      m_core->send(Sockets::all(m_channel, m_user, true), packet);
+    else
+      m_core->send(m_user->sockets(), packet);
+  }
   else
     Core::send(packet);
 
-  if (reply.date && options & Feed::Broadcast)
+  if (reply.date && (options & Feed::Broadcast))
     broadcast(result.feed, true);
 
   return Notice::OK;
