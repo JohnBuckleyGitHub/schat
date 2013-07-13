@@ -129,8 +129,7 @@ bool ChatId::hasOid() const
   if (m_date == 0)
     return true;
 
-  const qint64 time = oid().time();
-  return (time >= 946659600 && m_date >= (time * 1000) && m_date < Q_INT64_C(2147483648000));
+  return (oid().time() >= 946659600 && m_date >= Q_INT64_C(946659600000) && m_date < Q_INT64_C(2147483648000));
 }
 
 
