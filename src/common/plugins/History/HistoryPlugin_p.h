@@ -41,6 +41,7 @@ public:
 private slots:
   void notify(const Notify &notify);
   void open();
+  void ready();
   void start();
 
 private:

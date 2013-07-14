@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,14 @@ MessagesCh::MessagesCh(QObject *parent)
 void MessagesCh::newChannel(ChatChannel channel, ChatChannel user)
 {
   Ch::addNewFeedIfNotExist(channel, FEED_NAME_MESSAGES, user);
+}
+
+
+void MessagesCh::server(ChatChannel channel, bool created)
+{
+  Q_UNUSED(created)
+
+  channel->feed(FEED_NAME_MESSAGES);
 }
 
 
