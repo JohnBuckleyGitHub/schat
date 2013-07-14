@@ -20,6 +20,7 @@
 #include <QWebFrame>
 #include <QWebElement>
 
+#include "acl/AclValue.h"
 #include "ChatCore.h"
 #include "ChatNotify.h"
 #include "ChatSettings.h"
@@ -65,7 +66,7 @@ bool HistoryChatView::onContextMenu(ChatView *view, QMenu *menu, const QWebHitTe
     return false;
 
   const QWebElement block = result.enclosingBlockElement();
-  if (!block.hasClass("blocks"))
+  if (!block.hasClass("blocks") || block.hasClass("removed"))
     return false;
 
   const QWebElement container = block.parent();
@@ -75,14 +76,21 @@ bool HistoryChatView::onContextMenu(ChatView *view, QMenu *menu, const QWebHitTe
     return false;
 
   id.init(container.attribute(LS("id")).toLatin1());
+  id.setDate(mdate);
   if (id.type() != ChatId::MessageId)
     return false;
 
-  QVariantList data;
-  data << view->id() << (id.hasOid() ? ChatId::toBase32(id.oid().byteArray()) : id.toString());
+  const int permissions = this->permissions(HistoryDB::get(id));
+  if (permissions == NoPermissions)
+    return false;
 
-  menu->insertAction(menu->actions().first(), removeAction(data));
-  return false;
+  if (permissions & Remove) {
+    QVariantList data;
+    data << view->id() << (id.hasOid() ? ChatId::toBase32(id.oid().byteArray()) : id.toString());
+
+    menu->insertAction(menu->actions().first(), removeAction(data));
+  }
+  return true;
 }
 
 
@@ -212,6 +220,41 @@ bool HistoryChatView::sync(const QByteArray &id, qint64 date)
     return false;
 
   return ClientFeeds::request(id, FEED_METHOD_GET, MESSAGES_FEED_LAST_REQ, json);
+}
+
+
+/*!
+ * Определение доступных прав пользователя, для определения какие действия над сообщением возможны.
+ */
+int HistoryChatView::permissions(const MessageRecord &record) const
+{
+  if (!record.id)
+    return NoPermissions;
+
+  FeedPtr messages = ChatClient::server()->feed(FEED_NAME_MESSAGES, false);
+  if (!messages)
+    return NoPermissions;
+
+  const QVariantMap data = messages->data();
+  const int flags        = data.value(MESSAGES_FEED_EDITABLE_KEY, DefaultEditFlags).toInt();
+  const bool timeout     = (qAbs(ChatClient::date() - record.date) / 1000) > data.value(MESSAGES_FEED_TIMEOUT_KEY, DefaultTimeOut).toInt();
+
+  if (record.senderId == ChatClient::id() && (flags & SelfEdit) && !timeout)
+    return Remove | Modify;
+
+  if (ChatId(record.destId).type() != ChatId::ChannelId)
+    return NoPermissions;
+
+  const int acl = ClientFeeds::match(ChatClient::channels()->get(record.destId), ChatClient::channel());
+  if ((acl & Acl::SpecialWrite) || (acl & Acl::Edit)) {
+    int out = 0;
+    if (flags & ModeratorRemove) out |= Remove;
+    if (flags & ModeratorEdit)   out |= Modify;
+
+    return out;
+  }
+
+  return NoPermissions;
 }
 
 

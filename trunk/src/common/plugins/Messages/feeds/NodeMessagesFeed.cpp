@@ -48,6 +48,9 @@ FeedReply NodeMessagesFeed::del(const QString &path, Channel *channel, const QBy
 {
   Q_UNUSED(blob)
 
+  if (head().channel()->type() == ChatId::ServerId)
+    return Notice::BadRequest;
+
   if (!channel || feed(channel).value(MESSAGES_FEED_EDITABLE_KEY).toInt() == NoEdit)
     return Notice::BadRequest;
 
@@ -85,6 +88,9 @@ FeedReply NodeMessagesFeed::del(const QString &path, Channel *channel, const QBy
 FeedReply NodeMessagesFeed::get(const QString &path, const QVariantMap &json, Channel *channel, const QByteArray &blob) const
 {
   Q_UNUSED(blob);
+
+  if (head().channel()->type() == ChatId::ServerId)
+    return Notice::BadRequest;
 
   if (path == MESSAGES_FEED_FETCH_KEY)
     return fetch(json, channel);

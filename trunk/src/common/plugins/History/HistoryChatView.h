@@ -21,6 +21,7 @@
 
 #include "hooks/ChatViewHooks.h"
 
+class MessageRecord;
 class Notify;
 class QAction;
 
@@ -50,8 +51,29 @@ private slots:
   void synced();
 
 private:
+  /// Опции редактирования сообщений.
+  enum EditFlags {
+    NoEdit          = 0, ///< Редактирование запрещено.
+    SelfEdit        = 1, ///< Пользователь может редактировать и удалять свои сообщения.
+    ModeratorRemove = 2, ///< Модераторы канала могут удалять сообщения.
+    ModeratorEdit   = 4  ///< Модераторы канала могут редактировать сообщения.
+  };
+
+  /// Опции по умолчанию.
+  enum Defaults {
+    DefaultEditFlags = SelfEdit | ModeratorRemove, ///< Пользователь может редактировать и удалять свои сообщения, модераторы только удалять.
+    DefaultTimeOut   = 3600                        ///< По прошествии 1 часа (3600 секунд) пользователь больше не может редактировать свои сообщения.
+  };
+
+  enum Permissions {
+    NoPermissions = 0,
+    Remove        = 1,
+    Modify        = 2
+  };
+
   bool compatible(const QByteArray &id) const;
   bool sync(const QByteArray &id, qint64 date = 0);
+  int permissions(const MessageRecord &record) const;
   QAction *removeAction(const QVariant &data);
   void emulateLast(const QByteArray &channelId, const QList<QByteArray> &ids);
 

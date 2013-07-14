@@ -78,6 +78,8 @@ HistoryImpl::HistoryImpl(QObject *parent)
   ChatCore::translation()->addOther(LS("history"));
   ChatCore::settings()->setDefault(SETTINGS_HISTORY_AUTO_LOAD, true);
 
+  connect(ChatClient::i(), SIGNAL(ready()), SLOT(ready()));
+
   QTimer::singleShot(0, this, SLOT(start()));
 }
 
@@ -165,6 +167,12 @@ void HistoryImpl::open()
   const QByteArray id = ChatClient::serverId();
   if (!id.isEmpty())
     HistoryDB::open(id, ChatCore::networks()->root(SimpleID::encode(id)));
+}
+
+
+void HistoryImpl::ready()
+{
+  ClientFeeds::request(ChatClient::server(), FEED_METHOD_GET, FEED_NAME_MESSAGES);
 }
 
 

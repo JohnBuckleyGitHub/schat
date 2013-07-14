@@ -106,12 +106,12 @@ QList<QByteArray> HistoryDB::last(const QByteArray &channelId)
 }
 
 
-MessageRecord HistoryDB::get(const QByteArray &id)
+MessageRecord HistoryDB::get(const ChatId &id)
 {
   QSqlQuery query(QSqlDatabase::database(m_id));
   query.prepare(LS("SELECT id, senderId, destId, status, date, command, text, data FROM messages WHERE messageId = :messageId LIMIT 1;"));
 
-  query.bindValue(LS(":messageId"), SimpleID::encode(id));
+  query.bindValue(LS(":messageId"), id.toBase32());
   query.exec();
 
   if (!query.first())
@@ -119,7 +119,7 @@ MessageRecord HistoryDB::get(const QByteArray &id)
 
   MessageRecord record;
   record.id        = query.value(0).toLongLong();
-  record.messageId = id;
+  record.messageId = id.toByteArray();
   record.senderId  = SimpleID::decode(query.value(1).toByteArray());
   record.destId    = SimpleID::decode(query.value(2).toByteArray());
   record.status    = query.value(3).toLongLong();
