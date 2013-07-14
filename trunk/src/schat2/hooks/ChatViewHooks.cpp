@@ -80,6 +80,15 @@ bool ChatViewHooks::dropEvent(ChatView *view, QDropEvent *event)
 }
 
 
+void ChatViewHooks::retranslate()
+{
+  if (m_self) {
+    foreach (ChatViewHooks *hook, m_self->m_hooks)
+      hook->onRetranslate();
+  }
+}
+
+
 bool ChatViewHooks::onContextMenu(ChatView *view, QMenu *menu, const QWebHitTestResult &result)
 {
   Q_UNUSED(view)

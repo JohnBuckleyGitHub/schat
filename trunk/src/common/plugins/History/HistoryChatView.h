@@ -40,6 +40,7 @@ protected:
   void addImpl(ChatView *view);
   void initImpl(ChatView *view);
   void loadFinishedImpl(ChatView *view);
+  void onRetranslate();
 
 private slots:
   void notify(const Notify &notify);

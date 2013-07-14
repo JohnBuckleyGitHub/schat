@@ -110,6 +110,12 @@ void HistoryChatView::loadFinishedImpl(ChatView *view)
 }
 
 
+void HistoryChatView::onRetranslate()
+{
+  if (m_remove) m_remove->setText(tr("Remove message"));
+}
+
+
 void HistoryChatView::notify(const Notify &notify)
 {
   if (notify.type() == Notify::FeedReply) {

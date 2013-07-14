@@ -50,6 +50,7 @@ public:
   static bool contextMenu(ChatView *view, QMenu *menu, const QWebHitTestResult &result);
   static bool dragEnterEvent(ChatView *view, QDragEnterEvent *event);
   static bool dropEvent(ChatView *view, QDropEvent *event);
+  static void retranslate();
 
 signals:
   void addHook(ChatView *view);
@@ -64,6 +65,7 @@ protected:
   virtual void addImpl(ChatView *view);
   virtual void initImpl(ChatView *view);
   virtual void loadFinishedImpl(ChatView *view);
+  virtual void onRetranslate() {}
   virtual void removeImpl(ChatView *view);
 
 private:

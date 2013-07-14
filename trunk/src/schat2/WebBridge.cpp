@@ -32,6 +32,7 @@
 #include "client/ClientChannels.h"
 #include "client/ClientFeeds.h"
 #include "client/SimpleClient.h"
+#include "hooks/ChatViewHooks.h"
 #include "hooks/FeedHook.h"
 #include "JSON.h"
 #include "net/SimpleID.h"
@@ -502,6 +503,7 @@ QVariantMap WebBridge::feed(const FeedNotify &notify)
 
 void WebBridge::retranslate()
 {
+  ChatViewHooks::retranslate();
   emit retranslated();
 }
 
