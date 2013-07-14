@@ -238,7 +238,7 @@ hr {
   border: 1px solid transparent;
   border-radius: 3px;
   opacity: .5;
-  z-index: 6666;
+  z-index: 1000;
   text-align: center;
   font-weight: bold;
   -webkit-transition: opacity .2s ease, background-color .2s ease;
