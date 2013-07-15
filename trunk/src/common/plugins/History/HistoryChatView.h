@@ -21,9 +21,10 @@
 
 #include "hooks/ChatViewHooks.h"
 
-class MessageRecord;
 class Notify;
 class QAction;
+
+struct MessageRecord;
 
 class HistoryChatView : public ChatViewHooks
 {
