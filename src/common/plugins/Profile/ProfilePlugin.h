@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ public:
     QVariantMap out        = CoreApi::header();
     out[CORE_API_ID]       = "Profile";
     out[CORE_API_NAME]     = "Profile";
-    out[CORE_API_VERSION]  = "0.2.5";
+    out[CORE_API_VERSION]  = "0.2.6";
     out[CORE_API_SITE]     = "http://wiki.schat.me/Plugin/Profile";
     out[CORE_API_DESC]     = "Adds support for additional profile fields";
     out[CORE_API_DESC_RU]  = "Добавляет поддержку дополнительных полей профиля";
