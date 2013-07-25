@@ -666,7 +666,7 @@ void SimpleSocket::readyRead()
 
       *d->rxStream >> d->nextBlockSize;
 
-      if (d->nextBlockSize < 16 || (!d->authorized && d->nextBlockSize == 1195725856)) {
+      if (d->nextBlockSize < 16 || d->nextBlockSize > Protocol::MaxPacketSize) {
         disconnectFromHost();
         return;
       }
