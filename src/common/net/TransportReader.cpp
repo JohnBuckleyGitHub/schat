@@ -23,7 +23,7 @@
  * \param size   Размер данных.
  * \param stream Поток для чтения данных.
  */
-TransportReader::TransportReader(quint32 size, QDataStream *stream)
+TransportReader::TransportReader(qint32 size, QDataStream *stream)
   : m_stream(stream)
   , m_timestamp(0)
   , m_available(size)
@@ -61,7 +61,7 @@ int TransportReader::readHeader()
     m_available -= 8;
   }
 
-  if (createMap() != m_available)
+  if (!createMap())
     return -3;
 
   return m_type;
@@ -107,16 +107,22 @@ void TransportReader::skipAll()
 }
 
 
-quint32 TransportReader::createMap()
+bool TransportReader::createMap()
 {
   quint32 count = 0;
-  quint32 checkSize = 0;
   *m_stream >> count;
   m_available -= 4;
+  if (m_available < 0 || count > Protocol::MaxVirtualPackets)
+    return false;
+
+  qint32 checkSize = 0;
 
   if (m_options & Protocol::HugePackets) {
     m_options = m_options ^ Protocol::HugePackets;
     m_available -= (count * 4);
+    if (m_available < 0)
+      return false;
+
     quint32 size = 0;
     for (quint32 i = 0; i < count; ++i) {
       *m_stream >> size;
@@ -126,6 +132,9 @@ quint32 TransportReader::createMap()
   }
   else {
     m_available -= (count * 2);
+    if (m_available < 0)
+      return false;
+
     quint16 size = 0;
     for (quint32 i = 0; i < count; ++i) {
       *m_stream >> size;
@@ -134,5 +143,5 @@ quint32 TransportReader::createMap()
     }
   }
 
-  return checkSize;
+  return checkSize == m_available;
 }

@@ -27,10 +27,10 @@
 class TransportReader
 {
 public:
-  TransportReader(quint32 size, QDataStream *stream);
+  TransportReader(qint32 size, QDataStream *stream);
   inline int options() const       { return m_options; }
   inline qint64 timestamp() const  { return m_timestamp; }
-  inline quint32 available() const { return m_available; }
+  inline qint32 available() const  { return m_available; }
   inline quint64 sequence() const  { return m_sequence; }
   inline quint8 subversion() const { return m_subversion; }
   int readHeader();
@@ -39,13 +39,13 @@ public:
   void skipAll();
 
 private:
-  quint32 createMap();
+  bool createMap();
 
   QList<quint32> m_sizes; ///< список размеров виртуальных пакетов.
   QDataStream *m_stream;  ///< input stream.
   qint64 m_timestamp;     ///< Отметка времени.
   quint64 m_sequence;     ///< счётчик пакетов.
-  quint32 m_available;    ///< число не прочитанных байт.
+  qint32 m_available;     ///< число не прочитанных байт.
   quint8 m_options;       ///< packet options.
   quint8 m_subversion;    ///< packet subversion.
   quint8 m_type;          ///< packet type.
