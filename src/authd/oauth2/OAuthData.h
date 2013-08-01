@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ public:
   virtual ~OAuthData() {}
   virtual bool isValid() const;
   virtual bool read();
+  virtual QVariantList toList() const;
   virtual QVariantMap toJSON(const QByteArray &state) const;
 
   QByteArray id;        ///< Client ID.
@@ -41,7 +42,7 @@ public:
   QByteArray publicKey; ///< Публичный ключ приложения.
 
 protected:
-  virtual inline QByteArray toUrl(const QByteArray &state) const { Q_UNUSED(state) return QByteArray(); }
+  virtual QByteArray toUrl(const QByteArray &state) const = 0;
 };
 
 #endif /* OAUTHDATA_H_ */

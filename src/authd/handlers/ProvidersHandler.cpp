@@ -26,10 +26,11 @@
 #include "Settings.h"
 #include "sglobal.h"
 #include "Tufao/headers.h"
+#include "Tufao/httpserverrequest.h"
 #include "Tufao/httpserverresponse.h"
 #include "UrlQuery.h"
 
-bool ProvidersHandler::serve(const QUrl &url, const QString &path, Tufao::HttpServerRequest *, Tufao::HttpServerResponse *response, QObject *)
+bool ProvidersHandler::serve(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *)
 {
   if (path == LS("/providers")) {
     response->writeHead(Tufao::HttpServerResponse::OK);
@@ -61,6 +62,37 @@ bool ProvidersHandler::serve(const QUrl &url, const QString &path, Tufao::HttpSe
     body = JSON::generate(data);
 
     response->end(body);
+    return true;
+  }
+  else if (path == LS("/providers.json")) {
+    response->headers().replace("Content-Type", "application/json");
+
+    if (!m_date.isNull() && request->headers().contains("If-Modified-Since")) {
+      if (Tufao::Headers::toDateTime(request->headers().value("If-Modified-Since")) <= m_date) {
+        response->writeHead(Tufao::HttpServerResponse::NOT_MODIFIED);
+        response->end();
+        return true;
+      }
+    }
+
+    response->writeHead(Tufao::HttpServerResponse::OK);
+
+    if (m_providers.isEmpty()) {
+      m_date = QDateTime::currentDateTime();
+      const QMap<QString, OAuthData *> &providers = AuthCore::i()->providers();
+      const QStringList order = AuthCore::settings()->value(LS("Order")).toStringList();
+
+      QVariantList list;
+      foreach (const QString &id, order) {
+        if (providers.contains(id))
+          list.push_back(providers.value(id)->toList());
+      }
+
+      m_providers = JSON::generate(list);
+    }
+
+    response->headers().insert("Last-Modified", Tufao::Headers::fromDateTime(m_date));
+    response->end(m_providers);
     return true;
   }
 

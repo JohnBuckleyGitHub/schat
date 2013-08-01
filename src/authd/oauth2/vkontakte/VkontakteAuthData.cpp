@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -31,5 +31,6 @@ VkontakteAuthData::VkontakteAuthData()
 
 QByteArray VkontakteAuthData::toUrl(const QByteArray &state) const
 {
-  return "https://oauth.vk.com/authorize?client_id=" + id + "&redirect_uri=" + QUrl::toPercentEncoding(redirect + LC('/') + state) + "&response_type=code";
+  QByteArray url = "https://oauth.vk.com/authorize?client_id=" + id + "&redirect_uri=" + QUrl::toPercentEncoding(redirect + LC('/') + state) + "&response_type=code";
+  return url.replace("%24%7BSTATE%7D", "${STATE}");
 }
