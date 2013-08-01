@@ -52,6 +52,17 @@ bool OAuthData::read()
 }
 
 
+QVariantList OAuthData::toList() const
+{
+  QVariantList list;
+  list.append(provider);
+  list.append(name);
+  list.append(htmlName);
+  list.append(toUrl("${STATE}"));
+  return list;
+}
+
+
 QVariantMap OAuthData::toJSON(const QByteArray &state) const
 {
   ChatId s(state);

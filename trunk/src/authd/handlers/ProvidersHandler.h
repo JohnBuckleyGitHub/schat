@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@
 #ifndef AUTHPROVIDERS_H_
 #define AUTHPROVIDERS_H_
 
+#include <QDateTime>
+
 #include "HandlerCreator.h"
 
 /*!
@@ -31,7 +33,9 @@ public:
   bool serve(const QUrl &url, const QString &path, Tufao::HttpServerRequest *request, Tufao::HttpServerResponse *response, QObject *parent);
 
 private:
-  QStringList m_order; ///< Порядок следования провайдеров.
+  QByteArray m_providers; ///< Кэшированный список провайдеров.
+  QDateTime m_date;       ///< Время модификации списка.
+  QStringList m_order;    ///< Порядок следования провайдеров.
 };
 
 #endif /* AUTHPROVIDERS_H_ */
