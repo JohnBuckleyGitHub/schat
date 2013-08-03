@@ -24,8 +24,8 @@
 #include "net/SimpleSocket.h"
 #include "NodeLog.h"
 
-#define LOG_N4010  LOG_INFO("N4010", "Core/Worker", "s:" << socket->id() << ". new connection: ip:" << socket->peerAddress().toString())
-#define LOG_N4011  LOG_INFO("N4011", "Core/Worker", "s:" << socket->id() << ". released: ip:" << socket->peerAddress().toString() << ", authorized:" << socket->isAuthorized())
+#define LOG_N4010  LOG_INFO("N4010", "Core/Worker", "s:" << socket->id() << ". new connection: ip:" << socket->peerAddress().toString() << ":" << socket->peerPort())
+#define LOG_N4011  LOG_INFO("N4011", "Core/Worker", "s:" << socket->id() << ". released: ip:" << socket->peerAddress().toString() << ":" << socket->peerPort() << ", authorized:" << socket->isAuthorized())
 #define LOG_N4012 LOG_DEBUG("N4012", "Core/Worker", "released:" << id)
 
 NodeWorker::NodeWorker(QObject *core)
@@ -172,7 +172,7 @@ void NodeWorkerListener::packets(NewPacketsEvent *event)
 
     if (event->option == NewPacketsEvent::KillSocketOption)
       socket->leave();
-    else if (event->option == NewPacketsEvent::AuthorizeSocketOption)
+    else if (event->option == NewPacketsEvent::AuthorizeSocketOption && !socket->isAuthorized())
       socket->setAuthorized(event->channelId());
   }
 }

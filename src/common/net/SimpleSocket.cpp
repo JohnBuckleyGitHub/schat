@@ -229,10 +229,10 @@ void SimpleSocketPrivate::setTimerState(TimerState state)
 {
   SCHAT_DEBUG_STREAM(this << "setTimerState()" << state);
 
-  Q_Q(SimpleSocket);
-
   if ((state == Idling || state == WaitingReply) && !authorized)
     return;
+
+  Q_Q(SimpleSocket);
 
   timerState = state;
   if (timer->isActive())
@@ -533,6 +533,9 @@ void SimpleSocket::leave()
 void SimpleSocket::setAuthorized(const QByteArray &userId)
 {
   Q_D(SimpleSocket);
+
+  if (d->authorized)
+    return;
 
   if (userId.isEmpty()) {
     d->authorized = false;
