@@ -80,7 +80,7 @@ c['properties'] = {
 c['schedulers'] = [
   ForceScheduler(
     name='force',
-    builderNames=['lucid', 'lucid64', 'win32', 'win32-legacy', 'macosx', 'macosx-legacy', 'source', 'ppa', 'ppa-dev', 'obs', 'obs-dev', 'precise', 'precise64', 'release']
+    builderNames=['lucid', 'lucid64', 'win32', 'win32-legacy', 'macosx', 'macosx-legacy', 'source', 'ppa', 'ppa-dev', 'obs', 'obs-dev', 'precise', 'precise64', 'release', 'beta']
   ),
   SingleBranchScheduler(
     name='trunk',
@@ -121,11 +121,13 @@ def MakeDebBuilder():
     mode       = 0644,
     slavesrc   = WithProperties('os/ubuntu/deb/schat2_%(version)s-1~%(codename)s_%(arch)s.deb'),
     masterdest = UploadFileName('schat2_%(version)s-1~%(codename)s%(suffix)s_%(arch)s.deb'),
+    url        = WithProperties('https://download.schat.me/schat2/snapshots/%(version)s/r%(got_revision)s/schat2_%(version)s-1~%(codename)s%(suffix)s_%(arch)s.deb'),
   ))
   f.addStep(FileUpload(
     mode       = 0644,
     slavesrc   = WithProperties('os/ubuntu/deb/schatd2_%(version)s-1~%(codename)s_%(arch)s.deb'),
     masterdest = UploadFileName('schatd2_%(version)s-1~%(codename)s%(suffix)s_%(arch)s.deb'),
+    url        = WithProperties('https://download.schat.me/schat2/snapshots/%(version)s/r%(got_revision)s/schatd2_%(version)s-1~%(codename)s%(suffix)s_%(arch)s.deb'),
   ))
   return f
 
@@ -185,16 +187,19 @@ def MakeWinBuilder():
     mode       = 0644,
     slavesrc   = WithProperties('os/win32/out/schat2-%(version)s.exe'),
     masterdest = UploadFileName('schat2-%(version)s%(suffix)s.exe'),
+    url        = WithProperties('https://download.schat.me/schat2/snapshots/%(version)s/r%(got_revision)s/schat2-%(version)s%(suffix)s.exe'),
   ))
   f.addStep(FileUpload(
     mode       = 0644,
     slavesrc   = WithProperties('os/win32/out/schat2-server-%(version)s.exe'),
     masterdest = UploadFileName('schat2-server-%(version)s%(suffix)s.exe'),
+    url        = WithProperties('https://download.schat.me/schat2/snapshots/%(version)s/r%(got_revision)s/schat2-server-%(version)s%(suffix)s.exe'),
   ))
   f.addStep(FileUpload(
     mode       = 0644,
     slavesrc   = WithProperties('os/win32/out/schat2-%(version)s.msi'),
     masterdest = UploadFileName('schat2-%(version)s%(suffix)s.msi'),
+    url        = WithProperties('https://download.schat.me/schat2/snapshots/%(version)s/r%(got_revision)s/schat2-%(version)s%(suffix)s.msi'),
   ))
   return f
 
@@ -269,6 +274,7 @@ def MakeMacBuilder():
     mode       = 0644,
     slavesrc   = WithProperties('os/macosx/dmg/SimpleChat2-%(version)s.dmg'),
     masterdest = UploadFileName('SimpleChat2-%(version)s%(suffix)s.dmg'),
+    url        = WithProperties('https://download.schat.me/schat2/snapshots/%(version)s/r%(got_revision)s/SimpleChat2-%(version)s%(suffix)s.dmg'),
   ))
   return f
 
@@ -303,6 +309,7 @@ def MakeSrcBuilder():
     mode       = 0644,
     slavesrc   = WithProperties('schat2-src-%(version)s%(suffix)s.tar.bz2'),
     masterdest = UploadFileName('schat2-src-%(version)s%(suffix)s.tar.bz2'),
+    url        = WithProperties('https://download.schat.me/schat2/snapshots/%(version)s/r%(got_revision)s/schat2-src-%(version)s%(suffix)s.tar.bz2'),
   ))
   return f
 
@@ -314,7 +321,7 @@ def MakeObsBuilder():
     name          = 'upload',
     command       = ['bash', 'os/obs/obs-upload.sh', Property('project'), WithProperties('%(version)s.%(got_revision)s')],
     haltOnFailure = True,
-    logEnviron    = False,
+    logEnviron    = False
   ))
   return f
 
@@ -364,6 +371,22 @@ def MakeReleaseBuilder():
       'site.php',
       '--version',  SCHAT_VERSION,
     ]
+  ))
+  return f
+
+
+def MakeBetaBuilder():
+  f = BuildFactory()
+  f.addStep(MasterShellCommand(
+    name    = 'Create Update Channel',
+    command = [
+      'php',
+      'update.php',
+      '--channel',  Property('channel', default = 'beta'),
+      '--version',  SCHAT_VERSION,
+      '--revision', Property('revision'),
+      '--os',       Property('os', default = 'win32'),
+      ]
   ))
   return f
 
@@ -432,6 +455,10 @@ c['builders'] = [
   BuilderConfig(name = 'release',
     slavenames = ['master'],
     factory    = MakeReleaseBuilder(),
+  ),
+  BuilderConfig(name = 'beta',
+    slavenames = ['master'],
+    factory    = MakeBetaBuilder(),
   ),
   BuilderConfig(name = 'ppa',
     slavenames = ['master'],

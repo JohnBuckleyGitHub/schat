@@ -98,7 +98,7 @@ void ExternalAuthTask::timerEvent(QTimerEvent *event)
  */
 void ExternalAuthTask::ready()
 {
-  int error = m_reply->error();
+  const int error = m_reply->error();
   if (error == QNetworkReply::ContentOperationNotPermittedError)
     return setError(Notice::Forbidden);
 

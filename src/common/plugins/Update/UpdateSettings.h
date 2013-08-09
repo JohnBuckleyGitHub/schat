@@ -34,12 +34,13 @@ protected:
   void changeEvent(QEvent *event);
 
 private slots:
-  void autoDownload(bool checked);
+  void save();
 
 private:
   void retranslateUi();
 
   QCheckBox *m_autoDownload;
+  QCheckBox *m_beta;
 };
 
 #endif /* UPDATESETTINGS_H_ */

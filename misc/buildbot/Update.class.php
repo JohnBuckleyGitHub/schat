@@ -109,7 +109,7 @@ class UpdateWin32 extends Update
     if ($this->channel == 'stable')
       return 'http://schat.googlecode.com/files/schat2-' . $this->version . '.exe';
     else
-      return 'http://download.schat.me/schat2/snapshots/' . $this->version . '/r' . $this->revision . '/schat2-' . $this->version . '-dev.exe';
+      return 'https://download.schat.me/schat2/snapshots/' . $this->version . '/r' . $this->revision . '/schat2-' . $this->version . '-dev.exe';
   }
 
 
@@ -150,5 +150,3 @@ class UpdateUbuntu extends Update
     return 'https://schat.me/download/ubuntu';
   }
 }
-
-?>

@@ -37,7 +37,7 @@ public:
     QVariantMap out            = CoreApi::header();
     out[CORE_API_ID]           = "Update";
     out[CORE_API_NAME]         = "Update";
-    out[CORE_API_VERSION]      = "0.3.0";
+    out[CORE_API_VERSION]      = "0.3.1";
     out[CORE_API_SITE]         = "http://wiki.schat.me/Plugin/Update";
     out[CORE_API_DESC]         = "Automatically downloads and installs updates";
     out[CORE_API_DESC_RU]      = "Автоматически загружает и устанавливает обновления";
