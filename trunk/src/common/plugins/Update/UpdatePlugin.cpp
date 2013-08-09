@@ -125,7 +125,7 @@ UpdatePluginImpl::UpdatePluginImpl(QObject *parent)
   , m_current(0)
   , m_status(Unknown)
 {
-  m_settings->setLocalDefault(m_prefix + LS("/Url"),          LS("http://download.schat.me/schat2/update.json"));
+  m_settings->setLocalDefault(m_prefix + LS("/Url"),          LS("https://download.schat.me/schat2/update.json"));
   m_settings->setLocalDefault(m_prefix + LS("/Channel"),      LS("stable"));
   m_settings->setLocalDefault(m_prefix + LS("/AutoDownload"), true);
   m_settings->setLocalDefault(m_prefix + LS("/Ready"),        false);

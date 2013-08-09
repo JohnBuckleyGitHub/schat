@@ -32,6 +32,9 @@ UpdateSettings::UpdateSettings(QWidget *parent)
   m_autoDownload = new QCheckBox(this);
   m_autoDownload->setChecked(ChatCore::settings()->value(LS("Update/AutoDownload")).toBool());
 
+  m_beta = new QCheckBox(this);
+  m_beta->setChecked(ChatCore::settings()->value(LS("Update/Channel")) == LS("beta"));
+
   if (!Path::isPortable()) {
     m_autoDownload->setChecked(false);
     m_autoDownload->setEnabled(false);
@@ -39,11 +42,17 @@ UpdateSettings::UpdateSettings(QWidget *parent)
 
   QVBoxLayout *layout = new QVBoxLayout(this);
   layout->addWidget(m_autoDownload);
+# if defined(Q_OS_WIN)
+  layout->addWidget(m_beta);
+# else
+  m_beta->hide();
+# endif
   layout->setMargin(0);
 
   retranslateUi();
 
-  connect(m_autoDownload, SIGNAL(clicked(bool)), SLOT(autoDownload(bool)));
+  connect(m_autoDownload, SIGNAL(clicked(bool)), SLOT(save()));
+  connect(m_beta, SIGNAL(clicked(bool)), SLOT(save()));
 }
 
 
@@ -56,13 +65,15 @@ void UpdateSettings::changeEvent(QEvent *event)
 }
 
 
-void UpdateSettings::autoDownload(bool checked)
+void UpdateSettings::save()
 {
-  ChatCore::settings()->setValue(LS("Update/AutoDownload"), checked);
+  ChatCore::settings()->setValue(LS("Update/AutoDownload"), m_autoDownload->isChecked());
+  ChatCore::settings()->setValue(LS("Update/Channel"), m_beta->isChecked() ? LS("beta") : LS("stable"));
 }
 
 
 void UpdateSettings::retranslateUi()
 {
   m_autoDownload->setText(tr("Automatically download and install updates"));
+  m_beta->setText(tr("Update to beta versions"));
 }
