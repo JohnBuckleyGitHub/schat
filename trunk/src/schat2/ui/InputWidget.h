@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 #include <QTextEdit>
 
-#include "schat.h"
+#include "id/ChatId.h"
 
 class ColorButton;
 class QToolBar;
@@ -41,15 +41,17 @@ public:
 
   InputWidget(QWidget *parent = 0);
   ColorButton *color();
+  inline const QStringList& history() const { return m_states[m_id].history; }
   inline QAction *action(Actions action)    { return m_format.at(action); }
-  inline const QStringList& history() const { return m_history; }
   QSize minimumSizeHint() const;
   QSize sizeHint() const;
+  void reload(const QByteArray &id);
   void setMsg(int index);
 
 signals:
   void contextMenu(QMenu *menu, const QPoint &pos);
   void focusOut();
+  void reloaded();
   void send(const QString &text);
 
 protected:
@@ -77,6 +79,15 @@ private slots:
   void textChanged();
 
 private:
+  class State
+  {
+  public:
+    inline State() : current(0) {}
+
+    int current;         ///< Текущее сообщение в истории.
+    QStringList history; ///< Отправленные сообщения.
+  };
+
   bool bypass(QKeyEvent *event);
   int textHeight(int lines = 0) const;
   void createActions();
@@ -85,21 +96,21 @@ private:
   void prevMsg();
   void retranslateUi();
 
-  bool m_resizable;          ///< true если виджет может автоматически изменять свои размеры.
-  ColorButton *m_color;      ///< Кнопка выбора цвета.
-  int m_current;             ///< Текущее сообщение в истории.
-  int m_lines;               ///< Минимальная высота текста в строчках.
-  QAction *m_clear;          ///< Clear.
-  QAction *m_copy;           ///< Copy.
-  QAction *m_cut;            ///< Cut.
-  QAction *m_paste;          ///< Paste.
-  QAction *m_selectAll;      ///< Select All.
-  QList<QAction *> m_format; ///< Действия связанные с форматированием текста.
-  QMenu *m_menu;             ///< Контекстное меню.
-  QStringList m_history;     ///< Отправленные сообщения.
-  QTextCharFormat m_default; ///< Формат текста по умолчанию.
-  QToolBar *m_toolBar;       ///< Панель инструментов в контекстом меню.
-  QWidgetAction *m_action;   ///< Действие для добавления панели инструментов в меню.
+  bool m_resizable;               ///< true если виджет может автоматически изменять свои размеры.
+  ChatId m_id;                    ///< Идентификатор текущего разговора.
+  ColorButton *m_color;           ///< Кнопка выбора цвета.
+  int m_lines;                    ///< Минимальная высота текста в строчках.
+  QAction *m_clear;               ///< Clear.
+  QAction *m_copy;                ///< Copy.
+  QAction *m_cut;                 ///< Cut.
+  QAction *m_paste;               ///< Paste.
+  QAction *m_selectAll;           ///< Select All.
+  QList<QAction *> m_format;      ///< Действия связанные с форматированием текста.
+  QMap<ChatId, State> m_states;   ///< Индивидуальные состояния поля отправки для разных каналов.
+  QMenu *m_menu;                  ///< Контекстное меню.
+  QTextCharFormat m_default;      ///< Формат текста по умолчанию.
+  QToolBar *m_toolBar;            ///< Панель инструментов в контекстом меню.
+  QWidgetAction *m_action;        ///< Действие для добавления панели инструментов в меню.
 };
 
 #endif /* INPUTWIDGET_H_ */

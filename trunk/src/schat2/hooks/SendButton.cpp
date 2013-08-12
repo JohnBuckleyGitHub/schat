@@ -30,8 +30,6 @@ SendButton::SendButton(QWidget *parent)
   : QToolButton(parent)
 {
   m_history = new QMenu(this);
-  m_empty = m_history->addAction(tr("Empty"));
-  m_empty->setEnabled(false);
 
   setAutoRaise(true);
   setIcon(SCHAT_ICON(Send));
@@ -40,7 +38,8 @@ SendButton::SendButton(QWidget *parent)
 
   connect(m_history, SIGNAL(aboutToShow()), SLOT(showMenu()));
   connect(this, SIGNAL(clicked()), SendWidget::i()->input(), SLOT(send()));
-  connect(SendWidget::i()->input(), SIGNAL(send(QString)), SLOT(sendMsg()));
+  connect(SendWidget::i()->input(), SIGNAL(send(QString)), SLOT(clear()));
+  connect(SendWidget::i()->input(), SIGNAL(reloaded()), SLOT(clear()));
 
   retranslateUi();
 }
@@ -55,10 +54,9 @@ void SendButton::changeEvent(QEvent *event)
 }
 
 
-void SendButton::sendMsg()
+void SendButton::clear()
 {
   m_history->clear();
-  m_empty = 0;
 }
 
 
@@ -80,24 +78,26 @@ void SendButton::showMenu()
   if (!m_history->isEmpty())
     return;
 
-  QStringList history = SendWidget::i()->input()->history();
-  QFontMetrics fm = fontMetrics();
-  QAction *action = 0;
+  const QStringList history = SendWidget::i()->input()->history();
+  if (!history.isEmpty()) {
+    const QFontMetrics fm = fontMetrics();
+    QAction *action = 0;
 
-  for (int i = history.size() - 1; i >= 0; --i) {
-    action = m_history->addAction(fm.elidedText(PlainTextFilter::filter(history.at(i)), Qt::ElideMiddle, 150));
-    action->setData(i);
-    connect(action, SIGNAL(triggered()), SLOT(showItem()));
+    for (int i = history.size() - 1; i >= 0; --i) {
+      action = m_history->addAction(fm.elidedText(PlainTextFilter::filter(history.at(i)), Qt::ElideMiddle, 150));
+      action->setData(i);
+      connect(action, SIGNAL(triggered()), SLOT(showItem()));
+    }
   }
+
+  if (m_history->isEmpty())
+    m_history->addAction(tr("Empty"))->setEnabled(false);
 }
 
 
 void SendButton::retranslateUi()
 {
   setToolTip(tr("Send"));
-
-  if (m_empty)
-    m_empty->setText(tr("Empty"));
 }
 
 

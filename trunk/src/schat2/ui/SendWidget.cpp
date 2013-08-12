@@ -190,6 +190,8 @@ void SendWidget::pageChanged(AbstractTab *tab)
     if (action->action())
       action->action()->setVisible(action->isVisible(tab->type(), tab->id()));
   }
+
+  m_input->reload(tab->id());
 }
 
 
@@ -207,8 +209,8 @@ void SendWidget::settingsChanged(const QString &key, const QVariant &value)
  */
 QAction* SendWidget::before(int weight) const
 {
-  QList<int> keys = m_actions.keys();
-  int index = keys.indexOf(weight);
+  const QList<int> keys = m_actions.keys();
+  const int index = keys.indexOf(weight);
   if (index == -1)
     return 0;
 
