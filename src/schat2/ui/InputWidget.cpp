@@ -44,15 +44,14 @@
 InputWidget::InputWidget(QWidget *parent)
   : QTextEdit(parent)
   , m_resizable(true)
-  , m_current(0)
   , m_lines(1)
   , m_menu(0)
 {
-  #if defined(Q_OS_MAC)
+# if defined(Q_OS_MAC)
   setAttribute(Qt::WA_MacShowFocusRect, true);
   setFrameShape(QFrame::NoFrame);
   setFrameShadow(QFrame::Plain);
-  #endif
+# endif
   m_default = currentCharFormat();
 
   setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
@@ -93,7 +92,7 @@ QSize InputWidget::minimumSizeHint() const
 QSize InputWidget::sizeHint() const
 {
   QSize hint = QTextEdit::sizeHint();
-  int height = textHeight(!m_resizable ? m_lines : 0);
+  const int height = textHeight(!m_resizable ? m_lines : 0);
   if (height < 200)
     hint.setHeight(textHeight(!m_resizable ? m_lines : 0));;
 
@@ -101,11 +100,21 @@ QSize InputWidget::sizeHint() const
 }
 
 
+void InputWidget::reload(const QByteArray &id)
+{
+  m_id.init(id);
+
+  emit reloaded();
+}
+
+
 void InputWidget::setMsg(int index)
 {
-  if (index < m_history.size()) {
-    m_current = index;
-    setHtml(m_history.at(m_current));
+  State& state = m_states[m_id];
+
+  if (index < state.history.size()) {
+    state.current = index;
+    setHtml(state.history.at(state.current));
     moveCursor(QTextCursor::End);
   }
 }
@@ -122,11 +131,10 @@ void InputWidget::changeEvent(QEvent *event)
 
 /*!
  * Показ контекстного меню.
- * \todo Добавить возможность устанавливать произвольную высоту текста по умолчанию.
  */
 void InputWidget::contextMenuEvent(QContextMenuEvent *event)
 {
-  bool selection = textCursor().hasSelection();
+  const bool selection = textCursor().hasSelection();
   m_menu = new QMenu(this);
   connect(m_menu, SIGNAL(triggered(QAction*)), SLOT(menuTriggered(QAction*)));
 
@@ -314,14 +322,17 @@ void InputWidget::send()
   if (PlainTextFilter::filter(out).isEmpty())
     return;
 
-  if (m_history.isEmpty() || m_history.last() != html) {
-    if (m_history.size() == 20)
-      m_history.takeFirst();
+  State &state         = m_states[m_id];
+  QStringList& history = state.history;
 
-    m_history << html;
+  if (state.history.isEmpty() || state.history.last() != html) {
+    if (state.history.size() == 20)
+      state.history.takeFirst();
+
+    state.history << html;
   }
 
-  m_current = m_history.count();
+  state.current = history.count();
   emit send(out);
 }
 
@@ -521,9 +532,11 @@ void InputWidget::mergeFormat(const QTextCharFormat &format)
  */
 void InputWidget::nextMsg()
 {
-  if (m_current + 1 < m_history.count()) {
-    ++m_current;
-    setMsg(m_current);
+  State &state = m_states[m_id];
+
+  if (state.current + 1 < state.history.count()) {
+    ++state.current;
+    setMsg(state.current);
   }
 }
 
@@ -533,10 +546,12 @@ void InputWidget::nextMsg()
  */
 void InputWidget::prevMsg()
 {
-  if (m_current) {
-    if (m_current <= m_history.count()) {
-      --m_current;
-      setMsg(m_current);
+  State &state = m_states[m_id];
+
+  if (state.current) {
+    if (state.current <= state.history.count()) {
+      --state.current;
+      setMsg(state.current);
     }
   }
 }
