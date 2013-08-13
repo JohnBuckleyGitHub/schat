@@ -82,9 +82,11 @@ private:
   class State
   {
   public:
-    inline State() : current(0) {}
+    inline State() : current(0), pos(0) {}
 
     int current;         ///< Текущее сообщение в истории.
+    int pos;             ///< Текущая позиция курсора.
+    QString html;        ///< Текущий html текст в виджете.
     QStringList history; ///< Отправленные сообщения.
   };
 

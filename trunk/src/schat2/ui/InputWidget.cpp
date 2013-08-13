@@ -102,7 +102,16 @@ QSize InputWidget::sizeHint() const
 
 void InputWidget::reload(const QByteArray &id)
 {
+  m_states[m_id].html = toHtml();
+  m_states[m_id].pos  = textCursor().position();
+
+  clear();
   m_id.init(id);
+  setHtml(m_states[m_id].html);
+
+  QTextCursor cursor = textCursor();
+  cursor.setPosition(m_states[m_id].pos);
+  setTextCursor(cursor);
 
   emit reloaded();
 }
@@ -341,13 +350,13 @@ void InputWidget::cursorPositionChanged()
 {
   QTextCursor cursor = textCursor();
   if (cursor.hasSelection()) {
-    int position = cursor.position();
+    const int position = cursor.position();
     if (position < cursor.anchor())
       cursor.setPosition(position + 1);
   }
 
-  QTextCharFormat charFormat = cursor.charFormat();
-  QFont font = charFormat.font();
+  const QTextCharFormat charFormat = cursor.charFormat();
+  const QFont font = charFormat.font();
 
   m_format.at(Bold)->setChecked(font.bold());
   m_format.at(Italic)->setChecked(font.italic());
