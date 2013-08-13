@@ -127,7 +127,7 @@ void AuthBridge::ready(const QString &provider, const QByteArray &id, const QByt
   if (!htmlName.isEmpty())
     add(AlertMessage(tr("You have successfully logged in using <b>%1</b>").arg(htmlName), ALERT_MESSAGE_SUCCESS));
 
-  ChatNotify::start(Notify::ShowChat);
+  ChatNotify::start(Notify::ForceShowChat);
 }
 
 
