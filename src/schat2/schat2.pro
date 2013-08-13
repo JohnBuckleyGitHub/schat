@@ -205,6 +205,8 @@ win32 {
   }
 }
 
+win32:LIBS += -luser32
+
 include(../common/config.pri)
 include(../common/common.pri)
 
