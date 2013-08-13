@@ -220,6 +220,14 @@ void ChatWindow::notify(const Notify &notify)
   else if (notify.type() == Notify::ShowChat) {
     showChat();
   }
+  else if (notify.type() == Notify::ForceShowChat) {
+    showChat();
+#   if defined(Q_OS_WIN)
+    HWND hWnd = window()->internalWinId();
+    ShowWindow(hWnd, SW_MINIMIZE);
+    ShowWindow(hWnd, SW_RESTORE);
+#   endif
+  }
 }
 
 
