@@ -41,8 +41,8 @@ public:
 
   InputWidget(QWidget *parent = 0);
   ColorButton *color();
-  inline const QStringList& history() const { return m_states[m_id].history; }
-  inline QAction *action(Actions action)    { return m_format.at(action); }
+  inline QStringList history() const     { return m_states[m_id].history; }
+  inline QAction *action(Actions action) { return m_format.at(action); }
   QSize minimumSizeHint() const;
   QSize sizeHint() const;
   void reload(const QByteArray &id);
