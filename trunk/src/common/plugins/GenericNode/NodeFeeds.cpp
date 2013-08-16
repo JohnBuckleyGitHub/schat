@@ -263,7 +263,7 @@ int NodeFeeds::query(const QString &verb)
   m_event->date   = reply.date;
 
   if (options & Feed::Share) {
-    if (reply.date && (options && Feed::ShareAll))
+    if (reply.date && (options & Feed::ShareAll))
       m_core->send(Sockets::all(m_channel, m_user, true), packet);
     else
       m_core->send(m_user->sockets(), packet);
