@@ -167,6 +167,8 @@ void ChatSettings::set(bool offline)
     }
   }
 
+  sync();
+
   if (!offline && ChatClient::state() == ChatClient::Online && !m_synced) {
     m_synced = true;
     emit synced();
