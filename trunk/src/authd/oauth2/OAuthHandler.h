@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -52,6 +52,7 @@ protected:
   QByteArray m_state;                    ///< Base32 кодированный идентификатор состояния.
   QNetworkAccessManager *m_manager;      ///< Менеджер доступа к сети.
   QNetworkReply *m_reply;                ///< Текущий завершённый HTTP запрос.
+  QString m_redirect;                    ///< Адрес для редиректа клиента.
   Tufao::HttpServerRequest *m_request;   ///< HTTP запрос.
   Tufao::HttpServerResponse *m_response; ///< HTTP ответ.
 };
