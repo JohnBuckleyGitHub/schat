@@ -136,12 +136,19 @@ void OAuthHandler::serveError()
 
 void OAuthHandler::serveOk()
 {
-  m_response->writeHead(Tufao::HttpServerResponse::OK);
-  m_response->headers().replace("Content-Type", "text/html");
-  QByteArray data = page(LS("result.html"));
-  data.replace("${LANGUAGE}", m_request->headers().value("Accept-Language").left(2));
-  data.replace("${STATE_ID}", m_state);
-  m_response->end(data);
+  if (m_redirect.isEmpty()) {
+    m_response->writeHead(Tufao::HttpServerResponse::OK);
+    m_response->headers().replace("Content-Type", "text/html");
+    QByteArray data = page(LS("result.html"));
+    data.replace("${LANGUAGE}", m_request->headers().value("Accept-Language").left(2));
+    data.replace("${STATE_ID}", m_state);
+    m_response->end(data);
+  }
+  else {
+    m_response->writeHead(Tufao::HttpServerResponse::FOUND);
+    m_response->headers().replace("Location", m_redirect.toUtf8());
+    m_response->end();
+  }
 }
 
 
@@ -150,9 +157,10 @@ void OAuthHandler::serveOk()
  */
 void OAuthHandler::setState(const QByteArray &state)
 {
-  ChatId s(state);
+  ChatId s(state.left(ChatId::kEncodedSize));
   if (s.isNull())
     s.init(ChatId::MessageId);
 
+  m_redirect = ChatId::fromBase32(state.mid(ChatId::kEncodedSize));
   m_state = s.toBase32();
 }
