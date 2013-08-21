@@ -110,6 +110,17 @@ void OsInfo::init()
 # elif defined(Q_OS_LINUX)
   m_type = Linux;
   detectLinux(os);
+  if (os.isEmpty()) {
+    utsname buf;
+    if (uname(&buf) != -1) {
+      os.append(buf.sysname).append(LC(' '));
+      os.append(buf.release).append(LC(' '));
+      os.append(buf.machine);
+    }
+    else {
+      os = LS("Linux");
+    }
+  }
 # else
   m_type = Unknown;
 # endif
@@ -123,59 +134,62 @@ void OsInfo::detectLinux(QString &name)
 {
   if (QFile::exists(LS("/etc/lsb-release"))) {
     QSettings s(LS("/etc/lsb-release"), QSettings::IniFormat);
-    QString id = s.value(LS("DISTRIB_ID")).toString();
+    s.setIniCodec("UTF-8");
+    const QString id = s.value(LS("DISTRIB_ID")).toString();
     if (id == LS("Ubuntu"))
       m_type = Ubuntu;
 
-    QString desc = s.value(LS("DISTRIB_DESCRIPTION")).toString();
-    if (!desc.isEmpty())
-      name = desc;
+    name = s.value(LS("DISTRIB_DESCRIPTION")).toString();
+    return;
   }
-  else if (QFile::exists(LS("/etc/gentoo-release"))) {
+
+  if (QFile::exists(LS("/etc/gentoo-release"))) {
     m_type = Gentoo;
     QFile file(LS("/etc/gentoo-release"));
     if (file.open(QIODevice::ReadOnly))
       name = file.read(128).trimmed();
+
+    return;
   }
-  else if (QFile::exists(LS("/etc/debian_version"))) {
+
+  if (QFile::exists(LS("/etc/debian_version"))) {
     m_type = Debian;
     name = LS("Debian GNU/Linux");
     QFile file(LS("/etc/debian_version"));
     if (file.open(QIODevice::ReadOnly))
       name += LS(" ") + file.read(64).trimmed();
+
+    return;
   }
+
   else if (QFile::exists(LS("/etc/os-release"))) {
     QSettings s(LS("/etc/os-release"), QSettings::IniFormat);
-    QString id = s.value(LS("NAME")).toString();
-    if (id == LS("openSUSE"))
+    s.setIniCodec("UTF-8");
+    const QString id = s.value(LS("ID")).toString();
+    if (id == LS("opensuse"))
       m_type = OpenSUSE;
+    else if (id == LS("fedora"))
+      m_type == Fedora;
 
-    QString desc = s.value(LS("PRETTY_NAME")).toString();
-    if (!desc.isEmpty())
-      name = desc;
+    name = s.value(LS("PRETTY_NAME")).toString();
+    return;
   }
-  else if (QFile::exists(LS("/etc/fedora-release"))) {
+
+  if (QFile::exists(LS("/etc/fedora-release"))) {
     m_type = Fedora;
     QFile file(LS("/etc/fedora-release"));
     if (file.open(QIODevice::ReadOnly))
       name = file.read(128).trimmed();
+
+    return;
   }
-  else if (m_type == Linux && QFile::exists(LS("/etc/redhat-release"))) {
+
+  if (QFile::exists(LS("/etc/redhat-release"))) {
     QFile file(LS("/etc/redhat-release"));
     if (file.open(QIODevice::ReadOnly))
       name = file.read(128).trimmed();
-  }
 
-  if (name.isEmpty()) {
-    utsname buf;
-    if (uname(&buf) != -1) {
-      name.append(buf.sysname).append(LC(' '));
-      name.append(buf.release).append(LC(' '));
-      name.append(buf.machine);
-    }
-    else {
-      name = LS("Linux");
-    }
+    return;
   }
 }
 #endif
