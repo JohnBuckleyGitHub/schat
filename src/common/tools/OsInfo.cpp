@@ -169,7 +169,7 @@ void OsInfo::detectLinux(QString &name)
     if (id == LS("opensuse"))
       m_type = OpenSUSE;
     else if (id == LS("fedora"))
-      m_type == Fedora;
+      m_type = Fedora;
 
     name = s.value(LS("PRETTY_NAME")).toString();
     return;
