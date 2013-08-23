@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #include "AuthCore.h"
 #include "AuthHandler.h"
 #include "AuthState.h"
+#include "id/ChatId.h"
 #include "JSON.h"
 #include "net/SimpleID.h"
 #include "NodeLog.h"
@@ -127,8 +128,8 @@ bool VkontakteAuthCreator::serve(const QUrl &url, const QString &path, Tufao::Ht
     AuthHandler::setError(response, Tufao::HttpServerResponse::BAD_REQUEST);
   }
   else if (path.startsWith(LS("/oauth2/vkontakte/"))) {
-    QByteArray state = path.mid(18, 34).toLatin1();
-    if (SimpleID::typeOf(SimpleID::decode(state)) != SimpleID::MessageId) {
+    const QByteArray state = path.section(LC('/'), 3, 3).toLatin1();
+    if (ChatId(state.left(ChatId::kEncodedSize)).type() != ChatId::MessageId) {
       AuthHandler::setError(response, Tufao::HttpServerResponse::BAD_REQUEST);
       return true;
     }
