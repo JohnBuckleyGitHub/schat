@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include "AuthCore.h"
 #include "AuthHandler.h"
 #include "AuthState.h"
+#include "id/ChatId.h"
 #include "JSON.h"
 #include "net/SimpleID.h"
 #include "NodeLog.h"
@@ -91,7 +92,7 @@ void OdnoklassnikiAuth::getToken()
   request.setHeader(QNetworkRequest::ContentTypeHeader, LS("application/x-www-form-urlencoded"));
 
   QByteArray body = "code=" + m_code +
-      "&redirect_uri=" + m_provider->redirect + '/' + m_state +
+      "&redirect_uri=" + m_provider->redirect + '/' + m_state + ChatId::toBase32(m_redirect.toLatin1()) +
       "&grant_type=authorization_code&client_id=" + m_provider->id +
       "&client_secret=" + m_provider->secret;
 
@@ -106,8 +107,8 @@ bool OdnoklassnikiAuthCreator::serve(const QUrl &url, const QString &path, Tufao
     AuthHandler::setError(response, Tufao::HttpServerResponse::BAD_REQUEST);
   }
   else if (path.startsWith(LS("/oauth2/odnoklassniki/"))) {
-    QByteArray state = path.mid(22, 34).toLatin1();
-    if (SimpleID::typeOf(SimpleID::decode(state)) != SimpleID::MessageId) {
+    const QByteArray state = path.section(LC('/'), 3, 3).toLatin1();
+    if (ChatId(state.left(ChatId::kEncodedSize)).type() != ChatId::MessageId) {
       AuthHandler::setError(response, Tufao::HttpServerResponse::BAD_REQUEST);
       return true;
     }
