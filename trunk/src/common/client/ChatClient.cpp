@@ -73,13 +73,14 @@ int ChatClient::state()
  */
 QByteArray ChatClient::id()
 {
-  QByteArray id = io()->channelId();
-  if (!id.isEmpty())
-    return id;
+  ChatId id(io()->channelId());
 
-  id = io()->channel()->id();
-  if (!id.isEmpty())
-    return id;
+  if (!id.isNull())
+    return id.toByteArray();
+
+  id.init(io()->channel()->id());
+  if (!id.isNull())
+    return id.toByteArray();
 
   return m_self->m_hooks->id();
 }
@@ -87,9 +88,9 @@ QByteArray ChatClient::id()
 
 QByteArray ChatClient::serverId()
 {
-  QByteArray id = io()->server()->id();
-  if (!id.isEmpty())
-    return id;
+  ChatId id(io()->server()->id());
+  if (!id.isNull())
+    return id.toByteArray();
 
   return m_self->m_hooks->serverId();
 }

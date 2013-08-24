@@ -124,6 +124,7 @@ AbstractClientPrivate::AuthReplyAction AbstractClientPrivate::authReply(const Au
   if (reply.status == Notice::OK) {
     const bool setup = isSetup(reply);
     collisions = 0;
+    authorized = false;
     q->setAuthorized(reply.userId);
     channel->setId(reply.userId);
     channel->account()->cookie   = reply.cookie;
