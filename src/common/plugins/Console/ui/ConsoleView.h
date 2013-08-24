@@ -34,6 +34,7 @@ public:
   Q_INVOKABLE bool setName(const QString &channelId, const QString &name);
   Q_INVOKABLE QString expirationText(int days) const;
   Q_INVOKABLE QString toPassword(const QString &password) const;
+  Q_INVOKABLE void openUrl(const QString &url);
 
 signals:
   void feed(const QVariantMap &data);

@@ -95,6 +95,10 @@ Console.feed.console.get.tryAccess = function(json) {
   }
   else if (json.status == 403) {
     page.html('<div class="alert alert-error" data-tr="console_bad_server">' + Utils.tr('console_bad_server') + '</div>');
+    $('#page a').on('click', function(event) {
+      event.preventDefault();
+      ConsoleView.openUrl($(this).attr('href'));
+    });
   }
   else {
     page.html('<div class="alert alert-error"><strong>' + json.status + '</strong> ' + SimpleChat.statusText(json.status) + '</div>');
@@ -114,7 +118,8 @@ if (typeof ConsoleView === 'undefined') {
   ConsoleView = {
     toPassword: function(password)     { return password; },
     expirationText: function(days)     { return days;},
-    setName: function(channelId, name) { return false; }
+    setName: function(channelId, name) { return false; },
+    openUrl: function(url)             {}
   }
 
 }

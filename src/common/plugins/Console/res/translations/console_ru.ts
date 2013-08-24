@@ -30,8 +30,8 @@
     <name>ConsoleTr</name>
     <message>
         <location filename="../../ConsolePlugin.cpp" line="45"/>
-        <source>Remote management is disabled by default for security reasons.</source>
-        <translation>Удалённое управление отключено по умолчанию по соображениям безопасности.</translation>
+        <source>Remote management is disabled by default for security reasons. &lt;a href=&apos;https://wiki.schat.me/How_to_enable_console&apos;&gt;How to enable?&lt;/a&gt;</source>
+        <translation>Удалённое управление отключено по умолчанию по соображениям безопасности. &lt;a href=&apos;https://wiki.schat.me/How_to_enable_console&apos;&gt;Как включить?&lt;/a&gt;</translation>
     </message>
     <message>
         <location filename="../../ConsolePlugin.cpp" line="46"/>
@@ -182,7 +182,7 @@
 <context>
     <name>ConsoleView</name>
     <message numerus="yes">
-        <location filename="../../ui/ConsoleView.cpp" line="47"/>
+        <location filename="../../ui/ConsoleView.cpp" line="48"/>
         <source>Certificate expires in %n days</source>
         <translation>
             <numerusform>Сертификат истекает через %n день</numerusform>

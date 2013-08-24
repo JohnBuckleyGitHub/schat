@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDesktopServices>
 #include <QWebFrame>
 
 #include "ChatNotify.h"
@@ -51,6 +52,12 @@ QString ConsoleView::expirationText(int days) const
 QString ConsoleView::toPassword(const QString &password) const
 {
   return SimpleID::encode(SimpleID::make(password.toUtf8(), SimpleID::PasswordId));
+}
+
+
+void ConsoleView::openUrl(const QString &url)
+{
+  QDesktopServices::openUrl(QUrl(url));
 }
 
 
