@@ -40,6 +40,8 @@ HEADERS += \
     JSON.h \
     k8json/k8json.h \
     net/dns/ChatDNS.h \
+    net/NetReply.h \
+    net/NetRequest.h \
     net/PacketReader.h \
     net/packets/auth.h \
     net/packets/ChannelNotice.h \
@@ -87,6 +89,8 @@ SOURCES += \
     JSON.cpp \
     k8json/k8json.cpp \
     net/dns/ChatDNS.cpp \
+    net/NetReply.cpp \
+    net/NetRequest.cpp \
     net/PacketReader.cpp \
     net/packets/auth.cpp \
     net/packets/ChannelNotice.cpp \
