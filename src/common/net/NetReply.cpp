@@ -16,33 +16,10 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef RAWFEEDSCMD_H_
-#define RAWFEEDSCMD_H_
+#include "net/NetReply.h"
 
-#include "client/ClientHooks.h"
-
-class RawFeeds;
-
-namespace Hooks
+NetReply::NetReply()
 {
+  // TODO Auto-generated constructor stub
 
-class RawFeedsCmd : public Messages
-{
-  Q_OBJECT
-
-public:
-  RawFeedsCmd(RawFeeds *parent);
-  bool command(const QByteArray &dest, const ClientCmd &cmd);
-
-private:
-  void localFeeds(const QByteArray &dest);
-  void request(const QByteArray &dest, const ClientCmd &cmd);
-  void request(const QString &method, const QByteArray &dest, const QString &body);
-
-  RawFeeds *m_plugin;
-  QVariantMap m_headers;
-};
-
-} // namespace Hooks
-
-#endif /* RAWFEEDSCMD_H_ */
+}
