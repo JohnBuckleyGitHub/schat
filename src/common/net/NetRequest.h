@@ -36,9 +36,12 @@ public:
   static const QString UNSUB;
 
   NetRequest();
+  NetRequest(const QByteArray &json);
+  bool isValid() const;
   QByteArray toJSON() const;
   static QString genId();
 
+  QString type;        ///< Тип запроса.
   QString id;          ///< Уникальный идентификатор сообщения, формируется клиентом, сервер должен отправить его обратно в неизменном виде.
   QString method;      ///< Метод запроса, например GET, PUT, POST, DEL и AUTH.
   QString request;     ///< Имя ресурса к которому производится запрос.

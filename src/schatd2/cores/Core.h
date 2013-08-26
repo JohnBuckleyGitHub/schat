@@ -86,7 +86,8 @@ protected:
   void release(SocketReleaseEvent *event);
 
   // notices.
-  virtual void notice(quint16 type);
+  void json();
+  void notice(quint16 type);
 
   NewPacketsEvent *m_packetsEvent;    ///< Текущий объект NewPacketsEvent.
   Notice *m_notice;                   ///< Текущий прочитанный объект Notice.

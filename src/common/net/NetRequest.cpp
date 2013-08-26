@@ -36,10 +36,34 @@ NetRequest::NetRequest()
 }
 
 
+NetRequest::NetRequest(const QByteArray &json)
+{
+  const QVariantList list = JSON::parse(json).toList();
+  if (list.size() < 6)
+    return;
+
+  type    = list.at(0).toString();
+  id      = list.at(1).toString();
+  method  = list.at(2).toString();
+  request = list.at(3).toString();
+  headers = list.at(4).toMap();
+  data    = list.mid(5);
+}
+
+
+bool NetRequest::isValid() const
+{
+  if (type.isEmpty() || id.isEmpty() || method.isEmpty())
+    return false;
+
+  return true;
+}
+
+
 QByteArray NetRequest::toJSON() const
 {
   QVariantList list;
-  list.append(LS("REQ"));
+  list.append(type.isEmpty() ? LS("REQ") : type);
   list.append(id);
   list.append(method);
   list.append(request);

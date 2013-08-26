@@ -40,6 +40,7 @@ HEADERS = \
     feeds/NodeAclFeed.h \
     Host.h \
     Hosts.h \
+    net/NetContext.h \
     net/NodeAuthReply.h \
     net/NodePool.h \
     net/NodeWorker.h \
@@ -72,6 +73,7 @@ SOURCES = \
     feeds/NodeAclFeed.cpp \
     Host.cpp \
     Hosts.cpp \
+    net/NetContext.cpp \
     net/NodeAuthReply.cpp \
     net/NodePool.cpp \
     net/NodeWorker.cpp \
