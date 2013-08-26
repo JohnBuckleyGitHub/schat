@@ -99,9 +99,10 @@ public:
   };
 
   NetReply(const QString &id, int status = OK);
+  NetReply(const QVariantList &list);
+  bool isValid() const;
   QByteArray toJSON() const;
 
-  QString type;        ///< Тип ответа.
   QString id;          ///< Уникальный идентификатор сообщения.
   int status;          ///< Статусный код.
   QVariantMap headers; ///< Дополнительные заголовки в виде JSON объекта.

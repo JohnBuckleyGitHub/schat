@@ -386,19 +386,25 @@ void Core::release(SocketReleaseEvent *event)
 
 void Core::json()
 {
-  NetRequest *req = new NetRequest(m_reader->get<QByteArray>());
-  if (!req->isValid()) {
-    delete req;
+  const QVariantList list = JSON::parse(m_reader->get<QByteArray>()).toList();
+  if (list.size() < 4)
     return;
+
+  if (list.first() == LS("REQ")) {
+    NetRequest *req = new NetRequest(list);
+    if (!req->isValid()) {
+      delete req;
+      return;
+    }
+
+    NetContext context(req, m_socket);
+    NetReply reply(context.req()->id);
+
+    PacketWriter writer(m_sendStream, Protocol::JSONPacket);
+    writer.put(reply.toJSON());
+
+    send(QList<quint64>() << context.socket(), writer.data());
   }
-
-  NetContext context(req, m_socket);
-  NetReply reply(context.req()->id);
-
-  PacketWriter writer(m_sendStream, Protocol::JSONPacket);
-  writer.put(reply.toJSON());
-
-  send(QList<quint64>() << context.socket(), writer.data());
 }
 
 

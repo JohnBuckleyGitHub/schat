@@ -148,7 +148,10 @@ void RawFeedsCmd::request(const QString &method, const QByteArray &dest, const Q
   else
     req.request = body;
 
-  req.request.replace(LS("${DEST}"), ChatId::toBase32(dest));
+  if (req.request.startsWith(LC('$')))
+    req.request.replace(0, 1, ChatId::toBase32(dest));
+
+  m_plugin->add(req.id);
   ClientFeeds::req(req);
 }
 

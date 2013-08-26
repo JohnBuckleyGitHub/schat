@@ -23,9 +23,9 @@
 #include <QVariant>
 
 #include "Channel.h"
+#include "net/NetRequest.h"
 
 class FeedNotice;
-class NetRequest;
 
 namespace Hooks
 {
@@ -49,11 +49,14 @@ public:
   static int match(ClientChannel channel, ClientChannel user = ClientChannel());
 
 private slots:
+  void json();
   void notice(int type);
 
 private:
-  FeedNotice *m_packet;     ///< Текущий прочитанный пакет.
-  Hooks::Feeds *m_hooks;    ///< Хуки.
+  FeedNotice *m_packet;            ///< Текущий прочитанный пакет.
+  Hooks::Feeds *m_hooks;           ///< Хуки.
+  QMap<QString, NetRequest> m_req; ///< Отправленные запросы.
+  static ClientFeeds *m_self;      ///< Указатель на себя.
 };
 
 #endif /* CLIENTFEEDS_H_ */

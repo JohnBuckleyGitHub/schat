@@ -191,6 +191,7 @@ void SimpleClient::newPacketsImpl()
         break;
 
       case Protocol::JSONPacket:
+        emit jsonPacket();
         break;
 
       default:

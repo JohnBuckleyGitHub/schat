@@ -52,6 +52,13 @@ void ClientFeedsImpl::addImpl(ClientChannel channel, const ChannelInfo & /*info*
 }
 
 
+void ClientFeedsImpl::onReply(const NetRequest &req, const NetReply &reply)
+{
+  NetReplyNotify notify(req, reply);
+  ChatNotify::start(notify);
+}
+
+
 void ClientFeedsImpl::readFeedImpl(const FeedNotice &packet)
 {
   m_channel = ChatClient::channels()->get(packet.sender());
