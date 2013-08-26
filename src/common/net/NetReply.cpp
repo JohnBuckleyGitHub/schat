@@ -27,10 +27,31 @@ NetReply::NetReply(const QString &id, int status)
 }
 
 
+NetReply::NetReply(const QVariantList &list)
+{
+  if (list.size() < 5)
+    return;
+
+  id      = list.at(1).toString();
+  status  = list.at(2).toInt();
+  headers = list.at(3).toMap();
+  data    = list.mid(4);
+}
+
+
+bool NetReply::isValid() const
+{
+  if (id.isEmpty())
+    return false;
+
+  return true;
+}
+
+
 QByteArray NetReply::toJSON() const
 {
   QVariantList list;
-  list.append(type.isEmpty() ? LS("REP") : type);
+  list.append(LS("REP"));
   list.append(id);
   list.append(status);
   list.append(headers);

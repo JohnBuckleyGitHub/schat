@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "DateTime.h"
 #include "id/ChatId.h"
 #include "JSON.h"
 #include "net/NetRequest.h"
@@ -31,29 +32,29 @@ const QString NetRequest::SUB   = QLatin1String("SUB");
 const QString NetRequest::UNSUB = QLatin1String("UNSUB");
 
 NetRequest::NetRequest()
+  : id(genId())
+  , date(0)
 {
-  id = genId();
 }
 
 
-NetRequest::NetRequest(const QByteArray &json)
+NetRequest::NetRequest(const QVariantList &list)
 {
-  const QVariantList list = JSON::parse(json).toList();
   if (list.size() < 6)
     return;
 
-  type    = list.at(0).toString();
   id      = list.at(1).toString();
   method  = list.at(2).toString();
   request = list.at(3).toString();
   headers = list.at(4).toMap();
   data    = list.mid(5);
+  date    = DateTime::utc();
 }
 
 
 bool NetRequest::isValid() const
 {
-  if (type.isEmpty() || id.isEmpty() || method.isEmpty())
+  if (id.isEmpty() || method.isEmpty())
     return false;
 
   return true;
@@ -63,7 +64,7 @@ bool NetRequest::isValid() const
 QByteArray NetRequest::toJSON() const
 {
   QVariantList list;
-  list.append(type.isEmpty() ? LS("REQ") : type);
+  list.append(LS("REQ"));
   list.append(id);
   list.append(method);
   list.append(request);
