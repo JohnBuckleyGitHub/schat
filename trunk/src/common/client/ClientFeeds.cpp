@@ -22,8 +22,10 @@
 #include "client/ClientHooks.h"
 #include "client/SimpleClient.h"
 #include "feeds/FeedStrings.h"
+#include "net/NetRequest.h"
 #include "net/packets/FeedNotice.h"
 #include "net/packets/Notice.h"
+#include "net/PacketWriter.h"
 #include "net/SimpleID.h"
 #include "sglobal.h"
 
@@ -67,6 +69,15 @@ bool ClientFeeds::put(const QByteArray &id, const QString &name, const QVariant 
   json[FEED_KEY_VALUE]   = value;
   json[FEED_KEY_OPTIONS] = options;
   return request(id, FEED_METHOD_PUT, name, json);
+}
+
+
+bool ClientFeeds::req(const NetRequest &request)
+{
+  PacketWriter writer(ChatClient::io()->sendStream(), Protocol::JSONPacket);
+  writer.put(request.toJSON());
+
+  return ChatClient::io()->send(writer.data());
 }
 
 

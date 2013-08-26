@@ -31,6 +31,9 @@
 #include "debugstream.h"
 #include "events.h"
 #include "feeds/ServerFeed.h"
+#include "net/NetContext.h"
+#include "net/NetReply.h"
+#include "net/NetRequest.h"
 #include "net/NodeAuthReply.h"
 #include "net/PacketReader.h"
 #include "net/packets/auth.h"
@@ -292,7 +295,7 @@ void Core::newPacketsEvent(NewPacketsEvent *event)
     if (event->channelId().isEmpty() || Ch::channel(event->channelId()) == 0)
       continue;
 
-    if (!checkPacket())
+    if (reader.type() != Protocol::JSONPacket && !checkPacket())
       continue;
 
     m_timestamp = 0;
@@ -306,6 +309,10 @@ void Core::packet(int type)
   switch (type) {
     case Protocol::NoticePacket:
       notice(m_reader->get<quint16>());
+      break;
+
+    case Protocol::JSONPacket:
+      json();
       break;
 
     default:
@@ -374,6 +381,24 @@ void Core::release(SocketReleaseEvent *event)
   NodeNoticeReader::release(user, event->socket());
 
   Ch::gc(user);
+}
+
+
+void Core::json()
+{
+  NetRequest *req = new NetRequest(m_reader->get<QByteArray>());
+  if (!req->isValid()) {
+    delete req;
+    return;
+  }
+
+  NetContext context(req, m_socket);
+  NetReply reply(context.req()->id);
+
+  PacketWriter writer(m_sendStream, Protocol::JSONPacket);
+  writer.put(reply.toJSON());
+
+  send(QList<quint64>() << context.socket(), writer.data());
 }
 
 

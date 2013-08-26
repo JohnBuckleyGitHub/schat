@@ -98,7 +98,14 @@ public:
     NOT_EXTENDED                    = 510
   };
 
-  NetReply();
+  NetReply(const QString &id, int status = OK);
+  QByteArray toJSON() const;
+
+  QString type;        ///< Тип ответа.
+  QString id;          ///< Уникальный идентификатор сообщения.
+  int status;          ///< Статусный код.
+  QVariantMap headers; ///< Дополнительные заголовки в виде JSON объекта.
+  QVariant data;       ///< Данные запроса.
 };
 
 #endif /* NETREPLY_H_ */

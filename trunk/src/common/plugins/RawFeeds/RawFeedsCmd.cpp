@@ -149,6 +149,7 @@ void RawFeedsCmd::request(const QString &method, const QByteArray &dest, const Q
     req.request = body;
 
   req.request.replace(LS("${DEST}"), ChatId::toBase32(dest));
+  ClientFeeds::req(req);
 }
 
 } // namespace Hooks

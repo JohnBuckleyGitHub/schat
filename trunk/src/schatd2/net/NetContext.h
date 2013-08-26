@@ -16,34 +16,29 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "JSON.h"
-#include "net/NetReply.h"
-#include "sglobal.h"
+#ifndef NETCONTEXT_H_
+#define NETCONTEXT_H_
 
-NetReply::NetReply(const QString &id, int status)
-  : id(id)
-  , status(status)
+#include <QString>
+
+#include "schat.h"
+
+class NetRequest;
+
+class SCHAT_EXPORT NetContext
 {
-}
+public:
+  NetContext(NetRequest *req, qint64 socket);
+  ~NetContext();
 
+  inline const NetRequest *req() const { return m_req; }
+  inline qint64 date() const           { return m_date; }
+  inline qint64 socket() const         { return m_socket; }
 
-QByteArray NetReply::toJSON() const
-{
-  QVariantList list;
-  list.append(type.isEmpty() ? LS("REP") : type);
-  list.append(id);
-  list.append(status);
-  list.append(headers);
+private:
+  const NetRequest *m_req; ///< Указатель на запрос.
+  const qint64 m_date;     ///< Дата получения запроса.
+  const qint64 m_socket;   ///< Сокет запроса.
+};
 
-  if (data.canConvert(QVariant::List)) {
-    const QVariantList d = data.toList();
-    if (!d.isEmpty())
-      list.append(data.toList());
-    else
-      list.append(QVariant());
-  }
-  else
-    list.append(data);
-
-  return JSON::generate(list);
-}
+#endif /* NETCONTEXT_H_ */

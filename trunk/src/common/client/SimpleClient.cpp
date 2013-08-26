@@ -94,7 +94,7 @@ SimpleClientPrivate::AuthReplyAction SimpleClientPrivate::authReply(const AuthRe
 bool SimpleClientPrivate::notice()
 {
   Q_Q(SimpleClient);
-  quint16 type = reader->get<quint16>();
+  const quint16 type = reader->get<quint16>();
   emit(q->notice(type));
 
   return true;
@@ -188,6 +188,9 @@ void SimpleClient::newPacketsImpl()
 
       case Protocol::NoticePacket:
         d->notice();
+        break;
+
+      case Protocol::JSONPacket:
         break;
 
       default:
