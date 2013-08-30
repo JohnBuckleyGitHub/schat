@@ -104,6 +104,7 @@ public:
   QByteArray toJSON() const;
 
   QString id;          ///< Уникальный идентификатор сообщения.
+  qint64 date;         ///< Отметка времени.
   int status;          ///< Статусный код.
   QVariantMap headers; ///< Дополнительные заголовки в виде JSON объекта.
   QVariant data;       ///< Данные запроса.

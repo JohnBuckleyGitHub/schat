@@ -40,15 +40,15 @@ NetRequest::NetRequest()
 
 NetRequest::NetRequest(const QVariantList &list)
 {
-  if (list.size() < 6)
+  if (list.size() < 7)
     return;
 
   id      = list.at(1).toString();
-  method  = list.at(2).toString();
-  request = list.at(3).toString();
-  headers = list.at(4).toMap();
-  data    = list.mid(5);
-  date    = DateTime::utc();
+  date    = list.at(2).toLongLong();
+  method  = list.at(3).toString();
+  request = list.at(4).toString();
+  headers = list.at(5).toMap();
+  data    = list.mid(6);
 }
 
 
@@ -66,6 +66,7 @@ QByteArray NetRequest::toJSON() const
   QVariantList list;
   list.append(LS("REQ"));
   list.append(id);
+  list.append(date);
   list.append(method);
   list.append(request);
   list.append(headers);

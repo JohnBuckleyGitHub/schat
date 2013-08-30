@@ -66,10 +66,13 @@ bool Net::get(const NetContext &context, NetReply &reply) const
   const NetRecordMap &map = m_data[m_dest->id()];
   const QString path      = context.req()->request.section(LC('/'), 1);
 
-  if (!map.contains(path))
-    return false;
+  if (map.contains(path)) {
+    const NetRecord &record = map[path];
+    reply.date   = record.date;
+    reply.status = NetReply::OK;
+    reply.data   = record.data;
+    return true;
+  }
 
-  reply.data   = map[path].data;
-  reply.status = NetReply::OK;
-  return true;
+  return false;
 }

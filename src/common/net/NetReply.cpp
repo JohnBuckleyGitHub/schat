@@ -22,6 +22,7 @@
 
 NetReply::NetReply(const QString &id, int status)
   : id(id)
+  , date(0)
   , status(status)
 {
 }
@@ -29,13 +30,14 @@ NetReply::NetReply(const QString &id, int status)
 
 NetReply::NetReply(const QVariantList &list)
 {
-  if (list.size() < 5)
+  if (list.size() < 6)
     return;
 
   id      = list.at(1).toString();
-  status  = list.at(2).toInt();
-  headers = list.at(3).toMap();
-  data    = list.mid(4);
+  date    = list.at(2).toLongLong();
+  status  = list.at(3).toInt();
+  headers = list.at(4).toMap();
+  data    = list.mid(5);
 }
 
 
@@ -53,6 +55,7 @@ QByteArray NetReply::toJSON() const
   QVariantList list;
   list.append(LS("REP"));
   list.append(id);
+  list.append(date);
   list.append(status);
   list.append(headers);
 
