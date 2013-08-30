@@ -31,6 +31,7 @@
 #include "debugstream.h"
 #include "events.h"
 #include "feeds/ServerFeed.h"
+#include "net/Net.h"
 #include "net/NetContext.h"
 #include "net/NetReply.h"
 #include "net/NetRequest.h"
@@ -58,6 +59,7 @@ Core::Core(QObject *parent)
 {
   m_self = this;
 
+  m_net = new Net(this);
   m_sendStream = new QDataStream(&m_sendBuffer, QIODevice::ReadWrite);
   m_readStream = new QDataStream(&m_readBuffer, QIODevice::ReadWrite);
 }
@@ -398,11 +400,11 @@ void Core::json()
     }
 
     NetContext context(req, m_socket);
-    NetReply reply(context.req()->id);
+    NetReply reply(context.req()->id, NetReply::NOT_FOUND);
+    m_net->req(context, reply);
 
     PacketWriter writer(m_sendStream, Protocol::JSONPacket);
     writer.put(reply.toJSON());
-
     send(QList<quint64>() << context.socket(), writer.data());
   }
 }

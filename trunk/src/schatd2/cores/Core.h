@@ -27,6 +27,7 @@
 #include "ServerChannel.h"
 
 class AuthResult;
+class Net;
 class NewPacketsEvent;
 class NodeAuth;
 class Notice;
@@ -89,6 +90,7 @@ protected:
   void json();
   void notice(quint16 type);
 
+  Net *m_net;                         ///< Главный обработчик JSON пакетов.
   NewPacketsEvent *m_packetsEvent;    ///< Текущий объект NewPacketsEvent.
   Notice *m_notice;                   ///< Текущий прочитанный объект Notice.
   PacketReader *m_reader;             ///< Текущий объект PacketReader выполняющий чтение пакета.
