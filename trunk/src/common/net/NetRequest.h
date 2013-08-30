@@ -42,11 +42,11 @@ public:
   static QString genId();
 
   QString id;          ///< Уникальный идентификатор сообщения, формируется клиентом, сервер должен отправить его обратно в неизменном виде.
+  qint64 date;         ///< Отметка времени.
   QString method;      ///< Метод запроса, например GET, PUT, POST, DEL и AUTH.
   QString request;     ///< Имя ресурса к которому производится запрос.
   QVariantMap headers; ///< Дополнительные заголовки в виде JSON объекта.
   QVariant data;       ///< Данные запроса.
-  qint64 date;         ///< Отметка времени.
 };
 
 #endif /* NETREQUEST_H_ */
