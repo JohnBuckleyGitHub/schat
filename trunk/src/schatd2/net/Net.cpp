@@ -16,13 +16,13 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
-
+#include "Ch.h"
 #include "net/Net.h"
 #include "net/NetContext.h"
 #include "net/NetReply.h"
 #include "net/NetRequest.h"
 #include "NodeLog.h"
+#include "sglobal.h"
 
 #define LOG_N9010 LOG_TRACE("N9010", "Core/Net", "s:" << context.socket() << ". data:" << context.req()->toJSON())
 
@@ -35,4 +35,41 @@ Net::Net(QObject *parent)
 void Net::req(const NetContext &context, NetReply &reply)
 {
   LOG_N9010
+
+  const QString destId = context.req()->request.section(LC('/'), 0, 0);
+
+  if (destId == LS("server")) {
+    m_dest = Ch::server();
+  }
+  else {
+    ChatId id(destId);
+    if (!id.isNull())
+      m_dest = Ch::channel(id.toByteArray(), id.type());
+  }
+
+  if (!m_dest)
+    return;
+
+  if (context.req()->method == NetRequest::GET)
+    get(context, reply);
+}
+
+
+/*!
+ * \todo Добавить проверку прав доступа.
+ * \todo Добавить поддержку хуков.
+ */
+bool Net::get(const NetContext &context, NetReply &reply) const
+{
+  Q_UNUSED(reply)
+
+  const NetRecordMap &map = m_data[m_dest->id()];
+  const QString path      = context.req()->request.section(LC('/'), 1);
+
+  if (!map.contains(path))
+    return false;
+
+  reply.data   = map[path].data;
+  reply.status = NetReply::OK;
+  return true;
 }

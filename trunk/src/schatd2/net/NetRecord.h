@@ -16,31 +16,20 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NET_H_
-#define NET_H_
+#ifndef NETRECORD_H_
+#define NETRECORD_H_
 
-#include <QObject>
+#include <QVariant>
 
-#include "ServerChannel.h"
-#include "net/NetRecord.h"
-
-class NetContext;
-class NetReply;
-
-class SCHAT_EXPORT Net : public QObject
+class NetRecord
 {
-  Q_OBJECT
-
 public:
-  Net(QObject *parent = 0);
+  inline NetRecord(const QVariant &data = QVariant(), quint64 date = 0) : date(date), data(data) {}
 
-  void req(const NetContext &context, NetReply &reply);
-
-private:
-  bool get(const NetContext &context, NetReply &reply) const;
-
-  ChatChannel m_dest;                ///< Канал назначения.
-  QMap<ChatId, NetRecordMap> m_data; ///< Хранилище данных.
+  qint64 date;
+  QVariant data;
 };
 
-#endif /* NET_H_ */
+typedef QMap<QString, NetRecord> NetRecordMap;
+
+#endif /* NETRECORD_H_ */
