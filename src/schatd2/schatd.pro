@@ -42,6 +42,7 @@ HEADERS = \
     Hosts.h \
     net/Net.h \
     net/NetContext.h \
+    net/NetRecord.h \
     net/NodeAuthReply.h \
     net/NodePool.h \
     net/NodeWorker.h \
