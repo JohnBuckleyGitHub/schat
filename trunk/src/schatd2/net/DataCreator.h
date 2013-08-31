@@ -16,25 +16,20 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#ifndef DATACREATOR_H_
+#define DATACREATOR_H_
 
-#include "NodeMasterCh.h"
-#include "NodeMasterPlugin.h"
-#include "NodeMasterPlugin_p.h"
+#include "ServerChannel.h"
 
-NodeMasterImpl::NodeMasterImpl(QObject *parent)
-  : NodePlugin(parent)
+class NetRecord;
+
+class DataCreator
 {
-  new NodeMasterCh(this);
-}
+public:
+  DataCreator() {}
+  virtual ~DataCreator() {}
+  virtual bool create(ChatChannel channel, const QString &path, NetRecord &record) const = 0;
+  virtual QStringList paths() const = 0;
+};
 
-
-NodePlugin *NodeMasterPlugin::create()
-{
-  m_plugin = new NodeMasterImpl(this);
-  return m_plugin;
-}
-
-#if QT_VERSION < 0x050000
-  Q_EXPORT_PLUGIN2(NodeMaster, NodeMasterPlugin);
-#endif
+#endif /* DATACREATOR_H_ */
