@@ -17,6 +17,7 @@
  */
 
 #include "Ch.h"
+#include "DateTime.h"
 #include "net/DataCreator.h"
 #include "net/Net.h"
 #include "net/NetContext.h"
@@ -42,6 +43,9 @@ void Net::add(DataCreator *creator)
 
 void Net::pub(ChatChannel channel, const QString &path)
 {
+  if (!channel)
+    return;
+
   DataCreator *creator = m_creators.get(path);
   if (!creator)
     return;
@@ -49,6 +53,9 @@ void Net::pub(ChatChannel channel, const QString &path)
   NetRecord record;
   if (!creator->create(channel, path, record))
     return;
+
+  if (!record.date)
+    record.date = DateTime::utc();
 
   pub(channel->id(), path, record);
 }

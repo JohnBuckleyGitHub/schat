@@ -16,7 +16,9 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Ch.h"
 #include "cores/Core.h"
+#include "feeds/FeedEvents.h"
 #include "MasterDataCreator.h"
 #include "net/Net.h"
 #include "NodeMasterCh.h"
@@ -26,11 +28,33 @@ NodeMasterCh::NodeMasterCh(QObject *parent)
   : ChHook(parent)
   , m_net(Core::net())
 {
-  m_net->add(new MasterDataCreator());
+  MasterDataCreator *creator = new MasterDataCreator();
+  m_net->add(creator);
+
+  m_paths = creator->paths();
+
+  connect(FeedEvents::i(), SIGNAL(notify(FeedEvent)), SLOT(notify(FeedEvent)));
 }
 
 
 void NodeMasterCh::load(ChatChannel channel)
 {
-  m_net->pub(channel, QString());
+  foreach (const QString &path, m_paths)
+    m_net->pub(channel, path);
+}
+
+
+void NodeMasterCh::notify(const FeedEvent &event)
+{
+  if (event.status != Notice::OK || event.method == FEED_METHOD_GET)
+    return;
+
+  if (event.name == FEED_NAME_USER || event.name == FEED_NAME_CHANNEL) {
+    ChatChannel channel = Ch::channel(event.channel, ChatId(event.channel).type());
+    if (!channel)
+      return;
+
+    channel->setDate(channel->feed(event.name)->head().date());
+    m_net->pub(channel, QString());
+  }
 }

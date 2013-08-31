@@ -21,6 +21,7 @@
 
 #include "ChHook.h"
 
+class FeedEvent;
 class Net;
 
 class NodeMasterCh : public ChHook
@@ -31,8 +32,12 @@ public:
   NodeMasterCh(QObject *parent = 0);
   void load(ChatChannel channel);
 
+private slots:
+  void notify(const FeedEvent &event);
+
 private:
   Net *m_net;
+  QStringList m_paths;
 };
 
 #endif /* NODEMASTERCH_H_ */

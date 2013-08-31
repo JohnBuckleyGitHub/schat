@@ -18,12 +18,22 @@
 
 #include "MasterDataCreator.h"
 #include "net/NetRecord.h"
+#include "sglobal.h"
 
 bool MasterDataCreator::create(ChatChannel channel, const QString &path, NetRecord &record) const
 {
-  Q_UNUSED(channel)
-  Q_UNUSED(path)
-  Q_UNUSED(record)
+  if (path == QString()) {
+    QVariantMap map;
+    map.insert(LS("name"),   channel->name());
+    map.insert(LS("type"),   channel->type());
+    map.insert(LS("status"), channel->status().value());
+    map.insert(LS("gender"), channel->gender().value());
+    map.insert(LS("color"),  channel->gender().color());
+
+    record.date = channel->date();
+    record.data = map;
+    return true;
+  }
 
   return false;
 }
