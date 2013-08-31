@@ -20,10 +20,14 @@ QT = core network
 OTHER_FILES += NodeMaster.json
 
 HEADERS  = \
+   MasterDataCreator.h \
+   NodeMasterCh.h \
    NodeMasterPlugin.h \
    NodeMasterPlugin_p.h \
 
 SOURCES  = \
+   MasterDataCreator.cpp \
+   NodeMasterCh.cpp \
    NodeMasterPlugin.cpp \
 
 include(../plugins.pri)

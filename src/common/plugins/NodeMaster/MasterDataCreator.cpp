@@ -16,25 +16,22 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
+#include "MasterDataCreator.h"
+#include "net/NetRecord.h"
 
-#include "NodeMasterCh.h"
-#include "NodeMasterPlugin.h"
-#include "NodeMasterPlugin_p.h"
-
-NodeMasterImpl::NodeMasterImpl(QObject *parent)
-  : NodePlugin(parent)
+bool MasterDataCreator::create(ChatChannel channel, const QString &path, NetRecord &record) const
 {
-  new NodeMasterCh(this);
+  Q_UNUSED(channel)
+  Q_UNUSED(path)
+  Q_UNUSED(record)
+
+  return false;
 }
 
 
-NodePlugin *NodeMasterPlugin::create()
+QStringList MasterDataCreator::paths() const
 {
-  m_plugin = new NodeMasterImpl(this);
-  return m_plugin;
+  QStringList out;
+  out.append(QString());
+  return out;
 }
-
-#if QT_VERSION < 0x050000
-  Q_EXPORT_PLUGIN2(NodeMaster, NodeMasterPlugin);
-#endif

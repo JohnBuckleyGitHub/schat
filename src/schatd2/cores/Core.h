@@ -53,6 +53,7 @@ public:
   bool send(const QList<quint64> &sockets, const QByteArray &packet, int option = 0, const QByteArray &userId = QByteArray());
   bool send(const QList<quint64> &sockets, const QList<QByteArray> &packets, int option = 0, const QByteArray &userId = QByteArray());
   bool send(const QList<quint64> &sockets, Packet packet, int option = 0, const QByteArray &userId = QByteArray());
+  inline static Net *net()            { return m_self->m_net; }
   inline static QDataStream *stream() { return m_self->m_sendStream; }
   inline static quint64 socket()      { return m_self->m_socket; }
   static bool send(const QByteArray &packet);

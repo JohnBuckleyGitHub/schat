@@ -16,25 +16,21 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QtPlugin>
-
+#include "cores/Core.h"
+#include "MasterDataCreator.h"
+#include "net/Net.h"
 #include "NodeMasterCh.h"
-#include "NodeMasterPlugin.h"
-#include "NodeMasterPlugin_p.h"
+#include "sglobal.h"
 
-NodeMasterImpl::NodeMasterImpl(QObject *parent)
-  : NodePlugin(parent)
+NodeMasterCh::NodeMasterCh(QObject *parent)
+  : ChHook(parent)
+  , m_net(Core::net())
 {
-  new NodeMasterCh(this);
+  m_net->add(new MasterDataCreator());
 }
 
 
-NodePlugin *NodeMasterPlugin::create()
+void NodeMasterCh::load(ChatChannel channel)
 {
-  m_plugin = new NodeMasterImpl(this);
-  return m_plugin;
+  m_net->pub(channel, QString());
 }
-
-#if QT_VERSION < 0x050000
-  Q_EXPORT_PLUGIN2(NodeMaster, NodeMasterPlugin);
-#endif

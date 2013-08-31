@@ -376,8 +376,13 @@ void Ch::cache(ChatChannel channel)
     return;
 
   const QByteArray &id = channel->id();
-  if (channel->type() != SimpleID::ServerId)
+  if (channel->type() != ChatId::ServerId)
     setOnline(channel);
+
+  if (!m_channels.contains(id)) {
+    foreach (ChHook *hook, m_hooks)
+      hook->load(channel);
+  }
 
   m_channels[id] = channel;
   m_channels[channel->normalized()] = channel;

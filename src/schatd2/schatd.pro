@@ -40,6 +40,7 @@ HEADERS = \
     feeds/NodeAclFeed.h \
     Host.h \
     Hosts.h \
+    net/DataCreator.h \
     net/Net.h \
     net/NetContext.h \
     net/NetRecord.h \

@@ -17,6 +17,7 @@
  */
 
 #include "Ch.h"
+#include "net/DataCreator.h"
 #include "net/Net.h"
 #include "net/NetContext.h"
 #include "net/NetReply.h"
@@ -25,6 +26,7 @@
 #include "sglobal.h"
 
 #define LOG_N9010 LOG_TRACE("N9010", "Core/Net", "s:" << context.socket() << ". data:" << context.req()->toJSON())
+#define LOG_N9011 LOG_ERROR("N9011", "Core/Net", "s:" << context.socket() << ". channel: \"" << destId << "\" not found")
 
 Net::Net(QObject *parent)
   : QObject(parent)
@@ -32,10 +34,35 @@ Net::Net(QObject *parent)
 }
 
 
+void Net::add(DataCreator *creator)
+{
+  m_creators.add(creator);
+}
+
+
+void Net::pub(ChatChannel channel, const QString &path)
+{
+  DataCreator *creator = m_creators.get(path);
+  if (!creator)
+    return;
+
+  NetRecord record;
+  if (!creator->create(channel, path, record))
+    return;
+
+  pub(channel->id(), path, record);
+}
+
+
+void Net::pub(const ChatId &id, const QString &path, const NetRecord &record)
+{
+  m_data[id].insert(path, record);
+}
+
+
 void Net::req(const NetContext &context, NetReply &reply)
 {
   LOG_N9010
-
   const QString destId = context.req()->request.section(LC('/'), 0, 0);
 
   if (destId == LS("server")) {
@@ -47,11 +74,31 @@ void Net::req(const NetContext &context, NetReply &reply)
       m_dest = Ch::channel(id.toByteArray(), id.type());
   }
 
-  if (!m_dest)
+  if (!m_dest) {
+    LOG_N9011
     return;
+  }
 
   if (context.req()->method == NetRequest::GET)
     get(context, reply);
+}
+
+
+Net::Creators::~Creators()
+{
+  qDeleteAll(m_list);
+}
+
+
+void Net::Creators::add(DataCreator *creator)
+{
+  if (m_list.contains(creator))
+    return;
+
+  m_list.append(creator);
+  const QStringList paths = creator->paths();
+  foreach (const QString &path, paths)
+    m_map.insert(path, creator);
 }
 
 

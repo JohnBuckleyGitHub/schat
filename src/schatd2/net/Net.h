@@ -24,6 +24,7 @@
 #include "ServerChannel.h"
 #include "net/NetRecord.h"
 
+class DataCreator;
 class NetContext;
 class NetReply;
 
@@ -34,13 +35,30 @@ class SCHAT_EXPORT Net : public QObject
 public:
   Net(QObject *parent = 0);
 
+  void add(DataCreator *creator);
+  void pub(ChatChannel channel, const QString &path);
+  void pub(const ChatId &id, const QString &path, const NetRecord &record);
   void req(const NetContext &context, NetReply &reply);
 
 private:
+  class Creators
+  {
+  public:
+    Creators() {};
+    ~Creators();
+    inline DataCreator* get(const QString &path) const { return m_map.value(path); }
+    void add(DataCreator *creator);
+
+  private:
+    QList<DataCreator*> m_list;
+    QMap<QString, DataCreator*> m_map;
+  };
+
   bool get(const NetContext &context, NetReply &reply) const;
 
   ChatChannel m_dest;                ///< Канал назначения.
   QMap<ChatId, NetRecordMap> m_data; ///< Хранилище данных.
+  Creators m_creators;               ///< Обработчики для создания данных.
 };
 
 #endif /* NET_H_ */
