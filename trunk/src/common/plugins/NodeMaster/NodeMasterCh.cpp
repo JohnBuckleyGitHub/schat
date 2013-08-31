@@ -49,12 +49,17 @@ void NodeMasterCh::notify(const FeedEvent &event)
   if (event.status != Notice::OK || event.method == FEED_METHOD_GET)
     return;
 
+  const ChatId id(event.channel);
+
   if (event.name == FEED_NAME_USER || event.name == FEED_NAME_CHANNEL) {
-    ChatChannel channel = Ch::channel(event.channel, ChatId(event.channel).type());
+    ChatChannel channel = Ch::channel(event.channel, id.type());
     if (!channel)
       return;
 
     channel->setDate(channel->feed(event.name)->head().date());
     m_net->pub(channel, QString());
+  }
+  else if (event.name == FEED_NAME_LIST) {
+    m_net->pub(Ch::channel(event.channel, id.type()), LS("index"));
   }
 }
