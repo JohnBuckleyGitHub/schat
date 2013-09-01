@@ -84,7 +84,7 @@ ChannelsList.feed = {
    * Формирование HTML кода для канала.
    */
   listItem: function(list) {
-    var title = list[3];
+    var title = htmlspecialchars(list[3]);
     if (title == '')
       title = '<span data-tr="channels_no_title">' + Utils.tr('channels_no_title') + '</span>';
 
@@ -92,7 +92,7 @@ ChannelsList.feed = {
 
     return '<div class="channel-item">' +
              '<div class="channel-item-header">' +
-               '<i class="icon-' + (options & 4 ? 'secure' : 'channel') + '"></i>&nbsp;<a href="' + ChannelsView.toUrl(list[0], list[1]) + '" class="nick color-' + (options & 4 ? 'green' : 'default') + '" id="' + list[0] + '">' + list[1] + '</a>' +
+               '<i class="icon-' + (options & 4 ? 'secure' : 'channel') + '"></i>&nbsp;<a href="' + ChannelsView.toUrl(list[0], list[1]) + '" class="nick color-' + (options & 4 ? 'green' : 'default') + '" id="' + list[0] + '">' + htmlspecialchars(list[1]) + '</a>' +
                '<span class="badge">' + list[2] + (options & 2  ? '</span>&nbsp;<i class="icon-pin"></i>' : '') +
              '</div>' +
              '<div class="channel-item-title">' + title + '</div>' +
