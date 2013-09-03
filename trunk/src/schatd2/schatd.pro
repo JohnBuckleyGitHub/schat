@@ -47,6 +47,7 @@ HEADERS = \
     net/NodeAuthReply.h \
     net/NodePool.h \
     net/NodeWorker.h \
+    net/Subscribers.h \
     net/TcpServer.h \
     NodeLog.h \
     NodeNoticeReader.h \
@@ -81,6 +82,7 @@ SOURCES = \
     net/NodeAuthReply.cpp \
     net/NodePool.cpp \
     net/NodeWorker.cpp \
+    net/Subscribers.cpp \
     net/TcpServer.cpp \
     NodeLog.cpp \
     NodeNoticeReader.cpp \
