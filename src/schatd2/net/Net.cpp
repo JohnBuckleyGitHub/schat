@@ -18,6 +18,7 @@
 
 #include "Ch.h"
 #include "DateTime.h"
+#include "JSON.h"
 #include "net/DataCreator.h"
 #include "net/Net.h"
 #include "net/NetContext.h"
@@ -41,6 +42,9 @@ void Net::add(DataCreator *creator)
 }
 
 
+/*!
+ * Внутренняя функция для инициирования публикации изменений на основе состояния сервера.
+ */
 void Net::pub(ChatChannel channel, const QString &path)
 {
   if (!channel)
@@ -61,12 +65,28 @@ void Net::pub(ChatChannel channel, const QString &path)
 }
 
 
+/*!
+ * Внутренняя функция публикации изменений.
+ */
 void Net::pub(const ChatId &id, const QString &path, const NetRecord &record)
 {
-  m_data[id].insert(path, record);
+  NetRecordMap &map = m_data[id];
+  if (map.value(path).date == record.date)
+    return;
+
+  map.insert(path, record);
+
+  QVariantList list;
+  list.append(LS("RES"));
+  list.append(id.toString() + (path.size() ? LS("/") : QString()) + path);
+  list.append(record.date);
+  list.append(record.data);
 }
 
 
+/*!
+ * Обработка запроса от клиента.
+ */
 void Net::req(const NetContext &context, NetReply &reply)
 {
   LOG_N9010
@@ -122,6 +142,11 @@ bool Net::get(const NetContext &context, NetReply &reply) const
 
   if (map.contains(path)) {
     const NetRecord &record = map[path];
+    if (context.req()->date && context.req()->date == record.date) {
+      reply.status = NetReply::NOT_MODIFIED;
+      return true;
+    }
+
     reply.date   = record.date;
     reply.status = NetReply::OK;
     reply.data   = record.data;
