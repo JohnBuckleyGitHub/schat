@@ -16,8 +16,11 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Account.h"
 #include "Ch.h"
+#include "cores/Core.h"
 #include "DateTime.h"
+#include "events.h"
 #include "JSON.h"
 #include "net/DataCreator.h"
 #include "net/Net.h"
@@ -28,7 +31,8 @@
 #include "sglobal.h"
 
 #define LOG_N9010 LOG_TRACE("N9010", "Core/Net", "s:" << context.socket() << ". data:" << context.req()->toJSON())
-#define LOG_N9011 LOG_ERROR("N9011", "Core/Net", "s:" << context.socket() << ". channel: \"" << destId << "\" not found")
+#define LOG_N9011 LOG_ERROR("N9011", "Core/Net", "s:" << context.socket() << ". Unknown sender \"" << ChatId(Core::i()->packetsEvent()->channelId()).toString() << "\"")
+#define LOG_N9012 LOG_ERROR("N9012", "Core/Net", "s:" << context.socket() << ". channel \"" << destId << "\" not found")
 
 Net::Net(QObject *parent)
   : QObject(parent)
@@ -89,22 +93,8 @@ void Net::pub(const ChatId &id, const QString &path, const NetRecord &record)
  */
 void Net::req(const NetContext &context, NetReply &reply)
 {
-  LOG_N9010
-  const QString destId = context.req()->request.section(LC('/'), 0, 0);
-
-  if (destId == LS("server")) {
-    m_dest = Ch::server();
-  }
-  else {
-    ChatId id(destId);
-    if (!id.isNull())
-      m_dest = Ch::channel(id.toByteArray(), id.type());
-  }
-
-  if (!m_dest) {
-    LOG_N9011
+  if (!prepare(context, reply))
     return;
-  }
 
   if (context.req()->method == NetRequest::GET)
     get(context, reply);
@@ -154,4 +144,49 @@ bool Net::get(const NetContext &context, NetReply &reply) const
   }
 
   return false;
+}
+
+
+/*!
+ * Подготовка запроса к чтению.
+ */
+bool Net::prepare(const NetContext &context, NetReply &reply)
+{
+  LOG_N9010
+
+  m_sender = Ch::channel(Core::i()->packetsEvent()->channelId(), ChatId::UserId, false);
+  if (!m_sender || !m_sender->account()) {
+    reply.status = NetReply::BAD_REQUEST;
+    LOG_N9011
+    return false;
+  }
+
+  if (context.req()->headers.contains(LS("user"))) {
+    if (!m_sender->account()->groups.contains(LS("master"))) {
+      reply.status = NetReply::BAD_REQUEST;
+      return false;
+    }
+
+    const ChatId id(context.req()->headers.value(LS("user")).toString());
+    m_user = id.isNull() ? ChatChannel() : Ch::channel(id.toByteArray(), ChatId::UserId);
+  }
+  else
+    m_user = m_sender;
+
+  const QString destId = context.req()->request.section(LC('/'), 0, 0);
+  if (destId == LS("server")) {
+    m_dest = Ch::server();
+  }
+  else {
+    ChatId id(destId);
+    if (!id.isNull())
+      m_dest = Ch::channel(id.toByteArray(), id.type());
+  }
+
+  if (!m_dest) {
+    LOG_N9012
+    return false;
+  }
+
+  return true;
 }

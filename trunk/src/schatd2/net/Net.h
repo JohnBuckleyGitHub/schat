@@ -55,10 +55,13 @@ private:
   };
 
   bool get(const NetContext &context, NetReply &reply) const;
+  bool prepare(const NetContext &context, NetReply &reply);
 
   ChatChannel m_dest;                ///< Канал назначения.
-  QMap<ChatId, NetRecordMap> m_data; ///< Хранилище данных.
+  ChatChannel m_sender;              ///< Канал через который было доставлен запрос.
+  ChatChannel m_user;                ///< Пользователь отправивший запрос.
   Creators m_creators;               ///< Обработчики для создания данных.
+  QMap<ChatId, NetRecordMap> m_data; ///< Хранилище данных.
 };
 
 #endif /* NET_H_ */
