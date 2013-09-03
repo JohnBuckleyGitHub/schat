@@ -56,6 +56,7 @@ private:
 
   bool get(const NetContext &context, NetReply &reply) const;
   bool prepare(const NetContext &context, NetReply &reply);
+  int matchAcl(const QString &path) const;
 
   ChatChannel m_dest;                ///< Канал назначения.
   ChatChannel m_sender;              ///< Канал через который было доставлен запрос.

@@ -17,6 +17,7 @@
  */
 
 #include "Account.h"
+#include "acl/AclValue.h"
 #include "Ch.h"
 #include "cores/Core.h"
 #include "DateTime.h"
@@ -120,15 +121,28 @@ void Net::Creators::add(DataCreator *creator)
 
 
 /*!
- * \todo Добавить проверку прав доступа.
- * \todo Добавить поддержку хуков.
+ * Обработка GET запроса.
+ *
+ * В случае необходимости пользователь будет автоматически подписан на уведомления об изменении данных.
  */
 bool Net::get(const NetContext &context, NetReply &reply) const
 {
-  Q_UNUSED(reply)
+  ChatId id;
+  if (m_user)
+    id.init(m_user->id());
+
+  const QString path = context.req()->request.section(LC('/'), 1);
+
+  if (!m_dest->subscribers().contains(path, id)) {
+    if (!(matchAcl(path) & Acl::Read)) {
+      reply.status = NetReply::FORBIDDEN;
+      return false;
+    }
+
+    m_dest->subscribers().add(path, id);
+  }
 
   const NetRecordMap &map = m_data[m_dest->id()];
-  const QString path      = context.req()->request.section(LC('/'), 1);
 
   if (map.contains(path)) {
     const NetRecord &record = map[path];
@@ -189,4 +203,15 @@ bool Net::prepare(const NetContext &context, NetReply &reply)
   }
 
   return true;
+}
+
+
+/*!
+ * \todo Добавить проверку прав доступа.
+ */
+int Net::matchAcl(const QString &path) const
+{
+  Q_UNUSED(path)
+
+  return Acl::Read;
 }

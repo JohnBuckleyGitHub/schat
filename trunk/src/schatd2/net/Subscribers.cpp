@@ -16,8 +16,28 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "DateTime.h"
 #include "net/Subscribers.h"
 
 Subscribers::Subscribers()
 {
+}
+
+
+qint64 Subscribers::contains(const QString &path, const ChatId &id) const
+{
+  if (!m_map.contains(path))
+    return 0;
+
+  const Ids& ids = m_map[path];
+  if (!ids.contains(id))
+    return 0;
+
+  return ids.value(id);
+}
+
+
+void Subscribers::add(const QString &path, const ChatId &id)
+{
+  m_map[path].insert(id, DateTime::utc());
 }
