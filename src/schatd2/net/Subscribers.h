@@ -32,6 +32,8 @@ public:
   typedef QMap<ChatId, qint64> Ids;
 
   Subscribers();
+  qint64 contains(const QString &path, const ChatId &id) const;
+  void add(const QString &path, const ChatId &id);
 
 private:
   QMap<QString, Ids> m_map; ///< Карта имён ресурсов и каналов.
