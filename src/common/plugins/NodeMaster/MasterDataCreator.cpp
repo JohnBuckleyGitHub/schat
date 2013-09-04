@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "DateTime.h"
 #include "feeds/ListFeed.h"
 #include "MasterDataCreator.h"
 #include "net/NetRecord.h"
@@ -52,6 +53,12 @@ bool MasterDataCreator::create(ChatChannel channel, const QString &path, NetReco
     return true;
   }
 
+  if (path == LS("sub")) {
+    record.date = DateTime::utc();
+    record.data = channel->subscribers().toData();
+    return true;
+  }
+
   return false;
 }
 
@@ -61,5 +68,6 @@ QStringList MasterDataCreator::paths() const
   QStringList out;
   out.append(QString());
   out.append(LS("index"));
+  out.append(LS("sub"));
   return out;
 }

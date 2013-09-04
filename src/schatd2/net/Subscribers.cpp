@@ -60,6 +60,27 @@ QList<quint64> Subscribers::sockets(const QString &path) const
 }
 
 
+QVariantMap Subscribers::toData() const
+{
+  QVariantMap out;
+  QMapIterator<QString, Ids> i(m_map);
+  while (i.hasNext()) {
+    i.next();
+
+    QVariantMap item;
+    QMapIterator<ChatId, qint64> k(i.value());
+    while (k.hasNext()) {
+      k.next();
+      item.insert(k.key().toString(), k.value());
+    }
+
+    out.insert(i.key(), item);
+  }
+
+  return out;
+}
+
+
 void Subscribers::add(const QString &path, const ChatId &id)
 {
   m_map[path].insert(id, DateTime::utc());

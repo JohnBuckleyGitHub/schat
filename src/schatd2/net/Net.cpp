@@ -102,6 +102,9 @@ void Net::pub(ChatChannel channel, const QString &path, const NetRecord &record)
 
 /*!
  * Обработка запроса от клиента.
+ *
+ * \param context Контекст запроса.
+ * \param reply   Ответ на запрос.
  */
 void Net::req(const NetContext &context, NetReply &reply)
 {
@@ -138,30 +141,13 @@ void Net::Creators::add(DataCreator *creator)
  */
 bool Net::get(const NetContext &context, NetReply &reply) const
 {
-  ChatId id;
-  if (m_user)
-    id.init(m_user->id());
-
   const QString path = context.req()->request.section(LC('/'), 1);
-
-  if (!m_dest->subscribers().contains(path, id)) {
-    if (!(matchAcl(path) & Acl::Read)) {
-      reply.status = NetReply::FORBIDDEN;
-      return false;
-    }
-
-    m_dest->subscribers().add(path, id);
-
-    if (m_sender != m_user) {
-      id.init(m_sender->id());
-
-      if (!m_dest->subscribers().contains(path, id))
-        m_dest->subscribers().add(path, id);
-    }
+  if (!subscribe(path)) {
+    reply.status = NetReply::FORBIDDEN;
+    return false;
   }
 
   const NetRecordMap &map = m_data[m_dest->id()];
-
   if (map.contains(path)) {
     const NetRecord &record = map[path];
     if (context.req()->date && context.req()->date == record.date) {
@@ -219,6 +205,44 @@ bool Net::prepare(const NetContext &context, NetReply &reply)
     LOG_N9012
     return false;
   }
+
+  return true;
+}
+
+
+/*!
+ * Проверка прав доступа на чтение и автоматическая подписка в случае необходимости.
+ *
+ * \param path Имя ресурса.
+ * \return \true если у пользователя есть права на чтение, и он подписан на изменения этого ресурса.
+ */
+bool Net::subscribe(const QString &path) const
+{
+  int changed = 0;
+  ChatId id;
+
+  if (m_user)
+    id.init(m_user->id());
+
+  if (!m_dest->subscribers().contains(path, id)) {
+    if (!(matchAcl(path) & Acl::Read))
+      return false;
+
+    m_dest->subscribers().add(path, id);
+    ++changed;
+  }
+
+  if (m_sender != m_user) {
+    id.init(m_sender->id());
+
+    if (!m_dest->subscribers().contains(path, id)) {
+      m_dest->subscribers().add(path, id);
+      ++changed;
+    }
+  }
+
+  if (changed)
+    emit subscriptionChanged(m_dest->id(), path);
 
   return true;
 }

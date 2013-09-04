@@ -34,6 +34,7 @@ public:
   Subscribers();
   qint64 contains(const QString &path, const ChatId &id) const;
   QList<quint64> sockets(const QString &path) const;
+  QVariantMap toData() const;
   void add(const QString &path, const ChatId &id);
 
 private:

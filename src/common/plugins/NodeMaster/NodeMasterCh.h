@@ -33,7 +33,8 @@ public:
   void load(ChatChannel channel);
 
 private slots:
-  void notify(const FeedEvent &event);
+  void onNotify(const FeedEvent &event);
+  void onSubscriptionChanged(const QByteArray &id, const QString &path);
 
 private:
   Net *m_net;

@@ -40,6 +40,9 @@ public:
   void pub(ChatChannel channel, const QString &path, const NetRecord &record);
   void req(const NetContext &context, NetReply &reply);
 
+signals:
+  void subscriptionChanged(const QByteArray &id, const QString &path) const;
+
 private:
   class Creators
   {
@@ -56,6 +59,7 @@ private:
 
   bool get(const NetContext &context, NetReply &reply) const;
   bool prepare(const NetContext &context, NetReply &reply);
+  bool subscribe(const QString &path) const;
   int matchAcl(const QString &path) const;
 
   ChatChannel m_dest;                ///< Канал назначения.
