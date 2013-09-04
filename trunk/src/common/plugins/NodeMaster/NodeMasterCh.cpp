@@ -33,7 +33,8 @@ NodeMasterCh::NodeMasterCh(QObject *parent)
 
   m_paths = creator->paths();
 
-  connect(FeedEvents::i(), SIGNAL(notify(FeedEvent)), SLOT(notify(FeedEvent)));
+  connect(FeedEvents::i(), SIGNAL(notify(FeedEvent)), SLOT(onNotify(FeedEvent)));
+  connect(m_net, SIGNAL(subscriptionChanged(QByteArray,QString)), SLOT(onSubscriptionChanged(QByteArray,QString)));
 }
 
 
@@ -44,7 +45,7 @@ void NodeMasterCh::load(ChatChannel channel)
 }
 
 
-void NodeMasterCh::notify(const FeedEvent &event)
+void NodeMasterCh::onNotify(const FeedEvent &event)
 {
   if (event.status != Notice::OK || event.method == FEED_METHOD_GET)
     return;
@@ -62,4 +63,11 @@ void NodeMasterCh::notify(const FeedEvent &event)
   else if (event.name == FEED_NAME_LIST) {
     m_net->pub(Ch::channel(event.channel, id.type()), LS("index"));
   }
+}
+
+
+void NodeMasterCh::onSubscriptionChanged(const QByteArray &id, const QString &path)
+{
+  Q_UNUSED(path);
+  m_net->pub(Ch::channel(id, ChatId(id).type()), LS("sub"));
 }
