@@ -28,6 +28,7 @@
 #include "net/NetContext.h"
 #include "net/NetReply.h"
 #include "net/NetRequest.h"
+#include "net/PacketWriter.h"
 #include "NodeLog.h"
 #include "sglobal.h"
 
@@ -66,26 +67,36 @@ void Net::pub(ChatChannel channel, const QString &path)
   if (!record.date)
     record.date = DateTime::utc();
 
-  pub(channel->id(), path, record);
+  pub(channel, path, record);
 }
 
 
 /*!
  * Внутренняя функция публикации изменений.
  */
-void Net::pub(const ChatId &id, const QString &path, const NetRecord &record)
+void Net::pub(ChatChannel channel, const QString &path, const NetRecord &record)
 {
+  const ChatId id(channel->id());
+
   NetRecordMap &map = m_data[id];
   if (map.value(path).date == record.date)
     return;
 
   map.insert(path, record);
 
+  const QList<quint64> sockets = channel->subscribers().sockets(path);
+  if (sockets.isEmpty())
+    return;
+
   QVariantList list;
   list.append(LS("RES"));
   list.append(id.toString() + (path.size() ? LS("/") : QString()) + path);
   list.append(record.date);
   list.append(record.data);
+
+  PacketWriter writer(Core::stream(), Protocol::JSONPacket);
+  writer.put(JSON::generate(list));
+  Core::i()->send(sockets, writer.data());
 }
 
 
@@ -140,6 +151,13 @@ bool Net::get(const NetContext &context, NetReply &reply) const
     }
 
     m_dest->subscribers().add(path, id);
+
+    if (m_sender != m_user) {
+      id.init(m_sender->id());
+
+      if (!m_dest->subscribers().contains(path, id))
+        m_dest->subscribers().add(path, id);
+    }
   }
 
   const NetRecordMap &map = m_data[m_dest->id()];

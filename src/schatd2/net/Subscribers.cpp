@@ -16,8 +16,10 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Ch.h"
 #include "DateTime.h"
 #include "net/Subscribers.h"
+#include "Sockets.h"
 
 Subscribers::Subscribers()
 {
@@ -34,6 +36,27 @@ qint64 Subscribers::contains(const QString &path, const ChatId &id) const
     return 0;
 
   return ids.value(id);
+}
+
+
+QList<quint64> Subscribers::sockets(const QString &path) const
+{
+  QList<quint64> out;
+  if (!m_map.contains(path))
+    return out;
+
+  const Ids& ids = m_map[path];
+  ChatChannel channel;
+
+  QMapIterator<ChatId, qint64> i(ids);
+  while (i.hasNext()) {
+    i.next();
+    channel = Ch::channel(i.key().toByteArray(), ChatId::UserId, false);
+    if (channel)
+      Sockets::merge(out, channel->sockets());
+  }
+
+  return out;
 }
 
 

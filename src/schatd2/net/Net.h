@@ -37,7 +37,7 @@ public:
 
   void add(DataCreator *creator);
   void pub(ChatChannel channel, const QString &path);
-  void pub(const ChatId &id, const QString &path, const NetRecord &record);
+  void pub(ChatChannel channel, const QString &path, const NetRecord &record);
   void req(const NetContext &context, NetReply &reply);
 
 private:
