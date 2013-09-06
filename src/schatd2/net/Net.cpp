@@ -83,20 +83,7 @@ void Net::pub(ChatChannel channel, const QString &path, const NetRecord &record)
     return;
 
   map.insert(path, record);
-
-  const QList<quint64> sockets = channel->subscribers().sockets(path);
-  if (sockets.isEmpty())
-    return;
-
-  QVariantList list;
-  list.append(LS("RES"));
-  list.append(id.toString() + (path.size() ? LS("/") : QString()) + path);
-  list.append(record.date);
-  list.append(record.data);
-
-  PacketWriter writer(Core::stream(), Protocol::JSONPacket);
-  writer.put(JSON::generate(list));
-  Core::i()->send(sockets, writer.data());
+  broadcast(channel, path, record);
 }
 
 
@@ -256,4 +243,35 @@ int Net::matchAcl(const QString &path) const
   Q_UNUSED(path)
 
   return Acl::Read;
+}
+
+
+/*!
+ * Рассылка уведомления всем подписчикам при изменении ресурса.
+ */
+void Net::broadcast(ChatChannel channel, const QString &path, const NetRecord &record)
+{
+  const QList<quint64> sockets = channel->subscribers().sockets(path);
+  if (sockets.isEmpty())
+    return;
+
+  QVariantList list;
+  list.append(LS("RES"));
+  list.append(ChatId(channel->id()).toString() + (path.size() ? LS("/") : QString()) + path);
+  list.append(record.date);
+  list.append(QVariantMap());
+
+  if (record.data.canConvert(QVariant::List)) {
+    const QVariantList d = record.data.toList();
+    if (!d.isEmpty())
+      list.append(record.data.toList());
+    else
+      list.append(QVariant());
+  }
+  else
+    list.append(record.data);
+
+  PacketWriter writer(Core::stream(), Protocol::JSONPacket);
+  writer.put(JSON::generate(list));
+  Core::i()->send(sockets, writer.data());
 }

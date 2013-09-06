@@ -80,7 +80,7 @@ bool Ch::gc(ChatChannel channel)
     Ch::server()->removeChannel(channel->id());
   }
 
-  if (channel->channels().all().size())
+  if (channel->channels().all().size() || !channel->subscribers().isEmpty())
     return false;
 
   m_self->remove(channel);

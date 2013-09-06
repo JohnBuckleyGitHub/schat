@@ -32,6 +32,7 @@ public:
   typedef QMap<ChatId, qint64> Ids;
 
   Subscribers();
+  inline bool isEmpty() const { return m_map.isEmpty(); }
   qint64 contains(const QString &path, const ChatId &id) const;
   QList<quint64> sockets(const QString &path) const;
   QVariantMap toData() const;

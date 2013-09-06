@@ -61,6 +61,7 @@ private:
   bool prepare(const NetContext &context, NetReply &reply);
   bool subscribe(const QString &path) const;
   int matchAcl(const QString &path) const;
+  void broadcast(ChatChannel channel, const QString &path, const NetRecord &record);
 
   ChatChannel m_dest;                ///< Канал назначения.
   ChatChannel m_sender;              ///< Канал через который было доставлен запрос.
