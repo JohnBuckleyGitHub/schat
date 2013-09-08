@@ -23,6 +23,7 @@ HEADERS  = \
    feeds/AutoKick.h \
    feeds/NodeInfoFeed.h \
    feeds/NodeListFeed.h \
+   feeds/NodeStatsFeed.h \
    feeds/NodeUsersFeed.h \
    NodeChannelIndex.h \
    NodeChannelsCh.h \
@@ -33,6 +34,7 @@ SOURCES  = \
    feeds/AutoKick.cpp \
    feeds/NodeInfoFeed.cpp \
    feeds/NodeListFeed.cpp \
+   feeds/NodeStatsFeed.cpp \
    feeds/NodeUsersFeed.cpp \
    NodeChannelIndex.cpp \
    NodeChannelsCh.cpp \

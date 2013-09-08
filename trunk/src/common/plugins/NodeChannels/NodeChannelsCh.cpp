@@ -29,7 +29,7 @@ NodeChannelsCh::NodeChannelsCh(QObject *parent)
 
 void NodeChannelsCh::load()
 {
-  QStringList permanent = Storage::value(LS("PermanentChannels")).toStringList();
+  const QStringList permanent = Storage::value(LS("PermanentChannels")).toStringList();
 
   foreach (const QString &id, permanent) {
     ChatChannel channel = Ch::channel(SimpleID::decode(id), SimpleID::ChannelId);
@@ -44,6 +44,7 @@ void NodeChannelsCh::newChannel(ChatChannel channel, ChatChannel user)
   Q_UNUSED(user)
   Ch::addNewFeedIfNotExist(channel, FEED_NAME_INFO);
   channel->feed(FEED_NAME_USERS);
+  channel->feed(FEED_NAME_STATS);
 }
 
 
@@ -52,6 +53,7 @@ void NodeChannelsCh::server(ChatChannel channel, bool created)
   Q_UNUSED(created)
   channel->feed(FEED_NAME_LIST);
   channel->feed(FEED_NAME_USERS);
+  channel->feed(FEED_NAME_STATS);
 }
 
 
@@ -60,4 +62,11 @@ void NodeChannelsCh::sync(ChatChannel channel, ChatChannel user)
   Q_UNUSED(user)
   Ch::addNewFeedIfNotExist(channel, FEED_NAME_INFO);
   channel->feed(FEED_NAME_USERS);
+  channel->feed(FEED_NAME_STATS);
+}
+
+
+void NodeChannelsCh::userChannel(ChatChannel channel)
+{
+  channel->feed(FEED_NAME_STATS);
 }

@@ -35,9 +35,10 @@
 #define FEED_NAME_PLUGINS  QLatin1String("plugins")
 #define FEED_NAME_PROFILE  QLatin1String("profile")
 #define FEED_NAME_SERVER   QLatin1String("server")
+#define FEED_NAME_SETTINGS QLatin1String("settings")
+#define FEED_NAME_STATS    QLatin1String("stats")
 #define FEED_NAME_STORAGE  QLatin1String("storage")
 #define FEED_NAME_USER     QLatin1String("user")
-#define FEED_NAME_SETTINGS QLatin1String("settings")
 #define FEED_NAME_USERS    QLatin1String("users")
 
 #define FEED_WILDCARD_ASTERISK QLatin1String("*")

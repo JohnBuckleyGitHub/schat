@@ -22,6 +22,7 @@
 #include "feeds/FeedStorage.h"
 #include "feeds/NodeInfoFeed.h"
 #include "feeds/NodeListFeed.h"
+#include "feeds/NodeStatsFeed.h"
 #include "feeds/NodeUsersFeed.h"
 #include "NodeChannelIndex.h"
 #include "NodeChannelsCh.h"
@@ -43,6 +44,7 @@ NodeChannelsImpl::NodeChannelsImpl(QObject *parent)
   FeedStorage::add(new NodeInfoFeedCreator());
   FeedStorage::add(new NodeListFeedCreator());
   FeedStorage::add(new NodeUsersFeedCreator());
+  FeedStorage::add(new NodeStatsFeedCreator());
 }
 
 
