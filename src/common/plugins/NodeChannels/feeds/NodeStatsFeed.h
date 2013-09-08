@@ -16,22 +16,34 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NODECHANNELSCH_H_
-#define NODECHANNELSCH_H_
+#ifndef NODESTATSFEED_H_
+#define NODESTATSFEED_H_
 
-#include "ChHook.h"
+#include "feeds/Feed.h"
+#include "feeds/FeedCreator.h"
 
-class NodeChannelsCh : public ChHook
+/*!
+ * Серверная реализация фида \b stats.
+ */
+class NodeStatsFeed : public Feed
 {
-  Q_OBJECT
-
 public:
-  NodeChannelsCh(QObject *parent = 0);
-  void load();
-  void newChannel(ChatChannel channel, ChatChannel user = ChatChannel());
-  void server(ChatChannel channel, bool created);
-  void sync(ChatChannel channel, ChatChannel user = ChatChannel());
-  void userChannel(ChatChannel channel);
+  NodeStatsFeed(const QString &name, const QVariantMap &data);
+  NodeStatsFeed(const QString &name = FEED_NAME_STATS, qint64 date = 0);
+
+  void setChannel(Channel *channel);
+
+private:
+  void init();
 };
 
-#endif /* NODECHANNELSCH_H_ */
+
+class NodeStatsFeedCreator : public FeedCreator
+{
+public:
+  Feed* create(const QString &name) const;
+  Feed* load(const QString &name, const QVariantMap &data) const;
+  inline QString name() const { return FEED_NAME_STATS; }
+};
+
+#endif /* NODESTATSFEED_H_ */

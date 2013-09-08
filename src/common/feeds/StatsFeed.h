@@ -15,23 +15,9 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef STATSFEED_H_
+#define STATSFEED_H_
 
-#ifndef NODECHANNELSCH_H_
-#define NODECHANNELSCH_H_
+#define STATS_FEED_USERS_KEY QLatin1String("users")
 
-#include "ChHook.h"
-
-class NodeChannelsCh : public ChHook
-{
-  Q_OBJECT
-
-public:
-  NodeChannelsCh(QObject *parent = 0);
-  void load();
-  void newChannel(ChatChannel channel, ChatChannel user = ChatChannel());
-  void server(ChatChannel channel, bool created);
-  void sync(ChatChannel channel, ChatChannel user = ChatChannel());
-  void userChannel(ChatChannel channel);
-};
-
-#endif /* NODECHANNELSCH_H_ */
+#endif /* STATSFEED_H_ */
