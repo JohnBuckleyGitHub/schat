@@ -31,10 +31,14 @@ public:
   NodeStatsFeed(const QString &name, const QVariantMap &data);
   NodeStatsFeed(const QString &name = FEED_NAME_STATS, qint64 date = 0);
 
+  FeedReply del(const QString &path, Channel *user = 0, const QByteArray &blob = QByteArray());
+  FeedReply post(const QString &path, const QVariantMap &json, Channel *user = 0, const QByteArray &blob = QByteArray());
+  FeedReply put(const QString &path, const QVariantMap &json, Channel *user = 0, const QByteArray &blob = QByteArray());
   void setChannel(Channel *channel);
 
 private:
   void init();
+  qint64 rooms();
 };
 
 

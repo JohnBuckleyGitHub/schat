@@ -75,11 +75,15 @@ ServerChannel::~ServerChannel()
  */
 bool ServerChannel::addChannel(const QByteArray &id)
 {
+  const ChatId _id(id);
+
   if (m_channels.add(id)) {
     m_offline.remove(id);
 
-    if (SimpleID::typeOf(id) == SimpleID::UserId)
-      FeedsCore::post(this, FEED_NAME_USERS + LC('/') + SimpleID::encode(id), Ch::server().data(), QVariant(), Feed::Broadcast);
+    if (_id.type() == ChatId::UserId) {
+      FeedsCore::post(this, FEED_NAME_USERS + LC('/') + _id.toString(), Ch::server().data(), QVariant(), Feed::Broadcast);
+      FeedsCore::post(this, FEED_NAME_STATS + LC('/') + _id.toString(), Ch::server().data(), QVariant(), Feed::Broadcast);
+    }
 
     return true;
   }
@@ -93,14 +97,18 @@ bool ServerChannel::addChannel(const QByteArray &id)
  */
 bool ServerChannel::removeChannel(const QByteArray &id, bool offline)
 {
+  const ChatId _id(id);
+
   if (m_channels.contains(id)) {
     m_channels.remove(id);
 
     if (offline)
       m_offline.add(id);
 
-    if (SimpleID::typeOf(id) == SimpleID::UserId)
-      FeedsCore::del(this, FEED_NAME_USERS + LC('/') + SimpleID::encode(id), Ch::server().data(), Feed::Broadcast);
+    if (_id.type() == ChatId::UserId) {
+      FeedsCore::del(this, FEED_NAME_USERS + LC('/') + _id.toString(), Ch::server().data(), Feed::Broadcast);
+      FeedsCore::del(this, FEED_NAME_STATS + LC('/') + _id.toString(), Ch::server().data(), Feed::Broadcast);
+    }
 
     return true;
   }

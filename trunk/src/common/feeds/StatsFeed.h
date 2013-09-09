@@ -19,5 +19,6 @@
 #define STATSFEED_H_
 
 #define STATS_FEED_USERS_KEY QLatin1String("users")
+#define STATS_FEED_ROOMS_KEY QLatin1String("rooms")
 
 #endif /* STATSFEED_H_ */
