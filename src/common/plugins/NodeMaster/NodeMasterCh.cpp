@@ -60,9 +60,10 @@ void NodeMasterCh::onNotify(const FeedEvent &event)
     channel->setDate(channel->feed(event.name)->head().date());
     m_net->pub(channel, QString());
   }
-  else if (event.name == FEED_NAME_LIST) {
+  else if (event.name == FEED_NAME_LIST)
     m_net->pub(Ch::channel(event.channel, id.type()), LS("index"));
-  }
+  else if (event.name == FEED_NAME_STATS)
+    m_net->pub(Ch::channel(event.channel, id.type()), LS("stats"));
 }
 
 

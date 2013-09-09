@@ -27,6 +27,10 @@ public:
   MasterDataCreator() : DataCreator() {}
   bool create(ChatChannel channel, const QString &path, NetRecord &record) const;
   QStringList paths() const;
+
+private:
+  bool server(ChatChannel channel, NetRecord &record) const;
+  bool stats(ChatChannel channel, NetRecord &record) const;
 };
 
 #endif /* MASTERDATACREATOR_H_ */

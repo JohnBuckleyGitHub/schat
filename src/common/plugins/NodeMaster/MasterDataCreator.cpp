@@ -59,19 +59,11 @@ bool MasterDataCreator::create(ChatChannel channel, const QString &path, NetReco
     return true;
   }
 
-  if (path == LS("server")) {
-    FeedPtr feed     = channel->feed(FEED_NAME_SERVER);
-    record.date      = feed->head().date();
-    QVariantMap data = feed->data();
-    QVariantMap out;
-    out.insert(LS("id"),   data.value(LS("id")));
-    out.insert(LS("name"), data.value(LS("name")));
-    out.insert(LS("ver"),  data.value(LS("version")));
-    out.insert(LS("os"),   QVariantList() << data.value(LS("os")));
+  if (path == LS("server"))
+    return server(channel, record);
 
-    record.data = out;
-    return true;
-  }
+  if (path == LS("stats"))
+    return stats(channel, record);
 
   return false;
 }
@@ -84,5 +76,32 @@ QStringList MasterDataCreator::paths() const
   out.append(LS("index"));
   out.append(LS("sub"));
   out.append(LS("server"));
+  out.append(LS("stats"));
   return out;
+}
+
+
+bool MasterDataCreator::server(ChatChannel channel, NetRecord &record) const
+{
+  FeedPtr feed = channel->feed(FEED_NAME_SERVER);
+  record.date  = feed->head().date();
+  const QVariantMap data = feed->data();
+
+  QVariantMap out;
+  out.insert(LS("id"),   data.value(LS("id")));
+  out.insert(LS("name"), data.value(LS("name")));
+  out.insert(LS("ver"),  data.value(LS("version")));
+  out.insert(LS("os"),   QVariantList() << data.value(LS("os")));
+
+  record.data = out;
+  return true;
+}
+
+
+bool MasterDataCreator::stats(ChatChannel channel, NetRecord &record) const
+{
+  FeedPtr feed = channel->feed(FEED_NAME_STATS);
+  record.date  = feed->head().date();
+  record.data  = feed->data();
+  return true;
 }
