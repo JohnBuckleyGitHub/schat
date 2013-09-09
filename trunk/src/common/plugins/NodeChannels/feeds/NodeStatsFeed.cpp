@@ -18,6 +18,7 @@
 
 #include "Ch.h"
 #include "DateTime.h"
+#include "feeds/FeedsCore.h"
 #include "feeds/InfoFeed.h"
 #include "feeds/NodeStatsFeed.h"
 #include "feeds/StatsFeed.h"
@@ -141,6 +142,8 @@ void NodeStatsFeed::setChannel(Channel *channel)
 void NodeStatsFeed::init()
 {
   m_header.acl().setMask(0444);
+
+  FeedsCore::sub(FEED_NAME_STATS);
 }
 
 
