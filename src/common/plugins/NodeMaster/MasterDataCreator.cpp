@@ -49,6 +49,14 @@ bool MasterDataCreator::create(ChatChannel channel, const QString &path, NetReco
     return true;
   }
 
+  if (channel->type() == ChatId::ServerId || channel->type() == ChatId::ChannelId) {
+    if (path == LS("stats"))
+      return stats(channel, record);
+
+    if (path == LS("users"))
+      return users(channel, record);
+  }
+
   if (channel->type() != ChatId::ServerId)
     return false;
 
@@ -62,9 +70,6 @@ bool MasterDataCreator::create(ChatChannel channel, const QString &path, NetReco
   if (path == LS("server"))
     return server(channel, record);
 
-  if (path == LS("stats"))
-    return stats(channel, record);
-
   return false;
 }
 
@@ -77,6 +82,7 @@ QStringList MasterDataCreator::paths() const
   out.append(LS("sub"));
   out.append(LS("server"));
   out.append(LS("stats"));
+  out.append(LS("users"));
   return out;
 }
 
@@ -103,5 +109,22 @@ bool MasterDataCreator::stats(ChatChannel channel, NetRecord &record) const
   FeedPtr feed = channel->feed(FEED_NAME_STATS);
   record.date  = feed->head().date();
   record.data  = feed->data();
+  return true;
+}
+
+
+bool MasterDataCreator::users(ChatChannel channel, NetRecord &record) const
+{
+  FeedPtr feed = channel->feed(FEED_NAME_USERS);
+  record.date  = feed->head().date();
+  const QList<QByteArray> users = channel->channels().all(ChatId::UserId);
+
+  QStringList out;
+  ChatId id;
+
+  foreach (const QByteArray &userId, users)
+    out.append(id.init(userId).toString());
+
+  record.data = out;
   return true;
 }

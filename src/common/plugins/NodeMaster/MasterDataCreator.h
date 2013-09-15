@@ -31,6 +31,7 @@ public:
 private:
   bool server(ChatChannel channel, NetRecord &record) const;
   bool stats(ChatChannel channel, NetRecord &record) const;
+  bool users(ChatChannel channel, NetRecord &record) const;
 };
 
 #endif /* MASTERDATACREATOR_H_ */
