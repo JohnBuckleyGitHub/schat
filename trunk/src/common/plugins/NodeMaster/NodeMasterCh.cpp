@@ -63,7 +63,9 @@ void NodeMasterCh::onNotify(const FeedEvent &event)
   else if (event.name == FEED_NAME_LIST)
     m_net->pub(Ch::channel(event.channel, id.type()), LS("index"));
   else if (event.name == FEED_NAME_STATS)
-    m_net->pub(Ch::channel(event.channel, id.type()), LS("stats"));
+    m_net->pub(Ch::channel(event.channel, id.type()), FEED_NAME_STATS);
+  else if (event.name == FEED_NAME_USERS)
+    m_net->pub(Ch::channel(event.channel, id.type()), FEED_NAME_USERS);
 }
 
 
