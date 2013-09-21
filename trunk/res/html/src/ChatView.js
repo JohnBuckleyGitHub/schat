@@ -812,11 +812,9 @@ var Modal = {
 
 
 $(document).ready(function() {
-  //$.fx.off = true;
+  window.Chat = document.getElementById('Chat');
 
-  $(window).resize(function() {
-    alignChat();
-  });
+  $(window).resize(alignChat);
 
   $("#page-switcher-start").on("click", function(event){
     Pages.setPage(0);
@@ -849,7 +847,7 @@ function alignChat() {
   var windowHeight = window.innerHeight;
 
   if (windowHeight > 0) {
-    var contentElement = document.getElementById('Chat');
+    var contentElement = window.Chat;
     var contentHeight = contentElement.offsetHeight;
     if (windowHeight - contentHeight > 0) {
       contentElement.style.position = 'relative';
