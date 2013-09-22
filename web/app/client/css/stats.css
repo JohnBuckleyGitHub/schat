@@ -1,0 +1,15 @@
+.panel-stats h3 {
+  margin: 3px 0;
+}
+
+.panel-stats .pager {
+  margin-bottom: 10px;
+}
+
+.panel-stats .pager .disabled>a {
+  cursor: default;
+}
+
+.img-stats-graph {
+  margin: 0 auto;
+}

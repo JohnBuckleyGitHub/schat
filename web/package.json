@@ -1,0 +1,20 @@
+{
+  "name": "schat-client",
+  "version": "0.1.0",
+  "dependencies": {
+    "node-int64": "0.3.x",
+    "node-uuid": "1.4.x",
+    "starttls": "0.1.x",
+    "express": "3.3.x",
+    "sockjs": "0.3.x"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-jshint": "~0.6.3",
+    "grunt-contrib-uglify": "~0.2.2",
+    "grunt-contrib-watch": "~0.5.2",
+    "grunt-contrib-cssmin": "~0.6.1",
+    "grunt-recess": "~0.4.0"
+  }
+}
