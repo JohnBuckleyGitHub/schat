@@ -1,0 +1,63 @@
+body {
+  background-color: #eee;
+}
+
+.oauth-widget {
+  text-align: center;
+}
+
+.oauth-widget h3 {
+  margin-top: 0;
+}
+
+.oauth-widget .btn {
+  text-align: left;
+  margin: 2px;
+}
+
+.provider {
+  background-image: url(../img/providers.png?1);
+  background-position: 0 0;
+  background-size: 160px 16px;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  vertical-align: text-top;
+  background-repeat: no-repeat;
+}
+
+.provider-google {
+  background-position: -16px 0;
+}
+
+.provider-yandex {
+  background-position: -32px 0;
+}
+
+.provider-facebook {
+  background-position: -48px 0;
+}
+
+.provider-vkontakte {
+  background-position: -64px 0;
+}
+
+.provider-mail_ru {
+  background-position: -80px 0;
+}
+
+.provider-odnoklassniki {
+  background-position: -96px 0;
+}
+
+.provider-live {
+  background-position: -112px 0;
+}
+
+.provider-github {
+  background-position: -128px 0;
+}
+
+.provider-stackoverflow {
+  background-position: -144px 0;
+}

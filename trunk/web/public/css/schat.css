@@ -1,0 +1,265 @@
+body {
+  padding-top: 50px;
+}
+
+.navbar-brand {
+  background: url(../img/schat2.png) no-repeat 2px 2px;
+  background-size: 48px 48px;
+  padding-left: 52px;
+}
+
+.schat-navbar-right {
+  margin-right: 8px;
+}
+
+.center-wrapper {
+  display: table;
+  margin: 0 auto;
+}
+
+.center-widget {
+  margin: 10px;
+  padding: 15px;
+  background-color: #fff;
+  border: 1px solid #e5e5e5;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+  -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+  box-shadow: 0 1px 2px rgba(0,0,0,.05);
+}
+
+.panel-main {
+  margin: 6px;
+}
+
+.alert-danger {
+  background: #f2dede;
+  border-color: #eed3d7;
+}
+
+.list-group-item:hover, .list-group-item:focus {
+  text-decoration: none;
+  background-color: #f5f5f5;
+}
+
+.list-group-item, .panel-heading, .panel-body {
+  padding: 8px 10px;
+}
+
+.schat-icon {
+  position: relative;
+  top: 1px;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  vertical-align: text-top;
+  line-height: 1;
+  opacity: 0.7;
+  background: url(../img/schat-icons.png) no-repeat 20px 20px;
+  background-size: 40px 20px;
+}
+
+.schat-icon-pin {
+  background-position: -2px -2px;
+}
+
+.schat-icon-lock {
+  background-position: -22px -2px;
+}
+.full-overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  z-index: 9000;
+  background: #000;
+  opacity: .75;
+  -webkit-transition:opacity .4s;
+  -moz-transition:opacity .4s;
+  transition:opacity .4s;
+}
+
+.full-overlay > .spinner {
+  width: 47px;
+  height: 47px;
+  -webkit-animation: spinner 3s linear infinite;
+  -moz-animation: spinner 3s linear infinite;
+  animation: spinner 3s linear infinite;
+  margin: -10px 0 0 -10px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  opacity: .5;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC8AAAAvCAYAAABzJ5OsAAAB5klEQVRo3u1a0ZWEIAy0BEqwBEuwBEqwBDugBEugBEqgBEugBEuY/Yl33j2FBHBl3928t38rDJBJJmjXVQQAgzh81yoAbEhjaJF4Dx7GFsmPTPLmCWI+NjGAmUneRsbQNM9Ui/j0W3QAVIZYo6I9eX6pTXxHOAoPwABgZZLfAOjDs4o2RHRKucR/xG9k4hQChdqWG2YlxN8JI0l5G9qD/sRd3zFzd982Rnw9y3BX5JUge9yNTWwpKP21EPtTbrrUDxNf3mG2zmJ0oTpQUgumEvJS4ToAfURHRjheuNufi1JZhpYGjms0tNM+Q6jLTfb5GIaOOE5fPYHAylY92gq1xHUZcVhFVAXJ4NtaVyDfF2hqfZR8Yb/g/8n/SfIsn12njtxC3t7YZibJK/IhvmAnRiFxRT1srkW+vh6hCqiFAw4C8k5ysntVZTckGYLaUidAhWkVjqm6N8alp+eGA2GdaQdsSSpTH9lFZcTmXf1rn0PcoA2sUqFqtAUrifMWb8xmbpvWItyn3pgFadxbZjYozSb1b8wYC3Ckj4H+J1mI23N4ohDmEU8sYC5IreFCZ6Eq8ZMFhKsBBVbCR7KcP+T2eu9rU65OcBdjU/M88R6W64NM1yKYoh1bJc/x/6pV8j3F/tWv6kcTLz9aUc7PUOHRAAAAAElFTkSuQmCC) no-repeat;
+}
+
+.full-overlay > .spinner.one {
+  margin-left: -47px;
+  margin-top: -20px;
+}
+
+.full-overlay > .spinner.two {
+  margin-left: -1px;
+  animation-direction: reverse;
+  -moz-animation-direction: reverse;
+  -webkit-animation-direction: reverse;
+}
+
+.full-overlay > .spinner.three {
+  margin-left: -4px;
+  margin-top: 36px;
+  width: 33px;
+  height: 33px;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACEAAAAhCAYAAABX5MJvAAABV0lEQVRYw81XWxHDIBCMBCREAhIiIRIiIQ6QEAmRUAlIQAISkLD9ubZTGsgdr+nO5IeBy3KPvWOaCgBgxTX8NAoATIIEevxMJ9Yt0lgu9s8AVAmBg4y62ACtpbBGezcAgT4tIXBGhsPrhmQ0BwtAA1AJO7qEQGyEi5BZ1yVZ3xouR2IfRMLXhKMV9B0JdZP9tdhqFfHHrVQNtkkYhCFxsSiRB01VKAAs5AHDIKByKsvQkfXrEsKKCBz5ZXrkEyLhgZMZTiXJVCmJXZBXrheJVUDC9iJhBCRCLxK+sc68SSgqT0MzhK3xBtnzjDI96Z9LaVKZxLmZcZYt2xtTsg+6jWE2Pl8y2o3voAIvVM0SWdUl3Q/oD/sPk1U6LAMGGl6FZIicJEIPRqc9aO+VXhyToAu6FPMbb5nIji2R/XhS0g2egbuk+VU/iEVPvUoS27BXOSNU8Vfk8icEb1ExJcCeuAAAAABJRU5ErkJggg==) no-repeat;
+}
+
+@-webkit-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0);
+  }
+  100% {
+    -webkit-transform: rotate(720deg);
+  }
+}
+@-moz-keyframes spinner {
+  from {
+    -moz-transform: rotate(0);
+  }
+  to {
+    -moz-transform: rotate(720deg);
+  }
+}
+@keyframes spinner {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(720deg);
+  }
+}
+
+body {
+  background-color: #eee;
+}
+
+.oauth-widget {
+  text-align: center;
+}
+
+.oauth-widget h3 {
+  margin-top: 0;
+}
+
+.oauth-widget .btn {
+  text-align: left;
+  margin: 2px;
+}
+
+.provider {
+  background-image: url(../img/providers.png?1);
+  background-position: 0 0;
+  background-size: 160px 16px;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  vertical-align: text-top;
+  background-repeat: no-repeat;
+}
+
+.provider-google {
+  background-position: -16px 0;
+}
+
+.provider-yandex {
+  background-position: -32px 0;
+}
+
+.provider-facebook {
+  background-position: -48px 0;
+}
+
+.provider-vkontakte {
+  background-position: -64px 0;
+}
+
+.provider-mail_ru {
+  background-position: -80px 0;
+}
+
+.provider-odnoklassniki {
+  background-position: -96px 0;
+}
+
+.provider-live {
+  background-position: -112px 0;
+}
+
+.provider-github {
+  background-position: -128px 0;
+}
+
+.provider-stackoverflow {
+  background-position: -144px 0;
+}
+
+.signin-widget .close {
+  margin-top: -14px;
+  margin-right: -10px
+}
+
+.signin-widget .dropdown-toggle {
+  border-left: none
+}
+.panel-rooms h5 {
+  font-weight: bold;
+}
+
+.panel-rooms .schat-icon {
+  margin-right: 2px;
+}
+
+.panel-stats h3 {
+  margin: 3px 0;
+}
+
+.panel-stats .pager {
+  margin-bottom: 10px;
+}
+
+.panel-stats .pager .disabled>a {
+  cursor: default;
+}
+
+.img-stats-graph {
+  margin: 0 auto;
+}
+
+.panel-user h3 {
+  margin: 3px 0;
+}
+@media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min-resolution: 144dpi) {
+  .navbar-brand {
+    background-image: url(../img/schat2@2x.png);
+  }
+
+  .provider {
+    background-image: url(../img/providers@2x.png);
+  }
+
+  .full-overlay > .spinner, .full-overlay > .spinner.three {
+    background-image: url(../img/loader@2x.png);
+    background-size: 80px 47px;
+  }
+
+  .full-overlay > .spinner.three {
+    background-position: -47px 0;
+  }
+
+  .schat-icon {
+    background-image: url(../img/schat-icons@2x.png);
+  }
+}
