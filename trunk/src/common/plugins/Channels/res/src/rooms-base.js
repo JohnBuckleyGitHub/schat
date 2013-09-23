@@ -54,6 +54,21 @@
     online();
 
     /**
+     * Обработка нажатия на кнопку входа в канал.
+     */
+    $('#join').on('click.join', function(event) {
+      event.preventDefault();
+
+      var name = navbar.joinName.value;
+
+      if (name.length >= 3) {
+        ChannelsView.join(name);
+        navbar.joinName.value = '';
+      }
+    });
+
+
+    /**
      * Обработка нажатия на ссылку входа в канал по его идентификатору.
      */
     $('body').on('click.channel', '.nick', function (event) {

@@ -9,3 +9,15 @@
 .navbar-right {
   padding-right: 8px;
 }
+
+#join-name {
+  border-radius: 4px 0 0 4px;
+  margin: 0;
+  min-width: 222px;
+}
+
+#join {
+  margin-left: 0;
+  border-radius: 0 4px 4px 0;
+  border-left: 0;
+}
