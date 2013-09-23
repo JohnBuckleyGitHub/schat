@@ -799,8 +799,12 @@ if (typeof window !== 'undefined') {
 
   window.tr = function(key, param) {
     var lang = schat.lang.current;
-    if (!schat.lang.hasOwnProperty(lang))
+    if (!schat.lang.hasOwnProperty(lang)) {
       lang = 'en';
+
+      if (!schat.lang.hasOwnProperty(lang))
+        return key;
+    }
 
     var value = schat.lang[lang][key];
     if (!value && lang != 'en')
@@ -1603,6 +1607,7 @@ if (typeof window !== 'undefined') {
   function MainWidget() {
     schat.ui.main.textContent = '';
     schat.ui.main.setAttribute('class', 'panel-main');
+    this.qt = typeof SimpleChat !== 'undefined';
 
     this.date = {
       index: 0,
@@ -1610,18 +1615,23 @@ if (typeof window !== 'undefined') {
     };
 
     var panel = schat.ui.createElement('div', {class:'panel panel-default panel-rooms'});
-    panel.appendChild(schat.ui.createElement('div', {class:'panel-heading','data-tr':'common-rooms'}));
+
+    if (!this.qt)
+      panel.appendChild(schat.ui.createElement('div', {class:'panel-heading','data-tr':'common-rooms'}));
+
     this.rooms = schat.ui.createElement('div', {class:'list-group'});
     panel.appendChild(this.rooms);
     schat.ui.main.appendChild(panel);
 
-    panel = schat.ui.createElement('div', {class:'panel panel-default panel-stats'});
-    panel.appendChild(schat.ui.createElement('div', {class:'panel-heading'},
-        '<a href="/stats" class="internal" data-tr="common-stats">' + tr('common-stats') + '</a>'
-    ));
+    if (!this.qt) {
+      panel = schat.ui.createElement('div', {class:'panel panel-default panel-stats'});
+      panel.appendChild(schat.ui.createElement('div', {class:'panel-heading'},
+          (this.qt ? tr('common-stats') : '<a href="/stats" class="internal" data-tr="common-stats">' + tr('common-stats') + '</a>')
+      ));
 
-    this.stats = panel.appendChild(schat.ui.createElement('div', {class:'panel-body'}));
-    schat.ui.main.appendChild(panel);
+      this.stats = panel.appendChild(schat.ui.createElement('div', {class:'panel-body'}));
+      schat.ui.main.appendChild(panel);
+    }
   }
 
 
@@ -1635,7 +1645,7 @@ if (typeof window !== 'undefined') {
           '<span class="badge">' + rooms[i][2] + '</span>' +
               ((options & 2) ? '<i class="schat-icon schat-icon-pin pull-right"></i>' : '') +
               ((options & 4) ? '<i class="schat-icon schat-icon-lock pull-right"></i>' : '') +
-              '<h5 class="list-group-item-heading"><a class="internal" href="/talk/' + rooms[i][0] + '">' + schat.utils.encode(rooms[i][1]) + '</a></h5>' +
+              '<h5 class="list-group-item-heading">' + this.toUrl(rooms[i][0], rooms[i][1], options) + '</h5>' +
               '<small class="list-group-item-text text-muted">' + (rooms[i][3] === '' ? tr('channels-no-title') : schat.utils.encode(rooms[i][3]) ) + '</small>'
       ));
     }
@@ -1654,6 +1664,11 @@ if (typeof window !== 'undefined') {
         ]);
 
     $('.timeago').timeago();
+  };
+
+
+  MainWidget.prototype.toUrl = function(id, name, options) {
+    return '<a class="internal" href="/talk/' + id + '">' + schat.utils.encode(name) + '</a>';
   };
 
   window.schat.ui.MainWidget = MainWidget;
