@@ -48,12 +48,12 @@
 <context>
     <name>UpdateSettings</name>
     <message>
-        <location filename="../../UpdateSettings.cpp" line="73"/>
+        <location filename="../../UpdateSettings.cpp" line="77"/>
         <source>Automatically download and install updates</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../UpdateSettings.cpp" line="74"/>
+        <location filename="../../UpdateSettings.cpp" line="78"/>
         <source>Update to beta versions</source>
         <translation type="unfinished"></translation>
     </message>
