@@ -1,6 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
-  <file alias="css/Channels/bootstrap.css">res/css/bootstrap.min.css</file>
   <file alias="css/Channels/bootstrap-dropdown.css">res/css/bootstrap-dropdown.min.css</file>
   <file alias="css/Channels/bootstrap-override.css">res/css/bootstrap-override.min.css</file>
   <file alias="css/Channels/Channels.css">res/css/Channels.min.css</file>
