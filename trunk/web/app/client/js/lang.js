@@ -5,8 +5,12 @@
 
   window.tr = function(key, param) {
     var lang = schat.lang.current;
-    if (!schat.lang.hasOwnProperty(lang))
+    if (!schat.lang.hasOwnProperty(lang)) {
       lang = 'en';
+
+      if (!schat.lang.hasOwnProperty(lang))
+        return key;
+    }
 
     var value = schat.lang[lang][key];
     if (!value && lang != 'en')

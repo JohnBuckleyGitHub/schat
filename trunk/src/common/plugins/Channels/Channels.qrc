@@ -4,7 +4,7 @@
   <file alias="css/Channels/bootstrap-dropdown.css">res/css/bootstrap-dropdown.min.css</file>
   <file alias="css/Channels/bootstrap-override.css">res/css/bootstrap-override.min.css</file>
   <file alias="css/Channels/Channels.css">res/css/Channels.min.css</file>
-  <file alias="css/Channels/ListView.css">res/css/ListView.min.css</file>
+  <file alias="css/Channels/rooms.css">res/css/rooms.min.css</file>
   <file alias="html/channel_options.html">res/html/channel_options.html</file>
   <file alias="html/Channels/create.html">res/html/create.html</file>
   <file alias="html/Channels/index.html">res/html/index.html</file>
@@ -15,7 +15,7 @@
   <file alias="js/Channels/bootstrap-dropdown.js">res/js/bootstrap-dropdown.min.js</file>
   <file alias="js/Channels/Channels.js">res/js/Channels.min.js</file>
   <file alias="js/Channels/ChannelsUser.js">res/js/ChannelsUser.min.js</file>
-  <file alias="js/Channels/ListView.js">res/js/ListView.min.js</file>
+  <file alias="js/Channels/rooms.js">res/js/rooms.min.js</file>
   <file alias="translations/channels_ru.qm">res/translations/channels_ru.qm</file>
   <file alias="translations/channels_uk.qm">res/translations/channels_uk.qm</file>
 </qresource>

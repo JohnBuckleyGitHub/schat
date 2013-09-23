@@ -72,13 +72,16 @@ TabWidget::TabWidget(QWidget *parent)
   setTabBar(m_tabBar);
   setDocumentMode(true);
 
-  #if !defined(Q_OS_MAC)
+# if !defined(Q_OS_MAC)
   setStyleSheet(LS("QToolBar { margin:0px; border:0px; }"));
-  #endif
+# endif
 
   QWebSettings::globalSettings()->setFontSize(QWebSettings::DefaultFontSize,         fontInfo().pixelSize());
   QWebSettings::globalSettings()->setFontSize(QWebSettings::DefaultFixedFontSize,    fontInfo().pixelSize());
   QWebSettings::globalSettings()->setFontFamily(QWebSettings::StandardFont,          fontInfo().family());
+  QWebSettings::globalSettings()->setFontFamily(QWebSettings::SerifFont,             fontInfo().family());
+  QWebSettings::globalSettings()->setFontFamily(QWebSettings::SansSerifFont,         fontInfo().family());
+  QWebSettings::globalSettings()->setAttribute(QWebSettings::LocalStorageEnabled,    true);
   QWebSettings::globalSettings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, ChatCore::settings()->value(SETTINGS_LABS_DEVELOPER_EXTRAS).toBool());
 
   m_authIcon = new AuthIcon();
