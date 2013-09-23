@@ -23,6 +23,7 @@
 
   if (typeof SimpleChat !== 'undefined') {
     SimpleChat.online.connect(function() { online(); });
+    SimpleChat.retranslated.connect(function() { retranslate(); });
   }
 
 
@@ -50,7 +51,15 @@
   }
 
 
+  function retranslate() {
+    navbar.joinName.setAttribute('placeholder', tr('channels-channel-name'));
+  }
+
+
   function ready() {
+    schat.lang.retranslate();
+    retranslate();
+
     online();
 
     /**

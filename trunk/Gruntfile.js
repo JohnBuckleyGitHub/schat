@@ -12,7 +12,7 @@ module.exports = function(grunt) {
             'web/app/client/js/base.js',
             'web/app/client/js/utils.js',
             'web/app/client/js/phpjs.js',
-            'web/app/client/js/lang.js',
+            'res/html/src/lang.js',
             'web/app/client/js/ui/ui-base.js',
             'web/app/client/js/ui/ui-index.js',
             '<%= pkg.rooms %>/src/rooms-ui-navbar.js',
