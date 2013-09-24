@@ -9,11 +9,13 @@ module.exports = function(grunt) {
       js: {
         files: {
           '<%= pkg.rooms %>/src/rooms.js': [
+            'web/app/3rdparty/bootstrap/js/modal.js',
             'web/app/client/js/base.js',
             'web/app/client/js/utils.js',
             'web/app/client/js/phpjs.js',
             'res/html/src/lang.js',
             'web/app/client/js/ui/ui-base.js',
+            'web/app/client/js/ui/ui-modal.js',
             'web/app/client/js/ui/ui-index.js',
             '<%= pkg.rooms %>/src/rooms-ui-navbar.js',
             '<%= pkg.rooms %>/src/rooms-base.js'
@@ -44,7 +46,9 @@ module.exports = function(grunt) {
           'src/common/plugins/SendFile/res/js/SendFile.min.js': ['src/common/plugins/SendFile/res/src/SendFile.js'],
           'src/common/plugins/History/res/js/History.min.js': ['src/common/plugins/History/res/src/History.js'],
           'src/common/plugins/History/res/js/days.min.js': ['src/common/plugins/History/res/src/days.js'],
-          '<%= pkg.rooms %>/js/rooms.min.js': ['<%= pkg.rooms %>/src/rooms.js']
+          '<%= pkg.rooms %>/js/rooms.min.js': ['<%= pkg.rooms %>/src/rooms.js'],
+          '<%= pkg.rooms %>/js/Channels.min.js': ['<%= pkg.rooms %>/src/Channels.js'],
+          '<%= pkg.rooms %>/js/ChannelsUser.min.js': ['<%= pkg.rooms %>/src/ChannelsUser.js']
         }
       }
     },
