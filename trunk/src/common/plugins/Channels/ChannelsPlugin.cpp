@@ -80,8 +80,7 @@ protected:
     else if (key == LS("sudo-invite"))    return tr("Only owners and moderators can invite to room");
     else if (key == LS("create"))         return tr("Create");
     else if (key == LS("create-title"))   return tr("Create new room");
-    else if (key == LS("name-label"))     return tr("Name:");
-    else if (key == LS("access-label"))   return tr("Access:");
+    else if (key == LS("name-label"))     return tr("Room name:");
     else if (key == LS("access-checkbox"))return tr("This room is private");
     else if (key == LS("cancel"))         return tr("Cancel");
     else if (key == LS("bad-name"))       return tr("Invalid room name. Please choose another name.");
@@ -213,7 +212,7 @@ void ChannelsPluginImpl::showMenu(QMenu *menu, QAction *separator)
 {
   Q_UNUSED(separator)
 
-  m_list->setText(tr("Channels"));
+  m_list->setText(tr("Rooms"));
   m_list->setChecked(TabWidget::isCurrent(TabWidget::i()->tab(LIST_TAB, TabWidget::NoOptions)));
 
   menu->addAction(m_list);

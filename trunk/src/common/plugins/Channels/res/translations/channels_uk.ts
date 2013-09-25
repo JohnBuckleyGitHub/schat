@@ -64,8 +64,8 @@
 <context>
     <name>ChannelsPluginImpl</name>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="216"/>
-        <source>Channels</source>
+        <location filename="../../ChannelsPlugin.cpp" line="215"/>
+        <source>Rooms</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -195,17 +195,22 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="85"/>
+        <location filename="../../ChannelsPlugin.cpp" line="83"/>
+        <source>Room name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="84"/>
         <source>This room is private</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="87"/>
+        <location filename="../../ChannelsPlugin.cpp" line="86"/>
         <source>Invalid room name. Please choose another name.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="88"/>
+        <location filename="../../ChannelsPlugin.cpp" line="87"/>
         <source>That room already exists. Please choose another name.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -215,17 +220,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="83"/>
-        <source>Name:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../ChannelsPlugin.cpp" line="84"/>
-        <source>Access:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../ChannelsPlugin.cpp" line="86"/>
+        <location filename="../../ChannelsPlugin.cpp" line="85"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
@@ -234,7 +229,7 @@
     <name>ListTab</name>
     <message>
         <location filename="../../ui/ListTab.cpp" line="51"/>
-        <source>Channels</source>
+        <source>Rooms</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
