@@ -21,3 +21,10 @@
   border-radius: 0 4px 4px 0;
   border-left: 0;
 }
+
+#name-alert {
+  display: none;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  padding: 3px 6px;
+}

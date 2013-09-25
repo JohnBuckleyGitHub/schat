@@ -64,9 +64,9 @@
 <context>
     <name>ChannelsPluginImpl</name>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="216"/>
-        <source>Channels</source>
-        <translation>Каналы</translation>
+        <location filename="../../ChannelsPlugin.cpp" line="215"/>
+        <source>Rooms</source>
+        <translation>Комнаты</translation>
     </message>
 </context>
 <context>
@@ -195,17 +195,22 @@
         <translation>Создать новую комнату</translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="85"/>
+        <location filename="../../ChannelsPlugin.cpp" line="83"/>
+        <source>Room name:</source>
+        <translation>Имя комнаты:</translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="84"/>
         <source>This room is private</source>
         <translation>Приватная комната</translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="87"/>
+        <location filename="../../ChannelsPlugin.cpp" line="86"/>
         <source>Invalid room name. Please choose another name.</source>
         <translation>Неправильное имя комнаты. Пожалуйста, выберите другое имя.</translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="88"/>
+        <location filename="../../ChannelsPlugin.cpp" line="87"/>
         <source>That room already exists. Please choose another name.</source>
         <translation>Такая комната уже существует. Пожалуйста, выберите другое имя.</translation>
     </message>
@@ -215,17 +220,7 @@
         <translation>Создать</translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="83"/>
-        <source>Name:</source>
-        <translation>Имя канала:</translation>
-    </message>
-    <message>
-        <location filename="../../ChannelsPlugin.cpp" line="84"/>
-        <source>Access:</source>
-        <translation>Доступ:</translation>
-    </message>
-    <message>
-        <location filename="../../ChannelsPlugin.cpp" line="86"/>
+        <location filename="../../ChannelsPlugin.cpp" line="85"/>
         <source>Cancel</source>
         <translation>Отмена</translation>
     </message>
@@ -234,8 +229,8 @@
     <name>ListTab</name>
     <message>
         <location filename="../../ui/ListTab.cpp" line="51"/>
-        <source>Channels</source>
-        <translation>Каналы</translation>
+        <source>Rooms</source>
+        <translation>Комнаты</translation>
     </message>
 </context>
 <context>

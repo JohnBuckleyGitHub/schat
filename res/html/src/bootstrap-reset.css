@@ -35,12 +35,33 @@ small,
 }
 
 .modal-header,
-.modal-body,
 .modal-footer {
   padding: 8px;
+}
+
+.modal-body {
+  padding: 12px;
+}
+
+.modal-footer {
+  margin-top: 8px;
 }
 
 .modal-backdrop.in {
   border-left: 1px solid #a0a0a0;
   border-right: 1px solid #a0a0a0;
+}
+
+.form-group {
+  margin-bottom: 0;
+}
+
+input[type="checkbox"] {
+  margin: 0;
+}
+
+h4 {
+  font-size: 14px;
+  font-family: inherit;
+  font-weight: bold;
 }

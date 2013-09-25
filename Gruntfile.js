@@ -18,6 +18,7 @@ module.exports = function(grunt) {
             'web/app/client/js/ui/ui-modal.js',
             'web/app/client/js/ui/ui-index.js',
             '<%= pkg.rooms %>/src/rooms-ui-navbar.js',
+            '<%= pkg.rooms %>/src/rooms-ui-create.js',
             '<%= pkg.rooms %>/src/rooms-base.js'
           ]
         }
