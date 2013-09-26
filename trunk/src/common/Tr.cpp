@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2012 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -53,7 +53,34 @@ QString Tr::value(const QString &key)
 }
 
 
+QString Tr::value(const QString &key, int number)
+{
+  QString out;
+  foreach (Tr *hook, m_hooks) {
+    if (!hook->prefix().isEmpty() && key.startsWith(hook->prefix())) {
+      out = hook->valueImpl(key.mid(hook->prefix().size()), number);
+      if (!out.isEmpty())
+        return out;
+    }
+  }
+
+  for (int i = 0; i < m_hooks.size(); ++i) {
+    out = m_hooks.at(i)->valueImpl(key, number);
+    if (!out.isEmpty())
+      return out;
+  }
+
+  return key;
+}
+
+
 QString Tr::valueImpl(const QString & /*key*/) const
+{
+  return QString();
+}
+
+
+QString Tr::valueImpl(const QString & /*key*/, int /*number*/) const
 {
   return QString();
 }

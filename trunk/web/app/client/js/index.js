@@ -65,7 +65,7 @@
         widget = new schat.ui.MainWidget();
 
       widget.date.stats = reply.date;
-      widget.setStats(reply.data);
+      widget.setStats(reply.data[0]);
     }
 
     hideLoader();

@@ -1,6 +1,8 @@
 (function() {
   'use strict';
 
+  var create = schat.ui.createElement;
+
   function MainWidget() {
     schat.ui.main.textContent = '';
     schat.ui.main.setAttribute('class', 'panel-main');
@@ -11,24 +13,23 @@
       stats: 0
     };
 
-    var panel = schat.ui.createElement('div', {class:'panel panel-default panel-rooms'});
+    var panel = create('div', {class:'panel panel-default panel-rooms'});
 
     if (!this.qt)
-      panel.appendChild(schat.ui.createElement('div', {class:'panel-heading','data-tr':'common-rooms'}));
+      panel.appendChild(create('div', {class:'panel-heading','data-tr':'common-rooms'}));
 
-    this.rooms = schat.ui.createElement('div', {class:'list-group'});
+    this.rooms = create('div', {class:'list-group'});
     panel.appendChild(this.rooms);
     schat.ui.main.appendChild(panel);
 
-    if (!this.qt) {
-      panel = schat.ui.createElement('div', {class:'panel panel-default panel-stats'});
-      panel.appendChild(schat.ui.createElement('div', {class:'panel-heading'},
-          (this.qt ? tr('common-stats') : '<a href="/stats" class="internal" data-tr="common-stats">' + tr('common-stats') + '</a>')
-      ));
+    panel = create('div', {class:'panel panel-default panel-stats'});
+    if (!this.qt)
+      panel.appendChild(create('div', {class:'panel-heading'}, '<a href="/stats" class="internal" data-tr="common-stats">' + tr('common-stats') + '</a>'));
+    else
+      panel.appendChild(create('div', {class:'panel-heading', 'data-tr':'common-stats'}));
 
-      this.stats = panel.appendChild(schat.ui.createElement('div', {class:'panel-body'}));
-      schat.ui.main.appendChild(panel);
-    }
+    this.stats = panel.appendChild(create('div', {class:'panel-body'}));
+    schat.ui.main.appendChild(panel);
   }
 
 
@@ -38,7 +39,7 @@
     for (var i = 0; i < rooms.length; i++) {
       var options = rooms[i][4];
 
-      this.rooms.appendChild(schat.ui.createElement('div', {class:'list-group-item'},
+      this.rooms.appendChild(create('div', {class:'list-group-item'},
           '<span class="badge">' + rooms[i][2] + '</span>' +
               ((options & 2) ? '<i class="schat-icon schat-icon-pin pull-right"></i>' : '') +
               ((options & 4) ? '<i class="schat-icon schat-icon-lock pull-right"></i>' : '') +
@@ -50,7 +51,8 @@
 
 
   MainWidget.prototype.setStats = function(stats) {
-    stats = stats[0];
+    if (!stats)
+      return;
 
     this.stats.innerHTML = schat.utils.format(tr('stats-stats'),
         [

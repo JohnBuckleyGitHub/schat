@@ -85,6 +85,14 @@ protected:
     else if (key == LS("cancel"))         return tr("Cancel");
     else if (key == LS("bad-name"))       return tr("Invalid room name. Please choose another name.");
     else if (key == LS("already-exists")) return tr("That room already exists. Please choose another name.");
+    else if (key == LS("stats-stats"))    return tr("Now {0} online in {1}. Peak online <b>{2}</b> was <span class=\"timeago\" data-date=\"{3}\"></span>.");
+    return QString();
+  }
+
+
+  QString valueImpl(const QString &key, int number) const {
+    if      (key == LS("stats-users")) return tr("<b>%n</b> user(s)", "", number);
+    else if (key == LS("stats-rooms")) return tr("<b>%n</b> room(s)", "", number);
     return QString();
   }
 };

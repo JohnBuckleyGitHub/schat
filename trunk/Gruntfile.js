@@ -10,6 +10,7 @@ module.exports = function(grunt) {
         files: {
           '<%= pkg.rooms %>/src/rooms.js': [
             'web/app/3rdparty/bootstrap/js/modal.js',
+            'web/app/client/js/3rdparty/jquery.timeago.js',
             'web/app/client/js/base.js',
             'web/app/client/js/utils.js',
             'web/app/client/js/phpjs.js',
@@ -81,6 +82,7 @@ module.exports = function(grunt) {
           'web/app/3rdparty/bootstrap/less/schat-channels.less',
           'web/app/3rdparty/bootstrap/less/theme.less',
           'res/html/src/bootstrap-reset.css',
+          'res/html/src/scrollbar.css',
           'web/app/client/css/base.css',
           'web/app/client/css/icons.css',
           'res/html/src/icons.css',
