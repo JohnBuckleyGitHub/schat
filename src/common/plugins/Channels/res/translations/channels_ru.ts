@@ -64,7 +64,7 @@
 <context>
     <name>ChannelsPluginImpl</name>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="215"/>
+        <location filename="../../ChannelsPlugin.cpp" line="223"/>
         <source>Rooms</source>
         <translation>Комнаты</translation>
     </message>
@@ -213,6 +213,29 @@
         <location filename="../../ChannelsPlugin.cpp" line="87"/>
         <source>That room already exists. Please choose another name.</source>
         <translation>Такая комната уже существует. Пожалуйста, выберите другое имя.</translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="88"/>
+        <source>Now {0} online in {1}. Peak online &lt;b&gt;{2}&lt;/b&gt; was &lt;span class=&quot;timeago&quot; data-date=&quot;{3}&quot;&gt;&lt;/span&gt;.</source>
+        <translation>Сейчас {0} онлайн в {1}. Пиковый онлайн &lt;b&gt;{2}&lt;/b&gt; был &lt;span class=&quot;timeago&quot; data-date=&quot;{3}&quot;&gt;&lt;/span&gt;.</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../ChannelsPlugin.cpp" line="94"/>
+        <source>&lt;b&gt;%n&lt;/b&gt; user(s)</source>
+        <translation>
+            <numerusform>&lt;b&gt;%n&lt;/b&gt; пользователь</numerusform>
+            <numerusform>&lt;b&gt;%n&lt;/b&gt; пользователя</numerusform>
+            <numerusform>&lt;b&gt;%n&lt;/b&gt; пользователей</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../ChannelsPlugin.cpp" line="95"/>
+        <source>&lt;b&gt;%n&lt;/b&gt; room(s)</source>
+        <translation>
+            <numerusform>&lt;b&gt;%n&lt;/b&gt; комнате</numerusform>
+            <numerusform>&lt;b&gt;%n&lt;/b&gt; комнатах</numerusform>
+            <numerusform>&lt;b&gt;%n&lt;/b&gt; комнатах</numerusform>
+        </translation>
     </message>
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="81"/>

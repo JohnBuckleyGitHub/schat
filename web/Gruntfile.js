@@ -38,6 +38,7 @@ module.exports = function(grunt) {
       },
       css: {
         src: [
+          'app/client/css/navbar.css',
           'app/client/css/base.css',
           'app/client/css/icons.css',
           'app/client/css/loader.css',

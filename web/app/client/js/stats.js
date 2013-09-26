@@ -11,7 +11,7 @@
     if (widget === null)
       widget = new schat.ui.StatsWidget();
 
-    widget.setStats(reply.data);
+    widget.setStats(reply.data[0]);
   }
 
   function get() {

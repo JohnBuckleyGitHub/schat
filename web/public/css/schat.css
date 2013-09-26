@@ -1,3 +1,17 @@
+body {
+  padding-top: 50px;
+}
+
+.navbar-brand {
+  background: url(../img/schat2.png) no-repeat 2px 2px;
+  background-size: 48px 48px;
+  padding-left: 52px;
+}
+
+.schat-navbar-right {
+  margin-right: 8px;
+}
+
 .center-wrapper {
   display: table;
   margin: 0 auto;

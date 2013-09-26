@@ -58,7 +58,7 @@
     suffixFromNow: null,
     seconds: "меньше минуты",
     minute: "минуту",
-    minutes: function(value) { return numpf(value, "<b>%d<b/> минута", "<b>%d</b> минуты", "<b>%d</b> минут"); },
+    minutes: function(value) { return numpf(value, "<b>%d<b/> минуту", "<b>%d</b> минуты", "<b>%d</b> минут"); },
     hour: "час",
     hours: function(value) { return numpf(value, "<b>%d</b> час", "<b>%d</b> часа", "<b>%d</b> часов"); },
     day: "день",

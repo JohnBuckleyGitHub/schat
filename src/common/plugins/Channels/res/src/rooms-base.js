@@ -51,6 +51,8 @@
         createRoom(json.data, json.status);
       }
     }
+    else if (json.feed == 'stats' && json.type == 'body' && (json.status == 200 || json.status == 303))
+      rooms.setStats(json.data);
   }
 
 
@@ -72,6 +74,7 @@
 
   function retranslate() {
     navbar.joinName.setAttribute('placeholder', tr('channels-channel-name'));
+    rooms.setStats(SimpleChat.feed(SimpleChat.serverId(), 'stats', 3));
   }
 
 

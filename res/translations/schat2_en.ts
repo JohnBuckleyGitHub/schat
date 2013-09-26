@@ -1112,6 +1112,11 @@
         <source>This message has been removed.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../../src/schat2/WebBridge.cpp" line="102"/>
+        <source>Statistics</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>WebView</name>
