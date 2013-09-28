@@ -108,7 +108,7 @@ var Profile = {
 
   Field: {
     name: function(key, value) {
-      Profile.addRow(key, Utils.left(htmlspecialchars(Utils.simplified(value)), 128));
+      Profile.addRow(key, Utils.left(schat.utils.encode(Utils.simplified(value)), 128));
     }
   },
 
@@ -167,7 +167,7 @@ var Connections = {
   process: function(key, json) {
     $('#connections').append(
         '<div class="connection-row bottom-line" id="' + key + '">' +
-          '<i title="' + htmlspecialchars(json.osName) + '" class="icon-os os-' + Pages.os(json.os) + '"></i> ' +
+          '<i title="' + schat.utils.encode(json.osName) + '" class="icon-os os-' + Pages.os(json.os) + '"></i> ' +
           '<a href="#" class="connection-host modal-toggle" data-handler="connection">' + json.host + '</a>' +
         '</div>'
     );
@@ -235,9 +235,9 @@ var Connections = {
       var feed = SimpleChat.feed(Settings.getId(), FEED_NAME_USER, 3);
 
       if (feed !== false && feed.hasOwnProperty('last'))
-        html += '<a href="#" class="modal-toggle timeago" data-handler="connection" title="' + mdate + '">' + DateTime.template(mdate, true) + '</a>';
+        html += '<a href="#" class="modal-toggle timeago" data-handler="connection" data-date="' + mdate + '">' + DateTime.template(mdate, true) + '</a>';
       else
-        html += '<span class="timeago" title="' + mdate + '">' + DateTime.template(mdate, true) + '</span>';
+        html += '<span class="timeago" data-date="' + mdate + '">' + DateTime.template(mdate, true) + '</span>';
 
       block.html(html +'</div>');
 
@@ -267,9 +267,7 @@ var Connections = {
 
 
   retranslate: function() {
-    Loader.loadJS('qrc:/js/jquery.timeago.' + Utils.tr('lang') + '.js', function() {
-      $('.timeago').timeago();
-    });
+    $('.timeago').timeago();
   }
 };
 
@@ -297,8 +295,8 @@ Modal.create.connection = function(e)
 
   var modal = $('#modal-body');
   h3.text(json.host);
-  modal.append(Utils.row('chat_version', htmlspecialchars(json.version)));
-  modal.append(Utils.row('os_name', '<i class="icon-os os-' + Pages.os(json.os) + '"></i> ' + htmlspecialchars(json.osName)));
+  modal.append(Utils.row('chat_version', schat.utils.encode(json.version)));
+  modal.append(Utils.row('os_name', '<i class="icon-os os-' + Pages.os(json.os) + '"></i> ' + schat.utils.encode(json.osName)));
 
   for (var i = 0; i < UserHooks.connection.length; i++)
     UserHooks.connection[i](json);

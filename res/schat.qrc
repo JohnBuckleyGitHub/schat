@@ -101,16 +101,11 @@
   <file alias="images/user-yellow.png">images/fugue/user-yellow.png</file>
   <file alias="images/user-yellow-female.png">images/fugue/user-yellow-female.png</file>
   <file alias="js/about.js">html/js/about.min.js</file>
-  <file alias="js/bootstrap-modal.js">html/js/bootstrap-modal.min.js</file>
-  <file alias="js/bootstrap-tooltip.js">html/js/bootstrap-tooltip.min.js</file>
-  <file alias="js/ChatView.js">html/js/ChatView.min.js</file>
+  <file alias="js/common.js">js/common.min.js</file>
   <file alias="js/jquery.js">html/js/jquery.min.js</file>
-  <file alias="js/jquery.timeago.en.js">html/js/jquery.timeago.en.min.js</file>
-  <file alias="js/jquery.timeago.js">html/js/jquery.timeago.min.js</file>
-  <file alias="js/jquery.timeago.ru.js">html/js/jquery.timeago.ru.min.js</file>
   <file alias="js/PluginsView.js">html/js/PluginsView.min.js</file>
-  <file alias="js/server.js">html/js/server.min.js</file>
-  <file alias="js/user.js">html/js/user.min.js</file>
+  <file alias="js/server.js">js/server.min.js</file>
+  <file alias="js/user.js">js/user.min.js</file>
   <file>html/about.html</file>
   <file>html/Channel.html</file>
   <file>html/Plugins.html</file>
