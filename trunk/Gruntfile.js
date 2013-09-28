@@ -14,30 +14,37 @@ module.exports = function(grunt) {
             'web/app/client/js/base.js',
             'web/app/client/js/utils.js',
             'web/app/client/js/phpjs.js',
-            'res/html/src/lang.js',
+            'res/js/lang.js',
             'web/app/client/js/ui/ui-base.js',
             'web/app/client/js/ui/ui-modal.js',
             'web/app/client/js/ui/ui-index.js',
             '<%= pkg.rooms %>/src/rooms-ui-navbar.js',
             '<%= pkg.rooms %>/src/rooms-ui-create.js',
             '<%= pkg.rooms %>/src/rooms-base.js'
-          ]
+          ],
+          'res/js/common.js': [
+            'web/app/3rdparty/bootstrap/js/modal.js',
+            'web/app/3rdparty/bootstrap/js/tooltip.js',
+            'web/app/client/js/3rdparty/jquery.timeago.js',
+            'web/app/client/js/base.js',
+            'web/app/client/js/utils.js',
+            'web/app/client/js/phpjs.js',
+            'res/js/ChatView.js',
+            'res/js/lang.js'
+          ],
+          'res/js/user.js': ['res/js/user-base.js'],
+          'res/js/server.js': ['res/js/server-base.js']
         }
       }
     },
     uglify: {
       base: {
         files: {
-          'res/html/js/ChatView.min.js': ['res/html/src/ChatView.js'],
           'res/html/js/PluginsView.min.js': ['res/html/src/PluginsView.js'],
-          'res/html/js/server.min.js': ['res/html/src/server.js'],
-          'res/html/js/user.min.js': ['res/html/src/user.js'],
           'res/html/js/about.min.js': ['res/html/src/about.js'],
-          'res/html/js/bootstrap-tooltip.min.js': ['res/html/src/bootstrap-tooltip.js'],
-          'res/html/js/bootstrap-modal.min.js': ['res/html/src/bootstrap-modal.js'],
-          'res/html/js/jquery.timeago.min.js': ['res/html/src/jquery.timeago.js'],
-          'res/html/js/jquery.timeago.en.min.js': ['res/html/src/jquery.timeago.en.js'],
-          'res/html/js/jquery.timeago.ru.min.js': ['res/html/src/jquery.timeago.ru.js']
+          'res/js/common.min.js': ['res/js/common.js'],
+          'res/js/user.min.js': ['res/js/user.js'],
+          'res/js/server.min.js': ['res/js/server.js']
         }
       },
       plugins: {

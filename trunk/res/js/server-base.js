@@ -34,7 +34,9 @@ var Hosts = {
     try {
       Hosts[json.type](json.data);
     }
-    catch (e) {}
+    catch (e) {
+      console.error(e);
+    }
   },
 
 
@@ -46,14 +48,14 @@ var Hosts = {
       var out = '<tr class="host-row" id="' + key + '">' +
                   '<td class="os-cell">' +
                     '<i class="' + ((json.online === true ? "icon-status" : "icon-status-offline")) + ' host-status"></i>' +
-                    '<a class="host-os" title="' +  htmlspecialchars(json.osName) + '"><i class="icon-os os-' + Pages.os(json.os) + '"></i></a>' +
+                    '<a class="host-os" title="' +  schat.utils.encode(json.osName) + '"><i class="icon-os os-' + Pages.os(json.os) + '"></i></a>' +
                   '</td>' +
                   '<td class="host-name">' +
-                    htmlspecialchars(json.name) +
+                   schat.utils.encode(json.name) +
                   '</td>' +
                   '<td>' +
                     '<a class="host-info" rel="tooltip" data-original-title="' + Utils.table({'version': json.version, 'last_ip': json.host}) + '">' +
-                    '<i class="icon-info"></i></a> <span class="last-activity timeago" title="' + json.date + '">' + DateTime.template(json.date, true) + '</span>' +
+                    '<i class="icon-info"></i></a> <span class="last-activity timeago" data-date="' + json.date + '">' + DateTime.template(json.date, true) + '</span>' +
                   '</td>' +
                   '<td>' +
                     '<a onclick="" class="btn btn-small btn-unlink" data-tr="unlink" data-id="' + key + '">Unlink</a>' +
@@ -79,9 +81,7 @@ var Hosts = {
       Hosts.processSingleHost(key, json[key]);
     }
 
-    Loader.loadJS('qrc:/js/jquery.timeago.' + Utils.tr('lang') + '.js', function() {
-      $('.timeago').timeago();
-    });
+    $('.timeago').timeago();
 
     $('#hosts-content p').show();
     $('#hosts-content #fieldset').show();
@@ -117,7 +117,9 @@ Pages.onInfo.push(Hosts.reload);
 try {
   ChatView.feed.connect(Hosts.feed);
   ChatView.reload.connect(Hosts.reload);
-} catch (e) {}
+} catch (e) {
+  console.error(e);
+}
 
 
 /*
