@@ -1,7 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
-  <file alias="css/Console/bootstrap.css">../Channels/res/css/bootstrap.min.css</file>
-  <file alias="css/Console/bootstrap-override.css">../Channels/res/css/bootstrap-override.min.css</file>
+  <file alias="css/Console/bootstrap.css">res/css/bootstrap.min.css</file>
+  <file alias="css/Console/bootstrap-override.css">res/css/bootstrap-override.min.css</file>
   <file alias="css/Console/console.css">res/css/console.min.css</file>
   <file alias="html/Console/home.html">res/html/home.html</file>
   <file alias="html/Console/index.html">res/html/index.html</file>
