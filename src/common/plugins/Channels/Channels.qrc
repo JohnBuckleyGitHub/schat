@@ -1,6 +1,6 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
-  <file alias="css/Channels/Channels.css">res/css/Channels.min.css</file>
+  <file alias="css/Channels/room.css">res/css/room.min.css</file>
   <file alias="css/Channels/rooms.css">res/css/rooms.min.css</file>
   <file alias="html/channel_options.html">res/html/channel_options.html</file>
   <file alias="html/Channels/index.html">res/html/index.html</file>

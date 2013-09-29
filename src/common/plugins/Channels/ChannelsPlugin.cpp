@@ -202,7 +202,7 @@ void ChannelsPluginImpl::loadFinished(ChatView *view)
   if (SimpleID::typeOf(view->id()) != SimpleID::ChannelId)
     return;
 
-  view->addCSS(LS("qrc:/css/Channels/Channels.css"));
+  view->addCSS(LS("qrc:/css/Channels/room.css"));
 }
 
 
