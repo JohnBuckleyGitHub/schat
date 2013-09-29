@@ -16,7 +16,7 @@
 
   modal.appendChild(dialog);
 
-  window.schat.ui.modal = {
+  schat.ui.modal = {
     element: modal,
     header: header,
     title: title,
@@ -27,11 +27,28 @@
 
   $(document).ready(function() {
     $(modal).on('hidden.bs.modal', function() {
+      if (schat.ui.modal.current) {
+        try {
+          schat.ui.modal.current.hidden();
+        }
+        catch (e) {}
+      }
+
       title.textContent  = '';
       body.textContent   = '';
       footer.textContent = '';
+      footer.style.display = 'block';
 
       schat.ui.modal.current = null;
     })
   });
+
+  $(modal).on('shown.bs.modal', function() {
+    if (schat.ui.modal.current) {
+      try {
+        schat.ui.modal.current.shown();
+      }
+      catch (e) {}
+    }
+  })
 })();

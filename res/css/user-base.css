@@ -114,3 +114,7 @@ h3 {
   display: inline-block;
   height: 16px;
 }
+
+.modal-body {
+  padding-top: 6px;
+}
