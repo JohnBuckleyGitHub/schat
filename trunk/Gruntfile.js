@@ -23,6 +23,7 @@ module.exports = function(grunt) {
             '<%= pkg.rooms %>/src/rooms-base.js'
           ],
           'res/js/common.js': [
+            'web/app/3rdparty/bootstrap/js/dropdown.js',
             'web/app/3rdparty/bootstrap/js/modal.js',
             'web/app/3rdparty/bootstrap/js/tooltip.js',
             'web/app/client/js/3rdparty/jquery.timeago.js',
@@ -66,10 +67,6 @@ module.exports = function(grunt) {
         files: {
           'res/html/css/about.min.css': ['res/html/css/about.min.css'],
           'res/html/css/PluginsView.min.css': ['res/html/css/PluginsView.min.css'],
-          'res/html/css/ChatView.min.css': ['res/html/css/ChatView.min.css'],
-          'res/html/css/server.min.css': ['res/html/css/server.min.css'],
-          'res/html/css/user.min.css': ['res/html/css/user.min.css'],
-          'res/html/css/channel.min.css': ['res/html/css/channel.min.css']
         }
       },
       plugins: {
@@ -88,18 +85,32 @@ module.exports = function(grunt) {
         rooms: [
           'web/app/3rdparty/bootstrap/less/schat-channels.less',
           'web/app/3rdparty/bootstrap/less/theme.less',
-          'res/html/src/bootstrap-reset.css',
-          'res/html/src/scrollbar.css',
+          'res/css/bootstrap-reset.css',
+          'res/css/scrollbar.css',
           'web/app/client/css/base.css',
           'web/app/client/css/icons.css',
-          'res/html/src/icons.css',
+          'res/css/icons.css',
           'web/app/client/css/index.css',
           '<%= pkg.rooms %>/src/rooms-base.css'
+        ],
+        common: [
+          'web/app/3rdparty/bootstrap/less/schat-common.less',
+          'web/app/3rdparty/bootstrap/less/theme.less',
+          'res/css/bootstrap-reset.css',
+          'res/css/scrollbar.css',
+          'web/app/client/css/base.css',
+          'web/app/client/css/icons.css',
+          'res/css/icons.css',
+          'res/css/ChatView.css'
         ]
       },
       compile: {
         files: {
-          '<%= pkg.rooms %>/src/rooms.css': ['<%= recess.options.rooms %>']
+          '<%= pkg.rooms %>/src/rooms.css': ['<%= recess.options.rooms %>'],
+          'res/css/common.css': ['<%= recess.options.common %>'],
+          'res/css/channel.css': ['res/css/channel-base.css'],
+          'res/css/server.css': ['res/css/server-base.css'],
+          'res/css/user.css': ['res/css/user-base.css']
         }
       },
       compress: {
@@ -107,7 +118,11 @@ module.exports = function(grunt) {
           compress: true
         },
         files: {
-          '<%= pkg.rooms %>/css/rooms.min.css': ['<%= recess.options.rooms %>']
+          '<%= pkg.rooms %>/css/rooms.min.css': ['<%= recess.options.rooms %>'],
+          'res/css/common.min.css': ['<%= recess.options.common %>'],
+          'res/css/channel.min.css': ['res/css/channel-base.css'],
+          'res/css/server.min.css': ['res/css/server-base.css'],
+          'res/css/user.min.css': ['res/css/user-base.css']
         }
       }
     }

@@ -144,7 +144,7 @@ Messages.addFileMessage = function(json)
 
   var block = document.createElement('div');
   block.id = json.Id;
-  block.setAttribute('class', 'container ' + json.Type + '-type');
+  block.setAttribute('class', 'cont ' + json.Type + '-type');
   block.setAttribute('data-time', json.Date);
 
   var html = '<div class="blocks ' + json.Direction + '">';

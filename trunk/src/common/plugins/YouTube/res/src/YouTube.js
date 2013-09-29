@@ -53,7 +53,7 @@ var YouTube = {
           $(this).data('state', 1);
 
           var id = SimpleChat.randomId();
-          $(this).after('<a class="btn btn-youtube" id="' + id + '"><i class="icon-plus-small"></i></a>');
+          $(this).after('<a class="btn btn-default btn-youtube" id="' + id + '"><i class="icon-plus-small"></i></a>');
           $('#' + id).data('state', 0);
 
           $('#' + id).on('click', function() {

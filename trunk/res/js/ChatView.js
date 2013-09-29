@@ -300,7 +300,7 @@ var Messages = {
 
     var block = document.createElement('div');
     Messages.setMessageId(block, json);
-    block.setAttribute('class', 'container ' + json.Type + '-type');
+    block.setAttribute('class', 'cont ' + json.Type + '-type');
     block.setAttribute('data-time', json.Date);
 
     var html = '<div class="blocks ';
@@ -427,7 +427,7 @@ var Messages = {
   {
     var block = document.createElement('div');
     block.id = json.Id;
-    block.setAttribute('class', 'container ' + json.Type + '-type');
+    block.setAttribute('class', 'cont ' + json.Type + '-type');
     block.innerHTML = '<div class="blocks ' + (json.Extra !== undefined ? json.Extra : '') + '">' +
                         DateTime.template(json.Date, false) +
                         Messages.nameBlock(json.Author) +
@@ -444,7 +444,7 @@ var Messages = {
   addAlertMessage: function(json) {
     var block = document.createElement('div');
     block.id = json.Id;
-    block.setAttribute('class', 'container ' + json.Type + '-type');
+    block.setAttribute('class', 'cont ' + json.Type + '-type');
     block.innerHTML = '<div class="blocks ' + (json.Extra !== undefined ? json.Extra : '') + '">' +
                         '<div class="alert-box">' +
                           '<div class="alert-box-icon"></div>' +
@@ -497,7 +497,7 @@ var Messages = {
     if (Pages.current != 0)
       return;
 
-    $('.container').remove();
+    $('.cont').remove();
     alignChat();
   },
 
