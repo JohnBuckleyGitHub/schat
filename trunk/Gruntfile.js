@@ -24,7 +24,8 @@ module.exports = function(grunt) {
           ],
           '<%= pkg.rooms %>/js/room.js': [
             '<%= pkg.rooms %>/js/room-base.js',
-            '<%= pkg.rooms %>/js/ui-room-title.js'
+            '<%= pkg.rooms %>/js/ui-room-title.js',
+            '<%= pkg.rooms %>/js/ui-room-options.js'
           ],
           'res/js/common.js': [
             'web/app/3rdparty/bootstrap/js/dropdown.js',

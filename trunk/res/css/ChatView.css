@@ -475,23 +475,24 @@ hr {
   /*padding: 2px 5px;*/
 /*}*/
 
-/*select.btn, select.btn.active, select.btn:active {*/
-  /*text-align: left;*/
-  /*padding: 4px 14px 4px 4px;*/
-  /*background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAECAYAAABY+sXzAAAAIUlEQVQIW2PwDkv4jwszYAPe4WgKw3EoxNBASCEMEFIIALYOIAZIm78/AAAAAElFTkSuQmCC), -webkit-linear-gradient(#ffffff, #ffffff 25%, #e6e6e6);*/
-  /*background-position: right center;*/
-  /*-webkit-appearance: none;*/
-/*}*/
+select.btn, select.btn.active, select.btn:active {
+  text-align: left;
+  padding: 4px 14px 4px 4px;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAECAYAAABY+sXzAAAAIUlEQVQIW2PwDkv4jwszYAPe4WgKw3EoxNBASCEMEFIIALYOIAZIm78/AAAAAElFTkSuQmCC), -webkit-gradient(linear, left 0%, left 100%, from(#ffffff), to(#e6e6e6));
+  background-position: right center;
+  background-repeat: no-repeat;
+  -webkit-appearance: none;
+}
 
-/*select.btn:hover {*/
-  /*background-position: right center, 0 -15px;*/
-/*}*/
+select.btn:hover {
+  background-position: right center, 0 -15px;
+}
 
-/*select.btn.active, select.btn:active {*/
-  /*background-color: #fff;*/
-  /*color: #000;*/
-  /*background-position: right center;*/
-/*}*/
+select.btn.active, select.btn:active {
+  background-color: #fff;
+  color: #000;
+  background-position: right center;
+}
 
 /*.btn-group {*/
   /*position: relative;*/
