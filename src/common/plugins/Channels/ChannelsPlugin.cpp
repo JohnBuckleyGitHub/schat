@@ -187,10 +187,8 @@ void ChannelsPluginImpl::channel(const QByteArray &id)
  */
 void ChannelsPluginImpl::init(ChatView *view)
 {
-  if (SimpleID::typeOf(view->id()) == SimpleID::ChannelId) {
-    view->addJS(LS("qrc:/js/Channels/bootstrap-dropdown.js"));
+  if (SimpleID::typeOf(view->id()) == SimpleID::ChannelId)
     view->addJS(LS("qrc:/js/Channels/Channels.js"));
-  }
   else if (SimpleID::typeOf(view->id()) == SimpleID::UserId)
     view->addJS(LS("qrc:/js/Channels/ChannelsUser.js"));
 }
@@ -204,7 +202,6 @@ void ChannelsPluginImpl::loadFinished(ChatView *view)
   if (SimpleID::typeOf(view->id()) != SimpleID::ChannelId)
     return;
 
-  view->addCSS(LS("qrc:/css/Channels/bootstrap-dropdown.css"));
   view->addCSS(LS("qrc:/css/Channels/Channels.css"));
 }
 

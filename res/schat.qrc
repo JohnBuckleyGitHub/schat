@@ -1,12 +1,12 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
   <file alias="css/about.css">html/css/about.min.css</file>
-  <file alias="css/channel.css">html/css/channel.min.css</file>
-  <file alias="css/ChatView.css">html/css/ChatView.min.css</file>
+  <file alias="css/channel.css">css/channel.min.css</file>
+  <file alias="css/common.css">css/common.min.css</file>
   <file alias="css/input.css">html/css/input.css</file>
   <file alias="css/PluginsView.css">html/css/PluginsView.min.css</file>
-  <file alias="css/server.css">html/css/server.min.css</file>
-  <file alias="css/user.css">html/css/user.min.css</file>
+  <file alias="css/server.css">css/server.min.css</file>
+  <file alias="css/user.css">css/user.min.css</file>
   <file alias="images/add.png">images/diagona/103.png</file>
   <file alias="images/add-gray.png">images/add.png</file>
   <file alias="images/add-small.png">images/diagona/10/103.png</file>

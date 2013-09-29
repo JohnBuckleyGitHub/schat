@@ -52,7 +52,7 @@ RawFeeds = {
       return;
 
     var id = json.Id;
-    $('#' + id + ' .raw-feeds-title').append(' <a class="btn btn-toggle" id=""><i class="icon-plus-small"></i></a>');
+    $('#' + id + ' .raw-feeds-title').append(' <a class="btn btn-default btn-toggle" id=""><i class="icon-plus-small"></i></a>');
     $.JSONView(json.Text, $('#' + id + " .jsonoutput"));
 
     $('#' + id + ' .btn-toggle').on('click', function(event) {
@@ -83,7 +83,7 @@ Messages.addRawFeedsMessage = function(json)
 {
   var block = document.createElement('div');
   block.id = json.Id;
-  block.setAttribute('class', 'container ' + json.Type + '-type');
+  block.setAttribute('class', 'cont ' + json.Type + '-type');
 
   var html = '<div class="blocks ';
   if (json.Extra !== undefined)
