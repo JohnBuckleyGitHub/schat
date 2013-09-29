@@ -1,26 +1,26 @@
 <form id="channel-options">
-  <div id="visibility-row" class="row">
-    <label for="visibility" data-tr="channels-visibility" class="options-label"></label>
-    <select id="visibility" class="options-select btn">
+  <div id="visibility-row" class="form-group">
+    <label for="visibility" data-tr="channels-visibility" class="options-label control-label"></label>
+    <select id="visibility" class="options-select btn btn-default">
       <option value="0"  data-tr="channels-default"></option>
       <option value="1"  data-tr="channels-always-visible"></option>
       <option value="-1" data-tr="channels-hidden"></option>
-    </select><button id="pin-button" type="button" class="btn btn-icon-pin" title="Pin to channel list"></button>
+    </select><button id="pin-button" type="button" class="btn btn-default btn-icon-pin"><i class="schat-icon schat-icon-pin"></i></button>
     <i id="visibility-spinner" class="icon-spinner hide"></i>
     <div id="visibility-error" class="alert alert-error hide"></div>
   </div>
-  <div id="permissions-row" class="row">
-    <label for="permissions" data-tr="channels-default-acl" class="options-label">Default permissions</label>
-    <select id="permissions" class="options-select btn">
+  <div id="permissions-row" class="form-group">
+    <label for="permissions" data-tr="channels-default-acl" class="options-label control-label"></label>
+    <select id="permissions" class="options-select btn btn-default">
       <option value="502" data-tr="channels-readwrite"></option>
       <option value="484" data-tr="channels-readonly"></option>
       <option value="448" data-tr="channels-forbidden"></option>
-    </select><button id="sudo-button" type="button" class="btn btn-icon-sudo active"></button>
+    </select><button id="sudo-button" type="button" class="btn btn-default btn-icon-sudo active"><i class="schat-icon schat-icon-lock"></i></button>
     <i id="acl-spinner" class="icon-spinner hide"></i>
     <div id="acl-error" class="alert alert-error hide"></div>
   </div>
   <hr>
-  <div id="logging-row" class="row">
+  <div id="logging-row" class="form-group">
     <input id="logging" type="checkbox">
     <label for="logging" data-tr="channels-logging"></label>
     <i id="logging-spinner" class="icon-spinner hide"></i>
