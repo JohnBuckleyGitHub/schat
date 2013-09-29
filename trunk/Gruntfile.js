@@ -36,7 +36,7 @@ module.exports = function(grunt) {
             'res/js/ChatView.js'
           ],
           'res/js/user.js': ['res/js/ui-connection-dialog.js', 'res/js/user-base.js'],
-          'res/js/server.js': ['res/js/server-base.js']
+          'res/js/server.js': ['res/js/ui-oauth-dialog.js', 'res/js/server-base.js']
         }
       }
     },
