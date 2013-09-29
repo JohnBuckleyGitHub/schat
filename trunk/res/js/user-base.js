@@ -278,35 +278,10 @@ var UserHooks = {
 };
 
 
-Modal.create.connection = function(e)
+Modal.create.connection = function(event)
 {
-  var h3 = $('#modal-header h3');
-  h3.text(e.target.innerText);
-
-  var feed = SimpleChat.feed(Settings.id, FEED_NAME_USER, 3);
-  if (feed === false || !feed.hasOwnProperty('connections'))
-    return false;
-
-  var id   = $(e.target).data('id');
-  var json = typeof id === 'undefined' ? feed.last : feed.connections[id];
-
-  if (typeof json === 'undefined')
-    return false;
-
-  var modal = $('#modal-body');
-  h3.text(json.host);
-  modal.append(Utils.row('chat_version', schat.utils.encode(json.version)));
-  modal.append(Utils.row('os_name', '<i class="icon-os os-' + Pages.os(json.os) + '"></i> ' + schat.utils.encode(json.osName)));
-
-  for (var i = 0; i < UserHooks.connection.length; i++)
-    UserHooks.connection[i](json);
-
+  schat.ui.modal.current = new schat.ui.ConnectionDialog(event.target.innerText, $(event.target).data('id'));
   return true;
-};
-
-Modal.shown.connection = function()
-{
-  Utils.adjustWidth($('#modal-body .field-row-label'));
 };
 
 

@@ -99,27 +99,27 @@ var ProfilePlugin = {
    * Добавляется отображение гео информации.
    */
   connection: function(json) {
-    var modal = $('#modal-body');
+    var body = schat.ui.modal.body;
 
-    if (typeof json.tz === "number") {
+    if (typeof json.tz === 'number') {
       var date = new Date();
       date = new Date(date.getTime() + date.getTimezoneOffset() * 60000 + json.tz * 1000);
 
-      modal.append(Utils.row('field-tz', DateTime.time(date)));
+      body.innerHTML += Utils.row('field-tz', DateTime.time(date));
     }
 
     if (json.hasOwnProperty('geo')) {
       var country = json.geo.country.toLowerCase();
       if (country.length == 2) {
-        modal.append(Utils.row('field-country', '<i class="flag-' + country + '"></i> '
-          + '<span data-tr="country-' + country + '">' + Utils.tr('country-' + country) + '</span>'));
+        body.innerHTML += Utils.row('field-country', '<i class="flag-' + country + '"></i> '
+          + '<span data-tr="country-' + country + '">' + Utils.tr('country-' + country) + '</span>');
       }
 
       if (json.geo.org != '') {
         var org = json.geo.org;
         var index = org.indexOf(' ');
         if (index != -1)
-          modal.append(Utils.row('field-isp', Utils.left(org.slice(index), 100)));
+          body.innerHTML += Utils.row('field-isp', Utils.left(org.slice(index), 100));
       }
     }
   }

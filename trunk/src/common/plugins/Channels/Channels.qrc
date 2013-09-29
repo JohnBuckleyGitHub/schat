@@ -3,7 +3,6 @@
   <file alias="css/Channels/Channels.css">res/css/Channels.min.css</file>
   <file alias="css/Channels/rooms.css">res/css/rooms.min.css</file>
   <file alias="html/channel_options.html">res/html/channel_options.html</file>
-  <file alias="html/Channels/create.html">res/html/create.html</file>
   <file alias="html/Channels/index.html">res/html/index.html</file>
   <file alias="images/Channels/icon.png">res/images/hypic/forum_32.png</file>
   <file alias="images/Channels/list.png">res/images/silk/text_list_bullets.png</file>

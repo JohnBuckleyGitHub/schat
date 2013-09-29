@@ -30,10 +30,12 @@ module.exports = function(grunt) {
             'web/app/client/js/base.js',
             'web/app/client/js/utils.js',
             'web/app/client/js/phpjs.js',
-            'res/js/ChatView.js',
-            'res/js/lang.js'
+            'res/js/lang.js',
+            'web/app/client/js/ui/ui-base.js',
+            'web/app/client/js/ui/ui-modal.js',
+            'res/js/ChatView.js'
           ],
-          'res/js/user.js': ['res/js/user-base.js'],
+          'res/js/user.js': ['res/js/ui-connection-dialog.js', 'res/js/user-base.js'],
           'res/js/server.js': ['res/js/server-base.js']
         }
       }
@@ -66,7 +68,7 @@ module.exports = function(grunt) {
       base: {
         files: {
           'res/html/css/about.min.css': ['res/html/css/about.min.css'],
-          'res/html/css/PluginsView.min.css': ['res/html/css/PluginsView.min.css'],
+          'res/html/css/PluginsView.min.css': ['res/html/css/PluginsView.min.css']
         }
       },
       plugins: {

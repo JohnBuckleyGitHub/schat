@@ -84,67 +84,65 @@ var Settings = {
 window.Utils = window.Utils || {};
 
 
-var Utils = {
-  // Обрезка строки.
-  left: function(text, n) {
-    if (typeof text !== 'string')
-      return "";
+// Обрезка строки.
+Utils.left = function(text, n) {
+  if (typeof text !== 'string')
+    return '';
 
-    if (text.length < n)
-      return text;
+  if (text.length < n)
+    return text;
 
-    return text.slice(0, n);
-  },
-
-  simplified: function(text) {
-    return $.trim(text.replace(/\s+/gi, ' '));
-  },
+  return text.slice(0, n);
+};
 
 
-  table: function (dict) {
-    var table = '<table><tbody>';
-
-    for (var key in dict) if (dict.hasOwnProperty(key)) {
-      table += '<tr><td>' + Utils.tr(key) + '</td><td>' + dict[key] + '</td></tr>';
-    }
-
-    table += '</table></tbody>';
-    return table;
-  },
-
-  row: function(label, value) {
-    if (typeof value !== "string" || value === "")
-      return '';
-
-    var out = '<div class="field-row field-' + label + '">';
-    out += '<span class="field-row-label"><span data-tr="' + label + '">' + Utils.tr(label) + '</span>:</span> ';
-    out += '<span class="field-row-value">' + value + '</span>';
-    return out;
-  },
+Utils.simplified = function(text) { return $.trim(text.replace(/\s+/gi, ' ')); };
 
 
-  /*
-   * Установка ширины элементов, равной максимальной ширине одного из элементов.
-   *
-   * \param obj jQuery объект.
-   */
-  adjustWidth: function(obj) {
-    if (!obj.length || obj.width() < 1 || !obj.is(':visible'))
-      return;
+Utils.table = function (dict) {
+  var table = '<table><tbody>';
 
-    obj.css('width', '');
-
-    var max = 0;
-    var current = 0;
-
-    obj.each(function() {
-      current = $(this).width();
-      if (current > max)
-        max = current;
-    });
-
-    obj.width(max + 4);
+  for (var key in dict) if (dict.hasOwnProperty(key)) {
+    table += '<tr><td>' + Utils.tr(key) + '</td><td>' + dict[key] + '</td></tr>';
   }
+
+  table += '</table></tbody>';
+  return table;
+};
+
+
+Utils.row = function(label, value) {
+  if (typeof value !== 'string' || value === '')
+    return '';
+
+  return '<div class="field-row field-' + label + '">' +
+           '<span class="field-row-label"><span data-tr="' + label + '">' + tr(label) + '</span>:</span> ' +
+           '<span class="field-row-value">' + value + '</span>' +
+         '</div>';
+};
+
+
+/**
+ * Установка ширины элементов, равной максимальной ширине одного из элементов.
+ *
+ * \param obj jQuery объект.
+ */
+Utils.adjustWidth = function(obj) {
+  if (!obj.length || obj.width() < 1 || !obj.is(':visible'))
+    return;
+
+  obj.css('width', '');
+
+  var max = 0;
+  var current = 0;
+
+  obj.each(function() {
+    current = $(this).width();
+    if (current > max)
+      max = current;
+  });
+
+  obj.width(max + 4);
 };
 
 
@@ -758,7 +756,6 @@ var Modal = {
 
   init: function() {
     var body  = $('body');
-    var modal = $('#modal');
 
     body.on('click.modal', '.modal-toggle', function (event) {
       event.preventDefault();
@@ -771,24 +768,8 @@ var Modal = {
         Modal.current = handler;
       }
 
-      $('#modal').modal();
+      $(schat.ui.modal.element).modal();
     });
-
-
-    modal.on('hidden', function () {
-      if (Modal.hidden.hasOwnProperty(Modal.current))
-        Modal.hidden[Modal.current]();
-
-      $('#modal-header h3 *').remove();
-      $('#modal-body *').remove();
-      Modal.current = null;
-    });
-
-    modal.on('shown', function () {
-      if (Modal.shown.hasOwnProperty(Modal.current))
-        Modal.shown[Modal.current]();
-    });
-
 
     body.on('click', '[data-dismiss="alert"]', function(event) {
       event.preventDefault();
