@@ -201,20 +201,6 @@ var Channels = {
   },
 
 
-  /*
-   * Установка нового заголовка канала.
-   */
-  setTitle: function(event) {
-    event.preventDefault();
-
-    var text = $('#title-edit').val();
-    $('#modal').modal('hide');
-
-    if ($('#channel-title-text').text() != text)
-      SimpleChat.request(Settings.getId(), FEED_METHOD_POST, INFO_FEED_TITLE_REQ, {'value':text, 'options':7});
-  },
-
-
   setAcl: function(event) {
     var value = $(this).find('option:selected').attr('value');
     var user  = $(this).attr('data-user');
@@ -232,45 +218,12 @@ var Channels = {
 };
 
 
-/*
+/**
  * Создание модального окна для изменения заголовка канала.
  */
-Modal.create.title = function(event)
+Modal.create.title = function()
 {
-  ChatView.allowFocus(true);
-
-  var h3 = $('#modal-header h3');
-  h3.text(event.target.innerText);
-  h3.attr('data-tr', 'channels-title');
-
-  $('#modal-body').append(
-    '<form id="title-form">' +
-     '<div id="title-group" class="control-group">' +
-       '<input id="title-edit" type="text" maxlength="200">' +
-       '<button id="title-ok" type="submit" class="btn" data-tr="ok">' + Utils.tr('ok') + '</button>' +
-     '</div>' +
-    '</form>'
-  );
-
-  $('#title-edit').val($('#channel-title-text').text());
-};
-
-
-/*
- * Установка фокуса на поле редактирования заголовка канала.
- */
-Modal.shown.title = function()
-{
-  $('#title-edit').focus();
-};
-
-
-/*
- * Удаление фокуса при закрытии окна.
- */
-Modal.hidden.title = function()
-{
-  ChatView.allowFocus(false);
+  schat.ui.modal.current = new schat.ui.RoomTitleDialog();
 };
 
 
@@ -434,7 +387,6 @@ $(document).ready(function() {
   $('#page-header').append('<div id="channel-title"><div id="channel-title-text"></div></div>');
 
   var modal = $('#modal-body');
-  modal.on('click.title',        '#title-ok',    Channels.setTitle);
   modal.on('change.acl',         '#acl',         Channels.setAcl);
 
   Channels.online();
