@@ -30,8 +30,9 @@
         '</div>';
 
 
-    footer.appendChild(create('button', {type:'button', class:'btn btn-default', 'data-dismiss':'modal', 'data-tr':'channels-cancel'}));
     this.createBtn   = footer.appendChild(create('button', {type:'button', class:'btn btn-primary', 'data-tr':'channels-create'}));
+    footer.appendChild(create('button', {type:'button', class:'btn btn-default', 'data-dismiss':'modal', 'data-tr':'channels-cancel'}));
+
     this.nameEdit    = document.getElementById('create-name');
     this.aclCheckbox = document.getElementById('access-checkbox');
     this.nameGroup   = document.getElementById('name-group');

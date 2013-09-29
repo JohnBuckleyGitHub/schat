@@ -4,7 +4,6 @@
   var title  = schat.ui.modal.title;
   var footer = schat.ui.modal.footer;
   var body   = schat.ui.modal.body;
-  var create = window.schat.ui.createElement;
 
   function ConnectionDialog(host, id) {
     title.textContent = host;
