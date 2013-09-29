@@ -134,7 +134,7 @@ var AuthDialog = {
     Modal.current = 'auth';
     Modal.create.auth(null);
 
-    $('#modal').modal();
+    $(schat.ui.modal.element).modal();
   },
 
   /*
@@ -143,7 +143,7 @@ var AuthDialog = {
   providers: function()
   {
     var providers = Auth.providers();
-    if (!providers.hasOwnProperty('order'))
+    if (!providers.hasOwnProperty('order') || !schat.ui.modal.current instanceof schat.ui.OAuthDialog)
       return;
 
     for (var i = 0; i < providers.order.length; i++) {
@@ -152,7 +152,7 @@ var AuthDialog = {
         AuthDialog.addProvider(provider, providers.providers[provider]);
     }
 
-    $('#modal-header h3 .icon-spinner').remove();
+    $('#modal .icon-spinner').remove();
     Utils.adjustWidth($('#providers .btn'));
   },
 
@@ -160,7 +160,7 @@ var AuthDialog = {
    * Добавление одиночного провайдера.
    */
   addProvider: function(name, data) {
-    $('#providers').append('<a class="btn" href="' + data.url + ' "><i class="provider-' + name + '"></i> ' + data.htmlName + '</a>');
+    schat.ui.modal.current.providers.innerHTML += '<a class="btn btn-default" href="' + data.url + ' "><i class="provider-' + name + '"></i> ' + data.htmlName + '</a>';
   },
 
   /*
@@ -168,33 +168,14 @@ var AuthDialog = {
    */
   hide: function()
   {
-    $('#modal').modal('hide');
+    $(schat.ui.modal.element).modal('hide');
   }
 };
 
 
 Modal.create.auth = function(event)
 {
-  $('#modal-header h3 *').remove();
-  $('#modal-body *').remove();
-
-  $('#modal-header h3').append('<span></span>');
-  $('#modal-header h3').append(' <i class="icon-spinner"></i>');
-  $('#modal-header h3 span').text(Utils.tr('sign_in_with'));
-  $('#modal-header h3 span').attr('data-tr', 'sign_in_with');
-
-  $('#modal-body').append('<div id="providers"></div>');
-  
-  if (Auth.anonymous()) {
-    $('#modal-body').append('<div id="anonymous-auth"><a data-tr="or_anon_connect" href="#">' + Utils.tr('or_anon_connect') + '</a></div>');
-
-    $('#anonymous-auth a').on('click', function(event) {
-      event.preventDefault();
-      Auth.open();
-    });
-  }
-
-  AuthDialog.providers();
+  schat.ui.modal.current = new schat.ui.OAuthDialog();
 };
 
 
