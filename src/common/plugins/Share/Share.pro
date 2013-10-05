@@ -15,30 +15,18 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-CONFIG   += ordered
-TEMPLATE = subdirs
+SCHAT_CLIENT_LIB = 1
+SCHAT_CORE_LIB = 1
+QT = core gui network webkit
+OTHER_FILES += RawFeeds.json
 
-SUBDIRS += \
-    GenericNode \
-    Messages \
-    NodeChannels \
-    NodeMaster \
-    NodeConsole \
-    RestApi \
-    GeoIP \
-    NodeFeedLog \
-    Cache \
-    History \
-    Profile \
-    Channels \
-    Popup \
-    Emoticons \
-    Idle \
-    SendFile \
-    Share \
-    SpellChecker \
-    Proxy \
-    Console \
-    RawFeeds \
-    YouTube \
-    Update \
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webkitwidgets
+
+HEADERS  = \
+   SharePlugin.h \
+   SharePlugin_p.h \
+
+SOURCES  = \
+   SharePlugin.cpp \
+
+include(../plugins.pri)
