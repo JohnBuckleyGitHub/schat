@@ -16,29 +16,31 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SHAREPLUGIN_P_H_
-#define SHAREPLUGIN_P_H_
+#ifndef SHARECHATVIEW_H_
+#define SHARECHATVIEW_H_
 
-#include "plugins/ChatPlugin.h"
+#include <QUrl>
+#include <QStringList>
 
-class ChatId;
-class ChatView;
-class QNetworkAccessManager;
+#include "hooks/ChatViewHooks.h"
 
-class Share : public ChatPlugin
+class Share;
+
+class ShareChatView : public ChatViewHooks
 {
   Q_OBJECT
 
 public:
-  Share(QObject *parent);
-  void upload(const ChatId &id, const QStringList &files);
+  ShareChatView(Share *share);
 
-private slots:
-  void onFinished();
-  void onUploadProgress(qint64 bytesSent, qint64 bytesTotal);
+protected:
+  bool onDragEnterEvent(ChatView *view, QDragEnterEvent *event);
+  bool onDropEvent(ChatView *view, QDropEvent *event);
 
 private:
-  QNetworkAccessManager *m_net;
+  QStringList getFiles(const QList<QUrl> &urls) const;
+
+  Share *m_share;
 };
 
-#endif /* SHAREPLUGIN_P_H_ */
+#endif /* SHARECHATVIEW_H_ */

@@ -18,15 +18,17 @@
 SCHAT_CLIENT_LIB = 1
 SCHAT_CORE_LIB = 1
 QT = core gui network webkit
-OTHER_FILES += RawFeeds.json
+OTHER_FILES += Share.json
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webkitwidgets
 
 HEADERS  = \
+   ShareChatView.h \
    SharePlugin.h \
    SharePlugin_p.h \
 
 SOURCES  = \
+   ShareChatView.cpp \
    SharePlugin.cpp \
 
 include(../plugins.pri)
