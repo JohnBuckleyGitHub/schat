@@ -152,7 +152,7 @@
 
   schat.ui.RoomOptionsDialog = RoomOptionsDialog;
 
-  if (typeof SimpleChat !== 'undefined') {
+  try {
     SimpleChat.retranslated.connect(function() {
       var dialog = schat.ui.modal.current;
       if (dialog instanceof schat.ui.RoomOptionsDialog) {
@@ -160,4 +160,5 @@
       }
     });
   }
+  catch (e) {}
 })();

@@ -1,0 +1,8 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/">
+  <file alias="css/Share/share.css">res/css/share.min.css</file>
+  <file alias="js/Share/share.js">res/js/share.min.js</file>
+  <file alias="translations/share_ru.qm">res/translations/share_ru.qm</file>
+  <file alias="translations/share_uk.qm">res/translations/share_uk.qm</file>
+</qresource>
+</RCC>

@@ -19,11 +19,15 @@
 #ifndef SHAREPLUGIN_P_H_
 #define SHAREPLUGIN_P_H_
 
+#include <QMap>
+
+#include "id/ChatId.h"
 #include "plugins/ChatPlugin.h"
 
-class ChatId;
 class ChatView;
 class QNetworkAccessManager;
+class QNetworkReply;
+class SharePluginTr;
 
 class Share : public ChatPlugin
 {
@@ -31,14 +35,23 @@ class Share : public ChatPlugin
 
 public:
   Share(QObject *parent);
-  void upload(const ChatId &id, const QStringList &files);
+  ~Share();
+  void upload(const ChatId &roomId, const QStringList &files);
+  Q_INVOKABLE bool cancel(const QString &oid);
+
+signals:
+  void uploadProgress(const QString &roomId, const QString &oid, qint64 bytesSent, qint64 bytesTotal);
+  void uploadStarted(const QString &roomId, const QString &oid);
 
 private slots:
   void onFinished();
   void onUploadProgress(qint64 bytesSent, qint64 bytesTotal);
 
 private:
-  QNetworkAccessManager *m_net;
+  ChatId m_id;                            ///< Идентификатор загрузки.
+  QMap<ChatId, QNetworkReply*> m_replies; ///< Ответы на отправленные запросы.
+  QNetworkAccessManager *m_net;           ///< Доступ к сети.
+  SharePluginTr *m_tr;                    ///< Перевод строк в js коде.
 };
 
 #endif /* SHAREPLUGIN_P_H_ */

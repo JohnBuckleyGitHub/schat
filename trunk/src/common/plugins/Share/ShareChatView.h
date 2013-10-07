@@ -36,6 +36,8 @@ public:
 protected:
   bool onDragEnterEvent(ChatView *view, QDragEnterEvent *event);
   bool onDropEvent(ChatView *view, QDropEvent *event);
+  void initImpl(ChatView *view);
+  void loadFinishedImpl(ChatView *view);
 
 private:
   QStringList getFiles(const QList<QUrl> &urls) const;

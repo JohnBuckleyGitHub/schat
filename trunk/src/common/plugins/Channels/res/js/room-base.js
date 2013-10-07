@@ -246,12 +246,9 @@ $(document).ready(function() {
 
 Pages.onInfo.push(Channels.reload);
 
-if (typeof ChatView !== 'undefined') {
+try {
   ChatView.reload.connect(Channels.reload);
   ChatView.feed.connect(Channels.feed);
-}
-
-if (typeof SimpleChat !== 'undefined') {
   SimpleChat.online.connect(Channels.online);
- // SimpleChat.retranslated.connect(OptionsWindow.retranslate);
 }
+catch (e) {}

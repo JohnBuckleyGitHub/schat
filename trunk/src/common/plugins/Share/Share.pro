@@ -31,4 +31,12 @@ SOURCES  = \
    ShareChatView.cpp \
    SharePlugin.cpp \
 
+RESOURCES += Share.qrc
+
+TRANSLATIONS += res/translations/share_en.ts
+TRANSLATIONS += res/translations/share_ru.ts
+TRANSLATIONS += res/translations/share_uk.ts
+CODECFORTR  = UTF-8
+CODECFORSRC = UTF-8
+
 include(../plugins.pri)
