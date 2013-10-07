@@ -61,7 +61,7 @@ var Settings = {
   status: '',
   scroll: false,
   scrollTo: null,
-  autoscroll: SimpleChat.value('AutoScroll'),
+  autoscroll: (typeof SimpleChat !== 'undefined' ? SimpleChat.value('AutoScroll') : true),
 
   getId: function() {
     if (Settings.id == '')
@@ -252,7 +252,7 @@ var Messages = {
             block.classList.add('removed');
             block.children[2].innerHTML = '<span class="message-removed" data-tr="message-removed">' + Utils.tr('message-removed') + '</span> <i class="message-trash"></i>';
           }
-          catch (e) { console.log(e); }
+          catch (e) { console.error(e); }
         }
       }
     }
@@ -366,7 +366,7 @@ var Messages = {
       Messages[func](json);
     }
     catch (e) {
-      console.log(e);
+      console.error(e);
     }
   },
 
@@ -415,7 +415,7 @@ var Messages = {
    */
   addRawMessage: function (block, day)
   {
-    document.getElementById('Chat').appendChild(block);
+    window.Chat.appendChild(block);
     Messages.add(block.id);
   },
 

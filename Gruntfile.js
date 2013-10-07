@@ -3,7 +3,8 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: {
-      rooms: 'src/common/plugins/Channels/res'
+      rooms: 'src/common/plugins/Channels/res',
+      share: 'src/common/plugins/Share/res'
     },
     concat: {
       js: {
@@ -26,6 +27,10 @@ module.exports = function(grunt) {
             '<%= pkg.rooms %>/js/room-base.js',
             '<%= pkg.rooms %>/js/ui-room-title.js',
             '<%= pkg.rooms %>/js/ui-room-options.js'
+          ],
+          '<%= pkg.share %>/js/share.js': [
+            '<%= pkg.share %>/js/ui-image-message.js',
+            '<%= pkg.share %>/js/share-base.js'
           ],
           'res/js/common.js': [
             'web/app/3rdparty/bootstrap/js/dropdown.js',
@@ -65,7 +70,8 @@ module.exports = function(grunt) {
           'src/common/plugins/History/res/js/days.min.js': ['src/common/plugins/History/res/src/days.js'],
           '<%= pkg.rooms %>/js/rooms.min.js': ['<%= pkg.rooms %>/js/rooms.js'],
           '<%= pkg.rooms %>/js/room.min.js': ['<%= pkg.rooms %>/js/room.js'],
-          '<%= pkg.rooms %>/js/user.min.js': ['<%= pkg.rooms %>/js/user-base.js']
+          '<%= pkg.rooms %>/js/user.min.js': ['<%= pkg.rooms %>/js/user-base.js'],
+          '<%= pkg.share %>/js/share.min.js': ['<%= pkg.share %>/js/share.js']
         }
       }
     },
@@ -115,6 +121,7 @@ module.exports = function(grunt) {
         files: {
           '<%= pkg.rooms %>/css/rooms.css': ['<%= recess.options.rooms %>'],
           '<%= pkg.rooms %>/css/room.css': ['<%= pkg.rooms %>/css/room-base.css'],
+          '<%= pkg.share %>/css/share.css': ['<%= pkg.share %>/css/share-base.css'],
           'res/css/common.css': ['<%= recess.options.common %>'],
           'res/css/channel.css': ['res/css/channel-base.css'],
           'res/css/server.css': ['res/css/server-base.css'],
@@ -128,6 +135,7 @@ module.exports = function(grunt) {
         files: {
           '<%= pkg.rooms %>/css/rooms.min.css': ['<%= recess.options.rooms %>'],
           '<%= pkg.rooms %>/css/room.min.css': ['<%= pkg.rooms %>/css/room-base.css'],
+          '<%= pkg.share %>/css/share.min.css': ['<%= pkg.share %>/css/share-base.css'],
           'res/css/common.min.css': ['<%= recess.options.common %>'],
           'res/css/channel.min.css': ['res/css/channel-base.css'],
           'res/css/server.min.css': ['res/css/server-base.css'],

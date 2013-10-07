@@ -18,6 +18,7 @@
 
 #include <QDragEnterEvent>
 #include <QFileInfo>
+#include <QWebFrame>
 
 #include "sglobal.h"
 #include "ShareChatView.h"
@@ -52,6 +53,25 @@ bool ShareChatView::onDropEvent(ChatView *view, QDropEvent *event)
   event->acceptProposedAction();
   m_share->upload(id, getFiles(event->mimeData()->urls()));
   return true;
+}
+
+
+void ShareChatView::initImpl(ChatView *view)
+{
+  if (ChatId(view->id()).type() != ChatId::ChannelId)
+    return;
+
+  view->page()->mainFrame()->addToJavaScriptWindowObject(LS("Share"), m_share);
+  view->addJS(LS("qrc:/js/Share/share.js"));
+}
+
+
+void ShareChatView::loadFinishedImpl(ChatView *view)
+{
+  if (ChatId(view->id()).type() != ChatId::ChannelId)
+    return;
+
+  view->addCSS(LS("qrc:/css/Share/share.css"));
 }
 
 

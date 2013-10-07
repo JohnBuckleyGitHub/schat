@@ -16,35 +16,64 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QApplication>
 #include <QFileInfo>
 #include <QHttpMultiPart>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QtPlugin>
 
-#include "id/ChatId.h"
+#include "ChatCore.h"
 #include "sglobal.h"
 #include "ShareChatView.h"
 #include "SharePlugin.h"
 #include "SharePlugin_p.h"
+#include "Tr.h"
+#include "Translation.h"
 
-#include <QDebug>
+class SharePluginTr : public Tr
+{
+  Q_DECLARE_TR_FUNCTIONS(SharePluginTr)
+
+public:
+  SharePluginTr() : Tr() { m_prefix = LS("share-"); }
+
+protected:
+  QString valueImpl(const QString &key) const
+  {
+    if (key == LS("upload-images"))
+      return tr("Upload images");
+
+    return QString();
+  }
+};
+
 
 Share::Share(QObject *parent)
   : ChatPlugin(parent)
 {
+  m_tr  = new SharePluginTr();
   m_net = new QNetworkAccessManager(this);
   new ShareChatView(this);
+
+  ChatCore::translation()->addOther(LS("share"));
 }
 
 
-void Share::upload(const ChatId &id, const QStringList &files)
+Share::~Share()
 {
-  Q_UNUSED(id)
+  delete m_tr;
+}
+
+
+void Share::upload(const ChatId &roomId, const QStringList &files)
+{
+  Q_UNUSED(roomId)
 
   if (files.isEmpty())
     return;
 
+  m_id.init(ObjectId::gen());
   QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
 
   foreach (const QString &file, files) {
@@ -69,8 +98,25 @@ void Share::upload(const ChatId &id, const QStringList &files)
   QNetworkReply *reply = m_net->post(request, multiPart);
   multiPart->setParent(reply);
 
+  reply->setProperty("room", roomId.toByteArray());
+  reply->setProperty("id",   m_id.toByteArray());
+  m_replies.insert(m_id, reply);
+
   connect(reply, SIGNAL(finished()), SLOT(onFinished()));
   connect(reply, SIGNAL(uploadProgress(qint64,qint64)), SLOT(onUploadProgress(qint64,qint64)));
+
+  emit uploadStarted(roomId.toString(), ChatId::toBase32(m_id.oid().byteArray()));
+}
+
+
+bool Share::cancel(const QString &oid)
+{
+  m_id.init(oid.toLatin1());
+  if (!m_replies.contains(m_id))
+    return false;
+
+  m_replies.value(m_id)->close();
+  return true;
 }
 
 
@@ -80,8 +126,8 @@ void Share::onFinished()
   if (!reply)
     return;
 
-  qDebug() << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-  qDebug() << reply->readAll();
+  m_id.init(reply->property("id").toByteArray());
+  m_replies.remove(m_id);
 
   reply->deleteLater();
 }
@@ -89,7 +135,13 @@ void Share::onFinished()
 
 void Share::onUploadProgress(qint64 bytesSent, qint64 bytesTotal)
 {
-  qDebug() << bytesSent << bytesTotal;
+  QNetworkReply *reply = qobject_cast<QNetworkReply*>(sender());
+  if (!reply)
+    return;
+
+  m_id.init(reply->property("id").toByteArray());
+
+  emit uploadProgress(ChatId(reply->property("room").toByteArray()).toString(), ChatId::toBase32(m_id.oid().byteArray()), bytesSent, bytesTotal);
 }
 
 
