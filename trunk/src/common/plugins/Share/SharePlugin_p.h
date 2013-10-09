@@ -42,6 +42,7 @@ public:
 signals:
   void uploadProgress(const QString &roomId, const QString &oid, qint64 bytesSent, qint64 bytesTotal);
   void uploadStarted(const QString &roomId, const QString &oid);
+  void uploadStatus(const QString &roomId, const QString &oid, int status);
 
 private slots:
   void onFinished();

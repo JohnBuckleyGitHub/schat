@@ -41,8 +41,10 @@ public:
 protected:
   QString valueImpl(const QString &key) const
   {
-    if (key == LS("upload-images"))
-      return tr("Upload images");
+    if (key == LS("upload-images"))     return tr("Upload images");
+    else if (key == LS("close"))        return tr("Close");
+    else if (key == LS("upload-error")) return tr("An error occurred while uploading");
+    else if (key == LS("please-wait"))  return tr("Please Wait...");
 
     return QString();
   }
@@ -128,6 +130,11 @@ void Share::onFinished()
 
   m_id.init(reply->property("id").toByteArray());
   m_replies.remove(m_id);
+
+  const int status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+  m_id.init(reply->property("id").toByteArray());
+
+  emit uploadStatus(ChatId(reply->property("room").toByteArray()).toString(), ChatId::toBase32(m_id.oid().byteArray()), status);
 
   reply->deleteLater();
 }
