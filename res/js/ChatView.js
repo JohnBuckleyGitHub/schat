@@ -376,7 +376,7 @@ var Messages = {
     if (!messages.length)
       return;
 
-    var self     = Messages;
+    var that     = Messages;
     var scroll   = Settings.scroll;
     var scrollTo = Settings.scrollTo;
 
@@ -384,21 +384,21 @@ var Messages = {
     Settings.scrollTo = null;
 
     for (var i = 0; i < messages.length; i++)
-      self.addMessage(messages[i]);
+      that.addMessage(messages[i]);
 
-    for (i = 0; i < self.added.length; i++) {
-      for (var j = 0; j < self.onAdd.length; j++)
-        self.onAdd[j](self.added[i]);
+    for (i = 0; i < that.added.length; i++) {
+      for (var j = 0; j < that.onAdd.length; j++)
+        that.onAdd[j](that.added[i]);
     }
 
-    for (i = 0; i < self.onBulkAdd.length; i++) {
-      self.onBulkAdd[i](self.added);
+    for (i = 0; i < that.onBulkAdd.length; i++) {
+      that.onBulkAdd[i](that.added);
     }
 
     Settings.scroll = scroll;
 
-    if (self.added.length) {
-      self.added.length = 0;
+    if (that.added.length) {
+      that.added.length = 0;
     }
     else if (Settings.scrollTo === null)
       Settings.scrollTo = scrollTo;

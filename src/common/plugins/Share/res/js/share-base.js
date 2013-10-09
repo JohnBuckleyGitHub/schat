@@ -20,6 +20,7 @@
       alignChat();
     });
 
+    Messages.added.length = 0;
     alignChat();
   }
 
@@ -29,7 +30,6 @@
       return;
 
     progress[oid].setProgress(bytesSent, bytesTotal);
-    console.log(roomId, oid, bytesSent, bytesTotal);
   }
 
 
