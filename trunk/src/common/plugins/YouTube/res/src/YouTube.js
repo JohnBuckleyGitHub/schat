@@ -18,7 +18,11 @@
 
 var YouTube = {
   onAdd: function(id) {
-    if (document.getElementById(id).getElementsByClassName('youtube').length == 0)
+    var cont = document.getElementById(id);
+    if (cont === null)
+      return;
+
+    if (cont.getElementsByClassName('youtube').length == 0)
       return;
 
     var youtube = $('#' + id + ' .youtube');

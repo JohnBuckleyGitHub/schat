@@ -45,7 +45,7 @@ Profile.Field.city = Profile.Field.name;
  * Значение поля преобразуется в кликабельную ссылку.
  */
 Profile.Field.site = function(key, value) {
-  var addr = Utils.left(htmlspecialchars(value.replace(/\s+/gi, '')), 254);
+  var addr = Utils.left(schat.utils.encode(value.replace(/\s+/gi, '')), 254);
   var title = addr;
   if (addr.indexOf('http://') == 0)
     title = addr.slice(7);
@@ -64,7 +64,7 @@ Profile.Field.site = function(key, value) {
  * Значение поля преобразуется в кликабельную ссылку.
  */
 Profile.Field.email = function(key, value) {
-  var addr = Utils.left(htmlspecialchars(value.replace(/\s+/gi, '')), 254);
+  var addr = Utils.left(schat.utils.encode(value.replace(/\s+/gi, '')), 254);
   if (addr.indexOf('mailto:') == 0)
     addr = addr.slice(7);
 
