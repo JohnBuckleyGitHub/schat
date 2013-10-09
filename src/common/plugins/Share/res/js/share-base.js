@@ -12,7 +12,7 @@
 
     progress[oid] = message;
 
-    $(message.cancelBtn).on('click.cancel', function() {
+    message.cancelBtn.addEventListener('click', function() {
       Share.cancel(oid);
       message.cont.parentNode.removeChild(message.cont);
       delete progress[oid];
@@ -33,9 +33,18 @@
   }
 
 
+  function uploadStatus(roomId, oid, status) {
+    if (Settings.getId() !== roomId || !progress.hasOwnProperty(oid))
+      return;
+
+    progress[oid].setStatus(status);
+  }
+
+
   if (typeof Share !== 'undefined') {
     Share.uploadStarted.connect(uploadStarted);
     Share.uploadProgress.connect(uploadProgress);
+    Share.uploadStatus.connect(uploadStatus);
   }
   else {
     window.Share = {}

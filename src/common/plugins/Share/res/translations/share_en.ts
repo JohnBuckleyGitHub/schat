@@ -8,5 +8,17 @@
         <source>Upload images</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>An error occurred while uploading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please Wait...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

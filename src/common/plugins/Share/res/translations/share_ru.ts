@@ -8,5 +8,17 @@
         <source>Upload images</source>
         <translation>Загрузка изображений</translation>
     </message>
+    <message>
+        <source>Close</source>
+        <translation>Закрыть</translation>
+    </message>
+    <message>
+        <source>An error occurred while uploading</source>
+        <translation>Произошла ошибка при загрузке</translation>
+    </message>
+    <message>
+        <source>Please Wait...</source>
+        <translation>Пожалуйста, подождите...</translation>
+    </message>
 </context>
 </TS>
