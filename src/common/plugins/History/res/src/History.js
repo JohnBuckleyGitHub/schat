@@ -248,7 +248,7 @@ var History = {
    * Обработка не поддерживаемых сообщений.
    */
   unhandledMessage: function(json) {
-    var id = json.Id;
+    var id = json.OID || json.Id;
     if (History.scroll instanceof HistoryScroll) {
       var ids = [id];
       History.scroll.removeAll(ids);
