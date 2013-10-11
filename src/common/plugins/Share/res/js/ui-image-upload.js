@@ -3,7 +3,7 @@
 
   var create = window.schat.ui.createElement;
 
-  function ImageMessage(oid) {
+  function ImageUpload(oid) {
     this.cont = create('div', {id:oid, class:'cont image-type panel panel-default'});
 
     var head  = this.cont.appendChild(create('div',    {class:'panel-heading'}));
@@ -16,7 +16,7 @@
   }
 
 
-  ImageMessage.prototype.setProgress = function(bytesSent, bytesTotal) {
+  ImageUpload.prototype.setProgress = function(bytesSent, bytesTotal) {
     this.progress.style.width = Math.floor(bytesSent * 100 / bytesTotal) + '%';
 
     if (bytesSent == bytesTotal)
@@ -24,7 +24,7 @@
   };
 
 
-  ImageMessage.prototype.setStatus = function(status) {
+  ImageUpload.prototype.setStatus = function(status) {
     var mod = (status === 200 ? 'success' : 'danger');
 
     this.cont.setAttribute('class', 'cont image-type panel panel-' + mod);
@@ -40,10 +40,10 @@
   };
 
 
-  ImageMessage.prototype.tr = function(el, key) {
+  ImageUpload.prototype.tr = function(el, key) {
     el.setAttribute('data-tr', key);
     el.innerHTML = tr(key);
   };
 
-  window.schat.ui.ImageMessage = ImageMessage;
+  window.schat.ui.ImageUpload = ImageUpload;
 })();

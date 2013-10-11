@@ -7,7 +7,7 @@
     if (Settings.getId() !== roomId)
       return;
 
-    var message = new window.schat.ui.ImageMessage(oid);
+    var message = new schat.ui.ImageUpload(oid);
     Messages.addRawMessage(message.cont);
 
     progress[oid] = message;
@@ -39,6 +39,23 @@
 
     progress[oid].setStatus(status);
   }
+
+
+  Messages.addImageMessage = function(json) {
+    console.log(json);
+
+    var oid = json.OID;
+    if (progress.hasOwnProperty(oid)) {
+      progress[oid].cont.parentNode.removeChild(progress[oid].cont);
+      delete progress[oid];
+    }
+
+    var message = new schat.ui.ImageMessage(json);
+    console.log(message);
+
+    Messages.addHintedRawMessage(message.cont, json.Hint);
+    ChatView.setLastMessage(json.Date);
+  };
 
 
   if (typeof Share !== 'undefined') {

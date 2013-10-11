@@ -24,12 +24,19 @@
 #include <QtPlugin>
 
 #include "ChatCore.h"
+#include "client/ChatClient.h"
+#include "client/SimpleClient.h"
+#include "DateTime.h"
+#include "JSON.h"
+#include "messages/ChannelMessage.h"
 #include "sglobal.h"
 #include "ShareChatView.h"
+#include "ShareMessages.h"
 #include "SharePlugin.h"
 #include "SharePlugin_p.h"
 #include "Tr.h"
 #include "Translation.h"
+#include "ui/TabWidget.h"
 
 class SharePluginTr : public Tr
 {
@@ -57,6 +64,7 @@ Share::Share(QObject *parent)
   m_tr  = new SharePluginTr();
   m_net = new QNetworkAccessManager(this);
   new ShareChatView(this);
+  new ShareMessages(this);
 
   ChatCore::translation()->addOther(LS("share"));
 }
@@ -65,6 +73,34 @@ Share::Share(QObject *parent)
 Share::~Share()
 {
   delete m_tr;
+}
+
+
+bool Share::cancel(const QString &oid)
+{
+  m_id.init(oid.toLatin1());
+  if (!m_replies.contains(m_id))
+    return false;
+
+  m_replies.value(m_id)->close();
+  return true;
+}
+
+
+void Share::read(const MessagePacket &packet)
+{
+  Message message(packet->id(), Message::detectTab(packet->sender(), packet->dest()), LS("image"), LS("addImageMessage"));
+  message.setAuthor(packet->sender());
+  message.setDate(packet->date());
+  message.data().insert(ChannelMessage::kStatus, packet->status());
+  message.data().insert(ChannelMessage::kJSON,   packet->json());
+
+  if (!packet->oid.isNull()) {
+    message.data().insert(ChannelMessage::kOID, QString(ChatId::toBase32(packet->oid.byteArray())));
+    message.data().insert(ChannelMessage::kMDate, packet->mdate);
+  }
+
+  TabWidget::add(message);
 }
 
 
@@ -111,17 +147,6 @@ void Share::upload(const ChatId &roomId, const QStringList &files)
 }
 
 
-bool Share::cancel(const QString &oid)
-{
-  m_id.init(oid.toLatin1());
-  if (!m_replies.contains(m_id))
-    return false;
-
-  m_replies.value(m_id)->close();
-  return true;
-}
-
-
 void Share::onFinished()
 {
   QNetworkReply *reply = qobject_cast<QNetworkReply*>(sender());
@@ -129,12 +154,26 @@ void Share::onFinished()
     return;
 
   m_id.init(reply->property("id").toByteArray());
+  m_roomId.init(reply->property("room").toByteArray());
   m_replies.remove(m_id);
 
   const int status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
   m_id.init(reply->property("id").toByteArray());
 
-  emit uploadStatus(ChatId(reply->property("room").toByteArray()).toString(), ChatId::toBase32(m_id.oid().byteArray()), status);
+  emit uploadStatus(m_roomId.toString(), ChatId::toBase32(m_id.oid().byteArray()), status);
+  if (status != 200) {
+    reply->deleteLater();
+    return;
+  }
+
+  MessagePacket packet(new MessageNotice(ChatClient::id(), m_roomId.toByteArray(), QString(), DateTime::utc(), m_id.toByteArray()));
+  packet->setCommand(LS("image"));
+
+  QVariantMap data = JSON::parse(reply->readAll()).toMap();
+  data.insert(LS("format"), 1);
+  packet->setData(data);
+
+  ChatClient::io()->send(packet, true);
 
   reply->deleteLater();
 }
@@ -147,8 +186,9 @@ void Share::onUploadProgress(qint64 bytesSent, qint64 bytesTotal)
     return;
 
   m_id.init(reply->property("id").toByteArray());
+  m_roomId.init(reply->property("room").toByteArray());
 
-  emit uploadProgress(ChatId(reply->property("room").toByteArray()).toString(), ChatId::toBase32(m_id.oid().byteArray()), bytesSent, bytesTotal);
+  emit uploadProgress(m_roomId.toString(), ChatId::toBase32(m_id.oid().byteArray()), bytesSent, bytesTotal);
 }
 
 

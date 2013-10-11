@@ -22,6 +22,7 @@
 #include <QMap>
 
 #include "id/ChatId.h"
+#include "net/packets/MessageNotice.h"
 #include "plugins/ChatPlugin.h"
 
 class ChatView;
@@ -36,8 +37,9 @@ class Share : public ChatPlugin
 public:
   Share(QObject *parent);
   ~Share();
-  void upload(const ChatId &roomId, const QStringList &files);
   Q_INVOKABLE bool cancel(const QString &oid);
+  void read(const MessagePacket &packet);
+  void upload(const ChatId &roomId, const QStringList &files);
 
 signals:
   void uploadProgress(const QString &roomId, const QString &oid, qint64 bytesSent, qint64 bytesTotal);
@@ -50,6 +52,7 @@ private slots:
 
 private:
   ChatId m_id;                            ///< Идентификатор загрузки.
+  ChatId m_roomId;                        ///< Идентификатор комнаты.
   QMap<ChatId, QNetworkReply*> m_replies; ///< Ответы на отправленные запросы.
   QNetworkAccessManager *m_net;           ///< Доступ к сети.
   SharePluginTr *m_tr;                    ///< Перевод строк в js коде.
