@@ -24,11 +24,13 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webkitwidgets
 
 HEADERS  = \
    ShareChatView.h \
+   ShareMessages.h \
    SharePlugin.h \
    SharePlugin_p.h \
 
 SOURCES  = \
    ShareChatView.cpp \
+   ShareMessages.cpp \
    SharePlugin.cpp \
 
 RESOURCES += Share.qrc

@@ -14,3 +14,10 @@
   height: 10px;
   margin-bottom: 0;
 }
+
+.image-type .img-thumbnail {
+  width: 90px;
+  height: 90px;
+  box-sizing: content-box;
+  margin: 2px;
+}
