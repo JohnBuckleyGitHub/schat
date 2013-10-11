@@ -26,6 +26,7 @@
 #include "ui/tabs/ChatView.h"
 
 #define MAX_SIZE 10485760 /* 10 MB */
+#define MAX_IMAGES 20
 
 ShareChatView::ShareChatView(Share *share)
   : ChatViewHooks(share)
@@ -79,8 +80,12 @@ QStringList ShareChatView::getFiles(const QList<QUrl> &urls) const
 {
   QStringList out;
   qint64 size = 0;
+  int count = 0;
 
   foreach (const QUrl &url, urls) {
+    if (count == MAX_IMAGES)
+      break;
+
     if (url.scheme() == LS("file")) {
       const QFileInfo fi(url.toLocalFile());
       if (!fi.exists() || !fi.isFile())
@@ -91,8 +96,10 @@ QStringList ShareChatView::getFiles(const QList<QUrl> &urls) const
         continue;
 
       const QString suffix = fi.suffix().toLower();
-      if (suffix == LS("png") || suffix == LS("gif") || suffix == LS("jpg") || suffix == LS("jpeg"))
+      if (suffix == LS("png") || suffix == LS("gif") || suffix == LS("jpg") || suffix == LS("jpeg")) {
         out.append(fi.absoluteFilePath());
+        count++;
+      }
     }
   }
 

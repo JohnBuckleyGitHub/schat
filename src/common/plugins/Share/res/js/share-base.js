@@ -42,8 +42,6 @@
 
 
   Messages.addImageMessage = function(json) {
-    console.log(json);
-
     var oid = json.OID;
     if (progress.hasOwnProperty(oid)) {
       progress[oid].cont.parentNode.removeChild(progress[oid].cont);
@@ -51,10 +49,16 @@
     }
 
     var message = new schat.ui.ImageMessage(json);
-    console.log(message);
 
     Messages.addHintedRawMessage(message.cont, json.Hint);
     ChatView.setLastMessage(json.Date);
+  };
+
+
+  Modal.create.image = function(event)
+  {
+    console.log(event, event.target.src);
+    schat.ui.modal.current = new schat.ui.ImageDialog(event.target.src.replace('/S/', '/L/'));
   };
 
 

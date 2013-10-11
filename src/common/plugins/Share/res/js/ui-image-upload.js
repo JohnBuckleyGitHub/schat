@@ -4,7 +4,7 @@
   var create = window.schat.ui.createElement;
 
   function ImageUpload(oid) {
-    this.cont = create('div', {id:oid, class:'cont image-type panel panel-default'});
+    this.cont = create('div', {id:oid, class:'cont image-upload panel panel-default'});
 
     var head  = this.cont.appendChild(create('div',    {class:'panel-heading'}));
     this.head      = head.appendChild(create('span',   {'data-tr':'share-upload-images'}));
@@ -27,7 +27,7 @@
   ImageUpload.prototype.setStatus = function(status) {
     var mod = (status === 200 ? 'success' : 'danger');
 
-    this.cont.setAttribute('class', 'cont image-type panel panel-' + mod);
+    this.cont.setAttribute('class', 'cont image-upload panel panel-' + mod);
     this.cancelBtn.setAttribute('class', 'btn btn-cancel btn-xs pull-right btn-' + mod);
     this.progress.setAttribute('class', 'progress-bar progress-bar-' + mod);
 
