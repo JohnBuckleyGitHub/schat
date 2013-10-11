@@ -16,8 +16,11 @@
       return;
 
     var images = data.images;
+    var a;
+
     for (var i = 0; i < images.length; i++) {
-      body.appendChild(create('img', {class:'img-thumbnail', src:data.link + '/S/' + images[i].id.substr(0, 2) + '/' + images[i].id + '.' + images[i].type}));
+      a = body.appendChild(create('a', {href:'#', class:'modal-toggle', 'data-handler':'image'}));
+      a.appendChild(create('img', {class:'img-thumbnail', src:data.link + '/S/' + images[i].id.substr(0, 2) + '/' + images[i].id + '.' + images[i].type}));
     }
   }
 

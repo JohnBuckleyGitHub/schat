@@ -22,7 +22,8 @@
     title: title,
     body: body,
     footer: footer,
-    current: null
+    current: null,
+    dialog: dialog
   };
 
   $(document).ready(function() {
