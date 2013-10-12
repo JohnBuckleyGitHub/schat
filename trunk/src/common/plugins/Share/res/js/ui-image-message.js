@@ -4,7 +4,7 @@
   var create = window.schat.ui.createElement;
 
   function ImageMessage(json) {
-    this.cont = create('div', {id:json.OID, class:'cont image-type panel panel-default', 'data-mdate':json.MDate, 'data-remover':'image'});
+    this.cont = create('div', {id:json.OID, class:'cont image-type panel panel-default', 'data-mdate':json.MDate, 'data-time':json.Date, 'data-remover':'image'});
     var extra = json.Status === 600 ? ' removed' : '';
 
     var head = this.cont.appendChild(create('div', {class:'panel-heading' + extra}));

@@ -151,9 +151,11 @@ var History = {
     History.message = null;
 
     if (json.status == 200 && json.data.messages.length) {
-      var id = json.data.messages[0];
-      if ($('#' + id).length)
-        History.date = $('#' + id).attr('data-time');
+      var id   = json.data.messages[0];
+      var cont = document.getElementById(id);
+
+      if (cont !== null)
+        History.date = cont.getAttribute('data-time');
       else
         History.message = id;
 
