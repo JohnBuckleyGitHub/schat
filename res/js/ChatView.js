@@ -245,17 +245,23 @@ var Messages = {
     if (json.status == 200 && json.feed == FEED_NAME_MESSAGES && json.cmd == FEED_METHOD_DELETE) {
       var path = json.name.split('/', 2);
       if (path.length == 2) {
-        var container = document.getElementById(path[1]);
-        if (container !== null) {
+        var cont    = document.getElementById(path[1]);
+        var remover = cont.getAttribute('data-remover') || 'generic';
+
+        if (cont !== null) {
           try {
-            var block = container.firstChild;
-            block.classList.add('removed');
-            block.children[2].innerHTML = '<span class="message-removed" data-tr="message-removed">' + Utils.tr('message-removed') + '</span> <i class="message-trash"></i>';
+            Messages[remover + 'Remover'](cont);
           }
           catch (e) { console.error(e); }
         }
       }
     }
+  },
+
+  genericRemover: function(cont) {
+    var block = cont.firstChild;
+    block.classList.add('removed');
+    block.children[2].innerHTML = '<span class="message-removed" data-tr="message-removed">' + Utils.tr('message-removed') + '</span> <i class="message-trash"></i>';
   },
 
   /*
