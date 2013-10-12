@@ -124,7 +124,7 @@ void Share::upload(const ChatId &roomId, const QStringList &files)
     part.setHeader(QNetworkRequest::ContentTypeHeader, "image/" + type.toLatin1());
     part.setHeader(QNetworkRequest::ContentDispositionHeader, "form-data; name=\"image\"; filename=\"" + fi.fileName().toUtf8() + "\"");
 
-    QFile *f = new QFile(file);
+    QFile *f = new QFile(file, multiPart);
     if (f->open(QFile::ReadOnly)) {
       part.setBodyDevice(f);
       multiPart->append(part);

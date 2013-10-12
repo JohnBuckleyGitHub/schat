@@ -55,9 +55,17 @@
   };
 
 
+  Messages.imageRemover = function(cont) {
+    cont.children[0].setAttribute('class', 'panel-heading removed');
+
+    var body = cont.children[1];
+    body.setAttribute('class', 'panel-body removed');
+    body.innerHTML = '<img class="img-thumbnail" src="qrc:/images/Share/removed-image.png">';
+  };
+
+
   Modal.create.image = function(event)
   {
-    console.log(event, event.target.src);
     schat.ui.modal.current = new schat.ui.ImageDialog(event.target.src.replace('/S/', '/L/'));
   };
 

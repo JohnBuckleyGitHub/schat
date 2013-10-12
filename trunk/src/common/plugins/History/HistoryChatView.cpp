@@ -66,7 +66,7 @@ bool HistoryChatView::onContextMenu(ChatView *view, QMenu *menu, const QWebHitTe
     return false;
 
   const QWebElement block = result.enclosingBlockElement();
-  if (!block.hasClass("blocks") || block.hasClass("removed"))
+  if (!(block.hasClass(LS("blocks")) || block.hasClass(LS("panel-body")) || block.hasClass(LS("panel-heading"))) || block.hasClass("removed"))
     return false;
 
   const QWebElement container = block.parent();
