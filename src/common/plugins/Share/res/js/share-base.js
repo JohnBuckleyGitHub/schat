@@ -41,12 +41,20 @@
   }
 
 
+  /**
+   * Добавление сообщения с типом image.
+   *
+   * @param json
+   */
   Messages.addImageMessage = function(json) {
     var oid = json.OID;
     if (progress.hasOwnProperty(oid)) {
       progress[oid].cont.parentNode.removeChild(progress[oid].cont);
       delete progress[oid];
     }
+
+    if (document.getElementById(oid) !== null)
+      return;
 
     var message = new schat.ui.ImageMessage(json);
 
