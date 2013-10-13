@@ -23,6 +23,8 @@
 #include <QNetworkReply>
 #include <QtPlugin>
 
+#include "alerts/AlertType.h"
+#include "ChatAlerts.h"
 #include "ChatCore.h"
 #include "client/ChatClient.h"
 #include "client/SimpleClient.h"
@@ -58,6 +60,23 @@ protected:
 };
 
 
+class ImageAlertType : public AlertType
+{
+public:
+  ImageAlertType(int weight)
+  : AlertType(LS("image"), weight)
+  {
+    m_defaults[ALERT_TRAY_KEY]  = true;
+    m_defaults[ALERT_SOUND_KEY] = true;
+    m_defaults[ALERT_FILE_KEY]  = LS("Received.wav");
+
+    m_icon = QIcon(LS(":/images/Share/picture.png"));
+  }
+
+  QString name() const { return QObject::tr("Image"); }
+};
+
+
 Share::Share(QObject *parent)
   : ChatPlugin(parent)
 {
@@ -67,6 +86,7 @@ Share::Share(QObject *parent)
   new ShareMessages(this);
 
   ChatCore::translation()->addOther(LS("share"));
+  ChatAlerts::add(new ImageAlertType(390));
 }
 
 
@@ -101,6 +121,13 @@ void Share::read(const MessagePacket &packet)
   }
 
   TabWidget::add(message);
+
+  if (packet->status() != Notice::OK || packet->sender() == ChatClient::id())
+    return;
+
+  Alert alert = Alert(LS("image"), packet->id(), packet->date());
+  alert.setTab(packet->sender(), packet->dest());
+  ChatAlerts::start(alert);
 }
 
 

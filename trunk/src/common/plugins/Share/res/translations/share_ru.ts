@@ -3,6 +3,13 @@
 <TS version="2.0" language="ru_RU">
 <defaultcodec>UTF-8</defaultcodec>
 <context>
+    <name>QObject</name>
+    <message>
+        <source>Image</source>
+        <translation>Изображение</translation>
+    </message>
+</context>
+<context>
     <name>SharePluginTr</name>
     <message>
         <source>Upload images</source>

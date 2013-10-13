@@ -1,6 +1,8 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
   <file alias="css/Share/share.css">res/css/share.min.css</file>
+  <file alias="images/Share/icon.png">res/images/font-awesome/icon-picture@2x.png</file>
+  <file alias="images/Share/picture.png">res/images/font-awesome/icon-picture.png</file>
   <file alias="images/Share/removed-image.png">res/images/font-awesome/icon-ban-circle.png</file>
   <file alias="js/Share/share.js">res/js/share.min.js</file>
   <file alias="translations/share_ru.qm">res/translations/share_ru.qm</file>
