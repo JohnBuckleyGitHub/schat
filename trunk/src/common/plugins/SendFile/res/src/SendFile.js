@@ -19,7 +19,7 @@
 var SendFileUtils = {
   button: function(name, id)
   {
-    return '<a class="btn btn-small btn-file-' + name + '" data-tr="file-' + name + '" href="chat-sendfile:'
+    return '<a class="btn btn-default btn-xs btn-small btn-file-' + name + '" data-tr="file-' + name + '" href="chat-sendfile:'
        + name + '/' + id + '">' + Utils.tr('file-' + name) + '</a>';
   },
 
