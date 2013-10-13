@@ -18,6 +18,7 @@
 
 #include "client/ChatClient.h"
 #include "client/ClientMessages.h"
+#include "hooks/MessagesImpl.h"
 #include "sglobal.h"
 #include "ShareMessages.h"
 #include "SharePlugin_p.h"
@@ -32,7 +33,7 @@ ShareMessages::ShareMessages(Share *share)
 
 int ShareMessages::read(MessagePacket packet)
 {
-  if (packet->command() != LS("image"))
+  if (packet->command() != LS("image") || Hooks::MessagesImpl::isIgnored(packet))
     return 0;
 
   if (ChatId(packet->id()).type() != ChatId::MessageId)
