@@ -34,8 +34,6 @@ ShareChatView::ShareChatView(Share *share)
   : ChatViewHooks(share)
   , m_share(share)
 {
-  m_cache = new QNetworkDiskCache(this);
-  m_cache->setCacheDirectory(Path::cache() + LS("/cache"));
 }
 
 
@@ -66,7 +64,9 @@ void ShareChatView::initImpl(ChatView *view)
   if (ChatId(view->id()).type() != ChatId::ChannelId)
     return;
 
-  view->page()->networkAccessManager()->setCache(m_cache);
+  QNetworkDiskCache *cache = new QNetworkDiskCache(this);
+  cache->setCacheDirectory(Path::cache() + LS("/cache"));
+  view->page()->networkAccessManager()->setCache(cache);
 
   view->page()->mainFrame()->addToJavaScriptWindowObject(LS("Share"), m_share);
   view->addJS(LS("qrc:/js/Share/share.js"));

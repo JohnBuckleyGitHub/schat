@@ -24,7 +24,6 @@
 
 #include "hooks/ChatViewHooks.h"
 
-class QNetworkDiskCache;
 class Share;
 
 class ShareChatView : public ChatViewHooks
@@ -43,7 +42,6 @@ protected:
 private:
   QStringList getFiles(const QList<QUrl> &urls) const;
 
-  QNetworkDiskCache *m_cache;
   Share *m_share;
 };
 
