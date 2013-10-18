@@ -37,9 +37,10 @@ class Share : public ChatPlugin
 public:
   Share(QObject *parent);
   ~Share();
+  bool upload(const ChatId &roomId, const QList<QUrl> &urls);
+  bool upload(const ChatId &roomId, const QStringList &files);
   Q_INVOKABLE bool cancel(const QString &oid);
   void read(const MessagePacket &packet);
-  void upload(const ChatId &roomId, const QStringList &files);
 
 signals:
   void uploadProgress(const QString &roomId, const QString &oid, qint64 bytesSent, qint64 bytesTotal);

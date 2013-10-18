@@ -16,31 +16,19 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SHARECHATVIEW_H_
-#define SHARECHATVIEW_H_
+#ifndef SHAREDND_H_
+#define SHAREDND_H_
 
-#include <QUrl>
 #include <QStringList>
+#include <QUrl>
 
-#include "hooks/ChatViewHooks.h"
-
-class Share;
-
-class ShareChatView : public ChatViewHooks
+class ShareDnD
 {
-  Q_OBJECT
+  ShareDnD() {}
 
 public:
-  ShareChatView(Share *share);
-
-protected:
-  bool onDragEnterEvent(ChatView *view, QDragEnterEvent *event);
-  bool onDropEvent(ChatView *view, QDropEvent *event);
-  void initImpl(ChatView *view);
-  void loadFinishedImpl(ChatView *view);
-
-private:
-  Share *m_share;
+  static QStringList getFiles(const QList<QUrl> &urls);
+  static QList<QUrl> getUrls(const QList<QUrl> &urls);
 };
 
-#endif /* SHARECHATVIEW_H_ */
+#endif /* SHAREDND_H_ */
