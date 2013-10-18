@@ -17,7 +17,6 @@
  */
 
 #include <QDragEnterEvent>
-#include <QFileInfo>
 #include <QNetworkDiskCache>
 #include <QWebFrame>
 
@@ -26,9 +25,8 @@
 #include "ShareChatView.h"
 #include "SharePlugin_p.h"
 #include "ui/tabs/ChatView.h"
+#include "ShareDnD.h"
 
-#define MAX_SIZE 10485760 /* 10 MB */
-#define MAX_IMAGES 20
 
 ShareChatView::ShareChatView(Share *share)
   : ChatViewHooks(share)
@@ -39,7 +37,11 @@ ShareChatView::ShareChatView(Share *share)
 
 bool ShareChatView::onDragEnterEvent(ChatView *view, QDragEnterEvent *event)
 {
-  if (ChatId(view->id()).type() != ChatId::ChannelId || !event->mimeData()->hasUrls() || getFiles(event->mimeData()->urls()).isEmpty())
+  if (ChatId(view->id()).type() != ChatId::ChannelId || !event->mimeData()->hasUrls())
+    return false;
+
+  const QList<QUrl> urls = event->mimeData()->urls();
+  if (ShareDnD::getFiles(urls).isEmpty() && ShareDnD::getUrls(urls).isEmpty())
     return false;
 
   event->acceptProposedAction();
@@ -54,7 +56,11 @@ bool ShareChatView::onDropEvent(ChatView *view, QDropEvent *event)
     return false;
 
   event->acceptProposedAction();
-  m_share->upload(id, getFiles(event->mimeData()->urls()));
+
+  const QList<QUrl> urls = event->mimeData()->urls();
+  if (!m_share->upload(id, ShareDnD::getFiles(urls)))
+    return m_share->upload(id, ShareDnD::getUrls(urls));
+
   return true;
 }
 
@@ -79,35 +85,4 @@ void ShareChatView::loadFinishedImpl(ChatView *view)
     return;
 
   view->addCSS(LS("qrc:/css/Share/share.css"));
-}
-
-
-QStringList ShareChatView::getFiles(const QList<QUrl> &urls) const
-{
-  QStringList out;
-  qint64 size = 0;
-  int count = 0;
-
-  foreach (const QUrl &url, urls) {
-    if (count == MAX_IMAGES)
-      break;
-
-    if (url.scheme() == LS("file")) {
-      const QFileInfo fi(url.toLocalFile());
-      if (!fi.exists() || !fi.isFile())
-        continue;
-
-      size += fi.size();
-      if (size > MAX_SIZE)
-        continue;
-
-      const QString suffix = fi.suffix().toLower();
-      if (suffix == LS("png") || suffix == LS("gif") || suffix == LS("jpg") || suffix == LS("jpeg")) {
-        out.append(fi.absoluteFilePath());
-        count++;
-      }
-    }
-  }
-
-  return out;
 }
