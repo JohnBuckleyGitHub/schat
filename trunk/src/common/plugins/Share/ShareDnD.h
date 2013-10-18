@@ -22,13 +22,18 @@
 #include <QStringList>
 #include <QUrl>
 
+class QMimeData;
+
 class ShareDnD
 {
   ShareDnD() {}
 
 public:
-  static QStringList getFiles(const QList<QUrl> &urls);
-  static QList<QUrl> getUrls(const QList<QUrl> &urls);
+  static QStringList getFiles(const QMimeData *data);
+  static QList<QUrl> getUrls(const QMimeData *data);
+
+private:
+  static bool addUrl(QList<QUrl> &urls, const QUrl &url);
 };
 
 #endif /* SHAREDND_H_ */

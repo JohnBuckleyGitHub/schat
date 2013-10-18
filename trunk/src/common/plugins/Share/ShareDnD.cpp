@@ -17,6 +17,7 @@
  */
 
 #include <QFileInfo>
+#include <QMimeData>
 
 #include "sglobal.h"
 #include "ShareDnD.h"
@@ -24,11 +25,12 @@
 #define MAX_SIZE 10485760 /* 10 MB */
 #define MAX_IMAGES 20
 
-QStringList ShareDnD::getFiles(const QList<QUrl> &urls)
+QStringList ShareDnD::getFiles(const QMimeData *data)
 {
+  const QList<QUrl> urls = data->urls();
   QStringList out;
   qint64 size = 0;
-  int count = 0;
+  int count   = 0;
 
   foreach (const QUrl &url, urls) {
     if (count == MAX_IMAGES)
@@ -55,8 +57,9 @@ QStringList ShareDnD::getFiles(const QList<QUrl> &urls)
 }
 
 
-QList<QUrl> ShareDnD::getUrls(const QList<QUrl> &urls)
+QList<QUrl> ShareDnD::getUrls(const QMimeData *data)
 {
+  const QList<QUrl> urls = data->urls();
   QList<QUrl> out;
   int count = 0;
 
@@ -64,11 +67,23 @@ QList<QUrl> ShareDnD::getUrls(const QList<QUrl> &urls)
     if (count == MAX_IMAGES)
       break;
 
-    if (url.scheme() == LS("http") || url.scheme() == LS("https")) {
-      out.append(url);
+    if (addUrl(out, url))
       count++;
-    }
   }
 
+  if (out.isEmpty() && addUrl(out, data->text()))
+    count++;
+
   return out;
+}
+
+
+bool ShareDnD::addUrl(QList<QUrl> &urls, const QUrl &url)
+{
+  if (!url.isEmpty() && (url.scheme() == LS("http") || url.scheme() == LS("https"))) {
+    urls.append(url);
+    return true;
+  }
+
+  return false;
 }
