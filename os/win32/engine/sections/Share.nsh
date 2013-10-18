@@ -23,11 +23,16 @@ ${Body}
 ${Section}
   SetOutPath "$INSTDIR\plugins"
   File "${SCHAT_SOURCE}\plugins\Share.dll"
+
+  WriteRegStr HKCU "Software\Microsoft\Internet Explorer\Low Rights\DragDrop\{F0BDC313-72FB-40DF-B178-F38E1D965E18}" "AppName" "schat2.exe"
+  WriteRegStr HKCU "Software\Microsoft\Internet Explorer\Low Rights\DragDrop\{F0BDC313-72FB-40DF-B178-F38E1D965E18}" "AppPath" "$INSTDIR"
+  WriteRegDWORD HKCU "Software\Microsoft\Internet Explorer\Low Rights\DragDrop\{F0BDC313-72FB-40DF-B178-F38E1D965E18}" "Policy" 3
 ${SectionEnd}
 ${BodyEnd}
 
 ${Uninstall}
   Delete "$INSTDIR\plugins\Share.dll"
-
   RMDir "$INSTDIR\plugins"
+
+  DeleteRegKey HKCU "Software\Microsoft\Internet Explorer\Low Rights\DragDrop\{F0BDC313-72FB-40DF-B178-F38E1D965E18}"
 ${UninstallEnd}

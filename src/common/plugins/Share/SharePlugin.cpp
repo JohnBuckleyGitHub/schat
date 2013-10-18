@@ -40,6 +40,8 @@
 #include "Translation.h"
 #include "ui/TabWidget.h"
 
+#define API_URL QLatin1String("https://upload.schat.me/1/image")
+
 class SharePluginTr : public Tr
 {
   Q_DECLARE_TR_FUNCTIONS(SharePluginTr)
@@ -141,7 +143,7 @@ bool Share::upload(const ChatId &roomId, const QList<QUrl> &urls)
 
   m_id.init(ObjectId::gen());
 
-  QNetworkRequest request(QUrl("https://upload.schat.me/1/image"));
+  QNetworkRequest request(QUrl(API_URL));
   request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
   QVariantMap data;
@@ -194,7 +196,7 @@ bool Share::upload(const ChatId &roomId, const QStringList &files)
     }
   }
 
-  QNetworkRequest request(QUrl("https://upload.schat.me/1/image"));
+  QNetworkRequest request(QUrl(API_URL));
 
   QNetworkReply *reply = m_net->post(request, multiPart);
   multiPart->setParent(reply);

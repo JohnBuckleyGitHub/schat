@@ -40,8 +40,7 @@ bool ShareChatView::onDragEnterEvent(ChatView *view, QDragEnterEvent *event)
   if (ChatId(view->id()).type() != ChatId::ChannelId || !event->mimeData()->hasUrls())
     return false;
 
-  const QList<QUrl> urls = event->mimeData()->urls();
-  if (ShareDnD::getFiles(urls).isEmpty() && ShareDnD::getUrls(urls).isEmpty())
+  if (ShareDnD::getFiles(event->mimeData()).isEmpty() && ShareDnD::getUrls(event->mimeData()).isEmpty())
     return false;
 
   event->acceptProposedAction();
@@ -57,9 +56,8 @@ bool ShareChatView::onDropEvent(ChatView *view, QDropEvent *event)
 
   event->acceptProposedAction();
 
-  const QList<QUrl> urls = event->mimeData()->urls();
-  if (!m_share->upload(id, ShareDnD::getFiles(urls)))
-    return m_share->upload(id, ShareDnD::getUrls(urls));
+  if (!m_share->upload(id, ShareDnD::getFiles(event->mimeData())))
+    return m_share->upload(id, ShareDnD::getUrls(event->mimeData()));
 
   return true;
 }
