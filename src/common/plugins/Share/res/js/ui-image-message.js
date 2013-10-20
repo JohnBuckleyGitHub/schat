@@ -24,18 +24,28 @@
     var a;
 
     for (var i = 0; i < images.length; i++) {
-      a = body.appendChild(create('a', {href:this.imageUrl(data.link, images[i], 'O'), class:'modal-toggle', 'data-handler':'image'}));
-      a.appendChild(create('img', {class:'img-thumbnail', src:this.imageUrl(data.link, images[i], 'S')}));
+      a = body.appendChild(create('a', {
+        href:this.imageUrl(data.link, images[i], 'O'),
+        class:'img-thumbnail modal-toggle',
+        style:"background: url('" + this.imageUrl(data.link, images[i], 'S') + "') no-repeat center;",
+        'data-handler':'image'
+      }));
 
-      a.addEventListener('dragstart', function(event) {
-        event.dataTransfer.setData('text/plain', event.target.parentNode.getAttribute('href'));
-      });
+      a.addEventListener('dragstart', this.onDragStart);
     }
+
+    if (json.Text.length)
+      head.appendChild(create('span', {class:'img-desc'}, json.Text));
   }
 
 
   ImageMessage.prototype.imageUrl = function(link, image, size) {
     return link + '/' + size + '/' + image.id.substr(0, 2) + '/' + image.id + '.' + image.type;
+  };
+
+
+  ImageMessage.prototype.onDragStart = function(event) {
+    event.dataTransfer.setData('text/plain', event.target.href);
   };
 
   schat.ui.ImageMessage = ImageMessage;

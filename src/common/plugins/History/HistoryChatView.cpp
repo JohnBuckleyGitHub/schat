@@ -65,7 +65,10 @@ bool HistoryChatView::onContextMenu(ChatView *view, QMenu *menu, const QWebHitTe
   if (id.type() != ChatId::ChannelId && id.type() != ChatId::UserId)
     return false;
 
-  const QWebElement block = result.enclosingBlockElement();
+  QWebElement block = result.enclosingBlockElement();
+  if (block.styleProperty("display", QWebElement::CascadedStyle) == LS("inline-block"))
+    block = block.parent();
+
   if (!(block.hasClass(LS("blocks")) || block.hasClass(LS("panel-body")) || block.hasClass(LS("panel-heading"))) || block.hasClass("removed"))
     return false;
 
