@@ -36,6 +36,7 @@
 #include "ShareMessages.h"
 #include "SharePlugin.h"
 #include "SharePlugin_p.h"
+#include "text/TokenFilter.h"
 #include "Tr.h"
 #include "Translation.h"
 #include "ui/TabWidget.h"
@@ -116,6 +117,7 @@ void Share::read(const MessagePacket &packet)
   message.setDate(packet->date());
   message.data().insert(ChannelMessage::kStatus, packet->status());
   message.data().insert(ChannelMessage::kJSON,   packet->json());
+  message.data().insert(ChannelMessage::kText,   TokenFilter::filter(LS("channel"), packet->text()));
 
   if (!packet->oid.isNull()) {
     message.data().insert(ChannelMessage::kOID, QString(ChatId::toBase32(packet->oid.byteArray())));

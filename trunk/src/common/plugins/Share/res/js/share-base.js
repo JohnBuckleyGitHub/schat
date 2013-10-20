@@ -68,13 +68,13 @@
 
     var body = cont.children[1];
     body.setAttribute('class', 'panel-body removed');
-    body.innerHTML = '<img class="img-thumbnail" src="qrc:/images/Share/removed-image.png">';
+    body.innerHTML = '<img class="img-thumbnail" draggable="false" src="qrc:/images/Share/removed-image.png">';
   };
 
 
   Modal.create.image = function(event)
   {
-    schat.ui.modal.current = new schat.ui.ImageDialog(event.target.src.replace('/S/', '/L/'));
+    schat.ui.modal.current = new schat.ui.ImageDialog(event.target.href.replace('/O/', '/L/'));
   };
 
 

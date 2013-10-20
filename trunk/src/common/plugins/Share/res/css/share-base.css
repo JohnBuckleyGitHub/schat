@@ -5,9 +5,8 @@
 }
 
 .image-type .panel-body,
-.image-upload .panel-body{
+.image-upload .panel-body {
   padding: 5px;
-  text-align: center;
 }
 
 .image-upload .btn-cancel {
@@ -23,7 +22,7 @@
   width: 90px;
   height: 90px;
   box-sizing: content-box;
-  margin: 2px;
+  margin: 0 1px;
 }
 
 .image-type {
