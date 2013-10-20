@@ -12,7 +12,7 @@
 
     var body = this.cont.appendChild(create('div', {class:'panel-body' + extra}));
     if (json.Status === 600) {
-      body.appendChild(create('img', {class:'img-thumbnail', src:'qrc:/images/Share/removed-image.png'}));
+      body.appendChild(create('img', {class:'img-thumbnail', src:'qrc:/images/Share/removed-image.png', draggable:false}));
       return;
     }
 
@@ -26,6 +26,10 @@
     for (var i = 0; i < images.length; i++) {
       a = body.appendChild(create('a', {href:this.imageUrl(data.link, images[i], 'O'), class:'modal-toggle', 'data-handler':'image'}));
       a.appendChild(create('img', {class:'img-thumbnail', src:this.imageUrl(data.link, images[i], 'S')}));
+
+      a.addEventListener('dragstart', function(event) {
+        event.dataTransfer.setData('text/plain', event.target.parentNode.getAttribute('href'));
+      });
     }
   }
 
