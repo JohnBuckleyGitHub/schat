@@ -40,6 +40,7 @@ protected:
 
 private:
   FeedEvent *createEvent();
+  int filter();
   void pong(qint64 date);
   void reject(int status);
 

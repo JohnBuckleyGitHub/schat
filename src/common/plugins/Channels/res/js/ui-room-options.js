@@ -45,6 +45,7 @@
     this.permissions    = document.getElementById('permissions');
     this.permissionsRow = document.getElementById('permissions-row');
     this.logging        = document.getElementById('logging');
+    this.images         = document.getElementById('images');
     this.pinBtn         = document.getElementById('pin-button');
     this.sudoBtn        = document.getElementById('sudo-button');
 
@@ -53,11 +54,12 @@
 
     var that = this;
 
-    $(this.visibility).on('change',  function() { that.setVisibility.apply(that, arguments); });
-    $(this.permissions).on('change', function() { that.setPermissions.apply(that, arguments); });
-    $(this.logging).on('change',     this.setLogging);
-    $(this.pinBtn).on('click',       this.pin);
-    $(this.sudoBtn).on('click',      this.sudo);
+    this.visibility.addEventListener('change',  function() { that.setVisibility.apply(that, arguments); });
+    this.permissions.addEventListener('change', function() { that.setPermissions.apply(that, arguments); });
+    this.logging.addEventListener('change',     this.setLogging);
+    this.images.addEventListener('change',      this.setImages);
+    this.pinBtn.addEventListener('click',       this.pin);
+    this.sudoBtn.addEventListener('click',      this.sudo);
   };
 
 
@@ -68,8 +70,8 @@
     Utils.adjustWidth($('.options-label'));
     Utils.adjustWidth($('.options-select'));
 
-    $(this.pinBtn).attr('title', Utils.tr('channels-pin'));
-    $(this.sudoBtn).attr('title', Utils.tr('channels-sudo-invite'));
+    this.pinBtn.title  = tr('channels-pin');
+    this.sudoBtn.title = tr('channels-sudo-invite');
   };
 
 
@@ -97,7 +99,8 @@
     $(this.permissionsRow).toggleClass('strict-access', permissions != ACL_CHANNEL_READWRITE);
     $(this.pinBtn).toggleClass('active', feed[INFO_FEED_PINNED_KEY] == true);
     $(this.sudoBtn).toggleClass('active', sudo !== false);
-    $(this.logging).attr('checked', feed[INFO_FEED_LOGGING_KEY] !== false)
+    $(this.logging).attr('checked', feed[INFO_FEED_LOGGING_KEY] !== false);
+    this.images.checked = feed['images'] !== false;
   };
 
 
@@ -128,6 +131,14 @@
    */
   RoomOptionsDialog.prototype.setLogging = function() {
     SimpleChat.request(Settings.getId(), FEED_METHOD_POST, INFO_FEED_LOGGING_REQ, {'value':$(this).is(':checked'), 'options':7});
+  };
+
+
+  /**
+   * Установка показа изображений.
+   */
+  RoomOptionsDialog.prototype.setImages = function() {
+    SimpleChat.request(Settings.getId(), FEED_METHOD_POST, 'info/images', {'value':$(this).is(':checked'), 'options':7});
   };
 
 

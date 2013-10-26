@@ -49,7 +49,11 @@
   Messages.addImageMessage = function(json) {
     var oid = json.OID;
     if (progress.hasOwnProperty(oid)) {
-      progress[oid].cont.parentNode.removeChild(progress[oid].cont);
+      if (json.Status === 200)
+        progress[oid].cont.parentNode.removeChild(progress[oid].cont);
+      else
+        progress[oid].setStatus(json.Status);
+
       delete progress[oid];
     }
 

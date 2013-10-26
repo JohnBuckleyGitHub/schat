@@ -75,6 +75,7 @@ protected:
     else if (key == LS("readwrite"))      return tr("Read write");
     else if (key == LS("forbidden"))      return tr("No access");
     else if (key == LS("logging"))        return tr("Logging messages");
+    else if (key == LS("images"))         return tr("Images");
     else if (key == LS("accept"))         return tr("Accept invitation");
     else if (key == LS("reject"))         return tr("Reject");
     else if (key == LS("sudo-invite"))    return tr("Only owners and moderators can invite to room");
