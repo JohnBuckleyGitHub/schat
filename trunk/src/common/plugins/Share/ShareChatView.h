@@ -23,6 +23,7 @@
 #include <QStringList>
 
 #include "hooks/ChatViewHooks.h"
+#include "id/ChatId.h"
 
 class Share;
 
@@ -40,6 +41,9 @@ protected:
   void loadFinishedImpl(ChatView *view);
 
 private:
+  bool isAcceptable() const;
+
+  ChatId m_id;
   Share *m_share;
 };
 

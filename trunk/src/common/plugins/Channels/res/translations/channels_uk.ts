@@ -64,7 +64,7 @@
 <context>
     <name>ChannelsPluginImpl</name>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="223"/>
+        <location filename="../../ChannelsPlugin.cpp" line="221"/>
         <source>Rooms</source>
         <translation type="unfinished"></translation>
     </message>
@@ -176,51 +176,56 @@
     </message>
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="78"/>
-        <source>Accept invitation</source>
+        <source>Images</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="79"/>
-        <source>Reject</source>
+        <source>Accept invitation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="80"/>
+        <source>Reject</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="81"/>
         <source>Only owners and moderators can invite to room</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="82"/>
+        <location filename="../../ChannelsPlugin.cpp" line="83"/>
         <source>Create new room</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="83"/>
+        <location filename="../../ChannelsPlugin.cpp" line="84"/>
         <source>Room name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="84"/>
+        <location filename="../../ChannelsPlugin.cpp" line="85"/>
         <source>This room is private</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="86"/>
+        <location filename="../../ChannelsPlugin.cpp" line="87"/>
         <source>Invalid room name. Please choose another name.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="87"/>
+        <location filename="../../ChannelsPlugin.cpp" line="88"/>
         <source>That room already exists. Please choose another name.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="88"/>
+        <location filename="../../ChannelsPlugin.cpp" line="89"/>
         <source>Now {0} online in {1}. Peak online &lt;b&gt;{2}&lt;/b&gt; was &lt;span class=&quot;timeago&quot; data-date=&quot;{3}&quot;&gt;&lt;/span&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../../ChannelsPlugin.cpp" line="94"/>
+        <location filename="../../ChannelsPlugin.cpp" line="95"/>
         <source>&lt;b&gt;%n&lt;/b&gt; user(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -229,7 +234,7 @@
         </translation>
     </message>
     <message numerus="yes">
-        <location filename="../../ChannelsPlugin.cpp" line="95"/>
+        <location filename="../../ChannelsPlugin.cpp" line="96"/>
         <source>&lt;b&gt;%n&lt;/b&gt; room(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
@@ -238,12 +243,12 @@
         </translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="81"/>
+        <location filename="../../ChannelsPlugin.cpp" line="82"/>
         <source>Create</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="85"/>
+        <location filename="../../ChannelsPlugin.cpp" line="86"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>

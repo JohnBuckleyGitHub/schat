@@ -20,12 +20,14 @@
 #include <QNetworkDiskCache>
 #include <QWebFrame>
 
+#include "client/ChatClient.h"
+#include "client/ClientChannels.h"
 #include "Path.h"
 #include "sglobal.h"
 #include "ShareChatView.h"
+#include "ShareDnD.h"
 #include "SharePlugin_p.h"
 #include "ui/tabs/ChatView.h"
-#include "ShareDnD.h"
 
 
 ShareChatView::ShareChatView(Share *share)
@@ -37,7 +39,8 @@ ShareChatView::ShareChatView(Share *share)
 
 bool ShareChatView::onDragEnterEvent(ChatView *view, QDragEnterEvent *event)
 {
-  if (ChatId(view->id()).type() != ChatId::ChannelId || !event->mimeData()->hasUrls())
+  m_id.init(view->id());
+  if (!event->mimeData()->hasUrls() || !isAcceptable())
     return false;
 
   if (ShareDnD::getFiles(event->mimeData()).isEmpty() && ShareDnD::getUrls(event->mimeData()).isEmpty())
@@ -50,14 +53,14 @@ bool ShareChatView::onDragEnterEvent(ChatView *view, QDragEnterEvent *event)
 
 bool ShareChatView::onDropEvent(ChatView *view, QDropEvent *event)
 {
-  const ChatId id(view->id());
-  if (ChatId(view->id()).type() != ChatId::ChannelId || !event->mimeData()->hasUrls())
+  m_id.init(view->id());
+  if (!event->mimeData()->hasUrls() || !isAcceptable())
     return false;
 
   event->acceptProposedAction();
 
-  if (!m_share->upload(id, ShareDnD::getFiles(event->mimeData())))
-    return m_share->upload(id, ShareDnD::getUrls(event->mimeData()));
+  if (!m_share->upload(m_id, ShareDnD::getFiles(event->mimeData())))
+    return m_share->upload(m_id, ShareDnD::getUrls(event->mimeData()));
 
   return true;
 }
@@ -65,7 +68,8 @@ bool ShareChatView::onDropEvent(ChatView *view, QDropEvent *event)
 
 void ShareChatView::initImpl(ChatView *view)
 {
-  if (ChatId(view->id()).type() != ChatId::ChannelId)
+  m_id.init(view->id());
+  if (m_id.type() != ChatId::ChannelId)
     return;
 
   QNetworkDiskCache *cache = new QNetworkDiskCache(this);
@@ -79,8 +83,22 @@ void ShareChatView::initImpl(ChatView *view)
 
 void ShareChatView::loadFinishedImpl(ChatView *view)
 {
-  if (ChatId(view->id()).type() != ChatId::ChannelId)
+  m_id.init(view->id());
+  if (m_id.type() != ChatId::ChannelId)
     return;
 
   view->addCSS(LS("qrc:/css/Share/share.css"));
+}
+
+
+bool ShareChatView::isAcceptable() const
+{
+  if (m_id.type() != ChatId::ChannelId)
+    return false;
+
+  ClientChannel channel = ChatClient::channels()->get(m_id.toByteArray());
+  if (!channel)
+    return false;
+
+  return channel->feed("info")->data().value("images", true) != false;
 }
