@@ -33,7 +33,6 @@ public:
 
   virtual void add(ChatChannel channel);
   virtual void load();
-  virtual void load(ChatChannel channel);
   virtual void newChannel(ChatChannel channel, ChatChannel user = ChatChannel());
   virtual void remove(ChatChannel channel);
   virtual void rename(ChatChannel channel);

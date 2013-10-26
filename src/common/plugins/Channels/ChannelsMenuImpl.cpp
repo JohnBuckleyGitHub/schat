@@ -90,7 +90,7 @@ void ChannelsMenuImpl::bindImpl(QMenu *menu, ClientChannel channel, Hooks::Scope
 
     m_ignore = menu->addAction(SCHAT_ICON(Prohibition), tr("Ignore"));
     m_ignore->setCheckable(true);
-    m_ignore->setChecked(Hooks::MessagesImpl::isIgnored(channel));
+    m_ignore->setChecked(Hooks::MessagesImpl::ignored(channel));
   }
 }
 

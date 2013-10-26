@@ -98,8 +98,7 @@ public:
     AuthRequestPacket           = 0x6152, // "aR" or 24914
     /// Ответ на запрос авторизации.
     AuthReplyPacket             = 0x6172, // "ar" or 24946
-    NoticePacket                = 0x6e,   // "n" or 110
-    JSONPacket                  = 0x6a73  // "js" or 27251
+    NoticePacket                = 0x6e // "n" or 110
   };
 
   /// Опция заголовка виртуального пакета.

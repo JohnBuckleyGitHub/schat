@@ -99,7 +99,6 @@ protected:
     else if (key == LS("no-encryption"))     return tr("no");
     else if (key == LS("lang"))              return tr("en");
     else if (key == LS("message-removed"))   return tr("This message has been removed.");
-    else if (key == LS("common-stats"))      return tr("Statistics");
     return QString();
   }
 };
@@ -270,11 +269,8 @@ QString WebBridge::toBase32(const QString &text)
 }
 
 
-QString WebBridge::translate(const QString &key, const QVariant &param) const
+QString WebBridge::translate(const QString &key) const
 {
-  if (param.canConvert(QVariant::Int))
-    return Tr::value(key, param.toInt());
-
   return Tr::value(key);
 }
 

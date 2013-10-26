@@ -65,7 +65,7 @@ bool UserItem::reload()
 
     if (m_user->status() != Status::Offline) {
       m_bold      = acl & Acl::Edit || acl & Acl::SpecialWrite;
-      m_italic    = !(acl & Acl::Write) || Hooks::MessagesImpl::isIgnored(m_user);
+      m_italic    = !(acl & Acl::Write) || Hooks::MessagesImpl::ignored(m_user);
       m_underline = acl & Acl::SpecialEdit;
     }
     else {

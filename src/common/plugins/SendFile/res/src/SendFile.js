@@ -19,7 +19,7 @@
 var SendFileUtils = {
   button: function(name, id)
   {
-    return '<a class="btn btn-default btn-xs btn-small btn-file-' + name + '" data-tr="file-' + name + '" href="chat-sendfile:'
+    return '<a class="btn btn-small btn-file-' + name + '" data-tr="file-' + name + '" href="chat-sendfile:'
        + name + '/' + id + '">' + Utils.tr('file-' + name) + '</a>';
   },
 
@@ -144,7 +144,7 @@ Messages.addFileMessage = function(json)
 
   var block = document.createElement('div');
   block.id = json.Id;
-  block.setAttribute('class', 'cont ' + json.Type + '-type');
+  block.setAttribute('class', 'container ' + json.Type + '-type');
   block.setAttribute('data-time', json.Date);
 
   var html = '<div class="blocks ' + json.Direction + '">';

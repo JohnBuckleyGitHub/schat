@@ -126,7 +126,6 @@ void NodeChannelIndex::build()
   m_date    = DateTime::utc();
   m_updated = true;
 
-  FeedsCore::put(FEED_NAME_STATS + LS("/rooms"), QVariant(), Feed::Broadcast);
   FeedsCore::put(FEED_NAME_LIST + LS("/channels"), QVariant(), Feed::Broadcast);
 }
 

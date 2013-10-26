@@ -42,7 +42,7 @@ Messages.day = function(day) {
 
   var index = Messages.days.indexOf(day);
   if (index == Messages.days.length - 1) {
-    window.Chat.appendChild(block);
+    document.getElementById('Chat').appendChild(block);
   }
   else {
     var before = document.getElementById('day-' + Messages.days[index + 1]);
@@ -52,18 +52,7 @@ Messages.day = function(day) {
 
 
 Messages.addRawMessage = function(block, day) {
-  if (typeof day != 'string' || day.length != 10) {
-    var date = new Date();
-    day = date.getFullYear() + '_' + DateTime.pad(date.getMonth() + 1) + '_' + DateTime.pad(date.getDate());
-  }
-
-  var dayBody = document.getElementById('day-body-' + day);
-  if (dayBody === null) {
-    Messages.day(day);
-    dayBody = document.getElementById('day-body-' + day);
-  }
-
-  dayBody.appendChild(block);
+  document.getElementById('day-body-' + day).appendChild(block);
   Messages.add(block.id);
 };
 
@@ -115,11 +104,11 @@ Messages.retranslate = function() {
 };
 
 (function(){
-  try {
+  if (typeof ChatView !== 'undefined')
     ChatView.reload.connect(Messages.reload);
+
+  if (typeof SimpleChat !== 'undefined')
     SimpleChat.retranslated.connect(Messages.retranslate);
-  }
-  catch (e) {}
 })();
 
 $(document).ready(function() {

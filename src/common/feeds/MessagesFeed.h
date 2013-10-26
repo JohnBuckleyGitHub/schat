@@ -16,8 +16,8 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef MESSAGESFEED_H_
-#define MESSAGESFEED_H_
+#ifndef INFOFEED_H_
+#define INFOFEED_H_
 
 #define MESSAGES_FEED_BEFORE_KEY   QLatin1String("before")
 #define MESSAGES_FEED_COUNT_KEY    QLatin1String("count")
@@ -39,4 +39,4 @@
 #define MESSAGES_FEED_TIMEOUT_KEY  QLatin1String("timeout")
 #define MESSAGES_FEED_V_KEY        QLatin1String("v")
 
-#endif /* MESSAGESFEED_H_ */
+#endif /* INFOFEED_H_ */

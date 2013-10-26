@@ -21,8 +21,7 @@
 <context>
     <name>HistoryChatView</name>
     <message>
-        <location filename="../../HistoryChatView.cpp" line="126"/>
-        <location filename="../../HistoryChatView.cpp" line="267"/>
+        <location filename="../../HistoryChatView.cpp" line="215"/>
         <source>Remove message</source>
         <translation type="unfinished"></translation>
     </message>

@@ -23,7 +23,6 @@
 #include <QVariant>
 
 #include "Channel.h"
-#include "net/NetRequest.h"
 
 class FeedNotice;
 
@@ -43,20 +42,16 @@ public:
   static bool get(const QByteArray &id, const QString &name, const QVariant &value = QVariant());
   static bool post(const QByteArray &id, const QString &name, const QVariant &value = QVariant(), int options = 0);
   static bool put(const QByteArray &id, const QString &name, const QVariant &value = QVariant(), int options = 0);
-  static bool req(const NetRequest &request);
   static bool request(ClientChannel channel, const QString &command, const QString &name, const QVariantMap &json = QVariantMap());
   static bool request(const QByteArray &id, const QString &command, const QString &name, const QVariantMap &json = QVariantMap());
   static int match(ClientChannel channel, ClientChannel user = ClientChannel());
 
 private slots:
-  void json();
   void notice(int type);
 
 private:
-  FeedNotice *m_packet;            ///< Текущий прочитанный пакет.
-  Hooks::Feeds *m_hooks;           ///< Хуки.
-  QMap<QString, NetRequest> m_req; ///< Отправленные запросы.
-  static ClientFeeds *m_self;      ///< Указатель на себя.
+  FeedNotice *m_packet;     ///< Текущий прочитанный пакет.
+  Hooks::Feeds *m_hooks;    ///< Хуки.
 };
 
 #endif /* CLIENTFEEDS_H_ */

@@ -1,12 +1,12 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource prefix="/">
   <file alias="css/about.css">html/css/about.min.css</file>
-  <file alias="css/channel.css">css/channel.min.css</file>
-  <file alias="css/common.css">css/common.min.css</file>
+  <file alias="css/channel.css">html/css/channel.min.css</file>
+  <file alias="css/ChatView.css">html/css/ChatView.min.css</file>
   <file alias="css/input.css">html/css/input.css</file>
   <file alias="css/PluginsView.css">html/css/PluginsView.min.css</file>
-  <file alias="css/server.css">css/server.min.css</file>
-  <file alias="css/user.css">css/user.min.css</file>
+  <file alias="css/server.css">html/css/server.min.css</file>
+  <file alias="css/user.css">html/css/user.min.css</file>
   <file alias="images/add.png">images/diagona/103.png</file>
   <file alias="images/add-gray.png">images/add.png</file>
   <file alias="images/add-small.png">images/diagona/10/103.png</file>
@@ -57,7 +57,6 @@
   <file alias="images/quit.png">images/crystal/exit.png</file>
   <file alias="images/reload.png">images/fugue/arrow-circle-315.png</file>
   <file alias="images/remove.png">images/silk/cross.png</file>
-  <file alias="images/schat-icons.png">../web/public/img/schat-icons.png</file>
   <file alias="images/secure.png">images/fugue/lock.png</file>
   <file alias="images/send.png">images/oxygen/go-jump-locationbar.png</file>
   <file alias="images/settings.png">images/diagona/086.png</file>
@@ -101,11 +100,16 @@
   <file alias="images/user-yellow.png">images/fugue/user-yellow.png</file>
   <file alias="images/user-yellow-female.png">images/fugue/user-yellow-female.png</file>
   <file alias="js/about.js">html/js/about.min.js</file>
-  <file alias="js/common.js">js/common.min.js</file>
+  <file alias="js/bootstrap-modal.js">html/js/bootstrap-modal.min.js</file>
+  <file alias="js/bootstrap-tooltip.js">html/js/bootstrap-tooltip.min.js</file>
+  <file alias="js/ChatView.js">html/js/ChatView.min.js</file>
   <file alias="js/jquery.js">html/js/jquery.min.js</file>
+  <file alias="js/jquery.timeago.en.js">html/js/jquery.timeago.en.min.js</file>
+  <file alias="js/jquery.timeago.js">html/js/jquery.timeago.min.js</file>
+  <file alias="js/jquery.timeago.ru.js">html/js/jquery.timeago.ru.min.js</file>
   <file alias="js/PluginsView.js">html/js/PluginsView.min.js</file>
-  <file alias="js/server.js">js/server.min.js</file>
-  <file alias="js/user.js">js/user.min.js</file>
+  <file alias="js/server.js">html/js/server.min.js</file>
+  <file alias="js/user.js">html/js/user.min.js</file>
   <file>html/about.html</file>
   <file>html/Channel.html</file>
   <file>html/Plugins.html</file>

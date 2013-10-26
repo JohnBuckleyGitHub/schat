@@ -40,14 +40,9 @@ HEADERS = \
     feeds/NodeAclFeed.h \
     Host.h \
     Hosts.h \
-    net/DataCreator.h \
-    net/Net.h \
-    net/NetContext.h \
-    net/NetRecord.h \
     net/NodeAuthReply.h \
     net/NodePool.h \
     net/NodeWorker.h \
-    net/Subscribers.h \
     net/TcpServer.h \
     NodeLog.h \
     NodeNoticeReader.h \
@@ -77,12 +72,9 @@ SOURCES = \
     feeds/NodeAclFeed.cpp \
     Host.cpp \
     Hosts.cpp \
-    net/Net.cpp \
-    net/NetContext.cpp \
     net/NodeAuthReply.cpp \
     net/NodePool.cpp \
     net/NodeWorker.cpp \
-    net/Subscribers.cpp \
     net/TcpServer.cpp \
     NodeLog.cpp \
     NodeNoticeReader.cpp \

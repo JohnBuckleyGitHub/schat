@@ -18,11 +18,7 @@
 
 var YouTube = {
   onAdd: function(id) {
-    var cont = document.getElementById(id);
-    if (cont === null)
-      return;
-
-    if (cont.getElementsByClassName('youtube').length == 0)
+    if (document.getElementById(id).getElementsByClassName('youtube').length == 0)
       return;
 
     var youtube = $('#' + id + ' .youtube');
@@ -57,7 +53,7 @@ var YouTube = {
           $(this).data('state', 1);
 
           var id = SimpleChat.randomId();
-          $(this).after('<a class="btn btn-default btn-youtube" id="' + id + '"><i class="icon-plus-small"></i></a>');
+          $(this).after('<a class="btn btn-youtube" id="' + id + '"><i class="icon-plus-small"></i></a>');
           $('#' + id).data('state', 0);
 
           $('#' + id).on('click', function() {

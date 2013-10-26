@@ -52,7 +52,7 @@ public:
   Q_INVOKABLE QString status(const QString &id) const;
   Q_INVOKABLE QString statusText(int status) const;
   Q_INVOKABLE QString toBase32(const QString &text);
-  Q_INVOKABLE QString translate(const QString &key, const QVariant &param = QVariant()) const;
+  Q_INVOKABLE QString translate(const QString &key) const;
   Q_INVOKABLE QStringList fields() const;
   Q_INVOKABLE QVariant channel(const QString &id) const;
   Q_INVOKABLE QVariant encryption() const;

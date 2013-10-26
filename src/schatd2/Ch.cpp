@@ -80,7 +80,7 @@ bool Ch::gc(ChatChannel channel)
     Ch::server()->removeChannel(channel->id());
   }
 
-  if (channel->channels().all().size() || !channel->subscribers().isEmpty())
+  if (channel->channels().all().size())
     return false;
 
   m_self->remove(channel);
@@ -376,13 +376,8 @@ void Ch::cache(ChatChannel channel)
     return;
 
   const QByteArray &id = channel->id();
-  if (channel->type() != ChatId::ServerId)
+  if (channel->type() != SimpleID::ServerId)
     setOnline(channel);
-
-  if (!m_channels.contains(id)) {
-    foreach (ChHook *hook, m_hooks)
-      hook->load(channel);
-  }
 
   m_channels[id] = channel;
   m_channels[channel->normalized()] = channel;

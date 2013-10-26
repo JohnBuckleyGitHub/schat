@@ -4,7 +4,7 @@ class Download
 {
   public $version  = '';
   public $url      = 'http://schat.googlecode.com/files';
-  public $aws      = 'https://download.schat.me/schat2';
+  public $aws      = 'http://impomezia.s3.amazonaws.com/schat';
   public $path     = '/var/www/download.schat.me/htdocs/schat2';
   public $fileName = '/var/www/schat/htdocs/json/download.json';
 

@@ -50,12 +50,6 @@ void ChHook::load()
 }
 
 
-void ChHook::load(ChatChannel channel)
-{
-  Q_UNUSED(channel);
-}
-
-
 /*!
  * Создание нового обычного канала.
  *

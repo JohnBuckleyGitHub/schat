@@ -22,7 +22,6 @@ SUBDIRS += \
     GenericNode \
     Messages \
     NodeChannels \
-    NodeMaster \
     NodeConsole \
     RestApi \
     GeoIP \
@@ -35,7 +34,6 @@ SUBDIRS += \
     Emoticons \
     Idle \
     SendFile \
-    Share \
     SpellChecker \
     Proxy \
     Console \

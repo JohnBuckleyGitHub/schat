@@ -49,7 +49,6 @@ public:
 
 signals:
   void notice(int type);
-  void jsonPacket();
 
 protected:
   SimpleClient(SimpleClientPrivate &dd, QObject *parent);

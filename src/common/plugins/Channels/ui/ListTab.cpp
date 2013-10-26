@@ -48,7 +48,7 @@ ListTab::ListTab(TabWidget *parent)
 
 void ListTab::retranslateUi()
 {
-  setText(tr("Rooms"));
+  setText(tr("Channels"));
 }
 
 

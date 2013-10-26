@@ -151,11 +151,9 @@ var History = {
     History.message = null;
 
     if (json.status == 200 && json.data.messages.length) {
-      var id   = json.data.messages[0];
-      var cont = document.getElementById(id);
-
-      if (cont !== null)
-        History.date = cont.getAttribute('data-time');
+      var id = json.data.messages[0];
+      if ($('#' + id).length)
+        History.date = $('#' + id).attr('data-time');
       else
         History.message = id;
 
@@ -250,7 +248,7 @@ var History = {
    * Обработка не поддерживаемых сообщений.
    */
   unhandledMessage: function(json) {
-    var id = json.OID || json.Id;
+    var id = json.Id;
     if (History.scroll instanceof HistoryScroll) {
       var ids = [id];
       History.scroll.removeAll(ids);

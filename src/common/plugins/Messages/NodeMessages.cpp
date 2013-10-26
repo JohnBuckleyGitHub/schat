@@ -21,7 +21,6 @@
 #include "DateTime.h"
 #include "feeds/FeedEvents.h"
 #include "feeds/FeedStorage.h"
-#include "feeds/InfoFeed.h"
 #include "feeds/MessagesFeed.h"
 #include "net/PacketReader.h"
 #include "net/packets/MessageNotice.h"
@@ -44,18 +43,27 @@ NodeMessages::NodeMessages(Core *core)
  */
 bool NodeMessages::read(PacketReader *reader)
 {
-  if (ChatId(reader->sender()).type() != ChatId::UserId)
+  if (SimpleID::typeOf(reader->sender()) != SimpleID::UserId)
     return false;
 
-  m_sender = Ch::channel(reader->sender(), ChatId::UserId);
+  m_sender = Ch::channel(reader->sender(), SimpleID::UserId);
   if (!m_sender)
     return false;
 
   MessageNotice packet(m_type, reader);
   m_packet          = &packet;
   const qint64 date = m_packet->date();
+  FeedEvent *event  = createEvent();
 
-  FeedEvent *event = createEvent();
+  if (!m_dest)
+    event->status = Notice::NotFound;
+  else if (m_dest->type() == SimpleID::ServerId)
+    event->status = Notice::BadRequest;
+  else if (m_dest->type() == SimpleID::ChannelId && !m_dest->channels().contains(reader->sender()))
+    event->status = Notice::BadRequest;
+  else if (!m_dest->canWrite(m_sender))
+    event->status = Notice::Forbidden;
+
   if (event->status != Notice::OK) {
     reject(event->status);
     FeedEvents::start(event);
@@ -75,7 +83,7 @@ bool NodeMessages::read(PacketReader *reader)
   event->diffTo = event->date;
   event->date   = m_packet->date();
 
-  if (m_dest->type() == ChatId::UserId && m_dest->status().value() == Status::Offline) {
+  if (m_dest->type() == SimpleID::UserId && m_dest->status().value() == Status::Offline) {
     event->status = Notice::ChannelOffline;
     reject(event->status);
 
@@ -127,37 +135,7 @@ FeedEvent *NodeMessages::createEvent()
   if (m_dest)
     event->date = m_dest->feed(FEED_NAME_MESSAGES, true, false)->head().date();
 
-  event->status = filter();
   return event;
-}
-
-
-/*!
- * Фильтрация сообщения.
- *
- * \return Notice::OK если всё в порядке или другое значение, если сообщение должно быть отклонено.
- */
-int NodeMessages::filter()
-{
-  if (!m_dest)
-    return Notice::NotFound;
-
-  if (m_dest->type() == ChatId::ServerId)
-    return Notice::BadRequest;
-
-  if (m_dest->type() == ChatId::ChannelId && !m_dest->channels().contains(m_sender->id()))
-    return Notice::BadRequest;
-
-  if (!m_dest->canWrite(m_sender))
-    return Notice::Forbidden;
-
-  if (m_dest->type() == ChatId::ChannelId) {
-    const FeedPtr feed = m_dest->feed(FEED_NAME_INFO, true, false);
-    if (m_packet->command() == LS("image") && !feed->data().value(INFO_FEED_IMAGES_KEY, true).toBool())
-      return Notice::Forbidden;
-  }
-
-  return Notice::OK;
 }
 
 
@@ -195,6 +173,5 @@ void NodeMessages::reject(int status)
 
   MessageNotice packet(m_packet->sender(), m_packet->dest(), m_packet->text(), m_packet->date(), id.toByteArray());
   packet.setStatus(status);
-  packet.setCommand(m_packet->command());
   m_core->send(m_sender->sockets(), packet.data(Core::stream()));
 }

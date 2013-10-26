@@ -73,8 +73,7 @@ void AuthBridge::open()
 
 void AuthBridge::retry()
 {
-  ChatClient::io()->setAuthType(AuthRequest::Discovery);
-  ChatClient::open(ChatClient::io()->url());
+  ChatClient::open();
 }
 
 

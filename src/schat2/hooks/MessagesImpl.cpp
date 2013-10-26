@@ -57,7 +57,7 @@ int MessagesImpl::read(MessagePacket packet)
   if (command != LS("m") && command != LS("me") && command != LS("say"))
     return 0;
 
-  if (isIgnored(packet))
+  if (SimpleID::typeOf(packet->dest()) == SimpleID::ChannelId && ignored(ChatClient::channels()->get(packet->sender())))
     return 0;
 
   ChannelMessage message(packet);
@@ -82,25 +82,16 @@ int MessagesImpl::read(MessagePacket packet)
 /*!
  * \return \b true если сообщения пользователя игнорируются.
  */
-bool MessagesImpl::isIgnored(ClientChannel user)
+bool MessagesImpl::ignored(ClientChannel user)
 {
-  if (!user || user->type() != ChatId::UserId)
+  if (!user || user->type() != SimpleID::UserId)
     return false;
 
-  const FeedPtr feed = ChatClient::channel()->feed(FEED_NAME_ACL, false);
+  FeedPtr feed = ChatClient::channel()->feed(FEED_NAME_ACL, false);
   if (!feed)
     return false;
 
   return !feed->can(user.data(), Acl::Write);
-}
-
-
-bool MessagesImpl::isIgnored(MessagePacket packet)
-{
-  if (ChatId(packet->dest()).type() != ChatId::ChannelId)
-    return false;
-
-  return isIgnored(ChatClient::channels()->get(packet->sender()));
 }
 
 
@@ -136,12 +127,6 @@ void MessagesImpl::unhandled(MessagePacket packet)
   message.data()[ChannelMessage::kText]    = packet->text();
   message.data()[ChannelMessage::kStatus]  = packet->status();
   message.data()[ChannelMessage::kJSON]    = packet->json();
-
-  if (!packet->oid.isNull()) {
-    message.data().insert(ChannelMessage::kOID, QString(ChatId::toBase32(packet->oid.byteArray())));
-    message.data().insert(ChannelMessage::kMDate, packet->mdate);
-  }
-
   TabWidget::add(message);
 }
 

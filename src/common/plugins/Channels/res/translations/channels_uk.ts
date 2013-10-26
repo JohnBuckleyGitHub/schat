@@ -64,8 +64,8 @@
 <context>
     <name>ChannelsPluginImpl</name>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="221"/>
-        <source>Rooms</source>
+        <location filename="../../ChannelsPlugin.cpp" line="216"/>
+        <source>Channels</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -85,13 +85,33 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../ChannelsPlugin.cpp" line="60"/>
+        <source>Channel name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="61"/>
+        <source>Channels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../ChannelsPlugin.cpp" line="62"/>
         <source>No title</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../ChannelsPlugin.cpp" line="63"/>
+        <source>Channel title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../ChannelsPlugin.cpp" line="64"/>
         <source>Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="65"/>
+        <source>Visibility in the channel list</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -110,28 +130,8 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="60"/>
-        <source>Room name</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../ChannelsPlugin.cpp" line="61"/>
-        <source>Rooms</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../ChannelsPlugin.cpp" line="63"/>
-        <source>Room title</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../ChannelsPlugin.cpp" line="65"/>
-        <source>Visibility in the room list</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../ChannelsPlugin.cpp" line="69"/>
-        <source>Pin to room list</source>
+        <source>Pin to channel list</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -176,75 +176,42 @@
     </message>
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="78"/>
-        <source>Images</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../ChannelsPlugin.cpp" line="79"/>
         <source>Accept invitation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ChannelsPlugin.cpp" line="80"/>
+        <location filename="../../ChannelsPlugin.cpp" line="79"/>
         <source>Reject</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../../ChannelsPlugin.cpp" line="80"/>
+        <source>Only owners and moderators can invite to channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../ChannelsPlugin.cpp" line="81"/>
-        <source>Only owners and moderators can invite to room</source>
+        <source>Create</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="82"/>
+        <source>Create new channel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="83"/>
-        <source>Create new room</source>
+        <source>Name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="84"/>
-        <source>Room name:</source>
+        <source>Access:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../ChannelsPlugin.cpp" line="85"/>
-        <source>This room is private</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../ChannelsPlugin.cpp" line="87"/>
-        <source>Invalid room name. Please choose another name.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../ChannelsPlugin.cpp" line="88"/>
-        <source>That room already exists. Please choose another name.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../ChannelsPlugin.cpp" line="89"/>
-        <source>Now {0} online in {1}. Peak online &lt;b&gt;{2}&lt;/b&gt; was &lt;span class=&quot;timeago&quot; data-date=&quot;{3}&quot;&gt;&lt;/span&gt;.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message numerus="yes">
-        <location filename="../../ChannelsPlugin.cpp" line="95"/>
-        <source>&lt;b&gt;%n&lt;/b&gt; user(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message numerus="yes">
-        <location filename="../../ChannelsPlugin.cpp" line="96"/>
-        <source>&lt;b&gt;%n&lt;/b&gt; room(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
-    </message>
-    <message>
-        <location filename="../../ChannelsPlugin.cpp" line="82"/>
-        <source>Create</source>
+        <source>This channel is private</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -252,12 +219,22 @@
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="87"/>
+        <source>Invalid channel name. Please choose another name.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../ChannelsPlugin.cpp" line="88"/>
+        <source>That channel already exists. Please choose another name.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ListTab</name>
     <message>
         <location filename="../../ui/ListTab.cpp" line="51"/>
-        <source>Rooms</source>
+        <source>Channels</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -284,14 +284,6 @@ void Feeds::readFeed(const FeedNotice &packet)
 }
 
 
-void Feeds::reply(const NetRequest &req, const NetReply &reply)
-{
-  foreach (Feeds *hook, m_hooks) {
-    hook->onReply(req, reply);
-  }
-}
-
-
 /*!
  * Получение списка фидов, для которых требуется синхронизация.
  *
@@ -339,11 +331,6 @@ QStringList Feeds::unsynced(ClientChannel channel, const QVariantMap &feeds, con
 
 
 void Feeds::addImpl(ClientChannel /*channel*/, const ChannelInfo & /*info*/, const QVariantMap & /*json*/)
-{
-}
-
-
-void Feeds::onReply(const NetRequest & /*req*/, const NetReply & /*reply*/)
 {
 }
 

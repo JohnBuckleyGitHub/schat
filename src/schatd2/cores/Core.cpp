@@ -31,10 +31,6 @@
 #include "debugstream.h"
 #include "events.h"
 #include "feeds/ServerFeed.h"
-#include "net/Net.h"
-#include "net/NetContext.h"
-#include "net/NetReply.h"
-#include "net/NetRequest.h"
 #include "net/NodeAuthReply.h"
 #include "net/PacketReader.h"
 #include "net/packets/auth.h"
@@ -59,7 +55,6 @@ Core::Core(QObject *parent)
 {
   m_self = this;
 
-  m_net = new Net(this);
   m_sendStream = new QDataStream(&m_sendBuffer, QIODevice::ReadWrite);
   m_readStream = new QDataStream(&m_readBuffer, QIODevice::ReadWrite);
 }
@@ -297,7 +292,7 @@ void Core::newPacketsEvent(NewPacketsEvent *event)
     if (event->channelId().isEmpty() || Ch::channel(event->channelId()) == 0)
       continue;
 
-    if (reader.type() != Protocol::JSONPacket && !checkPacket())
+    if (!checkPacket())
       continue;
 
     m_timestamp = 0;
@@ -311,10 +306,6 @@ void Core::packet(int type)
   switch (type) {
     case Protocol::NoticePacket:
       notice(m_reader->get<quint16>());
-      break;
-
-    case Protocol::JSONPacket:
-      json();
       break;
 
     default:
@@ -383,30 +374,6 @@ void Core::release(SocketReleaseEvent *event)
   NodeNoticeReader::release(user, event->socket());
 
   Ch::gc(user);
-}
-
-
-void Core::json()
-{
-  const QVariantList list = JSON::parse(m_reader->get<QByteArray>()).toList();
-  if (list.size() < 4)
-    return;
-
-  if (list.first() == LS("REQ")) {
-    NetRequest *req = new NetRequest(list);
-    if (!req->isValid()) {
-      delete req;
-      return;
-    }
-
-    NetContext context(req, m_socket);
-    NetReply reply(context.req()->id, NetReply::NOT_FOUND);
-    m_net->req(context, reply);
-
-    PacketWriter writer(m_sendStream, Protocol::JSONPacket);
-    writer.put(reply.toJSON());
-    send(QList<quint64>() << context.socket(), writer.data());
-  }
 }
 
 
