@@ -75,36 +75,32 @@ void Alert::setTab(const QByteArray &sender, const QByteArray &dest)
 class OnlineAlertType : public AlertType
 {
 public:
-  OnlineAlertType(int weight)
+  inline OnlineAlertType(int weight)
   : AlertType(LS("online"), weight)
   {
     m_defaults[ALERT_POPUP_KEY] = false;
     m_defaults[ALERT_SOUND_KEY] = false;
+    m_defaults[ALERT_FILE_KEY]  = QString();
     m_icon = QIcon(LS(":/images/online.png"));
   }
 
-  QString name() const
-  {
-    return QObject::tr("Online");
-  }
+  inline QString name() const { return QObject::tr("Online"); }
 };
 
 
 class OfflineAlertType : public AlertType
 {
 public:
-  OfflineAlertType(int weight)
+  inline OfflineAlertType(int weight)
   : AlertType(LS("offline"), weight)
   {
     m_defaults[ALERT_POPUP_KEY] = false;
     m_defaults[ALERT_SOUND_KEY] = false;
+    m_defaults[ALERT_FILE_KEY]  = QString();
     m_icon = QIcon(LS(":/images/offline.png"));
   }
 
-  QString name() const
-  {
-    return QObject::tr("Offline");
-  }
+  inline QString name() const { return QObject::tr("Offline"); }
 };
 
 
@@ -151,7 +147,7 @@ bool ChatAlerts::add(AlertType *type)
 
   m_self->m_types[type->type()] = type;
 
-  QString prefix = LS("Alerts/") + type->type() + LC('.');
+  const QString prefix = LS("Alerts/") + type->type() + LC('.');
   QMapIterator<QString, QVariant> i(type->defaults());
   while (i.hasNext()) {
     i.next();
@@ -381,7 +377,7 @@ void ChatAlerts::settingsChanged(const QString &key, const QVariant &value)
     m_popupDnD = value.toBool();
   }
   else {
-    QStringList detect = key.mid(7).split(LC('.'));
+    const QStringList detect = key.mid(7).split(LC('.'));
     if (detect.size() != 2)
       return;
 
