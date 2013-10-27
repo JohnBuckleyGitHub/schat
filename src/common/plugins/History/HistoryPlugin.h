@@ -39,8 +39,8 @@ public:
     QVariantMap out            = CoreApi::header();
     out[CORE_API_ID]           = "History";
     out[CORE_API_NAME]         = "History";
-    out[CORE_API_VERSION]      = "0.5.0";
-    out[CORE_API_SITE]         = "http://wiki.schat.me/Plugin/History";
+    out[CORE_API_VERSION]      = "0.5.1";
+    out[CORE_API_SITE]         = "https://wiki.schat.me/Plugin/History";
     out[CORE_API_DESC]         = "Adds support for access to the message history";
     out[CORE_API_DESC_RU]      = "Добавляет поддержку доступа к истории сообщений";
     out[CORE_API_CONFIGURABLE] = true;
