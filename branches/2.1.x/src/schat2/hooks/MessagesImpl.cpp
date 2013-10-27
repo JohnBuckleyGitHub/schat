@@ -127,6 +127,12 @@ void MessagesImpl::unhandled(MessagePacket packet)
   message.data()[ChannelMessage::kText]    = packet->text();
   message.data()[ChannelMessage::kStatus]  = packet->status();
   message.data()[ChannelMessage::kJSON]    = packet->json();
+
+  if (!packet->oid.isNull()) {
+    message.data().insert(ChannelMessage::kOID, QString(ChatId::toBase32(packet->oid.byteArray())));
+    message.data().insert(ChannelMessage::kMDate, packet->mdate);
+  }
+
   TabWidget::add(message);
 }
 
