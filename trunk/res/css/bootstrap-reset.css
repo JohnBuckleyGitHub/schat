@@ -35,6 +35,16 @@ small,
   max-width: 520px;
 }
 
+.modal-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.modal-header .close {
+  margin-left: 6px;
+}
+
 .modal-header,
 .modal-footer {
   padding: 8px;

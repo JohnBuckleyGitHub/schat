@@ -40,6 +40,7 @@
 #include "Tr.h"
 #include "Translation.h"
 #include "ui/TabWidget.h"
+#include "UploadData.h"
 
 #define API_URL QLatin1String("https://upload.schat.me/1/image")
 
@@ -57,6 +58,8 @@ protected:
     else if (key == LS("close"))        return tr("Close");
     else if (key == LS("upload-error")) return tr("An error occurred while uploading");
     else if (key == LS("please-wait"))  return tr("Please Wait...");
+    else if (key == LS("img-desc"))     return tr("Image description");
+    else if (key == LS("upload"))       return tr("Upload");
 
     return QString();
   }
@@ -95,6 +98,7 @@ Share::Share(QObject *parent)
 
 Share::~Share()
 {
+  qDeleteAll(m_data);
   delete m_tr;
 }
 
@@ -102,11 +106,79 @@ Share::~Share()
 bool Share::cancel(const QString &oid)
 {
   m_id.init(oid.toLatin1());
-  if (!m_replies.contains(m_id))
+  if (!m_data.contains(m_id))
     return false;
 
-  m_replies.value(m_id)->close();
+  UploadData *data = m_data.take(m_id);
+  if (data->reply)
+    data->reply->close();
+
+  delete data;
   return true;
+}
+
+
+void Share::upload(const QString &oid, const QString &desc)
+{
+  m_id.init(oid.toLatin1());
+  if (!m_data.contains(m_id))
+    return;
+
+  UploadData *data = m_data.value(m_id);
+  data->setDesc(desc);
+  const QList<QUrl> &urls = data->urls();
+
+  if (data->type() == UploadData::Local) {
+    QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
+
+    foreach (const QUrl &url, urls) {
+      const QString file = url.toLocalFile();
+      const QFileInfo fi(file);
+
+      QString type = fi.suffix().toLower();
+      if (type == LS("jpg"))
+        type = LS("jpeg");
+
+      QHttpPart part;
+      part.setHeader(QNetworkRequest::ContentTypeHeader, "image/" + type.toLatin1());
+      part.setHeader(QNetworkRequest::ContentDispositionHeader, "form-data; name=\"image\"; filename=\"" + fi.fileName().toUtf8() + "\"");
+
+      QFile *f = new QFile(file, multiPart);
+      if (f->open(QFile::ReadOnly)) {
+        part.setBodyDevice(f);
+        multiPart->append(part);
+      }
+    }
+
+    QNetworkRequest request(QUrl(API_URL));
+
+    data->reply = m_net->post(request, multiPart);
+    multiPart->setParent(data->reply);
+  }
+  else {
+    QNetworkRequest request(QUrl(API_URL));
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    QVariantMap body;
+    QVariantList u;
+    u.reserve(urls.size());
+
+    foreach (const QUrl &url, urls) {
+      u.append(url.toString());
+    }
+
+    body.insert(LS("urls"), u);
+
+    data->reply = m_net->post(request, JSON::generate(body));
+  }
+
+  data->reply->setProperty("room", data->roomId().toByteArray());
+  data->reply->setProperty("id",   m_id.toByteArray());
+
+  connect(data->reply, SIGNAL(finished()), SLOT(onFinished()));
+  connect(data->reply, SIGNAL(uploadProgress(qint64,qint64)), SLOT(onUploadProgress(qint64,qint64)));
+
+  emit uploadStarted(data->roomId().toString(), ChatId::toBase32(m_id.oid().byteArray()));
 }
 
 
@@ -135,82 +207,12 @@ void Share::read(const MessagePacket &packet)
 }
 
 
-/**
- * \todo Получать адрес сервера изображений от сервера.
- */
-bool Share::upload(const ChatId &roomId, const QList<QUrl> &urls)
+bool Share::upload(const ChatId &roomId, const QList<QUrl> &urls, bool local)
 {
   if (urls.isEmpty())
     return false;
 
-  m_id.init(ObjectId::gen());
-
-  QNetworkRequest request(QUrl(API_URL));
-  request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-
-  QVariantMap data;
-  QVariantList u;
-  u.reserve(urls.size());
-
-  foreach (const QUrl &url, urls) {
-    u.append(url.toString());
-  }
-
-  data.insert(LS("urls"), u);
-
-  QNetworkReply *reply = m_net->post(request, JSON::generate(data));
-  reply->setProperty("room", roomId.toByteArray());
-  reply->setProperty("id",   m_id.toByteArray());
-
-  connect(reply, SIGNAL(finished()), SLOT(onFinished()));
-  connect(reply, SIGNAL(uploadProgress(qint64,qint64)), SLOT(onUploadProgress(qint64,qint64)));
-
-  emit uploadStarted(roomId.toString(), ChatId::toBase32(m_id.oid().byteArray()));
-  return true;
-}
-
-
-/**
- * \todo Получать адрес сервера изображений от сервера.
- */
-bool Share::upload(const ChatId &roomId, const QStringList &files)
-{
-  if (files.isEmpty())
-    return false;
-
-  m_id.init(ObjectId::gen());
-  QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
-
-  foreach (const QString &file, files) {
-    const QFileInfo fi(file);
-    QString type = fi.suffix().toLower();
-    if (type == LS("jpg"))
-      type = LS("jpeg");
-
-    QHttpPart part;
-    part.setHeader(QNetworkRequest::ContentTypeHeader, "image/" + type.toLatin1());
-    part.setHeader(QNetworkRequest::ContentDispositionHeader, "form-data; name=\"image\"; filename=\"" + fi.fileName().toUtf8() + "\"");
-
-    QFile *f = new QFile(file, multiPart);
-    if (f->open(QFile::ReadOnly)) {
-      part.setBodyDevice(f);
-      multiPart->append(part);
-    }
-  }
-
-  QNetworkRequest request(QUrl(API_URL));
-
-  QNetworkReply *reply = m_net->post(request, multiPart);
-  multiPart->setParent(reply);
-
-  reply->setProperty("room", roomId.toByteArray());
-  reply->setProperty("id",   m_id.toByteArray());
-  m_replies.insert(m_id, reply);
-
-  connect(reply, SIGNAL(finished()), SLOT(onFinished()));
-  connect(reply, SIGNAL(uploadProgress(qint64,qint64)), SLOT(onUploadProgress(qint64,qint64)));
-
-  emit uploadStarted(roomId.toString(), ChatId::toBase32(m_id.oid().byteArray()));
+  add(new UploadData(roomId, urls, local ? UploadData::Local : UploadData::Remote));
   return true;
 }
 
@@ -223,27 +225,30 @@ void Share::onFinished()
 
   m_id.init(reply->property("id").toByteArray());
   m_roomId.init(reply->property("room").toByteArray());
-  m_replies.remove(m_id);
+
+  UploadData *data = 0;
+  if (m_data.contains(m_id))
+    data = m_data.take(m_id);
 
   const int status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
   m_id.init(reply->property("id").toByteArray());
 
   emit uploadStatus(m_roomId.toString(), ChatId::toBase32(m_id.oid().byteArray()), status);
-  if (status != 200) {
-    reply->deleteLater();
-    return;
+  if (status == 200) {
+    MessagePacket packet(new MessageNotice(ChatClient::id(), m_roomId.toByteArray(), data ? data->desc() : QString(), DateTime::utc(), m_id.toByteArray()));
+    packet->setCommand(LS("image"));
+
+    QVariantMap body = JSON::parse(reply->readAll()).toMap();
+    body.insert(LS("format"), 1);
+    packet->setData(body);
+
+    ChatClient::io()->send(packet, true);
   }
 
-  MessagePacket packet(new MessageNotice(ChatClient::id(), m_roomId.toByteArray(), QString(), DateTime::utc(), m_id.toByteArray()));
-  packet->setCommand(LS("image"));
-
-  QVariantMap data = JSON::parse(reply->readAll()).toMap();
-  data.insert(LS("format"), 1);
-  packet->setData(data);
-
-  ChatClient::io()->send(packet, true);
-
   reply->deleteLater();
+
+  if (data)
+    delete data;
 }
 
 
@@ -257,6 +262,19 @@ void Share::onUploadProgress(qint64 bytesSent, qint64 bytesTotal)
   m_roomId.init(reply->property("room").toByteArray());
 
   emit uploadProgress(m_roomId.toString(), ChatId::toBase32(m_id.oid().byteArray()), bytesSent, bytesTotal);
+}
+
+
+void Share::add(UploadData *data)
+{
+  if (!data)
+    return;
+
+  if (m_data.contains(data->id()))
+    delete m_data.take(data->id());
+
+  emit uploadAdded(data->data());
+  m_data.insert(data->id(), data);
 }
 
 

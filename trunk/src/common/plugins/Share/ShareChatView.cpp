@@ -28,7 +28,7 @@
 #include "ShareDnD.h"
 #include "SharePlugin_p.h"
 #include "ui/tabs/ChatView.h"
-
+#include "UploadData.h"
 
 ShareChatView::ShareChatView(Share *share)
   : ChatViewHooks(share)
@@ -60,7 +60,7 @@ bool ShareChatView::onDropEvent(ChatView *view, QDropEvent *event)
   event->acceptProposedAction();
 
   if (!m_share->upload(m_id, ShareDnD::getFiles(event->mimeData())))
-    return m_share->upload(m_id, ShareDnD::getUrls(event->mimeData()));
+    return m_share->upload(m_id, ShareDnD::getUrls(event->mimeData()), false);
 
   return true;
 }
