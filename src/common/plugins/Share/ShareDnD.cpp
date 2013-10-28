@@ -25,10 +25,10 @@
 #define MAX_SIZE 10485760 /* 10 MB */
 #define MAX_IMAGES 20
 
-QStringList ShareDnD::getFiles(const QMimeData *data)
+QList<QUrl> ShareDnD::getFiles(const QMimeData *data)
 {
   const QList<QUrl> urls = data->urls();
-  QStringList out;
+  QList<QUrl> out;
   qint64 size = 0;
   int count   = 0;
 
@@ -47,7 +47,7 @@ QStringList ShareDnD::getFiles(const QMimeData *data)
 
       const QString suffix = fi.suffix().toLower();
       if (suffix == LS("png") || suffix == LS("gif") || suffix == LS("jpg") || suffix == LS("jpeg")) {
-        out.append(fi.absoluteFilePath());
+        out.append(url);
         count++;
       }
     }

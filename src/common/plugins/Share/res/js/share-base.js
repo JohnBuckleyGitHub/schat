@@ -3,6 +3,16 @@
 
   var progress = {};
 
+  function uploadAdded(data) {
+    console.log(data);
+
+    if (typeof data !== 'object' || Settings.getId() !== data.roomId)
+      return;
+
+    Share.add(data);
+  }
+
+
   function uploadStarted(roomId, oid) {
     if (Settings.getId() !== roomId)
       return;
@@ -83,6 +93,7 @@
 
 
   if (typeof Share !== 'undefined') {
+    Share.uploadAdded.connect(uploadAdded);
     Share.uploadStarted.connect(uploadStarted);
     Share.uploadProgress.connect(uploadProgress);
     Share.uploadStatus.connect(uploadStatus);

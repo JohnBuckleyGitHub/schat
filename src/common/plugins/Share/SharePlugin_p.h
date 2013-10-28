@@ -29,6 +29,7 @@ class ChatView;
 class QNetworkAccessManager;
 class QNetworkReply;
 class SharePluginTr;
+class UploadData;
 
 class Share : public ChatPlugin
 {
@@ -37,12 +38,13 @@ class Share : public ChatPlugin
 public:
   Share(QObject *parent);
   ~Share();
-  bool upload(const ChatId &roomId, const QList<QUrl> &urls);
-  bool upload(const ChatId &roomId, const QStringList &files);
+  bool upload(const ChatId &roomId, const QList<QUrl> &urls, bool local = true);
   Q_INVOKABLE bool cancel(const QString &oid);
+  Q_INVOKABLE void upload(const QString &oid, const QString &desc);
   void read(const MessagePacket &packet);
 
 signals:
+  void uploadAdded(const QVariantMap &data);
   void uploadProgress(const QString &roomId, const QString &oid, qint64 bytesSent, qint64 bytesTotal);
   void uploadStarted(const QString &roomId, const QString &oid);
   void uploadStatus(const QString &roomId, const QString &oid, int status);
@@ -52,9 +54,11 @@ private slots:
   void onUploadProgress(qint64 bytesSent, qint64 bytesTotal);
 
 private:
+  void add(UploadData *data);
+
   ChatId m_id;                            ///< Идентификатор загрузки.
   ChatId m_roomId;                        ///< Идентификатор комнаты.
-  QMap<ChatId, QNetworkReply*> m_replies; ///< Ответы на отправленные запросы.
+  QMap<ChatId, UploadData*> m_data;       ///< Данные для загрузки файлов.
   QNetworkAccessManager *m_net;           ///< Доступ к сети.
   SharePluginTr *m_tr;                    ///< Перевод строк в js коде.
 };

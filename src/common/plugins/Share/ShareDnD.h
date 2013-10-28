@@ -29,7 +29,7 @@ class ShareDnD
   ShareDnD() {}
 
 public:
-  static QStringList getFiles(const QMimeData *data);
+  static QList<QUrl> getFiles(const QMimeData *data);
   static QList<QUrl> getUrls(const QMimeData *data);
 
 private:
