@@ -4,8 +4,6 @@
   var progress = {};
 
   function uploadAdded(data) {
-    console.log(data);
-
     if (typeof data !== 'object' || Settings.getId() !== data.roomId)
       return;
 
@@ -83,6 +81,12 @@
     var body = cont.children[1];
     body.setAttribute('class', 'panel-body removed');
     body.innerHTML = '<img class="img-thumbnail" draggable="false" src="qrc:/images/Share/removed-image.png">';
+
+    var footer = cont.children[2];
+    if (footer)
+      cont.removeChild(footer);
+
+    alignChat();
   };
 
 

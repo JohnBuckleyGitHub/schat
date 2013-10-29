@@ -35,7 +35,7 @@
     }
 
     if (json.Text.length)
-      head.appendChild(create('span', {class:'img-desc'}, json.Text));
+      this.cont.innerHTML += '<div class="panel-footer">' + json.Text + '</div>';
   }
 
 

@@ -31,7 +31,7 @@
     upload.addEventListener('click', function(event) {
       Share.upload(that.id, desc.value);
       that.id = null;
-      
+
       $(schat.ui.modal.element).modal('hide');
     });
   }

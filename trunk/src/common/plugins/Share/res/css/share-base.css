@@ -5,6 +5,7 @@
 }
 
 .image-type .panel-body,
+.image-type .panel-footer,
 .image-upload .panel-body {
   padding: 5px;
 }
@@ -27,6 +28,7 @@
 
 .image-type {
   display: inline-block;
+  vertical-align: top;
 }
 
 .image-dialog {
