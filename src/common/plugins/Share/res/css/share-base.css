@@ -20,9 +20,8 @@
 }
 
 .image-type .img-thumbnail {
-  width: 90px;
-  height: 90px;
-  box-sizing: content-box;
+  width: 128px;
+  height: 128px;
   margin: 0 1px;
 }
 
