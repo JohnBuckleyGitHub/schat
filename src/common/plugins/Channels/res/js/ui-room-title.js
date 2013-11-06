@@ -11,12 +11,11 @@
     title.setAttribute('data-tr', 'channels-title');
     ChatView.allowFocus(true);
 
-    body.innerHTML =
-        '<div class="form-horizontal">' +
-          '<div class="form-group">' +
-            '<div class="col-sm-12">' +
-              '<input type="text" class="form-control" id="title-edit" maxlength="200" autofocus="autofocus">' +
-            '</div>' +
+    var form = body.appendChild(create('form', {class:'form-horizontal'}));
+    form.innerHTML =
+        '<div class="form-group">' +
+          '<div class="col-sm-12">' +
+            '<input type="text" class="form-control" id="title-edit" maxlength="200" autofocus="autofocus">' +
           '</div>' +
         '</div>';
 
@@ -28,12 +27,8 @@
 
     var that = this;
 
-    $(this.titleEdit).keydown(function(event){
-      if(event.keyCode == 13)
-        that.btn.click();
-    });
-
-    $(this.btn).on('click', function() { that.setTitle.apply(that, arguments); });
+    form.addEventListener('submit',    function() { that.setTitle.apply(that, arguments); });
+    this.btn.addEventListener('click', function() { that.setTitle.apply(that, arguments); });
   }
 
 

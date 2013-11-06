@@ -26,7 +26,8 @@ module.exports = function(grunt) {
           '<%= pkg.rooms %>/js/room.js': [
             '<%= pkg.rooms %>/js/room-base.js',
             '<%= pkg.rooms %>/js/ui-room-title.js',
-            '<%= pkg.rooms %>/js/ui-room-options.js'
+            '<%= pkg.rooms %>/js/ui-room-options.js',
+            '<%= pkg.rooms %>/js/ui-room-acl.js'
           ],
           '<%= pkg.share %>/js/share.js': [
             '<%= pkg.share %>/js/ui-image-dialog.js',
