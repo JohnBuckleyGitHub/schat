@@ -23,6 +23,7 @@ OTHER_FILES += Share.json
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets webkitwidgets
 
 HEADERS  = \
+   ShareButton.h \
    ShareChatView.h \
    ShareDnD.h \
    ShareMessages.h \
@@ -31,6 +32,7 @@ HEADERS  = \
    UploadData.h \
 
 SOURCES  = \
+   ShareButton.cpp \
    ShareChatView.cpp \
    ShareDnD.cpp \
    ShareMessages.cpp \
