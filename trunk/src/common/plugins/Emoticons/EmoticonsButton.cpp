@@ -34,6 +34,7 @@ EmoticonsButton::EmoticonsButton(Emoticons *emoticons, QWidget *parent)
   setIcon(QIcon(LS(":/images/Emoticons/edit.png")));
   setPopupMode(QToolButton::InstantPopup);
   setMenu(m_menu);
+  setStyleSheet(LS("QToolButton::menu-indicator {image:none}"));
 
   retranslateUi();
 
@@ -54,10 +55,10 @@ void EmoticonsButton::changeEvent(QEvent *event)
 void EmoticonsButton::menuAboutToHide()
 {
   QList<QAction *> actions = m_menu->actions();
-  foreach (QAction *action, actions) {
-    m_menu->removeAction(action);
+  foreach (QAction *action, actions)
     action->deleteLater();
-  }
+
+  m_menu->clear();
 }
 
 

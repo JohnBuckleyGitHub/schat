@@ -16,52 +16,32 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SHAREBUTTON_H_
-#define SHAREBUTTON_H_
+#ifndef SHAREWIDGET_H_
+#define SHAREWIDGET_H_
 
-#include <QApplication>
-#include <QToolButton>
+#include <QFrame>
 
-#include "ui/ToolBarAction.h"
+class QLabel;
+class QToolButton;
 
-class Share;
-
-class ShareButton : public QToolButton
+class ShareWidget : public QFrame
 {
   Q_OBJECT
 
 public:
-  ShareButton(Share *share, QWidget *parent = 0);
+  ShareWidget(QWidget *parent = 0);
 
-protected:
-  void changeEvent(QEvent *event);
-
-private slots:
+signals:
   void addFromDisk();
-  void menuAboutToHide();
-  void menuAboutToShow();
+  void addFromWeb();
+
+public slots:
+  void close();
 
 private:
-  void retranslateUi();
-
-  QMenu *m_menu;
-  Share *m_share;
+  QLabel *m_addLabel;
+  QToolButton *m_diskBtn;
+  QToolButton *m_webBtn;
 };
 
-
-class ShareAction : public ToolBarActionCreator
-{
-  Q_DECLARE_TR_FUNCTIONS(ShareAction)
-
-public:
-  ShareAction(Share *share);
-  QWidget* createWidget(QWidget *parent) const;
-  inline QIcon icon() const { return m_icon; }
-  QString title() const;
-
-private:
-  QIcon m_icon;
-  Share *m_share;
-};
-
-#endif /* SHAREBUTTON_H_ */
+#endif /* SHAREWIDGET_H_ */
