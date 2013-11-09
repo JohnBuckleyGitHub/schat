@@ -52,6 +52,7 @@ signals:
 private slots:
   void onFinished();
   void onUploadProgress(qint64 bytesSent, qint64 bytesTotal);
+  void start();
 
 private:
   void add(UploadData *data);

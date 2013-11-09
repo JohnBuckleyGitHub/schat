@@ -21,6 +21,7 @@
 #include <QHttpMultiPart>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QTimer>
 #include <QtPlugin>
 
 #include "alerts/AlertType.h"
@@ -32,6 +33,7 @@
 #include "JSON.h"
 #include "messages/ChannelMessage.h"
 #include "sglobal.h"
+#include "ShareButton.h"
 #include "ShareChatView.h"
 #include "ShareMessages.h"
 #include "SharePlugin.h"
@@ -39,6 +41,7 @@
 #include "text/TokenFilter.h"
 #include "Tr.h"
 #include "Translation.h"
+#include "ui/SendWidget.h"
 #include "ui/TabWidget.h"
 #include "UploadData.h"
 
@@ -93,6 +96,8 @@ Share::Share(QObject *parent)
 
   ChatCore::translation()->addOther(LS("share"));
   ChatAlerts::add(new ImageAlertType(390));
+
+  QTimer::singleShot(0, this, SLOT(start()));
 }
 
 
@@ -262,6 +267,12 @@ void Share::onUploadProgress(qint64 bytesSent, qint64 bytesTotal)
   m_roomId.init(reply->property("room").toByteArray());
 
   emit uploadProgress(m_roomId.toString(), ChatId::toBase32(m_id.oid().byteArray()), bytesSent, bytesTotal);
+}
+
+
+void Share::start()
+{
+  SendWidget::add(new ShareAction(this));
 }
 
 
