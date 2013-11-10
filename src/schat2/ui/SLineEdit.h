@@ -20,7 +20,6 @@
 #define SLINEEDIT_H_
 
 #include "arora/lineedit.h"
-#include "schat.h"
 
 class SCHAT_CORE_EXPORT SLineEdit : public LineEdit
 {
