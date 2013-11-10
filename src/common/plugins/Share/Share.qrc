@@ -3,9 +3,8 @@
   <file alias="css/Share/share.css">res/css/share.min.css</file>
   <file alias="images/Share/button.png">res/images/button.png</file>
   <file alias="images/Share/folder-open.png">res/images/font-awesome/fa-folder-open.png</file>
-  <file alias="images/Share/globe.png">res/images/font-awesome/fa-globe.png</file>
-  <file alias="images/Share/icon.png">res/images/font-awesome/icon-picture@2x.png</file>
-  <file alias="images/Share/picture.png">res/images/font-awesome/icon-picture.png</file>
+  <file alias="images/Share/icon.png">res/images/font-awesome/fa-picture-o@2x.png</file>
+  <file alias="images/Share/picture.png">res/images/font-awesome/fa-picture-o.png</file>
   <file alias="images/Share/removed-image.png">res/images/font-awesome/icon-ban-circle.png</file>
   <file alias="js/Share/share.js">res/js/share.min.js</file>
   <file alias="translations/share_ru.qm">res/translations/share_ru.qm</file>
