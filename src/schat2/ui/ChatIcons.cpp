@@ -23,6 +23,7 @@
 #include "sglobal.h"
 #include "ui/ChatIcons.h"
 
+QMap<int, QIcon> ChatIcons::m_cache;
 QMap<int, QString> ChatIcons::m_icons;
 
 /*!
@@ -116,10 +117,16 @@ QIcon ChatIcons::icon(const QString &file, const QString &overlay)
 
 QIcon ChatIcons::icon(int name)
 {
+  if (m_cache.contains(name))
+    return m_cache[name];
+
   if (!m_icons.contains(name))
     return QIcon(LS(":/webkit/resources/missingImage.png"));
 
-  return QIcon(LS(":/images/") + m_icons.value(name) + LS(".png"));
+  QIcon icon(LS(":/images/") + m_icons.value(name) + LS(".png"));
+  m_cache.insert(name, icon);
+
+  return icon;
 }
 
 

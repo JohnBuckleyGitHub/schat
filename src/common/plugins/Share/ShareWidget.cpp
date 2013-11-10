@@ -27,16 +27,16 @@
 ShareWidget::ShareWidget(QWidget *parent)
   : QFrame(parent)
 {
-  m_addLabel = new QLabel(LS("<b>") + tr("Add images") + LS("</b>"), this);
+  m_addLabel = new QLabel(LS("<b>") + tr("Add images from") + LS("</b>"), this);
 
   m_diskBtn = new QToolButton(this);
-  m_diskBtn->setText(tr("From Disk"));
+  m_diskBtn->setText(tr("Computer"));
   m_diskBtn->setIcon(QIcon(LS(":/images/Share/folder-open.png")));
   m_diskBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-  m_diskBtn->setToolTip(tr("Add images from disk"));
+  m_diskBtn->setToolTip(tr("Add images from computer"));
 
   m_webBtn = new QToolButton(this);
-  m_webBtn->setText(tr("From Web"));
+  m_webBtn->setText(tr("Web"));
   m_webBtn->setIcon(QIcon(LS(":/images/Share/globe.png")));
   m_webBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
   m_webBtn->setToolTip(tr("Add images from web"));

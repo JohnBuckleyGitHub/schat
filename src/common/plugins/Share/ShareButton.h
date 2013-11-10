@@ -38,12 +38,20 @@ protected:
 
 private slots:
   void addFromDisk();
+  void addFromWeb();
   void menuAboutToHide();
   void menuAboutToShow();
 
 private:
+  enum Mode {
+    DefaultMode,
+    WebMode
+  };
+
+  QString getDir(const QString &key) const;
   void retranslateUi();
 
+  int m_mode;
   QMenu *m_menu;
   Share *m_share;
 };

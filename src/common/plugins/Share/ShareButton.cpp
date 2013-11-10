@@ -16,19 +16,24 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDesktopServices>
 #include <QFileDialog>
 #include <QMenu>
+#include <QTimer>
 #include <QWidgetAction>
 
 #include "ChatCore.h"
+#include "ChatSettings.h"
 #include "sglobal.h"
 #include "ShareButton.h"
 #include "SharePlugin_p.h"
+#include "ShareWebWidget.h"
 #include "ShareWidget.h"
 #include "ui/TabWidget.h"
 
 ShareButton::ShareButton(Share *share, QWidget *parent)
   : QToolButton(parent)
+  , m_mode(DefaultMode)
   , m_share(share)
 {
   m_menu = new QMenu(this);
@@ -54,9 +59,13 @@ void ShareButton::changeEvent(QEvent *event)
 }
 
 
+/*!
+ * Показ диалога выбора локальных файлов.
+ */
 void ShareButton::addFromDisk()
 {
-  const QStringList files = QFileDialog::getOpenFileNames(TabWidget::i(), tr("Open images"), QDir::currentPath(), tr("Images (*.jpg *.jpeg *.png *.gif *.JPG *.PNG)"));
+  const QString key       = LS("SendFile/SendDir");
+  const QStringList files = QFileDialog::getOpenFileNames(TabWidget::i(), tr("Open images"), getDir(key), tr("Images (*.jpg *.jpeg *.png *.gif *.JPG *.PNG)"));
   if (files.isEmpty())
     return;
 
@@ -66,8 +75,15 @@ void ShareButton::addFromDisk()
   foreach (const QString &name, files)
     urls.append(QUrl::fromLocalFile(name));
 
-  ChatId id(ChatCore::currentId());
-  m_share->upload(id, urls, true);
+  if (m_share->upload(ChatCore::currentId(), urls, true))
+    ChatCore::settings()->setValue(key, QFileInfo(files.first()).absolutePath());
+}
+
+
+void ShareButton::addFromWeb()
+{
+  m_mode = WebMode;
+  QTimer::singleShot(0, this, SLOT(click()));
 }
 
 
@@ -83,12 +99,35 @@ void ShareButton::menuAboutToHide()
 
 void ShareButton::menuAboutToShow()
 {
-  ShareWidget *widget = new ShareWidget(this);
-  connect(widget, SIGNAL(addFromDisk()), SLOT(addFromDisk()));
+  QWidget *widget = 0;
+
+  if (m_mode == DefaultMode) {
+    widget = new ShareWidget(this);
+    connect(widget, SIGNAL(addFromDisk()), SLOT(addFromDisk()));
+    connect(widget, SIGNAL(addFromWeb()), SLOT(addFromWeb()));
+  }
+  else {
+    m_mode = DefaultMode;
+    widget = new ShareWebWidget(this);
+  }
 
   QWidgetAction *action = new QWidgetAction(this);
   action->setDefaultWidget(widget);
   m_menu->addAction(action);
+}
+
+
+QString ShareButton::getDir(const QString &key) const
+{
+  QDir dir(SCHAT_OPTION(key).toString());
+  if (dir.path() == LS(".") || !dir.exists())
+#   if QT_VERSION >= 0x050000
+    dir.setPath(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation));
+#   else
+    dir.setPath(QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation));
+#   endif
+
+  return dir.absolutePath();
 }
 
 
