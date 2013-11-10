@@ -24,6 +24,7 @@
 
 #include "ui/ToolBarAction.h"
 
+class QUrl;
 class Share;
 
 class ShareButton : public QToolButton
@@ -32,6 +33,7 @@ class ShareButton : public QToolButton
 
 public:
   ShareButton(Share *share, QWidget *parent = 0);
+  bool eventFilter(QObject *watched, QEvent *event);
 
 protected:
   void changeEvent(QEvent *event);
@@ -41,6 +43,7 @@ private slots:
   void addFromWeb();
   void menuAboutToHide();
   void menuAboutToShow();
+  void upload(const QUrl &url);
 
 private:
   enum Mode {
@@ -63,9 +66,10 @@ class ShareAction : public ToolBarActionCreator
 
 public:
   ShareAction(Share *share);
-  QWidget* createWidget(QWidget *parent) const;
+  bool isVisible(const QString &type, const QByteArray &id);
   inline QIcon icon() const { return m_icon; }
   QString title() const;
+  QWidget* createWidget(QWidget *parent) const;
 
 private:
   QIcon m_icon;

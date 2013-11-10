@@ -26,6 +26,28 @@
     </message>
 </context>
 <context>
+    <name>ShareAction</name>
+    <message>
+        <source>Share images</source>
+        <translation>Обмен изображениями</translation>
+    </message>
+</context>
+<context>
+    <name>ShareButton</name>
+    <message>
+        <source>Open images</source>
+        <translation>Открыть изображения</translation>
+    </message>
+    <message>
+        <source>Images (*.jpg *.jpeg *.png *.gif *.JPG *.PNG)</source>
+        <translation>Изображения (*.jpg *.jpeg *.png *.gif *.JPG *.PNG)</translation>
+    </message>
+    <message>
+        <source>Share images</source>
+        <translation>Обмен изображениями</translation>
+    </message>
+</context>
+<context>
     <name>SharePluginTr</name>
     <message>
         <source>Upload images</source>
@@ -50,6 +72,40 @@
     <message>
         <source>Upload</source>
         <translation>Загрузить</translation>
+    </message>
+</context>
+<context>
+    <name>ShareWebWidget</name>
+    <message>
+        <source>Enter link to image</source>
+        <translation>Введите ссылку на изображение</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>Добавить</translation>
+    </message>
+</context>
+<context>
+    <name>ShareWidget</name>
+    <message>
+        <source>Add images from</source>
+        <translation>Добавить изображения из</translation>
+    </message>
+    <message>
+        <source>Computer</source>
+        <translation>Компьютера</translation>
+    </message>
+    <message>
+        <source>Add images from computer</source>
+        <translation>Добавить изображения из компьютера</translation>
+    </message>
+    <message>
+        <source>Web</source>
+        <translation>Интернета</translation>
+    </message>
+    <message>
+        <source>Add images from web</source>
+        <translation>Добавить изображения из интернета</translation>
     </message>
 </context>
 </TS>

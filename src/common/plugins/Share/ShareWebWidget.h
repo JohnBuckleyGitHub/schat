@@ -22,6 +22,7 @@
 #include <QFrame>
 
 class QToolButton;
+class QUrl;
 class SLineEdit;
 
 class ShareWebWidget : public QFrame
@@ -31,10 +32,19 @@ class ShareWebWidget : public QFrame
 public:
   ShareWebWidget(QWidget *parent = 0);
 
+signals:
+  void upload(const QUrl &url);
+
 protected:
   void showEvent(QShowEvent *event);
 
+private slots:
+  void apply();
+  void onTextChanged(const QString &text);
+
 private:
+  bool isValid(const QUrl &url) const;
+
   QToolButton *m_addBtn;
   SLineEdit *m_urlEdit;
 };

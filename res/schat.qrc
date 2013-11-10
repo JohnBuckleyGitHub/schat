@@ -32,7 +32,7 @@
   <file alias="images/external-small.png">images/fugue/external-small.png</file>
   <file alias="images/ffc-small.png">images/diagona/10/036.png</file>
   <file alias="images/gear.png">images/fugue/gear.png</file>
-  <file alias="images/globe.png">images/diagona/094.png</file>
+  <file alias="images/globe.png">images/font-awesome/fa-globe.png</file>
   <file alias="images/information.png">images/fugue/information.png</file>
   <file alias="images/information-balloon.png">images/fugue/information-balloon.png</file>
   <file alias="images/key.png">images/diagona/065.png</file>
@@ -46,7 +46,7 @@
   <file alias="images/ok.png">images/diagona/102.png</file>
   <file alias="images/online.png">images/fugue/network-status.png</file>
   <file alias="images/password.png">images/fugue/ui-text-field-password.png</file>
-  <file alias="images/pin.png">images/fugue/pin.png</file>
+  <file alias="images/pin.png">images/font-awesome/fa-thumb-tack.png</file>
   <file alias="images/plug.png">images/fugue/plug.png</file>
   <file alias="images/plug-disconnect.png">images/fugue/plug-disconnect.png</file>
   <file alias="images/plugin.png">images/hypic/plugin_16.png</file>
@@ -58,7 +58,7 @@
   <file alias="images/reload.png">images/fugue/arrow-circle-315.png</file>
   <file alias="images/remove.png">images/font-awesome/fa-times.png</file>
   <file alias="images/schat-icons.png">../web/public/img/schat-icons.png</file>
-  <file alias="images/secure.png">images/fugue/lock.png</file>
+  <file alias="images/secure.png">images/font-awesome/fa-lock.png</file>
   <file alias="images/send.png">images/oxygen/go-jump-locationbar.png</file>
   <file alias="images/settings.png">images/diagona/086.png</file>
   <file alias="images/sign-in.png">images/essen/sign-in.png</file>

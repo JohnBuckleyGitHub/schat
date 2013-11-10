@@ -24,6 +24,28 @@
     </message>
 </context>
 <context>
+    <name>ShareAction</name>
+    <message>
+        <source>Share images</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ShareButton</name>
+    <message>
+        <source>Open images</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Images (*.jpg *.jpeg *.png *.gif *.JPG *.PNG)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Share images</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SharePluginTr</name>
     <message>
         <source>Upload images</source>
@@ -47,6 +69,40 @@
     </message>
     <message>
         <source>Upload</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ShareWebWidget</name>
+    <message>
+        <source>Enter link to image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ShareWidget</name>
+    <message>
+        <source>Add images from</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Computer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add images from computer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Web</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add images from web</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
