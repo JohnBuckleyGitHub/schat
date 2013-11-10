@@ -21,8 +21,9 @@
 #include <QToolButton>
 #include <QVBoxLayout>
 
-#include "ShareWidget.h"
 #include "sglobal.h"
+#include "ShareWidget.h"
+#include "ui/ChatIcons.h"
 
 ShareWidget::ShareWidget(QWidget *parent)
   : QFrame(parent)
@@ -37,7 +38,7 @@ ShareWidget::ShareWidget(QWidget *parent)
 
   m_webBtn = new QToolButton(this);
   m_webBtn->setText(tr("Web"));
-  m_webBtn->setIcon(QIcon(LS(":/images/Share/globe.png")));
+  m_webBtn->setIcon(SCHAT_ICON(Globe));
   m_webBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
   m_webBtn->setToolTip(tr("Add images from web"));
 

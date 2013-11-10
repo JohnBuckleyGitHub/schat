@@ -89,11 +89,11 @@
     <name>ShareWidget</name>
     <message>
         <source>Add images from</source>
-        <translation>Добавить изображения из</translation>
+        <translation>Добавить изображения</translation>
     </message>
     <message>
         <source>Computer</source>
-        <translation>Компьютера</translation>
+        <translation>Компьютер</translation>
     </message>
     <message>
         <source>Add images from computer</source>
@@ -101,7 +101,7 @@
     </message>
     <message>
         <source>Web</source>
-        <translation>Интернета</translation>
+        <translation>Интернет</translation>
     </message>
     <message>
         <source>Add images from web</source>
