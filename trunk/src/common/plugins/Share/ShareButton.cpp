@@ -18,9 +18,12 @@
 
 #include <QDesktopServices>
 #include <QFileDialog>
+#include <QKeyEvent>
 #include <QMenu>
 #include <QTimer>
 #include <QWidgetAction>
+#include <QUrl>
+#include <QDebug>
 
 #include "ChatCore.h"
 #include "ChatSettings.h"
@@ -37,6 +40,7 @@ ShareButton::ShareButton(Share *share, QWidget *parent)
   , m_share(share)
 {
   m_menu = new QMenu(this);
+  m_menu->installEventFilter(this);
 
   setAutoRaise(true);
   setPopupMode(QToolButton::InstantPopup);
@@ -47,6 +51,17 @@ ShareButton::ShareButton(Share *share, QWidget *parent)
 
   connect(m_menu, SIGNAL(aboutToHide()), SLOT(menuAboutToHide()));
   connect(m_menu, SIGNAL(aboutToShow()), SLOT(menuAboutToShow()));
+}
+
+
+bool ShareButton::eventFilter(QObject *watched, QEvent *event)
+{
+  if (m_menu == watched && event->type() == QEvent::KeyPress) {
+    if (static_cast<QKeyEvent *>(event)->modifiers() == Qt::AltModifier)
+      return true;
+  }
+
+  return QToolButton::eventFilter( watched, event );
 }
 
 
@@ -109,11 +124,22 @@ void ShareButton::menuAboutToShow()
   else {
     m_mode = DefaultMode;
     widget = new ShareWebWidget(this);
+    connect(widget, SIGNAL(upload(QUrl)), SLOT(upload(QUrl)));
   }
 
   QWidgetAction *action = new QWidgetAction(this);
   action->setDefaultWidget(widget);
   m_menu->addAction(action);
+}
+
+
+void ShareButton::upload(const QUrl &url)
+{
+  QList<QUrl> urls;
+  urls.reserve(1);
+  urls.append(url);
+
+  m_share->upload(ChatCore::currentId(), urls, false);
 }
 
 
@@ -145,15 +171,24 @@ ShareAction::ShareAction(Share *share)
 }
 
 
-QWidget* ShareAction::createWidget(QWidget *parent) const
+bool ShareAction::isVisible(const QString &type, const QByteArray &id)
 {
-  ShareButton *button = new ShareButton(m_share, parent);
-  button->setIcon(m_icon);
-  return button;
+  Q_UNUSED(type)
+
+  const ChatId i(id);
+  return i.type() == ChatId::ChannelId || i.type() == ChatId::UserId;
 }
 
 
 QString ShareAction::title() const
 {
   return tr("Share images");
+}
+
+
+QWidget* ShareAction::createWidget(QWidget *parent) const
+{
+  ShareButton *button = new ShareButton(m_share, parent);
+  button->setIcon(m_icon);
+  return button;
 }

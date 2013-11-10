@@ -215,13 +215,13 @@ void LineEdit::setInactiveText(const QString &text)
 void LineEdit::paintEvent(QPaintEvent *event)
 {
     QLineEdit::paintEvent(event);
-    if (text().isEmpty() && !m_inactiveText.isEmpty() && !hasFocus()) {
+    if (text().isEmpty() && !m_inactiveText.isEmpty()) {
         QStyleOptionFrameV2 panel;
         initStyleOption(&panel);
         QRect textRect = style()->subElementRect(QStyle::SE_LineEditContents, &panel, this);
         int horizontalMargin = 2;
         textRect.adjust(horizontalMargin, 0, 0, 0);
-        int left = textMargin(LineEdit::LeftSide);
+        int left = textMargin(LineEdit::LeftSide) + (hasFocus() ? 4 : 0);
         int right = textMargin(LineEdit::RightSide);
         textRect.adjust(left, 0, -right, 0);
         QPainter painter(this);
