@@ -7,8 +7,8 @@
   <file alias="css/PluginsView.css">html/css/PluginsView.min.css</file>
   <file alias="css/server.css">css/server.min.css</file>
   <file alias="css/user.css">css/user.min.css</file>
-  <file alias="images/add.png">images/diagona/103.png</file>
-  <file alias="images/add-gray.png">images/add.png</file>
+  <file alias="images/add.png">images/font-awesome/fa-plus.png</file>
+  <file alias="images/add-gray.png">images/font-awesome/fa-plus.png</file>
   <file alias="images/add-small.png">images/diagona/10/103.png</file>
   <file alias="images/arrow-right.png">images/silk/resultset_next.png</file>
   <file alias="images/away-small.png">images/diagona/10/087.png</file>
@@ -56,7 +56,7 @@
   <file alias="images/providers.png">www/img/providers.png</file>
   <file alias="images/quit.png">images/crystal/exit.png</file>
   <file alias="images/reload.png">images/fugue/arrow-circle-315.png</file>
-  <file alias="images/remove.png">images/silk/cross.png</file>
+  <file alias="images/remove.png">images/font-awesome/fa-times.png</file>
   <file alias="images/schat-icons.png">../web/public/img/schat-icons.png</file>
   <file alias="images/secure.png">images/fugue/lock.png</file>
   <file alias="images/send.png">images/oxygen/go-jump-locationbar.png</file>

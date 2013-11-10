@@ -16,25 +16,27 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SLINEEDIT_H_
-#define SLINEEDIT_H_
+#ifndef SHAREWEBWIDGET_H_
+#define SHAREWEBWIDGET_H_
 
-#include "arora/lineedit.h"
-#include "schat.h"
+#include <QFrame>
 
-class SCHAT_CORE_EXPORT SLineEdit : public LineEdit
+class QToolButton;
+class SLineEdit;
+
+class ShareWebWidget : public QFrame
 {
   Q_OBJECT
 
 public:
-  SLineEdit(QWidget *parent = 0);
-  SLineEdit(const QString &contents, QWidget *parent = 0);
+  ShareWebWidget(QWidget *parent = 0);
 
 protected:
-  void contextMenuEvent(QContextMenuEvent *event);
+  void showEvent(QShowEvent *event);
 
-private slots:
-  inline void deleteSelected() { if (!hasSelectedText()) return; del(); }
+private:
+  QToolButton *m_addBtn;
+  SLineEdit *m_urlEdit;
 };
 
-#endif /* SLINEEDIT_H_ */
+#endif /* SHAREWEBWIDGET_H_ */

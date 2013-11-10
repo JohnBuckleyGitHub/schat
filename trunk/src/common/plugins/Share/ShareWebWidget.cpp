@@ -16,25 +16,37 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SLINEEDIT_H_
-#define SLINEEDIT_H_
+#include <QToolButton>
+#include <QGridLayout>
 
-#include "arora/lineedit.h"
-#include "schat.h"
+#include "ShareWebWidget.h"
+#include "ui/SLineEdit.h"
+#include "sglobal.h"
+#include "ui/ChatIcons.h"
 
-class SCHAT_CORE_EXPORT SLineEdit : public LineEdit
+ShareWebWidget::ShareWebWidget(QWidget *parent)
+  : QFrame(parent)
 {
-  Q_OBJECT
+  m_urlEdit = new SLineEdit(this);
+  m_urlEdit->setMinimumWidth(256);
 
-public:
-  SLineEdit(QWidget *parent = 0);
-  SLineEdit(const QString &contents, QWidget *parent = 0);
+  m_addBtn = new QToolButton(this);
+  m_addBtn->setIcon(SCHAT_ICON(Add));
+  m_addBtn->setText(tr("Add"));
+  m_addBtn->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 
-protected:
-  void contextMenuEvent(QContextMenuEvent *event);
+  QGridLayout *layout = new QGridLayout(this);
+  layout->addWidget(m_urlEdit, 0, 0);
+  layout->addWidget(m_addBtn, 0, 1);
+  layout->setMargin(6);
 
-private slots:
-  inline void deleteSelected() { if (!hasSelectedText()) return; del(); }
-};
+  setFocusPolicy(Qt::WheelFocus);
+}
 
-#endif /* SLINEEDIT_H_ */
+
+void ShareWebWidget::showEvent(QShowEvent *event)
+{
+  QFrame::showEvent(event);
+
+  m_urlEdit->setFocus();
+}

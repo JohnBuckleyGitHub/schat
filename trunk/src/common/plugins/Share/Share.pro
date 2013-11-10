@@ -29,6 +29,7 @@ HEADERS  = \
    ShareMessages.h \
    SharePlugin.h \
    SharePlugin_p.h \
+   ShareWebWidget.h \
    ShareWidget.h \
    UploadData.h \
 
@@ -38,6 +39,7 @@ SOURCES  = \
    ShareDnD.cpp \
    ShareMessages.cpp \
    SharePlugin.cpp \
+   ShareWebWidget.cpp \
    ShareWidget.cpp \
    UploadData.cpp \
 
