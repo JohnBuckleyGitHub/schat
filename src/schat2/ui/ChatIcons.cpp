@@ -200,4 +200,6 @@ void ChatIcons::init()
   m_icons[Bell]           = LS("bell");
   m_icons[Pin]            = LS("pin");
   m_icons[Prohibition]    = LS("prohibition");
+  m_icons[Clock]          = LS("clock");
+  m_icons[Channels]       = LS("channels");
 }
