@@ -88,14 +88,6 @@
 <context>
     <name>ShareWidget</name>
     <message>
-        <source>Add images from</source>
-        <translation>Добавить изображения</translation>
-    </message>
-    <message>
-        <source>Computer</source>
-        <translation>Компьютер</translation>
-    </message>
-    <message>
         <source>Add images from computer</source>
         <translation>Добавить изображения из компьютера</translation>
     </message>
@@ -106,6 +98,22 @@
     <message>
         <source>Add images from web</source>
         <translation>Добавить изображения из интернета</translation>
+    </message>
+    <message>
+        <source>Add images from clipboard</source>
+        <translation>Добавить изображения из буфера обмена</translation>
+    </message>
+    <message>
+        <source>Add images</source>
+        <translation>Добавить изображения</translation>
+    </message>
+    <message>
+        <source>Browse...</source>
+        <translation>Обзор...</translation>
+    </message>
+    <message>
+        <source>Paste</source>
+        <translation>Вставить</translation>
     </message>
 </context>
 </TS>

@@ -72,7 +72,11 @@ void ShareWebWidget::apply()
 
   close();
 
-  emit upload(url);
+  QList<QUrl> urls;
+  urls.reserve(1);
+  urls.append(url);
+
+  emit upload(urls, false);
 }
 
 
