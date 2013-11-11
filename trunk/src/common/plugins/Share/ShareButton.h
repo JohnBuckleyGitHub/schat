@@ -43,7 +43,7 @@ private slots:
   void addFromWeb();
   void menuAboutToHide();
   void menuAboutToShow();
-  void upload(const QUrl &url);
+  void upload(const QList<QUrl> &urls, bool local);
 
 private:
   enum Mode {

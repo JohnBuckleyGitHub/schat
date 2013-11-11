@@ -33,7 +33,7 @@ public:
   ShareWebWidget(QWidget *parent = 0);
 
 signals:
-  void upload(const QUrl &url);
+  void upload(const QList<QUrl> &urls, bool local);
 
 protected:
   void showEvent(QShowEvent *event);

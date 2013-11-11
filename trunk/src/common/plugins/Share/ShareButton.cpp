@@ -124,8 +124,9 @@ void ShareButton::menuAboutToShow()
   else {
     m_mode = DefaultMode;
     widget = new ShareWebWidget(this);
-    connect(widget, SIGNAL(upload(QUrl)), SLOT(upload(QUrl)));
   }
+
+  connect(widget, SIGNAL(upload(QList<QUrl>,bool)), SLOT(upload(QList<QUrl>,bool)));
 
   QWidgetAction *action = new QWidgetAction(this);
   action->setDefaultWidget(widget);
@@ -133,13 +134,9 @@ void ShareButton::menuAboutToShow()
 }
 
 
-void ShareButton::upload(const QUrl &url)
+void ShareButton::upload(const QList<QUrl> &urls, bool local)
 {
-  QList<QUrl> urls;
-  urls.reserve(1);
-  urls.append(url);
-
-  m_share->upload(ChatCore::currentId(), urls, false);
+  m_share->upload(ChatCore::currentId(), urls, local);
 }
 
 

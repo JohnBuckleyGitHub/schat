@@ -20,6 +20,7 @@
 #define SHAREWIDGET_H_
 
 #include <QFrame>
+#include <QUrl>
 
 class QLabel;
 class QToolButton;
@@ -34,13 +35,19 @@ public:
 signals:
   void addFromDisk();
   void addFromWeb();
+  void upload(const QList<QUrl> &urls, bool local);
 
 public slots:
   void close();
 
+private slots:
+  void onDataChanged();
+  void paste();
+
 private:
   QLabel *m_addLabel;
   QToolButton *m_diskBtn;
+  QToolButton *m_pasteBtn;
   QToolButton *m_webBtn;
 };
 

@@ -88,14 +88,6 @@
 <context>
     <name>ShareWidget</name>
     <message>
-        <source>Add images from</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Computer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Add images from computer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -105,6 +97,22 @@
     </message>
     <message>
         <source>Add images from web</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add images from clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add images</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

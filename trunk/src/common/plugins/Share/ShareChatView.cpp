@@ -69,7 +69,7 @@ bool ShareChatView::onDropEvent(ChatView *view, QDropEvent *event)
 void ShareChatView::initImpl(ChatView *view)
 {
   m_id.init(view->id());
-  if (m_id.type() != ChatId::ChannelId && m_id.type() == ChatId::UserId)
+  if (m_id.type() != ChatId::ChannelId && m_id.type() != ChatId::UserId)
     return;
 
   QNetworkDiskCache *cache = new QNetworkDiskCache(this);
@@ -84,7 +84,7 @@ void ShareChatView::initImpl(ChatView *view)
 void ShareChatView::loadFinishedImpl(ChatView *view)
 {
   m_id.init(view->id());
-  if (m_id.type() != ChatId::ChannelId && m_id.type() == ChatId::UserId)
+  if (m_id.type() != ChatId::ChannelId && m_id.type() != ChatId::UserId)
     return;
 
   view->addCSS(LS("qrc:/css/Share/share.css"));
