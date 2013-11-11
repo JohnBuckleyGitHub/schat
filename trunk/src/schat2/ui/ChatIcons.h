@@ -83,7 +83,9 @@ public:
     Plugin             = 0x506C, ///< "Pl"
     Bell               = 0x4265, ///< "Be"
     Pin                = 0x5069, ///< "Pi"
-    Prohibition        = 0x5068  ///< "Ph"
+    Prohibition        = 0x5068, ///< "Ph"
+    Clock              = 0x436B, ///< "Ck"
+    Channels           = 0x4348  ///< "CH"
   };
 
   /// Опции получения иконки канала.
