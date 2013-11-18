@@ -257,6 +257,7 @@ void NetworkWidget::createActionsButton()
   m_actions->setMenu(m_menu);
   m_actions->setPopupMode(QToolButton::InstantPopup);
   m_actions->setToolTip(tr("Actions"));
+  m_actions->setStyleSheet(LS("QToolButton::menu-indicator {image:none}"));
 
   connect(m_menu, SIGNAL(aboutToShow()), SLOT(showMenu()));
   connect(m_menu, SIGNAL(triggered(QAction*)), SLOT(menuTriggered(QAction*)));

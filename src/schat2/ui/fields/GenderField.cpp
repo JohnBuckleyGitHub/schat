@@ -27,9 +27,9 @@
 #include "ChatSettings.h"
 #include "client/ChatClient.h"
 #include "client/ClientChannels.h"
+#include "sglobal.h"
 #include "ui/ChatIcons.h"
 #include "ui/fields/GenderField.h"
-
 
 GenderField::GenderField(QWidget *parent)
   : QWidget(parent)
@@ -57,6 +57,7 @@ GenderField::GenderField(QWidget *parent)
   m_config->setIcon(SCHAT_ICON(Gear));
   m_config->setMenu(m_menu);
   m_config->setPopupMode(QToolButton::InstantPopup);
+  m_config->setStyleSheet(LS("QToolButton::menu-indicator {image:none}"));
 
   m_toolBar = new QToolBar(this);
   m_toolBar->setIconSize(QSize(16, 16));
