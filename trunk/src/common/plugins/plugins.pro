@@ -35,10 +35,13 @@ SUBDIRS += \
     Emoticons \
     Idle \
     SendFile \
-    Share \
     SpellChecker \
     Proxy \
     Console \
     RawFeeds \
     YouTube \
     Update \
+
+isEqual(QT_MAJOR_VERSION, 4):greaterThan(QT_MINOR_VERSION, 7)|greaterThan(QT_MAJOR_VERSION, 4) {
+    SUBDIRS += Share
+}
