@@ -17,8 +17,8 @@
   <file alias="images/br-next.png">images/wireframe/br_next.png</file>
   <file alias="images/br-prev.png">images/wireframe/br_prev.png</file>
   <file alias="images/channel.png">images/font-awesome/fa-comments.png</file>
-  <file alias="images/channels.png">images/font-awesome/fa-list-ul.png</file>
   <file alias="images/channel-alert.png">images/diagona/029.png</file>
+  <file alias="images/channels.png">images/font-awesome/fa-list-ul.png</file>
   <file alias="images/clock.png">images/font-awesome/fa-clock-o.png</file>
   <file alias="images/computer.png">images/fugue/computer.png</file>
   <file alias="images/dnd-small.png">images/fugue/cross-circle-small.png</file>
@@ -33,7 +33,6 @@
   <file alias="images/exclamation-red-frame.png">images/fugue/exclamation-red-frame.png</file>
   <file alias="images/external-small.png">images/fugue/external-small.png</file>
   <file alias="images/ffc-small.png">images/diagona/10/036.png</file>
-  <file alias="images/gear.png">images/font-awesome/fa-cog.png</file>
   <file alias="images/globe.png">images/font-awesome/fa-globe.png</file>
   <file alias="images/information.png">images/fugue/information.png</file>
   <file alias="images/information-balloon.png">images/fugue/information-balloon.png</file>
@@ -53,10 +52,8 @@
   <file alias="images/plug-disconnect.png">images/fugue/plug-disconnect.png</file>
   <file alias="images/plugin.png">images/hypic/plugin_16.png</file>
   <file alias="images/plugin32.png">images/hypic/plugin_32.png</file>
-  <file alias="images/profile.png">images/led-icons/vcard.png</file>
   <file alias="images/prohibition.png">images/fugue/prohibition.png</file>
   <file alias="images/providers.png">www/img/providers.png</file>
-  <file alias="images/quit.png">images/crystal/exit.png</file>
   <file alias="images/reload.png">images/fugue/arrow-circle-315.png</file>
   <file alias="images/remove.png">images/font-awesome/fa-times.png</file>
   <file alias="images/schat-icons.png">../web/public/img/schat-icons.png</file>
@@ -120,14 +117,17 @@
   <file>images/edit.png</file>
   <file>images/find_next.png</file>
   <file>images/find_previous.png</file>
+  <file>images/gear.png</file>
   <file>images/icons/48x48/schat2.png</file>
   <file>images/icons/96x96/schat2.png</file>
   <file>images/minus-small.png</file>
   <file>images/os.png</file>
   <file>images/play.png</file>
   <file>images/plus-small.png</file>
+  <file>images/profile.png</file>
   <file>images/progress.gif</file>
   <file>images/progress-pink.gif</file>
+  <file>images/quit.png</file>
   <file>images/schat16.png</file>
   <file>images/schat16-ny.png</file>
   <file>images/search.png</file>
