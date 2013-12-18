@@ -99,8 +99,8 @@ bool Ch::gc(ChatChannel channel)
  */
 bool Ch::isCollision(const QByteArray &id, const QString &name, bool override)
 {
-  int type = SimpleID::typeOf(id);
-  QByteArray normalized = Normalize::toId(type, name);
+  const int type = SimpleID::typeOf(id);
+  const QByteArray normalized = Normalize::toId(type, name);
 
   ChatChannel channel = Ch::channel(normalized, type, false);
   if (channel && channel->id() != id)
