@@ -54,7 +54,7 @@ private:
   int update();
 
   bool isForbidden(ChatChannel channel) const;
-  ChannelPacket reply(ChatChannel channel, bool forbidden = false, const QString &command = CHANNELS_CHANNEL_CMD) const;
+  ChannelPacket reply(ChatChannel channel, bool forbidden = false, const QString &command = CHANNELS_CHANNEL_CMD, const QString &xName = QString()) const;
   void dump() const;
   void reply(int status);
 

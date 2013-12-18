@@ -175,6 +175,13 @@ bool ClientMessages::command(const QByteArray &dest, const ClientCmd &cmd)
     return true;
   }
 
+  if (command == LS("talk")) {
+    if (cmd.isBody())
+      ChatClient::channels()->join(body, ChatClient::id());
+
+    return true;
+  }
+
   if (command == LS("nick")) {
     ChatClient::channels()->nick(body);
     return true;

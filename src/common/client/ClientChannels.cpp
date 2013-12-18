@@ -95,13 +95,14 @@ bool ClientChannels::join(const QByteArray &id)
  * Подключение к обычному каналу по имени.
  *
  * \param name Имя канала.
+ * \param id   Идентификатор канала.
  */
-bool ClientChannels::join(const QString &name)
+bool ClientChannels::join(const QString &name, const QByteArray &id)
 {
   if (!Channel::isValidName(name))
     return false;
 
-  return m_client->send(ChannelNotice::request(ChatClient::id(), QByteArray(), CHANNELS_JOIN_CMD, name));
+  return m_client->send(ChannelNotice::request(ChatClient::id(), id, CHANNELS_JOIN_CMD, name));
 }
 
 
@@ -351,7 +352,7 @@ void ClientChannels::channel()
     }
   }
 
-  emit this->channel(channel->id());
+  emit this->channel(channel->id(), m_packet->json().value(LS("x-name")).toString());
 
   if (channel->type() == SimpleID::ChannelId) {
     channel->channels() = m_packet->channels;
@@ -365,6 +366,8 @@ void ClientChannels::channel()
  */
 void ClientChannels::join()
 {
+  qDebug() << "JOIN";
+
   ClientChannel user = add();
   ClientChannel channel = get(m_packet->dest());
 

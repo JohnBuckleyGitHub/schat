@@ -71,7 +71,7 @@ public:
   inline int policy() const                                       { return m_policy; }
 
   bool join(const QByteArray &id);
-  bool join(const QString &name);
+  bool join(const QString &name, const QByteArray &id = QByteArray());
   bool name(const QByteArray &id, const QString &name);
   bool nick(const QString &nick);
   bool part(const QByteArray &id);
@@ -80,13 +80,13 @@ public:
   ClientChannel get(const QByteArray &id);
 
 signals:
-  void channel(const ChannelInfo &info);                          ///< Общая информация о канале.
-  void channel(const QByteArray &id);                             ///< Команда "channel".
-  void channels(const QList<QByteArray> &channels);               ///< Пакет новых каналов.
-  void joined(const QByteArray &channel, const QByteArray &user); ///< Команда "+".
-  void notice(const ChannelNotice &notice);                       ///< Сырой пакет.
-  void part(const QByteArray &channel, const QByteArray &user);   ///< Команда "-".
-  void quit(const QByteArray &user, bool offline = false);        ///< Команда "quit".
+  void channel(const ChannelInfo &info);                                ///< Общая информация о канале.
+  void channel(const QByteArray &id, const QString &xName = QString()); ///< Команда "channel".
+  void channels(const QList<QByteArray> &channels);                     ///< Пакет новых каналов.
+  void joined(const QByteArray &channel, const QByteArray &user);       ///< Команда "+".
+  void notice(const ChannelNotice &notice);                             ///< Сырой пакет.
+  void part(const QByteArray &channel, const QByteArray &user);         ///< Команда "-".
+  void quit(const QByteArray &user, bool offline = false);              ///< Команда "quit".
 
 private slots:
   void clientStateChanged(int state, int previousState);

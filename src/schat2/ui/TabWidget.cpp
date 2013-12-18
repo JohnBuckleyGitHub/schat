@@ -102,7 +102,7 @@ TabWidget::TabWidget(QWidget *parent)
 
   connect(this, SIGNAL(tabCloseRequested(int)), SLOT(closeTab(int)));
   connect(this, SIGNAL(currentChanged(int)), SLOT(currentChanged(int)));
-  connect(ChatClient::channels(), SIGNAL(channel(QByteArray)), SLOT(addChannel(QByteArray)));
+  connect(ChatClient::channels(), SIGNAL(channel(QByteArray,QString)), SLOT(addChannel(QByteArray,QString)));
   connect(ChatClient::io(), SIGNAL(clientStateChanged(int,int)), SLOT(clientStateChanged(int,int)));
   connect(m_serverTab, SIGNAL(actionTriggered(bool)), SLOT(openTab()));
   connect(ChatNotify::i(), SIGNAL(notify(Notify)), SLOT(notify(Notify)));
@@ -603,14 +603,16 @@ void TabWidget::openTab()
 }
 
 
-void TabWidget::addChannel(const QByteArray &id)
+void TabWidget::addChannel(const QByteArray &id, const QString &xName)
 {
   const int type = SimpleID::typeOf(id);
 
-  if (type == SimpleID::ChannelId || m_prefetch.contains(id)) {
+  if (type == ChatId::ChannelId || m_prefetch.contains(id)) {
     m_prefetch.removeAll(id);
-    channelTab(id, true, type == SimpleID::ChannelId ? !m_channels.contains(id) : false);
+    channelTab(id, true, type == ChatId::ChannelId ? !m_channels.contains(id) : false);
   }
+  else if (type == ChatId::UserId && !xName.isEmpty())
+    channelTab(id, true, true);
 }
 
 

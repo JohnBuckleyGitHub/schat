@@ -100,7 +100,7 @@ private slots:
   void notify(const Notify &notify);
   void openTab();
 
-  void addChannel(const QByteArray &id);
+  void addChannel(const QByteArray &id, const QString &xName = QString());
 
   void clientStateChanged(int state, int previousState);
 
