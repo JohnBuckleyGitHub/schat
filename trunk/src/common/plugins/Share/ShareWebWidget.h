@@ -20,9 +20,9 @@
 #define SHAREWEBWIDGET_H_
 
 #include <QFrame>
+#include <QUrl>
 
 class QToolButton;
-class QUrl;
 class SLineEdit;
 
 class ShareWebWidget : public QFrame

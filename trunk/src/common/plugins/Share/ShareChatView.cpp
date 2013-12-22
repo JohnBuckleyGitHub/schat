@@ -17,6 +17,7 @@
  */
 
 #include <QDragEnterEvent>
+#include <QMimeData>
 #include <QNetworkDiskCache>
 #include <QWebFrame>
 
