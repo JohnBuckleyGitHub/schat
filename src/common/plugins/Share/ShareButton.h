@@ -21,10 +21,10 @@
 
 #include <QApplication>
 #include <QToolButton>
+#include <QUrl>
 
 #include "ui/ToolBarAction.h"
 
-class QUrl;
 class Share;
 
 class ShareButton : public QToolButton
