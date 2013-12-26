@@ -5,8 +5,8 @@ class Download
   public $version  = '';
   public $url      = 'http://schat.googlecode.com/files';
   public $aws      = 'https://download.schat.me/schat2';
-  public $path     = '/var/www/download.schat.me/htdocs/schat2';
-  public $fileName = '/var/www/schat/htdocs/json/download.json';
+  public $path     = '/var/www/download/htdocs/schat2';
+  public $fileName = '/var/www/beta/config/download.json';
 
   private $json;
 
@@ -30,7 +30,7 @@ class Download
     $this->fileInfo($this->json->windows, 'server', 'schat2-server-' . $this->version . '.exe');
     $this->fileInfo($this->json->windows, 'msi', 'schat2-' . $this->version . '.msi');
 
-    $this->json->osx->name          = 'Mac OS X';
+    $this->json->osx->name          = 'OS X';
     $this->json->osx->version       = $this->version;
     $this->fileInfo($this->json, 'osx', 'SimpleChat2-' . $this->version . '.dmg');
 
@@ -47,7 +47,7 @@ class Download
     $this->json->debian->size       = '';
     $this->json->debian->url        = 'download/debian';
 
-    $this->json->ubuntu->name       = 'Ubuntu Linux';
+    $this->json->ubuntu->name       = 'Ubuntu';
     $this->json->ubuntu->version    = $this->version;
     $this->json->ubuntu->size       = '';
     $this->json->ubuntu->url        = 'download/ubuntu';
