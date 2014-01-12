@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2014 IMPOMEZIA <schat@impomezia.com>
  * Copyright © 2012 Alexey Ivanov <alexey.ivanes@gmail.com>
  *
  *   This program is free software: you can redistribute it and/or modify
