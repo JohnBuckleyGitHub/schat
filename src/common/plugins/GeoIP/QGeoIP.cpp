@@ -1,6 +1,6 @@
 /* $Id$
  * IMPOMEZIA Simple Chat
- * Copyright © 2008-2013 IMPOMEZIA <schat@impomezia.com>
+ * Copyright © 2008-2014 IMPOMEZIA <schat@impomezia.com>
  *
  * Original QGeoIPRecord and QGeoIP classes
  * Copyright © Wim Leers <http://wimleers.com/> <https://github.com/wimleers/QGeoIP>
