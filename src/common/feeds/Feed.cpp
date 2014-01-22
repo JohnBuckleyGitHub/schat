@@ -141,7 +141,7 @@ FeedReply Feed::post(const QString &path, const QVariantMap &json, Channel *chan
     if (!can(channel, Acl::Edit | Acl::SpecialEdit))
       return Notice::Forbidden;
 
-    const int status = head().post(path.mid(5), value);
+    const int status = head().post(path.mid(5), value, channel);
     if (status == Notice::OK)
       return FeedReply(status, DateTime::utc());
 

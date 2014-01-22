@@ -272,7 +272,7 @@ int NodeAclFeed::setAcl(const QString &encodedId, int acl, bool sudo)
   }
 
   if (isGenericUser(id))
-    return head().post(LS("other/") + encodedId, acl);
+    return head().post(LS("other/") + encodedId, acl, 0);
 
   return Notice::Forbidden;
 }

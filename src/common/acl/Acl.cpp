@@ -43,7 +43,7 @@ bool Acl::add(const QByteArray &other, int acl)
  */
 bool Acl::get(QVariantMap &data, Channel *channel) const
 {
-  int acl = match(channel);
+  const int acl = match(channel);
 
   if (!(acl & Read))
     return false;
