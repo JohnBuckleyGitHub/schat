@@ -16,6 +16,7 @@
  *   along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Channel.h"
 #include "DateTime.h"
 #include "feeds/FeedHeader.h"
 #include "feeds/FeedStrings.h"
@@ -65,7 +66,7 @@ int FeedHeader::del(const QString &path)
 }
 
 
-int FeedHeader::post(const QString &path, const QVariant &value)
+int FeedHeader::post(const QString &path, const QVariant &value, Channel *user)
 {
   if (path == LS("owner")) {
     const QByteArray id = SimpleID::decode(value.toString());
@@ -81,6 +82,10 @@ int FeedHeader::post(const QString &path, const QVariant &value)
   }
   else if (path.startsWith(LS("other/"))) {
     const QByteArray id = SimpleID::decode(path.mid(6));
+
+    if (user && user->id() == id && (m_acl.match(user) & (Acl::Edit | Acl::SpecialEdit)))
+      return Notice::BadRequest;
+
     if (!m_acl.add(id, value.toInt()))
       return Notice::BadRequest;
 
