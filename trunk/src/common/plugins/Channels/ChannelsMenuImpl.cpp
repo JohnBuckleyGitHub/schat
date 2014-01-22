@@ -187,7 +187,7 @@ void ChannelsMenuImpl::permissions(QMenu *menu, ClientChannel user)
     return;
 
   const bool moderator = !m_self && (acl & Acl::Edit || acl & Acl::SpecialWrite);
-  const bool advanced  = acl & Acl::Edit;
+  const bool advanced  = (acl & Acl::Edit) && ChatClient::id() != user->id();
 
   if (moderator || advanced) {
     menu->addSeparator();
